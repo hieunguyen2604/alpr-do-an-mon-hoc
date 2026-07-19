@@ -1,0 +1,70 @@
+{
+  "config": "D:\\DATN\\scripts\\dataset\\configs\\datasets.yaml",
+  "datasets_root": "D:\\DATN\\datasets",
+  "outcomes": [
+    {
+      "name": "roboflow_school_fuhih",
+      "status": "downloaded",
+      "message": "Roboflow export fetched using format 'yolov11'",
+      "destination": "D:\\DATN\\datasets\\raw\\roboflow_school_fuhih",
+      "bytes_downloaded": 355496904,
+      "sha256": "626c7403285814a3246def9e69c094f2162f4426fef712f2329daaa13bb5c032"
+    },
+    {
+      "name": "roboflow_cuong_ta",
+      "status": "downloaded",
+      "message": "Roboflow export fetched using format 'yolov11'",
+      "destination": "D:\\DATN\\datasets\\raw\\roboflow_cuong_ta",
+      "bytes_downloaded": 205124627,
+      "sha256": "b0def84ba974601881f60b75be7741a442eb8f6ef26feef056bd257f3a9575cf"
+    },
+    {
+      "name": "roboflow_traffic_camera",
+      "status": "downloaded",
+      "message": "Roboflow export fetched using format 'yolov11'",
+      "destination": "D:\\DATN\\datasets\\raw\\roboflow_traffic_camera",
+      "bytes_downloaded": 343229643,
+      "sha256": "0dba415a6152eb7731c6930371bc46ee4fd352169645dd20ced26fdbcaf21352"
+    },
+    {
+      "name": "roboflow_tran_ngoc_xuan_tin",
+      "status": "downloaded",
+      "message": "Roboflow export fetched using format 'yolov11'",
+      "destination": "D:\\DATN\\datasets\\raw\\roboflow_tran_ngoc_xuan_tin",
+      "bytes_downloaded": 34643153,
+      "sha256": "3997c75c96d3b07391f0796bfba03318932f56c69a9c8805fc82b4453534ce66"
+    },
+    {
+      "name": "roboflow_eric_nguyen",
+      "status": "downloaded",
+      "message": "Roboflow export fetched using format 'yolov11'",
+      "destination": "D:\\DATN\\datasets\\raw\\roboflow_eric_nguyen",
+      "bytes_downloaded": 45940077,
+      "sha256": "8b0247f61a214e161ee2938da9d7c3e3977f23947939710da41e00e260d73101"
+    },
+    {
+      "name": "roboflow_demo_tracking",
+      "status": "downloaded",
+      "message": "Roboflow export fetched using format 'yolov11'",
+      "destination": "D:\\DATN\\datasets\\raw\\roboflow_demo_tracking",
+      "bytes_downloaded": 16912251,
+      "sha256": "88ee8f9b94b6e68b0ae7f3fcf02e2c81908a68534d7efcb5ecbac9fc6f3e763c"
+    },
+    {
+      "name": "roboflow_ocr_plate",
+      "status": "downloaded",
+      "message": "Roboflow export fetched using format 'yolov11'",
+      "destination": "D:\\DATN\\datasets\\raw\\roboflow_ocr_plate",
+      "bytes_downloaded": 132408770,
+      "sha256": "1ecde5abd7e2ff190fe6fc36fda10307b5c917d735d83ed78240df60bb214ab9"
+    },
+    {
+      "name": "roboflow_ocr_conversion",
+      "status": "downloaded",
+      "message": "Roboflow export fetched using format 'yolov11'",
+      "destination": "D:\\DATN\\datasets\\raw\\roboflow_ocr_conversion",
+      "bytes_downloaded": 4384909,
+      "sha256": "c6d682bb279092e4f67b0aceebcc030e3dd96ebfeb889d0ed4463a4fbed4097f"
+    }
+  ]
+}

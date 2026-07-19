@@ -1,0 +1,151 @@
+# =============================================================================
+# AI dependencies - Vietnamese License Plate Recognition (Phase 2/3)
+# Target: Windows 11, Python 3.13, CPU-only inference (Intel UHD 770, no CUDA).
+# Virtual environment: d:/DATN/.venv-ai
+# =============================================================================
+#
+# !!! IMPORTANT - READ BEFORE INSTALLING !!!
+#
+# `torch` and `torchvision` MUST be the CPU-only builds. By default, pip pulls
+# the CUDA-enabled wheels from PyPI, which are several gigabytes and useless on
+# a machine without an NVIDIA GPU. The CPU builds are served from a separate
+# PyTorch index, declared via --extra-index-url below.
+#
+# The `+cpu` local version suffix on the pins is what actually guarantees the
+# CPU build: that version does not exist on PyPI, so pip is forced to resolve
+# torch/torchvision from the PyTorch CPU index. Do not strip the `+cpu` suffix.
+#
+# --- Recommended: one-command install (the --extra-index-url below applies) ---
+#
+#   python -m venv d:/DATN/.venv-ai
+#   d:/DATN/.venv-ai/Scripts/python.exe -m pip install --upgrade pip setuptools wheel
+#   d:/DATN/.venv-ai/Scripts/python.exe -m pip install -r d:/DATN/ai/requirements.txt
+#
+# --- Alternative: two-step install (torch first, explicitly from the CPU index) ---
+#
+#   pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu
+#   pip install -r requirements.txt
+#
+# Note: --index-url (singular) REPLACES PyPI entirely and must not be placed in
+# this file - the PyTorch index does not host ultralytics, albumentations, etc.
+# Only --extra-index-url (which adds to PyPI) is safe here.
+#
+# Expected sanity check after install (cuda=False is CORRECT on this machine):
+#   python -c "import torch; print(torch.__version__, torch.cuda.is_available())"
+#   -> 2.13.0+cpu False
+#
+# Disk footprint: the resulting venv is ~1.25 GB (torch alone is ~1 GB on
+# Windows even for the CPU build). Allow time and space for the download.
+#
+# Versions below are pinned exactly: this is a thesis project and the training
+# and evaluation results must stay reproducible.
+# =============================================================================
+
+--extra-index-url https://download.pytorch.org/whl/cpu
+
+# --- Deep learning runtime (CPU-only builds, see the note above) --------------
+torch==2.13.0+cpu
+torchvision==0.28.0+cpu
+
+# --- Detection: YOLO11n primary, YOLO11s as the escalation option ------------
+ultralytics==8.4.101
+
+# --- Computer vision / imaging ------------------------------------------------
+opencv-python==5.0.0.93
+numpy==2.4.4
+pillow==12.2.0
+
+# --- Dataset deduplication ----------------------------------------------------
+# Perceptual hashing is MANDATORY before merging datasets: the per-dataset image
+# counts advertised by the Roboflow/Kaggle plate sets overlap heavily, so naive
+# concatenation inflates the totals and leaks near-duplicates across the
+# train/val/test split.
+imagehash==4.3.2
+
+# --- Configuration (YOLO data.yaml, training configs) -------------------------
+pyyaml==6.0.3
+
+# --- Dataset statistics and visualisation -------------------------------------
+matplotlib==3.11.1
+seaborn==0.13.2
+pandas==3.0.3
+
+# --- Progress reporting for long-running dataset jobs -------------------------
+tqdm==4.69.0
+
+# --- Augmentation (bbox-aware, YOLO format) -----------------------------------
+albumentations==2.0.8
+
+# --- OCR: PaddleOCR PP-OCRv5_mobile baseline (Phase 4) ------------------------
+#
+# INSTALL THESE INTO d:/DATN/.venv-ocr, NOT .venv-ai.
+#
+# Why a separate environment. These two lines were deferred out of Phase 2/3 on
+# the grounds that Paddle has its own Python-version and CPU/GPU wheel
+# constraints. That caution turned out to be justified but not fatal: the
+# wheels resolve cleanly on Python 3.13 / Windows, yet installing paddleocr
+# downgrades numpy (2.4.4 -> 2.3.5) and pulls in opencv-contrib-python, which
+# shares the `cv2` namespace with the opencv-python pinned above. Neither change
+# is acceptable in .venv-ai while a YOLO11n training run is using it, so Phase 4
+# gets its own venv:
+#
+#   python -m venv d:/DATN/.venv-ocr
+#   d:/DATN/.venv-ocr/Scripts/python.exe -m pip install --upgrade pip setuptools wheel
+#   d:/DATN/.venv-ocr/Scripts/python.exe -m pip install paddlepaddle==3.3.1 paddleocr==3.7.0 opencv-python==4.10.0.84 pytest==9.1.1
+#
+# The split is TEMPORARY. Once training is finished the two environments should
+# be reconciled into one, and the numpy/opencv pins above renegotiated against
+# whatever paddleocr requires at that time.
+#
+# paddlepaddle is the CPU build: the plain PyPI wheel is CPU-only (the GPU build
+# ships under the separate name paddlepaddle-gpu), so no extra index is needed
+# here, unlike torch above. Verified: paddle.is_compiled_with_cuda() is False.
+#
+# !!! RUNTIME WORKAROUND - enable_mkldnn=False IS MANDATORY !!!
+#
+# With paddlepaddle 3.3.1 on this machine, the default oneDNN (MKL-DNN) backend
+# crashes on the PP-OCRv5 detection graph:
+#
+#   NotImplementedError: (Unimplemented) ConvertPirAttribute2RuntimeAttribute
+#   not support [pir::ArrayAttribute<pir::DoubleAttribute>]
+#   (at ..\paddle\fluid\framework\new_executor\instruction\onednn\onednn_instruction.cc:118)
+#
+# This is a Paddle bug in the PIR-to-oneDNN attribute conversion, not a problem
+# with the model or the input. Constructing PaddleOCR(..., enable_mkldnn=False)
+# falls back to the plain CPU kernels and works. The recognizer implementation
+# must pass this flag; it is not optional. Measured after the workaround, on a
+# synthetic 520x160 plate: init 1.6 s warm / 13.2 s cold including model
+# download, first predict() 0.30 s, warm predict() ~0.22 s.
+#
+# paddlex is paddleocr's inference backend and is installed transitively; it is
+# pinned here because it, not paddleocr, is where the runner code that the
+# workaround above steers around actually lives.
+paddlepaddle==3.3.1
+paddleocr==3.7.0
+paddlex==3.7.2
+
+# =============================================================================
+# Deliberately NOT installed here
+# =============================================================================
+# easyocr                  : the Phase 4 benchmark comparison engine, to be
+#   added when the benchmark is built. Phase 1 found NO public evidence that
+#   PaddleOCR beats EasyOCR on plate imagery, and the one reproducible
+#   comparison favoured EasyOCR. PaddleOCR is the BASELINE, not the decided
+#   answer - which is exactly why BaseRecognizer exists.
+#
+# fastapi / pydantic       : the ai/ package must never import web-framework
+#   code (Clean Architecture: AI layer stays independent of the API layer).
+#   NOTE: pydantic still appears in `pip freeze` as a TRANSITIVE dependency of
+#   albumentations, and in .venv-ocr as a transitive dependency of paddlex
+#   (2.13.4). That is unavoidable and acceptable - the rule is that no module
+#   under ai/ may `import pydantic`, not that the wheel must be absent.
+#
+# opencv-python-headless   : not requested here, but ultralytics pulls it in as
+#   a transitive dependency. Both packages install into the same `cv2` namespace.
+#   They currently resolve to the identical version (5.0.0.93) so the import is
+#   consistent, but if `import cv2` ever misbehaves, uninstall BOTH and
+#   reinstall only opencv-python.
+#   The same clash exists in .venv-ocr, where paddleocr pulls in
+#   opencv-contrib-python. It is pinned there to 4.10.0.84, deliberately the
+#   same version as opencv-python, so `import cv2` stays consistent.
+# =============================================================================

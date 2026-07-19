@@ -1,0 +1,373 @@
+# =============================================================================
+# Danh muc nguon du lieu bien so xe Viet Nam - Phase 2
+# =============================================================================
+#
+# File nay la DAU VAO cua scripts/dataset/download.py. Sua o day, khong sua
+# trong ma nguon Python.
+#
+# Duong dan mac dinh: <project root>/scripts/dataset/configs/datasets.yaml
+# Neu ton tai <project root>/configs/datasets.yaml thi file do duoc uu tien.
+# Ghi de bang: python download.py --config <duong/dan/khac.yaml>
+#
+# -----------------------------------------------------------------------------
+# Y NGHIA CAC TRUONG
+# -----------------------------------------------------------------------------
+#   name                 : slug duy nhat. Dung lam ten thu muc trong datasets/raw/
+#                          va lam tien to ten file sau khi merge. Chi dung
+#                          [a-z0-9_].
+#   enabled              : false thi bo qua, tru khi goi --datasets <name>.
+#   source_type          : roboflow | kaggle | github_release | huggingface |
+#                          direct_url | manual
+#   url                  : dia chi tai. Ho tro thay the bien moi truong dang
+#                          ${TEN_BIEN} - dung de nhet API key vao URL ma khong
+#                          phai commit key len Git.
+#   label_format         : yolo | voc | coco | vnlp | unknown
+#                          (chi la sieu du lieu, download.py khong doc nhan)
+#   license              : giay phep. BAT BUOC ghi ro de trich dan trong bao cao.
+#   license_url          : link toi van ban giay phep.
+#   requires_credentials : true thi can bien moi truong o credential_env.
+#   credential_env       : danh sach bien moi truong bat buoc phai co.
+#   archive_name         : ten file luu ve trong datasets/raw/<name>/.
+#                          Bo trong thi suy ra tu URL.
+#   sha256               : checksum de kiem tra tinh toan ven. De null neu chua
+#                          biet - lan tai dau tien se in ra gia tri that de ban
+#                          dien vao day.
+#   extract              : true thi tu dong giai nen zip/tar sau khi tai.
+#   role                 : primary | supplementary | pretrain_only
+#   ocr_usable           : false nghia la TUYET DOI khong dua vao tap huan luyen
+#                          OCR (xem CCPD ben duoi).
+#   expected_images      : so anh uoc tinh - chi de doi chieu, khong bat buoc.
+#   notes                : ghi chu cho nguoi doc.
+#
+# -----------------------------------------------------------------------------
+# CANH BAO QUAN TRONG
+# -----------------------------------------------------------------------------
+# 1. Cac URL duoi day co the THAY DOI hoac CHET theo thoi gian (dac biet la link
+#    export cua Roboflow - link co han su dung). Neu tai loi, hay mo trang nguon,
+#    lay link export moi va cap nhat vao file nay. download.py se bao loi ro rang
+#    chu KHONG sap.
+# 2. Truong expected_images KHONG duoc cong don de suy ra tong so anh. Cac bo
+#    Roboflow trung lap nhau rat nhieu. Con so that chi co sau khi chay
+#    deduplicate.py.
+# 3. CCPD la du lieu Trung Quoc va KHONG co bien 2 dong nao. Chi dung de
+#    pre-train detector. Dua CCPD vao tap OCR se lam hong mo hinh.
+# =============================================================================
+
+version: 1
+
+datasets:
+  # ---------------------------------------------------------------------------
+  # BO CHINH - VNLP (fict-labs)
+  # Bo Viet Nam DUY NHAT vua co nhan ky tu, vua tach rieng bien 1 dong / 2 dong.
+  # ---------------------------------------------------------------------------
+  - name: vnlp
+    enabled: true
+    source_type: huggingface
+    url: fict-labs/vnlp
+    label_format: vnlp
+    license: "Kiem tra tren trang nguon truoc khi dung cho muc dich xuat ban"
+    license_url: https://huggingface.co/datasets/fict-labs/vnlp
+    requires_credentials: false
+    credential_env: []
+    archive_name: null
+    sha256: null
+    extract: false
+    role: primary
+    ocr_usable: true
+    expected_images: 37300
+    notes: >-
+      ~37.300 anh, trong do 19.086 anh bien 1 dong va 18.211 anh bien 2 dong.
+      Day la bo xuong song cho ca detection lan OCR. Neu snapshot_download
+      that bai, tai thu cong bang:
+      huggingface-cli download fict-labs/vnlp --repo-type dataset
+      --local-dir datasets/raw/vnlp
+
+  # ---------------------------------------------------------------------------
+  # BO THUC TE DA TAI DUOC - HuggingFace (hoanglvuit)
+  # Bo VNLP o tren tra ve HTTP 401 (gated / khong con public). Bo duoi day la
+  # bo bien so Viet Nam THAT, tai duoc khong can token, dung lam du lieu chinh
+  # cho Phase 2 cho den khi xin duoc quyen truy cap VNLP.
+  # ---------------------------------------------------------------------------
+  - name: hf_vn_plates_segment
+    enabled: true
+    source_type: direct_url
+    url: https://huggingface.co/datasets/hoanglvuit/Vietnam_License_Plate_Segment_Datasets/resolve/main/dataset.zip
+    label_format: yolo
+    license: "Kiem tra tren trang nguon truoc khi dung cho muc dich xuat ban"
+    license_url: https://huggingface.co/datasets/hoanglvuit/Vietnam_License_Plate_Segment_Datasets
+    requires_credentials: false
+    credential_env: []
+    archive_name: dataset.zip
+    sha256: null
+    extract: true
+    role: primary
+    ocr_usable: false
+    expected_images: null
+    notes: >-
+      Bo bien so Viet Nam dang YOLO (mot lop). Tai ve khong can token.
+      Chi co nhan hop, KHONG co nhan ky tu -> khong dung cho OCR.
+      Kich thuoc archive ~1,0 GB.
+
+  # ---------------------------------------------------------------------------
+  # BO BO SUNG - Roboflow Universe
+  # Dat enabled: false vi link export co han su dung. Truoc khi bat, hay vao
+  # trang du an, chon Format = YOLOv11, bam "Get Snippet" va dan link vao day.
+  # ---------------------------------------------------------------------------
+  # NHOM A - DETECTION (1 lop 'license plate'). Gop chung vao bo detection.
+  # ocr_usable: false cho ca nhom - chi co nhan hop, khong co nhan ky tu.
+  #
+  # NHOM B - NHAN KY TU (nhieu lop). XU LY RIENG, KHONG gop vao nhom A vi
+  # khong gian lop hoan toan khac nhau.
+  #
+  # KHONG TAI: vietnam-license-plate/vietnam-license-plate-lf9sg - lop duy nhat
+  # ten 'Tire', gan nhan sai de tin dung.
+
+  # --- Nhom A.1 ---
+  - name: roboflow_school_fuhih
+    enabled: true
+    source_type: roboflow
+    url: "https://api.roboflow.com/school-fuhih/vietnamese-license-plate-tptd0/1/yolov11?api_key=${ROBOFLOW_API_KEY}"
+    workspace: school-fuhih
+    project: vietnamese-license-plate-tptd0
+    version: 1
+    label_format: yolo
+    license: CC BY 4.0
+    license_url: https://creativecommons.org/licenses/by/4.0/
+    requires_credentials: true
+    credential_env:
+      - ROBOFLOW_API_KEY
+    archive_name: roboflow_school_fuhih.zip
+    sha256: null
+    extract: true
+    role: supplementary
+    ocr_usable: false
+    expected_images: 8397
+    notes: >-
+      Nhom A - detection 1 lop. Bo Roboflow lon nhat trong danh sach.
+      BAT BUOC dedup cheo voi cac bo A khac truoc khi ket luan so luong.
+
+  # --- Nhom A.2 ---
+  - name: roboflow_cuong_ta
+    enabled: true
+    source_type: roboflow
+    url: "https://api.roboflow.com/cuong-ta-ulxex/vietnamese-car-license-plate/1/yolov11?api_key=${ROBOFLOW_API_KEY}"
+    workspace: cuong-ta-ulxex
+    project: vietnamese-car-license-plate
+    version: 1
+    label_format: yolo
+    license: Public Domain
+    license_url: https://creativecommons.org/publicdomain/zero/1.0/
+    requires_credentials: true
+    credential_env:
+      - ROBOFLOW_API_KEY
+    archive_name: roboflow_cuong_ta.zip
+    sha256: null
+    extract: true
+    role: supplementary
+    ocr_usable: false
+    expected_images: 8255
+    notes: >-
+      Nhom A - detection 1 lop. Public Domain nen khong rang buoc ghi cong.
+      Nghi ngo trung lap nang voi roboflow_school_fuhih (cung kich co).
+
+  # --- Nhom A.3 ---
+  - name: roboflow_traffic_camera
+    enabled: true
+    source_type: roboflow
+    url: "https://api.roboflow.com/traffic-camera/vietnam-license-plate-hayn8/4/yolov11?api_key=${ROBOFLOW_API_KEY}"
+    workspace: traffic-camera
+    project: vietnam-license-plate-hayn8
+    version: 4
+    label_format: yolo
+    license: CC BY 4.0
+    license_url: https://creativecommons.org/licenses/by/4.0/
+    requires_credentials: true
+    credential_env:
+      - ROBOFLOW_API_KEY
+    archive_name: roboflow_traffic_camera.zip
+    sha256: null
+    extract: true
+    role: supplementary
+    ocr_usable: false
+    expected_images: 3149
+    notes: >-
+      Nhom A - detection 1 lop. Anh camera giao thong, goc cao va xa - bo sung
+      dieu kien chup ma cac bo chup gan khong co.
+      DA KIEM CHUNG: export thuc te 3843 anh, nhieu hon 694 anh so voi con so
+      3149 tren trang du an (v4 co augmentation).
+
+  # --- Nhom A.4 ---
+  - name: roboflow_tran_ngoc_xuan_tin
+    enabled: true
+    source_type: roboflow
+    url: "https://api.roboflow.com/tran-ngoc-xuan-tin-k15-hcm-dpuid/vietnam-license-plate-h8t3n/1/yolov11?api_key=${ROBOFLOW_API_KEY}"
+    workspace: tran-ngoc-xuan-tin-k15-hcm-dpuid
+    project: vietnam-license-plate-h8t3n
+    version: 1
+    label_format: yolo
+    license: CC BY 4.0
+    license_url: https://creativecommons.org/licenses/by/4.0/
+    requires_credentials: true
+    credential_env:
+      - ROBOFLOW_API_KEY
+    archive_name: roboflow_tran_ngoc_xuan_tin.zip
+    sha256: null
+    extract: true
+    role: supplementary
+    ocr_usable: false
+    expected_images: 1005
+    notes: Nhom A - detection 1 lop. Bo do an sinh vien, quy mo nho.
+
+  # --- Nhom A.5 ---
+  - name: roboflow_eric_nguyen
+    enabled: true
+    source_type: roboflow
+    url: "https://api.roboflow.com/eric-nguyen-knfxn/vietnam-license-plate-curhr/1/yolov11?api_key=${ROBOFLOW_API_KEY}"
+    workspace: eric-nguyen-knfxn
+    project: vietnam-license-plate-curhr
+    version: 1
+    label_format: yolo
+    license: CC BY 4.0
+    license_url: https://creativecommons.org/licenses/by/4.0/
+    requires_credentials: true
+    credential_env:
+      - ROBOFLOW_API_KEY
+    archive_name: roboflow_eric_nguyen.zip
+    sha256: null
+    extract: true
+    role: supplementary
+    ocr_usable: false
+    expected_images: 350
+    notes: >-
+      Nhom A. DA KIEM CHUNG: trang du an bao 350 anh nhung export thuc te ra
+      840 anh (gap 2,4 lan) - dung con so 840.
+      CANH BAO LOP: bo nay co nc=2, names=['license-plate','vehicle'], KHONG
+      phai 1 lop nhu cac bo A khac. Thuc te lop 'vehicle' (id 1) chi co 4 hop
+      tren 4 anh - gan nhu chac chan la gan nhan nham. Khi merge phai LOC BO
+      lop id 1 va anh xa id 0 -> lop bien so chung.
+
+  # --- Nhom A.6 ---
+  - name: roboflow_demo_tracking
+    enabled: true
+    source_type: roboflow
+    url: "https://api.roboflow.com/demo-tracking/license-plate-vietnam-car/2/yolov11?api_key=${ROBOFLOW_API_KEY}"
+    workspace: demo-tracking
+    project: license-plate-vietnam-car
+    version: 2
+    label_format: yolo
+    license: CC BY 4.0
+    license_url: https://creativecommons.org/licenses/by/4.0/
+    requires_credentials: true
+    credential_env:
+      - ROBOFLOW_API_KEY
+    archive_name: roboflow_demo_tracking.zip
+    sha256: null
+    extract: true
+    role: supplementary
+    ocr_usable: false
+    expected_images: 235
+    notes: Nhom A - detection 1 lop. Bo nho nhat, chi de tang da dang.
+
+  # --- Nhom B.1 - NHAN KY TU, XU LY RIENG ---
+  - name: roboflow_ocr_plate
+    enabled: true
+    source_type: roboflow
+    url: "https://api.roboflow.com/license-plate-reg/viet-nam-ocr-plate/1/yolov11?api_key=${ROBOFLOW_API_KEY}"
+    workspace: license-plate-reg
+    project: viet-nam-ocr-plate
+    version: 1
+    label_format: yolo
+    license: Public Domain
+    license_url: https://creativecommons.org/publicdomain/zero/1.0/
+    requires_credentials: true
+    credential_env:
+      - ROBOFLOW_API_KEY
+    archive_name: roboflow_ocr_plate.zip
+    sha256: null
+    extract: true
+    role: supplementary
+    ocr_usable: true
+    expected_images: 3819
+    notes: >-
+      NHOM B. TUYET DOI KHONG merge vao bo detection nhom A: khong gian lop
+      khac hoan toan, gop vao se hong ca hai.
+      DA KIEM CHUNG: thuc te nc=30 chu KHONG phai 32 nhu trang du an ghi.
+      VAN DE NGHIEM TRONG: names chi la chuoi so '0'..'29', tuc la CHI SO chu
+      khong phai ky tu that. Khong the biet lop 17 ung voi ky tu nao neu chi
+      doc data.yaml - phai cat anh theo hop va doc bang mat de dung bang anh xa
+      truoc khi dung bo nay cho OCR.
+
+  # --- Nhom B.2 - NHAN KY TU, XU LY RIENG ---
+  - name: roboflow_ocr_conversion
+    enabled: true
+    source_type: roboflow
+    url: "https://api.roboflow.com/dataset-format-conversion-iidaz/vietnam-license-plate-recognition/1/yolov11?api_key=${ROBOFLOW_API_KEY}"
+    workspace: dataset-format-conversion-iidaz
+    project: vietnam-license-plate-recognition
+    version: 1
+    label_format: yolo
+    license: CC BY 4.0
+    license_url: https://creativecommons.org/licenses/by/4.0/
+    requires_credentials: true
+    credential_env:
+      - ROBOFLOW_API_KEY
+    archive_name: roboflow_ocr_conversion.zip
+    sha256: null
+    extract: true
+    role: supplementary
+    ocr_usable: true
+    expected_images: 200
+    notes: >-
+      NHOM B - 22 lop ky tu. Quy mo nho, tap lop KHONG trung khop hoan toan voi
+      roboflow_ocr_plate (22 so voi 32) - phai anh xa lop truoc khi dung chung.
+
+  # ---------------------------------------------------------------------------
+  # BO BO SUNG - Kaggle
+  # ---------------------------------------------------------------------------
+  - name: kaggle_vn_plates
+    enabled: false
+    source_type: kaggle
+    url: duydieunguyen/licenseplate
+    label_format: voc
+    license: "Xem muc License tren trang Kaggle"
+    license_url: https://www.kaggle.com/datasets/duydieunguyen/licenseplate
+    requires_credentials: true
+    credential_env:
+      - KAGGLE_USERNAME
+      - KAGGLE_KEY
+    archive_name: kaggle_vn_plates.zip
+    sha256: null
+    extract: true
+    role: supplementary
+    ocr_usable: false
+    expected_images: null
+    notes: >-
+      Can dat kaggle.json vao %USERPROFILE%\.kaggle\ hoac dat hai bien moi
+      truong KAGGLE_USERNAME / KAGGLE_KEY. Nhan dinh dang Pascal VOC, phai
+      chuyen sang YOLO truoc khi merge.
+
+  # ---------------------------------------------------------------------------
+  # PRE-TRAIN DETECTOR - CCPD (Trung Quoc)
+  # ---------------------------------------------------------------------------
+  - name: ccpd
+    enabled: false
+    source_type: github_release
+    url: https://github.com/detectRecog/CCPD
+    label_format: unknown
+    license: "Nghien cuu / hoc thuat - xem repository goc"
+    license_url: https://github.com/detectRecog/CCPD
+    requires_credentials: false
+    credential_env: []
+    archive_name: ccpd_base.tar.xz
+    sha256: null
+    extract: true
+    role: pretrain_only
+    ocr_usable: false
+    expected_images: 250000
+    notes: >-
+      CHI dung de pre-train detector (hoc dac trung "vung bien so"), sau do
+      fine-tune tren du lieu Viet Nam. TUYET DOI KHONG dua vao tap huan luyen
+      OCR: CCPD khong co bat ky bien 2 dong nao va tap ky tu (co chu Han chi
+      tinh thanh) khac hoan toan bien Viet Nam. Repository goc dung link
+      Google Drive / Baidu, nen url o tren chi mang tinh tham chieu - nhieu
+      kha nang phai tai thu cong (source_type: manual).

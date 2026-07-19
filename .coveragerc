@@ -1,0 +1,61 @@
+# Coverage settings for the ALPR project (NFR-M2: >= 70% of business logic).
+#
+# The measured surface is the two business-logic packages. Everything excluded
+# below is excluded for a stated reason, not to flatter the number:
+#
+#   tests/            -- measuring the tests would count the suite as its own
+#                        coverage and make the figure meaningless;
+#   migrations/       -- Alembic revisions are executed by Alembic, not by the
+#                        application, and are verified by running the migration;
+#   */.venv*/         -- third-party code.
+
+[run]
+branch = True
+source =
+    ai
+    backend
+omit =
+    */tests/*
+    */migrations/*
+    */.venv*/*
+    */__pycache__/*
+    backend/alembic.ini
+# --- Offline tooling, excluded from the NFR-M2 figure -----------------------
+#
+# NFR-M2 puts a floor under the coverage of the *business logic* -- the code
+# that runs when the system serves a request. The three packages below are
+# offline tooling that runs from the command line and is verified by being run,
+# not by unit tests:
+#
+#   ai/training/    -- the training entry points. Exercising them means running
+#                      an actual training job (hours of GPU/CPU time).
+#   ai/evaluation/  -- the benchmark and evaluation harnesses. These *produce*
+#                      the measurements reported in the thesis; they are the
+#                      measuring instrument, not the subject.
+#   ai/data/        -- dataset preparation and schema definitions, driven by
+#                      the dataset build scripts.
+#
+# Excluding them is what makes the reported percentage mean "the served code is
+# covered" rather than being diluted by ~3 000 statements of scripts no unit
+# test should be running. Both figures are reported: with these included the
+# whole-repository number is substantially lower, and that number is not the one
+# NFR-M2 is about.
+    ai/training/*
+    ai/evaluation/*
+    ai/data/*
+
+[report]
+precision = 1
+show_missing = True
+skip_covered = False
+exclude_lines =
+    pragma: no cover
+    if __name__ == .__main__.:
+    if TYPE_CHECKING:
+    raise NotImplementedError
+    \.\.\.$
+    @abstractmethod
+    @abc.abstractmethod
+
+[html]
+directory = htmlcov

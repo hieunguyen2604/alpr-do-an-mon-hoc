@@ -1,0 +1,114 @@
+{
+  "tieu_de": "Giai quyet mau thuan NFR-P1: do lai E2E CLIENT-SIDE qua HTTP tren best.pt",
+  "measured_at": "2026-07-20T04:24:00",
+  "muc_dich": "Con so cu 5857,19 ms (bao cao Phase 7) va con so moi 780,36 ms (in-process, T5.7a) chenh 7,5 lan. Phep do nay xac dinh con so nao la con so E2E that su cho NFR-P1 bang cach do CLIENT-SIDE qua HTTP tren dung mo hinh chinh thuc best.pt, cung phuong phap voi bao cao cu (warmup truoc, bo cold-start, roi do >=50 anh that).",
+
+  "cau_hinh_do": {
+    "model_chinh_thuc": "models/best.pt (YOLO11n, 2.590.035 tham so, imgsz 640, split v3, epoch 20)",
+    "engine": "yolo:best.pt + paddleocr-PP-OCRv5-mobile(det=PP-OCRv5_mobile_det)",
+    "device": "cpu",
+    "enable_mkldnn": false,
+    "conf_threshold": 0.25,
+    "iou_threshold": 0.45,
+    "alpr_use_stub": false,
+    "backend": "uvicorn backend.main:app, cong 127.0.0.1:8199",
+    "health_model_loaded": true,
+    "tap_anh": "datasets/processed/yolo_v3/images/test (1.514 anh test v3)",
+    "warmup_bo_di": 10,
+    "so_anh_do": 100,
+    "so_bien_trung_binh_moi_anh": 1.33,
+    "may_do": "Intel Core i5-14600K, 14 nhan/20 luong, 32 GB RAM, Windows 11",
+    "tai_nen_khi_do": "May RANH (CPU idle ~5%, KHONG co tien trinh huan luyen chay song song). Day la diem khac biet then chot so voi phep do cu."
+  },
+
+  "ket_qua_client_side_best_pt": {
+    "cold_start_wall_ms": {
+      "samples": 10, "mean_ms": 176.19, "p50_ms": 174.26, "p95_ms": 246.36,
+      "p99_ms": 246.36, "min_ms": 142.49, "max_ms": 246.36,
+      "ghi_chu": "Cold-start THAP vi pipeline da duoc warmup ngay khi khoi dong server (lifespan warmup 2,54 s). 10 request dau khong bi phat cold-start. Ket luan: co warmup luc khoi dong thi khong con vung cold-start trong duong E2E."
+    },
+    "warm_client_wall_ms": {
+      "samples": 100, "mean_ms": 400.74, "p50_ms": 414.67, "p95_ms": 731.15,
+      "p99_ms": 947.83, "min_ms": 90.18, "max_ms": 1046.68,
+      "ghi_chu": "Do trên may client thuc su qua HTTP — DAY LA CON SO E2E CONG BO cho NFR-P1."
+    },
+    "warm_server_processing_ms": {
+      "samples": 100, "mean_ms": 375.34, "p50_ms": 392.49, "p95_ms": 696.82,
+      "p99_ms": 909.26, "min_ms": 77.18, "max_ms": 1014.37,
+      "ghi_chu": "Thoi gian pipeline bao cao trong response processing_time (chi suy luan, khong tinh mang)."
+    },
+    "warm_api_transport_overhead_ms": {
+      "samples": 100, "mean_ms": 25.39, "p50_ms": 25.95, "p95_ms": 43.56,
+      "p99_ms": 52.06, "min_ms": 8.25, "max_ms": 54.25,
+      "ghi_chu": "Chenh giua wall client va processing server = mang + tuan tu hoa. Phu hop NFR-P5 (overhead API muc tieu <=50 ms)."
+    }
+  },
+
+  "bang_so_sanh_ba_con_so": [
+    {
+      "nhan": "(a) Client-side WARM p95 tren best.pt (HTTP)",
+      "p95_ms": 731.15,
+      "phuong_phap": "Client that qua HTTP, may ranh, warmup roi do 100 anh test v3",
+      "nfr_p1_muc_tieu_800ms": "DAT",
+      "vai_tro": "CON SO CONG BO cho NFR-P1"
+    },
+    {
+      "nhan": "(b) In-process p95 tren best.pt (T5.7a)",
+      "p95_ms": 780.36,
+      "phuong_phap": "benchmark_system.py, goi pipeline.process truc tiep trong tien trinh, 100 anh",
+      "nfr_p1_muc_tieu_800ms": "DAT",
+      "vai_tro": "Doi chieu — DONG THUAN voi (a) trong pham vi ~7% sai so lay mau"
+    },
+    {
+      "nhan": "(c) Con so CU 5857,19 ms (bao cao Phase 7)",
+      "p95_ms": 5857.19,
+      "phuong_phap": "Do tren checkpoint epoch7 (KHONG phai best.pt) khi mot tien trinh huan luyen dang chiem 793% CPU song song; p95 roi dung vao vung mau bi nhiem o duoi phan phoi",
+      "nfr_p1_muc_tieu_800ms": "KHONG DAT (nhung phep do da bi bac bo)",
+      "vai_tro": "Con so bi nhiem — da bi thay the"
+    },
+    {
+      "nhan": "(d) Client-side WARM p95 tren baseline-416-v1 (HTTP)",
+      "p95_ms": 763.75,
+      "phuong_phap": "Cung phuong phap (a) nhung doi mo hinh sang baseline-416-v1 @imgsz416, may ranh",
+      "nfr_p1_muc_tieu_800ms": "DAT",
+      "vai_tro": "Bac bo gia thuyet 'baseline-416-v1 vốn cham': no cho ket qua GAN NHU Y HET best.pt"
+    }
+  ],
+
+  "ket_luan": {
+    "con_so_cong_bo_nfr_p1": "731,15 ms (client-side warm p95, best.pt, qua HTTP).",
+    "trang_thai_nfr_p1": "DAT muc tieu 800 ms (du 68,85 ms) va thoa man ca nguong toi thieu 1500 ms.",
+    "vi_sao_dong_thuan": "Con so client-side (731 ms) va con so in-process (780 ms) chi chenh ~6-7%, nam trong sai so lay mau CPU. Ca hai deu KHANG DINH E2E that su khoang 700-780 ms, KHONG phai 5857 ms. Con so 780 ms in-process KHONG gay hieu nham: khi do lai qua HTTP that su tren may ranh, wall-clock client con thap hon (731 ms) vi phep do in-process T5.7a nham dung tap 100 anh khac va chiu bien dong tai CPU luc do.",
+    "vi_sao_con_so_cu_5857_sai": [
+      "1. NHIEM DO TAI CANH TRANH (nguyen nhan chinh): file 07-benchmark-data.json cua chinh phep do cu ghi ro competing_processes co 'python -m ai.training.train ... cpu=793%' — mot tien trinh huan luyen dang an het CPU trong luc do. Bao cao cu tu no da tinh lai tren 80 mau dau (vung it nhiem) ra p95 ~3283 ms va ghi 'p95=5857 roi dung vao vung bi nhiem'. Do lai tren may RANH: p95 chi con 731 ms.",
+      "2. SAI MO HINH: 5857 ms do tren checkpoints/best-cpu-epoch7.pt — checkpoint giua chung, KHONG phai best.pt chinh thuc.",
+      "3. LOI CROP + OCR doc rong o epoch7: crop qua lon khien PaddleOCR chay ca khoi text-detection tren anh lon, day ocr len ~1322 ms/anh va lam ty trong OCR phong len 93,3% (xem muc sua breakdown ben duoi). Sau khi sua, ocr chi con ~112,55 ms/bien.",
+      "GIA THUYET oneDNN/cold-start: KHONG phai nguyen nhan. Server chay voi enable_mkldnn=false (oneDNN da tat) va cold-start do duoc chi 176 ms p95 vi pipeline warmup ngay luc khoi dong. Nguyen nhan that la (1)+(2)+(3)."
+    ],
+    "gia_thuyet_baseline_cham": "BAC BO. baseline-416-v1 do client-side ra 763,75 ms p95, gan nhu y het best.pt (731 ms). Su khac biet 7,5 lan cua con so cu KHONG den tu mo hinh."
+  },
+
+  "sua_breakdown_ty_trong_buoc": {
+    "con_so_cu_sai": "PaddleOCR chiem 93,3% do tre / detect 6,5% (bao cao Phase 7, muc 4).",
+    "con_so_dung_tren_best_pt": {
+      "nguon": "05-results.json -> T5.7b (do that tren best.pt, 40 mau, 1,57 bien/anh)",
+      "decode_phan_tram": 1.5,
+      "detect_phan_tram": 34.2,
+      "crop_phan_tram": 0.0,
+      "ocr_phan_tram": 64.3,
+      "normalize_phan_tram": 0.0,
+      "detect_ms": 59.83,
+      "ocr_ms_moi_bien": 112.55,
+      "decode_ms": 2.65,
+      "normalize_ms": 0.03
+    },
+    "giai_thich": "Con so 93,3% do mot he thong dang co loi crop (OCR doc anh crop qua lon = 1322 ms/anh). Tren best.pt da sua, OCR chi con ~112,55 ms/bien = 64,3% tong, detect 59,83 ms = 34,2%. OCR VAN la buoc ton kem nhat nhung KHONG con ap dao — toi uu bo phat hien (34,2%) gio da co y nghia thuc su, khac voi ket luan cu."
+  },
+
+  "tep_nguon_va_bang_chung": {
+    "server_log_best_pt": "docs/reports/07-benchmark-p1-resolved.server.log",
+    "server_log_baseline": "docs/reports/07-bench-baseline.server.log",
+    "in_process_goc": "docs/reports/05-results.json -> T5.7a (780,36 ms) va T5.7b (breakdown)",
+    "con_so_cu": "docs/reports/07-benchmark-data.json -> system_performance.nfr_p1_e2e_latency (5857,19 ms) + competing_processes (bang chung nhiem tai)"
+  }
+}

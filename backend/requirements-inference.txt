@@ -1,0 +1,50 @@
+# Inference runtime dependencies for the containerised backend.
+#
+# WHY THIS FILE EXISTS
+# --------------------
+# `backend/requirements.txt` covers the API layer only, on purpose: it stays
+# small enough to install and test the web layer on its own. But the deployed
+# container is not "the API layer" -- it is the API layer *plus* the `ai`
+# package, because `backend.main.build_pipeline` imports
+# `ai.inference.{detector,recognizer}` and would otherwise fall back to
+# `UnavailablePipeline` with `/health` reporting `model_loaded=false`.
+#
+# `ai/requirements.txt` cannot be used directly in the image for two reasons:
+#   1. It carries the DEVELOPMENT/TRAINING set (matplotlib, seaborn, pandas,
+#      albumentations, imagehash, tqdm) which the runtime never imports and
+#      which would add hundreds of megabytes for nothing.
+#   2. Its torch pins carry the `+cpu` local version and an `--extra-index-url`
+#      line. The Dockerfile already installs torch from the CPU index in an
+#      earlier, separately cached layer; re-declaring it here risks pip
+#      re-resolving against PyPI and dragging the CUDA wheels back in.
+#
+# So this file lists exactly what the INFERENCE PATH imports, and nothing else.
+# Torch/torchvision are deliberately absent -- see Dockerfile.backend.
+#
+# Install (inside the image, after the CPU torch step):
+#   pip install -r backend/requirements-inference.txt
+
+# --- Detection ---------------------------------------------------------------
+# Pulls torch (already satisfied by the CPU-index install), and opencv +
+# pyyaml transitively. Version matches ai/requirements.txt so that the
+# container and the training venv agree on the weights format.
+ultralytics==8.4.101
+
+# --- OCR ---------------------------------------------------------------------
+# The plain PyPI `paddlepaddle` wheel is the CPU build on linux/amd64 as well as
+# on Windows -- the GPU build ships under the separate name `paddlepaddle-gpu`.
+# No extra index is needed, unlike torch.
+#
+# NOTE for the container: `ai.inference.recognizer` constructs PaddleOCR with
+# `enable_mkldnn=False`. That flag is a workaround for a PIR-to-oneDNN attribute
+# conversion crash in paddlepaddle 3.3.x on the PP-OCRv5 detection graph. It is
+# not Windows-specific, so it must stay set here too.
+paddlepaddle==3.3.1
+paddleocr==3.7.0
+# paddleocr's inference backend. Pinned explicitly because the runner code the
+# mkldnn workaround steers around lives here, not in paddleocr.
+paddlex==3.7.2
+
+# --- Configuration -----------------------------------------------------------
+# Ultralytics reads the model's embedded YAML; also used by ai/ config loading.
+pyyaml>=6.0,<7.0

@@ -1,0 +1,2835 @@
+{
+  "dataset_root": "D:\\DATN\\datasets\\processed\\yolo",
+  "method": "imagehash.phash",
+  "hash_bits": 64,
+  "threshold_hamming": 10,
+  "splits": {
+    "train": 3203,
+    "test": 458
+  },
+  "unreadable_images": {},
+  "cross_split_comparisons": [
+    {
+      "split_a": "train",
+      "split_b": "test",
+      "images_a": 3203,
+      "images_b": 458,
+      "pairs_compared": 1466974,
+      "near_duplicate_pairs": 619,
+      "min_hamming_distance": 6,
+      "distance_histogram": {
+        "0": 0,
+        "1-5": 0,
+        "6-10": 619,
+        "11-15": 3016,
+        "16-20": 26135,
+        ">20": 1437204
+      }
+    }
+  ],
+  "within_split": {},
+  "total_cross_split_near_duplicate_pairs": 619,
+  "example_pairs": [
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_000006.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_000061.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_000006.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_003548.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_000007.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_000074.png",
+      "hamming_distance": 8
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_000009.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_003496.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_000020.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_000019.png",
+      "hamming_distance": 8
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_000027.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_000524.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_000031.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_003570.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_000035.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_000439.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_000058.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_000386.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_000062.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_000074.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_000063.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_000391.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_000064.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_000217.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_000081.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_003486.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_000086.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_000087.png",
+      "hamming_distance": 8
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_000089.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_000074.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_000094.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_000338.png",
+      "hamming_distance": 6
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_000096.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_003548.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_000107.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_000127.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_000117.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_000703.png",
+      "hamming_distance": 8
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_000119.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_000255.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_000119.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_003479.png",
+      "hamming_distance": 8
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_000119.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_003522.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_000121.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_000571.png",
+      "hamming_distance": 8
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_000122.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_000571.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_000126.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_003649.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_000139.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_000159.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_000139.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_003688.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_000141.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_003590.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_000141.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_003649.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_000142.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_003593.png",
+      "hamming_distance": 6
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_000143.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_000252.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_000158.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_000061.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_000158.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_003548.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_000182.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_000073.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_000182.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_003548.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_000185.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_003631.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_000187.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_000068.png",
+      "hamming_distance": 8
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_000198.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_000087.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_000199.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_000338.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_000211.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_000494.png",
+      "hamming_distance": 8
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_000224.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_000218.png",
+      "hamming_distance": 8
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_000224.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_000670.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_000225.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_003499.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_000245.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_000132.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_000248.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_000694.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_000258.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_000127.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_000262.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_003605.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_000262.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_003688.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_000263.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_003593.png",
+      "hamming_distance": 6
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_000264.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_000252.png",
+      "hamming_distance": 8
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_000267.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_000268.png",
+      "hamming_distance": 8
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_000271.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_000255.png",
+      "hamming_distance": 8
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_000271.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_003479.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_000282.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_003544.png",
+      "hamming_distance": 6
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_000289.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_000073.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_000308.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_000260.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_000310.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_000132.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_000327.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_000409.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_000328.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_000330.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_000329.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_003493.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_000329.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_003516.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_000334.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_003565.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_000339.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_000571.png",
+      "hamming_distance": 8
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_000351.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_000218.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_000351.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_000670.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_000356.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_000218.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_000358.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_000338.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_000370.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_000394.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_000370.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_000566.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_000372.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_000391.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_000390.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_000218.png",
+      "hamming_distance": 8
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_000390.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_000454.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_000390.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_000670.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_000392.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_000259.png",
+      "hamming_distance": 8
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_000392.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_003467.png",
+      "hamming_distance": 8
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_000392.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_003649.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_000410.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_000153.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_000413.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_000703.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_000413.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_003493.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_000415.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_000571.png",
+      "hamming_distance": 8
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_000416.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_003605.png",
+      "hamming_distance": 8
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_000440.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_000030.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_000440.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_000478.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_000443.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_003688.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_000444.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_000478.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_000444.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_003649.png",
+      "hamming_distance": 8
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_000447.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_000252.png",
+      "hamming_distance": 8
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_000451.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_003516.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_000455.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_000087.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_000464.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_000266.png",
+      "hamming_distance": 8
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_000467.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_000391.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_000468.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_003590.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_000468.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_003649.png",
+      "hamming_distance": 8
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_000477.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_003493.png",
+      "hamming_distance": 8
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_000484.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_003593.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_000492.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_000524.png",
+      "hamming_distance": 6
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_000500.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_000074.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_000504.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_000183.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_000504.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_003499.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_000507.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_000019.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_000519.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_000087.png",
+      "hamming_distance": 6
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_000522.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_000088.png",
+      "hamming_distance": 6
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_000522.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_000362.png",
+      "hamming_distance": 8
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_000522.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_000668.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_000538.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_003565.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_000541.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_000391.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_000551.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_000087.png",
+      "hamming_distance": 8
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_000567.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_003493.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_000579.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_003647.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_000596.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_000252.png",
+      "hamming_distance": 6
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_000596.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_003593.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_000608.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_000604.png",
+      "hamming_distance": 8
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_000640.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_000295.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_000651.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_000338.png",
+      "hamming_distance": 8
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_000652.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_000338.png",
+      "hamming_distance": 6
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_000657.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_000073.png",
+      "hamming_distance": 8
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_000663.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_000073.png",
+      "hamming_distance": 6
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_000672.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_000391.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_000679.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_000023.png",
+      "hamming_distance": 6
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_000685.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_000218.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_000685.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_000391.png",
+      "hamming_distance": 6
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_000685.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_000670.png",
+      "hamming_distance": 8
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_000696.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_003649.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_000698.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_003479.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_000698.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_003522.png",
+      "hamming_distance": 6
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_000700.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_000724.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_000702.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_000701.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_000715.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_000724.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_000715.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_003522.png",
+      "hamming_distance": 8
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_000716.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_000136.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001105.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001903.png",
+      "hamming_distance": 8
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001111.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_003833.png",
+      "hamming_distance": 8
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001113.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001166.png",
+      "hamming_distance": 8
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001113.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_002299.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001113.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_003841.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001122.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001168.png",
+      "hamming_distance": 8
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001125.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001344.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001125.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001712.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001144.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_003841.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001165.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001166.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001175.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_002299.png",
+      "hamming_distance": 8
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001176.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001629.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001180.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001302.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001180.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001750.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001180.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_002298.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001180.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_002321.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001180.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_004109.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001199.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001281.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001199.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001344.png",
+      "hamming_distance": 8
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001199.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001712.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001199.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_002299.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001199.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_003841.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001201.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_004064.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001204.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_003927.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001209.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001166.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001209.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001344.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001209.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001712.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001209.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_003841.png",
+      "hamming_distance": 8
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001213.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001150.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001219.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_004200.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001223.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_004177.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001224.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001166.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001224.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_002135.png",
+      "hamming_distance": 8
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001224.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_004053.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001240.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_002111.png",
+      "hamming_distance": 8
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001240.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_002283.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001241.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001281.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001241.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001344.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001241.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_002027.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001241.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_002037.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001241.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_002299.png",
+      "hamming_distance": 6
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001241.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_004020.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001244.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001371.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001244.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_004109.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001247.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001378.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001250.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001281.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001250.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001344.png",
+      "hamming_distance": 8
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001254.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001281.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001254.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_002299.png",
+      "hamming_distance": 6
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001254.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_004020.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001259.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001150.png",
+      "hamming_distance": 8
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001271.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_002135.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001280.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001394.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001285.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_003903.png",
+      "hamming_distance": 6
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001287.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_002135.png",
+      "hamming_distance": 8
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001289.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_002135.png",
+      "hamming_distance": 8
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001292.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001836.png",
+      "hamming_distance": 8
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001292.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_002298.png",
+      "hamming_distance": 8
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001293.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001629.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001293.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_003934.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001294.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001166.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001294.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001882.png",
+      "hamming_distance": 8
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001294.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_002135.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001294.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_002174.png",
+      "hamming_distance": 8
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001294.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_002299.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001294.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_004177.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001301.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001691.png",
+      "hamming_distance": 8
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001301.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_002391.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001304.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_002135.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001307.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_004007.png",
+      "hamming_distance": 8
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001308.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001197.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001321.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_002299.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001326.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001268.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001326.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_002321.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001326.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_004200.png",
+      "hamming_distance": 8
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001327.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001166.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001329.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_002135.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001349.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_003903.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001356.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_004007.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001360.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001485.png",
+      "hamming_distance": 6
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001360.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001595.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001366.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001344.png",
+      "hamming_distance": 8
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001366.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_003841.png",
+      "hamming_distance": 8
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001369.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001168.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001375.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001281.png",
+      "hamming_distance": 8
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001375.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001344.png",
+      "hamming_distance": 6
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001375.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001712.png",
+      "hamming_distance": 8
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001375.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_003841.png",
+      "hamming_distance": 6
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001380.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_002135.png",
+      "hamming_distance": 8
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001387.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_004020.png",
+      "hamming_distance": 8
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001397.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001834.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001397.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001882.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001397.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_002174.png",
+      "hamming_distance": 8
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001402.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_002417.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001403.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001302.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001403.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001306.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001403.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001501.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001403.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001750.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001403.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_003866.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001403.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_004052.png",
+      "hamming_distance": 8
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001403.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_004109.png",
+      "hamming_distance": 8
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001408.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001268.png",
+      "hamming_distance": 8
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001408.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001302.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001408.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_002298.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001408.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_002321.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001412.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_003998.png",
+      "hamming_distance": 8
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001413.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_002043.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001421.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_003941.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001423.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001371.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001426.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001756.png",
+      "hamming_distance": 8
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001429.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_002417.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001430.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001281.png",
+      "hamming_distance": 8
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001430.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001344.png",
+      "hamming_distance": 8
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001430.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001712.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001430.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_002299.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001444.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001378.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001445.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001378.png",
+      "hamming_distance": 8
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001446.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_002037.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001446.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_002074.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001451.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_003866.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001451.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_004109.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001455.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_002002.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001461.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001302.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001461.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_002298.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001462.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001156.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001465.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_002037.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001465.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_002299.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001471.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001227.png",
+      "hamming_distance": 6
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001472.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_002299.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001484.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001168.png",
+      "hamming_distance": 8
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001491.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001991.png",
+      "hamming_distance": 8
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001492.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_002027.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001505.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001629.png",
+      "hamming_distance": 8
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001505.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_003934.png",
+      "hamming_distance": 8
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001506.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001756.png",
+      "hamming_distance": 8
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001511.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001281.png",
+      "hamming_distance": 8
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001511.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001344.png",
+      "hamming_distance": 8
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001511.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001428.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001511.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001436.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001511.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001712.png",
+      "hamming_distance": 8
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001511.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_003841.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001516.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001168.png",
+      "hamming_distance": 8
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001521.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_004177.png",
+      "hamming_distance": 8
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001528.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001275.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001533.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001197.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001541.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001302.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001541.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_002298.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001541.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_004052.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001547.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_004148.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001556.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001281.png",
+      "hamming_distance": 8
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001556.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001300.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001556.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001344.png",
+      "hamming_distance": 8
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001556.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001428.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001556.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001712.png",
+      "hamming_distance": 8
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001556.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_002299.png",
+      "hamming_distance": 8
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001556.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_003841.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001557.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001629.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001557.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_003934.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001560.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001731.png",
+      "hamming_distance": 8
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001581.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001166.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001581.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001281.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001581.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001344.png",
+      "hamming_distance": 8
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001581.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001428.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001581.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001712.png",
+      "hamming_distance": 8
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001581.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_002299.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001581.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_003841.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001588.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001281.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001588.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001344.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001588.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001712.png",
+      "hamming_distance": 6
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001588.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_003841.png",
+      "hamming_distance": 8
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001593.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_004148.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001604.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001475.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001605.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_004148.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001609.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001703.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001614.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001302.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001614.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_004052.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001615.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_004007.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001618.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001478.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001625.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001168.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001630.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001127.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001641.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_002111.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001643.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_002299.png",
+      "hamming_distance": 8
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001646.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_002295.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001647.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_004053.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001657.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_004020.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001658.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001281.png",
+      "hamming_distance": 8
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001658.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001344.png",
+      "hamming_distance": 8
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001658.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001712.png",
+      "hamming_distance": 8
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001658.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_002263.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001658.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_003841.png",
+      "hamming_distance": 6
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001663.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001568.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001664.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_002299.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001666.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001378.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001668.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001168.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001673.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001302.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001678.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_004007.png",
+      "hamming_distance": 8
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001687.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_002292.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001687.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_003841.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001696.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_002027.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001696.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_002299.png",
+      "hamming_distance": 8
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001702.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_002205.png",
+      "hamming_distance": 8
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001706.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001302.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001714.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001306.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001715.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_002002.png",
+      "hamming_distance": 8
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001715.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_002086.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001723.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001836.png",
+      "hamming_distance": 8
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001723.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_004052.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001734.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001882.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001734.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_002174.png",
+      "hamming_distance": 8
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001737.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001200.png",
+      "hamming_distance": 8
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001737.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001525.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001739.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001268.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001749.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_002135.png",
+      "hamming_distance": 8
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001772.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_002417.png",
+      "hamming_distance": 8
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001776.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_002090.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001778.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_002027.png",
+      "hamming_distance": 8
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001779.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_003998.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001782.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001281.png",
+      "hamming_distance": 8
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001782.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_002299.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001784.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001268.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001785.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001127.png",
+      "hamming_distance": 8
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001785.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001171.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001788.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_003947.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001795.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001163.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001815.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001150.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001833.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001475.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001833.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_003941.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001837.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_002321.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001843.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_004081.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001844.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001691.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001844.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_002391.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001848.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001882.png",
+      "hamming_distance": 8
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001848.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_002027.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001848.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_002299.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001856.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001166.png",
+      "hamming_distance": 6
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001856.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001281.png",
+      "hamming_distance": 6
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001856.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001300.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001856.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001344.png",
+      "hamming_distance": 6
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001856.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001436.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001856.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001712.png",
+      "hamming_distance": 8
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001856.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001882.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001856.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_002135.png",
+      "hamming_distance": 8
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001856.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_002299.png",
+      "hamming_distance": 8
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001856.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_003841.png",
+      "hamming_distance": 8
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001862.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001281.png",
+      "hamming_distance": 6
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001862.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001344.png",
+      "hamming_distance": 8
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001862.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001712.png",
+      "hamming_distance": 8
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001862.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_002135.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001862.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_002263.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001862.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_002299.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001862.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_003841.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001871.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001882.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001904.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_004109.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001905.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_002421.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001915.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001836.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001919.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001281.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001932.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_003927.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001934.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_004177.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001937.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001276.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001944.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_002090.png",
+      "hamming_distance": 8
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001950.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_002037.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001953.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_002216.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001975.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_004052.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001975.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_004109.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001990.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001302.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001994.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001302.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001994.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_002298.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001994.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_003998.png",
+      "hamming_distance": 6
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_001999.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001501.png",
+      "hamming_distance": 10
+    },
+    {
+      "split_a": "train",
+      "image_a": "D:\\DATN\\datasets\\processed\\yolo\\images\\train\\hf_vn_plates_segment_002001.png",
+      "split_b": "test",
+      "image_b": "D:\\DATN\\datasets\\processed\\yolo\\images\\test\\hf_vn_plates_segment_001475.png",
+      "hamming_distance": 10
+    }
+  ],
+  "verdict": "LEAK_DETECTED"
+}

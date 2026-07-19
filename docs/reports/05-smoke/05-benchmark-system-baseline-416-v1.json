@@ -1,0 +1,104 @@
+{
+  "measured_at": "2026-07-19T20:16:27",
+  "hardware": {
+    "cpu_name": "Intel(R) Core(TM) i5-14600K",
+    "physical_cores": 14,
+    "logical_cores": 20,
+    "ram_total_gb": 31.77,
+    "platform": "Windows 11",
+    "python_version": "3.13.12",
+    "torch_version": "2.13.0+cpu",
+    "torch_threads": 8,
+    "baseline_cpu_percent": 44.0,
+    "competing_processes": [
+      "pid=0 cpu=1077% System Idle Process",
+      "pid=4 cpu=33% System",
+      "pid=19124 cpu=793% D:\\DATN\\.venv-ai\\Scripts\\python.exe -m ai.training.train --config yolo11n_finetune.yaml --data datasets/processed/yolo_v3/data.yaml --device"
+    ]
+  },
+  "weights": "D:\\DATN\\models\\baseline-416-v1.pt",
+  "images_root": "D:\\DATN\\datasets\\processed\\yolo_v3\\images\\test",
+  "image_count": 20,
+  "device": "cpu",
+  "nfr_p1_e2e_latency": {
+    "samples": 20,
+    "mean_ms": 222.66,
+    "p50_ms": 218.63,
+    "p95_ms": 284.54,
+    "p99_ms": 318.15,
+    "min_ms": 126.07,
+    "max_ms": 318.15
+  },
+  "mean_plates_per_image": 1.0,
+  "latency_budget": {
+    "median_ms": {
+      "decode_ms": 2.94,
+      "detect_ms": 111.9,
+      "crop_ms": 0.0,
+      "ocr_ms": 132.35,
+      "normalize_ms": 0.04
+    },
+    "share_percent": {
+      "decode_ms": 1.2,
+      "detect_ms": 45.3,
+      "crop_ms": 0.0,
+      "ocr_ms": 53.5,
+      "normalize_ms": 0.0
+    },
+    "median_total_ms": 247.23,
+    "mean_plates_per_image": 1.0,
+    "samples": 20
+  },
+  "detector_backend_comparison": {},
+  "nfr_verdicts": {
+    "NFR-P1": {
+      "measured_p95_ms": 284.54,
+      "target_ms": 800.0,
+      "floor_ms": 1500.0,
+      "meets_target": true,
+      "meets_floor": true,
+      "margin_to_target_ms": 515.46
+    },
+    "NFR-P4": {
+      "measured_load_s": 0.03,
+      "measured_warmup_s": 2.73,
+      "measured_ready_s": 2.76,
+      "target_s": 15.0,
+      "meets_target": true
+    },
+    "NFR-P7": {
+      "rss_before_load_gb": 0.422,
+      "rss_after_load_gb": 0.661,
+      "rss_peak_gb": 0.664,
+      "target_gb": 2.0,
+      "meets_target": true,
+      "note": "In-process pipeline RSS. The FastAPI server adds its own overhead."
+    }
+  },
+  "e2e_raw_latencies_ms": [
+    228.51,
+    252.0,
+    185.08,
+    205.24,
+    218.63,
+    318.15,
+    194.43,
+    193.12,
+    213.79,
+    266.58,
+    225.07,
+    280.28,
+    206.0,
+    126.07,
+    172.0,
+    177.84,
+    243.2,
+    284.54,
+    245.23,
+    217.52
+  ],
+  "figures": [
+    "D:\\DATN\\docs\\reports\\05-smoke\\figures\\07-latency-distribution.png",
+    "D:\\DATN\\docs\\reports\\05-smoke\\figures\\07-latency-budget.png"
+  ]
+}

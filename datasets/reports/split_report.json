@@ -1,0 +1,44 @@
+{
+  "input_dir": "D:\\DATN\\datasets\\processed\\merged_v2",
+  "output_dir": "D:\\DATN\\datasets\\processed\\yolo_v3",
+  "data_yaml": "D:\\DATN\\datasets\\processed\\yolo_v3\\data.yaml",
+  "seed": 42,
+  "stratified": true,
+  "requested_ratios": {
+    "train": 0.7,
+    "val": 0.2,
+    "test": 0.1
+  },
+  "images_total": 15133,
+  "images_per_split": {
+    "train": 10592,
+    "val": 3027,
+    "test": 1514
+  },
+  "realised_ratios": {
+    "train": 0.6999,
+    "val": 0.2,
+    "test": 0.1
+  },
+  "units_total": 7906,
+  "multi_image_units": 1171,
+  "largest_unit": 4411,
+  "stratum_per_split": {
+    "test": {
+      "1": 234,
+      "2": 1276,
+      "unknown": 4
+    },
+    "train": {
+      "1": 1634,
+      "2": 8930,
+      "unknown": 28
+    },
+    "val": {
+      "1": 467,
+      "2": 2552,
+      "unknown": 8
+    }
+  },
+  "leakage_protection": true
+}

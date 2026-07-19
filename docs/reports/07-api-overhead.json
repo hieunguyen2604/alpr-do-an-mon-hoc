@@ -1,0 +1,71 @@
+{
+  "measured_at": "2026-07-19T15:48:37",
+  "hardware": {
+    "cpu_name": "Intel(R) Core(TM) i5-14600K",
+    "physical_cores": 14,
+    "logical_cores": 20,
+    "ram_total_gb": 31.77,
+    "platform": "Windows 11",
+    "python_version": "3.13.12",
+    "competing_processes": [
+      "pid=4 cpu=41% System",
+      "pid=27516 cpu=791% D:\\DATN\\.venv-ai\\Scripts\\python.exe -m ai.training.train --config yolo11n_finetune.yaml --data datasets/processed/yolo/d"
+    ]
+  },
+  "weights": "D:\\DATN\\models\\checkpoints\\best-cpu-epoch7.pt",
+  "server_log": "D:\\DATN\\docs\\reports\\07-api-overhead.server.log",
+  "nfr_p4_startup": {
+    "measured_s": 8.36,
+    "target_s": 15.0,
+    "status": "PASS",
+    "health": {
+      "status": "ok",
+      "app_name": "Vietnamese ALPR API",
+      "version": "0.1.0",
+      "database_connected": true,
+      "model_loaded": true,
+      "uptime_seconds": 7.588928799988935,
+      "timestamp": "2026-07-19T08:48:45.887467Z"
+    }
+  },
+  "nfr_p5_api_overhead": {
+    "requests_measured": 27,
+    "wall_clock": {
+      "samples": 27,
+      "mean_ms": 1903.66,
+      "p50_ms": 1474.99,
+      "p95_ms": 3701.23,
+      "p99_ms": 3767.45,
+      "min_ms": 736.66,
+      "max_ms": 3767.45
+    },
+    "pipeline_reported": {
+      "samples": 27,
+      "mean_ms": 1887.84,
+      "p50_ms": 1457.51,
+      "p95_ms": 3682.83,
+      "p99_ms": 3748.74,
+      "min_ms": 721.54,
+      "max_ms": 3748.74
+    },
+    "overhead": {
+      "samples": 27,
+      "mean_ms": 15.82,
+      "p50_ms": 15.43,
+      "p95_ms": 19.01,
+      "p99_ms": 20.08,
+      "min_ms": 10.63,
+      "max_ms": 20.08
+    },
+    "failures": [],
+    "failure_count": 0,
+    "target_ms": 50.0,
+    "status": "PASS"
+  },
+  "nfr_p7_server_rss": {
+    "measured_gb": 0.806,
+    "target_gb": 2.0,
+    "status": "PASS",
+    "note": "uvicorn process plus children, sampled after the load."
+  }
+}

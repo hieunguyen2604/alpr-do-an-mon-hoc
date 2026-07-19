@@ -1,0 +1,93 @@
+{
+  "generated_at": "2026-07-19T13:16:00+00:00",
+  "model": {
+    "weights": "D:\\DATN\\models\\baseline-416-v1.pt",
+    "size_mb": 5.18
+  },
+  "dataset": {
+    "data_yaml": "D:\\DATN\\datasets\\processed\\yolo_v3\\data.yaml",
+    "split": "test",
+    "num_images": 200,
+    "num_ground_truth_boxes": 248,
+    "classes": {
+      "0": "license_plate"
+    },
+    "label_stats": {
+      "images_without_labels": 0,
+      "malformed_lines": 0,
+      "grouped_by_label": 0,
+      "grouped_by_class": 0,
+      "grouped_by_aspect_ratio": 248
+    }
+  },
+  "settings": {
+    "imgsz": 640,
+    "conf": 0.25,
+    "iou": 0.45,
+    "device": "cpu",
+    "aspect_ratio_threshold": 2.5
+  },
+  "environment": {
+    "python": "3.13.12",
+    "platform": "Windows 11",
+    "processor": "Intel64 Family 6 Model 183 Stepping 1, GenuineIntel"
+  },
+  "metrics_reference_ultralytics": {},
+  "metrics_overall": {
+    "group": "ALL",
+    "num_ground_truth": 248,
+    "num_predictions": 260,
+    "true_positives": 248,
+    "false_positives": 12,
+    "false_negatives": 0,
+    "precision": 0.95385,
+    "recall": 1.0,
+    "f1": 0.97638,
+    "mAP@0.5": 0.99668,
+    "mAP@0.5:0.95": 0.84478
+  },
+  "metrics_by_line_count": {
+    "single_line": {
+      "group": "single_line",
+      "num_ground_truth": 45,
+      "num_predictions": 46,
+      "true_positives": 45,
+      "false_positives": 1,
+      "false_negatives": 0,
+      "precision": 0.97826,
+      "recall": 1.0,
+      "f1": 0.98901,
+      "mAP@0.5": 0.99662,
+      "mAP@0.5:0.95": 0.78221
+    },
+    "two_line": {
+      "group": "two_line",
+      "num_ground_truth": 203,
+      "num_predictions": 214,
+      "true_positives": 203,
+      "false_positives": 11,
+      "false_negatives": 0,
+      "precision": 0.9486,
+      "recall": 1.0,
+      "f1": 0.97362,
+      "mAP@0.5": 0.99758,
+      "mAP@0.5:0.95": 0.85877
+    }
+  },
+  "nfr_a8_gap_ap50": -0.00097,
+  "inference_latency": {
+    "samples": 50,
+    "mean_ms": 75.93,
+    "p50_ms": 47.32,
+    "p95_ms": 70.91,
+    "p99_ms": 1411.17,
+    "min_ms": 34.77,
+    "max_ms": 1411.17,
+    "fps_p50": 21.13
+  },
+  "plots": {
+    "pr_curve_by_line_count": "D:\\DATN\\docs\\reports\\05-smoke\\figures\\ch5-baseline-416-v1-test_pr_curve.png",
+    "confusion_matrix": "D:\\DATN\\docs\\reports\\05-smoke\\figures\\ch5-baseline-416-v1-test_confusion_matrix.png",
+    "latency_histogram": "D:\\DATN\\docs\\reports\\05-smoke\\figures\\ch5-baseline-416-v1-test_latency.png"
+  }
+}

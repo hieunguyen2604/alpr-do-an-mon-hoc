@@ -1,0 +1,405 @@
+{
+  "source_report": {
+    "engine": "paddleocr-PP-OCRv5-mobile(det=PP-OCRv5_mobile_det)",
+    "generated_at": "2026-07-19T21:08:00+00:00",
+    "settings": {
+      "labels_path": "D:\\DATN\\datasets\\annotations\\plate_labels.csv",
+      "count": 2801,
+      "one_line": 567,
+      "two_line": 2234,
+      "by_dataset": {
+        "roboflow_ocr_plate": 2650,
+        "roboflow_ocr_conversion": 151
+      },
+      "by_split": {
+        "train": 2224,
+        "(none)": 6,
+        "valid": 571
+      },
+      "provenance": "Phase 2b reconstructed these strings from character-level boxes in roboflow_ocr_plate and roboflow_ocr_conversion; only rows the reconstruction validated WITHOUT the normalizer are kept, so the normalizer is not graded on labels it produced."
+    },
+    "summary": {
+      "count": 2801,
+      "char_accuracy_pre_norm": 0.8704,
+      "char_accuracy_post_norm": 0.8734,
+      "cer_pre_norm": 0.1296,
+      "cer_post_norm": 0.1266,
+      "mean_per_sample_cer_post_norm": 0.1257,
+      "exact_pre_norm": 0.6098,
+      "exact_post_norm": 0.6555,
+      "postprocessing_gain_points": 4.57,
+      "postprocessing_fixed": 128,
+      "postprocessing_broke": 0,
+      "valid_format_rate": 0.8115,
+      "empty_read_rate": 0.0039,
+      "mean_confidence": 0.9576,
+      "error_classes": {
+        "correct": 1836,
+        "empty_read": 11,
+        "substitution": 376,
+        "missing_chars": 217,
+        "extra_chars": 95,
+        "transposition": 0,
+        "mixed": 266
+      },
+      "e2e": {
+        "count": 2801,
+        "exact": 0.5227,
+        "detection_rate": 0.8804,
+        "char_accuracy": 0.7809,
+        "exact_given_detected": 0.5937,
+        "missed_by_detector": 335,
+        "unrepaired_input": {
+          "count": 2801,
+          "exact": 0.3235,
+          "detection_rate": 0.8268
+        }
+      }
+    }
+  },
+  "stage": "normalized",
+  "total_cases": 2801,
+  "total_errors": 965,
+  "error_rate": 0.3445,
+  "by_class": {
+    "correct": 1836,
+    "empty_read": 11,
+    "substitution": 376,
+    "missing_chars": 217,
+    "extra_chars": 95,
+    "transposition": 0,
+    "mixed": 266
+  },
+  "by_line_count": {
+    "1_line": {
+      "total": 567,
+      "correct": 538,
+      "empty_read": 1,
+      "substitution": 18,
+      "missing_chars": 1,
+      "extra_chars": 5,
+      "transposition": 0,
+      "mixed": 4
+    },
+    "2_line": {
+      "total": 2234,
+      "correct": 1298,
+      "empty_read": 10,
+      "substitution": 358,
+      "missing_chars": 216,
+      "extra_chars": 90,
+      "transposition": 0,
+      "mixed": 262
+    }
+  },
+  "top_substitutions": [
+    {
+      "true": "E",
+      "predicted": "F",
+      "count": 73
+    },
+    {
+      "true": "4",
+      "predicted": "1",
+      "count": 54
+    },
+    {
+      "true": "U",
+      "predicted": "1",
+      "count": 31
+    },
+    {
+      "true": "Z",
+      "predicted": "T",
+      "count": 30
+    },
+    {
+      "true": "2",
+      "predicted": "7",
+      "count": 29
+    },
+    {
+      "true": "9",
+      "predicted": "0",
+      "count": 25
+    },
+    {
+      "true": "X",
+      "predicted": "Y",
+      "count": 21
+    },
+    {
+      "true": "B",
+      "predicted": "R",
+      "count": 20
+    },
+    {
+      "true": "4",
+      "predicted": "L",
+      "count": 19
+    },
+    {
+      "true": "1",
+      "predicted": "L",
+      "count": 17
+    },
+    {
+      "true": "7",
+      "predicted": "1",
+      "count": 17
+    },
+    {
+      "true": "1",
+      "predicted": "7",
+      "count": 14
+    },
+    {
+      "true": "1",
+      "predicted": "0",
+      "count": 13
+    },
+    {
+      "true": "L",
+      "predicted": "1",
+      "count": 12
+    },
+    {
+      "true": "0",
+      "predicted": "1",
+      "count": 11
+    },
+    {
+      "true": "3",
+      "predicted": "1",
+      "count": 11
+    },
+    {
+      "true": "5",
+      "predicted": "0",
+      "count": 11
+    },
+    {
+      "true": "8",
+      "predicted": "9",
+      "count": 10
+    },
+    {
+      "true": "1",
+      "predicted": "3",
+      "count": 9
+    },
+    {
+      "true": "5",
+      "predicted": "4",
+      "count": 9
+    },
+    {
+      "true": "9",
+      "predicted": "1",
+      "count": 9
+    },
+    {
+      "true": "5",
+      "predicted": "6",
+      "count": 9
+    },
+    {
+      "true": "2",
+      "predicted": "Z",
+      "count": 9
+    },
+    {
+      "true": "1",
+      "predicted": "2",
+      "count": 8
+    },
+    {
+      "true": "1",
+      "predicted": "5",
+      "count": 8
+    },
+    {
+      "true": "6",
+      "predicted": "5",
+      "count": 8
+    },
+    {
+      "true": "H",
+      "predicted": "M",
+      "count": 8
+    },
+    {
+      "true": "6",
+      "predicted": "0",
+      "count": 7
+    },
+    {
+      "true": "0",
+      "predicted": "U",
+      "count": 7
+    },
+    {
+      "true": "6",
+      "predicted": "1",
+      "count": 7
+    }
+  ],
+  "error_positions": {
+    "0": 330,
+    "1": 377,
+    "2": 662,
+    "3": 386,
+    "4": 117,
+    "5": 95,
+    "6": 97,
+    "7": 92,
+    "8": 55
+  },
+  "ground_truth_lengths_of_failures": {
+    "7": 26,
+    "8": 362,
+    "9": 577
+  },
+  "confident_but_wrong": [
+    {
+      "image_path": "D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/3xemay1725_jpg.rf.2f938297aac994314ba10b7c9ab7f479.jpg",
+      "ground_truth": "54T11850",
+      "prediction": "1850",
+      "confidence": 0.9999,
+      "error_class": "missing_chars"
+    },
+    {
+      "image_path": "D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/3xemay75_jpg.rf.26270ec615791e8019fc4b6e9ce56461.jpg",
+      "ground_truth": "59P152934",
+      "prediction": "52934",
+      "confidence": 0.9999,
+      "error_class": "missing_chars"
+    },
+    {
+      "image_path": "D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata318_jpg.rf.fe911546a117a7049c8aeacc3e05a4b8.jpg",
+      "ground_truth": "99H61527",
+      "prediction": "1527",
+      "confidence": 0.9999,
+      "error_class": "missing_chars"
+    },
+    {
+      "image_path": "D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/1xemay1249_jpg.rf.a40a2f5e3460a2aed59887e291757800.jpg",
+      "ground_truth": "59U172979",
+      "prediction": "72979",
+      "confidence": 0.9998,
+      "error_class": "missing_chars"
+    },
+    {
+      "image_path": "D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay1100_jpg.rf.e1fe51b20ee096b874ee014cf5a4c87d.jpg",
+      "ground_truth": "47D118716",
+      "prediction": "18716",
+      "confidence": 0.9998,
+      "error_class": "missing_chars"
+    },
+    {
+      "image_path": "D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay1877_jpg.rf.539f693b829ac44d2f40baf3f8f7da97.jpg",
+      "ground_truth": "59E112903",
+      "prediction": "12903",
+      "confidence": 0.9998,
+      "error_class": "missing_chars"
+    },
+    {
+      "image_path": "D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/1xemay930_jpg.rf.019557a8e4b8da03f0b258152527556d.jpg",
+      "ground_truth": "75F102991",
+      "prediction": "02991",
+      "confidence": 0.9998,
+      "error_class": "missing_chars"
+    },
+    {
+      "image_path": "D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/4xemay2480_jpg.rf.3cafd80e53cd62742cd48adcf09919b1.jpg",
+      "ground_truth": "59L187760",
+      "prediction": "87760",
+      "confidence": 0.9998,
+      "error_class": "missing_chars"
+    },
+    {
+      "image_path": "D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay2180_jpg.rf.8caa6ab4ed2b854769c1b66bab150d7c.jpg",
+      "ground_truth": "72X18179",
+      "prediction": "8179",
+      "confidence": 0.9997,
+      "error_class": "missing_chars"
+    },
+    {
+      "image_path": "D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay2213_jpg.rf.15f36dd54f62ecdd8d078cea9a15c7a4.jpg",
+      "ground_truth": "59P112875",
+      "prediction": "12875",
+      "confidence": 0.9997,
+      "error_class": "missing_chars"
+    },
+    {
+      "image_path": "D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay2464_jpg.rf.d478a5d4fd041710a9e853714b47d58f.jpg",
+      "ground_truth": "59P152934",
+      "prediction": "52934",
+      "confidence": 0.9997,
+      "error_class": "missing_chars"
+    },
+    {
+      "image_path": "D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/3xemay1677_jpg.rf.76d063850759c39ac23f23e2139942eb.jpg",
+      "ground_truth": "54L48348",
+      "prediction": "8348",
+      "confidence": 0.9997,
+      "error_class": "missing_chars"
+    },
+    {
+      "image_path": "D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/6xemay493_jpg.rf.58000d41f10cfc68a1eabfee068209cf.jpg",
+      "ground_truth": "70G113509",
+      "prediction": "13509",
+      "confidence": 0.9997,
+      "error_class": "missing_chars"
+    },
+    {
+      "image_path": "D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/7xemay2484_jpg.rf.feb55da3613db7e8c3a90df09212c49d.jpg",
+      "ground_truth": "94H41831",
+      "prediction": "1831",
+      "confidence": 0.9997,
+      "error_class": "missing_chars"
+    },
+    {
+      "image_path": "D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/1xemay1421_jpg.rf.7763231e06473b015b6531e09944b769.jpg",
+      "ground_truth": "59D165455",
+      "prediction": "65455",
+      "confidence": 0.9997,
+      "error_class": "missing_chars"
+    },
+    {
+      "image_path": "D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay1770_jpg.rf.3bba668acf589b3bf4b31e5b61bf404e.jpg",
+      "ground_truth": "71S35011",
+      "prediction": "5011",
+      "confidence": 0.9996,
+      "error_class": "missing_chars"
+    },
+    {
+      "image_path": "D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/3xemay2383_jpg.rf.b014367da4c8cbc5e32ecfbc1bef7331.jpg",
+      "ground_truth": "77H62229",
+      "prediction": "2229",
+      "confidence": 0.9996,
+      "error_class": "missing_chars"
+    },
+    {
+      "image_path": "D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/3xemay439_jpg.rf.22853f6ac3d14c68cbb788196ae2f07f.jpg",
+      "ground_truth": "78H117550",
+      "prediction": "17550",
+      "confidence": 0.9996,
+      "error_class": "missing_chars"
+    },
+    {
+      "image_path": "D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/4xemay1954_jpg.rf.8b54b6435cb8a30018f4fe41a3e00dda.jpg",
+      "ground_truth": "47N69618",
+      "prediction": "9618",
+      "confidence": 0.9996,
+      "error_class": "missing_chars"
+    },
+    {
+      "image_path": "D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/4xemay1992_jpg.rf.b461e1b5a4fea0037dc0d9063c700217.jpg",
+      "ground_truth": "59E125297",
+      "prediction": "25297",
+      "confidence": 0.9996,
+      "error_class": "missing_chars"
+    }
+  ]
+}

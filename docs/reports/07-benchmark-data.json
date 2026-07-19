@@ -1,0 +1,848 @@
+{
+  "generated_at": "2026-07-19T15:50:10",
+  "hardware": {
+    "cpu_name": "Intel(R) Core(TM) i5-14600K",
+    "physical_cores": 14,
+    "logical_cores": 20,
+    "ram_total_gb": 31.77,
+    "platform": "Windows 11",
+    "python_version": "3.13.12",
+    "torch_version": "2.13.0+cpu",
+    "torch_threads": 14,
+    "baseline_cpu_percent": 45.3,
+    "competing_processes": [
+      "pid=0 cpu=1083% System Idle Process",
+      "pid=4 cpu=29% System",
+      "pid=27516 cpu=793% D:\\DATN\\.venv-ai\\Scripts\\python.exe -m ai.training.train --config yolo11n_finetune.yaml --data datasets/processed/yolo/data.yaml --device cp"
+    ]
+  },
+  "nfr_verdicts": [
+    {
+      "requirement": "NFR-P1",
+      "description": "End-to-end latency for one image, p95",
+      "measured": 5857.19,
+      "target": 800.0,
+      "unit": "ms",
+      "status": "FAIL",
+      "shortfall": 5057.19,
+      "times_over_target": 7.32,
+      "minimum_acceptable": 1500.0,
+      "meets_minimum": false
+    },
+    {
+      "requirement": "NFR-P4",
+      "description": "Model load to pipeline ready",
+      "measured": 6.41,
+      "target": 15.0,
+      "unit": "s",
+      "status": "PASS"
+    },
+    {
+      "requirement": "NFR-P7a",
+      "description": "Resident memory of the in-process pipeline",
+      "measured": 0.759,
+      "target": 2.0,
+      "unit": "GB",
+      "status": "PASS"
+    },
+    {
+      "requirement": "NFR-P5",
+      "description": "API overhead above pipeline time, p95",
+      "measured": 19.01,
+      "target": 50.0,
+      "unit": "ms",
+      "status": "PASS",
+      "minimum_acceptable": 100.0,
+      "meets_minimum": true
+    },
+    {
+      "requirement": "NFR-P4b",
+      "description": "Server start until /health reports ready",
+      "measured": 8.36,
+      "target": 15.0,
+      "unit": "s",
+      "status": "PASS"
+    },
+    {
+      "requirement": "NFR-P7b",
+      "description": "Resident memory of the uvicorn server under load",
+      "measured": 0.806,
+      "target": 2.0,
+      "unit": "GB",
+      "status": "PASS"
+    },
+    {
+      "requirement": "NFR-SC1",
+      "description": "Highest error-free concurrency",
+      "measured": 10.0,
+      "target": 5.0,
+      "unit": "concurrent requests",
+      "status": "PASS"
+    },
+    {
+      "requirement": "NFR-R4",
+      "description": "Success rate during the soak",
+      "measured": 1.0,
+      "target": 0.99,
+      "unit": "fraction",
+      "status": "PASS"
+    },
+    {
+      "requirement": "NFR-P6",
+      "description": "History query over 10,000 rows, worst p95",
+      "measured": 18.71,
+      "target": 500.0,
+      "unit": "ms",
+      "status": "PASS"
+    },
+    {
+      "requirement": "NFR-A1",
+      "description": "Detection mAP@0.5",
+      "measured": 0.9827,
+      "target": 0.9,
+      "unit": "",
+      "status": "PASS"
+    },
+    {
+      "requirement": "NFR-A2",
+      "description": "Detection mAP@0.5:0.95",
+      "measured": 0.8043,
+      "target": 0.65,
+      "unit": "",
+      "status": "PASS"
+    },
+    {
+      "requirement": "NFR-A3a",
+      "description": "Detection precision",
+      "measured": 0.9346,
+      "target": 0.92,
+      "unit": "",
+      "status": "PASS"
+    },
+    {
+      "requirement": "NFR-A3b",
+      "description": "Detection recall",
+      "measured": 0.9453,
+      "target": 0.9,
+      "unit": "",
+      "status": "PASS"
+    }
+  ],
+  "summary": {
+    "requirements_checked": 13,
+    "passed": 12,
+    "failed": 1,
+    "failed_requirements": [
+      "NFR-P1"
+    ]
+  },
+  "detection_accuracy": {
+    "generated_at": "2026-07-19T08:25:28+00:00",
+    "model": {
+      "weights": "D:\\DATN\\models\\checkpoints\\best-cpu-epoch7.pt",
+      "size_mb": 20.22
+    },
+    "dataset": {
+      "data_yaml": "D:\\DATN\\datasets\\processed\\yolo\\data.yaml",
+      "split": "test",
+      "num_images": 458,
+      "num_ground_truth_boxes": 512,
+      "classes": {
+        "0": "license_plate"
+      },
+      "label_stats": {
+        "images_without_labels": 0,
+        "malformed_lines": 0,
+        "grouped_by_label": 0,
+        "grouped_by_class": 0,
+        "grouped_by_aspect_ratio": 512
+      }
+    },
+    "settings": {
+      "imgsz": 640,
+      "conf": 0.25,
+      "iou": 0.45,
+      "device": "cpu",
+      "aspect_ratio_threshold": 2.5
+    },
+    "environment": {
+      "python": "3.13.12",
+      "platform": "Windows 11",
+      "processor": "Intel64 Family 6 Model 183 Stepping 1, GenuineIntel"
+    },
+    "metrics_reference_ultralytics": {
+      "mAP@0.5": 0.98265,
+      "mAP@0.5:0.95": 0.80429,
+      "precision": 0.93457,
+      "recall": 0.94531,
+      "f1": 0.93991
+    },
+    "metrics_overall": {
+      "group": "ALL",
+      "num_ground_truth": 512,
+      "num_predictions": 681,
+      "true_positives": 502,
+      "false_positives": 179,
+      "false_negatives": 10,
+      "precision": 0.73715,
+      "recall": 0.98047,
+      "f1": 0.84158,
+      "mAP@0.5": 0.96351,
+      "mAP@0.5:0.95": 0.79305
+    },
+    "metrics_by_line_count": {
+      "single_line": {
+        "group": "single_line",
+        "num_ground_truth": 153,
+        "num_predictions": 188,
+        "true_positives": 151,
+        "false_positives": 37,
+        "false_negatives": 2,
+        "precision": 0.80319,
+        "recall": 0.98693,
+        "f1": 0.88563,
+        "mAP@0.5": 0.98559,
+        "mAP@0.5:0.95": 0.75484
+      },
+      "two_line": {
+        "group": "two_line",
+        "num_ground_truth": 359,
+        "num_predictions": 493,
+        "true_positives": 351,
+        "false_positives": 142,
+        "false_negatives": 8,
+        "precision": 0.71197,
+        "recall": 0.97772,
+        "f1": 0.82394,
+        "mAP@0.5": 0.95915,
+        "mAP@0.5:0.95": 0.80859
+      }
+    },
+    "nfr_a8_gap_ap50": 0.02643,
+    "inference_latency": {
+      "samples": 150,
+      "mean_ms": 57.95,
+      "p50_ms": 49.61,
+      "p95_ms": 64.54,
+      "p99_ms": 74.78,
+      "min_ms": 28.32,
+      "max_ms": 1240.26,
+      "fps_p50": 20.16
+    },
+    "plots": {
+      "pr_curve_by_line_count": "D:\\DATN\\docs\\reports\\figures\\07-detection-test_pr_curve.png",
+      "confusion_matrix": "D:\\DATN\\docs\\reports\\figures\\07-detection-test_confusion_matrix.png",
+      "latency_histogram": "D:\\DATN\\docs\\reports\\figures\\07-detection-test_latency.png"
+    }
+  },
+  "system_performance": {
+    "measured_at": "2026-07-19T15:37:05",
+    "hardware": {
+      "cpu_name": "Intel(R) Core(TM) i5-14600K",
+      "physical_cores": 14,
+      "logical_cores": 20,
+      "ram_total_gb": 31.77,
+      "platform": "Windows 11",
+      "python_version": "3.13.12",
+      "torch_version": "2.13.0+cpu",
+      "torch_threads": 14,
+      "baseline_cpu_percent": 45.3,
+      "competing_processes": [
+        "pid=0 cpu=1083% System Idle Process",
+        "pid=4 cpu=29% System",
+        "pid=27516 cpu=793% D:\\DATN\\.venv-ai\\Scripts\\python.exe -m ai.training.train --config yolo11n_finetune.yaml --data datasets/processed/yolo/data.yaml --device cp"
+      ]
+    },
+    "weights": "D:\\DATN\\models\\checkpoints\\best-cpu-epoch7.pt",
+    "images_root": "D:\\DATN\\datasets\\processed\\yolo\\images\\test",
+    "image_count": 100,
+    "device": "cpu",
+    "nfr_p1_e2e_latency": {
+      "samples": 100,
+      "mean_ms": 2391.75,
+      "p50_ms": 1508.79,
+      "p95_ms": 5857.19,
+      "p99_ms": 10802.8,
+      "min_ms": 1169.8,
+      "max_ms": 10922.96
+    },
+    "mean_plates_per_image": 1.46,
+    "latency_budget": {
+      "median_ms": {
+        "decode_ms": 2.54,
+        "detect_ms": 92.56,
+        "crop_ms": 0.0,
+        "ocr_ms": 1322.4,
+        "normalize_ms": 0.04
+      },
+      "share_percent": {
+        "decode_ms": 0.2,
+        "detect_ms": 6.5,
+        "crop_ms": 0.0,
+        "ocr_ms": 93.3,
+        "normalize_ms": 0.0
+      },
+      "median_total_ms": 1417.54,
+      "mean_plates_per_image": 1.27,
+      "samples": 40
+    },
+    "detector_backend_comparison": {
+      "pytorch": {
+        "weights": "D:\\DATN\\models\\checkpoints\\best-cpu-epoch7.pt",
+        "load_seconds": 0.105,
+        "latency": {
+          "samples": 50,
+          "mean_ms": 43.33,
+          "p50_ms": 42.39,
+          "p95_ms": 53.6,
+          "p99_ms": 64.42,
+          "min_ms": 30.81,
+          "max_ms": 64.42
+        }
+      },
+      "onnx": {
+        "weights": "D:\\DATN\\models\\checkpoints\\best-cpu-epoch7.onnx",
+        "load_seconds": 0.0,
+        "latency": {
+          "samples": 50,
+          "mean_ms": 32.29,
+          "p50_ms": 29.85,
+          "p95_ms": 50.04,
+          "p99_ms": 57.08,
+          "min_ms": 22.74,
+          "max_ms": 57.08
+        }
+      },
+      "speedup_p50": 1.42
+    },
+    "nfr_verdicts": {
+      "NFR-P1": {
+        "measured_p95_ms": 5857.19,
+        "target_ms": 800.0,
+        "floor_ms": 1500.0,
+        "meets_target": false,
+        "meets_floor": false,
+        "margin_to_target_ms": -5057.19
+      },
+      "NFR-P4": {
+        "measured_load_s": 0.66,
+        "measured_warmup_s": 5.74,
+        "measured_ready_s": 6.41,
+        "target_s": 15.0,
+        "meets_target": true
+      },
+      "NFR-P7": {
+        "rss_before_load_gb": 0.196,
+        "rss_after_load_gb": 0.729,
+        "rss_peak_gb": 0.759,
+        "target_gb": 2.0,
+        "meets_target": true,
+        "note": "In-process pipeline RSS. The FastAPI server adds its own overhead."
+      }
+    },
+    "e2e_raw_latencies_ms": [
+      2980.64,
+      1459.81,
+      1467.49,
+      1429.78,
+      1508.79,
+      1562.15,
+      1319.99,
+      1328.21,
+      1403.42,
+      1367.43,
+      2818.88,
+      3650.66,
+      2550.87,
+      1342.79,
+      1544.42,
+      1376.46,
+      1398.65,
+      1313.97,
+      1294.4,
+      1525.6,
+      2680.75,
+      2930.86,
+      3282.61,
+      3161.65,
+      1408.71,
+      1380.69,
+      1516.5,
+      1563.17,
+      1343.84,
+      3800.69,
+      1360.4,
+      1260.98,
+      1434.76,
+      2675.88,
+      1344.33,
+      2732.68,
+      1351.22,
+      1473.34,
+      1232.44,
+      1220.25,
+      1391.7,
+      1327.59,
+      1444.74,
+      1427.57,
+      2333.51,
+      1467.07,
+      1306.91,
+      1473.3,
+      1427.06,
+      1576.83,
+      1263.76,
+      1535.44,
+      2548.67,
+      1613.35,
+      1243.31,
+      1636.82,
+      3232.03,
+      3162.34,
+      1533.44,
+      4296.81,
+      1461.25,
+      4381.36,
+      1474.7,
+      1277.16,
+      2217.09,
+      1333.41,
+      2449.31,
+      1282.63,
+      1268.1,
+      1380.96,
+      1532.84,
+      1284.66,
+      1178.1,
+      1324.25,
+      2490.8,
+      1487.07,
+      1414.38,
+      1436.04,
+      1274.71,
+      1169.8,
+      1496.63,
+      1437.82,
+      3976.97,
+      3371.22,
+      5345.09,
+      9358.97,
+      2290.25,
+      2243.71,
+      5857.19,
+      8958.84,
+      10802.8,
+      10922.96,
+      7767.05,
+      4570.24,
+      5025.04,
+      2861.35,
+      2166.66,
+      2465.32,
+      2391.6,
+      1704.55
+    ],
+    "figures": [
+      "D:\\DATN\\docs\\reports\\figures\\07-latency-distribution.png",
+      "D:\\DATN\\docs\\reports\\figures\\07-latency-budget.png",
+      "D:\\DATN\\docs\\reports\\figures\\07-backend-comparison.png"
+    ]
+  },
+  "load_and_soak": {
+    "measured_at": "2026-07-19T15:40:26",
+    "hardware": {
+      "cpu_name": "Intel(R) Core(TM) i5-14600K",
+      "physical_cores": 14,
+      "logical_cores": 20,
+      "ram_total_gb": 31.77,
+      "platform": "Windows 11",
+      "python_version": "3.13.12",
+      "competing_processes": [
+        "pid=27516 cpu=781% D:\\DATN\\.venv-ai\\Scripts\\python.exe -m ai.training.train --config yolo11n_finetune.yaml --data datasets/processed/yolo/d"
+      ]
+    },
+    "concurrency": {
+      "levels": [
+        {
+          "concurrency": 1,
+          "requests": 20,
+          "successes": 20,
+          "failures": 0,
+          "error_rate": 0.0,
+          "wall_seconds": 32.322,
+          "throughput_rps": 0.619,
+          "latency": {
+            "samples": 20,
+            "mean_ms": 1615.79,
+            "p50_ms": 1414.51,
+            "p95_ms": 2500.39,
+            "p99_ms": 3521.19,
+            "min_ms": 898.55,
+            "max_ms": 3521.19
+          },
+          "errors": []
+        },
+        {
+          "concurrency": 2,
+          "requests": 20,
+          "successes": 20,
+          "failures": 0,
+          "error_rate": 0.0,
+          "wall_seconds": 30.747,
+          "throughput_rps": 0.65,
+          "latency": {
+            "samples": 20,
+            "mean_ms": 3026.71,
+            "p50_ms": 2709.44,
+            "p95_ms": 5148.87,
+            "p99_ms": 5998.26,
+            "min_ms": 1859.67,
+            "max_ms": 5998.26
+          },
+          "errors": []
+        },
+        {
+          "concurrency": 5,
+          "requests": 20,
+          "successes": 20,
+          "failures": 0,
+          "error_rate": 0.0,
+          "wall_seconds": 32.161,
+          "throughput_rps": 0.622,
+          "latency": {
+            "samples": 20,
+            "mean_ms": 7350.84,
+            "p50_ms": 7199.99,
+            "p95_ms": 11706.15,
+            "p99_ms": 11780.42,
+            "min_ms": 2595.93,
+            "max_ms": 11780.42
+          },
+          "errors": []
+        },
+        {
+          "concurrency": 10,
+          "requests": 20,
+          "successes": 20,
+          "failures": 0,
+          "error_rate": 0.0,
+          "wall_seconds": 33.796,
+          "throughput_rps": 0.592,
+          "latency": {
+            "samples": 20,
+            "mean_ms": 13482.33,
+            "p50_ms": 14921.35,
+            "p95_ms": 19069.76,
+            "p99_ms": 19092.01,
+            "min_ms": 2861.77,
+            "max_ms": 19092.01
+          },
+          "errors": []
+        }
+      ],
+      "peak_throughput_rps": 0.65,
+      "peak_throughput_at_concurrency": 2,
+      "max_error_free_concurrency": 10,
+      "nfr_sc1_target_concurrency": 5,
+      "meets_nfr_sc1": true,
+      "figure": "D:\\DATN\\docs\\reports\\figures\\07-concurrency.png"
+    },
+    "soak": {
+      "duration_seconds": 300.0,
+      "concurrency": 2,
+      "requests": 185,
+      "successes": 185,
+      "failures": 0,
+      "success_rate": 1.0,
+      "target_rate": 0.99,
+      "meets_target": true,
+      "throughput_rps": 0.617,
+      "latency": {
+        "samples": 185,
+        "mean_ms": 3235.42,
+        "p50_ms": 2712.5,
+        "p95_ms": 6099.06,
+        "p99_ms": 6351.99,
+        "min_ms": 1970.58,
+        "max_ms": 6414.9
+      },
+      "rss_start_gb": 0.88,
+      "rss_end_gb": 0.875,
+      "rss_growth_gb": -0.005,
+      "errors": []
+    }
+  },
+  "database_performance": {
+    "measured_at": "2026-07-19T15:44:00",
+    "hardware": {
+      "cpu_name": "Intel(R) Core(TM) i5-14600K",
+      "physical_cores": 14,
+      "logical_cores": 20,
+      "ram_total_gb": 31.77,
+      "platform": "Windows 11",
+      "python_version": "3.13.12",
+      "competing_processes": [
+        "pid=4 cpu=32% System",
+        "pid=18780 cpu=946% D:\\DATN\\backend\\.venv\\Scripts\\python.exe -m ai.evaluation.stress_test --skip-db --requests-per-level 20 --soak-seconds 3",
+        "pid=27516 cpu=740% D:\\DATN\\.venv-ai\\Scripts\\python.exe -m ai.training.train --config yolo11n_finetune.yaml --data datasets/processed/yolo/d",
+        "pid=36232 cpu=97% D:\\DATN\\backend\\.venv\\Scripts\\python.exe -m pytest --cov=ai.inference --cov=backend --cov-report=term -q --no-header -p "
+      ]
+    },
+    "nfr_p6_history_query": {
+      "row_count": 10000,
+      "repeats": 10,
+      "target_ms": 500.0,
+      "scenarios": {
+        "page_1_no_filter": {
+          "samples": 10,
+          "mean_ms": 1.15,
+          "p50_ms": 0.83,
+          "p95_ms": 3.91,
+          "p99_ms": 3.91,
+          "min_ms": 0.7,
+          "max_ms": 3.91,
+          "matched_rows": 10000,
+          "returned_rows": 20,
+          "meets_target": true
+        },
+        "page_50_no_filter": {
+          "samples": 10,
+          "mean_ms": 0.76,
+          "p50_ms": 0.74,
+          "p95_ms": 0.87,
+          "p99_ms": 0.87,
+          "min_ms": 0.69,
+          "max_ms": 0.87,
+          "matched_rows": 10000,
+          "returned_rows": 20,
+          "meets_target": true
+        },
+        "deep_page_400": {
+          "samples": 10,
+          "mean_ms": 1.13,
+          "p50_ms": 1.09,
+          "p95_ms": 1.69,
+          "p99_ms": 1.69,
+          "min_ms": 0.87,
+          "max_ms": 1.69,
+          "matched_rows": 10000,
+          "returned_rows": 20,
+          "meets_target": true
+        },
+        "filter_input_type": {
+          "samples": 10,
+          "mean_ms": 1.56,
+          "p50_ms": 1.2,
+          "p95_ms": 4.09,
+          "p99_ms": 4.09,
+          "min_ms": 1.0,
+          "max_ms": 4.09,
+          "matched_rows": 3338,
+          "returned_rows": 20,
+          "meets_target": true
+        },
+        "filter_time_range": {
+          "samples": 10,
+          "mean_ms": 1.61,
+          "p50_ms": 1.38,
+          "p95_ms": 4.16,
+          "p99_ms": 4.16,
+          "min_ms": 1.13,
+          "max_ms": 4.16,
+          "matched_rows": 4320,
+          "returned_rows": 20,
+          "meets_target": true
+        },
+        "filter_confidence": {
+          "samples": 10,
+          "mean_ms": 3.13,
+          "p50_ms": 2.11,
+          "p95_ms": 5.27,
+          "p99_ms": 5.27,
+          "min_ms": 1.63,
+          "max_ms": 5.27,
+          "matched_rows": 2713,
+          "returned_rows": 20,
+          "meets_target": true
+        },
+        "filter_plate_substring": {
+          "samples": 10,
+          "mean_ms": 16.42,
+          "p50_ms": 15.9,
+          "p95_ms": 18.71,
+          "p99_ms": 18.71,
+          "min_ms": 14.75,
+          "max_ms": 18.71,
+          "matched_rows": 67,
+          "returned_rows": 20,
+          "meets_target": true
+        },
+        "combined_filters": {
+          "samples": 10,
+          "mean_ms": 1.74,
+          "p50_ms": 1.46,
+          "p95_ms": 3.67,
+          "p99_ms": 3.67,
+          "min_ms": 1.38,
+          "max_ms": 3.67,
+          "matched_rows": 1140,
+          "returned_rows": 20,
+          "meets_target": true
+        }
+      },
+      "worst_p95_ms": 18.71,
+      "meets_target": true
+    }
+  },
+  "api_overhead": {
+    "measured_at": "2026-07-19T15:48:37",
+    "hardware": {
+      "cpu_name": "Intel(R) Core(TM) i5-14600K",
+      "physical_cores": 14,
+      "logical_cores": 20,
+      "ram_total_gb": 31.77,
+      "platform": "Windows 11",
+      "python_version": "3.13.12",
+      "competing_processes": [
+        "pid=4 cpu=41% System",
+        "pid=27516 cpu=791% D:\\DATN\\.venv-ai\\Scripts\\python.exe -m ai.training.train --config yolo11n_finetune.yaml --data datasets/processed/yolo/d"
+      ]
+    },
+    "weights": "D:\\DATN\\models\\checkpoints\\best-cpu-epoch7.pt",
+    "server_log": "D:\\DATN\\docs\\reports\\07-api-overhead.server.log",
+    "nfr_p4_startup": {
+      "measured_s": 8.36,
+      "target_s": 15.0,
+      "status": "PASS",
+      "health": {
+        "status": "ok",
+        "app_name": "Vietnamese ALPR API",
+        "version": "0.1.0",
+        "database_connected": true,
+        "model_loaded": true,
+        "uptime_seconds": 7.588928799988935,
+        "timestamp": "2026-07-19T08:48:45.887467Z"
+      }
+    },
+    "nfr_p5_api_overhead": {
+      "requests_measured": 27,
+      "wall_clock": {
+        "samples": 27,
+        "mean_ms": 1903.66,
+        "p50_ms": 1474.99,
+        "p95_ms": 3701.23,
+        "p99_ms": 3767.45,
+        "min_ms": 736.66,
+        "max_ms": 3767.45
+      },
+      "pipeline_reported": {
+        "samples": 27,
+        "mean_ms": 1887.84,
+        "p50_ms": 1457.51,
+        "p95_ms": 3682.83,
+        "p99_ms": 3748.74,
+        "min_ms": 721.54,
+        "max_ms": 3748.74
+      },
+      "overhead": {
+        "samples": 27,
+        "mean_ms": 15.82,
+        "p50_ms": 15.43,
+        "p95_ms": 19.01,
+        "p99_ms": 20.08,
+        "min_ms": 10.63,
+        "max_ms": 20.08
+      },
+      "failures": [],
+      "failure_count": 0,
+      "target_ms": 50.0,
+      "status": "PASS"
+    },
+    "nfr_p7_server_rss": {
+      "measured_gb": 0.806,
+      "target_gb": 2.0,
+      "status": "PASS",
+      "note": "uvicorn process plus children, sampled after the load."
+    }
+  },
+  "data_leakage": {
+    "at_threshold_5": {
+      "cross_split_near_duplicate_pairs": 0,
+      "verdict": "CLEAN",
+      "comparisons": [
+        {
+          "split_a": "train",
+          "split_b": "val",
+          "images_a": 3203,
+          "images_b": 917,
+          "pairs_compared": 2937151,
+          "near_duplicate_pairs": 0,
+          "min_hamming_distance": 6,
+          "distance_histogram": {
+            "0": 0,
+            "1-5": 0,
+            "6-10": 1276,
+            "11-15": 6288,
+            "16-20": 52168,
+            ">20": 2877419
+          }
+        },
+        {
+          "split_a": "train",
+          "split_b": "test",
+          "images_a": 3203,
+          "images_b": 458,
+          "pairs_compared": 1466974,
+          "near_duplicate_pairs": 0,
+          "min_hamming_distance": 6,
+          "distance_histogram": {
+            "0": 0,
+            "1-5": 0,
+            "6-10": 619,
+            "11-15": 3016,
+            "16-20": 26135,
+            ">20": 1437204
+          }
+        },
+        {
+          "split_a": "val",
+          "split_b": "test",
+          "images_a": 917,
+          "images_b": 458,
+          "pairs_compared": 419986,
+          "near_duplicate_pairs": 0,
+          "min_hamming_distance": 6,
+          "distance_histogram": {
+            "0": 0,
+            "1-5": 0,
+            "6-10": 163,
+            "11-15": 894,
+            "16-20": 7369,
+            ">20": 411560
+          }
+        }
+      ],
+      "within_split": {
+        "train": {
+          "near_duplicate_pairs": 131,
+          "images": 3203
+        },
+        "val": {
+          "near_duplicate_pairs": 41,
+          "images": 917
+        },
+        "test": {
+          "near_duplicate_pairs": 21,
+          "images": 458
+        }
+      },
+      "circularity_warning": "The dataset build pipeline (scripts/dataset/deduplicate.py) groups images with imagehash.phash at DEFAULT_THRESHOLD = 5 and scripts/dataset/split.py keeps each duplicate group whole inside one split. This check uses the same hash and the same threshold, so a result of zero pairs is guaranteed by construction. It confirms the splitter did its job; it is NOT independent evidence that the task is hard or that the split is free of contamination."
+    },
+    "at_threshold_10": {
+      "cross_split_near_duplicate_pairs": 619,
+      "verdict": "LEAK_DETECTED",
+      "note": "Distances 6-10 are the band the splitter did NOT protect. Visual inspection of the closest pairs found the same vehicle and the same plate string present in both train and test."
+    },
+    "figure": "D:\\DATN\\docs\\reports\\figures\\07-leak-distance-distribution.png"
+  }
+}

@@ -1,0 +1,107 @@
+{
+  "images_total": 4578,
+  "boxes_total": 5200,
+  "background_images": 0,
+  "images_per_split": {
+    "unassigned": 4578
+  },
+  "images_per_source": {
+    "hf_vn_plates_segment": 4578
+  },
+  "images_per_split_and_source": {
+    "unassigned": {
+      "hf_vn_plates_segment": 4578
+    }
+  },
+  "boxes_per_image": {
+    "name": "boxes_per_image",
+    "count": 4578,
+    "min": 1.0,
+    "median": 1.0,
+    "mean": 1.135867,
+    "max": 9.0,
+    "stdev": 0.489177,
+    "p05": 1.0,
+    "p95": 2.0
+  },
+  "boxes_per_image_histogram": {
+    "1": 4157,
+    "2": 271,
+    "3": 114,
+    "4": 27,
+    "5": 6,
+    "6": 2,
+    "9": 1
+  },
+  "box_area_fraction": {
+    "name": "box_area_fraction",
+    "count": 5200,
+    "min": 8.2e-05,
+    "median": 0.03481,
+    "mean": 0.043248,
+    "max": 0.767362,
+    "stdev": 0.051599,
+    "p05": 0.002845,
+    "p95": 0.114964
+  },
+  "tiny_boxes_below_0_5_percent": 477,
+  "aspect_ratio": {
+    "name": "box_aspect_ratio",
+    "count": 5200,
+    "min": 0.316698,
+    "median": 1.403506,
+    "mean": 1.954941,
+    "max": 8.22242,
+    "stdev": 1.06787,
+    "p05": 1.080141,
+    "p95": 3.965121
+  },
+  "image_width": {
+    "name": "image_width",
+    "count": 4578,
+    "min": 324.0,
+    "median": 380.0,
+    "mean": 426.967016,
+    "max": 4032.0,
+    "stdev": 235.71552,
+    "p05": 380.0,
+    "p95": 600.0
+  },
+  "image_height": {
+    "name": "image_height",
+    "count": 4578,
+    "min": 243.0,
+    "median": 285.0,
+    "mean": 348.233945,
+    "max": 3024.0,
+    "stdev": 198.064202,
+    "p05": 285.0,
+    "p95": 600.0
+  },
+  "line_count_estimate": {
+    "method": "LABEL",
+    "threshold": 2.5,
+    "labelled_boxes": 5200,
+    "heuristic_boxes": 0,
+    "note": "Per box, the true line_count label is used when the source provides one; only boxes without a label fall back to the aspect-ratio threshold. Perspective and loose boxes move unlabelled plates across that threshold, so the heuristic portion is approximate.",
+    "counts": {
+      "1": 1641,
+      "2": 3559
+    },
+    "two_line_fraction": 0.6844,
+    "per_split": {
+      "unassigned": {
+        "1": 1641,
+        "2": 3559
+      }
+    }
+  },
+  "plate_text": {
+    "annotated_boxes": 0,
+    "character_frequency": {},
+    "length_histogram": {},
+    "note": "Empty unless labels carry the optional plate_text field (merge.py --include-extras). Detection-only sources have none."
+  },
+  "input_dir": "D:\\DATN\\datasets\\processed\\merged",
+  "charts": []
+}

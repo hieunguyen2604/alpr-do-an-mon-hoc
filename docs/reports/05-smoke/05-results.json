@@ -1,0 +1,1249 @@
+{
+  "T5.2b": {
+    "moi_truong": "D:\\DATN\\backend\\.venv",
+    "phien_ban": {
+      "ultralytics": "8.4.101",
+      "torch": "2.13.0+cpu",
+      "torchvision": "0.28.0+cpu",
+      "paddleocr": "3.7.0",
+      "paddlepaddle": "3.3.1",
+      "onnxruntime": "1.27.0",
+      "openvino": "2026.2.1",
+      "opencv-python": "4.10.0.84",
+      "numpy": "2.3.5",
+      "fastapi": "0.139.2",
+      "uvicorn": "0.51.0",
+      "sqlalchemy": "2.0.51",
+      "imagehash": "4.3.2",
+      "pytest": "9.1.1"
+    },
+    "ghi_chu": "Chi do duoc moi truong dang chay script. Cot con lai cua bang T5.2b phai lay bang cach chay chinh script nay trong moi truong ao con lai, hoac chay 'pip freeze' cua moi truong do."
+  },
+  "T5.3b": {
+    "theo_nguong": {
+      "0": {
+        "nguong": 0,
+        "v1_so_cap": null,
+        "v2_so_cap": null,
+        "v3_so_cap": 0,
+        "mang_thong_tin_moi": "Có"
+      },
+      "5": {
+        "nguong": 5,
+        "v1_so_cap": null,
+        "v2_so_cap": null,
+        "v3_so_cap": 0,
+        "mang_thong_tin_moi": "Không với v1, v2 (bằng ngưỡng gộp của chúng)"
+      },
+      "10": {
+        "nguong": 10,
+        "v1_so_cap": 619,
+        "v2_so_cap": 2699,
+        "v3_so_cap": 0,
+        "mang_thong_tin_moi": "**Không với v3** — bằng ngưỡng gộp"
+      },
+      "12": {
+        "nguong": 12,
+        "v1_so_cap": null,
+        "v2_so_cap": null,
+        "v3_so_cap": 7,
+        "mang_thong_tin_moi": "**Có**"
+      },
+      "15": {
+        "nguong": 15,
+        "v1_so_cap": null,
+        "v2_so_cap": null,
+        "v3_so_cap": 27,
+        "mang_thong_tin_moi": "**Có**"
+      },
+      "20": {
+        "nguong": 20,
+        "v1_so_cap": null,
+        "v2_so_cap": null,
+        "v3_so_cap": 693,
+        "mang_thong_tin_moi": "Có, nhưng ngưỡng đã lỏng tới mức nhiều cặp là dương tính giả"
+      }
+    },
+    "khoang_cach_nho_nhat": 12,
+    "so_anh_train": 300,
+    "so_anh_split_danh_gia": 300,
+    "split_danh_gia": "test",
+    "so_cap_da_so_sanh": 90000,
+    "anh_khong_doc_duoc": {
+      "train": [],
+      "test": []
+    },
+    "phuong_phap": "imagehash.phash 64 bit",
+    "nguong_gop_trung_lap_cua_v3": 10,
+    "canh_bao": "CHAY THU (--skip-slow): chi bam 300 anh train x 300 anh test thay vi toan bo split. So cap dem duoc KHONG the so sanh voi con so cua v1/v2 (do tren toan bo split) va KHONG duoc dien vao Chuong 5.",
+    "ghi_chu": "Cot v1 va v2 chi co so o nguong 10 vi do la con so da do truoc do tren hai bo du lieu ay; cac o con lai cua hai cot do de trong chu KHONG duoc suy ra. O v3 tai nguong 10 bang hoac gan 0 la HE QUA DINH NGHIA (v3 duoc khu trung lap o dung nguong 10), khong phai phat hien thuc nghiem — chi cac nguong 12, 15, 20 moi mang thong tin moi. Phash khong bat duoc ro ri o muc ngu nghia (cung mot bien so chup goc khac), nen ket qua thap KHONG chung minh tap test doc lap."
+  },
+  "T5.3c": {
+    "theo_nguon": {
+      "hf_vn_plates_segment|roboflow_cuong_ta|roboflow_eric_nguyen|roboflow_school_fuhih|roboflow_traffic_camera": {
+        "tong_so_anh": 4411,
+        "train": 4411,
+        "val": 0,
+        "test": 0,
+        "ty_le_train": 1.0,
+        "ty_le_val": 0.0,
+        "ty_le_test": 0.0,
+        "lech_test_so_voi_tong_the_diem_pt": -10.0,
+        "canh_bao": null
+      },
+      "roboflow_school_fuhih": {
+        "tong_so_anh": 3599,
+        "train": 2275,
+        "val": 938,
+        "test": 386,
+        "ty_le_train": 0.6321,
+        "ty_le_val": 0.2606,
+        "ty_le_test": 0.1073,
+        "lech_test_so_voi_tong_the_diem_pt": 0.72,
+        "canh_bao": null
+      },
+      "hf_vn_plates_segment": {
+        "tong_so_anh": 2820,
+        "train": 1933,
+        "val": 574,
+        "test": 313,
+        "ty_le_train": 0.6855,
+        "ty_le_val": 0.2035,
+        "ty_le_test": 0.111,
+        "lech_test_so_voi_tong_the_diem_pt": 1.09,
+        "canh_bao": null
+      },
+      "roboflow_traffic_camera": {
+        "tong_so_anh": 2582,
+        "train": 1368,
+        "val": 689,
+        "test": 525,
+        "ty_le_train": 0.5298,
+        "ty_le_val": 0.2668,
+        "ty_le_test": 0.2033,
+        "lech_test_so_voi_tong_the_diem_pt": 10.33,
+        "canh_bao": "lech quá 10 điểm phần trăm so với tỉ lệ test tổng thể — phải nêu tên nguồn này và thảo luận ảnh hưởng ở mục 5.3.4"
+      },
+      "hf_vn_plates_segment|roboflow_school_fuhih": {
+        "tong_so_anh": 634,
+        "train": 78,
+        "val": 527,
+        "test": 29,
+        "ty_le_train": 0.123,
+        "ty_le_val": 0.8312,
+        "ty_le_test": 0.0457,
+        "lech_test_so_voi_tong_the_diem_pt": -5.43,
+        "canh_bao": null
+      },
+      "roboflow_eric_nguyen": {
+        "tong_so_anh": 351,
+        "train": 228,
+        "val": 77,
+        "test": 46,
+        "ty_le_train": 0.6496,
+        "ty_le_val": 0.2194,
+        "ty_le_test": 0.1311,
+        "lech_test_so_voi_tong_the_diem_pt": 3.1,
+        "canh_bao": null
+      },
+      "roboflow_school_fuhih|roboflow_traffic_camera": {
+        "tong_so_anh": 250,
+        "train": 4,
+        "val": 72,
+        "test": 174,
+        "ty_le_train": 0.016,
+        "ty_le_val": 0.288,
+        "ty_le_test": 0.696,
+        "lech_test_so_voi_tong_the_diem_pt": 59.6,
+        "canh_bao": "lech quá 10 điểm phần trăm so với tỉ lệ test tổng thể — phải nêu tên nguồn này và thảo luận ảnh hưởng ở mục 5.3.4"
+      },
+      "roboflow_demo_tracking": {
+        "tong_so_anh": 210,
+        "train": 139,
+        "val": 51,
+        "test": 20,
+        "ty_le_train": 0.6619,
+        "ty_le_val": 0.2429,
+        "ty_le_test": 0.0952,
+        "lech_test_so_voi_tong_the_diem_pt": -0.48,
+        "canh_bao": null
+      },
+      "roboflow_cuong_ta": {
+        "tong_so_anh": 136,
+        "train": 88,
+        "val": 33,
+        "test": 15,
+        "ty_le_train": 0.6471,
+        "ty_le_val": 0.2426,
+        "ty_le_test": 0.1103,
+        "lech_test_so_voi_tong_the_diem_pt": 1.02,
+        "canh_bao": null
+      },
+      "roboflow_demo_tracking|roboflow_traffic_camera": {
+        "tong_so_anh": 57,
+        "train": 32,
+        "val": 22,
+        "test": 3,
+        "ty_le_train": 0.5614,
+        "ty_le_val": 0.386,
+        "ty_le_test": 0.0526,
+        "lech_test_so_voi_tong_the_diem_pt": -4.74,
+        "canh_bao": null
+      },
+      "hf_vn_plates_segment|roboflow_traffic_camera": {
+        "tong_so_anh": 50,
+        "train": 29,
+        "val": 18,
+        "test": 3,
+        "ty_le_train": 0.58,
+        "ty_le_val": 0.36,
+        "ty_le_test": 0.06,
+        "lech_test_so_voi_tong_the_diem_pt": -4.0,
+        "canh_bao": null
+      },
+      "hf_vn_plates_segment|roboflow_school_fuhih|roboflow_traffic_camera": {
+        "tong_so_anh": 20,
+        "train": 0,
+        "val": 20,
+        "test": 0,
+        "ty_le_train": 0.0,
+        "ty_le_val": 1.0,
+        "ty_le_test": 0.0,
+        "lech_test_so_voi_tong_the_diem_pt": -10.0,
+        "canh_bao": null
+      },
+      "hf_vn_plates_segment|roboflow_demo_tracking|roboflow_traffic_camera": {
+        "tong_so_anh": 4,
+        "train": 0,
+        "val": 4,
+        "test": 0,
+        "ty_le_train": 0.0,
+        "ty_le_val": 1.0,
+        "ty_le_test": 0.0,
+        "lech_test_so_voi_tong_the_diem_pt": -10.0,
+        "canh_bao": null
+      },
+      "roboflow_cuong_ta|roboflow_school_fuhih": {
+        "tong_so_anh": 4,
+        "train": 2,
+        "val": 2,
+        "test": 0,
+        "ty_le_train": 0.5,
+        "ty_le_val": 0.5,
+        "ty_le_test": 0.0,
+        "lech_test_so_voi_tong_the_diem_pt": -10.0,
+        "canh_bao": null
+      },
+      "hf_vn_plates_segment|roboflow_eric_nguyen|roboflow_school_fuhih": {
+        "tong_so_anh": 3,
+        "train": 3,
+        "val": 0,
+        "test": 0,
+        "ty_le_train": 1.0,
+        "ty_le_val": 0.0,
+        "ty_le_test": 0.0,
+        "lech_test_so_voi_tong_the_diem_pt": -10.0,
+        "canh_bao": null
+      },
+      "roboflow_demo_tracking|roboflow_school_fuhih": {
+        "tong_so_anh": 2,
+        "train": 2,
+        "val": 0,
+        "test": 0,
+        "ty_le_train": 1.0,
+        "ty_le_val": 0.0,
+        "ty_le_test": 0.0,
+        "lech_test_so_voi_tong_the_diem_pt": -10.0,
+        "canh_bao": null
+      }
+    },
+    "so_to_hop_xuat_xu": 16,
+    "nguon_nguyen_to": {
+      "roboflow_school_fuhih": 8923,
+      "hf_vn_plates_segment": 7942,
+      "roboflow_traffic_camera": 7374,
+      "roboflow_eric_nguyen": 4765,
+      "roboflow_cuong_ta": 4551,
+      "roboflow_demo_tracking": 273
+    },
+    "so_nguon_nguyen_to": 6,
+    "tong": {
+      "tong_so_anh": 15133,
+      "train": 10592,
+      "val": 3027,
+      "test": 1514,
+      "ty_le_train": 0.6999,
+      "ty_le_val": 0.2,
+      "ty_le_test": 0.1
+    },
+    "nguon_lech_qua_nguong": [
+      "roboflow_traffic_camera",
+      "roboflow_school_fuhih|roboflow_traffic_camera"
+    ],
+    "so_ban_ghi_khong_ro_split": 0,
+    "tep_nguon": "datasets\\processed\\yolo_v3\\split_manifest.csv",
+    "ghi_chu": "Moi dong la mot TO HOP xuat xu, khong phai mot nguon: sau khi khu trung lap, mot anh giu lai co the den tu nhieu nguon cung luc va manifest ghi ca tap xuat xu ngan cach bang '|'. Do do so dong lon hon con so 6 nguon nguyen to cua tap v3; khoa 'nguon_nguyen_to' liet ke tung nguon rieng le, nhung cac so trong do CONG DON QUA 15.133 vi anh da nguon bi dem nhieu lan — khong duoc dung lam mau so. Ti le cua tung dong tinh theo mau so la TONG SO ANH CUA CHINH DONG do, khong phai tong toan bo corpus. Cot lech so sanh ti le test cua dong voi ti le test tong the; nguong canh bao 10.0 diem phan tram lay tu tieu chi doc bang o muc 5.3.4."
+  },
+  "T5.4b": {
+    "theo_epoch": {
+      "1": {
+        "val_box_loss": 1.17051,
+        "val_cls_loss": 0.68577,
+        "val_dfl_loss": 1.15125,
+        "map50": 0.96841,
+        "map5095": 0.65261,
+        "precision": 0.95518,
+        "recall": 0.94101
+      },
+      "2": {
+        "val_box_loss": 1.18605,
+        "val_cls_loss": 0.55538,
+        "val_dfl_loss": 1.13069,
+        "map50": 0.97262,
+        "map5095": 0.66533,
+        "precision": 0.97004,
+        "recall": 0.94501
+      },
+      "3": {
+        "val_box_loss": 1.16471,
+        "val_cls_loss": 0.56509,
+        "val_dfl_loss": 1.10979,
+        "map50": 0.9723,
+        "map5095": 0.67703,
+        "precision": 0.97314,
+        "recall": 0.94486
+      },
+      "4": {
+        "val_box_loss": 1.03624,
+        "val_cls_loss": 0.51558,
+        "val_dfl_loss": 1.06697,
+        "map50": 0.97398,
+        "map5095": 0.71202,
+        "precision": 0.97818,
+        "recall": 0.94622
+      },
+      "5": {
+        "val_box_loss": 1.10741,
+        "val_cls_loss": 0.49773,
+        "val_dfl_loss": 1.08632,
+        "map50": 0.97539,
+        "map5095": 0.69503,
+        "precision": 0.97645,
+        "recall": 0.95246
+      }
+    },
+    "so_epoch_da_chay": 5,
+    "epoch_tot_nhat_theo_map5095": "4",
+    "canh_bao": "moi co 5/20 epoch — luot huan luyen CHUA ket thuc, khong duoc cong bo cac dong nay nhu ket qua cuoi cung",
+    "tep_nguon": "D:\\DATN\\runs\\final-640-v3\\results.csv"
+  },
+  "T5.5a": {
+    "map50": 0.99668,
+    "map5095": 0.84478,
+    "precision": 0.95385,
+    "recall": 1.0,
+    "f1": 0.97638,
+    "conf_toi_uu_theo_f1": 0.25,
+    "conf_ghi_chu": "evaluate.py bao cao chi so tai nguong conf co dinh; duong cong F1 theo nguong nam trong hinh 05-detection-f1-curve.png. Nguong toi uu phai doc tu hinh do, khong suy tu bang nay.",
+    "so_anh_tap_test": 200,
+    "so_doi_tuong_nhan_that": 248,
+    "nguon_chi_so": "bo_doi_sanh_noi_bo_evaluate.py",
+    "chi_so_bo_doi_sanh_noi_bo": {
+      "map50": 0.99668,
+      "map5095": 0.84478,
+      "precision": 0.95385,
+      "recall": 1.0,
+      "f1": 0.97638
+    },
+    "tep_nguon": "D:\\DATN\\docs\\reports\\05-smoke\\03-evaluation-ch5-baseline-416-v1-test.json",
+    "hinh": {
+      "pr_curve_by_line_count": "D:\\DATN\\docs\\reports\\05-smoke\\figures\\ch5-baseline-416-v1-test_pr_curve.png",
+      "confusion_matrix": "D:\\DATN\\docs\\reports\\05-smoke\\figures\\ch5-baseline-416-v1-test_confusion_matrix.png",
+      "latency_histogram": "D:\\DATN\\docs\\reports\\05-smoke\\figures\\ch5-baseline-416-v1-test_latency.png"
+    }
+  },
+  "T5.5b": {
+    "mot_dong": {
+      "so_doi_tuong": 45,
+      "map50": 0.99662,
+      "map5095": 0.78221,
+      "precision": 0.97826,
+      "recall": 1.0,
+      "f1": 0.98901
+    },
+    "hai_dong": {
+      "so_doi_tuong": 203,
+      "map50": 0.99758,
+      "map5095": 0.85877,
+      "precision": 0.9486,
+      "recall": 1.0,
+      "f1": 0.97362
+    },
+    "chenh_lech_diem_pt": {
+      "map50": -0.1,
+      "map5095": -7.66,
+      "precision": 2.97,
+      "recall": 0.0,
+      "f1": 1.54
+    },
+    "nguong_ty_le_khung_hinh": 2.5,
+    "ty_le_o_suy_bang_heuristic": 1.0,
+    "canh_bao_heuristic": "Layout duoc suy tu ty le khung hinh 2,5 cho phan lon hop giới han vi bo du lieu khong khai bao lop layout. Day la UOC LUONG, khong phai nhan that — moi ket luan ve NFR-A8 phai neu ro dieu nay.",
+    "moc_baseline_416_v1": {
+      "map50_mot_dong": 0.9856,
+      "map50_hai_dong": 0.9592,
+      "chenh_diem_pt": 2.6,
+      "ghi_chu": "So cua baseline-416-v1.pt (split v1, imgsz 416) — KHONG duoc chuyen thanh so cua best.pt."
+    }
+  },
+  "T5.5c": {
+    "dai": {
+      "rat_nho_duoi_0.5%": {
+        "so_doi_tuong": 37,
+        "ty_le_trong_tap": 0.1492,
+        "map50": 0.92411,
+        "map5095": 0.73059,
+        "recall": 1.0,
+        "precision": 0.7551,
+        "canh_bao": null
+      },
+      "nho_0.5_den_1%": {
+        "so_doi_tuong": 24,
+        "ty_le_trong_tap": 0.0968,
+        "map50": 1.0,
+        "map5095": 0.81162,
+        "recall": 1.0,
+        "precision": 1.0,
+        "canh_bao": "duoi 30 doi tuong — con so nay KHONG co y nghia thong ke, khong duoc dua vao so sanh"
+      },
+      "trung_binh_1_den_5%": {
+        "so_doi_tuong": 133,
+        "ty_le_trong_tap": 0.5363,
+        "map50": 1.0,
+        "map5095": 0.85425,
+        "recall": 1.0,
+        "precision": 1.0,
+        "canh_bao": null
+      },
+      "lon_5_den_15%": {
+        "so_doi_tuong": 52,
+        "ty_le_trong_tap": 0.2097,
+        "map50": 1.0,
+        "map5095": 0.88785,
+        "recall": 1.0,
+        "precision": 1.0,
+        "canh_bao": null
+      },
+      "rat_lon_tren_15%": {
+        "so_doi_tuong": 2,
+        "ty_le_trong_tap": 0.0081,
+        "map50": 1.0,
+        "map5095": 0.75,
+        "recall": 1.0,
+        "precision": 1.0,
+        "canh_bao": "duoi 30 doi tuong — con so nay KHONG co y nghia thong ke, khong duoc dua vao so sanh"
+      }
+    },
+    "toan_tap": {
+      "so_doi_tuong": 248,
+      "map50": 0.99668,
+      "map5095": 0.84478,
+      "recall": 1.0
+    },
+    "so_anh": 200,
+    "so_box_khong_gan_duoc_dai": 0,
+    "ghi_chu": "Dai duoc tinh tu (w x h) cua hop nhan that chia cho dien tich anh goc. Chi so cua moi dai tinh bang chinh ham evaluate_group cua ai/evaluation/evaluate.py nen cong thuc mAP la duy nhat trong do an."
+  },
+  "T5.7a": {
+    "p50_ms": 218.63,
+    "p95_ms": 284.54,
+    "p99_ms": 318.15,
+    "mean_ms": 222.66,
+    "std_ms": null,
+    "min_ms": 126.07,
+    "max_ms": 318.15,
+    "so_anh_do": 20,
+    "so_bien_trung_binh_moi_anh": 1.0,
+    "boi_so_vuot_nguong_toi_thieu": 0.19,
+    "boi_so_vuot_muc_tieu": 0.36,
+    "ket_qua_nfr_p1": "✅ đạt",
+    "moc_baseline_416_v1_p95_ms": 5857.19,
+    "tep_nguon": "D:\\DATN\\docs\\reports\\05-smoke\\05-benchmark-system-baseline-416-v1.json"
+  },
+  "T5.7b": {
+    "buoc": {
+      "decode_ms": {
+        "ten_buoc": "Giải mã ảnh + tiền xử lý",
+        "uoc_luong_phase0_ms": 50.0,
+        "do_that_ms": 2.94,
+        "chenh_lech_lan": 0.06,
+        "phan_tram_tong": 1.2
+      },
+      "detect_ms": {
+        "ten_buoc": "Suy luận YOLO11n @ 640px (CPU)",
+        "uoc_luong_phase0_ms": 150.0,
+        "do_that_ms": 111.9,
+        "chenh_lech_lan": 0.75,
+        "phan_tram_tong": 45.3
+      },
+      "crop_ms": {
+        "ten_buoc": "Cắt + tiền xử lý vùng biển số",
+        "uoc_luong_phase0_ms": 30.0,
+        "do_that_ms": 0.0,
+        "chenh_lech_lan": 0.0,
+        "phan_tram_tong": 0.0
+      },
+      "ocr_ms": {
+        "ten_buoc": "**PaddleOCR (mỗi biển)**",
+        "uoc_luong_phase0_ms": 120.0,
+        "do_that_ms": 132.35,
+        "chenh_lech_lan": 1.1,
+        "phan_tram_tong": 53.5
+      },
+      "normalize_ms": {
+        "ten_buoc": "Hậu xử lý regex + kiểm tra hợp lệ",
+        "uoc_luong_phase0_ms": 5.0,
+        "do_that_ms": 0.04,
+        "chenh_lech_lan": 0.01,
+        "phan_tram_tong": 0.0
+      },
+      "db_ms": {
+        "ten_buoc": "Ghi CSDL + lưu ảnh",
+        "uoc_luong_phase0_ms": 50.0,
+        "do_that_ms": null,
+        "chenh_lech_lan": null,
+        "phan_tram_tong": null
+      }
+    },
+    "tong": {
+      "uoc_luong_phase0_ms": 405.0,
+      "uoc_luong_cung_pham_vi_ms": 355.0,
+      "do_that_ms": 247.23,
+      "chenh_lech_lan": 0.7,
+      "phan_tram_tong": 100.0
+    },
+    "so_mau": 20,
+    "so_bien_trung_binh_moi_anh": 1.0,
+    "ghi_chu": "Buoc 'ghi CSDL + luu anh' khong co doi ung trong so do vi benchmark_system do pipeline suy luan thuan, khong di qua tang API — o 'do that' cua no giu '—'. Cot ty so 'chenh lech (lan)' o dong tong vi vay so voi uoc luong CUNG PHAM VI (da tru buoc ghi CSDL), khong so voi con so 405 ms tron."
+  },
+  "T5.7c": {
+    "trang_thai": "chua do",
+    "ly_do": "khong tim thay ban xuat ONNX/OpenVINO cho baseline-416-v1.pt (da tim canh trong so va trong models/checkpoints/exported/). Xuat truoc bang: yolo export model=D:\\DATN\\models\\baseline-416-v1.pt format=onnx imgsz=640"
+  },
+  "T5.6a": {
+    "char_accuracy_truoc": 0.8829,
+    "char_accuracy_sau": 0.8829,
+    "cer_truoc": 0.1171,
+    "cer_sau": 0.1171,
+    "N_so_ky_tu_nhan_that": 521,
+    "S_thay_the": 15,
+    "D_bi_xoa": 29,
+    "I_chen_thua": 17,
+    "S_D_I_nguon": "dan ra tu confusion_matrix cua 05-ocr-accuracy.json: S = tong o ngoai duong cheo, D = tong deletions, I = tong insertions, N = tong ma tran cong D. Khong phai so uoc luong.",
+    "S_D_I_ly_do": null,
+    "so_ca_theo_loai_loi": {
+      "correct": 39,
+      "empty_read": 0,
+      "substitution": 8,
+      "missing_chars": 4,
+      "extra_chars": 2,
+      "transposition": 0,
+      "mixed": 7
+    },
+    "so_mau": 60,
+    "ket_qua_nfr_a4": "❌ không đạt",
+    "tep_nguon": "D:\\DATN\\docs\\reports\\05-smoke\\05-ocr-accuracy.json"
+  },
+  "T5.6b": {
+    "a5_truoc_hau_xu_ly": 0.6167,
+    "a6_sau_hau_xu_ly": 0.65,
+    "muc_cai_thien_diem_pt": 3.33,
+    "so_bien_duoc_sua_dung": 2,
+    "so_bien_bi_lam_hong": 0,
+    "so_bien_sai_ca_truoc_lan_sau": 21,
+    "so_mau": 60,
+    "ket_qua_nfr_a5": "❌ không đạt",
+    "ket_qua_nfr_a6": "❌ không đạt",
+    "nhanh_dien_giai": "A",
+    "phan_ra_theo_nhom_luat": {
+      "trang_thai": "chua do",
+      "ly_do": "Chua co co che bat/tat tung nhom luat trong ai/inference/plate_rules.py. Muc D.2 cua ch5-thuc-nghiem.md ghi day la hang muc can viet ma truoc khi dien duoc."
+    }
+  },
+  "T5.6c": {
+    "mot_dong": {
+      "so_mau": 10,
+      "char_accuracy": 1.0,
+      "a5": 1.0,
+      "a6": 1.0,
+      "gain_points": 0.0,
+      "a7": 0.0
+    },
+    "hai_dong": {
+      "so_mau": 50,
+      "char_accuracy": 0.8614,
+      "a5": 0.54,
+      "a6": 0.58,
+      "gain_points": 4.0,
+      "a7": 0.0
+    },
+    "chenh_lech_diem_pt": {
+      "char_accuracy": 13.86,
+      "a5": 46.0,
+      "a6": 42.0
+    },
+    "moc_tham_chieu": "Laroca va cong su (VISAPP 2022) bao cao 94,3% (bien mot dong) so voi 45,7% (bien hai dong), chenh 48,6 diem, do tren bo du lieu RodoSol-ALPR CUA BRAZIL. Day KHONG phai so lieu Viet Nam."
+  },
+  "T5.6d": {
+    "top_cap_nham": [
+      {
+        "hang": 1,
+        "ky_tu_that": "E",
+        "doc_thanh": "F",
+        "so_lan": 2,
+        "ty_le_trong_tong_thay_the": 0.1333,
+        "co_trong_bang_luat": false,
+        "bang_luat": null,
+        "huong_anh_xa": "chưa có luật nào phủ cặp này"
+      },
+      {
+        "hang": 2,
+        "ky_tu_that": "U",
+        "doc_thanh": "1",
+        "so_lan": 2,
+        "ty_le_trong_tong_thay_the": 0.1333,
+        "co_trong_bang_luat": false,
+        "bang_luat": null,
+        "huong_anh_xa": "chưa có luật nào phủ cặp này"
+      },
+      {
+        "hang": 3,
+        "ky_tu_that": "0",
+        "doc_thanh": "U",
+        "so_lan": 1,
+        "ty_le_trong_tong_thay_the": 0.0667,
+        "co_trong_bang_luat": false,
+        "bang_luat": null,
+        "huong_anh_xa": "chưa có luật nào phủ cặp này"
+      },
+      {
+        "hang": 4,
+        "ky_tu_that": "1",
+        "doc_thanh": "8",
+        "so_lan": 1,
+        "ty_le_trong_tong_thay_the": 0.0667,
+        "co_trong_bang_luat": false,
+        "bang_luat": null,
+        "huong_anh_xa": "chưa có luật nào phủ cặp này"
+      },
+      {
+        "hang": 5,
+        "ky_tu_that": "4",
+        "doc_thanh": "L",
+        "so_lan": 1,
+        "ty_le_trong_tong_thay_the": 0.0667,
+        "co_trong_bang_luat": false,
+        "bang_luat": null,
+        "huong_anh_xa": "chưa có luật nào phủ cặp này"
+      },
+      {
+        "hang": 6,
+        "ky_tu_that": "5",
+        "doc_thanh": "8",
+        "so_lan": 1,
+        "ty_le_trong_tong_thay_the": 0.0667,
+        "co_trong_bang_luat": false,
+        "bang_luat": null,
+        "huong_anh_xa": "chưa có luật nào phủ cặp này"
+      },
+      {
+        "hang": 7,
+        "ky_tu_that": "5",
+        "doc_thanh": "9",
+        "so_lan": 1,
+        "ty_le_trong_tong_thay_the": 0.0667,
+        "co_trong_bang_luat": false,
+        "bang_luat": null,
+        "huong_anh_xa": "chưa có luật nào phủ cặp này"
+      },
+      {
+        "hang": 8,
+        "ky_tu_that": "6",
+        "doc_thanh": "5",
+        "so_lan": 1,
+        "ty_le_trong_tong_thay_the": 0.0667,
+        "co_trong_bang_luat": false,
+        "bang_luat": null,
+        "huong_anh_xa": "chưa có luật nào phủ cặp này"
+      },
+      {
+        "hang": 9,
+        "ky_tu_that": "A",
+        "doc_thanh": "4",
+        "so_lan": 1,
+        "ty_le_trong_tong_thay_the": 0.0667,
+        "co_trong_bang_luat": true,
+        "bang_luat": "TO_DIGIT",
+        "huong_anh_xa": "đúng chiều — luật `A → 4` thuộc TO_DIGIT"
+      },
+      {
+        "hang": 10,
+        "ky_tu_that": "H",
+        "doc_thanh": "M",
+        "so_lan": 1,
+        "ty_le_trong_tong_thay_the": 0.0667,
+        "co_trong_bang_luat": false,
+        "bang_luat": null,
+        "huong_anh_xa": "chưa có luật nào phủ cặp này"
+      }
+    ],
+    "tong_so_thay_the": 15,
+    "doi_chieu_bang_luat": {
+      "confirmed": [
+        {
+          "table": "TO_LETTER",
+          "rule": "1 -> L",
+          "observed_confusions": 1
+        },
+        {
+          "table": "TO_LETTER",
+          "rule": "4 -> A",
+          "observed_confusions": 1
+        }
+      ],
+      "unobserved": [
+        {
+          "table": "TO_DIGIT",
+          "rule": "O -> 0",
+          "observed_confusions": 0
+        },
+        {
+          "table": "TO_DIGIT",
+          "rule": "Q -> 0",
+          "observed_confusions": 0
+        },
+        {
+          "table": "TO_DIGIT",
+          "rule": "D -> 0",
+          "observed_confusions": 0
+        },
+        {
+          "table": "TO_DIGIT",
+          "rule": "I -> 1",
+          "observed_confusions": 0
+        },
+        {
+          "table": "TO_DIGIT",
+          "rule": "J -> 1",
+          "observed_confusions": 0
+        },
+        {
+          "table": "TO_DIGIT",
+          "rule": "L -> 1",
+          "observed_confusions": 0
+        },
+        {
+          "table": "TO_DIGIT",
+          "rule": "Z -> 2",
+          "observed_confusions": 0
+        },
+        {
+          "table": "TO_DIGIT",
+          "rule": "A -> 4",
+          "observed_confusions": 0
+        },
+        {
+          "table": "TO_DIGIT",
+          "rule": "S -> 5",
+          "observed_confusions": 0
+        },
+        {
+          "table": "TO_DIGIT",
+          "rule": "G -> 6",
+          "observed_confusions": 0
+        },
+        {
+          "table": "TO_DIGIT",
+          "rule": "T -> 7",
+          "observed_confusions": 0
+        },
+        {
+          "table": "TO_DIGIT",
+          "rule": "B -> 8",
+          "observed_confusions": 0
+        },
+        {
+          "table": "TO_LETTER",
+          "rule": "0 -> D",
+          "observed_confusions": 0
+        },
+        {
+          "table": "TO_LETTER",
+          "rule": "2 -> Z",
+          "observed_confusions": 0
+        },
+        {
+          "table": "TO_LETTER",
+          "rule": "3 -> B",
+          "observed_confusions": 0
+        },
+        {
+          "table": "TO_LETTER",
+          "rule": "5 -> S",
+          "observed_confusions": 0
+        },
+        {
+          "table": "TO_LETTER",
+          "rule": "6 -> G",
+          "observed_confusions": 0
+        },
+        {
+          "table": "TO_LETTER",
+          "rule": "7 -> T",
+          "observed_confusions": 0
+        },
+        {
+          "table": "TO_LETTER",
+          "rule": "8 -> B",
+          "observed_confusions": 0
+        }
+      ],
+      "missing_from_tables": [
+        {
+          "true": "E",
+          "predicted": "F",
+          "count": 2
+        },
+        {
+          "true": "U",
+          "predicted": "1",
+          "count": 2
+        },
+        {
+          "true": "0",
+          "predicted": "U",
+          "count": 1
+        },
+        {
+          "true": "1",
+          "predicted": "8",
+          "count": 1
+        },
+        {
+          "true": "4",
+          "predicted": "L",
+          "count": 1
+        },
+        {
+          "true": "5",
+          "predicted": "8",
+          "count": 1
+        },
+        {
+          "true": "5",
+          "predicted": "9",
+          "count": 1
+        },
+        {
+          "true": "6",
+          "predicted": "5",
+          "count": 1
+        },
+        {
+          "true": "H",
+          "predicted": "M",
+          "count": 1
+        },
+        {
+          "true": "N",
+          "predicted": "M",
+          "count": 1
+        },
+        {
+          "true": "U",
+          "predicted": "0",
+          "count": 1
+        }
+      ],
+      "proposed_updates": {
+        "note": "Suy ra tu ma tran nham lan do that: voi moi ky tu engine doc ra tai vi tri KHONG hop le cho no, ky tu that nao xuat hien nhieu nhat. CHUA ap dung vao plate_rules.py -- doi bang se lam thay doi NFR-A6, nen phai ap dung co chu dich va DO LAI, neu khong con so bao cao se la ket qua cua luat duoc khop tren chinh tap danh gia.",
+        "TO_DIGIT": [
+          {
+            "emitted": "L",
+            "current_target": "1",
+            "current_support": 0,
+            "proposed_target": "4",
+            "proposed_support": 1,
+            "action": "change"
+          },
+          {
+            "emitted": "U",
+            "current_target": null,
+            "current_support": 0,
+            "proposed_target": "0",
+            "proposed_support": 1,
+            "action": "add"
+          }
+        ],
+        "TO_LETTER": [
+          {
+            "emitted": "1",
+            "current_target": "L",
+            "current_support": 1,
+            "proposed_target": "U",
+            "proposed_support": 2,
+            "action": "change"
+          },
+          {
+            "emitted": "0",
+            "current_target": "D",
+            "current_support": 0,
+            "proposed_target": "U",
+            "proposed_support": 1,
+            "action": "change"
+          },
+          {
+            "emitted": "4",
+            "current_target": "A",
+            "current_support": 1,
+            "proposed_target": "A",
+            "proposed_support": 1,
+            "action": "agree"
+          }
+        ]
+      }
+    },
+    "kich_thuoc_ma_tran": "36x36",
+    "bo_ky_tu": "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+    "so_mau": 60,
+    "hinh": [
+      "04-ocr-accuracy-by-line-count.png",
+      "04-ocr-confusion-matrix.png",
+      "04-ocr-error-classes.png",
+      "04-ocr-top-confusions.png"
+    ]
+  },
+  "T5.6e": {
+    "a7_e2e": 0.0,
+    "a7_voi_dieu_kien_da_phat_hien": 0.0,
+    "ty_le_bien_bi_bo_sot": 0.5667,
+    "ty_le_phat_hien_dung_nhung_doc_sai": 1.0,
+    "chenh_lech_a6_tru_a7": 65.0,
+    "so_mau": 30,
+    "ket_qua_nfr_a7": "❌ không đạt",
+    "canh_bao_hieu_luc": "Con so nay do tren anh CROP bien so, khong phai anh hien truong, vi khong bo du lieu nao trong do an co dong thoi anh toan canh va chuoi bien so. Bo detect duoc huan luyen tren anh giao thong day du nen mot tam anh chi co bien so chiem gan het khung la NGOAI PHAN BO: phan lon that bai la do detect khong bat duoc box, khong phai do OCR doc sai (xem e2e.exact_given_detected va e2e.missed_by_detector). Phase 7 do duoc mAP50 = 0,9935 cho bo detect tren anh hien truong that. De do NFR-A7 dung cach can gan nhan chuoi bien so cho mot phan bo test cua yolo_v2 -- viec nay CHUA lam."
+  },
+  "T5.10": {
+    "loai_loi": {
+      "E1": {
+        "ten": "Bỏ sót biển",
+        "so_ca": 17,
+        "mau_so_rieng": 30,
+        "khong_chia_chung_mau_so": true,
+        "ly_do_neu_thieu": null,
+        "ty_le_tren_mau_so_rieng": 0.5667
+      },
+      "E2": {
+        "ten": "Phát hiện nhầm",
+        "so_ca": "chua do",
+        "ly_do_neu_thieu": "so duong tinh gia nam o T5.5a (false_positives cua bo doi sanh noi bo), khong cung mau so voi cac loai E3...E6 nen khong duoc gop chung vao mot cot ty le",
+        "mot_dong": null,
+        "hai_dong": null
+      },
+      "E3": {
+        "ten": "Nhầm ký tự",
+        "so_ca": 8,
+        "ty_le_trong_tong_ca_sai": 0.381,
+        "ty_le_trong_toan_tap": 0.1333,
+        "mot_dong": 0,
+        "hai_dong": 8
+      },
+      "E4": {
+        "ten": "Thiếu ký tự",
+        "so_ca": 4,
+        "ty_le_trong_tong_ca_sai": 0.1905,
+        "ty_le_trong_toan_tap": 0.0667,
+        "mot_dong": 0,
+        "hai_dong": 4
+      },
+      "E5": {
+        "ten": "Thừa ký tự",
+        "so_ca": 2,
+        "ty_le_trong_tong_ca_sai": 0.0952,
+        "ty_le_trong_toan_tap": 0.0333,
+        "mot_dong": 0,
+        "hai_dong": 2
+      },
+      "E6": {
+        "ten": "Sai thứ tự",
+        "so_ca": 0,
+        "ty_le_trong_tong_ca_sai": 0.0,
+        "ty_le_trong_toan_tap": 0.0,
+        "mot_dong": 0,
+        "hai_dong": 0
+      }
+    },
+    "cac_loai_khac": {
+      "empty_read": 0,
+      "mixed": 7,
+      "ghi_chu": "Hai loai nay co trong cai dat nhung khong co ma E tuong ung trong bang 5.10.1. Phai them dong cho chung hoac gop co giai thich — khong duoc bo im lang vi khi do tong se khong bang 100%."
+    },
+    "tong_so_ca_sai": 21,
+    "tong_so_ca_danh_gia": 60,
+    "ty_le_loi": 0.35,
+    "tep_nguon": "D:\\DATN\\docs\\reports\\05-smoke\\05-ocr-errors\\error_analysis.json"
+  },
+  "T5.7e": {
+    "trang_thai": "chua do",
+    "ly_do": "bo qua theo --skip-slow. Chay lai khong co co nay de do (khoang 10 phut)."
+  },
+  "T5.7d": {
+    "trang_thai": "chua do",
+    "ly_do": "chua co kich ban do webcam/video. Muc D.3 cua ch5-thuc-nghiem.md ghi day la hang muc can viet ma, va khi viet phai kem dinh nghia tuong minh cua 'FPS hieu dung' (khung hinh duoc NHAN DANG moi giay hay khung hinh duoc HIEN THI moi giay)."
+  },
+  "T5.8": {
+    "baseline_416_v1": {
+      "imgsz": 416,
+      "bo_du_lieu": "v1 — 4.578 ảnh, 1 nguồn",
+      "nguong_gop_trung_lap": 5,
+      "ro_ri_train_test_nguong_10": "619 cặp",
+      "so_epoch": 40,
+      "tong_thoi_gian_phut": 156,
+      "map50": 0.9933,
+      "map5095": 0.8597,
+      "precision": 0.9822,
+      "recall": 0.981,
+      "map50_mot_dong": 0.9856,
+      "map50_hai_dong": 0.9592,
+      "chenh_layout_diem_pt": 2.6,
+      "do_tre_p95_ms": 5857.19
+    },
+    "chinh_thuc": {
+      "imgsz": 640,
+      "bo_du_lieu": "v3 — 15.133 ảnh, 6 nguồn nguyên tố (hợp nhất từ 7 bộ)",
+      "nguong_gop_trung_lap": 10,
+      "ro_ri_train_test_nguong_10": "chua do",
+      "so_epoch": 5,
+      "tong_thoi_gian_phut": "chua do",
+      "map50": 0.99668,
+      "map5095": 0.84478,
+      "precision": 0.95385,
+      "recall": 1.0,
+      "map50_mot_dong": 0.99662,
+      "map50_hai_dong": 0.99758,
+      "chenh_layout_diem_pt": -0.1,
+      "do_tre_p95_ms": 284.54
+    },
+    "trong_so_chinh_thuc": "D:\\DATN\\models\\baseline-416-v1.pt",
+    "canh_bao_quy_ket": "Ba bien thay doi dong thoi (imgsz, bo du lieu + cach chia, so epoch) va chung tac dong NGUOC CHIEU nhau. Phat bieu duy nhat duoc phep la mo ta: 'cau hinh A cho X, cau hinh B cho Y'. Khong duoc quy ket nguyen nhan cho bat ky bien nao."
+  },
+  "T5.9": {
+    "dong": [
+      {
+        "ma": "P1",
+        "chi_tieu": "Độ trễ E2E một ảnh, p95 (ms)",
+        "do_duoc": 284.54,
+        "nfr": "NFR-P1",
+        "ket_qua": "✅ đạt"
+      },
+      {
+        "ma": "P2",
+        "chi_tieu": "Tốc độ khung hình webcam (FPS)",
+        "do_duoc": null,
+        "nfr": null,
+        "ly_do": "chua co kich ban do webcam — muc D.3 cua ch5-thuc-nghiem.md",
+        "ket_qua": "⬜ chưa đo"
+      },
+      {
+        "ma": "P3",
+        "chi_tieu": "Tốc độ xử lý video (× thời gian thực)",
+        "do_duoc": null,
+        "nfr": null,
+        "ly_do": "chua co kich ban do video",
+        "ket_qua": "⬜ chưa đo"
+      },
+      {
+        "ma": "P4",
+        "chi_tieu": "Thời gian nạp mô hình (s)",
+        "do_duoc": 6.41,
+        "nfr": "NFR-P4",
+        "ghi_chu": "do tren baseline-416-v1.pt",
+        "ket_qua": "✅ đạt"
+      },
+      {
+        "ma": "P5",
+        "chi_tieu": "Overhead API, p95 (ms)",
+        "do_duoc": 19.01,
+        "nfr": "NFR-P5",
+        "ghi_chu": "do tren baseline-416-v1.pt",
+        "ket_qua": "✅ đạt"
+      },
+      {
+        "ma": "P6",
+        "chi_tieu": "Truy vấn 10.000 bản ghi, p95 (ms)",
+        "do_duoc": 18.71,
+        "nfr": "NFR-P6",
+        "ghi_chu": "do tren baseline-416-v1.pt",
+        "ket_qua": "✅ đạt"
+      },
+      {
+        "ma": "P7a",
+        "chi_tieu": "RSS pipeline (GB)",
+        "do_duoc": 0.759,
+        "nfr": "NFR-P7a",
+        "ket_qua": "✅ đạt"
+      },
+      {
+        "ma": "P7b",
+        "chi_tieu": "RSS máy chủ backend (GB)",
+        "do_duoc": 0.806,
+        "nfr": "NFR-P7b",
+        "ket_qua": "✅ đạt"
+      },
+      {
+        "ma": "A1",
+        "chi_tieu": "mAP@0.5 của bộ phát hiện",
+        "do_duoc": 0.99668,
+        "nfr": "NFR-A1",
+        "ket_qua": "✅ đạt"
+      },
+      {
+        "ma": "A2",
+        "chi_tieu": "mAP@0.5:0.95 của bộ phát hiện",
+        "do_duoc": 0.84478,
+        "nfr": "NFR-A2",
+        "ket_qua": "✅ đạt"
+      },
+      {
+        "ma": "A3-P",
+        "chi_tieu": "Precision phát hiện",
+        "do_duoc": 0.95385,
+        "nfr": "NFR-A3p",
+        "ket_qua": "✅ đạt"
+      },
+      {
+        "ma": "A3-R",
+        "chi_tieu": "Recall phát hiện",
+        "do_duoc": 1.0,
+        "nfr": "NFR-A3r",
+        "ket_qua": "✅ đạt"
+      },
+      {
+        "ma": "A4",
+        "chi_tieu": "1 − CER (mức ký tự)",
+        "do_duoc": 0.8829,
+        "nfr": "NFR-A4",
+        "ket_qua": "❌ không đạt"
+      },
+      {
+        "ma": "A5",
+        "chi_tieu": "Chuỗi đầy đủ trước hậu xử lý",
+        "do_duoc": 0.6167,
+        "nfr": "NFR-A5",
+        "ket_qua": "❌ không đạt"
+      },
+      {
+        "ma": "A6",
+        "chi_tieu": "Chuỗi đầy đủ sau hậu xử lý",
+        "do_duoc": 0.65,
+        "nfr": "NFR-A6",
+        "ket_qua": "❌ không đạt"
+      },
+      {
+        "ma": "A6−A5",
+        "chi_tieu": "Đóng góp của khối hậu xử lý (điểm %)",
+        "do_duoc": 3.33,
+        "nfr": null,
+        "ket_qua": "n/a"
+      },
+      {
+        "ma": "A7",
+        "chi_tieu": "Độ chính xác E2E toàn trình",
+        "do_duoc": 0.0,
+        "nfr": "NFR-A7",
+        "ket_qua": "❌ không đạt"
+      },
+      {
+        "ma": "A8",
+        "chi_tieu": "Chênh lệch layout, detection (điểm %)",
+        "do_duoc": -0.1,
+        "nfr": null,
+        "ket_qua": "n/a"
+      },
+      {
+        "ma": "A9",
+        "chi_tieu": "Tách theo điều kiện ảnh",
+        "do_duoc": null,
+        "nfr": null,
+        "ly_do": "bo du lieu KHONG co nhan dieu kien anh — day la han che that, khong phai 'chua toi luot do'. Khong duoc gan nhan bang suy doan.",
+        "ket_qua": "⬜ chưa đo"
+      },
+      {
+        "ma": "R4",
+        "chi_tieu": "Tỉ lệ thành công soak 300 s",
+        "do_duoc": null,
+        "nfr": "NFR-R4",
+        "ket_qua": "⬜ chưa đo"
+      },
+      {
+        "ma": "R5",
+        "chi_tieu": "CSDL sống sót qua khởi động lại",
+        "do_duoc": null,
+        "nfr": null,
+        "ly_do": "chua chay kich ban khoi dong lai",
+        "ket_qua": "⬜ chưa đo"
+      },
+      {
+        "ma": "SC1",
+        "chi_tieu": "Số yêu cầu đồng thời xử lý ổn định",
+        "do_duoc": null,
+        "nfr": "NFR-SC1",
+        "ket_qua": "⬜ chưa đo"
+      },
+      {
+        "ma": "M2",
+        "chi_tieu": "Độ bao phủ test tầng nghiệp vụ",
+        "do_duoc": 0.881,
+        "nfr": null,
+        "ghi_chu": "861/862 test pass, 1 xfail, 0 fail; toan kho 42,0%",
+        "ket_qua": "n/a"
+      }
+    ]
+  },
+  "_meta": {
+    "thoi_diem_do": "2026-07-19T20:15:41",
+    "he_dieu_hanh": "Windows 11",
+    "cpu_ten": "Intel(R) Core(TM) i5-14600K",
+    "so_nhan_logic": 20,
+    "so_nhan_vat_ly": 14,
+    "ram_tong_gb": 31.77,
+    "python": "3.13.12",
+    "venv": "D:\\DATN\\backend\\.venv",
+    "torch": "2.13.0+cpu",
+    "ultralytics": "8.4.101",
+    "paddleocr": "3.7.0",
+    "device": "cpu",
+    "duong_dan_model": "D:\\DATN\\models\\baseline-416-v1.pt",
+    "model_ton_tai": true,
+    "dataset_yaml": "datasets\\processed\\yolo_v3\\data.yaml",
+    "split": "test",
+    "so_anh_split": 1514,
+    "skip_slow": true,
+    "ghi_chu": "Moi so lieu hieu nang trong tep nay chi co nghia khi doc kem khoi _meta nay. Kich thuoc lo = 1, bo 3 luot khoi dong nong dau tien.",
+    "torch_threads": 14,
+    "tien_trinh_canh_tranh": [
+      "pid=0 cpu=1088% System Idle Process",
+      "pid=4 cpu=37% System",
+      "pid=19124 cpu=798% D:\\DATN\\.venv-ai\\Scripts\\python.exe -m ai.training.train --config yolo11n_finetune.yaml --data datasets/processed/yolo_v3/data.yaml --device"
+    ],
+    "phien_ban_thu_vien": {
+      "torch": "2.13.0+cpu",
+      "ultralytics": "8.4.101",
+      "paddleocr": "3.7.0",
+      "onnxruntime": "1.27.0",
+      "openvino": "2026.2.1",
+      "numpy": "2.3.5"
+    },
+    "thoi_gian_chay_giay": 77.0
+  }
+}

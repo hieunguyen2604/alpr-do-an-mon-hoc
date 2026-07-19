@@ -1,0 +1,105 @@
+# ---------- Python ----------
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.venv/
+.venv-ai/
+.venv*/
+venv/
+env/
+*.egg-info/
+dist/
+build/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+
+# ---------- Node / Frontend ----------
+node_modules/
+frontend/dist/
+frontend/.vite/
+*.local
+npm-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# ---------- Môi trường & bí mật ----------
+.env
+.env.*
+!.env.example
+
+# ---------- Cơ sở dữ liệu ----------
+*.db
+*.sqlite
+*.sqlite3
+backend/data/*.db
+# SQLite write-ahead-log sidecar files (không khớp với *.db)
+*.db-wal
+*.db-shm
+# ---------- Tệp người dùng tải lên khi chạy ----------
+data/uploads/**
+data/plates/**
+data/outputs/**
+!data/**/.gitkeep
+
+# ---------- Dữ liệu & mô hình ----------
+# Dataset thô quá lớn để đưa vào Git — dùng script tải về (Phase 2)
+datasets/raw/**
+datasets/processed/**
+!datasets/**/.gitkeep
+!datasets/**/README.md
+# Thống kê dataset thì GIỮ LẠI — là sản phẩm bàn giao
+!datasets/statistics/**
+
+# Checkpoint trung gian bị loại, nhưng best.pt thì GIỮ LẠI (sản phẩm bàn giao)
+models/**/*.pt
+!models/best.pt
+!models/*.onnx
+runs/
+wandb/
+
+# ---------- Tệp do người dùng tải lên / hệ thống sinh ra ----------
+backend/storage/
+uploads/
+outputs/
+*.log
+logs/
+
+# ---------- Hệ điều hành ----------
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+.DS_Store
+
+# ---------- IDE ----------
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+.idea/
+*.swp
+
+# ---------- Tài liệu tạm ----------
+docs/**/*.aux
+docs/**/*.out
+docs/**/~$*
+
+# ---------- Bổ sung khi đóng gói (Phase 11) ----------
+# Ảnh crop trung gian để gán nhãn — tái tạo bằng scripts/labeling/extract_plates.py.
+# Giữ lại nhãn CSV (plate_labels.csv, plate_text_labels.csv) là sản phẩm thật.
+datasets/annotations/plates_to_label/**
+datasets/annotations/verify_samples/**
+!datasets/annotations/*.csv
+
+# Thư mục lưu trữ runtime ở gốc (ảnh do người dùng chạy thử sinh ra)
+/storage/
+
+# Bản COCO tải về đặt ở gốc khi huấn luyện — trùng md5 với models/pretrained/yolo11n-coco.pt
+/yolo11n.pt
+
+# Bản export ONNX/OpenVINO của baseline (epoch7) — tái tạo bằng ai/training/export.py.
+# Giữ export của model chính thức: models/best.onnx.
+models/checkpoints/exported/**

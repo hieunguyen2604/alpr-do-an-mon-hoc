@@ -1,0 +1,88 @@
+{
+  "corpus": "datasets/processed/merged_v2/images",
+  "images": 15133,
+  "hash": "phash-64bit",
+  "note": "Transitive closure over phash pairs percolates on this corpus because it is dominated by fixed cameras: frames of different vehicles from one camera are perceptually close, so raising the threshold chains them into one giant component. At threshold 12 that component holds 54.6% of the corpus and at 20 it holds everything, which makes a 70/20/10 split meaningless. Threshold 10 was chosen for yolo_v3: it is the highest value at which genuine duplicates were confirmed by eye, and its giant component (29.1%) still fits inside the train split.",
+  "rows": [
+    {
+      "threshold": 5,
+      "pairs": 0,
+      "groups": 0,
+      "images_in_groups": 0,
+      "images_in_groups_pct": 0.0,
+      "largest_component": 1,
+      "largest_component_pct": 0.0,
+      "max_split_feasible": "yes"
+    },
+    {
+      "threshold": 6,
+      "pairs": 1637,
+      "groups": 965,
+      "images_in_groups": 2510,
+      "images_in_groups_pct": 16.6,
+      "largest_component": 50,
+      "largest_component_pct": 0.3,
+      "max_split_feasible": "yes"
+    },
+    {
+      "threshold": 8,
+      "pairs": 6303,
+      "groups": 1244,
+      "images_in_groups": 5634,
+      "images_in_groups_pct": 37.2,
+      "largest_component": 1171,
+      "largest_component_pct": 7.7,
+      "max_split_feasible": "yes"
+    },
+    {
+      "threshold": 10,
+      "pairs": 19277,
+      "groups": 1171,
+      "images_in_groups": 8398,
+      "images_in_groups_pct": 55.5,
+      "largest_component": 4411,
+      "largest_component_pct": 29.1,
+      "max_split_feasible": "yes"
+    },
+    {
+      "threshold": 12,
+      "pairs": 51467,
+      "groups": 852,
+      "images_in_groups": 10596,
+      "images_in_groups_pct": 70.0,
+      "largest_component": 8262,
+      "largest_component_pct": 54.6,
+      "max_split_feasible": "yes"
+    },
+    {
+      "threshold": 14,
+      "pairs": 122837,
+      "groups": 382,
+      "images_in_groups": 12690,
+      "images_in_groups_pct": 83.9,
+      "largest_component": 11673,
+      "largest_component_pct": 77.1,
+      "max_split_feasible": "NO"
+    },
+    {
+      "threshold": 15,
+      "pairs": 122837,
+      "groups": 382,
+      "images_in_groups": 12690,
+      "images_in_groups_pct": 83.9,
+      "largest_component": 11673,
+      "largest_component_pct": 77.1,
+      "max_split_feasible": "NO"
+    },
+    {
+      "threshold": 20,
+      "pairs": 1471347,
+      "groups": 1,
+      "images_in_groups": 15133,
+      "images_in_groups_pct": 100.0,
+      "largest_component": 15133,
+      "largest_component_pct": 100.0,
+      "max_split_feasible": "NO"
+    }
+  ]
+}

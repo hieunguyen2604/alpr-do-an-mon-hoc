@@ -1,0 +1,248 @@
+# =============================================================================
+# ALPR -- Vietnamese License Plate Recognition System
+# Local / single-host deployment stack.
+# =============================================================================
+#
+# +---------------------------------------------------------------------------+
+# |  CPU-ONLY CONFIGURATION -- THERE IS NO GPU PASSTHROUGH ANYWHERE HERE.      |
+# |                                                                           |
+# |  Deliberate, per architecture decision AD-06: the target machine has no    |
+# |  CUDA GPU. Consequently this file contains no `deploy.resources.reservat-  |
+# |  ions.devices`, no `runtime: nvidia`, and no NVIDIA_* variables, and the   |
+# |  backend image installs the CPU-only PyTorch build.                        |
+# |                                                                           |
+# |  Model TRAINING happens on Colab/Kaggle GPU and is out of scope for this   |
+# |  stack; only the trained weights are mounted in, read-only.                |
+# |                                                                           |
+# |  To add a GPU later you would need all of: a CUDA-enabled torch build in   |
+# |  Dockerfile.backend, the NVIDIA Container Toolkit on the host, a           |
+# |  `deploy.resources.reservations.devices` block below, and ALPR_DEVICE=cuda |
+# |  with ALPR_OCR_USE_GPU=true. Changing only the last of those produces a    |
+# |  container that fails at model-load time.                                  |
+# +---------------------------------------------------------------------------+
+#
+# The `version:` key is intentionally absent -- it is obsolete in Compose v2
+# and current releases emit a warning when it is present.
+#
+# Quick start:
+#   cp deployment/.env.example .env
+#   mkdir -p storage models          # see deployment/README.md
+#   docker compose up -d --build
+#   -> UI      http://localhost:5173
+#   -> Swagger http://localhost:5173/docs
+
+name: alpr
+
+services:
+  # ---------------------------------------------------------------------------
+  # Backend -- FastAPI + the ai/ inference pipeline
+  # ---------------------------------------------------------------------------
+  backend:
+    build:
+      # Project root, not deployment/docker: the image needs both `backend/`
+      # and `ai/`, and `ai.inference.config.PROJECT_ROOT` resolves relative to
+      # the package location (NFR-M4).
+      context: .
+      dockerfile: deployment/docker/Dockerfile.backend
+      args:
+        # Keep torch on the CPU index. Building against default PyPI pulls the
+        # CUDA wheels and roughly triples the image size for no benefit here.
+        TORCH_INDEX_URL: ${TORCH_INDEX_URL:-https://download.pytorch.org/whl/cpu}
+        TORCH_VERSION: ${TORCH_VERSION:-}
+        # Match these to your host user on Linux if you bind-mount ./storage,
+        # otherwise the container cannot write to it.
+        APP_UID: ${APP_UID:-1000}
+        APP_GID: ${APP_GID:-1000}
+    image: alpr-backend:${ALPR_TAG:-latest}
+    container_name: alpr-backend
+
+    # `required: false` keeps `docker compose config` and `up` working before
+    # anyone has created a .env. Every value below also carries an inline
+    # default, so the stack is runnable straight from a fresh clone.
+    env_file:
+      - path: .env
+        required: false
+
+    environment:
+      # --- Inference (consumed by ai.inference.InferenceConfig.from_env) ----
+      # DELIBERATELY NOT `${ALPR_MODEL_PATH:-...}`. Compose interpolates from the
+      # project-root `.env`, which is also the file the HOST tooling uses, and
+      # there ALPR_MODEL_PATH is a host-relative path (`models/best.pt`). Letting
+      # that leak in would point the container at a path that means something
+      # different inside it. The container path is fixed here; only the FILE NAME
+      # is configurable, which is what actually varies (best.pt after training,
+      # a checkpoint before it).
+      ALPR_MODEL_PATH: /app/models/${ALPR_MODEL_FILE:-best.pt}
+      ALPR_DEVICE: ${ALPR_DEVICE:-cpu}
+      ALPR_CONF_THRESHOLD: ${ALPR_CONF_THRESHOLD:-0.25}
+      ALPR_IOU_THRESHOLD: ${ALPR_IOU_THRESHOLD:-0.45}
+      ALPR_IMGSZ: ${ALPR_IMGSZ:-640}
+      ALPR_OCR_LANG: ${ALPR_OCR_LANG:-en}
+      ALPR_OCR_USE_GPU: ${ALPR_OCR_USE_GPU:-false}
+      ALPR_TWO_LINE_ASPECT_RATIO: ${ALPR_TWO_LINE_ASPECT_RATIO:-2.5}
+
+      # --- Application (consumed by backend/core config, Phase 5) -----------
+      # Four slashes in a sqlite URL means an ABSOLUTE path: `sqlite:///` plus
+      # `/app/data/...`. Three slashes would make it relative to the working
+      # directory and put the database somewhere unintended.
+      # Fixed for the same reason as ALPR_MODEL_PATH above: the root `.env`
+      # holds the host-side SQLite URL, which must not reach the container.
+      ALPR_DATABASE_URL: sqlite:////app/data/alpr.db
+      # ALPR_STORAGE_ROOT, not ALPR_STORAGE_DIR. The settings field is
+      # `storage_root` and the prefix is `ALPR_`, so `ALPR_STORAGE_DIR` matches
+      # no field at all -- and because the settings model is `extra="ignore"`,
+      # it was accepted in silence rather than rejected. The effect was that
+      # `storage_root` kept its default of `data`, so every upload and every
+      # cropped plate landed in /app/data (the SQLite named volume) and the
+      # ./storage bind mount below stayed empty. Verified by inspecting the
+      # running container, not by reading the code.
+      ALPR_STORAGE_ROOT: /app/storage
+      ALPR_LOG_LEVEL: ${ALPR_LOG_LEVEL:-info}
+      # Explicit origin list, never "*" (NFR-S4). Must include the address the
+      # browser actually uses -- add the LAN origin here for a remote demo.
+      ALPR_CORS_ORIGINS: ${ALPR_CORS_ORIGINS:-http://localhost:5173,http://127.0.0.1:5173}
+      # Keep at or below nginx's client_max_body_size (200m) so the API's
+      # structured 413 is what clients receive, not nginx's default page.
+      ALPR_MAX_UPLOAD_MB: ${ALPR_MAX_UPLOAD_MB:-200}
+
+      # --- CPU thread budget -----------------------------------------------
+      # The single most influential performance setting on a GPU-less host.
+      # Should not exceed the CPU limit under `deploy` below: more OpenMP
+      # threads than available cores causes oversubscription, which usually
+      # makes inference slower, not faster.
+      OMP_NUM_THREADS: ${OMP_NUM_THREADS:-4}
+      MKL_NUM_THREADS: ${MKL_NUM_THREADS:-4}
+      OPENBLAS_NUM_THREADS: ${OPENBLAS_NUM_THREADS:-4}
+
+    volumes:
+      # SQLite lives in a NAMED VOLUME on purpose. Its locking relies on POSIX
+      # file locks, which behave unreliably across the bind-mount translation
+      # layer on Docker Desktop for Windows and macOS -- the classic symptom is
+      # an intermittent "database is locked" under concurrent writes. A named
+      # volume stays inside the Linux VM filesystem and avoids this entirely.
+      - alpr-data:/app/data
+
+      # Uploaded and generated media, bind-mounted so processed videos and
+      # cropped plates can be inspected directly from the host while building
+      # the demo and the thesis. On Linux create it BEFORE the first `up`
+      # (`mkdir -p storage`), otherwise Docker creates it owned by root and the
+      # unprivileged container user cannot write to it.
+      - ${ALPR_STORAGE_HOST_DIR:-./storage}:/app/storage
+
+      # Trained weights, READ-ONLY: the container has no business modifying
+      # them, and the flag makes a mistake fail loudly rather than silently
+      # corrupt an artefact that took GPU hours to produce.
+      - ${ALPR_MODELS_HOST_DIR:-./models}:/app/models:ro
+
+      # PaddleOCR fetches its detection/recognition weights on first use.
+      # Persisting the cache turns that one-off download into a one-off cost
+      # instead of repeating it on every container recreate.
+      - alpr-model-cache:/home/appuser/.cache
+
+    ports:
+      # Bound to loopback by default: the frontend container reaches the
+      # backend over the internal Docker network, so publishing this port is
+      # only for direct API access and Swagger during development. Set
+      # ALPR_BACKEND_BIND=0.0.0.0 to expose the API on the LAN for a demo.
+      - "${ALPR_BACKEND_BIND:-127.0.0.1}:${ALPR_BACKEND_PORT:-8000}:8000"
+
+    # The healthcheck is defined in Dockerfile.backend (single source of truth)
+    # and probes /health. `depends_on: service_healthy` below consumes it.
+
+    restart: unless-stopped
+
+    # Model loading plus in-flight inference means SIGTERM needs a moment to be
+    # honoured; the 10 s default can cut a request off mid-write.
+    stop_grace_period: 30s
+
+    # Structured logs (requirement: every request carries a request_id) grow
+    # quickly. Without a cap the json-file driver fills the disk silently.
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+    deploy:
+      resources:
+        limits:
+          # Ceiling that keeps inference from starving the rest of the host.
+          # Keep OMP_NUM_THREADS <= this number.
+          cpus: ${ALPR_CPU_LIMIT:-4}
+          # NFR-P7 budgets 2 GB resident, 4 GB worst case. torch + Paddle
+          # weights sit near the lower figure once warm.
+          memory: ${ALPR_MEMORY_LIMIT:-4g}
+
+    networks:
+      - alpr-net
+
+  # ---------------------------------------------------------------------------
+  # Frontend -- React/Vite bundle served by nginx, also reverse-proxies the API
+  # ---------------------------------------------------------------------------
+  frontend:
+    build:
+      # Root context again: this image copies both `frontend/` and
+      # `deployment/docker/nginx.conf`, and COPY cannot reach outside context.
+      context: .
+      dockerfile: deployment/docker/Dockerfile.frontend
+      args:
+        # Baked in at BUILD time by Vite -- changing it later requires a
+        # rebuild, not a restart. The relative default routes API calls back
+        # through nginx, keeping the image portable across hostnames.
+        VITE_API_BASE_URL: ${VITE_API_BASE_URL:-/api}
+    image: alpr-frontend:${ALPR_TAG:-latest}
+    container_name: alpr-frontend
+
+    # No env_file here on purpose. This container is nginx serving a static
+    # bundle: the API base URL was inlined by Vite at BUILD time, so runtime
+    # variables change nothing. Loading the project `.env` would only copy the
+    # Roboflow/Kaggle credentials it holds into a container that has no use for
+    # them -- needless secret exposure for zero benefit.
+
+    ports:
+      # 5173 keeps parity with the Vite dev server port developers already use,
+      # mapped onto nginx's port 80 inside the container.
+      - "${ALPR_FRONTEND_PORT:-5173}:80"
+
+    depends_on:
+      backend:
+        # Waits for /health to pass, not merely for the container to exist.
+        # Plain `depends_on` would start nginx while the backend is still
+        # loading models; nginx resolves `backend` at startup and exits if the
+        # name is not yet resolvable, and any early request would 502.
+        condition: service_healthy
+
+    restart: unless-stopped
+
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+    networks:
+      - alpr-net
+
+# -----------------------------------------------------------------------------
+# Networks
+# -----------------------------------------------------------------------------
+networks:
+  alpr-net:
+    # Dedicated bridge rather than the default network: containers reach each
+    # other by service name (nginx proxies to `backend:8000`) while staying
+    # isolated from unrelated stacks on the same host.
+    driver: bridge
+    name: alpr-network
+
+# -----------------------------------------------------------------------------
+# Volumes
+# -----------------------------------------------------------------------------
+volumes:
+  alpr-data:
+    # SQLite database. THE ONLY STATE THAT CANNOT BE REGENERATED -- everything
+    # else is derived. `docker compose down -v` deletes it; see the backup
+    # commands in deployment/README.md.
+    name: alpr-data
+  alpr-model-cache:
+    # Re-downloadable OCR weights. Safe to delete; costs one slow first start.
+    name: alpr-model-cache

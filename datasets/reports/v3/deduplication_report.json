@@ -1,0 +1,42 @@
+{
+  "threshold": 10,
+  "hash": "phash-64bit",
+  "images_scanned": 15133,
+  "images_unreadable": 0,
+  "duplicate_pairs": 19277,
+  "duplicate_groups": 1171,
+  "cross_dataset_groups": 116,
+  "cross_dataset_pairs_by_dataset": {
+    "hf_vn_plates_segment <-> roboflow_eric_nguyen": 1,
+    "hf_vn_plates_segment <-> roboflow_school_fuhih": 2669,
+    "hf_vn_plates_segment <-> roboflow_traffic_camera": 45,
+    "roboflow_cuong_ta <-> roboflow_school_fuhih": 4,
+    "roboflow_demo_tracking <-> roboflow_school_fuhih": 1,
+    "roboflow_demo_tracking <-> roboflow_traffic_camera": 31,
+    "roboflow_eric_nguyen <-> roboflow_school_fuhih": 1,
+    "roboflow_school_fuhih <-> roboflow_traffic_camera": 13
+  },
+  "removable_images": 7227,
+  "unique_images_after_dedup": 7906,
+  "images_per_dataset": {
+    "hf_vn_plates_segment": 4375,
+    "roboflow_cuong_ta": 140,
+    "roboflow_demo_tracking": 235,
+    "roboflow_eric_nguyen": 353,
+    "roboflow_school_fuhih": 6868,
+    "roboflow_traffic_camera": 3162
+  },
+  "removable_per_dataset": {
+    "hf_vn_plates_segment": 1700,
+    "roboflow_cuong_ta": 18,
+    "roboflow_demo_tracking": 1,
+    "roboflow_eric_nguyen": 3,
+    "roboflow_school_fuhih": 3769,
+    "roboflow_traffic_camera": 1736
+  },
+  "unreadable_images": [],
+  "leakage_warning": "Cross-dataset duplicate groups place the same photograph under two dataset names. split.py must keep every group member in one split, otherwise test accuracy measures memorisation.",
+  "input_dir": "D:\\DATN\\datasets\\processed\\merged_v2\\images",
+  "applied": false,
+  "search": "auto"
+}

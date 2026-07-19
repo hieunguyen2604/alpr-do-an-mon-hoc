@@ -1,0 +1,158 @@
+# Ignore rules for the PROJECT ROOT build context, shared by both images.
+#
+# ---------------------------------------------------------------------------
+# Why this file is duplicated -- read before editing
+# ---------------------------------------------------------------------------
+# Docker only auto-loads `.dockerignore` from the ROOT OF THE BUILD CONTEXT.
+# Both images here build from the project root, so the file Docker would look
+# for is `D:/DATN/.dockerignore` -- not this one. This copy on its own would be
+# silently inert.
+#
+# BuildKit resolves ignore rules in this order:
+#   1. `<path-to-dockerfile>.dockerignore`   <- used here
+#   2. `<context-root>/.dockerignore`        <- fallback
+#
+# So the rules that actually apply live in the sidecar files next to each
+# Dockerfile:
+#   deployment/docker/Dockerfile.backend.dockerignore
+#   deployment/docker/Dockerfile.frontend.dockerignore
+#
+# This file is the canonical reference the sidecars are kept in sync with, and
+# is what takes effect if the project later moves to a root-level
+# `.dockerignore`. EDIT ALL THREE TOGETHER, or move to a single root-level file
+# and delete these.
+#
+# Requires BuildKit (default since Docker 23). Under the legacy builder the
+# sidecars are ignored and the whole context -- datasets included -- is sent.
+
+# --- Version control --------------------------------------------------------
+.git
+.gitignore
+.gitattributes
+**/.git
+
+# --- Datasets and model weights ---------------------------------------------
+# The single most important exclusion. `datasets/` holds the raw and augmented
+# training images and is easily tens of gigabytes; sending it to the daemon
+# would dominate build time even though nothing in either image uses it.
+# Weights are excluded for a different reason: they are mounted read-only at
+# runtime, so retraining a model does not require rebuilding the image.
+datasets/
+models/
+*.pt
+*.pth
+*.onnx
+*.engine
+*.pdparams
+*.pdmodel
+
+# --- Runtime data -----------------------------------------------------------
+# Uploaded media and the SQLite file live in volumes. Baking a developer's
+# local database into a shipped image would be both wrong and a privacy leak.
+data/
+storage/
+uploads/
+*.db
+*.sqlite
+*.sqlite3
+
+# --- Python -----------------------------------------------------------------
+__pycache__/
+**/__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.venv/
+# Anchored patterns only match the project root. The venvs in this repo are
+# .venv-ai, .venv-ocr and backend/.venv, none of which the three lines above
+# catch -- backend/.venv alone is 2 GB of WINDOWS wheels that would be sent as
+# build context and then baked into a LINUX image by `COPY backend/`.
+.venv*/
+**/.venv/
+**/.venv*/
+**/venv/
+venv/
+env/
+.Python
+build/
+dist/
+*.egg-info/
+.eggs/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.ipynb_checkpoints/
+*.ipynb
+
+# --- Node / frontend --------------------------------------------------------
+# node_modules is reinstalled inside the build stage by `npm ci` against the
+# lockfile. Copying the host copy in would be slower and would smuggle in
+# platform-specific native binaries built for Windows.
+frontend/node_modules/
+**/node_modules/
+frontend/dist/
+frontend/.vite/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# --- Secrets ----------------------------------------------------------------
+# Environment values are injected at RUN time by docker-compose. Anything
+# copied into an image is readable by anyone who can pull that image, and
+# persists in the layer history even if a later layer deletes it.
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+secrets/
+
+# --- Documentation and thesis material --------------------------------------
+# Needed for the deliverable, never needed by a running container.
+# `*.md` matches root-level files only: a `*` never crosses a `/`, so nested
+# READMEs such as `ai/inference/README.md` are still copied. They are a few
+# kilobytes and keeping them means the module documentation travels with the
+# code it documents.
+docs/
+demo/
+*.md
+LICENSE
+
+# --- Training and evaluation ------------------------------------------------
+# Training runs on Colab/Kaggle GPU (decision AD-06), never inside these
+# images. Only `ai/inference` is used at serving time -- but note that
+# `ai/training` and `ai/evaluation` are NOT excluded here, because the backend
+# image copies the whole `ai/` package and excluding subpackages would break
+# `import ai`. They are small (scripts only); the heavy outputs below are what
+# actually matter.
+runs/
+wandb/
+mlruns/
+lightning_logs/
+*.log
+
+# --- Editor and OS ----------------------------------------------------------
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# --- Docker itself ----------------------------------------------------------
+# `deployment/` is deliberately NOT excluded: the frontend image copies
+# `deployment/docker/nginx.conf` out of the context, and excluding the
+# directory then re-including one file through a `!` exception is a subtle
+# rule that breaks the build outright if it is ever evaluated differently.
+# The whole directory is a handful of kilobytes, so there is nothing to gain.
+docker-compose*.yml
+
+# --- CI ---------------------------------------------------------------------
+.github/
+.gitlab-ci.yml

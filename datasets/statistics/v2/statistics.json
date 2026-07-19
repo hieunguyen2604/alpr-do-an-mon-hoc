@@ -1,0 +1,258 @@
+{
+  "images_total": 15133,
+  "boxes_total": 15977,
+  "background_images": 42,
+  "images_per_split": {
+    "train": 10590,
+    "val": 3028,
+    "test": 1515
+  },
+  "images_per_source": {
+    "hf_vn_plates_segment": 4375,
+    "roboflow_cuong_ta": 140,
+    "roboflow_demo_tracking": 235,
+    "roboflow_eric_nguyen": 353,
+    "roboflow_school_fuhih": 6868,
+    "roboflow_traffic_camera": 3162
+  },
+  "images_per_split_and_source": {
+    "test": {
+      "hf_vn_plates_segment": 451,
+      "roboflow_cuong_ta": 15,
+      "roboflow_demo_tracking": 20,
+      "roboflow_eric_nguyen": 48,
+      "roboflow_school_fuhih": 700,
+      "roboflow_traffic_camera": 281
+    },
+    "train": {
+      "hf_vn_plates_segment": 3035,
+      "roboflow_cuong_ta": 91,
+      "roboflow_demo_tracking": 170,
+      "roboflow_eric_nguyen": 239,
+      "roboflow_school_fuhih": 4814,
+      "roboflow_traffic_camera": 2241
+    },
+    "val": {
+      "hf_vn_plates_segment": 889,
+      "roboflow_cuong_ta": 34,
+      "roboflow_demo_tracking": 45,
+      "roboflow_eric_nguyen": 66,
+      "roboflow_school_fuhih": 1354,
+      "roboflow_traffic_camera": 640
+    }
+  },
+  "boxes_per_image": {
+    "name": "boxes_per_image",
+    "count": 15133,
+    "min": 0.0,
+    "median": 1.0,
+    "mean": 1.055772,
+    "max": 9.0,
+    "stdev": 0.33585,
+    "p05": 1.0,
+    "p95": 1.0
+  },
+  "boxes_per_image_histogram": {
+    "0": 42,
+    "1": 14481,
+    "2": 418,
+    "3": 137,
+    "4": 39,
+    "5": 10,
+    "6": 2,
+    "7": 2,
+    "8": 1,
+    "9": 1
+  },
+  "box_area_fraction": {
+    "name": "box_area_fraction",
+    "count": 15977,
+    "min": 2.9e-05,
+    "median": 0.029974,
+    "mean": 0.036923,
+    "max": 0.767362,
+    "stdev": 0.040653,
+    "p05": 0.002929,
+    "p95": 0.088786
+  },
+  "tiny_boxes_below_0_5_percent": 1743,
+  "aspect_ratio": {
+    "name": "box_aspect_ratio",
+    "count": 15977,
+    "min": 0.15624,
+    "median": 1.379463,
+    "mean": 1.759392,
+    "max": 8.22242,
+    "stdev": 0.974561,
+    "p05": 0.736842,
+    "p95": 3.753585
+  },
+  "image_width": {
+    "name": "image_width",
+    "count": 15133,
+    "min": 234.0,
+    "median": 640.0,
+    "mean": 619.569087,
+    "max": 4653.0,
+    "stdev": 363.798417,
+    "p05": 372.0,
+    "p95": 1758.0
+  },
+  "image_height": {
+    "name": "image_height",
+    "count": 15133,
+    "min": 176.0,
+    "median": 640.0,
+    "mean": 574.493161,
+    "max": 3024.0,
+    "stdev": 209.277619,
+    "p05": 285.0,
+    "p95": 988.0
+  },
+  "line_count_estimate": {
+    "method": "HEURISTIC",
+    "threshold": 2.5,
+    "labelled_boxes": 0,
+    "heuristic_boxes": 15977,
+    "note": "Per box, the true line_count label is used when the source provides one; only boxes without a label fall back to the aspect-ratio threshold. Perspective and loose boxes move unlabelled plates across that threshold, so the heuristic portion is approximate.",
+    "counts": {
+      "1": 3177,
+      "2": 12800
+    },
+    "two_line_fraction": 0.8012,
+    "per_split": {
+      "test": {
+        "1": 317,
+        "2": 1276
+      },
+      "train": {
+        "1": 2214,
+        "2": 8967
+      },
+      "val": {
+        "1": 646,
+        "2": 2557
+      }
+    }
+  },
+  "plate_text": {
+    "annotated_boxes": 0,
+    "character_frequency": {
+      "1": 4222,
+      "5": 3756,
+      "9": 3269,
+      "2": 2767,
+      "0": 2562,
+      "3": 2379,
+      "6": 2234,
+      "4": 2230,
+      "7": 2222,
+      "8": 1994,
+      "B": 789,
+      "F": 448,
+      "A": 416,
+      "G": 318,
+      "E": 271,
+      "Z": 268,
+      "D": 262,
+      "M": 252,
+      "C": 225,
+      "L": 207,
+      "S": 196,
+      "H": 178,
+      "K": 176,
+      "P": 176,
+      "T": 156,
+      "V": 121,
+      "U": 120,
+      "X": 114,
+      "N": 109,
+      "Y": 67
+    },
+    "length_histogram": {
+      "1": 9,
+      "2": 10,
+      "3": 10,
+      "4": 20,
+      "5": 37,
+      "6": 128,
+      "7": 839,
+      "8": 1319,
+      "9": 1524,
+      "10": 111,
+      "11": 9,
+      "16": 2,
+      "30": 1
+    },
+    "note": "Reconstructed by build_plate_text.py from the multi-class character datasets. Those images are a separate corpus from the detection split, so these counts do not add to boxes_total.",
+    "source": "external",
+    "csv": "D:\\DATN\\datasets\\annotations\\plate_text_labels.csv",
+    "reconstructed_strings": 4019,
+    "valid_format_strings": 2801,
+    "valid_format_rate": 0.6969,
+    "character_frequency_valid_only": {
+      "1": 3366,
+      "5": 3111,
+      "9": 2581,
+      "2": 2072,
+      "0": 1865,
+      "3": 1736,
+      "6": 1661,
+      "7": 1634,
+      "4": 1622,
+      "8": 1359,
+      "F": 404,
+      "A": 276,
+      "B": 200,
+      "E": 199,
+      "L": 167,
+      "S": 155,
+      "C": 151,
+      "P": 147,
+      "H": 142,
+      "G": 135,
+      "K": 116,
+      "T": 112,
+      "X": 101,
+      "D": 97,
+      "V": 88,
+      "M": 87,
+      "N": 85,
+      "U": 84,
+      "Y": 63,
+      "Z": 39
+    },
+    "distinct_characters": 30,
+    "length_histogram_valid_only": {
+      "7": 49,
+      "8": 1256,
+      "9": 1496
+    },
+    "line_count_distribution": {
+      "1": 1539,
+      "2": 2474,
+      "3": 6
+    },
+    "per_dataset": {
+      "roboflow_ocr_conversion": {
+        "images": 200,
+        "valid_format": 151
+      },
+      "roboflow_ocr_plate": {
+        "images": 3819,
+        "valid_format": 2650
+      }
+    }
+  },
+  "input_dir": "D:\\DATN\\datasets\\processed\\yolo_v2",
+  "charts": [
+    "D:\\DATN\\datasets\\statistics\\v2\\images_per_split.png",
+    "D:\\DATN\\datasets\\statistics\\v2\\boxes_per_image.png",
+    "D:\\DATN\\datasets\\statistics\\v2\\box_area.png",
+    "D:\\DATN\\datasets\\statistics\\v2\\aspect_ratio.png",
+    "D:\\DATN\\datasets\\statistics\\v2\\image_sizes.png",
+    "D:\\DATN\\datasets\\statistics\\v2\\box_position_heatmap.png",
+    "D:\\DATN\\datasets\\statistics\\v2\\character_frequency.png",
+    "D:\\DATN\\datasets\\statistics\\v2\\plate_length.png"
+  ]
+}

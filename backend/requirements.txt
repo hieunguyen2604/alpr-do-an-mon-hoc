@@ -1,0 +1,54 @@
+# Backend runtime dependencies.
+#
+# Scope: the API layer only. Torch, ultralytics and PaddleOCR are NOT listed
+# here -- they belong to the ``ai`` package and arrive in Phase 3/4 with their
+# own requirements file. Keeping them apart is what lets the backend be
+# installed and tested, and its Docker image built, without pulling in the
+# ~2 GB of CUDA wheels that torch drags along. That separation is the practical
+# payoff of NFR-M1.
+#
+# Versions are pinned with a lower bound and an upper bound at the next major
+# release: lower bounds because the code uses APIs that do not exist earlier
+# (SQLAlchemy 2.0's Mapped/mapped_column, Pydantic v2's model_config), upper
+# bounds so that a future major release cannot silently break a build months
+# from now.
+#
+# Install:  pip install -r backend/requirements.txt
+
+# --- Web framework -----------------------------------------------------------
+fastapi>=0.115,<1.0
+# The [standard] extra brings uvloop/httptools where available, plus the
+# websockets and watchfiles support used for reload during development.
+uvicorn[standard]>=0.30,<1.0
+# Required by FastAPI to parse multipart/form-data, i.e. every file upload.
+# FastAPI raises at import time on an upload route if it is missing.
+python-multipart>=0.0.9,<1.0
+
+# --- Data validation and configuration ---------------------------------------
+pydantic>=2.7,<3.0
+# 2.6 required: core/config.py uses NoDecode to accept comma-separated list
+# settings (ALPR_CORS_ORIGINS=a,b). Earlier versions JSON-decode list fields
+# before validators run, so that syntax raises at start-up.
+pydantic-settings>=2.6,<3.0
+
+# --- Persistence -------------------------------------------------------------
+# 2.0 required: the models use the typed Mapped[]/mapped_column() style, which
+# does not exist in 1.4.
+sqlalchemy>=2.0,<3.0
+alembic>=1.13,<2.0
+
+# --- File handling -----------------------------------------------------------
+# MIME type detection from magic bytes rather than from the file extension
+# (NFR-S1). libmagic is a C library, so the package differs per platform:
+#   * Windows: python-magic-bin ships the prebuilt DLL.
+#   * Linux (the Docker image): python-magic plus the system libmagic1 package,
+#     which the Dockerfile must apt-get install -- the wheel does not bundle it.
+python-magic-bin>=0.4.14; sys_platform == "win32"
+python-magic>=0.4.27; sys_platform != "win32"
+
+pillow>=10.3,<12.0
+numpy>=1.26,<3.0
+# The headless build omits the GUI bindings (cv2.imshow and friends), which a
+# server never calls and which pull in a large set of X11 libraries that are
+# absent from the slim base image.
+opencv-python-headless>=4.9,<5.0

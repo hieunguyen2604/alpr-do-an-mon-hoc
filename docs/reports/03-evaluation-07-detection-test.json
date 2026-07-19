@@ -1,0 +1,99 @@
+{
+  "generated_at": "2026-07-19T08:25:28+00:00",
+  "model": {
+    "weights": "D:\\DATN\\models\\checkpoints\\best-cpu-epoch7.pt",
+    "size_mb": 20.22
+  },
+  "dataset": {
+    "data_yaml": "D:\\DATN\\datasets\\processed\\yolo\\data.yaml",
+    "split": "test",
+    "num_images": 458,
+    "num_ground_truth_boxes": 512,
+    "classes": {
+      "0": "license_plate"
+    },
+    "label_stats": {
+      "images_without_labels": 0,
+      "malformed_lines": 0,
+      "grouped_by_label": 0,
+      "grouped_by_class": 0,
+      "grouped_by_aspect_ratio": 512
+    }
+  },
+  "settings": {
+    "imgsz": 640,
+    "conf": 0.25,
+    "iou": 0.45,
+    "device": "cpu",
+    "aspect_ratio_threshold": 2.5
+  },
+  "environment": {
+    "python": "3.13.12",
+    "platform": "Windows 11",
+    "processor": "Intel64 Family 6 Model 183 Stepping 1, GenuineIntel"
+  },
+  "metrics_reference_ultralytics": {
+    "mAP@0.5": 0.98265,
+    "mAP@0.5:0.95": 0.80429,
+    "precision": 0.93457,
+    "recall": 0.94531,
+    "f1": 0.93991
+  },
+  "metrics_overall": {
+    "group": "ALL",
+    "num_ground_truth": 512,
+    "num_predictions": 681,
+    "true_positives": 502,
+    "false_positives": 179,
+    "false_negatives": 10,
+    "precision": 0.73715,
+    "recall": 0.98047,
+    "f1": 0.84158,
+    "mAP@0.5": 0.96351,
+    "mAP@0.5:0.95": 0.79305
+  },
+  "metrics_by_line_count": {
+    "single_line": {
+      "group": "single_line",
+      "num_ground_truth": 153,
+      "num_predictions": 188,
+      "true_positives": 151,
+      "false_positives": 37,
+      "false_negatives": 2,
+      "precision": 0.80319,
+      "recall": 0.98693,
+      "f1": 0.88563,
+      "mAP@0.5": 0.98559,
+      "mAP@0.5:0.95": 0.75484
+    },
+    "two_line": {
+      "group": "two_line",
+      "num_ground_truth": 359,
+      "num_predictions": 493,
+      "true_positives": 351,
+      "false_positives": 142,
+      "false_negatives": 8,
+      "precision": 0.71197,
+      "recall": 0.97772,
+      "f1": 0.82394,
+      "mAP@0.5": 0.95915,
+      "mAP@0.5:0.95": 0.80859
+    }
+  },
+  "nfr_a8_gap_ap50": 0.02643,
+  "inference_latency": {
+    "samples": 150,
+    "mean_ms": 57.95,
+    "p50_ms": 49.61,
+    "p95_ms": 64.54,
+    "p99_ms": 74.78,
+    "min_ms": 28.32,
+    "max_ms": 1240.26,
+    "fps_p50": 20.16
+  },
+  "plots": {
+    "pr_curve_by_line_count": "D:\\DATN\\docs\\reports\\figures\\07-detection-test_pr_curve.png",
+    "confusion_matrix": "D:\\DATN\\docs\\reports\\figures\\07-detection-test_confusion_matrix.png",
+    "latency_histogram": "D:\\DATN\\docs\\reports\\figures\\07-detection-test_latency.png"
+  }
+}

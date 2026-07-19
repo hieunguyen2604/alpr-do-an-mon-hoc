@@ -1,0 +1,504 @@
+{
+  "generated_at": "2026-07-19T18:19:30",
+  "hardware": {
+    "cpu_name": "Intel(R) Core(TM) i5-14600K",
+    "physical_cores": 14,
+    "logical_cores": 20,
+    "ram_total_gb": 31.77,
+    "platform": "Windows 11",
+    "python_version": "3.13.12",
+    "competing_processes": [
+      "pid=4 cpu=76% System",
+      "pid=19124 cpu=756% D:\\DATN\\.venv-ai\\Scripts\\python.exe -m ai.training.train --config yolo11n_finetune.yaml --data datasets/processed/yolo_v",
+      "pid=24820 cpu=934% D:\\DATN\\backend\\.venv\\Scripts\\python.exe C:/Users/hieun/AppData/Local/Temp/claude/d--DATN/b376c040-0f8d-439f-8f47-c4b41e"
+    ]
+  },
+  "configuration": {
+    "imgsz": 640,
+    "device": "cpu",
+    "conf_threshold": 0.25,
+    "frame_stride": 5,
+    "database_url": "sqlite:///D:/DATN/data/alpr.db",
+    "use_stub": false,
+    "model_path_effective": "D:\\DATN\\models\\baseline-416-v1.pt",
+    "model_path_override": null,
+    "model_path_from_env_files": "D:\\DATN\\models\\baseline-416-v1.pt",
+    "env_file_conflict": "backend/.env sets ALPR_MODEL_PATH=models/baseline-416-v1.pt and OVERRIDES the root .env, which sets the OpenVINO export. pydantic-settings reads (.env, backend/.env) in that order and the later file wins, so the main measurement below ran on the PyTorch baseline checkpoint, NOT on the optimised model the root .env names."
+  },
+  "images_root": "D:\\DATN\\datasets\\processed\\yolo\\images\\test",
+  "server_log": "D:\\DATN\\docs\\reports\\07-benchmark-data-v2.server.log",
+  "server_run_1": {
+    "ready_after_s": 9.46,
+    "health": {
+      "status": "ok",
+      "app_name": "Vietnamese ALPR API",
+      "version": "0.1.0",
+      "database_connected": true,
+      "model_loaded": true,
+      "uptime_seconds": 8.30513979998068,
+      "timestamp": "2026-07-19T11:19:39.800984Z"
+    }
+  },
+  "nfr_p2_webcam_fps": {
+    "window_seconds": 60.11,
+    "virtual_capture_fps": 30.0,
+    "frames_offered_by_camera": 1803,
+    "frames_sent": 245,
+    "frames_succeeded": 245,
+    "frames_dropped_by_single_slot_queue": 1558,
+    "failure_count": 0,
+    "failures": [],
+    "plates_returned_total": 245,
+    "per_frame_latency_ms": {
+      "samples": 245,
+      "mean_ms": 228.95,
+      "p50_ms": 226.6,
+      "p95_ms": 254.46,
+      "p99_ms": 270.73,
+      "min_ms": 182.85,
+      "max_ms": 437.35
+    },
+    "effective_fps": 4.076,
+    "target_fps": 5.0,
+    "floor_fps": 3.0,
+    "status": "MARGINAL",
+    "measurement_note": "Measured over HTTP on the loopback interface. Excludes real camera capture, browser-side JPEG encoding and canvas draw time; a real webcam session would be slower. Upper bound, not a field figure.",
+    "competing_load_caveat": "A YOLO training job was using roughly 790% CPU during this run. The figure is therefore a floor, not the machine's capability.",
+    "best_measured_alternative_fps": 4.57
+  },
+  "nfr_p3_video_throughput": {
+    "video": {
+      "path": "D:\\DATN\\demo\\demo-video.mp4",
+      "frame_count": 171,
+      "fps": 12.0,
+      "duration_s": 14.25,
+      "width": 960,
+      "height": 540
+    },
+    "frame_stride": 5,
+    "accepted_after_s": 0.036,
+    "total_wall_s": 18.898,
+    "poll_interval_s": 0.25,
+    "total_frames_reported": 171,
+    "processed_frames": 35,
+    "detection_count": 26,
+    "seconds_per_processed_frame": 0.54,
+    "realtime_ratio": 0.754,
+    "target_ratio": 0.3,
+    "floor_ratio": 0.15,
+    "status": "PASS",
+    "measurement_note": "Stopwatch spans upload -> terminal job state, including a 0.25 s polling granularity that is not subtracted. Only every 5th frame is analysed (ALPR_FRAME_STRIDE)."
+  },
+  "nfr_r4_soak": {
+    "duration_minutes_run": 15.0,
+    "duration_minutes_specified": 60.0,
+    "requests_sent": 3928,
+    "requests_succeeded": 3928,
+    "requests_failed": 0,
+    "success_rate_percent": 100.0,
+    "target_success_percent": 99.0,
+    "latency_ms": {
+      "samples": 3928,
+      "mean_ms": 229.02,
+      "p50_ms": 227.28,
+      "p95_ms": 263.27,
+      "p99_ms": 286.41,
+      "min_ms": 174.01,
+      "max_ms": 325.08
+    },
+    "throughput_rps": 4.364,
+    "error_samples": [],
+    "rss_trace_gb": [
+      {
+        "elapsed_s": 0.4,
+        "rss_gb": 0.701
+      },
+      {
+        "elapsed_s": 30.4,
+        "rss_gb": 0.705
+      },
+      {
+        "elapsed_s": 60.5,
+        "rss_gb": 0.712
+      },
+      {
+        "elapsed_s": 90.7,
+        "rss_gb": 0.712
+      },
+      {
+        "elapsed_s": 120.9,
+        "rss_gb": 0.71
+      },
+      {
+        "elapsed_s": 150.9,
+        "rss_gb": 0.711
+      },
+      {
+        "elapsed_s": 180.9,
+        "rss_gb": 0.71
+      },
+      {
+        "elapsed_s": 211.0,
+        "rss_gb": 0.706
+      },
+      {
+        "elapsed_s": 241.1,
+        "rss_gb": 0.713
+      },
+      {
+        "elapsed_s": 271.1,
+        "rss_gb": 0.714
+      },
+      {
+        "elapsed_s": 301.2,
+        "rss_gb": 0.714
+      },
+      {
+        "elapsed_s": 331.3,
+        "rss_gb": 0.709
+      },
+      {
+        "elapsed_s": 361.4,
+        "rss_gb": 0.718
+      },
+      {
+        "elapsed_s": 391.5,
+        "rss_gb": 0.711
+      },
+      {
+        "elapsed_s": 421.6,
+        "rss_gb": 0.712
+      },
+      {
+        "elapsed_s": 451.8,
+        "rss_gb": 0.71
+      },
+      {
+        "elapsed_s": 481.8,
+        "rss_gb": 0.713
+      },
+      {
+        "elapsed_s": 512.1,
+        "rss_gb": 0.714
+      },
+      {
+        "elapsed_s": 542.2,
+        "rss_gb": 0.709
+      },
+      {
+        "elapsed_s": 572.4,
+        "rss_gb": 0.714
+      },
+      {
+        "elapsed_s": 602.6,
+        "rss_gb": 0.71
+      },
+      {
+        "elapsed_s": 632.7,
+        "rss_gb": 0.712
+      },
+      {
+        "elapsed_s": 662.9,
+        "rss_gb": 0.716
+      },
+      {
+        "elapsed_s": 693.0,
+        "rss_gb": 0.716
+      },
+      {
+        "elapsed_s": 723.0,
+        "rss_gb": 0.709
+      },
+      {
+        "elapsed_s": 753.0,
+        "rss_gb": 0.714
+      },
+      {
+        "elapsed_s": 783.1,
+        "rss_gb": 0.716
+      },
+      {
+        "elapsed_s": 813.1,
+        "rss_gb": 0.717
+      },
+      {
+        "elapsed_s": 843.3,
+        "rss_gb": 0.716
+      },
+      {
+        "elapsed_s": 873.5,
+        "rss_gb": 0.716
+      }
+    ],
+    "rss_growth_gb": 0.015,
+    "status": "PASS",
+    "coverage_caveat": "Run for 15.0 minutes, NOT the 60 minutes the requirement specifies. The success rate below is therefore evidence over a shorter window than NFR-R4 asks for, and does not by itself close the requirement."
+  },
+  "nfr_r5_restart_durability": {
+    "total_records_before": 4470,
+    "total_records_after": 4470,
+    "records_lost": 0,
+    "counts_identical": true,
+    "sample_records_identical": true,
+    "sample_size": 10,
+    "sample_before": [
+      {
+        "id": "4470",
+        "plate_number": "51A89714",
+        "detected_time": "2026-07-19T11:35:59.717398Z"
+      },
+      {
+        "id": "4469",
+        "plate_number": "51F63034",
+        "detected_time": "2026-07-19T11:35:59.479409Z"
+      },
+      {
+        "id": "4468",
+        "plate_number": "51G21670",
+        "detected_time": "2026-07-19T11:35:59.275536Z"
+      },
+      {
+        "id": "4467",
+        "plate_number": "51F86988",
+        "detected_time": "2026-07-19T11:35:59.035247Z"
+      },
+      {
+        "id": "4466",
+        "plate_number": "51F86988",
+        "detected_time": "2026-07-19T11:35:58.797957Z"
+      },
+      {
+        "id": "4465",
+        "plate_number": "47A06546",
+        "detected_time": "2026-07-19T11:35:58.570308Z"
+      },
+      {
+        "id": "4464",
+        "plate_number": "51F73420",
+        "detected_time": "2026-07-19T11:35:58.359852Z"
+      },
+      {
+        "id": "4463",
+        "plate_number": "51G49539",
+        "detected_time": "2026-07-19T11:35:58.131719Z"
+      },
+      {
+        "id": "4462",
+        "plate_number": "51F15585",
+        "detected_time": "2026-07-19T11:35:57.900409Z"
+      },
+      {
+        "id": "4461",
+        "plate_number": "51F88270",
+        "detected_time": "2026-07-19T11:35:57.654335Z"
+      }
+    ],
+    "sample_after": [
+      {
+        "id": "4470",
+        "plate_number": "51A89714",
+        "detected_time": "2026-07-19T11:35:59.717398Z"
+      },
+      {
+        "id": "4469",
+        "plate_number": "51F63034",
+        "detected_time": "2026-07-19T11:35:59.479409Z"
+      },
+      {
+        "id": "4468",
+        "plate_number": "51G21670",
+        "detected_time": "2026-07-19T11:35:59.275536Z"
+      },
+      {
+        "id": "4467",
+        "plate_number": "51F86988",
+        "detected_time": "2026-07-19T11:35:59.035247Z"
+      },
+      {
+        "id": "4466",
+        "plate_number": "51F86988",
+        "detected_time": "2026-07-19T11:35:58.797957Z"
+      },
+      {
+        "id": "4465",
+        "plate_number": "47A06546",
+        "detected_time": "2026-07-19T11:35:58.570308Z"
+      },
+      {
+        "id": "4464",
+        "plate_number": "51F73420",
+        "detected_time": "2026-07-19T11:35:58.359852Z"
+      },
+      {
+        "id": "4463",
+        "plate_number": "51G49539",
+        "detected_time": "2026-07-19T11:35:58.131719Z"
+      },
+      {
+        "id": "4462",
+        "plate_number": "51F15585",
+        "detected_time": "2026-07-19T11:35:57.900409Z"
+      },
+      {
+        "id": "4461",
+        "plate_number": "51F88270",
+        "detected_time": "2026-07-19T11:35:57.654335Z"
+      }
+    ],
+    "status": "PASS",
+    "measurement_note": "Both snapshots were read through GET /api/history and GET /api/statistics, so the check proves the rows are still reachable by the application after the process was terminated and started again -- not merely that a file survived.",
+    "shutdown_kind": "Abrupt: TerminateProcess on Windows, so no graceful shutdown hook and no orderly connection close. Closer to a crash than to a clean stop, which makes survival the stronger result.",
+    "restart_ready_after_s": 8.81,
+    "health_after_restart": {
+      "status": "ok",
+      "app_name": "Vietnamese ALPR API",
+      "version": "0.1.0",
+      "database_connected": true,
+      "model_loaded": true,
+      "uptime_seconds": 7.612779799994314,
+      "timestamp": "2026-07-19T11:36:11.751437Z"
+    }
+  },
+  "summary": {
+    "requirements_checked": 4,
+    "passed": 3,
+    "not_passed": [
+      "NFR-P2"
+    ],
+    "verdicts": [
+      "NFR-P2 FPS webcam hiệu dụng: 4.076 -- MARGINAL",
+      "NFR-P3 Tỉ lệ so với thời gian thực: 0.754 -- PASS",
+      "NFR-R4 Tỉ lệ thành công khi chạy liên tục: 100.0 -- PASS",
+      "NFR-R5 Bản ghi mất sau khởi động lại: 0 -- PASS"
+    ],
+    "notes": [
+      "NFR-P2 did not meet its 5 FPS target in any configuration measured (best: 4.57 FPS on OpenVINO@640). It DID stay above the 3 FPS minimum threshold in all PyTorch/OpenVINO configurations. Reported as NOT MET against target, MET against threshold.",
+      "NFR-R4 ran for 15 minutes, not the 60 minutes the requirement specifies. It is therefore partial evidence and does not close the requirement.",
+      "All figures were taken while a YOLO training job consumed roughly 790% CPU on the same machine, and are pessimistic by an unquantified margin.",
+      "The main run measured models/baseline-416-v1.pt because backend/.env overrides the root .env; the root .env's OpenVINO path was never in effect and could not have loaded before the main.py fix."
+    ]
+  },
+  "nfr_p2_p3_backend_comparison": {
+    "purpose": "NFR-P2 missed its 5 FPS target on the shipped configuration, so the three mitigations that docs/00-requirements/non-functional-requirements.md section 1 requires to be exhausted before the target may be lowered were each measured.",
+    "baseline_pytorch@640": {
+      "label": "PyTorch baseline-416-v1.pt, imgsz 640 (the shipped configuration)",
+      "model_path": "D:\\DATN\\models\\baseline-416-v1.pt",
+      "effective_fps": 4.076,
+      "per_frame_latency_ms": {
+        "samples": 245,
+        "mean_ms": 228.95,
+        "p50_ms": 226.6,
+        "p95_ms": 254.46,
+        "p99_ms": 270.73,
+        "min_ms": 182.85,
+        "max_ms": 437.35
+      },
+      "realtime_ratio": 0.754
+    },
+    "onnx@640": {
+      "label": "ONNX Runtime, imgsz 640",
+      "model_path": "models/checkpoints/exported/onnx-640/best-cpu-epoch7.onnx",
+      "imgsz": 640,
+      "effective_fps": 1.874,
+      "p2_status": "FAIL",
+      "per_frame_latency_ms": {
+        "samples": 113,
+        "mean_ms": 516.53,
+        "p50_ms": 519.07,
+        "p95_ms": 592.96,
+        "p99_ms": 614.02,
+        "min_ms": 397.17,
+        "max_ms": 623.46
+      },
+      "realtime_ratio": 0.4476,
+      "p3_status": "PASS",
+      "video_wall_s": 31.837
+    },
+    "openvino@640": {
+      "label": "OpenVINO, imgsz 640",
+      "model_path": "models/checkpoints/exported/openvino-640/best-cpu-epoch7_openvino_model",
+      "imgsz": 640,
+      "effective_fps": 4.57,
+      "p2_status": "MARGINAL",
+      "per_frame_latency_ms": {
+        "samples": 275,
+        "mean_ms": 200.47,
+        "p50_ms": 206.44,
+        "p95_ms": 235.52,
+        "p99_ms": 257.53,
+        "min_ms": 131.93,
+        "max_ms": 308.85
+      },
+      "realtime_ratio": 0.6197,
+      "p3_status": "PASS",
+      "video_wall_s": 22.996
+    },
+    "openvino@480": {
+      "label": "OpenVINO, imgsz 480",
+      "model_path": "models/checkpoints/exported/openvino-480/best-cpu-epoch7_openvino_model",
+      "imgsz": 480,
+      "effective_fps": 4.346,
+      "p2_status": "MARGINAL",
+      "per_frame_latency_ms": {
+        "samples": 261,
+        "mean_ms": 212.49,
+        "p50_ms": 204.66,
+        "p95_ms": 258.9,
+        "p99_ms": 386.24,
+        "min_ms": 156.88,
+        "max_ms": 439.12
+      },
+      "realtime_ratio": 0.6838,
+      "p3_status": "PASS",
+      "video_wall_s": 20.839
+    },
+    "mitigation_findings": {
+      "1_onnx_or_openvino": "OpenVINO is the best CPU backend measured for NFR-P2: 4.08 FPS on the shipped PyTorch baseline rises to 4.57 FPS, a gain of about 12%. That is far short of the 2-3x speed-up the requirements document anticipated, because the speed-up applies to detection only and detection is not the bottleneck. ONNX Runtime was markedly WORSE end-to-end (1.87 FPS) despite a fast detector: it contends with PaddleOCR for CPU threads. For NFR-P3 the three backends landed at 0.75x, 0.62x and 0.68x with no consistent ordering -- that spread is competing-load noise, not a real difference, and all three pass the 0.3x target comfortably.",
+      "2_imgsz_480": "No gain end-to-end for NFR-P2 (4.57 -> 4.35 FPS, within noise). Detection did fall from 23.3 ms to 15.3 ms as intended, but by that point detection was already only 12% of the pipeline, so an 8 ms saving is invisible against a ~170 ms OCR stage. The option works and is simply spent.",
+      "3_paddleocr_mobile": "ALREADY IN USE. The server log reports the engine as 'paddleocr-PP-OCRv5-mobile(det=PP-OCRv5_mobile_det)', so this option was spent before the measurement began and offers nothing further.",
+      "conclusion": "All three documented mitigations are now exhausted. Best measured: OpenVINO at imgsz 640, 4.57 effective FPS -- above the 3 FPS minimum threshold, below the 5 FPS target. NFR-P2 is therefore NOT MET against target and MET against threshold. Two caveats must travel with that verdict. First, a YOLO training job consumed roughly 790% CPU (about 8 of 20 logical cores) during every run here, so every figure is a floor. Second, the OCR stage -- which no mitigation touched -- drifted 34% between runs under that load, which is larger than the entire gap to the target. The measurement must be repeated on an idle machine before NFR-P2 is declared failed or its target lowered."
+    },
+    "backend_load_bug_fixed": "backend/main.py gated weight loading on Path.is_file(). An OpenVINO export is a directory, so the backend could never load one and started degraded with model_loaded=false -- even though the root .env is configured to point at exactly such a directory. Changed to Path.exists() as part of this measurement; without that fix mitigation (1) could not be tested through the API at all."
+  },
+  "pipeline_stage_breakdown": {
+    "source": "Median of every 'Pipeline run finished' log record emitted by the server during these measurements. The main log mixes the webcam, video and 15-minute soak phases, so its sample is much larger.",
+    "by_backend": {
+      "pytorch_baseline@640": {
+        "pipeline_runs_sampled": 4209,
+        "detect_ms_median": 86.71,
+        "ocr_ms_median": 124.67,
+        "total_ms_median": 212.77,
+        "ocr_share_percent": 58.6,
+        "detect_share_percent": 40.8
+      },
+      "onnx@640": {
+        "pipeline_runs_sampled": 149,
+        "detect_ms_median": 51.08,
+        "ocr_ms_median": 446.24,
+        "total_ms_median": 507.92,
+        "ocr_share_percent": 87.9,
+        "detect_share_percent": 10.1
+      },
+      "openvino@640": {
+        "pipeline_runs_sampled": 311,
+        "detect_ms_median": 23.27,
+        "ocr_ms_median": 166.45,
+        "total_ms_median": 191.02,
+        "ocr_share_percent": 87.1,
+        "detect_share_percent": 12.2
+      },
+      "openvino@480": {
+        "pipeline_runs_sampled": 297,
+        "detect_ms_median": 15.29,
+        "ocr_ms_median": 171.31,
+        "total_ms_median": 188.08,
+        "ocr_share_percent": 91.1,
+        "detect_share_percent": 8.1
+      }
+    },
+    "finding": "The bottleneck MOVES between configurations, and an earlier draft of this report got it wrong by generalising from the optimised runs. On the shipped PyTorch baseline the split is detection 86.7 ms (40.8%) against OCR 124.7 ms (58.6%) -- detection is a major cost. On OpenVINO it is detection 23.3 ms (12.2%) against OCR 166.5 ms (87.1%) -- OCR dominates. So the detector mitigation was aimed at a real bottleneck, and it worked on its own terms: OpenVINO cut detection from 86.7 ms to 23.3 ms, a 3.7x speed-up that matches the figure Phase 1 found published by Ultralytics for this CPU class.",
+    "onnx_anomaly": "ONNX Runtime's OCR stage more than doubled (166 ms -> 446 ms) while its detector stayed fast. The two runtimes are each spawning their own thread pool on a machine that was already oversubscribed, so they contend rather than compose. This is a measurement-environment effect as much as a property of ONNX, and would need re-checking on an idle machine with thread counts pinned.",
+    "why_the_speedup_did_not_reach_the_target": "A 3.7x faster detector moved end-to-end throughput only from 4.08 to 4.57 FPS. Two reasons, and they should not be conflated. (1) Amdahl: detection was 41% of the pipeline, so even removing it entirely caps the gain at about 1.7x. (2) Confounding: the measured OCR median drifted from 124.7 ms on the baseline run to 166.5 ms on the OpenVINO run, and OCR was untouched by the change -- that 34% drift is competing-load noise from the concurrent training job, and it ate most of the detector saving. Holding OCR at its baseline 124.7 ms, the OpenVINO pipeline would total about 148 ms, i.e. roughly 6.7 FPS, which would PASS. That projection is arithmetic, not a measurement, and is recorded here only to argue that the NFR-P2 target is not obviously unreachable on an idle machine.",
+    "finding_supersedes": "Supersedes the OCR-share claim in nfr_p2_p3_backend_comparison.mitigation_findings, which was derived from the optimised runs alone and does not hold for the shipped baseline."
+  }
+}

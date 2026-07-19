@@ -1,0 +1,68 @@
+{
+  "images_checked": 236,
+  "images_ok": 236,
+  "images_with_errors": 0,
+  "boxes_checked": 240,
+  "errors": 0,
+  "warnings": 53,
+  "issues_by_code": {
+    "warning:small_box": 53
+  },
+  "min_box_area_threshold": 0.005,
+  "aspect_ratio": {
+    "count": 240,
+    "min": 0.15625,
+    "median": 1.970175,
+    "mean": 2.503015,
+    "max": 7.904762,
+    "stdev": 1.632442,
+    "p05": 0.714286,
+    "p95": 5.820513,
+    "threshold": 2.5,
+    "estimated_one_line": 84,
+    "estimated_two_line": 156,
+    "estimated_two_line_ratio": 0.65,
+    "method": "HEURISTIC",
+    "method_note": "Line count is inferred from box aspect ratio against the 2.5 threshold, derived from QCVN 08:2024/BCA nominal plate sizes (1-line car 520x110mm = 4.727; 2-line car 330x165mm = 2.000; motorcycle 190x140mm = 1.357). Perspective, loose boxes and bent plates all move a plate across the threshold, so these counts are an approximate distribution and NOT ground truth."
+  },
+  "box_area": {
+    "name": "box_area_fraction",
+    "count": 240,
+    "min": 0.000391,
+    "median": 0.010021,
+    "mean": 0.013975,
+    "max": 0.198931,
+    "stdev": 0.017367,
+    "p05": 0.002539,
+    "p95": 0.035991
+  },
+  "boxes_per_image": {
+    "name": "boxes_per_image",
+    "count": 236,
+    "min": 1.0,
+    "median": 1.0,
+    "mean": 1.016949,
+    "max": 2.0,
+    "stdev": 0.129081,
+    "p05": 1.0,
+    "p95": 1.0
+  },
+  "per_dataset": {
+    "train": {
+      "boxes": 170,
+      "images": 166,
+      "line_estimate_1": 67,
+      "line_estimate_2": 103,
+      "small_box": 38
+    },
+    "valid": {
+      "boxes": 70,
+      "images": 70,
+      "line_estimate_1": 17,
+      "line_estimate_2": 53,
+      "small_box": 15
+    }
+  },
+  "input_dir": "D:\\DATN\\datasets\\raw\\roboflow_demo_tracking",
+  "truncated": false
+}

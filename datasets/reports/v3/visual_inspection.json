@@ -1,0 +1,76 @@
+{
+  "method": "Side-by-side contact sheets rendered at fixed Hamming distances and read by eye. The verdict for each pair is whether the two frames show the SAME vehicle (same plate string) or merely the same camera scene.",
+  "hash_parity_finding": {
+    "claim": "Hamming distance between phash values on this corpus is ALWAYS even.",
+    "evidence": "All 15133 hashes have even popcount (parity-0 count = 15133, parity-1 count = 0). imagehash.phash sets a bit per DCT coefficient above the median, so every hash carries exactly 32 set bits; two hashes of equal weight w satisfy d = 2*(w - |A and B|), which is even. 4498500 sampled pairs: 4498500 even, 0 odd.",
+    "consequence": "The 'minimum distance = 6' seen in the Phase 7 audit after grouping at threshold 5 is a mechanical artifact, not a truncated distribution: 6 is simply the next even value above 5. Odd thresholds are wasted (11 behaves as 10, 13 as 12, 15 as 14)."
+  },
+  "corrections_to_phase7": [
+    {
+      "claim": "hf_vn_plates_segment_000032.png <-> roboflow_school_fuhih_001383.jpg (d=10) is the same photograph present in two source datasets",
+      "verdict": "REFUTED by visual inspection",
+      "observed": "Left is a Toyota Land Cruiser, plate 52Y-6490. Right is a Toyota Hiace van, plate 51F-220.29, timestamped 06/12/2017 10:37:53. Different vehicles, different plates, same fixed parking-barrier camera."
+    }
+  ],
+  "pairs_inspected": [
+    {
+      "distance": 6,
+      "verdict": "MIXED",
+      "genuine_duplicates": [
+        "red Hyundai 30F-322.45 appears twice, near-identical crop",
+        "white scooter, identical frame, timestamp 2000-01-09 07:14:43 on both"
+      ],
+      "false_positives": [
+        "63-H5 1336 vs 72-C1 050.18",
+        "51-U7 4598 vs 51-V4 4579"
+      ]
+    },
+    {
+      "distance": 8,
+      "verdict": "MIXED",
+      "genuine_duplicates": [
+        "white Hyundai 30A-620.43, same vehicle, consecutive frames"
+      ],
+      "false_positives": [
+        "63-B8 552.46 vs 93-L1 012.80",
+        "75-F1 298.30 vs 73-G1 175.44"
+      ]
+    },
+    {
+      "distance": 10,
+      "verdict": "MIXED - genuine cross-source duplicate confirmed",
+      "genuine_duplicates": [
+        "plate 59-L2 237.14, same motorcycle, in BOTH hf_vn_plates_segment_001346.png and roboflow_school_fuhih_005961.jpg"
+      ],
+      "false_positives": [
+        "61-D1 079.11 vs 59-Y1 919.82",
+        "55-P2 3999 vs 63-V5 0914"
+      ]
+    },
+    {
+      "distance": 12,
+      "verdict": "NO genuine duplicates observed in the sample",
+      "genuine_duplicates": [],
+      "false_positives": [
+        "59-B3 761.93 vs 59-L2 054.42",
+        "Mazda 30F-204.49 vs Chevrolet 29D-215.96",
+        "Ford 30A-601.68 vs Ford 61A-775.29",
+        "59-F1 010.59 vs 36-F4 747.8"
+      ]
+    },
+    {
+      "distance": 14,
+      "verdict": "MOSTLY false positives, but one same-vehicle pair found",
+      "genuine_duplicates": [
+        "plate 51F-155.85, same white Hyundai, two visits to the same barrier (04/12/2017 07:47:33 and 02/12/2017 13:08:21) - landed in two different splits of yolo_v3"
+      ],
+      "false_positives": [
+        "51F-222.61 vs Audi 51G-510.08",
+        "51A-554.33 vs 29D-3263",
+        "29A-239.50 vs 48A-028.66",
+        "56S-0009 vs 30M-4703"
+      ]
+    }
+  ],
+  "conclusion": "Genuine near-duplicates on this corpus live at distances 6-10 and are mixed with same-camera false positives throughout that range. At 12 and above the sampled pairs are dominated by same-camera / different-vehicle matches. Threshold 10 was therefore chosen for yolo_v3. Residual risk above 10 is NOT the same photograph but the same vehicle revisiting the same fixed camera on another day (51F-155.85). A perceptual hash cannot separate that from an unrelated vehicle in the same scene; only plate-string-aware grouping could, and plate transcriptions do not exist for this detection corpus (only for the separate roboflow_ocr_plate set)."
+}

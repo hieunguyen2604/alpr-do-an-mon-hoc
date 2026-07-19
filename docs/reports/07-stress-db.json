@@ -1,0 +1,122 @@
+{
+  "measured_at": "2026-07-19T15:44:00",
+  "hardware": {
+    "cpu_name": "Intel(R) Core(TM) i5-14600K",
+    "physical_cores": 14,
+    "logical_cores": 20,
+    "ram_total_gb": 31.77,
+    "platform": "Windows 11",
+    "python_version": "3.13.12",
+    "competing_processes": [
+      "pid=4 cpu=32% System",
+      "pid=18780 cpu=946% D:\\DATN\\backend\\.venv\\Scripts\\python.exe -m ai.evaluation.stress_test --skip-db --requests-per-level 20 --soak-seconds 3",
+      "pid=27516 cpu=740% D:\\DATN\\.venv-ai\\Scripts\\python.exe -m ai.training.train --config yolo11n_finetune.yaml --data datasets/processed/yolo/d",
+      "pid=36232 cpu=97% D:\\DATN\\backend\\.venv\\Scripts\\python.exe -m pytest --cov=ai.inference --cov=backend --cov-report=term -q --no-header -p "
+    ]
+  },
+  "nfr_p6_history_query": {
+    "row_count": 10000,
+    "repeats": 10,
+    "target_ms": 500.0,
+    "scenarios": {
+      "page_1_no_filter": {
+        "samples": 10,
+        "mean_ms": 1.15,
+        "p50_ms": 0.83,
+        "p95_ms": 3.91,
+        "p99_ms": 3.91,
+        "min_ms": 0.7,
+        "max_ms": 3.91,
+        "matched_rows": 10000,
+        "returned_rows": 20,
+        "meets_target": true
+      },
+      "page_50_no_filter": {
+        "samples": 10,
+        "mean_ms": 0.76,
+        "p50_ms": 0.74,
+        "p95_ms": 0.87,
+        "p99_ms": 0.87,
+        "min_ms": 0.69,
+        "max_ms": 0.87,
+        "matched_rows": 10000,
+        "returned_rows": 20,
+        "meets_target": true
+      },
+      "deep_page_400": {
+        "samples": 10,
+        "mean_ms": 1.13,
+        "p50_ms": 1.09,
+        "p95_ms": 1.69,
+        "p99_ms": 1.69,
+        "min_ms": 0.87,
+        "max_ms": 1.69,
+        "matched_rows": 10000,
+        "returned_rows": 20,
+        "meets_target": true
+      },
+      "filter_input_type": {
+        "samples": 10,
+        "mean_ms": 1.56,
+        "p50_ms": 1.2,
+        "p95_ms": 4.09,
+        "p99_ms": 4.09,
+        "min_ms": 1.0,
+        "max_ms": 4.09,
+        "matched_rows": 3338,
+        "returned_rows": 20,
+        "meets_target": true
+      },
+      "filter_time_range": {
+        "samples": 10,
+        "mean_ms": 1.61,
+        "p50_ms": 1.38,
+        "p95_ms": 4.16,
+        "p99_ms": 4.16,
+        "min_ms": 1.13,
+        "max_ms": 4.16,
+        "matched_rows": 4320,
+        "returned_rows": 20,
+        "meets_target": true
+      },
+      "filter_confidence": {
+        "samples": 10,
+        "mean_ms": 3.13,
+        "p50_ms": 2.11,
+        "p95_ms": 5.27,
+        "p99_ms": 5.27,
+        "min_ms": 1.63,
+        "max_ms": 5.27,
+        "matched_rows": 2713,
+        "returned_rows": 20,
+        "meets_target": true
+      },
+      "filter_plate_substring": {
+        "samples": 10,
+        "mean_ms": 16.42,
+        "p50_ms": 15.9,
+        "p95_ms": 18.71,
+        "p99_ms": 18.71,
+        "min_ms": 14.75,
+        "max_ms": 18.71,
+        "matched_rows": 67,
+        "returned_rows": 20,
+        "meets_target": true
+      },
+      "combined_filters": {
+        "samples": 10,
+        "mean_ms": 1.74,
+        "p50_ms": 1.46,
+        "p95_ms": 3.67,
+        "p99_ms": 3.67,
+        "min_ms": 1.38,
+        "max_ms": 3.67,
+        "matched_rows": 1140,
+        "returned_rows": 20,
+        "meets_target": true
+      }
+    },
+    "worst_p95_ms": 18.71,
+    "meets_target": true
+  }
+}

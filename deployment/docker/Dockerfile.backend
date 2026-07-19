@@ -1,0 +1,190 @@
+# syntax=docker/dockerfile:1.7
+#
+# Backend image: FastAPI + the pure-Python `ai/` inference package.
+#
+# Build context is the PROJECT ROOT, not this directory, because the image must
+# contain both `backend/` (API layer) and `ai/` (inference layer). Keeping the
+# root as the context is also what makes `ai.inference.config.PROJECT_ROOT`
+# resolve correctly: that value is derived from `<root>/ai/inference/config.py`
+# by walking two levels up, so the package must live at `/app/ai/inference/`
+# for `/app` to be seen as the project root (NFR-M4 -- no hard-coded paths).
+#
+# Base is pinned to `bookworm` rather than the floating `slim` tag on purpose:
+# Debian 13 (trixie) renamed several runtime libraries used here to their
+# `t64` variants (`libglib2.0-0` -> `libglib2.0-0t64`), which silently breaks
+# the apt-get step whenever the floating tag moves to a new Debian release.
+
+# ---------------------------------------------------------------------------
+# Stage 1 -- builder: compile wheels into a self-contained virtual environment
+# ---------------------------------------------------------------------------
+FROM python:3.12-slim-bookworm AS builder
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PIP_NO_CACHE_DIR=1 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1
+
+# Build-time toolchain only. None of this reaches the runtime stage.
+RUN apt-get update \
+    && apt-get install --no-install-recommends -y \
+        build-essential \
+        gcc \
+        g++ \
+    && rm -rf /var/lib/apt/lists/*
+
+# A virtual environment is used so the runtime stage can copy one directory
+# instead of trying to reproduce a site-packages tree spread across the image.
+ENV VIRTUAL_ENV=/opt/venv
+RUN python -m venv "${VIRTUAL_ENV}"
+ENV PATH="${VIRTUAL_ENV}/bin:${PATH}"
+
+WORKDIR /build
+
+# --- CPU-only PyTorch -------------------------------------------------------
+# This matters more than any other line in this file. `pip install torch` from
+# the default PyPI index pulls the CUDA build together with the bundled NVIDIA
+# runtime libraries: roughly 2.5-3 GB of wheels that can never be used, because
+# this deployment has no GPU (decision AD-06). Installing from the dedicated
+# CPU index instead brings the same functionality in ~200 MB.
+#
+# Torch is installed BEFORE the requirements file so that pip already considers
+# the dependency satisfied when it processes `backend/requirements.txt`.
+# Consequence for Phase 5: that file must either omit torch/torchvision, or pin
+# versions that also exist on the CPU index -- otherwise pip re-resolves them
+# against PyPI and the CUDA wheels come back in.
+ARG TORCH_INDEX_URL=https://download.pytorch.org/whl/cpu
+ARG TORCH_VERSION=""
+RUN pip install --upgrade pip setuptools wheel \
+    && if [ -n "${TORCH_VERSION}" ]; then \
+           pip install --index-url "${TORCH_INDEX_URL}" \
+               "torch==${TORCH_VERSION}" torchvision ; \
+       else \
+           pip install --index-url "${TORCH_INDEX_URL}" torch torchvision ; \
+       fi
+
+# Copied on its own so that editing application source does not invalidate the
+# dependency layer -- by far the most expensive layer in this image.
+COPY backend/requirements.txt /build/requirements.txt
+RUN pip install -r /build/requirements.txt
+
+# --- Inference stack (ultralytics + PaddleOCR) ------------------------------
+# Installed as its own layer AFTER the API requirements so that a change to the
+# small, frequently-edited API dependency list does not invalidate this much
+# more expensive one.
+#
+# This is what makes `backend.main.build_pipeline` return the REAL pipeline
+# instead of `UnavailablePipeline`. Without it the container starts, answers
+# /health with model_loaded=false, and rejects every detection request.
+COPY backend/requirements-inference.txt /build/requirements-inference.txt
+RUN pip install -r /build/requirements-inference.txt
+
+# ---------------------------------------------------------------------------
+# Stage 2 -- runtime: no compilers, no build caches, non-root
+# ---------------------------------------------------------------------------
+FROM python:3.12-slim-bookworm AS runtime
+
+# System libraries required at runtime:
+#   libgl1, libglib2.0-0  -> OpenCV (`cv2`) shared-object dependencies.
+#                            These can be dropped if backend/requirements.txt
+#                            uses `opencv-python-headless` instead of
+#                            `opencv-python` (saves roughly 200 MB).
+#   libmagic1             -> python-magic, used to validate uploads by magic
+#                            bytes rather than by file extension (NFR-S1).
+#   libgomp1              -> OpenMP runtime; PyTorch and PaddlePaddle both need
+#                            it for CPU thread parallelism.
+RUN apt-get update \
+    && apt-get install --no-install-recommends -y \
+        libgl1 \
+        libglib2.0-0 \
+        libmagic1 \
+        libgomp1 \
+    && rm -rf /var/lib/apt/lists/*
+
+# --- Unprivileged user ------------------------------------------------------
+# A container escape from a root process is a host-level compromise; from an
+# unprivileged one it is not. UID/GID 1000 matches the first regular user on
+# most Linux hosts, which keeps bind-mounted directories writable.
+ARG APP_UID=1000
+ARG APP_GID=1000
+RUN groupadd --gid "${APP_GID}" appuser \
+    && useradd --uid "${APP_UID}" --gid "${APP_GID}" \
+        --create-home --home-dir /home/appuser --shell /usr/sbin/nologin appuser
+
+ENV VIRTUAL_ENV=/opt/venv \
+    PATH="/opt/venv/bin:${PATH}" \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PYTHONPATH=/app
+
+# --- CPU inference thread budget -------------------------------------------
+# Decisive for performance on a GPU-less host. Left unset, OpenMP spawns one
+# thread per visible core; several such pools (torch, Paddle, OpenBLAS) then
+# oversubscribe the CPU and fight each other, which typically makes inference
+# SLOWER than a bounded pool while pushing memory past the NFR-P7 budget of
+# 2 GB. Override via the compose file / .env for the host in question.
+ENV OMP_NUM_THREADS=4 \
+    MKL_NUM_THREADS=4 \
+    OPENBLAS_NUM_THREADS=4 \
+    NUMEXPR_NUM_THREADS=4 \
+    VECLIB_MAXIMUM_THREADS=4
+
+# --- Writable cache locations ----------------------------------------------
+# PaddleOCR downloads its detection/recognition weights on first use and
+# Ultralytics writes a settings file at import time. Both default to locations
+# under $HOME; pointing them at an explicit directory (mounted as a volume in
+# docker-compose.yml) stops the weights being re-downloaded on every container
+# start and prevents a hard failure when HOME is not writable.
+ENV HOME=/home/appuser \
+    XDG_CACHE_HOME=/home/appuser/.cache \
+    YOLO_CONFIG_DIR=/home/appuser/.config/Ultralytics \
+    MPLCONFIGDIR=/home/appuser/.cache/matplotlib \
+    PADDLE_PDX_CACHE_HOME=/home/appuser/.cache/paddlex
+
+COPY --from=builder /opt/venv /opt/venv
+
+WORKDIR /app
+
+# Only the two Python layers are copied. Datasets, notebooks, docs and model
+# weights stay out of the image: weights are mounted read-only at runtime so
+# that retraining does not require an image rebuild.
+COPY --chown=appuser:appuser ai/ /app/ai/
+COPY --chown=appuser:appuser backend/ /app/backend/
+
+# Created in the image (not only in the compose file) so the directories exist
+# with the right ownership before Docker populates any named volume from them.
+RUN mkdir -p /app/data /app/storage /app/models \
+        /home/appuser/.cache /home/appuser/.config/Ultralytics \
+    && chown -R appuser:appuser /app/data /app/storage /app/models /home/appuser
+
+# --- Runtime configuration --------------------------------------------------
+# Defaults are absolute container paths. Every one of them is read through the
+# central configuration object (NFR-M4); nothing here is duplicated in code.
+ENV ALPR_MODEL_PATH=/app/models/best.pt \
+    ALPR_DEVICE=cpu \
+    ALPR_OCR_USE_GPU=false \
+    ALPR_DATABASE_URL=sqlite:////app/data/alpr.db \
+    ALPR_STORAGE_ROOT=/app/storage \
+    ALPR_LOG_LEVEL=info
+
+USER appuser
+
+EXPOSE 8000
+
+# Implemented with the interpreter that is guaranteed to be present rather than
+# with curl, which would mean carrying an extra apt package purely for probing.
+# start-period covers model loading: NFR-P4 allows up to 30 s worst case, so a
+# 60 s grace window keeps a slow cold start from being reported as a failure.
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+    CMD python -c "import sys, urllib.request; sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=5).status == 200 else 1)"
+
+# Single worker, deliberately. Each uvicorn worker loads its own copy of the
+# YOLO and OCR weights into memory, so N workers multiply resident memory by N
+# while contending for the same CPU cores. Concurrency (NFR-SC1, >= 5) comes
+# from async request handling and the background job queue, not from processes.
+# Exec form keeps uvicorn as PID 1 so SIGTERM reaches it and shutdown is clean.
+CMD ["uvicorn", "backend.main:app", \
+     "--host", "0.0.0.0", \
+     "--port", "8000", \
+     "--workers", "1", \
+     "--proxy-headers", \
+     "--forwarded-allow-ips", "*"]

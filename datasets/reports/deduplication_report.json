@@ -1,0 +1,22 @@
+{
+  "threshold": 5,
+  "hash": "phash-64bit",
+  "images_scanned": 4578,
+  "images_unreadable": 0,
+  "duplicate_pairs": 193,
+  "duplicate_groups": 144,
+  "cross_dataset_groups": 0,
+  "cross_dataset_pairs_by_dataset": {},
+  "removable_images": 181,
+  "unique_images_after_dedup": 4397,
+  "images_per_dataset": {
+    "hf_vn_plates_segment": 4578
+  },
+  "removable_per_dataset": {
+    "hf_vn_plates_segment": 181
+  },
+  "unreadable_images": [],
+  "leakage_warning": "Cross-dataset duplicate groups place the same photograph under two dataset names. split.py must keep every group member in one split, otherwise test accuracy measures memorisation.",
+  "input_dir": "D:\\DATN\\datasets\\raw",
+  "applied": false
+}

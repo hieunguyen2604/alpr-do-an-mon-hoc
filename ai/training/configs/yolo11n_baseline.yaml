@@ -1,0 +1,115 @@
+# =============================================================================
+# YOLO11n -- BASELINE (train from a randomly initialised backbone)
+# =============================================================================
+# Purpose: the reference number the thesis compares everything else against.
+# Training from scratch isolates the contribution of transfer learning: run this
+# and `yolo11n_finetune.yaml` on the identical split and the mAP gap IS the
+# measured value of COCO pretraining. Expect this run to be clearly WORSE than
+# the fine-tuned one on ~37k images -- that is the point, not a failure.
+#
+# Run:  python -m ai.training.train --config yolo11n_baseline.yaml
+# =============================================================================
+
+description: >-
+  YOLO11n trained from scratch on the merged Vietnamese plate dataset.
+  Reference run for the transfer-learning ablation; not the shipping model.
+
+# --- Model ------------------------------------------------------------------
+model_variant: yolo11n
+# Empty string => build the architecture from `yolo11n.yaml` with random weights.
+# Set this to `yolo11n.pt` to fine-tune instead (see yolo11n_finetune.yaml).
+pretrained_weights: ""
+
+# --- Data -------------------------------------------------------------------
+# Relative to the repository root; produced by the Phase 2 dataset pipeline.
+data: datasets/processed/data.yaml
+
+# --- Core schedule ----------------------------------------------------------
+# 640 px: plates are small objects. Lowering this is the first thing that hurts
+# recall, so it is held constant across every config in this directory.
+imgsz: 640
+# From scratch needs a longer schedule than fine-tuning to converge at all.
+epochs: 150
+# 16 fits comfortably on a Colab T4 at 640 px. Use -1 for Ultralytics AutoBatch
+# if the assigned GPU varies between sessions.
+batch: 16
+# Stop after 30 epochs without fitness improvement. Wider than the fine-tune
+# config because from-scratch training plateaus and then improves again.
+patience: 30
+
+# --- Optimiser --------------------------------------------------------------
+optimizer: AdamW
+# Higher initial LR than fine-tuning: there is no pretrained structure to
+# preserve, so the model can afford to move fast early on.
+lr0: 0.002
+# Final LR = lr0 * lrf = 2e-5.
+lrf: 0.01
+momentum: 0.937
+weight_decay: 0.0005
+# Longer warm-up: random weights produce large, noisy early gradients.
+warmup_epochs: 5.0
+warmup_momentum: 0.8
+warmup_bias_lr: 0.1
+cos_lr: false
+
+# --- Loss weights -----------------------------------------------------------
+# box raised above the Ultralytics default (7.5): localisation quality decides
+# crop quality, and a sloppy crop is unreadable to the OCR stage downstream.
+box: 8.0
+# Low: the detector has very few classes, classification is the easy part.
+cls: 0.5
+dfl: 1.5
+
+# --- Augmentation -----------------------------------------------------------
+# Hue jitter kept tiny: plate BACKGROUND COLOUR is semantically meaningful in
+# Vietnam (white / yellow / blue / red encode the vehicle category). Scrambling
+# hue would destroy a real signal.
+hsv_h: 0.015
+hsv_s: 0.7
+# Generous brightness jitter: night captures, headlight glare, backlit plates.
+hsv_v: 0.4
+# Small rotation only -- real plates are near-horizontal on a mounted vehicle.
+degrees: 5.0
+translate: 0.1
+scale: 0.5
+shear: 2.0
+# Mild perspective warp: off-axis gate and parking cameras are the norm.
+perspective: 0.0005
+# ---------------------------------------------------------------------------
+# flipud / fliplr MUST stay 0.0 and the loader rejects any other value.
+# A horizontally flipped plate has mirrored glyphs: it is not a plate that can
+# exist, and training on it corrupts the signal the OCR stage depends on.
+# ---------------------------------------------------------------------------
+flipud: 0.0
+fliplr: 0.0
+copy_paste: 0.0
+# Random erasing: plates are frequently occluded by mud, brackets, tow bars.
+erasing: 0.4
+# Mosaic is the single most effective augmentation for small objects.
+mosaic: 1.0
+# Disable mosaic for the final 15 epochs so the model finishes on clean images.
+close_mosaic: 15
+# MixUp blends two images: the resulting plate text is unreadable nonsense.
+mixup: 0.0
+
+# --- Runtime ----------------------------------------------------------------
+# 'auto' -> cuda if available, else mps, else cpu (resolved in train.py).
+device: auto
+workers: 8
+project: runs
+name: yolo11n_baseline
+exist_ok: false
+# Fixed seed + deterministic kernels: a thesis number must be reproducible.
+seed: 42
+deterministic: true
+# Checkpoint every 10 epochs. NOT optional on Colab -- sessions are killed
+# without warning and a run with only last.pt can lose hours of GPU time.
+save_period: 10
+val: true
+plots: true
+cache: false
+amp: true
+rect: false
+single_cls: false
+fraction: 1.0
+verbose: true

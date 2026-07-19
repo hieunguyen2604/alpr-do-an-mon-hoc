@@ -1,0 +1,4 @@
+# Images dropped: verify_annotations.py reported error-severity issues.
+# Generated from datasets/reports/v2/verify/*/annotation_issues.csv
+D:\DATN\datasets\raw\roboflow_traffic_camera\train\images\AQUA5_80651_checkin_2020-10-29-13-25NcqqbyFPPl_jpg.rf.64d5362dfd4b0c032476b2c53aeda8fc.jpg
+D:\DATN\datasets\raw\roboflow_traffic_camera\train\images\AQUA7_71990_checkin_2020-11-1-10-59_RyT10JuPE_jpg.rf.4a762595fe72bbba1b369461fc9bde1f.jpg

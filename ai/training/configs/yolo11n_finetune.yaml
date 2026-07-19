@@ -1,0 +1,106 @@
+# =============================================================================
+# YOLO11n -- FINE-TUNE from COCO-pretrained weights   [PRIMARY / SHIPPING RUN]
+# =============================================================================
+# This is the configuration that produces the model the system actually ships.
+# Phase 1 selected YOLO11n as the primary detector: it is the only variant whose
+# CPU latency fits the deployment target (no CUDA GPU on the target machine).
+#
+# `yolo11n.pt` is downloaded automatically by Ultralytics on first use. COCO
+# does not contain a "license plate" class, but the low-level features -- edges,
+# corners, high-contrast rectangles -- transfer extremely well, which is exactly
+# what a plate detector needs.
+#
+# Run:  python -m ai.training.train --config yolo11n_finetune.yaml
+# =============================================================================
+
+description: >-
+  YOLO11n fine-tuned from COCO weights on the merged Vietnamese plate dataset
+  (VNLP + deduplicated Roboflow/Kaggle sets). Primary shipping configuration.
+
+# --- Model ------------------------------------------------------------------
+model_variant: yolo11n
+# Non-empty => transfer learning. This single line is the difference from the
+# baseline config, and the mAP gap between the two runs measures its value.
+pretrained_weights: yolo11n.pt
+
+# --- Data -------------------------------------------------------------------
+data: datasets/processed/data.yaml
+
+# --- Core schedule ----------------------------------------------------------
+imgsz: 640
+# Fewer epochs than from-scratch: pretrained features converge much faster.
+epochs: 100
+batch: 16
+# Tighter than the baseline; a fine-tune that has not improved in 20 epochs is
+# done, and continuing only overfits.
+patience: 20
+
+# --- Optimiser --------------------------------------------------------------
+# AdamW: more forgiving than SGD on a mid-sized dataset and needs less LR tuning.
+optimizer: AdamW
+# Deliberately LOW. A high LR on pretrained weights causes catastrophic
+# forgetting: the useful COCO features are destroyed in the first few hundred
+# steps and the run ends up worse than training from scratch.
+lr0: 0.001
+# Final LR = lr0 * lrf = 1e-5.
+lrf: 0.01
+momentum: 0.937
+weight_decay: 0.0005
+# Short warm-up is enough -- the weights already start from a sane point.
+warmup_epochs: 3.0
+warmup_momentum: 0.8
+warmup_bias_lr: 0.1
+# Cosine decay: smoother tail than the linear schedule, which measurably helps
+# the last few mAP points on a fine-tune.
+cos_lr: true
+
+# --- Loss weights -----------------------------------------------------------
+# Raised from the 7.5 default: tight boxes -> clean crops -> readable OCR.
+# This matters more here than in any generic detection task, because the
+# detector's output is consumed by a second model, not by a human.
+box: 8.0
+cls: 0.5
+dfl: 1.5
+
+# --- Augmentation -----------------------------------------------------------
+# Identical policy to the baseline so the two runs remain directly comparable.
+# Plate background colour carries meaning (white/yellow/blue/red) -> low hue jitter.
+hsv_h: 0.015
+hsv_s: 0.7
+hsv_v: 0.4
+degrees: 5.0
+translate: 0.1
+scale: 0.5
+shear: 2.0
+perspective: 0.0005
+# ---------------------------------------------------------------------------
+# MUST remain 0.0 -- horizontal flip mirrors the printed characters.
+# The config loader raises ValueError on any non-zero value here.
+# ---------------------------------------------------------------------------
+flipud: 0.0
+fliplr: 0.0
+copy_paste: 0.0
+erasing: 0.4
+mosaic: 1.0
+# Last 10 epochs mosaic-free, matching the shorter schedule.
+close_mosaic: 10
+mixup: 0.0
+
+# --- Runtime ----------------------------------------------------------------
+device: auto
+workers: 8
+project: runs
+name: yolo11n_finetune
+exist_ok: false
+seed: 42
+deterministic: true
+# Colab-survival setting: keep a numbered checkpoint every 10 epochs.
+save_period: 10
+val: true
+plots: true
+cache: false
+amp: true
+rect: false
+single_cls: false
+fraction: 1.0
+verbose: true

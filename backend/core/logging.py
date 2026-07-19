@@ -1,0 +1,516 @@
+"""Structured JSON logging with per-request correlation identifiers.
+
+Every log line is one JSON object on one line. That format is chosen because
+logs from a video job are interleaved with logs from concurrent uploads, and
+plain text cannot be filtered back apart afterwards. With JSON, one ``jq``
+expression reconstructs a single request's story::
+
+    jq 'select(.request_id == "3f2a...")' backend.log
+
+The correlation identifier travels in a :class:`~contextvars.ContextVar`, not
+in a function argument. That matters: a value passed by hand would have to be
+threaded through the service layer, the repository layer and the pipeline
+adapter, and every function that forgot to forward it would silently break the
+trace. A context variable is set once by the HTTP middleware and is then
+visible to every ``logger`` call underneath it, including inside ``async``
+tasks, because each task inherits a copy of the context at creation time.
+
+What must never appear in a log line
+------------------------------------
+NFR-S5 forbids logging file contents. Log the filename, the size and the
+detected MIME type; never the bytes. :func:`get_logger` cannot enforce that --
+it is a review rule, stated here because this is where someone looks when
+deciding what to log.
+
+Relationship with :mod:`backend.core.exceptions`
+------------------------------------------------
+The split is deliberate and is the mechanism behind NFR-S4: the technical
+detail of a failure is written *here*, with a stack trace, while the user
+receives only the Vietnamese ``user_message`` carried by the exception. The
+``request_id`` appears on both sides, so a user quoting the identifier from an
+error screen lets a developer find the exact stack trace behind it.
+"""
+
+from __future__ import annotations
+
+import datetime as dt
+import json
+import logging
+import sys
+import uuid
+from collections.abc import Iterator, Mapping
+from contextlib import contextmanager
+from contextvars import ContextVar, Token
+from typing import Any, Final, TextIO
+
+__all__ = [
+    "NO_REQUEST_ID",
+    "JsonFormatter",
+    "RequestIdFilter",
+    "setup_logging",
+    "get_logger",
+    "new_request_id",
+    "get_request_id",
+    "set_request_id",
+    "reset_request_id",
+    "request_context",
+    "safe_extra",
+]
+
+NO_REQUEST_ID: Final[str] = "-"
+"""Placeholder used for log records emitted outside any request.
+
+Start-up, shutdown and background maintenance produce real log lines that
+belong to no HTTP request. They still get the ``request_id`` key so that every
+record has an identical shape -- a log consumer never has to handle a missing
+field.
+"""
+
+_request_id: ContextVar[str] = ContextVar("alpr_request_id", default=NO_REQUEST_ID)
+"""Holds the identifier of the request being served by the current context."""
+
+_LOG_RECORD_BUILTINS: Final[frozenset[str]] = frozenset(
+    {
+        "args",
+        "asctime",
+        "created",
+        "exc_info",
+        "exc_text",
+        "filename",
+        "funcName",
+        "levelname",
+        "levelno",
+        "lineno",
+        "module",
+        "msecs",
+        "message",
+        "msg",
+        "name",
+        "pathname",
+        "process",
+        "processName",
+        "relativeCreated",
+        "stack_info",
+        "taskName",
+        "thread",
+        "threadName",
+        "request_id",
+    }
+)
+"""Attributes the standard library puts on every record.
+
+Anything on a record that is *not* in this set was supplied by the caller
+through ``logger.info(..., extra={...})``, and is copied into the JSON output
+verbatim. This is what makes structured logging usable::
+
+    logger.info("upload accepted", extra={"job_id": job.id, "size_bytes": n})
+"""
+
+_UVICORN_LOGGERS: Final[tuple[str, ...]] = (
+    "uvicorn",
+    "uvicorn.error",
+    "uvicorn.access",
+    "fastapi",
+)
+"""Third-party loggers re-pointed at our handler.
+
+Uvicorn installs its own colourised handlers at start-up. Left alone, the
+server's own lines would be plain text in the middle of a JSON stream, which
+defeats machine parsing. Their handlers are removed and propagation is turned
+on so they flow through the same formatter as everything else.
+"""
+
+_CONFIGURED: bool = False
+"""Guards against installing duplicate handlers.
+
+``setup_logging`` is reachable from the app factory, from Alembic and from test
+fixtures. Without this flag a test suite that builds the app repeatedly would
+add one handler per call and print every line N times.
+"""
+
+
+# --------------------------------------------------------------------------
+# Request identifier
+# --------------------------------------------------------------------------
+
+
+def new_request_id() -> str:
+    """Generate a fresh request identifier.
+
+    Returns:
+        A random UUID4 in its 32-character hexadecimal form -- short enough to
+        stay readable in a log line and to be quoted by a user reporting an
+        error.
+    """
+    return uuid.uuid4().hex
+
+
+def get_request_id() -> str:
+    """Return the identifier of the request being handled in this context.
+
+    Returns:
+        The current request identifier, or :data:`NO_REQUEST_ID` when running
+        outside a request (start-up, shutdown, scheduled work).
+    """
+    return _request_id.get()
+
+
+def set_request_id(request_id: str) -> Token[str]:
+    """Bind a request identifier to the current context.
+
+    Args:
+        request_id: The identifier to bind, normally taken from an inbound
+            ``X-Request-ID`` header or generated by :func:`new_request_id`.
+
+    Returns:
+        A token that restores the previous value when passed to
+        :func:`reset_request_id`. Restoring rather than clearing is what keeps
+        nested scopes correct -- a background task started inside a request
+        must not wipe the outer identifier when it finishes.
+    """
+    return _request_id.set(request_id)
+
+
+def reset_request_id(token: Token[str]) -> None:
+    """Restore the request identifier that was bound before :func:`set_request_id`.
+
+    Args:
+        token: The token returned by the matching :func:`set_request_id` call.
+    """
+    _request_id.reset(token)
+
+
+@contextmanager
+def request_context(request_id: str | None = None) -> Iterator[str]:
+    """Bind a request identifier for the duration of a ``with`` block.
+
+    The safe way to use the context variable: the identifier is always
+    restored, including when the block raises.
+
+    Used by the HTTP middleware for inbound requests, and by background video
+    jobs, which run outside any request but still need their own trace::
+
+        with request_context() as job_trace_id:
+            logger.info("video job started", extra={"job_id": job.id})
+
+    Args:
+        request_id: Identifier to bind. A new one is generated when omitted.
+
+    Yields:
+        The identifier that was bound, so the caller can echo it back in a
+        response header or store it alongside the job.
+    """
+    token = set_request_id(request_id or new_request_id())
+    try:
+        yield get_request_id()
+    finally:
+        reset_request_id(token)
+
+
+# --------------------------------------------------------------------------
+# Structured fields
+# --------------------------------------------------------------------------
+
+_RESERVED_LOG_KEYS: Final[frozenset[str]] = frozenset(
+    {
+        "args",
+        "asctime",
+        "created",
+        "exc_info",
+        "exc_text",
+        "filename",
+        "funcName",
+        "levelname",
+        "levelno",
+        "lineno",
+        "message",
+        "module",
+        "msecs",
+        "msg",
+        "name",
+        "pathname",
+        "process",
+        "processName",
+        "relativeCreated",
+        "stack_info",
+        "taskName",
+        "thread",
+        "threadName",
+    }
+)
+"""Keys ``logging`` refuses to accept in ``extra=``.
+
+The standard library owns these attribute names on every ``LogRecord`` and
+raises ``KeyError: "Attempt to overwrite 'filename' in LogRecord"`` rather than
+letting a caller shadow one. The failure has an unpleasant shape: it is raised
+*by the logging call*, so it replaces the diagnostic that was being written
+with an unrelated exception -- and it usually happens on an error path, which
+is the moment the log mattered most. ``filename`` and ``module`` are the ones
+that bite in practice, because they are the natural names for exactly the
+things worth logging about an upload.
+"""
+
+_SAFE_KEY_PREFIX: Final[str] = "ctx_"
+"""Prefix applied to a field whose name the standard library has reserved."""
+
+
+def safe_extra(fields: Mapping[str, Any]) -> dict[str, Any]:
+    """Make a mapping safe to pass as ``logger.*(..., extra=...)``.
+
+    Renames any key that ``logging`` reserves instead of dropping it: the value
+    is usually the most interesting thing in the record, and losing
+    ``filename`` from a rejected-upload log line would leave the entry unable to
+    answer the only question anyone asks of it.
+
+    Call it wherever the field names are not literals in the calling line --
+    an exception's context dictionary, anything assembled from user input or
+    from another layer. A call site writing its own literal keys can skip it,
+    since a collision there is visible in the source.
+
+    Args:
+        fields: The structured fields to attach to a log record.
+
+    Returns:
+        A new mapping in which every reserved key has been prefixed with
+        ``"ctx_"``, e.g. ``filename`` becomes ``ctx_filename``.
+    """
+    return {
+        (f"{_SAFE_KEY_PREFIX}{key}" if key in _RESERVED_LOG_KEYS else key): value
+        for key, value in fields.items()
+    }
+
+
+# --------------------------------------------------------------------------
+# Formatting
+# --------------------------------------------------------------------------
+
+
+class RequestIdFilter(logging.Filter):
+    """Attaches the current request identifier to every log record.
+
+    Implemented as a filter rather than being read inside the formatter so
+    that the value is captured at the moment the record is *created*. Handlers
+    may run later -- on another thread, for a queue handler -- by which time
+    the context variable would already have been reset.
+    """
+
+    def filter(self, record: logging.LogRecord) -> bool:
+        """Add a ``request_id`` attribute to the record.
+
+        Args:
+            record: The record being emitted.
+
+        Returns:
+            Always ``True``: this filter enriches records, it never drops them.
+        """
+        if not hasattr(record, "request_id"):
+            record.request_id = get_request_id()
+        return True
+
+
+class JsonFormatter(logging.Formatter):
+    """Renders a log record as a single-line JSON object.
+
+    Every record carries the same base keys, so a consumer can rely on their
+    presence:
+
+    ============== ==========================================================
+    Key            Meaning
+    ============== ==========================================================
+    ``timestamp``  ISO-8601 UTC, millisecond precision
+    ``level``      ``INFO``, ``ERROR``, ...
+    ``logger``     Dotted logger name, i.e. the module that logged
+    ``message``    The formatted message
+    ``request_id`` Correlation identifier, or ``"-"`` outside a request
+    ``module``     Source module, function and line -- where it came from
+    ``function``
+    ``line``
+    ============== ==========================================================
+
+    ``exception`` is added only when there is a traceback, and any keyword
+    passed through ``extra=`` is merged in at the top level.
+
+    Timestamps are UTC on purpose: the development machine, the Docker
+    container and any future host would otherwise disagree about what "14:30"
+    means, making it impossible to line up two log files.
+    """
+
+    def __init__(self, *, ensure_ascii: bool = False) -> None:
+        """Initialise the formatter.
+
+        Args:
+            ensure_ascii: When ``False`` (the default), non-ASCII characters
+                are written as themselves rather than as ``\\uXXXX`` escapes.
+                This keeps Vietnamese text in log messages readable.
+        """
+        super().__init__()
+        self._ensure_ascii = ensure_ascii
+
+    def format(self, record: logging.LogRecord) -> str:
+        """Serialise one log record to a JSON string.
+
+        Args:
+            record: The record to render.
+
+        Returns:
+            A single line of JSON, without a trailing newline -- the handler
+            adds the line terminator.
+        """
+        timestamp = dt.datetime.fromtimestamp(record.created, tz=dt.timezone.utc)
+        payload: dict[str, Any] = {
+            "timestamp": timestamp.isoformat(timespec="milliseconds").replace(
+                "+00:00", "Z"
+            ),
+            "level": record.levelname,
+            "logger": record.name,
+            "message": record.getMessage(),
+            "request_id": getattr(record, "request_id", NO_REQUEST_ID),
+            "module": record.module,
+            "function": record.funcName,
+            "line": record.lineno,
+        }
+
+        if record.exc_info:
+            payload["exception"] = self.formatException(record.exc_info)
+        if record.stack_info:
+            payload["stack"] = self.formatStack(record.stack_info)
+
+        for key, value in record.__dict__.items():
+            if key not in _LOG_RECORD_BUILTINS and not key.startswith("_"):
+                payload[key] = self._coerce(value)
+
+        return json.dumps(payload, ensure_ascii=self._ensure_ascii, default=str)
+
+    @staticmethod
+    def _coerce(value: Any) -> Any:
+        """Make a value safe to hand to :func:`json.dumps`.
+
+        Anything exotic -- a ``Path``, a ``UUID``, a dataclass -- is stringified
+        rather than allowed to raise. A logging call must never be the thing
+        that crashes a request: an unserialisable value in ``extra`` is a minor
+        mistake and should degrade to a string, not to a 500.
+
+        Args:
+            value: A value taken from the record's ``extra`` fields.
+
+        Returns:
+            The value unchanged if JSON already handles it, otherwise its
+            ``repr``-safe string form.
+        """
+        if isinstance(value, (str, int, float, bool, type(None))):
+            return value
+        if isinstance(value, (list, tuple, set)):
+            return [JsonFormatter._coerce(item) for item in value]
+        if isinstance(value, dict):
+            return {str(k): JsonFormatter._coerce(v) for k, v in value.items()}
+        return str(value)
+
+
+# --------------------------------------------------------------------------
+# Set-up
+# --------------------------------------------------------------------------
+
+
+def _utf8_stdout() -> TextIO:
+    """Return ``sys.stdout``, switched to UTF-8 if it is not already.
+
+    A Windows console defaults to the legacy ``cp1252`` code page, which cannot
+    encode Vietnamese. Since the formatter writes non-ASCII text as itself
+    (``ensure_ascii=False``, so log messages stay readable), a single log line
+    containing Vietnamese would raise ``UnicodeEncodeError`` *inside the
+    logging machinery* -- and a crash while reporting an error is the worst
+    possible place for one, because it destroys the diagnostic that was being
+    written. The failure would also appear only on Windows, never in the Linux
+    container, so it would survive testing in Docker.
+
+    ``errors="backslashreplace"`` is a second line of defence: if the stream
+    still cannot represent a character, it is escaped rather than raised on.
+
+    Returns:
+        The standard output stream, configured for UTF-8 where possible.
+    """
+    stream = sys.stdout
+    reconfigure = getattr(stream, "reconfigure", None)
+    if reconfigure is not None:
+        try:
+            reconfigure(encoding="utf-8", errors="backslashreplace")
+        except (ValueError, OSError):
+            # A stream replaced by a test harness may not support this; the
+            # handler still works, so this is not worth failing start-up over.
+            pass
+    return stream
+
+
+def setup_logging(level: str = "INFO", *, force: bool = False) -> None:
+    """Install the JSON handler on the root logger.
+
+    Call once, as early as possible during start-up -- anything logged before
+    this runs is emitted through the standard library's default handler and
+    will not be JSON.
+
+    Logs go to ``stdout`` rather than a file. That is the twelve-factor
+    convention and the right choice here specifically because the service runs
+    in Docker (Phase 8): the container runtime owns collection and rotation, so
+    a process writing its own file would put the logs somewhere the operator
+    cannot reach with ``docker logs``.
+
+    Args:
+        level: Root log level name, e.g. ``"INFO"`` or ``"DEBUG"``. Normally
+            :attr:`~backend.core.config.Settings.log_level`.
+        force: Reconfigure even if logging was already set up. Only useful in
+            tests that need to change the level mid-run.
+
+    Raises:
+        ValueError: If ``level`` is not a recognised logging level name.
+    """
+    global _CONFIGURED
+
+    if _CONFIGURED and not force:
+        return
+
+    numeric_level = logging.getLevelName(level.strip().upper())
+    if not isinstance(numeric_level, int):
+        raise ValueError(f"Unknown log level: {level!r}")
+
+    handler = logging.StreamHandler(stream=_utf8_stdout())
+    handler.setFormatter(JsonFormatter())
+    handler.addFilter(RequestIdFilter())
+
+    root = logging.getLogger()
+    for existing in list(root.handlers):
+        root.removeHandler(existing)
+        existing.close()
+    root.addHandler(handler)
+    root.setLevel(numeric_level)
+
+    # Let uvicorn's records reach our handler instead of its own coloured one,
+    # so the stream stays uniformly parseable.
+    for name in _UVICORN_LOGGERS:
+        third_party = logging.getLogger(name)
+        third_party.handlers.clear()
+        third_party.propagate = True
+
+    # These two are chatty at DEBUG and would bury our own records. SQLAlchemy
+    # in particular echoes every statement, which is only wanted when debug
+    # mode explicitly asks for it via ``echo=True`` on the engine.
+    logging.getLogger("sqlalchemy.engine").setLevel(logging.WARNING)
+    logging.getLogger("multipart").setLevel(logging.WARNING)
+
+    _CONFIGURED = True
+
+
+def get_logger(name: str) -> logging.LoggerAdapter[logging.Logger] | logging.Logger:
+    """Return the logger for a module.
+
+    Args:
+        name: Logger name, conventionally the calling module's ``__name__``.
+            Using the dotted module name means the ``logger`` field in the JSON
+            output points at the exact source of the line, and it lets levels
+            be tuned per subsystem.
+
+    Returns:
+        A standard library logger. No handler is attached to it: records
+        propagate up to the root handler installed by :func:`setup_logging`,
+        which is what keeps the output format defined in exactly one place.
+    """
+    return logging.getLogger(name)

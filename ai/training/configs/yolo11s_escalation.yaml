@@ -1,0 +1,107 @@
+# =============================================================================
+# YOLO11s -- ESCALATION (only if YOLO11n misses the mAP target)
+# =============================================================================
+# DO NOT run this first. The decision procedure is:
+#
+#   1. Run yolo11n_finetune.yaml.
+#   2. Evaluate with ai/evaluation/evaluate.py, INCLUDING the separate
+#      single-line / two-line breakdown (NFR-A8).
+#   3. If mAP@0.5 clears the target on BOTH plate types -> ship YOLO11n, stop.
+#   4. Only if it does not -> run this config.
+#
+# YOLO11s is roughly 3x the parameters and 3x the CPU latency of YOLO11n. On a
+# machine with no CUDA GPU that cost is paid on every single inference, forever.
+# It buys a few mAP points; spend them only if the nano model actually fails.
+#
+# Before escalating, check WHERE nano failed. If two-line plates (motorcycles,
+# short car plates) are the weak class -- the expected outcome, cf. OpenALPR:
+# 94.3% on single-line vs 45.7% on two-line -- then more dataset balance is
+# likely a better fix than more parameters.
+#
+# Run:  python -m ai.training.train --config yolo11s_escalation.yaml
+# =============================================================================
+
+description: >-
+  YOLO11s fine-tuned from COCO weights. Escalation path used only when the
+  YOLO11n primary run fails to reach the mAP target; costs ~3x CPU latency.
+
+# --- Model ------------------------------------------------------------------
+model_variant: yolo11s
+pretrained_weights: yolo11s.pt
+
+# --- Data -------------------------------------------------------------------
+# Same split as the nano runs -- otherwise the comparison is meaningless.
+data: datasets/processed/data.yaml
+
+# --- Core schedule ----------------------------------------------------------
+# Identical resolution to the nano runs so the mAP delta is attributable to
+# model capacity alone.
+imgsz: 640
+epochs: 100
+# Halved: YOLO11s activations are considerably larger, and a Colab T4 (16 GB)
+# can OOM at batch 16 with 640 px inputs plus mosaic. Set -1 for AutoBatch if
+# you would rather let Ultralytics size it against the assigned GPU.
+batch: 8
+patience: 20
+
+# --- Optimiser --------------------------------------------------------------
+optimizer: AdamW
+# Scaled down with the batch size (smaller batch -> noisier gradients ->
+# a smaller step keeps the effective update comparable to the nano run).
+lr0: 0.0008
+lrf: 0.01
+momentum: 0.937
+# Slightly stronger regularisation: more parameters on the same ~37k images
+# means more room to overfit.
+weight_decay: 0.001
+warmup_epochs: 3.0
+warmup_momentum: 0.8
+warmup_bias_lr: 0.1
+cos_lr: true
+
+# --- Loss weights -----------------------------------------------------------
+box: 8.0
+cls: 0.5
+dfl: 1.5
+
+# --- Augmentation -----------------------------------------------------------
+# Unchanged from the nano fine-tune, on purpose: an escalation run must differ
+# in exactly ONE dimension (capacity), or the experiment proves nothing.
+hsv_h: 0.015
+hsv_s: 0.7
+hsv_v: 0.4
+degrees: 5.0
+translate: 0.1
+scale: 0.5
+shear: 2.0
+perspective: 0.0005
+# ---------------------------------------------------------------------------
+# MUST remain 0.0 -- mirrored glyphs are not a plate that can exist.
+# ---------------------------------------------------------------------------
+flipud: 0.0
+fliplr: 0.0
+copy_paste: 0.0
+erasing: 0.4
+mosaic: 1.0
+close_mosaic: 10
+mixup: 0.0
+
+# --- Runtime ----------------------------------------------------------------
+device: auto
+# Lower than the nano configs: with batch 8 the GPU is the bottleneck, and
+# 8 workers only add host-side memory pressure on a Colab VM.
+workers: 4
+project: runs
+name: yolo11s_escalation
+exist_ok: false
+seed: 42
+deterministic: true
+save_period: 10
+val: true
+plots: true
+cache: false
+amp: true
+rect: false
+single_cls: false
+fraction: 1.0
+verbose: true

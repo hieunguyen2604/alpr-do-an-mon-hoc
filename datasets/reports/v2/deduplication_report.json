@@ -1,0 +1,47 @@
+{
+  "threshold": 5,
+  "hash": "phash-64bit",
+  "images_scanned": 27111,
+  "images_unreadable": 0,
+  "duplicate_pairs": 19554,
+  "duplicate_groups": 7861,
+  "cross_dataset_groups": 7044,
+  "cross_dataset_pairs_by_dataset": {
+    "hf_vn_plates_segment <-> roboflow_cuong_ta": 29,
+    "hf_vn_plates_segment <-> roboflow_school_fuhih": 32,
+    "hf_vn_plates_segment <-> roboflow_tran_ngoc_xuan_tin": 8,
+    "roboflow_cuong_ta <-> roboflow_demo_tracking": 2,
+    "roboflow_cuong_ta <-> roboflow_school_fuhih": 11426,
+    "roboflow_cuong_ta <-> roboflow_traffic_camera": 15,
+    "roboflow_cuong_ta <-> roboflow_tran_ngoc_xuan_tin": 1569,
+    "roboflow_demo_tracking <-> roboflow_school_fuhih": 2,
+    "roboflow_demo_tracking <-> roboflow_traffic_camera": 40,
+    "roboflow_school_fuhih <-> roboflow_traffic_camera": 15,
+    "roboflow_school_fuhih <-> roboflow_tran_ngoc_xuan_tin": 1577
+  },
+  "removable_images": 11978,
+  "unique_images_after_dedup": 15133,
+  "images_per_dataset": {
+    "hf_vn_plates_segment": 4578,
+    "roboflow_cuong_ta": 8254,
+    "roboflow_demo_tracking": 236,
+    "roboflow_eric_nguyen": 840,
+    "roboflow_school_fuhih": 8357,
+    "roboflow_traffic_camera": 3841,
+    "roboflow_tran_ngoc_xuan_tin": 1005
+  },
+  "removable_per_dataset": {
+    "hf_vn_plates_segment": 203,
+    "roboflow_cuong_ta": 8114,
+    "roboflow_demo_tracking": 1,
+    "roboflow_eric_nguyen": 487,
+    "roboflow_school_fuhih": 1489,
+    "roboflow_traffic_camera": 679,
+    "roboflow_tran_ngoc_xuan_tin": 1005
+  },
+  "unreadable_images": [],
+  "leakage_warning": "Cross-dataset duplicate groups place the same photograph under two dataset names. split.py must keep every group member in one split, otherwise test accuracy measures memorisation.",
+  "input_dir": "D:\\DATN\\datasets\\processed\\merged_v2\\images",
+  "applied": true,
+  "deleted_images": 11978
+}

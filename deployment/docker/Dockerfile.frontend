@@ -1,0 +1,77 @@
+# syntax=docker/dockerfile:1.7
+#
+# Frontend image: React + Vite + TypeScript compiled to static assets, then
+# served by nginx.
+#
+# Build context is the PROJECT ROOT, the same as the backend image. A narrower
+# `frontend/` context would be cheaper to send, but COPY cannot read anything
+# outside the context, and this image needs `deployment/docker/nginx.conf`.
+# Baking that config into the image -- rather than bind-mounting it from the
+# compose file -- keeps the image self-contained and runnable on its own.
+# Ignore rules come from `Dockerfile.frontend.dockerignore` next to this file.
+#
+# The result contains no Node.js runtime at all: the toolchain exists only in
+# the build stage. The published image is nginx plus a few megabytes of static
+# files -- around 55 MB against roughly 500 MB had the Node image been shipped.
+
+# ---------------------------------------------------------------------------
+# Stage 1 -- build the static bundle
+# ---------------------------------------------------------------------------
+FROM node:20-alpine AS builder
+
+WORKDIR /app
+
+# Manifests first: this layer is rebuilt only when dependencies actually
+# change, so ordinary source edits reuse the cached `npm ci`.
+COPY frontend/package.json frontend/package-lock.json* ./
+
+# `npm ci` rather than `npm install`: it installs exactly the locked versions
+# and fails loudly when package.json and package-lock.json disagree, which is
+# what makes a build reproducible. It requires package-lock.json to be present
+# and committed.
+RUN npm ci
+
+COPY frontend/ ./
+
+# --- API base URL -----------------------------------------------------------
+# Vite inlines VITE_* variables at BUILD time -- they cannot be changed later
+# by setting an environment variable on the container. The default is therefore
+# the relative path `/api`, which makes the bundle host-agnostic: the browser
+# requests the same origin it loaded the page from and nginx proxies onward
+# (see nginx.conf). One image then runs unchanged on localhost, on a LAN
+# address or behind a domain name, with no rebuild.
+#
+# Override only when the API is served from a genuinely different origin, and
+# remember that CORS must then allow that origin explicitly (NFR-S4).
+ARG VITE_API_BASE_URL=/api
+ENV VITE_API_BASE_URL=${VITE_API_BASE_URL}
+
+RUN npm run build
+
+# ---------------------------------------------------------------------------
+# Stage 2 -- serve
+# ---------------------------------------------------------------------------
+FROM nginx:alpine AS runtime
+
+# Replaces the packaged default server block. Handles the SPA history fallback,
+# gzip, asset caching and the /api reverse proxy.
+COPY deployment/docker/nginx.conf /etc/nginx/conf.d/default.conf
+
+# Vite emits to `dist/` by default.
+COPY --from=builder /app/dist /usr/share/nginx/html
+
+# nginx runs its master as root and drops privileges for worker processes,
+# which is the image's designed behaviour. Switching the master to a non-root
+# user additionally requires writable cache/pid paths and a port above 1024;
+# `nginxinc/nginx-unprivileged` is the drop-in option if a fully rootless
+# frontend is required later.
+
+EXPOSE 80
+
+# wget ships with the BusyBox userland in Alpine, so no extra package is needed.
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
+    CMD wget --quiet --spider --tries=1 http://127.0.0.1/ || exit 1
+
+# "daemon off;" keeps nginx in the foreground as PID 1 so Docker can supervise
+# it and deliver stop signals.
+CMD ["nginx", "-g", "daemon off;"]

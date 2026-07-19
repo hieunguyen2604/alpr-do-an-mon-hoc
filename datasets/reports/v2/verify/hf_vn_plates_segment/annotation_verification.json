@@ -1,0 +1,61 @@
+{
+  "images_checked": 4578,
+  "images_ok": 4578,
+  "images_with_errors": 0,
+  "boxes_checked": 5200,
+  "errors": 0,
+  "warnings": 477,
+  "issues_by_code": {
+    "warning:small_box": 477
+  },
+  "min_box_area_threshold": 0.005,
+  "aspect_ratio": {
+    "count": 5200,
+    "min": 0.316698,
+    "median": 1.403506,
+    "mean": 1.954941,
+    "max": 8.22242,
+    "stdev": 1.06787,
+    "p05": 1.080141,
+    "p95": 3.965121,
+    "threshold": 2.5,
+    "estimated_one_line": 1516,
+    "estimated_two_line": 3684,
+    "estimated_two_line_ratio": 0.7085,
+    "method": "HEURISTIC",
+    "method_note": "Line count is inferred from box aspect ratio against the 2.5 threshold, derived from QCVN 08:2024/BCA nominal plate sizes (1-line car 520x110mm = 4.727; 2-line car 330x165mm = 2.000; motorcycle 190x140mm = 1.357). Perspective, loose boxes and bent plates all move a plate across the threshold, so these counts are an approximate distribution and NOT ground truth."
+  },
+  "box_area": {
+    "name": "box_area_fraction",
+    "count": 5200,
+    "min": 8.2e-05,
+    "median": 0.03481,
+    "mean": 0.043248,
+    "max": 0.767362,
+    "stdev": 0.051599,
+    "p05": 0.002845,
+    "p95": 0.114964
+  },
+  "boxes_per_image": {
+    "name": "boxes_per_image",
+    "count": 4578,
+    "min": 1.0,
+    "median": 1.0,
+    "mean": 1.135867,
+    "max": 9.0,
+    "stdev": 0.489177,
+    "p05": 1.0,
+    "p95": 2.0
+  },
+  "per_dataset": {
+    "images": {
+      "boxes": 5200,
+      "images": 4578,
+      "line_estimate_1": 1516,
+      "line_estimate_2": 3684,
+      "small_box": 477
+    }
+  },
+  "input_dir": "D:\\DATN\\datasets\\raw\\hf_vn_plates_segment",
+  "truncated": false
+}
