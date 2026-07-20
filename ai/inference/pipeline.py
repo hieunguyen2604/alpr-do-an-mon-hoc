@@ -791,6 +791,18 @@ _COLOR_PREFERRED_KINDS: Final[dict[str, tuple[str, ...]]] = {
     "blue": ("blue_car", "blue_motorcycle"),
 }
 
+_BLUE_EQUIVALENT: Final[dict[str, str]] = {
+    "car": "blue_car",
+    "motorcycle_new": "blue_motorcycle",
+    "motorcycle_old": "blue_motorcycle",
+}
+"""The State-agency counterpart of each civil family.
+
+Keyed on the family the *character string* established, because that is the only
+evidence for car-versus-motorcycle: the serial pattern differs (`65A` versus
+`65K1`) while the colour is identical either way.
+"""
+
 
 def refine_kind_with_color(outcome: object, color: str, line_count: int) -> str:
     """Resolve a string-level plate-family ambiguity using the plate's colour.
@@ -843,13 +855,18 @@ def refine_kind_with_color(outcome: object, color: str, line_count: int) -> str:
         # special. Colour must not overrule a definite reading.
         return original
 
-    for candidate in preferred:
-        if candidate not in candidates:
-            continue
-        wants_motorcycle = candidate.endswith("motorcycle")
-        if wants_motorcycle == (line_count == 2):
-            return candidate
-
-    # The preferred family is plausible but its car/motorcycle split disagrees
-    # with the line count. Trust the line count -- it is measured, not inferred.
+    # Promote within the vehicle class the *string* already established, never
+    # across it. The serial pattern is what separates a car from a motorcycle --
+    # `65A` is a car serial, `65K1` a motorcycle one -- and the colour has
+    # nothing to say about that distinction.
+    #
+    # An earlier version chose between `blue_car` and `blue_motorcycle` by line
+    # count, on the assumption that two lines meant a motorcycle. Real data
+    # disproved it: `65A-004.50` is a two-line State **car** plate, and
+    # QCVN 08:2024/BCA defines the 330x165 two-line format for cars precisely so
+    # that it can exist. The assumption cost the promotion on exactly the plates
+    # it was meant to catch.
+    target = _BLUE_EQUIVALENT.get(original)
+    if target is not None and target in candidates:
+        return target
     return original

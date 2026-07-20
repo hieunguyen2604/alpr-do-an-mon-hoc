@@ -55,8 +55,9 @@ graph TB
 
     subgraph L4["Tầng AI — thuần Python, độc lập"]
         A1[PlateDetector<br/>YOLO11]
+        A5[PlateColor<br/>HSV — màu nền]
         A2[PlateRecognizer<br/>PaddleOCR]
-        A3[PlateNormalizer<br/>regex + validate]
+        A3[PlateNormalizer<br/>regex + validate + họ biển]
         A4[ALPRPipeline<br/>điều phối]
     end
 
@@ -70,7 +71,8 @@ graph TB
     L2 --> L3
     S1 --> A4
     S2 --> A4
-    A4 --> A1 --> A2 --> A3
+    A4 --> A1 --> A5 --> A2 --> A3
+    A5 -.->|"màu nền — gỡ nhập nhằng họ biển"| A3
     L3 --> D2 --> D1
     S5 --> D3
 
@@ -98,11 +100,13 @@ flowchart LR
     DET --> Q{"Có<br/>biển số?"}
     Q -->|Không| EMPTY["Trả kết quả rỗng<br/>(HTTP 200)"]
     Q -->|Có| CROP["Cắt vùng biển số"]
-    CROP --> LINE{"Biển<br/>mấy dòng?"}
+    CROP --> COLOR["Phân loại MÀU NỀN<br/>HSV vùng giữa ảnh cắt"]
+    COLOR --> LINE{"Biển<br/>mấy dòng?"}
     LINE -->|1 dòng| OCR["PaddleOCR"]
     LINE -->|2 dòng| SPLIT["Tách trên / dưới"] --> OCR2["OCR từng nửa"] --> MERGE["Ghép kết quả"] --> NORM
-    OCR --> NORM["Chuẩn hoá + sửa regex"]
-    NORM --> VAL{"Hợp lệ theo<br/>định dạng VN?"}
+    OCR --> NORM["Chuẩn hoá + sửa regex<br/>+ suy HỌ BIỂN từ chuỗi"]
+    COLOR -.->|"gỡ nhập nhằng<br/>họ biển"| NORM
+    NORM --> VAL{"Hợp lệ theo<br/>định dạng dân sự VN?"}
     VAL -->|Có| OK["Kết quả hợp lệ"]
     VAL -->|Không| WARN["Đánh dấu độ tin cậy thấp<br/>vẫn lưu lại"]
     OK --> SAVE[(Ghi CSDL)]
@@ -110,7 +114,27 @@ flowchart LR
 
     style LINE fill:#fecaca,stroke:#dc2626
     style SPLIT fill:#fecaca,stroke:#dc2626
+    style COLOR fill:#dcfce7,stroke:#16a34a
 ```
+
+> **Bước màu xanh lá — phân loại màu nền (bổ sung 20/07/2026).** Đặt **trước**
+> OCR chứ không phải sau, vì kết quả của nó được tầng chuẩn hoá dùng để gỡ nhập
+> nhằng họ biển. Đây là bằng chứng mà **không luật nào trên chuỗi ký tự lấy lại
+> được**: theo TT 79/2024/TT-BCA, biển xe kinh doanh vận tải **nền vàng** mang bố
+> cục ký tự **y hệt** biển cá nhân nền trắng, nên hai loại giống nhau tuyệt đối
+> khi nhìn dưới dạng chuỗi. Chiều ngược lại cũng đúng — biển ngoại giao nền
+> trắng như biển cá nhân, chỉ chuỗi mới tách được. Hai nguồn bằng chứng **bù trừ
+> nhau và phải đọc cùng nhau**; chi tiết ở [Tài liệu API mục
+> 4.4.7](../manuals/api-documentation.md).
+>
+> Chi phí gần như bằng không (một histogram HSV trên vùng giữa của một ảnh cắt
+> nhỏ) và bước này **không bao giờ ném ngoại lệ**: ảnh cắt quá tối, cháy sáng
+> hoặc không phải biển đều trả về `unknown` thay vì một phỏng đoán.
+
+> **Lưu ý về nhánh `VAL`.** `is_valid_format` mang nghĩa hẹp: *khớp định dạng
+> biển **dân sự** Việt Nam*. Biển quân đội đi vào nhánh `WARN` **có chủ đích** vì
+> nó nằm ngoài hệ đăng ký dân sự — nó vẫn là biển thật, đọc đúng. Tầng trình bày
+> **không được** diễn giải nhánh này thành "sai định dạng" mà chưa đọc `plate_kind`.
 
 > **Nhánh màu đỏ là phần khó nhất của đồ án** (rủi ro R-04). Biển số 2 dòng chiếm phần lớn xe máy tại Việt Nam. Các pipeline OCR dựng sẵn thường đọc biển 2 dòng thành một chuỗi lộn xộn vì chúng giả định văn bản nằm trên một dòng. Việc **tách rồi ghép** là kỹ thuật xử lý chuẩn, cần làm sớm ở Phase 4.
 
@@ -212,6 +236,9 @@ erDiagram
         int bbox_h
         bool is_valid_format
         int plate_line_count
+        string plate_kind
+        string plate_color
+        float plate_color_confidence
         float processing_time
         datetime detected_time
         datetime created_at
@@ -232,6 +259,40 @@ erDiagram
 
     DETECTION_JOB ||--o{ DETECTION_HISTORY : "sinh ra"
 ```
+
+`detection_history` hiện có **21 cột** (18 cột của lược đồ khởi tạo `0001_initial`
+cộng 3 cột phân loại phương tiện thêm ở `0002_plate_kind_and_color`);
+`detection_job` có **11 cột**, không đổi.
+
+#### Lịch sử thay đổi lược đồ
+
+| Revision | Ngày | Thay đổi | `detection_history` |
+|---|---|---|---|
+| `0001_initial` | 2026-07-19 | Tạo cả hai bảng theo lược đồ mở rộng đã duyệt ở mục 6.2 | 18 cột |
+| `0002_plate_kind_and_color` | 2026-07-20 | Thêm `plate_kind` `String(16)`, `plate_color` `String(16)`, `plate_color_confidence` `Float` | **21 cột** |
+
+**Ba cột của `0002` đều `NULL`-able và KHÔNG có giá trị mặc định.** Đây là chủ ý,
+không phải sự lười biếng: những hàng ghi **trước** migration này thực sự chưa
+từng được tính các giá trị đó — thông tin chưa bao giờ tồn tại với chúng. Điền
+một giá trị đoán vào sẽ khiến nó **không phân biệt được với một giá trị đo thật**,
+và mọi thống kê theo loại/màu biển sau này sẽ trộn lẫn dữ liệu bịa với dữ liệu
+thật mà không có cách nào tách ra. `NULL` đọc là "chưa ghi nhận", đúng sự thật.
+
+**Vì sao cần cả hai cột thay vì một.** `plate_kind` suy từ **chuỗi ký tự** và
+không thấy được rằng biển vàng kinh doanh mang cùng bộ chữ với biển trắng cá
+nhân — cả hai đều ra `car`. `plate_color` đọc từ **điểm ảnh** và không phân biệt
+được biển ngoại giao với biển cá nhân — cả hai đều nền trắng. Chỉ cặp hai cột
+mới định danh được loại phương tiện; chi tiết ở [Tài liệu API mục
+4.4.7](../manuals/api-documentation.md).
+
+**Động cơ trực tiếp của migration này** là một lỗi quan sát được: một biển quân
+đội đọc **đúng** thành `KV6938` ở độ tin cậy OCR 0,999 được lưu với
+`is_valid_format = 0` và **không có gì khác** — không phân biệt được với một biển
+mà hệ thống đọc hỏng. Giao diện sau đó trình bày nó cho người dùng là "sai định
+dạng biển số", điều này **không đúng**: biển quân đội là biển hợp lệ, chỉ nằm
+ngoài hệ đăng ký dân sự. `SQLite` cho phép `ADD COLUMN` với cột nullable mà không
+phải dựng lại bảng, nên chiều `upgrade` không cần chế độ batch; chiều `downgrade`
+thì cần, vì xoá cột là thao tác SQLite thực hiện bằng cách tạo lại bảng.
 
 ### 6.2. Mở rộng so với `CLAUDE.md` — ĐÃ PHÊ DUYỆT (2026-07-19)
 

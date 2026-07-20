@@ -1,7 +1,7 @@
 # Sổ tay kỹ thuật — Hệ thống nhận dạng biển số xe Việt Nam ứng dụng AI
 
 **Đối tượng đọc:** lập trình viên tiếp quản và bảo trì hệ thống.
-**Phiên bản tài liệu:** 1.1 — 2026-07-20.
+**Phiên bản tài liệu:** 1.2 — 2026-07-20 (bổ sung phân loại loại biển và màu biển: mục 8.4, 8.5 và ba cột mới ở mục 6).
 **Kho mã:** `d:/DATN`.
 
 > **Cách đọc tài liệu này.** Sổ tay kỹ thuật *không* lặp lại phần luận chứng thiết kế. Mọi câu hỏi dạng "vì sao lại thiết kế như vậy" được trả lời trong [`docs/architecture/system-architecture.md`](../architecture/system-architecture.md); mọi câu hỏi dạng "yêu cầu nào bắt buộc điều đó" được trả lời trong [`docs/00-requirements/`](../00-requirements/). Tài liệu này trả lời câu hỏi *"tôi phải làm gì để hệ thống chạy được, và tôi không được phá vỡ điều gì"*.
@@ -128,7 +128,8 @@ Hàm này có ba đường ra, và sự khác nhau giữa chúng là chủ ý:
 ```
 d:/DATN/
 ├── ai/                          # Tầng 5 — độc lập hoàn toàn với khung web
-│   ├── inference/               # Đường ống suy luận (11 module, chạy lúc phục vụ)
+│   ├── inference/               # Đường ống suy luận (11 module chức năng
+│   │   │                        #   + __init__.py, chạy lúc phục vụ)
 │   │   ├── types.py             # BoundingBox, PlateDetection, PlateRecognition,
 │   │   │                        #   DetectionResult, PipelineResult — dataclass thuần
 │   │   ├── interfaces.py        # BaseDetector, BaseRecognizer, BaseNormalizer (ABC)
@@ -136,6 +137,8 @@ d:/DATN/
 │   │   ├── exceptions.py        # ALPRError và 4 lớp con
 │   │   ├── plate_rules.py       # PlateKind, mặt nạ vị trí ký tự, clean_text()
 │   │   ├── normalizer.py        # VietnamesePlateNormalizer
+│   │   ├── plate_color.py       # PlateColor, classify_plate_color() — màu nền
+│   │   │                        #   đọc từ điểm ảnh (HSV) — mục 8.4
 │   │   ├── two_line.py          # Tách/ghép biển hai dòng, tiền xử lý ảnh cắt
 │   │   ├── detector.py          # YoloPlateDetector (Ultralytics YOLO11)
 │   │   ├── recognizer.py        # PaddleOcrRecognizer (PP-OCRv5 mobile)
@@ -145,11 +148,14 @@ d:/DATN/
 │   │   ├── train.py             # Điểm vào huấn luyện, bao quanh Ultralytics
 │   │   ├── export.py            # Xuất ONNX / OpenVINO / TorchScript
 │   │   └── configs/             # yolo11n_baseline · yolo11n_finetune · yolo11s_escalation
-│   ├── evaluation/              # Ngoại tuyến — đo đạc (7 kịch bản)
+│   ├── evaluation/              # Ngoại tuyến — đo đạc (10 kịch bản)
 │   │   ├── evaluate.py          # Đánh giá bộ phát hiện trên tập test
 │   │   ├── benchmark_ocr.py     # Độ chính xác và độ trễ tầng OCR
 │   │   ├── benchmark_system.py  # Đo E2E đối chiếu các chỉ tiêu NFR-P
 │   │   ├── benchmark_cpu.py     # So PyTorch / ONNX / OpenVINO trên chính CPU này
+│   │   ├── ocr_accuracy.py      # NFR-A4/A5/A6 — CER và biển đầy đủ trước/sau hậu xử lý
+│   │   ├── color_accuracy.py    # Độ chính xác nhận MÀU NỀN — mục 8.4
+│   │   ├── plate_type_audit.py  # Kiểm kê phân bố LOẠI BIỂN trong một bộ dữ liệu
 │   │   ├── error_analysis.py    # Nhóm và xuất các ca OCR sai để soi bằng mắt
 │   │   ├── leak_check.py        # Dò rò rỉ train/test bằng perceptual hash
 │   │   └── stress_test.py       # Kiểm thử tải và ngâm (NFR-SC1, NFR-R4)
@@ -171,6 +177,7 @@ d:/DATN/
 │   │   ├── deps.py              # Các dependency FastAPI (session, pipeline, service)
 │   │   └── routes/              # health · detection · history · statistics
 │   ├── migrations/              # Alembic: env.py + versions/0001_initial.py
+│   │                            #   + versions/0002_plate_kind_and_color.py
 │   ├── main.py                  # create_app, lifespan, build_pipeline, exception handler
 │   ├── alembic.ini              # KHÔNG chứa sqlalchemy.url — xem mục 6.4
 │   ├── requirements.txt         # Chỉ tầng API. Không có torch/ultralytics/paddle
@@ -195,7 +202,7 @@ d:/DATN/
 │   ├── labeling/                # extract_plates.py, label_tool.py
 │   └── benchmark_*.py           # Đo overhead API và truy vấn lịch sử
 │
-├── tests/                       # 882 test được thu thập — mục 11
+├── tests/                       # 913 test được thu thập — mục 11
 │   ├── test_architecture.py     # ⚠ Thi hành tự động NFR-M1 và NFR-M4
 │   ├── test_*.py                # Đơn vị: detector, normalizer, pipeline, plate_rules…
 │   ├── backend/                 # Kho dữ liệu, schema, dịch vụ lưu trữ
@@ -529,8 +536,11 @@ erDiagram
         int      bbox_y "BẮT BUỘC"
         int      bbox_w "BẮT BUỘC, > 0"
         int      bbox_h "BẮT BUỘC, > 0"
-        bool     is_valid_format
+        bool     is_valid_format "khớp định dạng DÂN SỰ"
         int      plate_line_count "nullable — 1 hoặc 2"
+        string   plate_kind "nullable — họ biển suy từ CHUỖI"
+        string   plate_color "nullable — màu nền đọc từ ĐIỂM ẢNH"
+        float    plate_color_confidence "nullable — tỉ lệ điểm ảnh ủng hộ"
         float    processing_time "giây"
         datetime detected_time
         datetime created_at
@@ -538,7 +548,14 @@ erDiagram
     }
 ```
 
-`detection_history` có **18 cột**, `detection_job` có **11 cột** — đã kiểm chứng sau khi chạy `alembic upgrade head`.
+`detection_history` có **21 cột**, `detection_job` có **11 cột** — đã kiểm chứng sau khi chạy `alembic upgrade head`.
+
+**Lịch sử lược đồ:**
+
+| Revision | Ngày | Thay đổi | Số cột `detection_history` |
+|---|---|---|---|
+| `0001_initial` | 2026-07-19 | Tạo cả hai bảng | 18 |
+| `0002_plate_kind_and_color` | 2026-07-20 | `+ plate_kind`, `+ plate_color`, `+ plate_color_confidence` | **21** |
 
 ### 6.2. Bảng `detection_job`
 
@@ -594,14 +611,19 @@ Một hàng là **một biển số tìm được trong một job**. Một ảnh
 | `plate_image_path` | `String(512)` | nullable | Ảnh cắt riêng vùng biển số |
 | `bbox_x`, `bbox_y` | `Integer` | `NOT NULL` | Góc trên-trái hộp, tính bằng pixel của ảnh nguồn |
 | `bbox_w`, `bbox_h` | `Integer` | `NOT NULL`, `CHECK w > 0 AND h > 0` | Kích thước hộp |
-| `is_valid_format` | `Boolean` | `NOT NULL`, mặc định `false` | `false` **đánh dấu** hàng chứ không loại bỏ nó |
+| `is_valid_format` | `Boolean` | `NOT NULL`, mặc định `false` | Nghĩa hẹp: khớp định dạng biển **DÂN SỰ**. `false` **đánh dấu** hàng chứ không loại bỏ nó. Biển quân đội trả `false` **có chủ đích** — đọc kèm `plate_kind`, xem mục 8.4 |
 | `plate_line_count` | `Integer` | nullable, `CHECK NULL OR IN (1,2)` | Cho phép báo cáo độ chính xác tách riêng biển một dòng và hai dòng |
+| `plate_kind` | `String(16)` | nullable, **không có** mặc định | Họ biển suy từ **chuỗi ký tự**: `car`, `motorcycle_new`, `motorcycle_old`, `blue_car`, `blue_motorcycle`, `special`, `diplomatic`, `military`, `unknown`. Thêm ở `0002` |
+| `plate_color` | `String(16)` | nullable, **không có** mặc định | Màu nền đọc từ **điểm ảnh**: `white`, `yellow`, `blue`, `red`, `unknown`. Thêm ở `0002` |
+| `plate_color_confidence` | `Float` | nullable, **không có** mặc định | Tỉ lệ điểm ảnh đã lấy mẫu ủng hộ `plate_color`. **Không phải xác suất** — là biên độ quyết định dựa vào. Thêm ở `0002` |
 | `processing_time` | `Float` | `NOT NULL`, mặc định `0.0` | Giây, gồm cả phát hiện lẫn OCR cho biển này |
 | `detected_time` | `UtcDateTime` | `NOT NULL` | Với video, đây là **thời điểm xử lý**, không phải vị trí trong video |
 | `created_at` | `UtcDateTime` | `NOT NULL` | |
 | `source_job_id` | `String(36)` | `NOT NULL`, FK → `detection_job.id`, `ON DELETE CASCADE` | **Không nullable là chủ ý** |
 
 **Chỉ mục:** `ix_detection_history_plate_number`, `ix_detection_history_detected_time`, `ix_detection_history_input_type`, `ix_detection_history_source_job_id`, và chỉ mục **tổ hợp** `ix_detection_history_input_type_detected_time` — truy vấn mặc định của màn hình lịch sử là "mới nhất trước, có thể lọc theo loại đầu vào", chỉ mục tổ hợp cho phép SQLite thoả cả bộ lọc lẫn thứ tự từ một cấu trúc, và đó là thứ giữ truy vấn phân trang nằm trong ngưỡng NFR-P6.
+
+**Ba cột của `0002` nullable KHÔNG có mặc định — đây là chủ ý.** Những hàng ghi trước migration này thực sự **chưa từng được tính** các giá trị đó; điền một giá trị đoán vào sẽ khiến nó không phân biệt được với một giá trị đo thật, và mọi thống kê theo loại/màu biển về sau sẽ trộn dữ liệu bịa với dữ liệu thật mà không có cách nào tách ra. `NULL` đọc là "chưa ghi nhận", đúng sự thật. Lưu ý về độ dài: `_ENUM_LENGTH = 16` được dùng chung với các cột enum sẵn có; giá trị dài nhất phải lưu là `motorcycle_new` (14 ký tự), tức chỉ còn **hai ký tự dư**. Một họ biển mới có tên dài hơn cần migration riêng — nới hằng số ở một chỗ sẽ làm model và lược đồ lệch nhau.
 
 **Quy tắc nullable duy nhất:** *một lần phát hiện vẫn đáng lưu kể cả khi OCR không đọc được gì*. Đầu ra của bộ phát hiện — hộp và độ tin cậy — luôn có mặt nên các cột đó `NOT NULL`. Mọi cột dẫn xuất từ OCR đều nullable. **Vứt bỏ những hàng đó sẽ xoá đúng những ca thất bại mà chương đánh giá cần đếm, và làm độ chính xác nhận dạng trông hoàn hảo do cách xây dựng.**
 
@@ -750,20 +772,28 @@ flowchart LR
     C --> D{"Có hộp nào?"}
     D -->|"không"| R0["PipelineResult rỗng<br/>KHÔNG phải lỗi"]
     D -->|"có"| E["_crop() theo từng hộp<br/>hộp đã kẹp trong biên ảnh"]
-    E --> F["estimate_line_count()<br/>theo tỉ lệ rộng/cao"]
+    E --> CL["classify_plate_color()<br/>HSV vùng giữa ảnh cắt"]
+    CL --> F["estimate_line_count()<br/>theo tỉ lệ rộng/cao"]
     F -->|"2 dòng"| G["split_two_line() →<br/>merge_two_line()<br/>ghép thành dải một dòng"]
     F -->|"1 dòng"| H["preprocess_plate()<br/>phóng to + CLAHE"]
     G --> H
     H --> I["BaseRecognizer.recognize()<br/>PaddleOCR PP-OCRv5 mobile"]
     I --> J["raw_text + ocr_confidence"]
-    J --> K["BaseNormalizer.normalize()<br/>clean_text + mặt nạ vị trí"]
-    K --> L["(plate_number, is_valid_format)"]
-    L --> M["DetectionResult"]
+    J --> K["normalize_detailed()<br/>clean_text + mặt nạ vị trí"]
+    K --> KC["refine_kind_with_color()<br/>màu gỡ nhập nhằng họ biển"]
+    CL -.->|"plate_color"| KC
+    KC --> L["(plate_number, is_valid_format,<br/>kind, display_text)"]
+    L --> RQ{"should_rescue<br/>_two_line()?"}
+    RQ -->|"có"| RS["rescue_two_line_upper()<br/>đọc lại NỬA TRÊN, ghép, validate"]
+    RQ -->|"không"| M["DetectionResult<br/>+ plate_color, plate_color_confidence"]
+    RS --> M
     M --> N["PipelineResult"]
 
     style C fill:#e3f2fd
     style I fill:#fff3e0
     style K fill:#f3e5f5
+    style CL fill:#dcfce7,stroke:#16a34a
+    style KC fill:#dcfce7,stroke:#16a34a
 ```
 
 **Ba nguyên tắc của luồng này:**
@@ -828,6 +858,81 @@ pipeline: PlatePipeline = ALPRPipeline(
 * Ảnh cắt không đọc được thì **trả kết quả rỗng**, đừng ném.
 
 **Lưu ý cho benchmark.** `PaddleOcrRecognizer.__init__` nhận tham số `engine` để tiêm sẵn một engine đã dựng, và tham số `preprocess: bool` để **tắt chuỗi tiền xử lý** nhằm đo xem nó đóng góp bao nhiêu. Lớp con mới nên giữ hai lối vào tương tự.
+
+### 8.4. Phân loại màu nền — [`ai/inference/plate_color.py`](../../ai/inference/plate_color.py)
+
+> **Đọc mục này trước khi sửa bất cứ thứ gì liên quan tới `plate_kind` hoặc `plate_color`.** Hai trường này **bù trừ** cho nhau; dùng riêng một trong hai để kết luận loại phương tiện sẽ sai một cách có hệ thống chứ không phải sai ngẫu nhiên.
+
+**Vì sao module này tồn tại.** `plate_rules.py` phân loại biển theo **hình dạng chuỗi ký tự** — mạnh, nhưng mù trước một phân biệt mà pháp luật đặt ra **chỉ bằng màu**. Thông tư 79/2024/TT-BCA cho xe kinh doanh vận tải biển **nền vàng** mang bố cục **y hệt** biển nền trắng của xe cá nhân: `29E-015.66` là cùng một chuỗi trong cả hai trường hợp. Không lượng công sức nào bỏ vào biểu thức chính quy tách được chúng, vì **khác biệt không nằm trong chuỗi**.
+
+Chiều ngược lại cũng đúng, và đó là lý do màu **không** thay thế được chuỗi:
+
+| Loại biển | Màu nền | `plate_kind` (từ chuỗi) |
+|---|---|---|
+| Xe cá nhân | trắng | `car` |
+| Xe kinh doanh | **vàng** | `car` — *giống hệt!* |
+| Cơ quan nhà nước | xanh | `blue_car` |
+| Quân đội | đỏ | `military` |
+| Ngoại giao | trắng, chữ seri đỏ | `diplomatic` |
+
+Hai dòng đầu cho thấy chuỗi không đủ; dòng cuối cho thấy màu cũng không đủ — biển ngoại giao nền trắng như biển cá nhân, chỉ chuỗi mới nói nó là gì.
+
+**API công khai của module:**
+
+| Ký hiệu | Vai trò |
+|---|---|
+| `PlateColor` | `StrEnum`: `white`, `yellow`, `blue`, `red`, `unknown` |
+| `ColorEstimate` | Kết quả một lần phân loại: `color`, `confidence`, `fractions` (tỉ lệ **từng dải màu**, kể cả dải thua), `.label` trả nhãn tiếng Việt |
+| `classify_plate_color(plate_image)` | Nhận ảnh cắt BGR `uint8`, trả `ColorEstimate` |
+| `CENTRE_INSET = 0.18` | Tỉ lệ cắt bỏ mỗi cạnh trước khi lấy mẫu |
+| `MIN_DOMINANT_FRACTION = 0.30` | Tỉ lệ tối thiểu dải thắng phải đạt để được gọi tên |
+
+**Cách hoạt động.** Ảnh cắt được chuyển sang HSV rồi rút gọn thành tỉ lệ điểm ảnh rơi vào từng dải màu. Dải lớn nhất thắng, **với điều kiện** vượt `MIN_DOMINANT_FRACTION`; không đạt thì kết quả là `PlateColor.UNKNOWN` chứ **không** phải một phỏng đoán — gọi sai tên một màu là **khẳng định** một loại phương tiện mà hệ thống không chứng minh được, tệ hơn hẳn việc thừa nhận không biết.
+
+**Hai chi tiết quan trọng hơn cả các ngưỡng:**
+
+* **Chỉ vùng GIỮA ảnh cắt được lấy mẫu** (`CENTRE_INSET = 0.18`, giữ khoảng hai phần ba mỗi chiều). Khung phát hiện hiếm khi bám sát nên dải ngoài thường là cản xe, kính chắn gió hoặc mặt đường — **một chiếc xe sơn đỏ phía sau tấm biển trắng sẽ thắng phiếu ngay** nếu lấy cả rìa.
+* **Điểm ảnh của ký tự KHÔNG bị loại trừ**, và không cần loại: ký tự chiếm thiểu số diện tích biển, còn ngưỡng của mỗi dải là **tỉ lệ trên vùng đã lấy mẫu** chứ không phải đa số tuyệt đối. Che chúng đi đồng nghĩa với phân đoạn từng chữ — một bước mong manh hơn nhiều so với bước mà nó định bảo vệ.
+
+**Không bao giờ ném ngoại lệ.** Ảnh rỗng, ảnh một kênh (xám) hay mảng không dùng được đều trả `UNKNOWN` với `confidence = 0.0`: một biển không đọc được màu là **kết cục bình thường vẫn phải ghi lại**, đúng như một biển không đọc được chữ. Ảnh xám bị từ chối chứ không đoán — một phán quyết về màu rút ra từ ảnh không có màu là chuyện bịa.
+
+**Ngưỡng được hiệu chỉnh trên ảnh cắt thật do chính bộ phát hiện của dự án sinh ra**, không phải trên bảng màu chuẩn — điều cần quan tâm là biển **trông thế nào sau nén JPEG, nhoè do chuyển động và phơi sáng buổi tối**, không phải nước sơn đo dưới đèn studio.
+
+**Kết quả đo (`ai/evaluation/color_accuracy.py`).** **97,89%** trên **1.565** ảnh có nhãn màu do người gán — nền vàng **98,56%** (684/694), nền trắng **97,40%** (787/808), nền xanh **96,83%** (61/63). Nguồn: [`docs/reports/19-color-accuracy.json`](../reports/19-color-accuracy.json).
+
+> **Phải nêu kèm hai giới hạn khi trích con số này.** Bộ dữ liệu là `nguyenluanai/license-plate-color v4` trên Roboflow Universe (CC BY 4.0), 2.107 ảnh, trong đó **542 ảnh bị loại khỏi con số công bố** vì mang nhãn `bien_unknown` — ảnh chụp đêm/hồng ngoại lỗi cân bằng trắng, ám tím, đến **chính người gán nhãn cũng không đọc được màu nền**. Vậy 97,89% là độ chính xác **trên các ảnh mà màu nền còn đọc được**, không phải trên mọi ảnh đầu vào có thể gặp. Ngoài ra mọi ảnh trong bộ này đều bị **kéo méo về 640×640** trước khi tải lên, nên bộ này **không dùng được để đánh giá OCR** (bước ước lượng số dòng dựa trên tỉ lệ khung hình) — nhưng câu hỏi về màu thì nó trả lời được, vì phép kéo không làm đổi màu nền.
+
+### 8.5. Ba hàm công khai mới trong [`pipeline.py`](../../ai/inference/pipeline.py)
+
+Cả ba là **hàm tự do ở mức module**, không phải phương thức riêng của `ALPRPipeline`. Đây là chủ ý: [`ai/evaluation/ocr_accuracy.py`](../../ai/evaluation/ocr_accuracy.py) điều khiển trực tiếp bộ nhận dạng và bộ chuẩn hoá mà **không dựng pipeline**. Nếu chúng là phương thức, các con số NFR-A5/A6/A7 công bố sẽ đo một nhánh mã **mà bản chạy thật không dùng** — phép đánh giá sẽ âm thầm báo thấp hơn hệ thống đã giao.
+
+#### `should_rescue_two_line(recognition) -> bool`
+
+Trả `True` **chỉ khi** biển hai dòng có chuỗi đã chuẩn hoá **trượt** kiểm tra định dạng nhưng **vẫn còn chữ**. Kết quả đã hợp lệ **không bao giờ** bị thử lại — chính điều đó khiến bước giải cứu **không thể về mặt cấu trúc** làm hỏng một biển vốn đã đọc đúng.
+
+#### `rescue_two_line_upper(recognizer, normalizer, plate_image, recognition, context=None, color="") -> PlateRecognition`
+
+Đọc lại **riêng nửa trên** rồi ghép vào trước kết quả hỏng, và **chỉ giữ** khi chuỗi ghép được validate.
+
+*Chữa lỗi gì.* Dải ghép ngang (mục 8.2) có một kiểu hỏng riêng: khi dòng trên nằm thấp trong một ảnh cắt lỏng, bộ dò văn bản chỉ tìm thấy **một** vùng chữ — dòng dưới — và mã tỉnh cùng chữ seri **mất hẳn**. `29E-015.66` trả về thành `015.66`: năm chữ số trần không khớp bố cục Việt Nam nào, nên validate **đúng khi từ chối** nó. Điều này khớp với hồ sơ lỗi đo được, nơi **lỗi thiếu ký tự nhiều hơn lỗi thay ký tự** trên biển hai dòng — mất nguyên một dòng chính là hình dạng của một hồ sơ lỗi thiên về thiếu.
+
+*Vì sao chỉ đọc lại nửa trên chứ không đọc riêng từng nửa.* Đọc tách hai nửa rồi nối chuỗi đạt **3,5%** so với **64,5%** của dải ghép trên mẫu 200 biển: hai nửa **cố ý chồng lấn**, nên vùng chồng bị đọc hai lần và nhân đôi ký tự — `84G122593` trở về thành `84-G124E009.01225.93`. Ghép trước chính là thứ cho phép bộ dò văn bản loại bỏ dải chồng đó.
+
+*Hiệu quả đã đo.* Trên 900 biển hai dòng qua hai mẫu độc lập: **+1,86 điểm** trên 700 biển (60,14% → 62,00%, cứu được 13 biển) và **+0,5 điểm** trên 200 biển, **không có trường hợp nào tụt lùi** ở cả hai. Lần gọi OCR thêm chỉ kích hoạt trên khoảng **một phần năm** ảnh cắt hai dòng — đúng những ảnh đã trượt — tốn khoảng **22 ms** độ trễ trung bình. Nguồn: [`docs/reports/15-two-line-fallback-700.json`](../reports/15-two-line-fallback-700.json).
+
+*An toàn.* Mọi lỗi bên trong lần thử lại đều trả về **kết quả gốc không đổi**: một lần giải cứu không bao giờ được phép tốn nhiều hơn phần nó có thể thắng.
+
+#### `refine_kind_with_color(outcome, color, line_count) -> str`
+
+Gỡ một trường hợp nhập nhằng ở mức chuỗi bằng **màu nền**.
+
+*Nhập nhằng nào.* Bố cục biển Việt Nam **không** là duy nhất cho mỗi họ biển. Hỏi phân loại `80A12345`, tầng luật ký tự trả về **bốn ứng viên** — `car`, `motorcycle_old`, `blue_car`, `blue_motorcycle` — và đánh dấu kết quả là nhập nhằng, vì cả bốn đều là cách đọc **hợp pháp** của chuỗi đó. Bộ chuẩn hoá buộc phải chọn một, và chọn cái phổ biến nhất: `car`. Câu trả lời đó **đúng phần lớn thời gian và sai âm thầm với mọi xe công vụ**, vốn mang đúng bộ ký tự đó trên nền **xanh**.
+
+*Ranh giới quyền hạn — điểm quan trọng nhất.* Màu **chỉ được nâng một ứng viên mà chuỗi ĐÃ coi là hợp lý**, và không hơn. Nó **không thể** tạo ra một họ biển mà tầng luật ký tự đã loại. Nhờ ràng buộc đó, một lần đọc màu sai **không thể bịa ra một phân loại**: điều tệ nhất nó gây ra là chọn nhầm phần tử **trong chính tập ứng viên mà chuỗi đã coi là ngang nhau**. Cụ thể: chuỗi được phân loại **dứt khoát** (`military`, `diplomatic`, `special`) thì màu **không được** lật ngược — một biển quân đội bị đọc nhầm màu vẫn là biển quân đội.
+
+*Bảng ưu tiên hiện tại* (`_COLOR_PREFERRED_KINDS`) chỉ có **một** mục: `blue → (blue_car, blue_motorcycle)`. Nền xanh là bằng chứng **duy nhất** tách được biển cơ quan nhà nước khỏi biển cá nhân. Chọn giữa hai thành viên của cặp dựa vào `line_count`; nếu `line_count` mâu thuẫn với cặp được ưu tiên thì **giữ nguyên kết luận gốc** — số dòng là đại lượng **đo được**, không phải suy diễn.
+
+> **Hệ quả cho tầng trình bày.** `is_valid_format = false` mang nghĩa hẹp: *chuỗi không khớp định dạng biển **DÂN SỰ***. Biển quân đội trả `false` **có chủ đích** vì nó nằm ngoài hệ đăng ký dân sự — nó vẫn là biển thật, đọc đúng, độ tin cậy cao. Trình bày kết quả đó thành "sai định dạng biển số" là **sai**; đây là lỗi giao diện đã từng xảy ra và đã được sửa. Quy tắc: khi `is_valid_format = false`, **luôn** đọc `plate_kind` trước khi hiện bất kỳ thông điệp lỗi nào.
 
 ---
 
@@ -1014,7 +1119,7 @@ Báo cáo HTML sinh vào `htmlcov/index.html`.
 | Nhóm | Tệp | Nội dung |
 |---|---|---|
 | **Kiến trúc** | `tests/test_architecture.py` | Thi hành NFR-M1 và NFR-M4 — xem mục 3 |
-| **Đơn vị — AI** | `test_config`, `test_detector`, `test_normalizer`, `test_pipeline`, `test_plate_rules`, `test_recognizer`, `test_two_line` | Logic suy luận |
+| **Đơn vị — AI** | `test_config`, `test_detector`, `test_normalizer`, `test_pipeline`, `test_plate_rules`, `test_plate_color`, `test_recognizer`, `test_two_line`, `test_ocr_accuracy` | Logic suy luận. `test_plate_color` phủ module màu nền (mục 8.4); các hàm giải cứu biển hai dòng và `refine_kind_with_color` nằm trong `test_pipeline` |
 | **Đơn vị — backend** | `tests/backend/test_repositories`, `test_job_repository`, `test_schemas`, `test_storage_service` | Tầng dữ liệu và lưu trữ |
 | **Tích hợp** | `tests/integration/test_api_health`, `test_api_detection`, `test_api_history`, `test_api_statistics` | Chạy qua `TestClient`: router thật, middleware thật, exception handler thật, service thật, SQL thật |
 
@@ -1328,9 +1433,9 @@ if not is_usable:
 |---|---|
 | Backend FastAPI | Kiểm chứng bằng HTTP thật vào tiến trình `uvicorn` sống. `/health` trả `model_loaded=true`, `engine = 'yolo:...+paddleocr-PP-OCRv5-mobile'`. 10/10 ảnh test thật nhận dạng được biển số |
 | Chuỗi đọc được thật (ví dụ) | `51G-495.39`, `51F-734.20`, `47A-065.46`, `51A-897.14` — độ tin cậy OCR 0,94–0,9993 |
-| Migration | `alembic upgrade head` chạy xong: `detection_history` 18 cột, `detection_job` 11 cột |
+| Migration | `alembic upgrade head` chạy xong tới `0002_plate_kind_and_color`: `detection_history` **21 cột**, `detection_job` 11 cột |
 | Frontend | `typecheck` sạch, `lint` sạch, `build` thành công (2.381 module). 10 endpoint kiểm chứng qua HTTP thật, kiểu TypeScript khớp từng trường |
-| Kiểm thử | **882 test thu thập; 881 pass, 1 `xfail`, 0 fail, 0 skip, 17 cảnh báo** (chạy 2026-07-20; xem ghi chú ở mục 11.4 về các con số 862/861 và 199 đã lỗi thời). Bao phủ tầng nghiệp vụ **87,7%** đo 2026-07-20 (`docs/reports/13-refactor-result.json`) — NFR-M2 ≥ 70% — **ĐẠT**; số đo Phase 7 trước đó là 88,1% tầng nghiệp vụ và 42,0% toàn kho (`docs/reports/07-testing-report.md`) |
+| Kiểm thử | **913 test thu thập; 912 pass, 1 `xfail`, 0 fail** (sau khi bổ sung tính năng phân loại loại biển / màu biển ngày 20/07/2026; con số trước đó là 882 thu thập / 881 pass. Xem ghi chú ở mục 11.4 về các con số 862/861 và 199 đã lỗi thời). Bao phủ tầng nghiệp vụ **87,7%** đo 2026-07-20 (`docs/reports/13-refactor-result.json`) — NFR-M2 ≥ 70% — **ĐẠT**; số đo Phase 7 trước đó là 88,1% tầng nghiệp vụ và 42,0% toàn kho (`docs/reports/07-testing-report.md`) |
 | Docker | `Dockerfile` + `compose` đã có, `docker compose config` hợp lệ |
 | Bộ dữ liệu | 15.133 ảnh, hợp nhất từ 7 bộ, còn 6 nguồn nguyên tố sau khử trùng lặp chéo bộ (9 bộ đã tải về, 2 bộ nhãn ký tự tách riêng cho OCR); khử trùng lặp chéo bộ loại **11.978/27.111 ảnh (44,2%)** trên toàn bộ ảnh của 7 bộ vào hợp nhất (ngưỡng 5, đã xoá thật). 4.019 chuỗi biển tái tạo từ 2 bộ có nhãn ký tự (2.801 hợp lệ) |
 

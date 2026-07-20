@@ -1,6 +1,6 @@
 # Tài liệu API — Hệ thống nhận dạng biển số xe Việt Nam
 
-**Phiên bản tài liệu:** 1.2
+**Phiên bản tài liệu:** 1.3
 **Ngày lập:** 19/07/2026 · **Ngày cập nhật:** 20/07/2026
 **Phạm vi:** REST API của tầng backend (FastAPI), tương ứng module `backend/` trong kho mã nguồn.
 **Nguồn đối chiếu:** toàn bộ nội dung dưới đây được đọc trực tiếp từ mã nguồn
@@ -301,6 +301,10 @@ curl -s -X POST http://127.0.0.1:8000/api/detect/image \
       "ocr_confidence": 0.87,
       "bbox": { "x": 142, "y": 318, "width": 186, "height": 64 },
       "is_valid_format": true,
+      "plate_kind": "car",
+      "plate_color": "yellow",
+      "plate_color_confidence": 0.69,
+      "plate_display": "51F-123.45",
       "plate_line_count": 1,
       "processing_time": 0.412,
       "plate_image_url": "/files/plates/3f2a1c7e-plate-0.jpg"
@@ -314,7 +318,7 @@ curl -s -X POST http://127.0.0.1:8000/api/detect/image \
 }
 ```
 
-**Ba điểm ngữ nghĩa cần nắm:**
+**Bốn điểm ngữ nghĩa cần nắm:**
 
 1. **Một lần tải lên là một job.** Ảnh chứa ba xe sinh ba phần tử trong
    `results`, cả ba dùng chung một `job_id`, và được tính là **một** lượt tải
@@ -326,6 +330,11 @@ curl -s -X POST http://127.0.0.1:8000/api/detect/image \
 3. **Kiểu tệp xác định bằng magic bytes**, không dựa vào phần mở rộng hay
    header `Content-Type`. Một tệp `.jpg` thực chất là kho nén ZIP sẽ bị từ chối
    với mã 415.
+4. **`plate_kind` và `plate_color` phải đọc cùng nhau**, không được dùng riêng
+   một trong hai để kết luận loại xe: `plate_kind` suy từ **chuỗi ký tự** nên
+   không thấy được nền vàng của xe kinh doanh, `plate_color` đọc từ **điểm ảnh**
+   nên không phân biệt được biển ngoại giao với biển cá nhân. Đây là điểm dễ
+   dùng sai nhất trong bốn trường mới; xem mục 4.4.7.
 
 **Bảng mã lỗi:**
 
@@ -452,6 +461,10 @@ curl -s -X POST http://127.0.0.1:8000/api/detect/frame \
       "ocr_confidence": 0.87,
       "bbox": { "x": 142, "y": 318, "width": 186, "height": 64 },
       "is_valid_format": true,
+      "plate_kind": "car",
+      "plate_color": "white",
+      "plate_color_confidence": 0.71,
+      "plate_display": "51F-123.45",
       "plate_line_count": 1,
       "processing_time": 0.412,
       "plate_image_url": "/files/plates/3f2a1c7e-plate-0.jpg"
@@ -582,6 +595,9 @@ curl -s -G http://127.0.0.1:8000/api/history \
       "bbox_h": 64,
       "bbox": { "x": 142, "y": 318, "width": 186, "height": 64 },
       "is_valid_format": true,
+      "plate_kind": "car",
+      "plate_color": "yellow",
+      "plate_color_confidence": 0.69,
       "plate_line_count": 1,
       "processing_time": 0.412,
       "detected_time": "2026-07-19T09:31:22.145Z",
@@ -598,13 +614,26 @@ curl -s -G http://127.0.0.1:8000/api/history \
 }
 ```
 
-**Hai điểm ngữ nghĩa:**
+**Ba điểm ngữ nghĩa:**
 
 1. **Một dòng là một biển số, không phải một lượt tải lên.** Ảnh chứa ba biển
    số xuất hiện thành ba dòng dùng chung một `source_job_id`.
 2. **`total` đếm số bản ghi khớp bộ lọc trên toàn bộ các trang**, không phải số
    phần tử trong trang hiện tại. Nhờ vậy client dùng trực tiếp được để dựng bộ
    đếm trang.
+3. **`plate_kind`, `plate_color`, `plate_color_confidence` có thể là `null` với
+   bản ghi cũ.** Ba cột này được thêm bằng migration `0002_plate_kind_and_color`
+   (20/07/2026); các bản ghi ghi xuống **trước** thời điểm đó thực sự chưa từng
+   được tính các giá trị này, và `null` mang đúng nghĩa "chưa ghi nhận". Client
+   **không được** coi `null` là "biển trắng" hay "loại xe con" — điền một giá
+   trị mặc định sẽ làm nó không phân biệt được với một giá trị đo thật.
+
+**Trường `plate_display` không có trong phản hồi lịch sử.** Nó chỉ xuất hiện
+trong `DetectionResultSchema` (các endpoint nhận dạng), vì nó là **hàm thuần**
+của `plate_number` và `plate_line_count`, được suy ra lúc đọc chứ không lưu
+trong cơ sở dữ liệu. Client cần chuỗi có dấu phân tách cho bản ghi lịch sử thì
+tự dựng từ `plate_number`, hoặc dùng `GET /api/history/{id}` như hiện tại và
+định dạng ở phía giao diện.
 
 **Không có biến thể không phân trang.** Bảng lịch sử được đặc tả chứa tới
 100 000 bản ghi (NFR-SC2); một truy vấn không giới hạn sẽ nạp toàn bộ số dòng
@@ -643,6 +672,12 @@ trình đọc. Mười một cột, theo thứ tự khai báo trong hằng `_CSV
 `ID`, `Biển số`, `Chuỗi OCR thô`, `Độ tin cậy phát hiện`, `Độ tin cậy OCR`,
 `Loại đầu vào`, `Đúng định dạng`, `Số dòng`, `Thời gian xử lý (giây)`,
 `Thời điểm phát hiện (UTC)`, `Mã lượt tải lên`.
+
+> **Ba trường mới chưa có trong bản xuất CSV.** `plate_kind`, `plate_color` và
+> `plate_color_confidence` đã có trong phản hồi JSON của `GET /api/history`
+> nhưng **chưa** được thêm vào `_CSV_HEADERS` — bản xuất vẫn đúng 11 cột như
+> trên. Cần phân tích theo loại biển hoặc màu biển thì phải dùng API JSON. Ghi
+> nhận ở mục 4.9.
 
 **Phản hồi được truyền theo luồng (streaming)** thay vì dựng sẵn trong bộ nhớ:
 ở ngưỡng 100 000 bản ghi, tài liệu có kích thước hàng chục megabyte.
@@ -856,6 +891,10 @@ classDiagram
         +float? ocr_confidence
         +BoundingBoxSchema bbox
         +bool is_valid_format
+        +str? plate_kind
+        +str? plate_color
+        +float? plate_color_confidence
+        +str? plate_display
         +int? plate_line_count
         +float processing_time
         +str? plate_image_url
@@ -881,6 +920,9 @@ classDiagram
         +int bbox_h
         +BoundingBoxSchema bbox
         +bool is_valid_format
+        +str? plate_kind
+        +str? plate_color
+        +float? plate_color_confidence
         +int? plate_line_count
         +float processing_time
         +datetime detected_time
@@ -1076,7 +1118,11 @@ sai một trong số chúng.
 | `detection_confidence` | float | bắt buộc | Độ tin cậy bước phát hiện, `[0, 1]` |
 | `ocr_confidence` | float \| null | `null` | Độ tin cậy bước OCR, `[0, 1]`. `null` khi không đọc được chữ |
 | `bbox` | BoundingBoxSchema | bắt buộc | Vị trí biển trong ảnh nguồn |
-| `is_valid_format` | bool | `false` | Chuỗi có khớp một mẫu biển số Việt Nam đã biết hay không. Giá trị `false` **đánh dấu** kết quả chứ không loại bỏ nó |
+| `is_valid_format` | bool | `false` | Chuỗi có khớp một mẫu biển số **dân sự** Việt Nam đã biết hay không. Giá trị `false` **đánh dấu** kết quả chứ không loại bỏ nó. Biển quân đội trả `false` **có chủ đích** — đọc kèm `plate_kind`, xem mục 4.4.7 |
+| `plate_kind` | str \| null | `null` | Họ biển suy từ **chuỗi ký tự**: `car`, `motorcycle_new`, `motorcycle_old`, `blue_car`, `blue_motorcycle`, `special`, `diplomatic`, `military`, `unknown`. Ví dụ: `"car"`. Không phân biệt được biển vàng kinh doanh với biển trắng cá nhân — cả hai đều ra `car` (mục 4.4.7) |
+| `plate_color` | str \| null | `null` | Màu nền đọc từ **điểm ảnh** của ảnh cắt: `white`, `yellow`, `blue`, `red`, `unknown`. Ví dụ: `"yellow"`. Theo TT 79/2024/TT-BCA: trắng = cá nhân/tổ chức trong nước, vàng = kinh doanh vận tải, xanh = cơ quan nhà nước, đỏ = quân đội (mục 4.4.7) |
+| `plate_color_confidence` | float \| null | `null` | Tỷ lệ điểm ảnh đã lấy mẫu ủng hộ `plate_color`, `[0, 1]`. Ví dụ: `0.69`. **Không phải xác suất** — đây là biên độ mà quyết định về màu dựa vào. Ngưỡng để được gọi tên là `0.30`; dưới ngưỡng, `plate_color` trả `unknown` (mục 4.4.7) |
+| `plate_display` | str \| null | `null` | Biển số kèm dấu phân tách như trên biển thật, ví dụ `"29E-015.66"` cho `29E01566`, `"51F-123.45"` cho `51F12345`. **Chỉ dùng để hiển thị**: tìm kiếm, so khớp và mọi phép đo độ chính xác đều dùng `plate_number` trần. Không lưu trong cơ sở dữ liệu — suy ra lúc đọc (mục 4.4.8) |
 | `plate_line_count` | int \| null | `null` | Số dòng chữ, `1` hoặc `2` (mục 4.4.5) |
 | `processing_time` | float | `0.0` | Số giây xử lý riêng biển này, gồm phát hiện và OCR |
 | `plate_image_url` | str \| null | `null` | URL ảnh biển đã cắt, `null` khi không lưu được ảnh cắt |
@@ -1142,7 +1188,10 @@ phơi ra **trừ** đường dẫn hệ thống tệp thô, vốn được thay 
 | `plate_image_path` | str \| null | **URL** tương đối của ảnh biển đã cắt |
 | `bbox_x`, `bbox_y`, `bbox_w`, `bbox_h` | int | Hộp giới hạn dạng phẳng, pixel |
 | `bbox` | BoundingBoxSchema | Hộp giới hạn dạng lồng, dẫn xuất bằng `@computed_field` |
-| `is_valid_format` | bool | Có khớp mẫu biển Việt Nam hay không |
+| `is_valid_format` | bool | Có khớp mẫu biển **dân sự** Việt Nam hay không. Biển quân đội trả `false` theo thiết kế (mục 4.4.7) |
+| `plate_kind` | str \| null | Họ biển suy từ chuỗi ký tự, một trong chín giá trị nêu ở bảng `DetectionResultSchema`. `null` với bản ghi ghi trước migration `0002` |
+| `plate_color` | str \| null | Màu nền đọc từ điểm ảnh: `white` \| `yellow` \| `blue` \| `red` \| `unknown`. `null` với bản ghi ghi trước migration `0002` |
+| `plate_color_confidence` | float \| null | Tỷ lệ điểm ảnh ủng hộ `plate_color`, `[0, 1]`. `null` với bản ghi ghi trước migration `0002` |
 | `plate_line_count` | int \| null | Số dòng chữ |
 | `processing_time` | float | Số giây xử lý biển này |
 | `detected_time` | datetime | Thời điểm phát hiện biển (UTC) |
@@ -1191,6 +1240,105 @@ Xem mục 4.8.
 #### `ErrorResponse`
 
 Xem mục 4.5.
+
+### 4.4.7 `plate_kind` và `plate_color` — hai nguồn bằng chứng bù trừ nhau
+
+> **Đây là phần bên tiêu thụ API bắt buộc phải hiểu.** Dùng riêng lẻ một trong
+> hai trường để kết luận loại phương tiện sẽ cho kết quả sai một cách có hệ
+> thống, chứ không phải sai ngẫu nhiên.
+
+Hai trường trả lời hai câu hỏi khác nhau, bằng hai loại bằng chứng khác nhau:
+
+| | `plate_kind` | `plate_color` |
+|---|---|---|
+| **Đọc từ** | **Chuỗi ký tự** đã nhận dạng | **Điểm ảnh** của ảnh biển đã cắt |
+| **Sinh bởi** | `ai/inference/plate_rules.py` + `normalizer.py` | `ai/inference/plate_color.py` |
+| **Giá trị** | `car`, `motorcycle_new`, `motorcycle_old`, `blue_car`, `blue_motorcycle`, `special`, `diplomatic`, `military`, `unknown` | `white`, `yellow`, `blue`, `red`, `unknown` |
+| **Điểm mù** | **Không** thấy được màu nền: biển vàng kinh doanh và biển trắng cá nhân mang **cùng một bố cục ký tự**, cả hai đều ra `car` | **Không** thấy được cấu trúc chuỗi: biển ngoại giao và biển cá nhân **cùng nền trắng**, màu không tách được hai loại |
+
+**Vì sao không thể gộp thành một trường.** Thông tư 79/2024/TT-BCA quy định biển
+xe kinh doanh vận tải **nền vàng** nhưng bố cục ký tự **y hệt** biển cá nhân nền
+trắng: `29E-015.66` là chuỗi hợp lệ cho cả hai. Không có biểu thức chính quy nào
+tách được chúng, vì khác biệt **không nằm trong chuỗi**. Chiều ngược lại cũng
+đúng: biển ngoại giao có nền trắng như biển cá nhân, và chỉ chuỗi ký tự (mã quốc
+gia ba chữ số) mới cho biết nó là gì. **Chỉ cặp hai trường mới định danh được
+loại phương tiện.**
+
+Bảng tra cứu thực dụng cho bên tiêu thụ:
+
+| `plate_color` | `plate_kind` | Diễn giải |
+|---|---|---|
+| `white` | `car` / `motorcycle_new` / `motorcycle_old` | Xe cá nhân hoặc tổ chức trong nước |
+| `yellow` | `car` / `motorcycle_new` / `motorcycle_old` | Xe **kinh doanh vận tải** — *chỉ màu mới cho biết điều này* |
+| `blue` | `blue_car` / `blue_motorcycle` | Xe cơ quan nhà nước, tổ chức chính trị – xã hội |
+| `red` | `military` | Xe quân đội |
+| `white` | `diplomatic` | Xe ngoại giao — *chỉ chuỗi mới cho biết điều này* |
+| bất kỳ | `unknown` | Chuỗi không khớp mẫu nào; xem `is_valid_format` |
+
+**Màu được phép nâng cấp một ứng viên, và chỉ vậy thôi.** Riêng biển xanh cơ
+quan nhà nước có một trường hợp nhập nhằng thật: với chuỗi `80A12345`, tầng luật
+ký tự trả về **bốn ứng viên ngang nhau** — `car`, `motorcycle_old`, `blue_car`,
+`blue_motorcycle` — vì cả bốn đều là cách đọc hợp lệ, rồi buộc phải chọn cái phổ
+biến nhất là `car`. Hàm `refine_kind_with_color` trong `ai/inference/pipeline.py`
+dùng màu nền để **nâng một ứng viên mà chuỗi đã coi là hợp lý** lên thành kết
+luận. Nó **không** được phép tạo ra một họ biển mà tầng luật đã loại: một biển
+quân đội bị đọc nhầm màu vẫn là biển quân đội. Hệ quả với bên tiêu thụ: sai sót
+tệ nhất mà một lần đọc màu sai có thể gây ra là chọn nhầm phần tử **trong chính
+tập ứng viên mà chuỗi đã coi là ngang nhau**, chứ không phải bịa ra một phân
+loại mới.
+
+**`is_valid_format = false` không đồng nghĩa với "sai định dạng".** Trường này có
+nghĩa hẹp: *chuỗi có khớp định dạng biển **dân sự** Việt Nam hay không*. Biển
+quân đội (`plate_kind = "military"`) trả `false` **có chủ đích**, vì nó nằm ngoài
+hệ đăng ký dân sự — nó vẫn là một biển số thật, đọc đúng, độ tin cậy cao. Trình
+bày kết quả đó cho người dùng thành "sai định dạng biển số" là **sai**; đây là
+lỗi giao diện đã từng xảy ra và đã được sửa. Quy tắc cho client: khi
+`is_valid_format = false`, **luôn** kiểm tra `plate_kind` trước khi hiển thị bất
+kỳ thông điệp lỗi nào.
+
+**Độ chính xác của bước nhận màu.** Đo được **97,89%** trên **1.565** ảnh có
+nhãn màu do người gán (`docs/reports/19-color-accuracy.json`): nền vàng
+**98,56%** (684/694), nền trắng **97,40%** (787/808), nền xanh **96,83%**
+(61/63). Cần nêu kèm hai giới hạn của phép đo này để không bị hiểu quá rộng:
+bộ dữ liệu là `nguyenluanai/license-plate-color v4` trên Roboflow Universe
+(giấy phép CC BY 4.0), gồm 2.107 ảnh, trong đó **542 ảnh bị loại khỏi con số
+công bố** vì được gán nhãn `bien_unknown` — ảnh chụp đêm/hồng ngoại bị lỗi cân
+bằng trắng, ám màu tím, đến chính người gán nhãn cũng không đọc được màu nền.
+Con số 97,89% vì vậy là độ chính xác **trên các ảnh mà màu nền còn đọc được**,
+không phải trên toàn bộ ảnh đầu vào có thể gặp.
+
+**Ngưỡng và vùng lấy mẫu**, để hiểu vì sao có giá trị `unknown`:
+
+* Chỉ vùng **giữa** ảnh cắt được lấy mẫu (`CENTRE_INSET = 0.18`, tức cắt bỏ 18%
+  mỗi cạnh). Khung phát hiện thường lỏng nên dải ngoài hay dính cản xe, kính
+  chắn gió hoặc mặt đường — một chiếc xe **sơn đỏ** phía sau tấm biển **trắng**
+  sẽ thắng phiếu nếu lấy cả rìa.
+* Dải màu thắng phải chiếm tối thiểu **30%** số điểm ảnh đã lấy mẫu
+  (`MIN_DOMINANT_FRACTION = 0.30`). Không đạt thì kết quả là `unknown` chứ không
+  phải một phỏng đoán: gọi sai tên một màu là **khẳng định** một loại phương
+  tiện mà hệ thống không chứng minh được, tệ hơn là thừa nhận không biết.
+
+### 4.4.8 `plate_display` — chuỗi để hiển thị, không phải chuỗi để so khớp
+
+**Kiểu:** `str | None`. **Chỉ có** trong `DetectionResultSchema` (các endpoint
+nhận dạng), **không có** trong `DetectionHistoryResponse`.
+
+| Trường | Giá trị | Dùng cho |
+|---|---|---|
+| `plate_number` | `"51F12345"` — chuỗi trần, không dấu phân tách | Tìm kiếm, so khớp, mọi phép đo độ chính xác |
+| `plate_display` | `"51F-123.45"` — kèm dấu phân tách như trên biển thật | **Chỉ** hiển thị cho người đọc |
+
+Giá trị được **suy ra lúc đọc** bởi hàm `_display_text` trong
+`backend/services/detection_service.py`, gọi tới
+`VietnamesePlateNormalizer.format_for_display`. Nó **không** được lưu thành cột
+trong cơ sở dữ liệu, và đây là quyết định có lý do: dấu phân tách là **hàm thuần**
+của chuỗi biển số cộng số dòng, nên lưu lại sẽ tạo ra **bản sao thứ hai của cùng
+một sự kiện** — một bản sao có thể trôi lệch khỏi bản gốc, và dù sao cũng không
+có với những bản ghi ghi trước khi tính năng này tồn tại.
+
+Khi chuỗi không khớp bố cục nào đã biết, `plate_display` trả về **đúng chuỗi đầu
+vào không đổi** — một chuỗi chưa nhận dạng được hiển thị nguyên trạng, không bao
+giờ được "trang điểm" cho giống một biển số hợp lệ.
 
 ---
 
@@ -1649,6 +1797,8 @@ bảo đảm tính trung thực của tài liệu.
 | 5 | `image_path` / `plate_image_path` mang tên "path" nhưng chứa URL | Mô tả trường ghi rõ là "Relative URL", nhưng tên trường vẫn là `_path` do kế thừa từ tên cột cơ sở dữ liệu | Tên gây hiểu nhầm |
 | 6 | Không có route hủy tác vụ | Tầng worker và repository đều hỗ trợ hủy (`_is_cancelled`, `mark_cancelled`), nhưng không có endpoint HTTP nào kích hoạt. Trạng thái `cancelled` trong enum hiện không thể đạt tới qua API | FR-2.6 mới đạt một phần |
 | 7 | Mã `422` không được khai báo trong `responses` | Không route nào liệt kê 422 trong `responses`, dù mọi route có tham số đều có thể trả về mã này. Tài liệu OpenAPI sinh ra vì vậy thiếu mã 422 ở phần lớn endpoint | Tài liệu chưa đầy đủ |
+| 8 | Ví dụ `plate_number` có dấu gạch nối | `schemas/detection.py` ghi ví dụ `"51F-12345"`, nhưng `VietnamesePlateNormalizer.normalize("51F12345")` thực tế trả về chuỗi **trần** `"51F12345"` — dấu phân tách chỉ được thêm ở `plate_display`. Các ví dụ JSON trong tài liệu này kế thừa dạng có gạch nối từ mã nguồn | Ví dụ trong schema gây hiểu nhầm về dạng lưu trữ |
+| 9 | Xuất CSV chưa có ba cột mới | `_CSV_HEADERS` vẫn là **11 cột** và không chứa `plate_kind`, `plate_color`, `plate_color_confidence`. Người dùng xuất CSV để phân tích loại biển sẽ không thấy chúng | Chức năng chưa đồng bộ với API JSON |
 
 ---
 

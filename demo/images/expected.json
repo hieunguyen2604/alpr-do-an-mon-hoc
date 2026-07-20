@@ -1,0 +1,257 @@
+[
+  {
+    "file": "1dong-1.png",
+    "plates": [
+      {
+        "plate": "51G31691",
+        "display": "51G-316.91",
+        "kind": "car",
+        "color": "white",
+        "valid": true,
+        "lines": 1
+      }
+    ]
+  },
+  {
+    "file": "1dong-2.png",
+    "plates": [
+      {
+        "plate": "51F63034",
+        "display": "51F-630.34",
+        "kind": "car",
+        "color": "white",
+        "valid": true,
+        "lines": 1
+      }
+    ]
+  },
+  {
+    "file": "1dong-3.png",
+    "plates": [
+      {
+        "plate": "51G51332",
+        "display": "51G-513.32",
+        "kind": "car",
+        "color": "white",
+        "valid": true,
+        "lines": 1
+      }
+    ]
+  },
+  {
+    "file": "2dong-1.png",
+    "plates": [
+      {
+        "plate": "59K120173",
+        "display": "59K1-201.73",
+        "kind": "motorcycle_old",
+        "color": "white",
+        "valid": true,
+        "lines": 2
+      }
+    ]
+  },
+  {
+    "file": "2dong-2.png",
+    "plates": [
+      {
+        "plate": "59K122599",
+        "display": "59K1-225.99",
+        "kind": "motorcycle_old",
+        "color": "white",
+        "valid": true,
+        "lines": 2
+      }
+    ]
+  },
+  {
+    "file": "2dong-3.png",
+    "plates": [
+      {
+        "plate": "51P54578",
+        "display": "51P-545.78",
+        "kind": "car",
+        "color": "white",
+        "valid": true,
+        "lines": 2
+      }
+    ]
+  },
+  {
+    "file": "bien-do-quan-doi.jpg",
+    "plates": [
+      {
+        "plate": "KV6938",
+        "display": "KV-6938",
+        "kind": "military",
+        "color": "red",
+        "valid": false,
+        "lines": 1
+      }
+    ]
+  },
+  {
+    "file": "bien-ngoai-giao-51ng.jpg",
+    "plates": [
+      {
+        "plate": "51NG16633",
+        "display": "51NG16633",
+        "kind": "unknown",
+        "color": "white",
+        "valid": false,
+        "lines": 2
+      }
+    ]
+  },
+  {
+    "file": "bien-ngoai-giao-ng.jpg",
+    "plates": [
+      {
+        "plate": "80346NG68",
+        "display": "80-346-NG-68",
+        "kind": "diplomatic",
+        "color": "white",
+        "valid": true,
+        "lines": 1
+      }
+    ]
+  },
+  {
+    "file": "bien-vang-kinh-doanh.jpg",
+    "plates": [
+      {
+        "plate": "29E01566",
+        "display": "29E-015.66",
+        "kind": "car",
+        "color": "yellow",
+        "valid": true,
+        "lines": 2
+      }
+    ]
+  },
+  {
+    "file": "bien-xanh-nha-nuoc-2.jpg",
+    "plates": [
+      {
+        "plate": "65A00450",
+        "display": "65A-004.50",
+        "kind": "car",
+        "color": "blue",
+        "valid": true,
+        "lines": 2
+      }
+    ]
+  },
+  {
+    "file": "bien-xanh-nha-nuoc.jpg",
+    "plates": [
+      {
+        "plate": "1987",
+        "display": "1987",
+        "kind": "unknown",
+        "color": "blue",
+        "valid": false,
+        "lines": 2
+      }
+    ]
+  },
+  {
+    "file": "khong-co-bien-so.jpg",
+    "plates": []
+  },
+  {
+    "file": "nhieu-bien-1.png",
+    "plates": [
+      {
+        "plate": "56P23135",
+        "display": "56P-231.35",
+        "kind": "car",
+        "color": "white",
+        "valid": true,
+        "lines": 2
+      },
+      {
+        "plate": "51G09964",
+        "display": "51G-099.64",
+        "kind": "car",
+        "color": "white",
+        "valid": true,
+        "lines": 2
+      },
+      {
+        "plate": "",
+        "display": "",
+        "kind": "unknown",
+        "color": "white",
+        "valid": false,
+        "lines": 2
+      }
+    ]
+  },
+  {
+    "file": "nhieu-bien-2.png",
+    "plates": [
+      {
+        "plate": "59YR20430",
+        "display": "59YR-204.30",
+        "kind": "motorcycle_new",
+        "color": "white",
+        "valid": true,
+        "lines": 2
+      },
+      {
+        "plate": "39458858X0",
+        "display": "39458858X0",
+        "kind": "unknown",
+        "color": "white",
+        "valid": false,
+        "lines": 2
+      },
+      {
+        "plate": "73G341873",
+        "display": "73G3-418.73",
+        "kind": "motorcycle_old",
+        "color": "white",
+        "valid": true,
+        "lines": 2
+      },
+      {
+        "plate": "BA104",
+        "display": "BA-104",
+        "kind": "military",
+        "color": "white",
+        "valid": false,
+        "lines": 2
+      }
+    ]
+  },
+  {
+    "file": "nhieu-bien-3.png",
+    "plates": [
+      {
+        "plate": "4374",
+        "display": "4374",
+        "kind": "unknown",
+        "color": "white",
+        "valid": false,
+        "lines": 2
+      },
+      {
+        "plate": "27T935952",
+        "display": "27T9-359.52",
+        "kind": "motorcycle_old",
+        "color": "white",
+        "valid": true,
+        "lines": 2
+      },
+      {
+        "plate": "",
+        "display": "",
+        "kind": "unknown",
+        "color": "white",
+        "valid": false,
+        "lines": 2
+      }
+    ]
+  }
+]

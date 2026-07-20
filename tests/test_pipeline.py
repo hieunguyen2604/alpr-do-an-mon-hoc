@@ -573,10 +573,23 @@ class TestColorResolvesKindAmbiguity:
         outcome = _Outcome(kind, (kind,))
         assert refine_kind_with_color(outcome, "blue", 1) == kind
 
-    def test_line_count_wins_when_it_contradicts_the_promotion(self) -> None:
-        """A two-line plate cannot become `blue_car`; the line count is measured."""
+    def test_a_two_line_plate_can_still_be_a_state_car(self) -> None:
+        """Two lines does not imply a motorcycle, and assuming so lost real plates.
+
+        `65A-004.50` is a two-line State **car** plate; QCVN 08:2024/BCA defines
+        the 330x165 two-line car format precisely so that it can exist. An
+        earlier version of the refinement chose between `blue_car` and
+        `blue_motorcycle` by line count, and therefore refused to promote exactly
+        the plates it was written for -- found by running the real image, not by
+        review.
+        """
         outcome = _Outcome("car", ("car", "blue_car"))
-        assert refine_kind_with_color(outcome, "blue", 2) == "car"
+        assert refine_kind_with_color(outcome, "blue", 2) == "blue_car"
+
+    def test_promotion_never_crosses_the_vehicle_class(self) -> None:
+        """Colour says nothing about car versus motorcycle; the serial pattern does."""
+        outcome = _Outcome("motorcycle_old", _AMBIGUOUS)
+        assert refine_kind_with_color(outcome, "blue", 1) == "blue_motorcycle"
 
     def test_an_outcome_without_a_classification_is_handled(self) -> None:
         """`BaseNormalizer` promises only `normalize`; absence must not raise."""

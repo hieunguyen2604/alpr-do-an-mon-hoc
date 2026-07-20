@@ -20,6 +20,7 @@ from __future__ import annotations
 
 import pytest
 
+from ai.inference.normalizer import VietnamesePlateNormalizer
 from ai.inference.plate_rules import (
     CIVIL_KINDS,
     EXCLUDED_LETTERS,
@@ -520,3 +521,67 @@ class TestEndToEndRepair:
             for kind, pattern in PATTERNS_BY_KIND.items()
             if kind in CIVIL_KINDS
         )
+
+
+class TestMilitaryLayouts:
+    """All six layouts of Annex II to the 2021 Ministry of National Defence rules.
+
+    The pattern used to accept only the commonest one -- two letters and four to
+    six digits. The other five fell through to the civil rules, and one of them
+    failed dangerously rather than merely failing: see
+    :class:`TestMilitaryIsNeverReportedAsCivil`.
+    """
+
+    @pytest.mark.parametrize(
+        ("plate", "layout"),
+        [
+            ("AB1234", "ô tô, xe xích — biển dài"),
+            ("AB123456", "ô tô, số hiệu 6 chữ số"),
+            ("AB123", "mô tô"),
+            ("AB123RM", "rơ moóc"),
+            ("AB123BM", "sơ mi rơ moóc"),
+            ("ABS1234", "xe máy chuyên dùng, hậu tố S"),
+            ("ABL1234", "xe máy chuyên dùng, hậu tố L"),
+            ("ABX1234", "xe máy chuyên dùng, hậu tố X"),
+            ("KV6938", "mã đơn vị có thật"),
+        ],
+    )
+    def test_every_layout_is_recognised_as_military(self, plate: str, layout: str) -> None:
+        assert RE_MILITARY.match(plate) is not None, layout
+
+    @pytest.mark.parametrize("plate", ["51F73420", "29AA12345", "80001NG01", "51LD12345"])
+    def test_civil_plates_are_not_claimed_as_military(self, plate: str) -> None:
+        """Widening the pattern must not let it swallow civil layouts."""
+        assert RE_MILITARY.match(plate) is None
+
+
+class TestMilitaryIsNeverReportedAsCivil:
+    """An army plate must never reach a user labelled as a valid civilian plate.
+
+    The failure this guards against was real, not theoretical. Position repair
+    assumes its input is meant to be a civil plate and rewrites characters until
+    it looks like one; given ``ABS1234`` it produced ``48S1234`` -- a well-formed
+    Ho Chi Minh City car plate -- and reported ``is_valid_format = True``.
+
+    That is worse than returning nothing. "I could not read this" invites a
+    second look; a plausible plate number does not.
+    """
+
+    @pytest.mark.parametrize(
+        "plate",
+        ["AB1234", "AB123", "AB123RM", "AB123BM", "ABS1234", "ABL1234", "ABX1234", "KV6938"],
+    )
+    def test_military_string_is_left_alone_and_flagged_invalid(self, plate: str) -> None:
+        normalizer = VietnamesePlateNormalizer()
+        outcome = normalizer.normalize_detailed(plate, line_count=1)
+
+        assert outcome.decision.kind is PlateKind.MILITARY
+        assert outcome.is_valid_format is False, "an army plate is not a civil format"
+        assert outcome.text == plate, "repair must not rewrite a recognised army plate"
+
+    def test_the_specific_string_that_used_to_become_a_fake_car_plate(self) -> None:
+        normalizer = VietnamesePlateNormalizer()
+        outcome = normalizer.normalize_detailed("ABS1234", line_count=1)
+
+        assert outcome.text != "48S1234", "A→4 and B→8 must not be applied here"
+        assert outcome.decision.kind is not PlateKind.CAR

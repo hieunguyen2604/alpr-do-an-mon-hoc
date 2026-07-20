@@ -605,12 +605,29 @@ def _run_pipeline(
         LOGGER.warning("E2E OCR failed: %s", error)
         return "", True
 
-    return (
-        normalizer.normalize_detailed(
-            clean_text(recognition.raw_text), line_count=recognition.line_count
-        ).text,
-        True,
+    outcome = normalizer.normalize_detailed(
+        clean_text(recognition.raw_text), line_count=recognition.line_count
     )
+
+    # The end-to-end figure must measure the end-to-end product. Leaving the
+    # rescue out here -- as this function did until the first re-run reported an
+    # unchanged NFR-A7 while NFR-A6 moved +1.75 points -- publishes a number for
+    # a shorter pipeline than the one users get. The unchanged figure was itself
+    # the tell: a step that improves recognition cannot leave the metric that
+    # contains recognition untouched.
+    candidate = PlateRecognition(
+        text=outcome.text,
+        raw_text=clean_text(recognition.raw_text),
+        confidence=recognition.confidence,
+        line_count=recognition.line_count,
+        is_valid_format=outcome.is_valid_format,
+    )
+    if should_rescue_two_line(candidate):
+        rescued = rescue_two_line_upper(recognizer, normalizer, crop, candidate)
+        if rescued.is_valid_format:
+            return rescued.text, True
+
+    return outcome.text, True
 
 
 def measure_end_to_end(

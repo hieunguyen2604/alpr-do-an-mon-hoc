@@ -60,6 +60,8 @@ __all__ = [
     "RE_SPECIAL",
     "RE_DIPLOMATIC",
     "RE_MILITARY",
+    "MILITARY_SPECIALISED_SUFFIXES",
+    "MILITARY_TRAILER_SUFFIXES",
     "PATTERNS_BY_KIND",
     "CIVIL_KINDS",
     "POSITION_MASKS",
@@ -416,11 +418,52 @@ RE_DIPLOMATIC: Final[re.Pattern[str]] = re.compile(
 )
 """Diplomatic/foreign plate: province + 3-digit country code + code + number."""
 
-RE_MILITARY: Final[re.Pattern[str]] = re.compile(r"^(?P<unit>[A-Z]{2})(?P<number>\d{4,6})$")
-"""Army plate, which starts with two letters instead of a province code.
+MILITARY_SPECIALISED_SUFFIXES: Final[tuple[str, ...]] = ("S", "L", "X")
+"""Third letter marking an army *specialised machine* plate: ``ABS``, ``ABL``, ``ABX``."""
+
+MILITARY_TRAILER_SUFFIXES: Final[tuple[str, ...]] = ("RM", "BM")
+"""Trailer and semi-trailer codes, which follow the digits: ``AB123RM``, ``AB123BM``."""
+
+RE_MILITARY: Final[re.Pattern[str]] = re.compile(
+    r"^(?P<unit>[A-Z]{2})"
+    rf"(?P<specialised>[{''.join(MILITARY_SPECIALISED_SUFFIXES)}]?)"
+    r"(?P<number>\d{3,6})"
+    rf"(?P<trailer>{'|'.join(MILITARY_TRAILER_SUFFIXES)})?$"
+)
+"""Army plate, which starts with a two-letter unit code instead of a province code.
 
 Present **to recognise and exclude**, not to validate: army plates are outside
 the civil registration system this project targets.
+
+Covers all six layouts of Annex II to the Ministry of National Defence's 2021
+registration rules, not just the commonest one:
+
+=================  ==================================  ==========================
+Layout             Example                             Vehicle
+=================  ==================================  ==========================
+``AB`` + 4 digits  ``AB-12-34``                        car, tracked vehicle
+``AB`` + 3 digits  ``AB`` / ``123``                    motorcycle
+``AB`` + 3 + code  ``AB 123RM`` / ``AB 123BM``         trailer, semi-trailer
+``ABS`` + 4        ``ABS-12-34``, ``ABL``, ``ABX``     specialised machine
+=================  ==================================  ==========================
+
+Why the widening matters more than coverage
+-------------------------------------------
+The earlier pattern accepted only ``[A-Z]{2}`` followed by 4-6 digits, so the
+other four layouts fell through to the civil rules -- and one of them did not
+merely fail, it failed *dangerously*. ``ABS1234`` has three letters where the
+civil car layout wants two digits and one letter, so post-processing "corrected"
+``A`` to ``4`` and ``B`` to ``8`` and produced ``48S1234``: a well-formed
+Ho Chi Minh City car plate, reported with ``is_valid_format = True``.
+
+An army specialised-machine plate presented to the operator as a valid civilian
+car, with no warning, is worse than an admitted failure. A system that says "I
+could not read this" invites a second look; one that answers confidently and
+wrongly does not.
+
+Note the deliberate asymmetry: ``specialised`` sits *before* the digits and
+``trailer`` *after*, matching the physical plates. Both groups are optional, so
+the original layout still matches exactly as it did.
 """
 
 PATTERNS_BY_KIND: Final[dict[PlateKind, re.Pattern[str]]] = {

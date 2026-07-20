@@ -218,6 +218,32 @@ class VietnamesePlateNormalizer(BaseNormalizer):
                 decision=decision,
             )
 
+        # Rule 1b: an army plate is already correctly identified, so repairing it
+        # can only make things worse -- and specifically, worse in the one way
+        # that matters most.
+        #
+        # Position repair assumes the string is *meant* to be a civil plate and
+        # rewrites characters until it looks like one. Applied to ``ABS1234`` it
+        # turns ``A`` into ``4`` and ``B`` into ``8``, yielding ``48S1234``: a
+        # well-formed Ho Chi Minh City car plate, returned with
+        # ``is_valid_format = True``. An army specialised-machine plate would
+        # reach the operator disguised as a valid civilian car, with nothing to
+        # indicate anything had happened.
+        #
+        # A confident wrong answer is worse than an admitted failure: "I could
+        # not read this" invites a second look, a plausible plate number does
+        # not. So military strings return here, unrepaired and explicitly not
+        # valid as a *civil* format -- which is the correct verdict, not a
+        # failure to reach one.
+        if decision.kind is PlateKind.MILITARY:
+            return NormalizationOutcome(
+                raw_text=raw_text,
+                cleaned_text=cleaned,
+                text=cleaned,
+                is_valid_format=False,
+                decision=decision,
+            )
+
         mask = mask_for_length(len(cleaned))
         if mask is None:
             logger.debug(
