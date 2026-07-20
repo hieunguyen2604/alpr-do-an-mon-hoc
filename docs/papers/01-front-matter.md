@@ -46,18 +46,18 @@
 
 | | |
 |---:|:---|
-| **Ngành:** | «Tên ngành» |
-| **Chuyên ngành:** | «Tên chuyên ngành» |
-| **Mã ngành:** | «Mã ngành» |
-| **Sinh viên thực hiện:** | «Họ và tên sinh viên» |
-| **Mã số sinh viên:** | «MSSV» |
-| **Lớp:** | «Lớp» |
-| **Khoá:** | «Khoá» |
-| **Giảng viên hướng dẫn:** | «Học hàm, học vị, Họ và tên» |
+| **Ngành:** | «Tên ngành — SV bổ sung» |
+| **Chuyên ngành:** | Trí tuệ nhân tạo |
+| **Mã ngành:** | «Mã ngành — SV bổ sung» |
+| **Sinh viên thực hiện:** | **Phạm Công Thành** — MSSV **25410013** |
+| | **Nguyễn Minh Hiếu** — MSSV **25410007** |
+| **Lớp:** | AI503.F3.LT.TTNT |
+| **Khoá:** | «Khoá — SV bổ sung» |
+| **Giảng viên hướng dẫn:** | ThS. Cáp Phạm Đình Thăng |
 
 <br/><br/>
 
-**«Địa danh», tháng «MM» năm «YYYY»**
+**«Địa danh — SV bổ sung», tháng 7 năm 2026**
 
 </div>
 
@@ -89,17 +89,17 @@
 
 </div>
 
-Tôi xin cam đoan đồ án tốt nghiệp với đề tài **"Xây dựng hệ thống nhận dạng biển số xe Việt Nam ứng dụng Trí tuệ nhân tạo"** là công trình nghiên cứu của riêng tôi, được thực hiện dưới sự hướng dẫn khoa học của «Học hàm, học vị, Họ và tên giảng viên hướng dẫn».
+Chúng tôi xin cam đoan đồ án tốt nghiệp với đề tài **"Xây dựng hệ thống nhận dạng biển số xe Việt Nam ứng dụng Trí tuệ nhân tạo"** là công trình nghiên cứu của nhóm chúng tôi, được thực hiện dưới sự hướng dẫn khoa học của **ThS. Cáp Phạm Đình Thăng**.
 
-Các nội dung nghiên cứu, kết quả thực nghiệm và số liệu trình bày trong đồ án là trung thực và do chính tôi thực hiện. Các thư viện, mô hình và bộ dữ liệu mã nguồn mở được sử dụng lại đều được nêu rõ nguồn gốc, phiên bản và điều kiện giấy phép tại các chương tương ứng.
+Các nội dung nghiên cứu, kết quả thực nghiệm và số liệu trình bày trong đồ án là trung thực và do chính chúng tôi thực hiện. Các thư viện, mô hình và bộ dữ liệu mã nguồn mở được sử dụng lại đều được nêu rõ nguồn gốc, phiên bản và điều kiện giấy phép tại các chương tương ứng.
 
 Mọi tài liệu tham khảo, số liệu, bảng biểu và hình vẽ được trích dẫn từ công trình của tác giả khác đều được ghi rõ nguồn trong phần Tài liệu tham khảo theo đúng quy định về trích dẫn học thuật. Các văn bản quy phạm pháp luật được viện dẫn trong đồ án đã được đối chiếu với văn bản gốc và kiểm tra hiệu lực tại thời điểm thực hiện.
 
-Tôi xin cam đoan không sao chép nguyên văn hoặc sử dụng kết quả của người khác mà không ghi nguồn. Tôi xin chịu hoàn toàn trách nhiệm trước Nhà trường và Hội đồng đánh giá về lời cam đoan này.
+Chúng tôi xin cam đoan không sao chép nguyên văn hoặc sử dụng kết quả của người khác mà không ghi nguồn. Chúng tôi xin chịu hoàn toàn trách nhiệm trước Nhà trường và Hội đồng đánh giá về lời cam đoan này.
 
 <div align="right">
 
-*«Địa danh», ngày «DD» tháng «MM» năm «YYYY»*
+*«Địa danh — SV bổ sung», ngày «DD» tháng 7 năm 2026*
 
 **Sinh viên thực hiện**
 
@@ -107,7 +107,7 @@ Tôi xin cam đoan không sao chép nguyên văn hoặc sử dụng kết quả 
 
 <br/><br/>
 
-**«Họ và tên sinh viên»**
+**Phạm Công Thành**  ·  **Nguyễn Minh Hiếu**
 
 </div>
 
@@ -121,29 +121,29 @@ Tôi xin cam đoan không sao chép nguyên văn hoặc sử dụng kết quả 
 
 </div>
 
-Để hoàn thành đồ án tốt nghiệp này, tôi đã nhận được sự giúp đỡ và hướng dẫn tận tình từ nhiều thầy cô, gia đình và bạn bè.
+Để hoàn thành đồ án tốt nghiệp này, chúng tôi đã nhận được sự giúp đỡ và hướng dẫn tận tình từ nhiều thầy cô, gia đình và bạn bè.
 
-Trước hết, tôi xin bày tỏ lòng biết ơn sâu sắc tới «Học hàm, học vị, Họ và tên giảng viên hướng dẫn» — người đã trực tiếp hướng dẫn tôi trong suốt quá trình thực hiện đồ án. Thầy/Cô không chỉ định hướng về mặt chuyên môn mà còn chỉ ra cho tôi những yêu cầu nghiêm ngặt về tính trung thực trong nghiên cứu khoa học: mọi số liệu công bố đều phải kiểm chứng được, mọi trích dẫn đều phải truy về nguồn gốc, và những gì chưa đo được thì không được suy đoán.
+Trước hết, chúng tôi xin bày tỏ lòng biết ơn sâu sắc tới **ThS. Cáp Phạm Đình Thăng** — người đã trực tiếp hướng dẫn chúng tôi trong suốt quá trình thực hiện đồ án. Thầy không chỉ định hướng về mặt chuyên môn mà còn chỉ ra cho chúng tôi những yêu cầu nghiêm ngặt về tính trung thực trong nghiên cứu khoa học: mọi số liệu công bố đều phải kiểm chứng được, mọi trích dẫn đều phải truy về nguồn gốc, và những gì chưa đo được thì không được suy đoán.
 
-Tôi xin chân thành cảm ơn quý thầy cô «Khoa / Viện», «Trường Đại học» đã truyền đạt cho tôi nền tảng kiến thức trong suốt những năm học vừa qua — đó là cơ sở để tôi tiếp cận và giải quyết bài toán của đồ án này.
+Chúng tôi xin chân thành cảm ơn quý thầy cô «Khoa / Viện — SV bổ sung», «Trường Đại học — SV bổ sung» đã truyền đạt cho chúng tôi nền tảng kiến thức trong suốt những năm học vừa qua — đó là cơ sở để chúng tôi tiếp cận và giải quyết bài toán của đồ án này.
 
-Tôi cũng xin gửi lời cảm ơn tới cộng đồng mã nguồn mở, các nhóm nghiên cứu đã công bố công trình, mã nguồn và bộ dữ liệu về nhận dạng biển số xe. Đồ án này được xây dựng trên nền tảng những đóng góp đó.
+Chúng tôi cũng xin gửi lời cảm ơn tới cộng đồng mã nguồn mở, các nhóm nghiên cứu đã công bố công trình, mã nguồn và bộ dữ liệu về nhận dạng biển số xe. Đồ án này được xây dựng trên nền tảng những đóng góp đó.
 
-Cuối cùng, tôi xin cảm ơn gia đình và bạn bè đã luôn động viên, ủng hộ tôi trong suốt quá trình học tập và thực hiện đồ án.
+Cuối cùng, chúng tôi xin cảm ơn gia đình và bạn bè đã luôn động viên, ủng hộ trong suốt quá trình học tập và thực hiện đồ án.
 
-Do giới hạn về thời gian, phần cứng và kinh nghiệm, đồ án chắc chắn còn nhiều thiếu sót. Tôi rất mong nhận được ý kiến đóng góp của quý thầy cô và Hội đồng để hoàn thiện hơn.
+Do giới hạn về thời gian, phần cứng và kinh nghiệm, đồ án chắc chắn còn nhiều thiếu sót. Chúng tôi rất mong nhận được ý kiến đóng góp của quý thầy cô và Hội đồng để hoàn thiện hơn.
 
-Tôi xin chân thành cảm ơn!
+Chúng tôi xin chân thành cảm ơn!
 
 <div align="right">
 
-*«Địa danh», ngày «DD» tháng «MM» năm «YYYY»*
+*«Địa danh — SV bổ sung», ngày «DD» tháng 7 năm 2026*
 
-**Sinh viên thực hiện**
+**Nhóm sinh viên thực hiện**
 
 <br/>
 
-**«Họ và tên sinh viên»**
+**Phạm Công Thành**  ·  **Nguyễn Minh Hiếu**
 
 </div>
 
