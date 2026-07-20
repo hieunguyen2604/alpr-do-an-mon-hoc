@@ -285,7 +285,7 @@ Chương này mô tả **thiết kế**, không mô tả **mã nguồn**. Ranh g
 | Mục | Nội dung | Nguồn |
 |---|---|---|
 | 3.1.1. Đặc điểm người dùng và sơ đồ use case | Bốn vai trò: người vận hành, người phân tích, nhà phát triển, hội đồng đánh giá | `SRS` §2.3; `FR` §1 |
-| 3.1.2. Yêu cầu chức năng | **34 FR** chia 6 nhóm — 24 Must, 7 Should, 3 Could (MoSCoW) | `FR` §2–7 |
+| 3.1.2. Yêu cầu chức năng | **34 FR** chia 6 nhóm — **21 Must, 6 Should, 3 Could, 4 Won't** (MoSCoW). Bốn yêu cầu Won't (FR-3.1, FR-3.4, FR-4.1, FR-4.2) đều thuần giao diện, chuyển mức trong hai đợt thu gọn phạm vi 2026-07-20; **FR-4.1 là yêu cầu mức Must đầu tiên bị đưa ra khỏi phạm vi** — phải nêu thẳng, không giấu | `FR` §2–7 |
 | 3.1.3. Yêu cầu phi chức năng | 7 nhóm: NFR-P, A, R, U, M, S, C, SC — mọi chỉ tiêu đều **đo được bằng số** | `NFR` §1–8 |
 | 3.1.4. Ràng buộc, giả định và phụ thuộc | CON-01…CON-06; A-01…A-04; D-01…D-03 | `SRS` §2.4, §2.5 |
 | 3.1.5. Phân tích rủi ro | R-01…R-07 kèm phương án ứng phó | `SCOPE` §7 |
@@ -342,14 +342,14 @@ Cơ sở của thiết kế bất đồng bộ ở 3.4.4 (`ARCH` §5): một vid
 | 3.5.4. Bảng `DetectionJob` | Bảng mới, cần cho FR-2.1 và FR-2.6 | `ARCH` §6.2 |
 | 3.5.5. Quản lý migration bằng Alembic | | `TECH` §3 |
 
-> **Luận cứ đắt giá nhất ở 3.5.3** (`ARCH` §6.2): thiếu `raw_ocr_text` thì **không thể đo được NFR-A5 so với NFR-A6**, tức mất luôn một đóng góp học thuật định lượng. Thiếu `source_job_id` thì một ảnh chứa 3 biển số thành 3 bản ghi rời rạc, và dashboard sẽ đếm thành "3 lượt nhận dạng" thay vì "1 ảnh có 3 biển số" — toàn bộ thống kê FR-4.1 sai lệch. Đây là ví dụ tốt cho thấy thiết kế CSDL là quyết định học thuật, không phải chi tiết vụn vặt.
+> **Luận cứ đắt giá nhất ở 3.5.3** (`ARCH` §6.2): thiếu `raw_ocr_text` thì **không thể đo được NFR-A5 so với NFR-A6**, tức mất luôn một đóng góp học thuật định lượng. Thiếu `source_job_id` thì một ảnh chứa 3 biển số thành 3 bản ghi rời rạc, và `GET /api/statistics` sẽ đếm thành "3 lượt nhận dạng" thay vì "1 ảnh có 3 biển số" — toàn bộ thống kê FR-4.1 sai lệch. Đây là ví dụ tốt cho thấy thiết kế CSDL là quyết định học thuật, không phải chi tiết vụn vặt.
 
 ### 3.6. Thiết kế giao diện người dùng
 
 | Mục | Nội dung | Nguồn |
 |---|---|---|
-| 3.6.1. Kiến trúc SPA và sơ đồ điều hướng | Năm màn hình: Dashboard, Nhận dạng ảnh, Nhận dạng video, Webcam, Lịch sử | `SRS` §5.1 |
-| 3.6.2. Thiết kế từng màn hình | | `FR` FR-1.7, FR-2.6, FR-3.4, FR-4.x |
+| 3.6.1. Kiến trúc SPA và sơ đồ điều hướng | **Ba màn hình**: Nhận dạng ảnh (trang chủ `/`), Nhận dạng video (`/video`), Lịch sử (`/history`); đường dẫn không tồn tại chuyển hướng về `/`. *Hai đợt thu gọn phạm vi ngày 2026-07-20 đã gỡ trang Webcam rồi tới trang Tổng quan (Dashboard) — năng lực thời gian thực và số liệu thống kê đều giữ ở tầng API* | `SRS` §5.1 |
+| 3.6.2. Thiết kế từng màn hình | Ba màn hình hiện hành, cộng ghi chú lịch sử về hai màn hình đã gỡ. *(FR-3.1/FR-3.4 chuyển M→W ở đợt 1; **FR-4.1 chuyển M→W** và FR-4.2 chuyển S→W ở đợt 2)* | `FR` FR-1.7, FR-2.6, FR-4.x |
 | 3.6.3. Nguyên tắc phản hồi và thông báo lỗi | Phản hồi trực quan cho mọi thao tác > 500 ms; thông báo lỗi tiếng Việt nêu rõ cách khắc phục | `NFR` U2, U3 |
 | 3.6.4. Khả năng tiếp cận | Tương phản đạt WCAG AA (≥ 4,5:1) | `NFR` U5 |
 
@@ -364,7 +364,7 @@ Cơ sở của thiết kế bất đồng bộ ở 3.4.4 (`ARCH` §5): một vid
 
 ### 3.8. Các quyết định thiết kế và đánh đổi
 
-Bảng **AD-01 … AD-08** (`ARCH` §8), mỗi dòng gồm: quyết định, lựa chọn, lý do, đánh đổi phải chấp nhận. Phần thảo luận sâu về **AD-03** (vì sao chọn HTTP thay vì WebSocket cho webcam) nên giữ nguyên lập luận gốc: ở mức ~5 FPS trên CPU, nút thắt là **thời gian suy luận** (~300–400 ms/khung), không phải overhead HTTP (vài ms). WebSocket sẽ thêm độ phức tạp mà không chạm vào nút thắt thật.
+Bảng **AD-01 … AD-08** (`ARCH` §8), mỗi dòng gồm: quyết định, lựa chọn, lý do, đánh đổi phải chấp nhận. Phần thảo luận sâu về **AD-03** (vì sao chọn HTTP thay vì WebSocket cho chế độ thời gian thực) nên giữ nguyên lập luận gốc: ở mức ~5 FPS trên CPU, nút thắt là **thời gian suy luận** (~300–400 ms/khung), không phải overhead HTTP (vài ms). WebSocket sẽ thêm độ phức tạp mà không chạm vào nút thắt thật. Lập luận không đổi sau khi trang Webcam được gỡ khỏi giao diện (2026-07-20): "client" trong quyết định nay là bất kỳ chương trình nào gọi `POST /api/detect/frame`.
 
 ### 3.9. Tóm tắt chương
 
@@ -392,7 +392,7 @@ Bảng **AD-01 … AD-08** (`ARCH` §8), mỗi dòng gồm: quyết định, l�
 | 4.1. Môi trường và công cụ phát triển | Cấu hình local, môi trường huấn luyện từ xa, môi trường Docker (`ENV`) |
 | 4.2. Cài đặt tầng AI | Detector YOLO11n, tích hợp PaddleOCR, xử lý biển hai dòng, khối chuẩn hoá và hậu xử lý theo vị trí |
 | 4.3. Cài đặt backend | Router, service, repository, model, migration |
-| 4.4. Cài đặt frontend | Các màn hình, gọi API, vẽ overlay |
+| 4.4. Cài đặt frontend | Ba màn hình (48 mô-đun), tầng gọi API sáu hàm, ánh xạ kiểu, vẽ overlay; ghi chú lịch sử về hai màn hình đã gỡ 2026-07-20 |
 | 4.5. Xây dựng bộ dữ liệu | Thu thập, gộp, làm sạch, kiểm tra nhãn, khử trùng lặp, chia tập, augmentation |
 | 4.6. Triển khai bằng Docker | Dockerfile, docker-compose |
 | 4.7. Những chỗ cài đặt lệch khỏi thiết kế ở Chương 3, và lý do | |
@@ -471,6 +471,7 @@ Chương kết luận đối chiếu kết quả thật ở Chương 5 với m�
 
 - **Bốn chỉ tiêu độ chính xác chưa đạt ngưỡng đề ra:** A4 0,8734 (ngưỡng 0,92), A5 0,6098 (0,80), A6 0,6555 (0,85), A7 0,5227 (0,82). Nguyên nhân chi phối là biển hai dòng — chiếm 79,8% tập đánh giá nhưng A6 chỉ đạt 0,5810 so với 0,9489 của biển một dòng.
 - **Một số phép đo chưa thực hiện:** NFR-P2 (FPS webcam), NFR-P3 (video), NFR-A9, NFR-R5.
+- **Một yêu cầu mức *Must* bị đưa ra khỏi phạm vi (mục 6.3.6):** FR-4.1 (màn hình thống kê tổng hợp) chuyển M→W, kèm FR-4.2 chuyển S→W, khi trang Tổng quan bị gỡ khỏi giao diện ngày 2026-07-20. **Đây là lần đầu và duy nhất trong đồ án một yêu cầu Must bị hạ mức** — phải nêu thẳng khi bảo vệ. Năng lực vẫn phục vụ và vẫn có kiểm thử ở tầng API (`GET /api/statistics`, `GET /health`); bộ Must đáp ứng được là bộ **21**, không phải 22.
 
 - SQLite chỉ cho phép **một tiến trình ghi tại một thời điểm**; hướng khắc phục là chuyển sang PostgreSQL nếu triển khai thực tế (`NFR` §8). Đây là câu hỏi phản biện rất dễ gặp.
 - Mọi số liệu hiệu năng là **số liệu CPU**, không so sánh trực tiếp được với các con số FPS đo trên GPU (`RESEARCH` §2.11.5).
@@ -480,6 +481,7 @@ Chương kết luận đối chiếu kết quả thật ở Chương 5 với m�
 **Mục 6.4 — các hướng phát triển đã được xác định trước:**
 
 - Bám vết đối tượng qua khung hình (SORT/DeepSORT) thay cho gộp trùng theo chuỗi ký tự (`SCOPE` §3).
+- **Khôi phục hai màn hình đã gỡ từ lịch sử git** (mục 6.4.6): Webcam và Tổng quan. Endpoint, kiểm thử và các kiểu dữ liệu hợp đồng đều còn nguyên, nên đây là thao tác phục hồi chứ không phải xây mới; nếu dựng lại phần biểu đồ thì nên chọn thư viện nhẹ hơn `recharts` để không mất mức giảm 730 KB → 328,8 KB.
 - Huấn luyện riêng một mô hình OCR cho biển số Việt Nam thay vì dùng PaddleOCR pre-trained (`SCOPE` §3).
 - Chuyển sang WebSocket nếu đo được HTTP là nút cổ chai thực sự (`ARCH` AD-03).
 - Lượng tử hoá INT8 với tập hiệu chuẩn để tối ưu thêm trên CPU Intel (`TECH` §9).

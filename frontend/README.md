@@ -14,7 +14,7 @@ Ngược lại, **mã nguồn — tên biến, tên hàm, comment, docstring —
 | Node.js | **≥ 18** | Vite 5 dùng API chỉ có từ Node 18. Node 14/16 sẽ **thất bại** ngay ở bước `npm install` |
 | npm | ≥ 9 | Đi kèm Node 18+ |
 | Backend | đang chạy tại `http://localhost:8000` | Bắt buộc, xem mục 5 |
-| Trình duyệt | Chrome / Edge / Firefox bản mới | Trang Webcam cần `navigator.mediaDevices` |
+| Trình duyệt | Chrome / Edge / Firefox bản mới | Không còn yêu cầu `navigator.mediaDevices` — trang Webcam đã gỡ 2026-07-20 |
 
 Ràng buộc phiên bản đã được khai báo trong `package.json`:
 
@@ -129,20 +129,28 @@ frontend/
 │
 └── src/
     ├── main.tsx                # Gắn React vào DOM, cài router
-    ├── App.tsx                 # Bảng định tuyến 5 trang
+    ├── App.tsx                 # Bảng định tuyến 3 trang: / (ảnh), /video,
+    │                           # /history; đường dẫn lạ → về /
     ├── index.css               # Directive Tailwind + biến màu + lớp tiện ích chung
     ├── vite-env.d.ts           # Khai báo kiểu cho import.meta.env
     │
     ├── types/
-    │   └── index.ts            # Interface khớp schema Pydantic của backend (snake_case)
+    │   └── index.ts            # Interface khớp schema Pydantic của backend (snake_case).
+    │                           # Statistics / StatisticsQuery / HealthStatus /
+    │                           # InputTypeBreakdown được GIỮ LẠI có chủ đích: chúng là
+    │                           # bản sao hợp đồng của GET /api/statistics và GET /health —
+    │                           # hai endpoint vẫn phục vụ dù trang Dashboard đã gỡ
+    │                           # (lý do ghi ngay trong tệp)
     │
     ├── services/
     │   └── api.ts              # Client axios: baseURL, timeout, X-Request-ID,
     │                           # chuẩn hoá lỗi sang thông báo tiếng Việt,
-    │                           # và toàn bộ hàm gọi 10 endpoint
+    │                           # và các hàm gọi endpoint. Đã xoá theo hai lần thu gọn
+    │                           # phạm vi 2026-07-20: detectFrame (cùng trang Webcam),
+    │                           # getStatistics và getHealth (cùng trang Tổng quan).
+    │                           # Ba endpoint backend tương ứng vẫn tồn tại
     │
     ├── hooks/
-    │   ├── useApi.ts           # Vòng đời một lời gọi: loading / data / error
     │   ├── useDebounce.ts      # Hoãn phát request khi người dùng đang gõ
     │   └── useJobPolling.ts    # Hỏi tiến độ tác vụ video, tự dừng ở trạng thái cuối
     │
@@ -155,35 +163,54 @@ frontend/
     │   └── format.ts           # Re-export tương thích, đã @deprecated → dùng @/lib/format
     │
     ├── components/
-    │   ├── Layout.tsx          # Sidebar 5 mục, header, vùng nội dung
+    │   ├── Layout.tsx          # Sidebar 3 mục (ảnh → video → lịch sử), header,
+    │   │                       # vùng nội dung
     │   ├── StateViews.tsx      # PageSection, LoadingState, InlineError dùng chung
     │   ├── ui/                 # 15 thành phần nền: Button, Card, Table, Modal,
     │   │                       # Pagination, ConfidenceBar, PlateChip, EmptyState,
     │   │                       # ErrorState, Skeleton, ProgressBar, FileDropzone…
-    │   ├── dashboard/          # Thẻ chỉ số, biểu đồ ngày, biểu đồ theo nguồn,
-    │   │                       # trạng thái hệ thống, danh sách gần đây
     │   ├── detection/
     │   │   ├── image/          # Dropzone, overlay bounding box, thẻ kết quả, tải tệp
-    │   │   ├── video/          # Dropzone, bảng tiến độ tác vụ, bảng kết quả
-    │   │   └── webcam/         # useCameraStream, useFrameCaptureLoop, khung camera,
-    │   │                       # bảng đo hiệu năng, bảng biển số trong phiên
+    │   │   └── video/          # Dropzone, bảng tiến độ tác vụ, bảng kết quả
+    │   │                       # (thư mục webcam/ đã xoá 2026-07-20 cùng trang Webcam)
     │   └── history/            # Bộ lọc, bảng, modal chi tiết, hộp thoại xoá,
     │                           # useHistoryQuery (lưu trạng thái lọc lên URL)
+    │                           # (thư mục dashboard/ đã xoá 2026-07-20
+    │                           #  cùng trang Tổng quan)
     │
     └── pages/
-        ├── Dashboard.tsx       # Thống kê tổng hợp + biểu đồ
-        ├── ImageDetection.tsx  # Tải ảnh và nhận dạng
-        ├── VideoDetection.tsx  # Tải video, theo dõi tiến độ nền
-        ├── WebcamDetection.tsx # Nhận dạng thời gian thực
-        └── History.tsx         # Tra cứu, lọc, phân trang, xem chi tiết, xoá, xuất CSV
+        ├── ImageDetection.tsx  # Tải ảnh và nhận dạng — TRANG CHỦ (/)
+        ├── VideoDetection.tsx  # Tải video, theo dõi tiến độ nền (/video)
+        └── History.tsx         # Tra cứu, lọc, phân trang, xem chi tiết, xoá, xuất CSV (/history)
 ```
+
+> **Hai thay đổi phạm vi trong ngày 2026-07-20.** Giao diện được thu gọn hai lần liên tiếp,
+> nay còn **3 trang**. Mã của cả hai trang đã gỡ **còn trong lịch sử git**.
+>
+> | # | Trang đã gỡ | Đã xoá khỏi cây thư mục | Năng lực còn lại ở backend |
+> |---|---|---|---|
+> | 1 | **Webcam** | `pages/WebcamDetection.tsx`, `components/detection/webcam/`, hàm `detectFrame` | `POST /api/detect/frame` vẫn phục vụ, vẫn có kiểm thử |
+> | 2 | **Tổng quan (Dashboard)** | `pages/Dashboard.tsx`, cả thư mục `components/dashboard/`, `hooks/useApi.ts`, hàm `getStatistics` và `getHealth`, gói npm `recharts` | `GET /api/statistics` và `GET /health` vẫn phục vụ, vẫn có kiểm thử |
+>
+> Bảng định tuyến hiện hành (`src/App.tsx`):
+>
+> | Route | Trang |
+> |---|---|
+> | `/` (index) | `ImageDetection` — trang chủ |
+> | `/video` | `VideoDetection` |
+> | `/history` | `History` |
+> | `*` | chuyển hướng về `/` |
+>
+> Gỡ `recharts` cùng trang Tổng quan làm **gói tải về giảm từ ~730 KB xuống 328,8 KB
+> (giảm 55%)** — đo ngày **2026-07-20**; build thành công trong 2,14 s, `tsc --noEmit` 0 lỗi,
+> ESLint sạch.
 
 ### Vai trò từng tầng
 
 | Tầng | Trách nhiệm | Không được làm |
 |---|---|---|
 | `pages/` | Ghép thành phần, giữ trạng thái của trang, xử lý đủ 4 trạng thái loading / empty / error / success | Gọi `axios` trực tiếp |
-| `components/` | Hiển thị. Nhận dữ liệu qua props, báo sự kiện ra ngoài | Tự gọi API (trừ hook chuyên dụng trong `detection/webcam`) |
+| `components/` | Hiển thị. Nhận dữ liệu qua props, báo sự kiện ra ngoài | Tự gọi API |
 | `hooks/` | Vòng đời bất đồng bộ dùng lại được | Chứa markup |
 | `services/api.ts` | Điểm **duy nhất** chạm tới HTTP | Ném lỗi thô ra giao diện |
 | `types/` | Bản sao kiểu của schema backend | Đổi tên trường sang camelCase |
@@ -235,9 +262,9 @@ là `http://localhost:5173`. Vite chuyển tiếp ba tiền tố đường dẫn
 
 | Tiền tố | Chuyển tới | Vì sao cần |
 |---|---|---|
-| `/api` | `http://localhost:8000` | Toàn bộ REST API: nhận dạng, tác vụ, lịch sử, thống kê |
+| `/api` | `http://localhost:8000` | Toàn bộ REST API: nhận dạng, tác vụ, lịch sử. *(Backend còn phục vụ `GET /api/statistics`; từ 2026-07-20 không trang nào của giao diện gọi nó nữa — xem mục 3.)* |
 | `/files` | `http://localhost:8000` | Ảnh gốc và ảnh biển số đã cắt. Đây chính là đường dẫn trả về trong `image_path` / `plate_image_path`. **Thiếu mục này thì mọi ảnh kết quả đều hỏng** |
-| `/health` | `http://localhost:8000` | Endpoint sức khoẻ nằm ở gốc, không dưới `/api`, nên cần mục riêng |
+| `/health` | `http://localhost:8000` | Endpoint sức khoẻ nằm ở gốc, không dưới `/api`, nên cần mục riêng. Giữ lại sau khi gỡ trang Tổng quan: không trang nào của giao diện gọi nó nữa, nhưng mục proxy này cho phép kiểm tra backend ngay qua cổng 5173 (`curl http://localhost:5173/health`) — hữu ích khi cần xác định lỗi nằm ở proxy hay ở backend |
 
 ```ts
 // vite.config.ts (trích)
@@ -318,21 +345,6 @@ taskkill /PID <pid> /F
 Không nên đổi cổng: `strictPort: true` cố ý báo lỗi để cấu hình proxy trong tài liệu
 luôn khớp thực tế.
 
-### Trang Webcam báo không truy cập được camera
-
-Ba nguyên nhân thường gặp, giao diện đều hiện gợi ý khắc phục tương ứng:
-
-1. **Chưa cấp quyền** — bấm biểu tượng camera trên thanh địa chỉ và cho phép.
-2. **Camera đang bị ứng dụng khác chiếm** (Zoom, Teams, OBS) — đóng ứng dụng đó rồi bấm *Thử lại*.
-3. **Không phải ngữ cảnh bảo mật** — `getUserMedia` chỉ hoạt động trên `https://` hoặc `localhost`.
-   Mở giao diện bằng địa chỉ IP LAN (`http://192.168.x.x:5173`) sẽ bị trình duyệt chặn.
-
-### Webcam chạy nhưng thấy nhiều khung hình "bị bỏ qua"
-
-Đây là **hành vi cố ý**, không phải lỗi. Vòng lặp chỉ cho phép **một** request đang bay;
-khung hình chụp ra khi khe còn bận sẽ bị **bỏ**, không xếp hàng. Chọn chu kỳ chậm hơn
-(1 giây hoặc 2 giây) sẽ giảm con số này mà không làm giảm tốc độ thực tế.
-
 ### Video xử lý mãi không xong
 
 Bình thường. Suy luận chạy trên CPU: video 60 giây cần khoảng 200 giây.
@@ -363,11 +375,17 @@ nhiều khả năng tệp đã bị mở bằng công cụ khác rồi lưu đè
 
 ## 7. Ghi chú về trạng thái hiện tại
 
-* **Cả 5 trang đã nối vào API thật** và đã được xác minh chạy với backend tại
-  `http://localhost:8000`. `npm run typecheck` sạch.
-* Backend hiện chạy **StubPipeline** (chưa có mô hình thật), nên biển số hiển thị là
-  **kết quả giả lập**. Dashboard hiện cảnh báo rõ điều này khi `model_loaded = false`.
-  Hợp đồng API không đổi khi thay bằng mô hình thật, nên frontend không cần sửa.
+* **Cả 3 trang đã nối vào API thật** và đã được xác minh chạy với backend tại
+  `http://localhost:8000`. `npm run typecheck` sạch, `npm run lint` sạch, `npm run build`
+  thành công trong 2,14 s. (Trang Webcam và trang Tổng quan đều đã gỡ 2026-07-20
+  theo hai thay đổi phạm vi — xem ghi chú ở mục 3.)
+* Kích thước gói tải về sau khi gỡ trang Tổng quan: **328,8 KB** (trước đó ~730 KB —
+  giảm 55%, chủ yếu nhờ bỏ thư viện biểu đồ `recharts`). Đo ngày **2026-07-20**.
+* Backend chạy **mô hình thật** (`models/best.pt` — YOLO11n + PaddleOCR, cấu hình qua
+  `ALPR_MODEL_PATH`). Nếu không nạp được mô hình, backend dùng `UnavailablePipeline`
+  — trả lỗi rõ ràng thay vì kết quả giả lập, nên người dùng vẫn thấy ngay là hệ thống
+  không sẵn sàng. Trạng thái `model_loaded` vẫn đọc được qua `GET /health`; từ 2026-07-20
+  **không còn màn hình nào hiển thị nó** (thẻ cảnh báo cũ nằm ở trang Tổng quan đã gỡ).
 * Nút **Huỷ tác vụ** ở trang video đang **bị vô hiệu hoá** vì API chưa có endpoint huỷ
   (xem mục Hạn chế trong `docs/reports/06-ui-documentation.md`).
 

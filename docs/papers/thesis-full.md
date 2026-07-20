@@ -543,7 +543,7 @@ Bổ sung hai yêu cầu phân tích phục vụ chương đánh giá:
 | Mã | Chỉ tiêu | Mục tiêu | Ngưỡng tối thiểu |
 |---|---|:--:|:--:|
 | **NFR-P1** | **Độ trễ E2E một ảnh (p95)** | **≤ 800 ms** | **≤ 1500 ms** |
-| NFR-P2 | Tốc độ khung hình chế độ webcam | ≥ 5 FPS hiệu dụng | ≥ 3 FPS |
+| NFR-P2 | Tốc độ khung hình chế độ thời gian thực (webcam — đo ở tầng API) | ≥ 5 FPS hiệu dụng | ≥ 3 FPS |
 | NFR-P3 | Tốc độ xử lý video | ≥ 0,3× thời gian thực | ≥ 0,15× |
 | NFR-P4 | Thời gian nạp mô hình khi khởi động | ≤ 15 s | ≤ 30 s |
 | NFR-P5 | Overhead của tầng API (không tính suy luận) | ≤ 50 ms | ≤ 100 ms |
@@ -552,7 +552,7 @@ Bổ sung hai yêu cầu phân tích phục vụ chương đánh giá:
 
 > **Vì sao các chỉ tiêu độ trễ này "rộng rãi" hơn số liệu thường thấy trong các bài báo ALPR.** Máy phát triển của đồ án **không có GPU CUDA** (ràng buộc CON-02). Việc huấn luyện diễn ra trên GPU miễn phí của Colab/Kaggle, nhưng **toàn bộ suy luận và phần demo bảo vệ chạy trên CPU**. Các bài báo ALPR thường đo trên RTX/V100 và công bố vài chục mili-giây; đặt hai loại số liệu này cạnh nhau là so sánh sai. Đây là lý do mọi số liệu hiệu năng của đồ án đều **bắt buộc công bố kèm cấu hình phần cứng** — xem mục 1.4.2.
 
-**(c) Nhóm chỉ tiêu chức năng, chất lượng phần mềm và triển khai:** hiện thực đầy đủ **34 yêu cầu chức năng** (24 *Must*, 7 *Should*, 3 *Could*) tổ chức thành **sáu nhóm** — nhận dạng ảnh, nhận dạng video, nhận dạng thời gian thực qua webcam, dashboard thống kê–lịch sử, quản lý dữ liệu, và hệ thống–vận hành (chi tiết ở mục 3.1.3); **tách biệt kiến trúc bắt buộc** (NFR-M1: mã pipeline AI **không import bất cứ thành phần nào của FastAPI**, kiểm chứng bằng phân tích import); **khả năng thay thế bộ OCR** không phải sửa mã tầng API (NFR-M5); **độ bao phủ kiểm thử tầng nghiệp vụ ≥ 70%** (NFR-M2); và **khởi động một lệnh duy nhất** `docker compose up` trên máy sạch, demo hoạt động **không cần kết nối Internet**.
+**(c) Nhóm chỉ tiêu chức năng, chất lượng phần mềm và triển khai:** hiện thực **34 yêu cầu chức năng** (22 *Must*, 7 *Should*, 3 *Could*, 2 *Won't* — hai yêu cầu thuần giao diện FR-3.1/FR-3.4 chuyển mức khi gỡ trang webcam khỏi giao diện ngày 2026-07-20, năng lực thời gian thực giữ nguyên ở tầng API) tổ chức thành **sáu nhóm** — nhận dạng ảnh, nhận dạng video, nhận dạng thời gian thực qua API, dashboard thống kê–lịch sử, quản lý dữ liệu, và hệ thống–vận hành (chi tiết ở mục 3.1.3); **tách biệt kiến trúc bắt buộc** (NFR-M1: mã pipeline AI **không import bất cứ thành phần nào của FastAPI**, kiểm chứng bằng phân tích import); **khả năng thay thế bộ OCR** không phải sửa mã tầng API (NFR-M5); **độ bao phủ kiểm thử tầng nghiệp vụ ≥ 70%** (NFR-M2); và **khởi động một lệnh duy nhất** `docker compose up` trên máy sạch, demo hoạt động **không cần kết nối Internet**.
 
 ### 1.2.3. Tiêu chí thành công
 
@@ -586,7 +586,7 @@ Bổ sung hai yêu cầu phân tích phục vụ chương đánh giá:
 |---|---|
 | **(a) Trí tuệ nhân tạo** | Huấn luyện bộ phát hiện biển số YOLO11 trên dữ liệu Việt Nam; so sánh các biến thể kích thước mô hình (n / s / m) để chọn điểm cân bằng tốc độ – độ chính xác, kèm huấn luyện YOLO26n song song làm đối chứng (mục 2.8.1); **benchmark các engine OCR ứng viên** trên chính tập kiểm thử biển số Việt Nam rồi tích hợp engine thắng cuộc (đã tinh chỉnh) để nhận dạng ký tự trên vùng đã cắt; hậu xử lý bằng biểu thức chính quy và luật kiểm tra tính hợp lệ theo vị trí; **hỗ trợ cả biển một dòng và hai dòng**; đánh giá đầy đủ (mAP, precision, recall, F1, ma trận nhầm lẫn, đường cong loss); đo hiệu năng suy luận trên CPU |
 | **(b) Dữ liệu** | Thu thập, gộp và làm sạch các bộ dữ liệu công khai; kiểm tra và sửa nhãn; loại bỏ ảnh trùng lặp; tăng cường dữ liệu (augmentation); chia tập train / val / test **có kiểm soát rò rỉ dữ liệu**; thống kê và trực quan hoá |
-| **(c) Phần mềm** | REST API bằng FastAPI có tài liệu Swagger tự sinh; nhận dạng từ ảnh, video và luồng webcam; lưu lịch sử bằng SQLite + SQLAlchemy + Alembic; giao diện web React + Vite + TypeScript + TailwindCSS; dashboard thống kê, lịch sử, tìm kiếm, lọc; đóng gói bằng Docker và Docker Compose |
+| **(c) Phần mềm** | REST API bằng FastAPI có tài liệu Swagger tự sinh; nhận dạng từ ảnh, video và khung hình thời gian thực gửi qua API (`POST /api/detect/frame`); lưu lịch sử bằng SQLite + SQLAlchemy + Alembic; giao diện web React + Vite + TypeScript + TailwindCSS gồm bốn trang (trang webcam đã gỡ khỏi giao diện theo thu gọn phạm vi 2026-07-20); dashboard thống kê, lịch sử, tìm kiếm, lọc; đóng gói bằng Docker và Docker Compose |
 | **(d) Kiểm thử và tài liệu** | Unit test, integration test, kiểm thử độ chính xác AI, kiểm thử hiệu năng và chịu tải; bộ tài liệu học thuật và kỹ thuật đầy đủ |
 
 ### 1.3.3. Phạm vi ngoài nghiên cứu
@@ -613,7 +613,7 @@ Bổ sung hai yêu cầu phân tích phục vụ chương đánh giá:
 graph TB
     subgraph EXT["Ngoài hệ thống"]
         U["Người dùng<br/>(trình duyệt)"]
-        CAM["Webcam"]
+        CAM["Client thời gian thực<br/>(webcam — gọi API trực tiếp)"]
         FS["Tệp ảnh / video"]
         COLAB["Colab / Kaggle<br/>(huấn luyện — ngoại tuyến)"]
     end
@@ -627,7 +627,7 @@ graph TB
     end
 
     U --> FE
-    CAM --> FE
+    CAM --> BE
     FS --> FE
     FE <--> BE
     BE --> AI
@@ -639,7 +639,7 @@ graph TB
     style SYS fill:#f0f9ff,stroke:#0284c7
 ```
 
-Colab/Kaggle nằm **ngoài** ranh giới hệ thống khi vận hành — chúng chỉ là công cụ ngoại tuyến sản xuất ra tệp trọng số `best.pt`. Hệ thống khi chạy **không phụ thuộc vào bất kỳ dịch vụ ngoài nào**, đây là hệ quả trực tiếp của tiêu chí "demo chạy được không cần Internet" ở mục 1.2.3.
+Colab/Kaggle nằm **ngoài** ranh giới hệ thống khi vận hành — chúng chỉ là công cụ ngoại tuyến sản xuất ra tệp trọng số `best.pt`. Hệ thống khi chạy **không phụ thuộc vào bất kỳ dịch vụ ngoài nào**, đây là hệ quả trực tiếp của tiêu chí "demo chạy được không cần Internet" ở mục 1.2.3. Lưu ý luồng thời gian thực: sau khi trang webcam được gỡ khỏi giao diện web (thu gọn phạm vi 2026-07-20), client thời gian thực gửi khung hình **trực tiếp vào tầng API** qua `POST /api/detect/frame` thay vì đi qua frontend.
 
 ---
 
@@ -745,7 +745,7 @@ Các con số vượt 99% xuất hiện trong tài liệu ALPR quốc tế là s
 
 ### 1.6.2. Đóng góp (a) — Hệ thống hoàn chỉnh từ mô hình AI đến giao diện và triển khai
 
-Sản phẩm là một hệ thống có **kiến trúc phần mềm**, không phải một tập script rời rạc: pipeline AI tách biệt hoàn toàn khỏi tầng API (NFR-M1, kiểm chứng được bằng phân tích import), interface trừu tượng cho phép thay thế engine OCR mà không sửa mã tầng API (NFR-M5), REST API có tài liệu tự sinh, giao diện web năm màn hình, cơ sở dữ liệu có migration, bộ kiểm thử độ bao phủ ≥ 70%, và đóng gói Docker khởi động một lệnh.
+Sản phẩm là một hệ thống có **kiến trúc phần mềm**, không phải một tập script rời rạc: pipeline AI tách biệt hoàn toàn khỏi tầng API (NFR-M1, kiểm chứng được bằng phân tích import), interface trừu tượng cho phép thay thế engine OCR mà không sửa mã tầng API (NFR-M5), REST API có tài liệu tự sinh, giao diện web bốn màn hình (thu gọn từ năm sau khi gỡ trang webcam ngày 2026-07-20 — năng lực thời gian thực giữ ở tầng API), cơ sở dữ liệu có migration, bộ kiểm thử độ bao phủ ≥ 70%, và đóng gói Docker khởi động một lệnh.
 
 > **Mức độ hoàn thành tại thời điểm viết.** Bốn hạng mục đầu — tách tầng AI, interface trừu tượng, REST API có tài liệu tự sinh, cơ sở dữ liệu có migration — **đã được cài đặt và xác minh bằng yêu cầu HTTP thật**. Giao diện web **đã hoàn thành** và build sạch. Chỉ tiêu độ bao phủ kiểm thử ≥ 70% **đã đạt và đã đo**: 88,1% ở tầng nghiệp vụ (42,0% trên toàn kho), với 861 test đạt / 1 xfail / 0 thất bại. Đóng gói Docker và Docker Compose **đã hoàn thành**. Số liệu chi tiết của từng hạng mục được báo cáo ở **Chương 5**.
 
@@ -2047,7 +2047,7 @@ Quá trình phân tích xác định bốn tác nhân, trong đó ba tác nhân 
 
 | Tác nhân | Mô tả vai trò | Trình độ kỹ thuật | Tần suất sử dụng |
 |---|---|---|---|
-| **Người vận hành** (Operator) | Đưa ảnh, video hoặc luồng webcam vào hệ thống; xem kết quả nhận dạng; tra cứu lịch sử gần đây | Cơ bản — sử dụng được trình duyệt web | Hằng ngày |
+| **Người vận hành** (Operator) | Đưa ảnh hoặc video vào hệ thống qua giao diện web; xem kết quả nhận dạng; tra cứu lịch sử gần đây *(luồng thời gian thực từ webcam chuyển sang dùng qua API từ 2026-07-20 — xem mục 3.1.3b)* | Cơ bản — sử dụng được trình duyệt web | Hằng ngày |
 | **Người phân tích** (Analyst) | Xem thống kê tổng hợp, lọc và tìm kiếm lịch sử, xuất dữ liệu ra tệp để báo cáo | Trung bình | Hằng tuần |
 | **Nhà phát triển** (Developer) | Tích hợp hệ thống vào ứng dụng khác thông qua REST API, đọc tài liệu OpenAPI | Cao | Khi tích hợp |
 | **Hội đồng đánh giá** | Quan sát trình diễn, đọc tài liệu, đặt câu hỏi phản biện | Cao | Một lần (bảo vệ) |
@@ -2080,8 +2080,8 @@ graph TB
 
     OP --> UC1
     OP --> UC2
-    OP --> UC3
     OP --> UC4
+    DEV --> UC3
     AN --> UC4
     AN --> UC5
     AN --> UC6
@@ -2101,6 +2101,8 @@ Ba quan hệ trên sơ đồ đáng được giải thích:
 - **UC-02 «include» UC-09.** Nhận dạng video *bắt buộc* kéo theo việc theo dõi tiến độ, bởi vì xử lý video là tác vụ chạy nền bất đồng bộ; nếu không có cơ chế theo dõi thì người dùng không có cách nào biết công việc đã xong hay chưa.
 - **UC-08 «include» UC-01, UC-02.** REST API không phải một chức năng song song mà là *một lối vào khác* cho cùng các nghiệp vụ nhận dạng. Điều này phản ánh đúng thiết kế: giao diện web cũng gọi chính các endpoint đó.
 - **UC-04 «extend» UC-06.** Xuất kết quả là hành vi tùy chọn mở rộng từ tra cứu lịch sử — người dùng có thể tra cứu mà không xuất, nhưng không thể xuất mà chưa xác định tập bản ghi cần xuất.
+
+Trên sơ đồ, UC-03 (nhận dạng thời gian thực) gắn với tác nhân **nhà phát triển** thay vì người vận hành: từ 2026-07-20, chức năng này chỉ còn lối vào qua REST API (`POST /api/detect/frame`) sau khi trang Webcam được gỡ khỏi giao diện web — xem đặc tả UC-03 ở mục d.
 
 #### b) Đặc tả use case UC-01 — Nhận dạng biển số từ ảnh
 
@@ -2163,41 +2165,45 @@ Hai điểm A3 và A4 đáng được nhấn mạnh vì chúng phân biệt mộ
 
 #### d) Đặc tả use case UC-03 — Nhận dạng thời gian thực qua webcam
 
+> ⚠️ **Thay đổi phạm vi 2026-07-20:** trang Webcam đã được **gỡ khỏi giao diện web** theo quyết định thu gọn phạm vi demo. Use case này vì vậy được hiện thực và kiểm chứng **ở tầng API** (`POST /api/detect/frame`); tác nhân chính trở thành một *client thời gian thực* bất kỳ gọi API — trang webcam trước đây của giao diện chính là một client như vậy. Luồng sự kiện dưới đây được giữ làm đặc tả cho phía client; các bước thuần giao diện (tương ứng FR-3.1, FR-3.4) chuyển mức ưu tiên **M → W**.
+
 | Mục | Nội dung |
 |---|---|
 | **Mã** | UC-03 |
-| **Tác nhân chính** | Người vận hành |
+| **Tác nhân chính** | Client thời gian thực (trước 2026-07-20: người vận hành, qua trang Webcam của giao diện) |
 | **Tiền điều kiện** | Trình duyệt hỗ trợ `navigator.mediaDevices.getUserMedia`; người dùng cấp quyền camera |
 | **Hậu điều kiện thành công** | Các biển số quan sát được trong phiên đã được lưu, có gộp trùng; toàn bộ phiên là **một** bản ghi tác vụ |
 
 **Luồng sự kiện chính:**
 
-1. Người dùng bấm "Bật camera"; trình duyệt hỏi quyền truy cập.
-2. Giao diện hiển thị luồng video trực tiếp.
-3. Theo chu kỳ cấu hình được, giao diện chụp một khung hình, mã hoá thành JPEG và gửi lên máy chủ. Lời gọi đầu tiên không kèm định danh phiên; máy chủ tạo tác vụ mới và trả `job_id` về.
+1. Client bật nguồn thu hình (với client chạy trong trình duyệt: xin quyền truy cập camera).
+2. Client hiển thị luồng video trực tiếp, nếu có thành phần hiển thị.
+3. Theo chu kỳ cấu hình được, client chụp một khung hình, mã hoá thành JPEG và gửi lên máy chủ. Lời gọi đầu tiên không kèm định danh phiên; máy chủ tạo tác vụ mới và trả `job_id` về.
 4. Các lời gọi tiếp theo gửi kèm `job_id` đó, nhờ vậy toàn bộ khung hình của một phiên được quy về cùng một tác vụ.
-5. Hệ thống xử lý khung hình và trả kết quả; giao diện vẽ bounding box chồng lên khung hình trực tiếp.
+5. Hệ thống xử lý khung hình và trả kết quả; client sử dụng kết quả theo nhu cầu (trang webcam trước đây vẽ bounding box chồng lên khung hình trực tiếp).
 6. Kết quả trùng biển số trong phiên được gộp lại thành một bản ghi duy nhất.
 
-**Ràng buộc riêng của chế độ này.** Vì không có GPU, hệ thống bắt buộc phải áp dụng kỹ thuật bỏ bớt khung hình (frame skipping) kết hợp hàng đợi một khe (single-slot queue) ở phía giao diện: nếu một khung hình đang chờ kết quả thì khung mới chụp được sẽ bị bỏ qua thay vì xếp hàng. Nếu không làm vậy, tốc độ chụp của camera (khoảng 30 khung/giây) sẽ vượt xa tốc độ xử lý (khoảng 3–5 khung/giây), hàng đợi phình vô hạn và độ trễ hiển thị tăng tuyến tính theo thời gian phiên — hệ thống trông như "chạy được" trong 10 giây đầu rồi tụt hậu ngày càng xa so với thực tế.
+**Ràng buộc riêng của chế độ này.** Vì không có GPU, hệ thống bắt buộc phải áp dụng kỹ thuật bỏ bớt khung hình (frame skipping) kết hợp hàng đợi một khe (single-slot queue) ở phía client gọi API: nếu một khung hình đang chờ kết quả thì khung mới chụp được sẽ bị bỏ qua thay vì xếp hàng. Nếu không làm vậy, tốc độ chụp của camera (khoảng 30 khung/giây) sẽ vượt xa tốc độ xử lý (khoảng 3–5 khung/giây), hàng đợi phình vô hạn và độ trễ hiển thị tăng tuyến tính theo thời gian phiên — hệ thống trông như "chạy được" trong 10 giây đầu rồi tụt hậu ngày càng xa so với thực tế.
 
 Một chi tiết thiết kế nhỏ nhưng quan trọng: nếu `job_id` gửi lên không tồn tại hoặc thuộc về một phiên đã kết thúc, hệ thống **âm thầm mở phiên mới** thay vì báo lỗi. Điều này để việc người dùng tải lại trang giữa chừng không làm hỏng luồng chụp.
 
 ### 3.1.3. Yêu cầu chức năng
 
-Đồ án đặc tả tổng cộng **34 yêu cầu chức năng**, tổ chức thành **6 nhóm**. Mỗi yêu cầu được gán một mã định danh, một mức ưu tiên theo thang MoSCoW (Must — bắt buộc, Should — nên có, Could — có thì tốt) và **một tiêu chí chấp nhận kiểm chứng được bằng một phép thử cụ thể**. Nguyên tắc cuối cùng này là chủ ý: một yêu cầu không kèm cách kiểm chứng thì không thể tuyên bố là đã hoàn thành hay chưa.
+Đồ án đặc tả tổng cộng **34 yêu cầu chức năng**, tổ chức thành **6 nhóm**. Mỗi yêu cầu được gán một mã định danh, một mức ưu tiên theo thang MoSCoW (Must — bắt buộc, Should — nên có, Could — có thì tốt, Won't — không triển khai ở bản này) và **một tiêu chí chấp nhận kiểm chứng được bằng một phép thử cụ thể**. Nguyên tắc cuối cùng này là chủ ý: một yêu cầu không kèm cách kiểm chứng thì không thể tuyên bố là đã hoàn thành hay chưa.
 
 #### a) Phân bố yêu cầu theo nhóm và mức ưu tiên
 
-| Nhóm | Mã | Phạm vi chức năng | Must | Should | Could | **Tổng** |
-|---|---|---|:---:|:---:|:---:|:---:|
-| FR-1 | FR-1.1 → 1.7 | Nhận dạng từ ảnh tĩnh | 7 | 0 | 0 | **7** |
-| FR-2 | FR-2.1 → 2.6 | Nhận dạng từ video | 5 | 1 | 0 | **6** |
-| FR-3 | FR-3.1 → 3.5 | Nhận dạng thời gian thực qua webcam | 5 | 0 | 0 | **5** |
-| FR-4 | FR-4.1 → 4.8 | Dashboard, lịch sử và tra cứu | 5 | 2 | 1 | **8** |
-| FR-5 | FR-5.1 → 5.4 | Quản lý dữ liệu | 0 | 2 | 2 | **4** |
-| FR-6 | FR-6.1 → 6.4 | Hệ thống và vận hành | 2 | 2 | 0 | **4** |
-| | | **Tổng cộng** | **24** | **7** | **3** | **34** |
+| Nhóm | Mã | Phạm vi chức năng | Must | Should | Could | Won't | **Tổng** |
+|---|---|---|:---:|:---:|:---:|:---:|:---:|
+| FR-1 | FR-1.1 → 1.7 | Nhận dạng từ ảnh tĩnh | 7 | 0 | 0 | 0 | **7** |
+| FR-2 | FR-2.1 → 2.6 | Nhận dạng từ video | 5 | 1 | 0 | 0 | **6** |
+| FR-3 | FR-3.1 → 3.5 | Nhận dạng thời gian thực (tầng API) | 3 | 0 | 0 | 2 | **5** |
+| FR-4 | FR-4.1 → 4.8 | Dashboard, lịch sử và tra cứu | 5 | 2 | 1 | 0 | **8** |
+| FR-5 | FR-5.1 → 5.4 | Quản lý dữ liệu | 0 | 2 | 2 | 0 | **4** |
+| FR-6 | FR-6.1 → 6.4 | Hệ thống và vận hành | 2 | 2 | 0 | 0 | **4** |
+| | | **Tổng cộng** | **22** | **7** | **3** | **2** | **34** |
+
+> Hai yêu cầu mức Won't là FR-3.1 và FR-3.4 — hai yêu cầu thuần giao diện của nhóm FR-3, chuyển từ Must khi trang Webcam được gỡ khỏi giao diện web (2026-07-20).
 
 #### b) Nội dung cốt lõi của từng nhóm
 
@@ -2209,7 +2215,7 @@ Một yêu cầu trong nhóm đáng được nêu riêng. FR-1.5 quy định r�
 
 Yêu cầu gộp trùng (FR-2.4) là điểm dễ bị bỏ sót nhất trong các đồ án ALPR và là một trong những yêu cầu có ảnh hưởng lan toả lớn nhất. Không có nó, một video 30 giây sẽ sinh ra hàng nghìn bản ghi mô tả cùng vài chiếc xe, làm hỏng toàn bộ phần thống kê ở nhóm FR-4 và biến bảng lịch sử thành vô dụng.
 
-**FR-3 — Nhận dạng thời gian thực (5 yêu cầu, toàn bộ Must).** Nhóm này bao trùm việc xin quyền và hiển thị luồng webcam, gửi khung hình về máy chủ theo chu kỳ cấu hình được, nhận dạng trên luồng trực tiếp, vẽ chồng bounding box lên hình ảnh đang chạy, và lưu lịch sử phiên có gộp trùng. Ràng buộc hiệu năng của nhóm này gắn chặt với việc không có GPU và được cụ thể hoá thành chỉ tiêu định lượng NFR-P2.
+**FR-3 — Nhận dạng thời gian thực (5 yêu cầu: 3 Must, 2 Won't).** Nhóm này ban đầu gồm 5 yêu cầu Must, bao trùm việc xin quyền và hiển thị luồng webcam, gửi khung hình về máy chủ theo chu kỳ cấu hình được, nhận dạng trên luồng trực tiếp, vẽ chồng bounding box lên hình ảnh đang chạy, và lưu lịch sử phiên có gộp trùng. **Theo quyết định thu gọn phạm vi ngày 2026-07-20**, trang Webcam được gỡ khỏi giao diện web: hai yêu cầu thuần giao diện FR-3.1 (xin quyền, hiển thị luồng) và FR-3.4 (vẽ chồng bounding box) chuyển mức **M → W**; ba yêu cầu còn lại (FR-3.2, FR-3.3, FR-3.5) vẫn là Must và được đáp ứng, kiểm chứng **ở tầng API** qua `POST /api/detect/frame` với phiên gộp trùng theo `job_id`. Ràng buộc hiệu năng của nhóm gắn chặt với việc không có GPU và được cụ thể hoá thành chỉ tiêu định lượng NFR-P2.
 
 **FR-4 — Dashboard, lịch sử và tra cứu (8 yêu cầu: 5 Must, 2 Should, 1 Could).** Đây là nhóm đông yêu cầu nhất. Nội dung gồm: các chỉ số tổng hợp trên dashboard (tổng lượt sử dụng, độ tin cậy trung bình, thời gian xử lý trung bình, phân bố theo loại đầu vào), biểu đồ số lượt theo thời gian, danh sách lịch sử có phân trang, tìm kiếm theo biển số hỗ trợ khớp một phần, lọc theo loại đầu vào — khoảng thời gian — ngưỡng độ tin cậy, xem chi tiết một bản ghi với đầy đủ metadata, tải về ảnh kết quả, và sắp xếp theo cột.
 
@@ -2225,7 +2231,7 @@ Yêu cầu gộp trùng (FR-2.4) là điểm dễ bị bỏ sót nhất trong c�
 |---|---|---|
 | FR-1 (Ảnh) | Phase 3, 4, 5, 6 | Unit test + integration test |
 | FR-2 (Video) | Phase 5, 6 | Integration test + performance test |
-| FR-3 (Thời gian thực) | Phase 5, 6 | Performance test |
+| FR-3 (Thời gian thực) | Phase 5 (tầng API — phần giao diện đã gỡ 2026-07-20) | Performance test |
 | FR-4 (Dashboard) | Phase 5, 6 | Integration test + UI test |
 | FR-5 (Dữ liệu) | Phase 5, 6 | Unit test |
 | FR-6 (Hệ thống) | Phase 5, 8 | Smoke test + stress test |
@@ -2267,7 +2273,7 @@ Hệ quả cuối cùng: các chỉ tiêu độ trễ dưới đây trông "rộ
 | Mã | Chỉ tiêu | Mục tiêu | Ngưỡng tối thiểu | Phương pháp đo |
 |---|---|---|---|---|
 | **NFR-P1** | Độ trễ toàn trình một ảnh (p95) | ≤ 800 ms | ≤ 1500 ms | 100 ảnh test, báo cáo p50/p95/p99 |
-| **NFR-P2** | Tốc độ khung hình chế độ webcam | ≥ 5 FPS hiệu dụng | ≥ 3 FPS | Đo liên tục trong 60 giây |
+| **NFR-P2** | Tốc độ khung hình chế độ thời gian thực (webcam — đo ở tầng API) | ≥ 5 FPS hiệu dụng | ≥ 3 FPS | Đo liên tục trong 60 giây |
 | **NFR-P3** | Tốc độ xử lý video | ≥ 0,3× thời gian thực | ≥ 0,15× | Video 60 giây xử lý trong ≤ 200 giây |
 | **NFR-P4** | Thời gian nạp mô hình khi khởi động | ≤ 15 giây | ≤ 30 giây | Từ lúc khởi động đến khi `/health` báo sẵn sàng |
 | **NFR-P5** | Overhead của tầng API (không tính suy luận) | ≤ 50 ms | ≤ 100 ms | Hiệu giữa tổng thời gian request và thời gian pipeline |
@@ -2371,11 +2377,10 @@ Hệ thống được tổ chức thành năm tầng:
 ```mermaid
 graph TB
     subgraph L1["Tầng 1 — Trình bày (React + Vite + TypeScript)"]
-        UI1[Dashboard]
-        UI2[Nhận dạng ảnh]
-        UI3[Nhận dạng video]
-        UI4[Webcam thời gian thực]
-        UI5[Lịch sử và tra cứu]
+        UI1[Nhận dạng ảnh<br/>— trang chủ]
+        UI2[Nhận dạng video]
+        UI3[Lịch sử và tra cứu]
+        UI4[Tổng quan]
     end
 
     subgraph L2["Tầng 2 — Giao diện lập trình (FastAPI)"]
@@ -2424,6 +2429,8 @@ graph TB
     style L3 fill:#dbeafe,stroke:#2563eb
     style L5 fill:#dcfce7,stroke:#16a34a
 ```
+
+> **Ghi chú thay đổi phạm vi 2026-07-20:** tầng trình bày còn **bốn trang** — trang Webcam thời gian thực đã được gỡ khỏi giao diện. Endpoint `POST /detect/frame` **vẫn giữ nguyên ở tầng 2** và phục vụ các client thời gian thực gọi API trực tiếp, không qua tầng trình bày.
 
 **Trách nhiệm của từng tầng:**
 
@@ -2587,12 +2594,14 @@ Toàn bộ các quyết định kiến trúc của hệ thống được ghi l�
 |---|---|---|---|---|
 | **AD-01** | Quan hệ giữa tầng AI và tầng API | Tầng AI là package Python độc lập | NFR-M1; kiểm thử độc lập, tái dùng được trong script huấn luyện và đánh giá (mục 3.2.3) | Thêm một lớp gián tiếp giữa hai tầng |
 | **AD-02** | Xử lý video | **Bất đồng bộ, trả `job_id` ngay** | Thời gian xử lý vượt xa timeout HTTP (NFR-SC3); xem phân tích ở mục 3.1.2(c) | Giao diện phải hỏi tiến độ định kỳ; cần quản lý vòng đời tác vụ |
-| **AD-03** | Webcam thời gian thực | Giao diện gửi từng khung qua HTTP | Đơn giản, dễ gỡ lỗi, đủ cho mức ~5 FPS | Nếu cần tốc độ khung hình cao hơn thì phải chuyển sang WebSocket |
+| **AD-03** | Thời gian thực (webcam) | Client gửi từng khung qua HTTP (`POST /detect/frame`) | Đơn giản, dễ gỡ lỗi, đủ cho mức ~5 FPS | Nếu cần tốc độ khung hình cao hơn thì phải chuyển sang WebSocket |
 | **AD-04** | Gộp trùng biển số | Theo chuỗi ký tự kết hợp cửa sổ thời gian | Đơn giản hơn nhiều so với bám vết đối tượng, đủ dùng cho FR-2.4 | Kém chính xác nếu hai xe cùng biển số trong một video — thực tế không xảy ra |
 | **AD-05** | Runtime suy luận | **ONNX Runtime làm mặc định**, OpenVINO là tối ưu bổ sung | Nhanh hơn PyTorch khoảng 3,73 lần ở phân khúc nano; một runtime duy nhất cho cả hai mô hình loại bỏ xung đột framework (mục 2.8.3) | Thêm bước xuất mô hình vào quy trình; phải đặt tường minh số luồng nội bộ |
 | **AD-06** | Thiết bị suy luận | Cấu hình được, mặc định `cpu` | CON-02 — máy phát triển không có GPU CUDA | — |
 | **AD-07** | Lưu trữ ảnh và video | Tệp trên đĩa, cơ sở dữ liệu chỉ giữ đường dẫn | Tránh phình tệp SQLite do BLOB (mục 3.3.2c) | Phải giữ đồng bộ giữa tệp và bản ghi (FR-5.1, FR-5.3) |
 | **AD-08** | Đặt tên tệp | Sinh từ UUID, không dùng tên gốc | NFR-S2 — chống path traversal | Phải lưu tên gốc ở một trường riêng nếu muốn hiển thị lại cho người dùng |
+
+> **Ghi chú về AD-03.** Sau khi trang Webcam được gỡ khỏi giao diện (thu gọn phạm vi 2026-07-20), "client" trong quyết định này là bất kỳ chương trình nào gọi API — trang webcam trước đây là một client như vậy. Bản thân quyết định không thay đổi: ở mức ~5 FPS trên CPU, nút thắt là thời gian suy luận từng khung, không phải overhead giao thức, nên HTTP vẫn là lựa chọn đúng.
 
 > **Ghi chú về AD-05.** Đây là quyết định duy nhất đã **thay đổi** so với bản phác thảo kiến trúc ở giai đoạn phân tích ban đầu, vốn ghi *"PyTorch trước, ONNX/OpenVINO nếu cần"*. Bằng chứng định lượng thu được ở giai đoạn khảo sát công nghệ (mục 2.8.3) đủ mạnh để nâng ONNX Runtime từ một tối ưu hoá dự phòng thành lựa chọn mặc định. Việc ghi nhận tường minh sự thay đổi này — thay vì lặng lẽ sửa lại bảng — là một phần của yêu cầu truy vết quyết định thiết kế.
 
@@ -2919,12 +2928,14 @@ Vòng lặp hỏi tiến độ ở phía giao diện chạy độc lập với v
 
 #### c) Nhận dạng thời gian thực qua webcam
 
+> Sơ đồ dưới đây mô tả luồng thời gian thực với một **client gọi API** (từ 2026-07-20, trang Webcam đã gỡ khỏi giao diện web; trang đó trước đây chính là client trong sơ đồ). Toàn bộ phần phía máy chủ — tầng API, service, pipeline và CSDL — giữ nguyên.
+
 ```mermaid
 sequenceDiagram
     autonumber
     actor U as Người dùng
     participant BR as Trình duyệt
-    participant FE as Giao diện web
+    participant FE as Client thời gian thực
     participant API as Tầng API
     participant SVC as DetectionService
     participant AI as Pipeline AI
@@ -3208,22 +3219,21 @@ Cuối cùng, việc giữ lại các trường hợp thất bại còn mang gi�
 
 ### 3.5.1. Sơ đồ điều hướng
 
-Giao diện được xây dựng dưới dạng ứng dụng một trang (Single Page Application) với năm màn hình chính, chia sẻ chung một khung bố cục gồm thanh điều hướng và vùng nội dung:
+Giao diện được xây dựng dưới dạng ứng dụng một trang (Single Page Application) với bốn màn hình chính, chia sẻ chung một khung bố cục gồm thanh điều hướng và vùng nội dung:
 
 ```mermaid
 graph LR
     ROOT["Khung bố cục<br/>(thanh điều hướng + vùng nội dung)"]
 
-    ROOT --> P1["/<br/>Dashboard"]
-    ROOT --> P2["/image<br/>Nhận dạng ảnh"]
-    ROOT --> P3["/video<br/>Nhận dạng video"]
-    ROOT --> P4["/webcam<br/>Webcam thời gian thực"]
-    ROOT --> P5["/history<br/>Lịch sử và tra cứu"]
+    ROOT --> P1["/<br/>Nhận dạng ảnh (trang chủ)"]
+    ROOT --> P2["/video<br/>Nhận dạng video"]
+    ROOT --> P3["/history<br/>Lịch sử và tra cứu"]
+    ROOT --> P4["/dashboard<br/>Tổng quan (cuối menu)"]
 
-    P1 -.->|"bấm vào một mục<br/>hoạt động gần đây"| P5
-    P5 -.->|"bấm vào một dòng"| M1["Hộp thoại chi tiết<br/>bản ghi"]
-    P5 -.->|"bấm nút xoá"| M2["Hộp thoại<br/>xác nhận xoá"]
-    P3 -.->|"tác vụ hoàn tất"| P5
+    P4 -.->|"bấm vào một mục<br/>hoạt động gần đây"| P3
+    P3 -.->|"bấm vào một dòng"| M1["Hộp thoại chi tiết<br/>bản ghi"]
+    P3 -.->|"bấm nút xoá"| M2["Hộp thoại<br/>xác nhận xoá"]
+    P2 -.->|"tác vụ hoàn tất"| P3
 
     ANY["Đường dẫn không hợp lệ"] -->|"chuyển hướng"| P1
 
@@ -3232,15 +3242,17 @@ graph LR
     style M2 fill:#fef9c3,stroke:#ca8a04
 ```
 
-Cấu trúc điều hướng cố ý giữ ở mức **phẳng**: năm màn hình chính đều truy cập được trực tiếp từ thanh điều hướng, không có màn hình nào bị lồng sâu. Chi tiết một bản ghi và xác nhận xoá được trình bày dưới dạng hộp thoại chồng lên trang lịch sử thay vì một trang riêng, để người dùng không mất ngữ cảnh danh sách và các bộ lọc đang áp dụng khi xem xong một bản ghi.
+> **Ghi chú thay đổi phạm vi 2026-07-20:** so với thiết kế ban đầu (năm màn hình, Dashboard là trang chủ), màn hình Webcam (`/webcam`) đã được **gỡ khỏi giao diện** để thu gọn phạm vi demo — năng lực thời gian thực giữ nguyên ở tầng API (`POST /api/detect/frame`); đồng thời trang chủ chuyển sang **Nhận dạng ảnh** và Tổng quan lùi về cuối thanh điều hướng (`/dashboard`).
 
-Mọi đường dẫn không khớp đều được chuyển hướng về dashboard thay vì hiển thị trang lỗi.
+Cấu trúc điều hướng cố ý giữ ở mức **phẳng**: bốn màn hình chính đều truy cập được trực tiếp từ thanh điều hướng, không có màn hình nào bị lồng sâu. Chi tiết một bản ghi và xác nhận xoá được trình bày dưới dạng hộp thoại chồng lên trang lịch sử thay vì một trang riêng, để người dùng không mất ngữ cảnh danh sách và các bộ lọc đang áp dụng khi xem xong một bản ghi.
+
+Mọi đường dẫn không khớp đều được chuyển hướng về trang chủ (Nhận dạng ảnh) thay vì hiển thị trang lỗi.
 
 ### 3.5.2. Mô tả các màn hình chính
 
-#### a) Dashboard
+#### a) Dashboard (Tổng quan)
 
-Màn hình mặc định khi mở ứng dụng. Bố cục gồm bốn khối:
+Màn hình tổng quan, truy cập tại `/dashboard` và đặt ở cuối thanh điều hướng (trước thay đổi phạm vi 2026-07-20, đây là màn hình mặc định khi mở ứng dụng). Bố cục gồm bốn khối:
 
 1. **Hàng thẻ chỉ số** — các con số tổng hợp: tổng số lượt sử dụng (đếm theo tác vụ), tổng số biển số đã đọc (đếm theo bản ghi lịch sử), độ tin cậy trung bình, thời gian xử lý trung bình. Việc hai con số đầu được tính từ hai bảng khác nhau là hệ quả trực tiếp của quyết định thiết kế ở mục 3.4.3(c).
 2. **Biểu đồ xu hướng theo ngày** — số lượt nhận dạng theo thời gian, có bộ chọn độ dài cửa sổ.
@@ -3251,7 +3263,7 @@ Ngoài ra, một thẻ trạng thái hệ thống hiển thị kết quả của
 
 #### b) Màn hình nhận dạng ảnh
 
-Bố cục hai cột. Cột trái là khu vực tải ảnh hỗ trợ kéo–thả và chọn tệp, kèm ảnh xem trước. Cột phải hiển thị kết quả: ảnh đã vẽ bounding box, danh sách thẻ kết quả cho từng biển số, và phần tóm tắt gồm số biển phát hiện được, số biển đọc được và thời gian xử lý.
+Trang chủ của ứng dụng (`/`) — màn hình mặc định khi mở giao diện, phản ánh vai trò nghiệp vụ trung tâm của luồng nhận dạng ảnh. Bố cục hai cột. Cột trái là khu vực tải ảnh hỗ trợ kéo–thả và chọn tệp, kèm ảnh xem trước. Cột phải hiển thị kết quả: ảnh đã vẽ bounding box, danh sách thẻ kết quả cho từng biển số, và phần tóm tắt gồm số biển phát hiện được, số biển đọc được và thời gian xử lý.
 
 Mỗi thẻ kết quả hiển thị: chuỗi biển số đã chuẩn hoá ở kích thước lớn, chuỗi OCR thô ở kích thước nhỏ hơn khi hai chuỗi khác nhau, hai thanh độ tin cậy riêng biệt cho phát hiện và OCR, nhãn số dòng, và cờ hợp lệ định dạng. Việc hiển thị **cả hai chuỗi** khi chúng khác nhau là một lựa chọn có chủ đích: nó cho phép người xem quan sát trực tiếp khối hậu xử lý đã can thiệp gì, và trong buổi bảo vệ, đây là bằng chứng trực quan cho đóng góp kỹ thuật được phân tích ở mục 3.4.3(b).
 
@@ -3259,11 +3271,11 @@ Mỗi thẻ kết quả hiển thị: chuỗi biển số đã chuẩn hoá ở 
 
 Ba giai đoạn nối tiếp, phản ánh đúng bản chất bất đồng bộ của nghiệp vụ: khu vực tải tệp; bảng tiến độ hiển thị thanh phần trăm, số khung đã xử lý trên tổng số khung, trạng thái tác vụ và nút huỷ; bảng kết quả hiển thị video đã gắn nhãn, danh sách biển số đã gộp trùng và liên kết tải về.
 
-#### d) Màn hình webcam
+#### d) Màn hình webcam (đã gỡ khỏi giao diện 2026-07-20)
 
-Gồm khu vực hiển thị camera với lớp phủ vẽ bounding box theo thời gian thực, cụm điều khiển bật/tắt camera và chọn thiết bị, bảng số liệu phiên (tốc độ khung hình hiệu dụng, số khung đã gửi, số khung bị bỏ, độ trễ trung bình), và bảng biển số đã phát hiện trong phiên.
+Thiết kế ban đầu có màn hình webcam gồm khu vực hiển thị camera với lớp phủ vẽ bounding box theo thời gian thực, cụm điều khiển bật/tắt camera và chọn thiết bị, bảng số liệu phiên (tốc độ khung hình hiệu dụng, số khung đã gửi, số khung bị bỏ, độ trễ trung bình), và bảng biển số đã phát hiện trong phiên. Bảng số liệu phiên khi đó có vai trò kép: với người dùng, nó cho biết hệ thống đang chạy nhanh chậm ra sao; với người thực hiện đồ án, nó là công cụ đo tại chỗ cho chỉ tiêu NFR-P2 — việc số khung bị bỏ được hiển thị công khai giúp phân biệt rõ giữa "hệ thống xử lý được 5 khung mỗi giây" và "camera chụp 30 khung mỗi giây nhưng 25 khung bị bỏ".
 
-Bảng số liệu phiên có vai trò kép. Với người dùng, nó cho biết hệ thống đang chạy nhanh chậm ra sao. Với người thực hiện đồ án, nó là **công cụ đo tại chỗ cho chỉ tiêu NFR-P2**: tốc độ khung hình hiệu dụng hiển thị trên màn hình chính là đại lượng cần báo cáo, và việc số khung bị bỏ được hiển thị công khai giúp phân biệt rõ giữa "hệ thống xử lý được 5 khung mỗi giây" và "camera chụp 30 khung mỗi giây nhưng 25 khung bị bỏ".
+**Theo quyết định thu gọn phạm vi ngày 2026-07-20, màn hình này đã được gỡ khỏi giao diện web.** Năng lực nhận dạng thời gian thực giữ nguyên ở tầng API (`POST /api/detect/frame`, mục 3.3.3), và phép đo NFR-P2 chuyển sang thực hiện bằng kịch bản gọi API trực tiếp. Mã nguồn màn hình còn trong lịch sử git nếu cần khôi phục.
 
 #### e) Màn hình lịch sử
 
@@ -3312,7 +3324,7 @@ Nguyên tắc vận hành đi kèm: **chi tiết kỹ thuật không bị vứt 
 
 **Bố cục thích ứng.** Giao diện hoạt động đúng từ độ phân giải 1366×768 trở lên (NFR-U4). Đây là độ phân giải phổ biến của máy chiếu trong phòng bảo vệ, nên yêu cầu này có tính thực dụng trực tiếp.
 
-**Trạng thái cài đặt.** Phần giao diện **đã hoàn thành**: cấu trúc điều hướng, khung bố cục và toàn bộ thành phần của cả năm màn hình đã được cài đặt, bản build production chạy sạch và khớp đủ 10 endpoint của backend. Chi tiết cài đặt cùng ảnh chụp màn hình được trình bày ở **Chương 4**; các hạng mục còn dở (đáng chú ý là nút huỷ tác vụ video) được ghi nhận ở mục 4.7.
+**Trạng thái cài đặt.** Phần giao diện **đã hoàn thành**: cấu trúc điều hướng, khung bố cục và toàn bộ thành phần của bốn màn hình hiện hành đã được cài đặt, bản build production chạy sạch (màn hình webcam từng được cài đặt đầy đủ và đã gỡ 2026-07-20 theo thu gọn phạm vi; endpoint `POST /api/detect/frame` của backend nay phục vụ client API, không còn trang giao diện gọi tới). Chi tiết cài đặt cùng ảnh chụp màn hình được trình bày ở **Chương 4**; các hạng mục còn dở (đáng chú ý là nút huỷ tác vụ video) được ghi nhận ở mục 4.7.
 
 ---
 
@@ -3320,7 +3332,7 @@ Nguyên tắc vận hành đi kèm: **chi tiết kỹ thuật không bị vứt 
 
 Chương này đã trình bày toàn bộ quá trình phân tích yêu cầu và thiết kế hệ thống nhận dạng biển số xe Việt Nam.
 
-Về **phân tích yêu cầu**, đồ án xác định ba tác nhân tương tác trực tiếp và chín use case, đặc tả 34 yêu cầu chức năng tổ chức thành 6 nhóm (24 bắt buộc, 7 nên có, 3 có thì tốt), mỗi yêu cầu kèm một tiêu chí chấp nhận kiểm chứng được. Yêu cầu phi chức năng được đặt ở dạng chỉ tiêu định lượng, trong đó điểm cần nhấn mạnh là **mọi chỉ tiêu hiệu năng đều là chỉ tiêu đo trên CPU**. Việc không có GPU được xác lập là một ràng buộc thiết kế nghiêm túc chứ không phải một hạn chế tạm thời, vì nó cố định trong toàn bộ vòng đời đồ án, thay đổi độ trễ theo bậc độ lớn chứ không theo tỉ lệ phần trăm, chi phối việc lựa chọn thành phần ở mọi tầng, và trực tiếp sinh ra hai quyết định kiến trúc — xử lý video bất đồng bộ và bỏ khung có kiểm soát ở chế độ webcam.
+Về **phân tích yêu cầu**, đồ án xác định ba tác nhân tương tác trực tiếp và chín use case, đặc tả 34 yêu cầu chức năng tổ chức thành 6 nhóm (22 bắt buộc, 7 nên có, 3 có thì tốt, 2 không triển khai ở bản này — hai yêu cầu thuần giao diện FR-3.1/FR-3.4, chuyển mức khi gỡ trang webcam 2026-07-20), mỗi yêu cầu kèm một tiêu chí chấp nhận kiểm chứng được. Yêu cầu phi chức năng được đặt ở dạng chỉ tiêu định lượng, trong đó điểm cần nhấn mạnh là **mọi chỉ tiêu hiệu năng đều là chỉ tiêu đo trên CPU**. Việc không có GPU được xác lập là một ràng buộc thiết kế nghiêm túc chứ không phải một hạn chế tạm thời, vì nó cố định trong toàn bộ vòng đời đồ án, thay đổi độ trễ theo bậc độ lớn chứ không theo tỉ lệ phần trăm, chi phối việc lựa chọn thành phần ở mọi tầng, và trực tiếp sinh ra hai quyết định kiến trúc — xử lý video bất đồng bộ và bỏ khung có kiểm soát ở chế độ webcam.
 
 Về **kiến trúc**, hệ thống được tổ chức thành năm tầng theo nguyên tắc phụ thuộc một chiều. Quyết định kiến trúc quan trọng nhất là **tách hoàn toàn tầng AI khỏi tầng API**: package nhận dạng không import bất kỳ thành phần nào của framework web. Ba lợi ích của quyết định này — kiểm thử độc lập, tái sử dụng trong script huấn luyện và đánh giá, thay thế engine mà không sửa tầng API — không phải lập luận lý thuyết mà đang được sử dụng trong thực tế: nhờ nó, toàn bộ phần mềm đã được xây dựng và chạy được với một pipeline mô phỏng trước khi mô hình được huấn luyện. Ràng buộc này được kiểm chứng bằng hai công cụ bổ trợ nhau: kiểm tra tĩnh các câu lệnh import và kiểm tra động danh sách module đã nạp lúc chạy — phép thứ hai bắt được cả import muộn lẫn import bắc cầu mà phép thứ nhất bỏ sót.
 
@@ -3328,7 +3340,7 @@ Về **thiết kế chi tiết**, chương đã đặc tả cấu trúc lớp c�
 
 Về **thiết kế cơ sở dữ liệu**, mô hình gồm hai bảng có quan hệ một–nhiều. Năm quyết định thiết kế dữ liệu được phân tích kỹ, và điểm chung của cả năm là chúng bảo vệ **tính đúng đắn của các số liệu sẽ được công bố ở chương đánh giá**: tách hai cột độ tin cậy để phân tích lỗi được; lưu cả chuỗi OCR thô lẫn chuỗi đã sửa để đo được đóng góp định lượng của khối hậu xử lý; thêm khoá nhóm tác vụ để thống kê sử dụng không bị thổi phồng theo số biển số trên mỗi ảnh; lưu số dòng của biển vì chuỗi ký tự tự nó nhập nhằng giữa biển ô tô và biển xe máy; và cho phép các cột OCR rỗng để những trường hợp đọc không ra vẫn nằm trong mẫu số khi tính độ chính xác. Mỗi quyết định trong số này, nếu bỏ qua, đều dẫn tới một con số sai mà **không có gì báo hiệu** — đó là lý do chúng được cân nhắc ngay từ khâu thiết kế lược đồ chứ không để lại xử lý sau.
 
-Về **giao diện người dùng**, chương trình bày sơ đồ điều hướng phẳng gồm năm màn hình, mô tả chức năng từng màn hình, và xác lập hai nguyên tắc trải nghiệm bắt buộc: bốn trạng thái phải xử lý cho mọi thành phần hiển thị dữ liệu, và quy tắc soạn thông báo lỗi tiếng Việt gồm ba phần nguyên nhân — giải thích — hướng khắc phục.
+Về **giao diện người dùng**, chương trình bày sơ đồ điều hướng phẳng gồm bốn màn hình (sau thu gọn phạm vi 2026-07-20, gỡ màn hình webcam), mô tả chức năng từng màn hình, và xác lập hai nguyên tắc trải nghiệm bắt buộc: bốn trạng thái phải xử lý cho mọi thành phần hiển thị dữ liệu, và quy tắc soạn thông báo lỗi tiếng Việt gồm ba phần nguyên nhân — giải thích — hướng khắc phục.
 
 Cần nói rõ giới hạn của chương này. Nội dung trình bày ở đây là **thiết kế và trạng thái cài đặt của thiết kế**, không phải kết quả thực nghiệm. Tầng API, tầng nghiệp vụ, tầng dữ liệu và lược đồ cơ sở dữ liệu đã được cài đặt và xác minh bằng lời gọi HTTP thực tế; giao diện đã hoàn thiện và build sạch; hệ thống **đã chạy pipeline nhận dạng thật với mô hình chính thức** `models/best.pt`. Mô hình đối chứng `models/baseline-416-v1.pt` không dùng làm kết quả đánh giá được (sai độ phân giải và split có rò rỉ). Toàn bộ số liệu về độ chính xác của mô hình, độ trễ thực đo trên CPU, mức đóng góp thực tế của khối hậu xử lý và độ chính xác tách theo số dòng biển số **được trình bày ở Chương 5**. Việc chương này tập trung vào tính đúng đắn có thể kiểm chứng của thiết kế, thay vì trình bày trước các con số thuộc chương đánh giá, là một lựa chọn có chủ đích về phương pháp.
 
@@ -5527,7 +5539,7 @@ Bảng dưới là bảng tổng hợp trình bày khi bảo vệ. Nó liệt k�
 | M3 | Type hint và docstring cho hàm public | 100% | 100% | — | ⬜ | 5.9.2 |
 | M4 | Không hard-code đường dẫn | 0 vi phạm | 0 vi phạm | — | ⬜ | 5.9.2 |
 | M5 | Thay được bộ OCR mà không sửa mã API | ràng buộc bằng interface | — | — | ⬜ | 5.9.2 |
-| M6 | Tuân thủ lint và định dạng tự động | sạch | sạch | — | ⬜ | 5.9.2 |
+| M6 | Tuân thủ lint và định dạng tự động | sạch | sạch | **black 96/96 sạch; ruff còn 83 `E501`** | ⚠️ | 5.9.2 |
 | **NFR-S — An toàn** | | | | | | |
 | S1 | Kiểm tra tệp bằng magic bytes | chặn được tệp giả mạo | — | — | ⬜ | 5.9.2 |
 | S2 | Chống path traversal | 100% | — | — | ⬜ | 5.9.2 |

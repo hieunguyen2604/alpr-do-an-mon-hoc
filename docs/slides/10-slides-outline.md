@@ -48,7 +48,7 @@ Mỗi slide gồm bốn phần:
 | **S12 — Kết quả detection** | ✅ **ĐÃ ĐIỀN** | mAP50 0,983 / mAP50-95 0,783 / P 0,984 / R 0,971, tách 1 dòng / 2 dòng | `05-tables.md §T5.5a/b` (`best.pt`, test v3) |
 | S13 | ⚠️ Một phần | Ảnh minh hoạ split-then-hstack (chưa render) | Phase 4 — xuất ảnh trung gian từ `two_line.py` |
 | **S15 — Đóng góp hậu xử lý** | ✅ **ĐÃ ĐIỀN** | A4–A7, tách layout, A6−A5 = +4,57 điểm | `05-tables.md §T5.6a–e` (2.801 biển) |
-| S16 | ✅ Có ảnh | Đã có 5 ảnh trong `docs/screenshots/` | — |
+| S16 | ⚠️ Có ảnh, **cần chụp lại** | Còn **3 ảnh dùng được** trong `docs/screenshots/` (`image-detection` · `video-detection` · `history`). `dashboard.png` **bỏ** — trang Tổng quan đã gỡ 2026-07-20. Cả 3 ảnh chụp khi sidebar còn 5 mục và trang chủ còn là Tổng quan ⇒ **chụp lại trước khi nộp** | — |
 | **S17 — Hiệu năng CPU** | ✅ **ĐÃ ĐIỀN** | p50/p95/p99 độ trễ, phân rã bước | `07-benchmark-p1-resolved.json`, `05-tables.md §T5.7` |
 | S18–S21 | ✅ Đủ dữ liệu | — | — |
 
@@ -70,7 +70,7 @@ Mỗi slide gồm bốn phần:
 **Hình / Bảng**
 
 - Logo trường (góc trên trái)
-- Một ảnh nền mờ: khung hình giao thông có biển số đã được khoanh hộp — lấy từ đầu ra thật của hệ thống, **không** dùng ảnh stock. Nguồn: chạy `/image` rồi chụp vùng kết quả.
+- Một ảnh nền mờ: khung hình giao thông có biển số đã được khoanh hộp — lấy từ đầu ra thật của hệ thống, **không** dùng ảnh stock. Nguồn: chạy trang **Nhận dạng ảnh** (`/`, trang chủ) rồi chụp vùng kết quả.
 
 **Speaker notes** *(20 s)*
 
@@ -251,7 +251,7 @@ Mỗi slide gồm bốn phần:
 
 | Tầng | Công nghệ | Vai trò |
 |---|---|---|
-| L1 — Trình bày | React 18 + Vite + TypeScript strict + Tailwind | 5 trang |
+| L1 — Trình bày | React 18 + Vite + TypeScript strict + Tailwind | 3 trang |
 | L2 — API | FastAPI + Swagger | 10 endpoint |
 | L3 — Nghiệp vụ | Detection / Video / History / Statistics / Storage Service | Điều phối |
 | **L4 — AI** | **Python thuần — cấm import FastAPI** | YOLO11 + PaddleOCR + Normalizer |
@@ -634,15 +634,24 @@ Biển 1 dòng **vượt cả ba mục tiêu**; biển 2 dòng (xe máy, 79,8% t
 
 **Nội dung trên slide**
 
-**5 trang trong một khung ứng dụng chung:**
+**3 trang trong một khung ứng dụng chung:**
 
 | Trang | Chức năng |
 |---|---|
-| `/` — Tổng quan | 4 thẻ chỉ số · trạng thái hệ thống · hoạt động 7 ngày · phân bố theo nguồn · 5 nhận dạng gần nhất |
-| `/image` — Nhận dạng ảnh | Upload, vẽ bounding box, hiện biển số + độ tin cậy + thời gian xử lý |
+| `/` — Nhận dạng ảnh *(trang chủ)* | Upload, vẽ bounding box, hiện biển số + độ tin cậy + thời gian xử lý |
 | `/video` — Nhận dạng video | Upload → `202 Accepted` + `job_id` → hỏi tiến độ định kỳ → video có gắn nhãn |
-| `/webcam` — Thời gian thực | Gửi từng khung qua HTTP, mục tiêu ~5 FPS |
 | `/history` — Lịch sử | Lọc, sắp xếp, phân trang — **trạng thái nằm trên URL**, gửi link được |
+
+*Chế độ thời gian thực (webcam) giữ ở tầng API — `POST /api/detect/frame`, gửi từng khung qua HTTP, mục tiêu ~5 FPS; trang Webcam đã gỡ khỏi giao diện 2026-07-20.*
+
+**Hai lần thu gọn phạm vi giao diện trong ngày 2026-07-20 — nói thẳng, đừng để hội đồng tự phát hiện:**
+
+| Trang gỡ | Yêu cầu bị ảnh hưởng | Năng lực còn lại |
+|---|---|---|
+| Webcam | FR-3.1, FR-3.4 (M/M → **W**) | `POST /api/detect/frame` — không đổi một dòng, vẫn có kiểm thử |
+| **Tổng quan (Dashboard)** | **FR-4.1 (M → W)**, FR-4.2 (S → W) | `GET /api/statistics` và `GET /health` **vẫn phục vụ**, vẫn có kiểm thử tích hợp |
+
+⚠️ **FR-4.1 là lần đầu một yêu cầu mức *Must* bị đưa ra khỏi phạm vi.** Đây là quyết định thu gọn demo, không phải một chức năng thất bại — trang đã từng chạy thật và còn nguyên trong lịch sử git. Đánh đổi đo được: gỡ `recharts` làm gói tải về giảm từ ~730 KB xuống **328,8 KB (−55%)**. Chi tiết trả lời ở **E4c** của `10-defense-qa.md`.
 
 **Bốn nguyên tắc giao diện:**
 - **Bốn trạng thái đủ ở mọi vùng dữ liệu**: loading / empty / error / success — riêng *empty* tách nhỏ theo nguyên nhân
@@ -652,14 +661,18 @@ Biển 1 dòng **vượt cả ba mục tiêu**; biển 2 dòng (xe máy, 79,8% t
 
 **Hình / Bảng**
 
-- **Ảnh chụp màn hình** — đã có sẵn trong `docs/screenshots/`:
-  - `dashboard.png` (ảnh lớn, chiếm ~55% slide)
-  - `image-detection.png` (ảnh vừa — quan trọng nhất vì hiện kết quả AI thật)
-  - `history.png`, `webcam.png`, `video-detection.png` (3 ảnh nhỏ xếp hàng dưới)
+- **Ảnh chụp màn hình** — dùng **3 tệp** trong `docs/screenshots/`:
+  - `image-detection.png` (ảnh lớn — quan trọng nhất vì hiện kết quả AI thật)
+  - `video-detection.png`, `history.png` (2 ảnh nhỏ xếp hàng dưới)
+  - ❌ **Không dùng `dashboard.png`** — trang Tổng quan đã gỡ khỏi giao diện
+
+> ⚠️ **Phải chụp lại 3 ảnh này trước khi nộp.** Bản hiện có được chụp khi sidebar còn **5 mục**
+> và trang chủ còn là **Tổng quan**. Giao diện bây giờ chỉ còn **3 mục**, trang chủ là **Nhận dạng ảnh**
+> và **không còn trang Tổng quan** — chiếu ảnh cũ lên slide sẽ mâu thuẫn với chính lời nói ở dưới.
 
 **Speaker notes** *(40 s)*
 
-> Giao diện gồm năm trang: tổng quan, nhận dạng ảnh, nhận dạng video, webcam và lịch sử. Ba trang nhận dạng là nguồn sinh dữ liệu, tất cả đổ về cùng một bảng lịch sử.
+> Giao diện gồm ba trang: nhận dạng ảnh (trang chủ), nhận dạng video và lịch sử. Hai trang nhận dạng là nguồn sinh dữ liệu, cùng đổ về một bảng lịch sử. Em xin nói thẳng hai chỗ đã thu gọn: trang webcam và trang tổng quan đều đã được gỡ khỏi giao diện ngày 20 tháng 7. Cả hai năng lực vẫn còn nguyên ở tầng API — `POST /api/detect/frame` cho thời gian thực và `GET /api/statistics` cho số liệu tổng hợp, cả hai vẫn có kiểm thử tự động. Riêng việc gỡ trang tổng quan đưa FR-4.1, một yêu cầu mức *bắt buộc*, ra khỏi phạm vi bản này; em nói rõ điều đó và sẵn sàng trả lời kỹ ở phần hỏi đáp.
 >
 > Em xin nêu hai chi tiết thiết kế. Thứ nhất, mỗi vùng dữ liệu đều xử lý đủ bốn trạng thái, và riêng trạng thái rỗng em còn tách nhỏ theo nguyên nhân — chưa gửi gì, đã xử lý mà không thấy biển, hay không khớp bộ lọc — vì cách thoát khỏi mỗi trạng thái là khác nhau. Thứ hai, kiểu dữ liệu ở frontend dùng đúng tên trường của JSON API, không có lớp chuyển đổi ở giữa. Nhờ vậy nếu backend đổi schema thì TypeScript báo lỗi ngay lúc biên dịch, thay vì một trường lặng lẽ thành undefined lúc chạy.
 >
@@ -736,6 +749,7 @@ Biển 1 dòng **vượt cả ba mục tiêu**; biển 2 dòng (xe máy, 79,8% t
 | 7 | **Giấy phép bộ dữ liệu chưa rõ** | ⚠️ | Trang nguồn không ghi license |
 | 8 | **Chưa kiểm chứng ở chế độ đa đối tượng** | ⚠️ | 90,8% ảnh chỉ có 1 biển; toàn bộ dataset chỉ 9 ảnh có ≥ 5 biển |
 | 9 | Không có xác thực người dùng · SQLite 1 tiến trình ghi | ⚠️ | Lựa chọn phạm vi có ý thức (giả định A-04, chạy nội bộ) |
+| 10 | **FR-4.1 (Must) và FR-4.2 (Should) đưa ra khỏi phạm vi** — trang Tổng quan gỡ khỏi giao diện 2026-07-20 | ⚠️ | Quyết định thu gọn demo, **không** phải chức năng thất bại. `GET /api/statistics` + `GET /health` vẫn phục vụ và vẫn có kiểm thử; đổi lại gói tải về giảm 55% (~730 KB → 328,8 KB) |
 
 **Ba thiên lệch dữ liệu đã đo được:** ảnh gần như chỉ có 1 biển (90,8%) · biển tập trung giữa khung (heatmap x≈0,46–0,50) · box cực nhỏ tập trung ở biển xe máy (p05 diện tích 0,244% so với 1,002%)
 
@@ -806,7 +820,7 @@ xác thực + phân quyền → SQLite sang PostgreSQL → kiểm thử chịu t
 | 1 | Bộ luật sửa lỗi OCR **theo vị trí**, xây từ TT 79/2024 | `plate_rules.py` · 29 test |
 | 2 | **Thiết kế phép đo** đóng góp của hậu xử lý (`raw_ocr_text` vs `plate_number`) | Schema CSDL 18 cột |
 | 3 | Đánh giá **tách riêng** biển 1 dòng / 2 dòng, không che bằng số trung bình | `evaluate.py` bảng NFR-A8 |
-| 4 | Hệ thống hoàn chỉnh **chạy không cần GPU** | 5 tầng · 10 endpoint · 5 trang |
+| 4 | Hệ thống hoàn chỉnh **chạy không cần GPU** | 5 tầng · 10 endpoint · 3 trang |
 
 **Ba điều đồ án này KHÔNG tuyên bố:**
 - ❌ Không tạo ra state-of-the-art, và **không đặt mục tiêu đó**
@@ -865,6 +879,9 @@ xác thực + phân quyền → SQLite sang PostgreSQL → kiểm thử chịu t
 - [ ] S13 — đã render ảnh minh hoạ split-then-hstack chưa (hình quan trọng nhất, hiện **còn thiếu**)
 - [ ] Mọi con số trên slide đọc lại từ file nguồn, không chép tay
 - [ ] Slide S2 ghi rõ cảnh báo phạm vi áp dụng "số liệu Brazil, không phải Việt Nam"
+- [ ] **S16 — chụp lại 3 ảnh màn hình** (`image-detection` · `video-detection` · `history`).
+      Bản đang có chụp lúc sidebar còn 5 mục và trang chủ còn là Tổng quan; giao diện nay còn **3 trang**,
+      trang chủ là Nhận dạng ảnh, **không còn trang Tổng quan**. Không dùng `dashboard.png`
 
 **Về kỹ thuật**
 - [ ] Backend và frontend **đã khởi động trước khi vào phòng** — đừng để lần chạy đầu của buổi bảo vệ là lần khởi động server
@@ -896,6 +913,7 @@ Dùng khi hội đồng hỏi giữa lúc trình bày — biết ngay câu trả
 | **S12** | ⚠️ **"mAP 0,983 cao quá, có rò rỉ không?"** | **C3 — câu khó nhất** |
 | S13 | "Biển 2 dòng xử lý thế nào?" · "Sao biết mấy dòng?" | D2, D3 |
 | S14 | "Charset gồm những ký tự nào?" | **D6** |
+| **S16** | ⚠️ **"Sao bỏ hẳn một yêu cầu mức Must (FR-4.1)?"** · "Sao không còn trang Webcam?" | **E4c**, E4b |
 | S15 | "Làm sao biết hậu xử lý có tác dụng?" · "Sao chọn PaddleOCR?" | F4, **D1** |
 | **S17** | ⚠️ **"Tốc độ bao nhiêu? Đo trên máy gì?"** | **F3** |
 | S18 | "Docker chạy được chưa?" · "Chịu được bao nhiêu người dùng?" | E7, E3, G3 |

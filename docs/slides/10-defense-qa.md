@@ -30,7 +30,8 @@ Mỗi câu gồm ba phần:
 | Huấn luyện detector | ✅ **Xong** — `models/best.pt` (YOLO11n, imgsz 640, split v3, 20 epoch) | `runs/final-640-v3/results.csv` |
 | Kết quả detection (test v3) | ✅ mAP50 **0,983** / mAP50-95 **0,783** / P **0,984** / R **0,971** — đạt cả bốn | `05-tables.md §T5.5a` |
 | Backend FastAPI | ✅ Chạy được — **10 endpoint** phản hồi đúng qua HTTP thật, Alembic migrate xong | `detection_history` 18 cột, `detection_job` 11 cột |
-| Frontend React | ✅ Chạy được — typecheck sạch, lint sạch, build thành công, 10 endpoint kiểm chứng | — |
+| Frontend React | ✅ Chạy được — typecheck sạch, lint sạch, build thành công, 10 endpoint kiểm chứng | **3 trang**: Nhận dạng ảnh *(trang chủ)* · Nhận dạng video · Lịch sử |
+| Phạm vi giao diện | ⚠️ Thu gọn **2 lần** ngày 2026-07-20 — gỡ trang Webcam, rồi gỡ trang Tổng quan | MoSCoW nay: **21 Must · 6 Should · 3 Could · 4 Won't** (FR-3.1, FR-3.4, **FR-4.1**, FR-4.2). Xem **E4b, E4c** |
 | Module OCR + tách 2 dòng + regex | ✅ Đã viết, 104 unit test | `ai/inference/`, `tests/` |
 | Độ chính xác OCR (2.801 biển) | ⚠️ **Đã đo — KHÔNG đạt** (A4 0,873 / A5 0,610 / A6 0,656; biển 2 dòng yếu) | `05-tables.md §T5.6` |
 | Docker | ⚠️ Có Dockerfile + compose, `docker compose config` hợp lệ, **chưa build thật** | `deployment/docker/` |
@@ -53,7 +54,7 @@ Bốn đóng góp cụ thể, mỗi cái đều kiểm chứng được:
 | 1 | **Bộ luật sửa lỗi OCR theo vị trí** — ép về chữ số ở vị trí số, ép về chữ cái ở vị trí seri, có vùng cấm sửa | `ai/inference/plate_rules.py`, 29 test trong `test_normalizer.py` |
 | 2 | **Đo định lượng được đóng góp của hậu xử lý** — schema lưu cả chuỗi thô lẫn chuỗi đã chuẩn hoá (NFR-A5 vs A6) | `detection_history.raw_ocr_text` |
 | 3 | **Đánh giá tách riêng biển 1 dòng / 2 dòng** thay vì một con số trung bình che mất điểm yếu | `evaluate.py` in bảng NFR-A8, tập test có 300 ảnh biển 2 dòng |
-| 4 | **Hệ thống hoàn chỉnh chạy được** — 5 tầng, 10 endpoint, giao diện 5 trang, chạy không cần GPU | Backend + frontend đã kiểm chứng bằng HTTP thật |
+| 4 | **Hệ thống hoàn chỉnh chạy được** — 5 tầng, 10 endpoint, giao diện 3 trang, chạy không cần GPU | Backend + frontend đã kiểm chứng bằng HTTP thật |
 
 **Cảnh báo.** Đừng trả lời "em tự train model nên đó là đóng góp". Fine-tune một model có sẵn trên một dataset có sẵn là công việc kỹ thuật chuẩn, không phải đóng góp học thuật. Đóng góp thật là **phép đo** và **bộ luật theo văn bản pháp lý**.
 
@@ -121,7 +122,7 @@ Em cố ý loại ba nhóm: nhận dạng loại xe / màu xe, tích hợp barri
 ### A7. Ai là người dùng của hệ thống này? Bài toán có thật không?
 
 **Trả lời ngắn.**
-Người dùng mục tiêu là bãi giữ xe, cổng ra vào cơ quan, và người vận hành cần tra cứu lịch sử ra vào. Đó là lý do hệ thống có ba chế độ đầu vào (ảnh, video, webcam) cộng một trang lịch sử có bộ lọc và một dashboard thống kê.
+Người dùng mục tiêu là bãi giữ xe, cổng ra vào cơ quan, và người vận hành cần tra cứu lịch sử ra vào. Đó là lý do hệ thống có ba chế độ đầu vào — ảnh, video, và khung hình thời gian thực qua API — cộng một trang lịch sử có bộ lọc. Phần số liệu tổng hợp phục vụ qua `GET /api/statistics`; màn hình hiển thị sẵn cho nó đã được gỡ khỏi giao diện ngày 2026-07-20 (xem câu E4c).
 
 **Nếu bị hỏi sâu.**
 Điểm cần trung thực: bộ dữ liệu em có **không phải** ảnh camera giao thông toàn cảnh. 90,8% ảnh chỉ chứa một biển số, và heatmap vị trí cho thấy biển tập trung mạnh ở giữa khung — dấu hiệu ảnh đã được cắt hoặc chụp có chủ đích lấy xe làm trung tâm. Nghĩa là mô hình **chưa được kiểm chứng ở chế độ đa đối tượng**; toàn bộ dataset chỉ có 9 ảnh chứa từ 5 biển trở lên.
@@ -205,7 +206,7 @@ Nhãn do tác giả bộ dữ liệu gán, em **không gán lại thủ công** 
 Ba lý do. Thứ nhất, chụp và gán nhãn 4.500 ảnh thủ công vượt quá ngân sách thời gian của một đồ án — riêng gán nhãn đã là hàng chục giờ. Thứ hai, ảnh tự chụp sẽ chỉ phản ánh một địa điểm và một loại camera, tổng quát hoá còn kém hơn dữ liệu công khai. Thứ ba, chụp biển số xe người khác rồi công bố có vấn đề về dữ liệu cá nhân.
 
 **Nếu bị hỏi sâu.**
-Nếu hội đồng hỏi "vậy làm sao biết hệ thống chạy được trên ảnh thật?" — trả lời trung thực: em có demo trực tiếp bằng webcam trên máy tại buổi bảo vệ, nhưng đó là **kiểm chứng định tính, không phải phép đo**. Một bộ test tự chụp có nhãn là việc còn thiếu và em ghi nhận nó ở phần Hạn chế.
+Nếu hội đồng hỏi "vậy làm sao biết hệ thống chạy được trên ảnh thật?" — trả lời trung thực: em có demo trực tiếp trên máy tại buổi bảo vệ với ảnh chụp thật, nhưng đó là **kiểm chứng định tính, không phải phép đo**. Một bộ test tự chụp có nhãn là việc còn thiếu và em ghi nhận nó ở phần Hạn chế.
 
 ---
 
@@ -620,7 +621,7 @@ Vì mục tiêu triển khai là một lệnh `docker compose up`, và SQLite kh
 
 ---
 
-### E4. Vì sao webcam dùng HTTP mà không WebSocket?
+### E4. Vì sao chế độ thời gian thực dùng HTTP mà không WebSocket?
 
 **Trả lời ngắn.**
 Vì WebSocket không giải quyết được nút thắt thật. Với chỉ tiêu ~5 FPS trên CPU, **thời gian suy luận mới là nút thắt** — khoảng 300–400 ms mỗi khung hình, so với vài mili-giây overhead của HTTP. WebSocket sẽ thêm quản lý trạng thái kết nối, logic kết nối lại và độ phức tạp khi debug mà không cải thiện được điều gì.
@@ -629,6 +630,59 @@ Vì WebSocket không giải quyết được nút thắt thật. Với chỉ ti�
 - Đây là quyết định AD-03, có ghi rõ đánh đổi: nếu cần FPS cao hơn thì phải chuyển WebSocket.
 - Em ghi luôn điều kiện thay đổi quyết định: *nếu Phase 7 đo được và chứng minh HTTP là nút cổ chai thì sẽ xem xét lại*. Và bản thân phép đo đó là một nội dung tốt cho chương Đánh giá.
 - Điểm phương pháp luận đáng nêu: một quyết định kiến trúc nên đi kèm **điều kiện để đảo ngược nó**, chứ không chỉ đi kèm lý do chọn.
+
+---
+
+### E4b. Vì sao giao diện không còn trang Webcam? Có phải làm không được?
+
+**Trả lời ngắn.**
+Không. Đây là **quyết định thu gọn phạm vi giao diện** ngày 2026-07-20, không phải một chức năng thất bại. Trang Webcam đã từng được cài đặt đầy đủ và chạy được; em gỡ nó khỏi giao diện để phần demo gọn lại quanh nghiệp vụ chính. **Năng lực thời gian thực vẫn còn nguyên ở tầng API**: endpoint `POST /api/detect/frame` không thay đổi một dòng nào, vẫn có kiểm thử tự động và vẫn nằm trong kế hoạch đo NFR-P2.
+
+**Nếu bị hỏi sâu.**
+- **Về yêu cầu:** trong sáu nhóm yêu cầu chức năng, nhóm FR-3 có 5 yêu cầu. Hai yêu cầu **thuần giao diện** — FR-3.1 (xin quyền và hiển thị luồng camera) và FR-3.4 (vẽ chồng bounding box lên khung hình trực tiếp) — chuyển mức ưu tiên từ *Must* sang *Won't* cho bản này. Ba yêu cầu còn lại — FR-3.2 (nhận và xử lý từng khung), FR-3.3 (nhận dạng trên khung trực tiếp), FR-3.5 (lưu lịch sử phiên có gộp trùng theo `job_id`) — **vẫn là Must và vẫn được đáp ứng**, chỉ là kiểm chứng ở mức API thay vì qua giao diện.
+- **Về khả năng khôi phục:** toàn bộ mã giao diện đã gỡ — trang `WebcamDetection`, thư mục `components/detection/webcam/`, hook `useFrameCaptureLoop` và hàm gọi `detectFrame` — **còn nguyên trong lịch sử git**. Khôi phục là thao tác phục hồi, không phải xây mới. Em ghi nó ở phần Hướng phát triển.
+- **Nếu hội đồng muốn xem chạy thật:** em demo được ngay bằng một lệnh gọi API (Bước 6 của kịch bản demo) hoặc qua Swagger tại `localhost:8000/docs`.
+- **Điểm đáng nêu về kiến trúc:** việc gỡ được một trang giao diện mà **không đụng một dòng nào** ở tầng API, tầng nghiệp vụ hay tầng AI chính là bằng chứng thực tế cho nguyên tắc tách tầng mà em trình bày ở Chương 3.
+
+**Cảnh báo.** Đừng nói "em bỏ vì không kịp làm" — sai sự thật, vì trang đã từng chạy được. Cũng đừng nói lảng như thể hệ thống chưa bao giờ có phần này. Nói đúng: **đã làm, đã chạy được, chủ động thu gọn khỏi giao diện, năng lực giữ ở API.**
+
+---
+
+### E4c. ⚠️ Vì sao đồ án bỏ hẳn một yêu cầu mức *Must* (FR-4.1 — Dashboard)?
+
+> **Đây là câu hỏi khó nhất trong nhóm E, và nó có thể được đặt ra ngay khi hội đồng đối chiếu
+> bảng yêu cầu chức năng với giao diện đang chiếu. Chuẩn bị để nói TRƯỚC, đừng đợi bị hỏi.**
+
+**Trả lời ngắn.**
+Em xác nhận: ngày 2026-07-20 em gỡ trang **Tổng quan (Dashboard)** khỏi giao diện, và điều đó đưa **FR-4.1 từ *Must* xuống *Won't*** — **lần đầu tiên** trong đồ án một yêu cầu mức bắt buộc bị đưa ra khỏi phạm vi (FR-4.2 mức *Should* cũng chuyển sang *Won't* theo). Đây là **quyết định thu gọn phạm vi demo do em chủ động đưa ra**, không phải một chức năng làm không được: trang đã được cài đặt đầy đủ, đã chạy thật, và toàn bộ mã của nó — `pages/Dashboard.tsx`, thư mục `components/dashboard/` (10 tệp), hook `useApi.ts` — **còn nguyên trong lịch sử git**.
+
+**Nếu bị hỏi sâu — bốn điều, theo thứ tự.**
+
+**(1) Năng lực số liệu KHÔNG mất, chỉ mất màn hình hiển thị.**
+Endpoint `GET /api/statistics` và `GET /health` **vẫn phục vụ, không đổi một dòng nào**, và vẫn có kiểm thử tích hợp trong bộ test (`tests/integration/test_api_statistics.py`, `test_api_health.py`). Hội đồng muốn xem số liệu tổng hợp thì em gọi API tại chỗ — đó chính là Bước 3 trong kịch bản demo, một lời gọi `curl` hoặc một lần bấm *Try it out* trên Swagger.
+
+**(2) Phần Lịch sử — nơi chứa 6 trong 8 yêu cầu của nhóm FR-4 — không đổi.**
+FR-4.3 đến FR-4.8 (phân trang, tìm kiếm khớp một phần, lọc đa tiêu chí, xem chi tiết, tải về, sắp xếp) đều thuộc trang Lịch sử và **giữ nguyên mức ưu tiên, giữ nguyên tình trạng đáp ứng**. Cái mất là hai yêu cầu *trình bày* số liệu, không phải năng lực tra cứu.
+
+**(3) Đánh đổi đo được, không phải cảm tính.**
+Gỡ trang kéo theo gỡ thư viện biểu đồ `recharts`: gói tải về của giao diện giảm từ **~730 KB xuống 328,8 KB — giảm 55%**. Với một hệ thống mà ràng buộc chi phối là chạy trên máy không GPU và mạng nội bộ, đó là một đánh đổi có lợi đo được.
+
+**(4) Bảng MoSCoW sau thay đổi — em nói thẳng con số.**
+34 yêu cầu chức năng: **21 Must · 6 Should · 3 Could · 4 Won't**. Bốn yêu cầu *Won't* là FR-3.1, FR-3.4 (gỡ trang Webcam) và FR-4.1, FR-4.2 (gỡ trang Tổng quan) — cả bốn đều **thuần giao diện**, không có yêu cầu nào ở tầng xử lý hay tầng dữ liệu bị bỏ.
+
+**Nếu hội đồng hỏi "vậy đồ án có còn đạt không, khi thiếu một Must?"**
+Trả lời: *"Theo đúng định nghĩa MoSCoW mà em chốt ở Phase 0 thì một Must bị thiếu là một khiếm khuyết, và em không né điều đó. Cái em xin trình bày là bản chất của khiếm khuyết này: nó nằm ở tầng trình bày, năng lực bên dưới còn nguyên và kiểm chứng được ngay tại đây, và việc khôi phục là một thao tác phục hồi từ git chứ không phải xây mới. Nếu hội đồng yêu cầu, em khôi phục lại trang trước ngày nộp."*
+
+**Cảnh báo — bốn cách trả lời SAI:**
+
+| ❌ Cách nói sai | Vì sao hỏng |
+|---|---|
+| *"Dashboard không cần thiết ạ"* | Nói tránh, và **tự mâu thuẫn**: chính em đặt nó là *Must* ở Phase 0. Hạ giá một yêu cầu sau khi bỏ nó là sửa tiêu chuẩn cho vừa kết quả — hội đồng nhìn ra ngay. |
+| *"Em không kịp làm"* | **Sai sự thật.** Trang đã chạy được, còn trong lịch sử git. Nói sai một chi tiết kiểm chứng được sẽ khiến mọi khẳng định khác bị nghi ngờ. |
+| *"Số liệu vẫn có trong CSDL mà"* (rồi dừng) | Đúng nhưng **né trọng tâm**. Câu hỏi là về *yêu cầu bị bỏ*, không phải về nơi cất dữ liệu. Phải nói rõ đây là khiếm khuyết có thật, rồi mới nói phạm vi của nó. |
+| Im lặng không nhắc, đợi hội đồng phát hiện | Tệ nhất. Một khiếm khuyết **tự khai** là một quyết định phạm vi; cũng khiếm khuyết đó **bị bắt** là một chỗ giấu giếm. |
+
+**Cách nói đúng, một câu:** *"Em chủ động gỡ trang Tổng quan để thu gọn phạm vi demo. Hệ quả là FR-4.1 — một yêu cầu mức Must — chuyển sang Won't, và em nêu thẳng chứ không giấu. Trang đã từng chạy thật và còn trong lịch sử git; endpoint thống kê vẫn phục vụ và vẫn có kiểm thử; đổi lại gói tải về giảm 55%."*
 
 ---
 
@@ -683,7 +737,7 @@ Nếu hội đồng hỏi "vì sao chưa build?" — trả lời trung thực: �
 ### E8. Vì sao cơ sở dữ liệu của em khác đặc tả ban đầu?
 
 **Trả lời ngắn.**
-Vì đặc tả gốc có một thiếu sót làm sai thống kê. Schema gốc không có trường nhóm, nên **một ảnh chứa 3 biển số sẽ thành 3 bản ghi rời rạc** và dashboard sẽ đếm thành "3 lượt nhận dạng" thay vì "1 ảnh có 3 biển số". Em bổ sung `source_job_id` và bảng `DetectionJob`, và đã kiểm chứng bằng test: 1 ảnh 3 biển đếm ra **1 lượt**, không phải 3.
+Vì đặc tả gốc có một thiếu sót làm sai thống kê. Schema gốc không có trường nhóm, nên **một ảnh chứa 3 biển số sẽ thành 3 bản ghi rời rạc** và `GET /api/statistics` sẽ đếm thành "3 lượt nhận dạng" thay vì "1 ảnh có 3 biển số". Em bổ sung `source_job_id` và bảng `DetectionJob`, và đã kiểm chứng bằng test: 1 ảnh 3 biển đếm ra **1 lượt**, không phải 3.
 
 **Nếu bị hỏi sâu — sáu trường bổ sung, mỗi trường một lý do:**
 
@@ -907,9 +961,11 @@ Ba việc. Một, **chốt nguồn dữ liệu có nhãn chuỗi biển số tr�
 ### G7. Nếu bây giờ em phải demo trực tiếp mà hệ thống lỗi thì sao?
 
 **Trả lời ngắn.**
-Em có ảnh chụp màn hình của cả 5 trang giao diện trong `docs/screenshots/`, và có thể trình bày kết quả từ file `results.csv` sinh ra tự động. Nhưng nếu demo lỗi thì em sẽ nói thẳng nó lỗi ở đâu — em quen với hệ thống đủ để chẩn đoán tại chỗ.
+Em có ảnh chụp màn hình **cả 3 trang** giao diện trong `docs/screenshots/` (`image-detection` · `video-detection` · `history`), và có thể trình bày kết quả từ file `results.csv` sinh ra tự động. Nhưng nếu demo lỗi thì em sẽ nói thẳng nó lỗi ở đâu — em quen với hệ thống đủ để chẩn đoán tại chỗ.
 
 **Cảnh báo.** Chuẩn bị trước: mở sẵn backend và frontend **trước khi vào phòng**, có sẵn 2–3 ảnh test đã biết chắc chạy được, và có sẵn tab Swagger. Đừng để lần chạy đầu tiên của buổi bảo vệ là lần khởi động server.
+
+⚠️ **Chụp lại 3 ảnh này trước khi nộp.** Bản đang có chụp lúc sidebar còn **5 mục** và trang chủ còn là **Tổng quan**. Nếu phải dùng ảnh cũ làm phương án dự phòng mà hội đồng để ý thấy khác giao diện đang mô tả, hãy nói thẳng: *"Ảnh này chụp trước khi em thu gọn giao diện ngày 20/7, hiện giao diện còn 3 trang — nhận dạng ảnh, nhận dạng video và lịch sử."*
 
 ---
 
@@ -1016,6 +1072,8 @@ Nó là một hệ thống chạy được nhưng **chưa phải sản phẩm tr
 | Charset OCR | **36 ký tự** A–Z + 0–9; tập loại trừ chắc chắn chỉ **5 chữ I J O Q W** |
 | Căn cứ pháp lý | TT 79/2024 (sửa bởi TT 13/2025, TT 51/2025) + QCVN 08:2024/BCA |
 | Cơ sở dữ liệu | `detection_history` 18 cột · `detection_job` 11 cột |
+| Giao diện | **3 trang** — `/` Nhận dạng ảnh *(trang chủ)* · `/video` · `/history`; gói tải về **328,8 KB** (−55% sau khi gỡ `recharts`) |
+| MoSCoW (34 FR) | **21 Must · 6 Should · 3 Could · 4 Won't** — Won't = FR-3.1, FR-3.4, **FR-4.1 (Must cũ)**, FR-4.2 |
 | Unit test tầng AI | 104 (detector 30 · normalizer 29 · two_line 26 · recognizer 19) |
 | Tài liệu tham khảo | 232 entry, 211 được trích dẫn |
 | Lỗi tự phát hiện ở Phase 1 | **25 lỗi**, trong đó **3 nghiêm trọng** |

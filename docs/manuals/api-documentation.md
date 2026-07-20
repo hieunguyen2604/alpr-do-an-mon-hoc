@@ -1,7 +1,7 @@
 # Tài liệu API — Hệ thống nhận dạng biển số xe Việt Nam
 
-**Phiên bản tài liệu:** 1.0
-**Ngày lập:** 19/07/2026
+**Phiên bản tài liệu:** 1.2
+**Ngày lập:** 19/07/2026 · **Ngày cập nhật:** 20/07/2026
 **Phạm vi:** REST API của tầng backend (FastAPI), tương ứng module `backend/` trong kho mã nguồn.
 **Nguồn đối chiếu:** toàn bộ nội dung dưới đây được đọc trực tiếp từ mã nguồn
 `backend/api/routes/*.py`, `backend/schemas/detection.py`, `backend/core/config.py`,
@@ -44,8 +44,12 @@ có chủ đích:
 `/health` **cố tình nằm ngoài** tiền tố `/api`. Lý do được ghi rõ trong
 `backend/main.py`: một endpoint kiểm tra sức khỏe mà lại dịch chuyển mỗi khi
 tiền tố API thay đổi thì không còn giá trị đối với hệ thống giám sát hoặc
-orchestrator. Mã nguồn frontend (`frontend/src/services/api.ts`) cũng gọi
-`/health` ở gốc, tách khỏi hằng `API_PREFIX`.
+orchestrator. Mã nguồn frontend (`frontend/src/services/api.ts`) cũng giữ đúng
+sự tách biệt này: hàm `resolveOrigin` cắt bỏ hậu tố `/api` khỏi giá trị cấu
+hình để một endpoint nằm ngoài tiền tố vẫn gọi được từ cùng một `axios`
+instance. Từ 20/07/2026, bản thân giao diện web **không còn gọi** `/health` —
+trang Tổng quan (Dashboard) đã bị gỡ; endpoint vẫn phục vụ bình thường cho các
+bên tiêu thụ khác (xem mục 4.3.1).
 
 ### 4.1.2 Định dạng dữ liệu
 
@@ -158,7 +162,7 @@ nghĩa.
 | 7 | `GET` | `/api/history/export` | Xuất bản ghi khớp bộ lọc ra CSV | `200` | `400`, `422`, `500` |
 | 8 | `GET` | `/api/history/{detection_id}` | Đọc chi tiết một bản ghi | `200` | `404`, `422`, `500` |
 | 9 | `DELETE` | `/api/history/{detection_id}` | Xóa một bản ghi | `204` | `404`, `422`, `500` |
-| 10 | `GET` | `/api/statistics` | Số liệu tổng hợp cho bảng điều khiển | `200` | `400`, `422`, `500` |
+| 10 | `GET` | `/api/statistics` | Số liệu tổng hợp toàn hệ thống | `200` | `400`, `422`, `500` |
 
 Ghi chú: mã `422` không được khai báo tường minh trong `responses` của từng
 route, nhưng vẫn có thể phát sinh ở mọi endpoint có tham số — nó do FastAPI
@@ -220,6 +224,13 @@ Quy ước trình bày: mỗi endpoint gồm tham số, ví dụ yêu cầu bằ
 ### 4.3.1 `GET /health` — Kiểm tra mức sẵn sàng
 
 **Định nghĩa:** `backend/api/routes/health.py`, hàm `health`.
+
+> **Bên tiêu thụ (cập nhật 20/07/2026):** trang Tổng quan (Dashboard) — nơi
+> trước đây hiển thị ô "Trạng thái hệ thống" dựng từ endpoint này — đã được gỡ
+> khỏi giao diện web ngày 20/07/2026; đặc tả endpoint và bộ test tự động
+> (`tests/integration/test_api_health.py`) **giữ nguyên**. Bên tiêu thụ hiện tại
+> là hệ thống giám sát, orchestrator, client bên ngoài hoặc script gọi trực tiếp
+> qua HTTP.
 
 **Tham số:** không có.
 
@@ -383,6 +394,11 @@ video.
 ### 4.3.4 `POST /api/detect/frame` — Nhận dạng một khung hình webcam
 
 **Định nghĩa:** `backend/api/routes/detection.py`, hàm `detect_frame`.
+
+> **Bên tiêu thụ (cập nhật 20/07/2026):** trang Webcam đã được gỡ khỏi giao diện
+> web ngày 20/07/2026; đặc tả endpoint, bộ test tự động và số liệu benchmark của
+> nó **giữ nguyên**. Bên tiêu thụ hiện tại là các client thời gian thực bên ngoài
+> hoặc script demo gọi trực tiếp qua HTTP.
 
 **Tham số:**
 
@@ -730,6 +746,12 @@ client phân biệt được một lệnh xóa đã hoàn tất với một lệ
 ### 4.3.10 `GET /api/statistics` — Số liệu tổng hợp
 
 **Định nghĩa:** `backend/api/routes/statistics.py`, hàm `get_statistics`.
+
+> **Bên tiêu thụ (cập nhật 20/07/2026):** trang Tổng quan (Dashboard) — nơi
+> trước đây vẽ các ô số và biểu đồ từ endpoint này — đã được gỡ khỏi giao diện
+> web ngày 20/07/2026; đặc tả endpoint và bộ test tự động
+> (`tests/integration/test_api_statistics.py`) **giữ nguyên**. Bên tiêu thụ hiện
+> tại là client bên ngoài hoặc script gọi trực tiếp qua HTTP.
 
 **Tham số:**
 
@@ -1491,9 +1513,13 @@ sequenceDiagram
 
 ### 4.7.3 Nhận dạng webcam — luồng lặp có trạng thái
 
+Luồng này do một **client thời gian thực bên ngoài** (hoặc script demo) thực
+hiện — trang Webcam trên giao diện web đã được gỡ ngày 20/07/2026, endpoint và
+luồng dưới đây không thay đổi.
+
 ```mermaid
 sequenceDiagram
-    participant C as Client (trình duyệt)
+    participant C as Client thời gian thực (ngoài giao diện web)
     participant A as API
 
     Note over C: Bắt đầu phiên quay

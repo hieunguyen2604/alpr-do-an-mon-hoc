@@ -14,7 +14,19 @@
 
 ## 1. Giới thiệu
 
-Hệ thống tự động **phát hiện** và **đọc** biển số xe Việt Nam từ ba nguồn đầu vào: ảnh tĩnh, tệp video, và luồng webcam thời gian thực. Kết quả được chuẩn hoá theo định dạng biển số Việt Nam, lưu vào cơ sở dữ liệu và trình bày trên một dashboard thống kê.
+Hệ thống tự động **phát hiện** và **đọc** biển số xe Việt Nam từ ảnh tĩnh và tệp video trên giao diện web, cùng năng lực nhận dạng **thời gian thực qua API** (`POST /api/detect/frame`). Kết quả được chuẩn hoá theo định dạng biển số Việt Nam, lưu vào cơ sở dữ liệu và tra cứu được trên trang **Lịch sử** (tìm kiếm, lọc, xem chi tiết, xuất CSV); số liệu tổng hợp phục vụ qua `GET /api/statistics`.
+
+**Giao diện gồm 3 trang:** Nhận dạng ảnh *(trang chủ, `/`)* · Nhận dạng video *(`/video`)* · Lịch sử *(`/history`)*.
+
+> ⚠️ **Thu gọn phạm vi giao diện — ngày 2026-07-20, hai lần liên tiếp.**
+> Gỡ trang **Webcam** (FR-3.1, FR-3.4: Must → Won't), rồi gỡ trang **Tổng quan / Dashboard**
+> (**FR-4.1: Must → Won't**, FR-4.2: Should → Won't). Đây là **lần đầu** một yêu cầu mức *Must*
+> bị đưa ra khỏi phạm vi; ghi rõ ở đây thay vì để người đọc tự phát hiện.
+> **Không đổi:** `POST /api/detect/frame`, `GET /api/statistics` và `GET /health` vẫn phục vụ,
+> vẫn có kiểm thử tích hợp; FR-4.3–FR-4.8 (trang Lịch sử) giữ nguyên; mã giao diện đã gỡ còn
+> nguyên trong lịch sử git. **Đánh đổi đo được:** gỡ `recharts` ⇒ gói tải về của giao diện giảm
+> từ ~730 KB xuống **328,8 KB (−55%)**. Bảng MoSCoW nay: **34 FR = 21 Must · 6 Should · 3 Could ·
+> 4 Won't**. Chi tiết: [functional-requirements.md](docs/00-requirements/functional-requirements.md).
 
 Điểm khác biệt so với việc ghép các thư viện có sẵn:
 
@@ -28,7 +40,7 @@ Hệ thống tự động **phát hiện** và **đọc** biển số xe Việt 
 ## 2. Kiến trúc
 
 ```
-Ảnh / Video / Webcam
+Ảnh / Video / Khung hình thời gian thực (API)
         ↓
     YOLO11  ──────────► phát hiện vùng biển số
         ↓
@@ -40,7 +52,7 @@ Hệ thống tự động **phát hiện** và **đọc** biển số xe Việt 
         ↓
     Kiểm tra định dạng biển số Việt Nam
         ↓
-    SQLite ──► REST API ──► Dashboard
+    SQLite ──► REST API ──► Giao diện web (3 trang)
 ```
 
 Sơ đồ chi tiết, sơ đồ tuần tự và các quyết định kiến trúc: [docs/architecture/system-architecture.md](docs/architecture/system-architecture.md)
@@ -69,11 +81,11 @@ Sơ đồ chi tiết, sơ đồ tuần tự và các quyết định kiến trú
 | **3** | Model Training | ✅ **Mô hình chính thức `best.pt` xong** (`imgsz=640`, split v3, 20 epoch): mAP@0.5 = **0,9829** / mAP@0.5:0.95 = **0,7834** / P **0,9837** / R **0,9714** — đạt |
 | **4** | OCR | ✅ **Hoàn thành** — 145 test pass; đã đo A4–A7 (OCR biển 2 dòng KHÔNG đạt — kết quả thật) |
 | **5** | Backend | ✅ **Hoàn thành** — đã nối `ALPRPipeline` thật, xác minh bằng HTTP sống |
-| **6** | Frontend | ✅ **Hoàn thành** — build sạch, 10 endpoint khớp |
-| **7** | Testing | 🟠 **Đã đo xong** — 862 test thu thập / 861 pass, bao phủ 88,1%; ✅ **NFR-P1 ĐẠT** trên `best.pt` (p95 5.857 → **731 ms** client / **780 ms** in-process); chốt M7 vẫn chưa qua, nay bị chặn bởi **NFR-A4/A5/A6** (độ chính xác OCR biển 2 dòng — kết quả thật) |
-| **8** | Deployment | ✅ **Build thật thành công** — 2 image, stack chạy, 3 lỗi đã sửa |
+| **6** | Frontend | ✅ **Hoàn thành** — build sạch, 10 endpoint khớp; **3 trang** sau thu gọn phạm vi 2026-07-20, gói tải về **328,8 KB** (−55%) |
+| **7** | Testing | 🟠 **Đã đo xong** — **882 test thu thập / 881 pass / 1 `xfail`**, bao phủ tầng nghiệp vụ **87,7%** (đo 20/07/2026); ✅ **NFR-P1 ĐẠT** trên `best.pt` (p95 5.857 → **731 ms** client / **780 ms** in-process); chốt M7 vẫn chưa qua, nay bị chặn bởi **NFR-A4/A5/A6** (độ chính xác OCR biển 2 dòng — kết quả thật) |
+| **8** | Deployment | ✅ **Build thật thành công** — 2 image, stack chạy `Healthy`, 4 lỗi đã sửa |
 | **9** | Documentation | 🟡 Chương 1–4, sổ tay kỹ thuật, tài liệu API xong — **chờ chương 5–6** |
-| **10** | Presentation | 🟡 56 câu Q&A, demo, 21 slide, poster — chờ số liệu cuối |
+| **10** | Presentation | 🟡 58 câu Q&A, demo, 21 slide, poster — chờ số liệu cuối |
 | 11 | Final Package | ⚪ Chưa bắt đầu |
 
 **Đã chạy được thật:**
@@ -87,7 +99,7 @@ Sơ đồ chi tiết, sơ đồ tuần tự và các quyết định kiến trú
 - **Backend** — xác minh bằng HTTP thật vào tiến trình uvicorn sống: **10 endpoint** phản hồi đúng (10 thao tác HTTP phân bố trên 9 đường dẫn — `/api/history/{detection_id}` mang cả `GET` lẫn `DELETE`; `/docs`, `/redoc`, `/openapi.json` do FastAPI **tự sinh** nên không tính vào 10), Swagger render được, Alembic migrate xong (`detection_history` 18 cột, `detection_job` 11 cột). Quy tắc đếm thống kê đã kiểm chứng: 1 ảnh chứa 3 biển = **1 lượt**, không phải 3.
 - **Pipeline nhận dạng thật** — hệ thống chạy `ALPRPipeline` thật với `models/best.pt` (mô hình chính thức): `GET /health` trả `model_loaded: true`, `engine = 'yolo:best.pt+paddleocr-PP-OCRv5-mobile'`. `StubPipeline` **đã bị đưa ra khỏi đường chạy chính** — phương án lùi khi thiếu trọng số là `UnavailablePipeline`, nó **ném lỗi** thay vì bịa ra biển số; stub chỉ chạy khi đặt tường minh `ALPR_USE_STUB=true`.
 - **Ràng buộc kiến trúc** — `ai/` không import FastAPI/Pydantic (kiểm cả bằng `sys.modules` lúc chạy); không hard-code đường dẫn; abstract base class thật.
-- **Kiểm thử (Phase 7)** — **861/862 test pass, 0 fail, 1 `xfail` có mô tả**; bao phủ tầng nghiệp vụ **88,1%** (NFR-M2 ≥ 70% ⇒ đạt); 18/18 test kiến trúc pass. Chi tiết: [07-testing-report.md](docs/reports/07-testing-report.md).
+- **Kiểm thử (Phase 7)** — **881/882 test pass, 0 fail, 1 `xfail` có mô tả** (lệnh `backend/.venv/Scripts/python.exe -m pytest -q` chạy từ gốc kho); bao phủ tầng nghiệp vụ **87,7%** theo lần đo 20/07/2026 ([13-refactor-result.json](docs/reports/13-refactor-result.json)) và **88,1%** theo lần đo Phase 7 trước đó ([07-testing-report.md](docs/reports/07-testing-report.md)) — NFR-M2 ≥ 70% ⇒ đạt ở cả hai mốc; 18/18 test kiến trúc pass.
 - **Benchmark (Phase 7)** — đo trên **Intel i5-14600K, 14 nhân vật lý / 20 luồng logic, 31,77 GiB RAM, Windows 11, Python 3.13.12, torch 2.13.0+cpu, CPU-only**. ✅ **NFR-P1 = 731,15 ms p95 client-side / 780,36 ms in-process** trên `models/best.pt`, máy rảnh (mục tiêu 800 ms). Phân rã bước: OCR **64,3%** (~112,55 ms/biển), detect **34,2%** (~59,83 ms). Truy vấn CSDL 10.000 bản ghi **18,71 ms** (chỉ tiêu 500 ms), overhead API **19,01 ms** (50 ms), RAM **0,88 GB** (2 GB), khởi động **8,36 s** (15 s) *(P4–P7 đo trên baseline)*, 0 lỗi ở mức đồng thời 10, soak 300 s 100%. ⚠️ **NFR-P2/P3 (webcam/video) chưa đo trên `best.pt`**. Con số cũ 5.857 ms (epoch 7, máy bận, lỗi crop) **đã bị bác bỏ** — xem [07-benchmark-p1-resolved.json](docs/reports/07-benchmark-p1-resolved.json). Chi tiết: [07-benchmark-report.md](docs/reports/07-benchmark-report.md).
 - **Docker (Phase 8)** — build thật thành công: `alpr-backend` 4,12 GB + `alpr-frontend` 97,7 MB, stack chạy, kiểm chứng bằng `curl` từ ngoài container. 3 lỗi thật đã phát hiện và sửa. Chi tiết: [08-deployment-guide.md](docs/reports/08-deployment-guide.md).
 
@@ -165,7 +177,7 @@ Sơ đồ chi tiết, sơ đồ tuần tự và các quyết định kiến trú
 
 | Tài liệu | Nội dung |
 |---|---|
-| [07-testing-report.md](docs/reports/07-testing-report.md) | **Báo cáo kiểm thử** — 862 test thu thập (861 pass, 1 `xfail`), bao phủ 88,1%, kiểm kiến trúc tự động, độ chính xác tách 1 dòng/2 dòng, **kiểm chứng rò rỉ dữ liệu**, bảng đối chiếu toàn bộ NFR, lỗi đã phát hiện, hạn chế |
+| [07-testing-report.md](docs/reports/07-testing-report.md) | **Báo cáo kiểm thử** — 882 test thu thập (881 pass, 1 `xfail`, 0 fail), bao phủ tầng nghiệp vụ 88,1% (đo Phase 7) / 87,7% (đo lại 20/07/2026), kiểm kiến trúc tự động, độ chính xác tách 1 dòng/2 dòng, **kiểm chứng rò rỉ dữ liệu**, bảng đối chiếu toàn bộ NFR, lỗi đã phát hiện, hạn chế |
 | [07-benchmark-report.md](docs/reports/07-benchmark-report.md) | **Báo cáo benchmark** — độ trễ E2E, **phân rã ngân sách đo thật so với ước lượng**, PyTorch với ONNX, chịu tải, truy vấn CSDL |
 | `docs/reports/07-*.json` | Toàn bộ dữ liệu đo gốc (benchmark, chịu tải, CSDL, overhead API, rò rỉ) |
 | `docs/reports/figures/` | 8 biểu đồ Phase 7 + 6 biểu đồ gốc Ultralytics |

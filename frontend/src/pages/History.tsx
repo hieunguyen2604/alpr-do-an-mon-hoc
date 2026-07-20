@@ -333,7 +333,7 @@ export default function History(): JSX.Element {
               title="Chưa có dữ liệu nhận dạng"
               description="Mọi biển số nhận dạng được từ ảnh, video hoặc webcam sẽ tự động xuất hiện ở đây."
               action={
-                <Link to="/image" className="btn-primary">
+                <Link to="/" className="btn-primary">
                   Nhận dạng ảnh đầu tiên
                 </Link>
               }

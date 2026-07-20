@@ -37,7 +37,8 @@
 ### 2.3. Phần mềm
 
 - ✅ REST API bằng FastAPI, có tài liệu Swagger.
-- ✅ Nhận dạng từ ảnh, video và webcam.
+- ✅ Nhận dạng từ ảnh và video trên giao diện web.
+- ✅ Nhận dạng thời gian thực từng khung hình ở tầng API (`POST /api/detect/frame`) — trang Webcam đã gỡ khỏi giao diện 2026-07-20, FR-3.1/FR-3.4 chuyển M → W (xem [functional-requirements.md](functional-requirements.md)).
 - ✅ Lưu trữ lịch sử bằng SQLite + SQLAlchemy + Alembic.
 - ✅ Giao diện web React + Vite + TypeScript + TailwindCSS.
 - ✅ Dashboard thống kê, lịch sử, tìm kiếm, lọc.
@@ -76,7 +77,7 @@ Việc ghi rõ những gì **không làm** quan trọng ngang với việc ghi n
 graph TB
     subgraph EXT["Ngoài hệ thống"]
         U["👤 Người dùng<br/>(trình duyệt)"]
-        CAM["📷 Webcam"]
+        CAM["📷 Khung hình thời gian thực<br/>(client gọi API)"]
         FS["📁 Tệp ảnh / video<br/>của người dùng"]
         COLAB["☁️ Colab / Kaggle<br/>(huấn luyện — ngoại tuyến)"]
     end
@@ -90,7 +91,7 @@ graph TB
     end
 
     U --> FE
-    CAM --> FE
+    CAM --> BE
     FS --> FE
     FE <--> BE
     BE --> AI
@@ -101,6 +102,8 @@ graph TB
     style COLAB stroke-dasharray: 5 5
     style SYS fill:#f0f9ff,stroke:#0284c7
 ```
+
+**Ghi chú (2026-07-20):** nút *Khung hình thời gian thực* trước đây là *Webcam* đi qua trang Webcam của Frontend; trang này đã gỡ khỏi giao diện nên khung hình nay do client bên ngoài gửi thẳng tới Backend qua `POST /api/detect/frame` — vì vậy mũi tên trỏ vào Backend, không qua Frontend.
 
 **Điểm cần lưu ý:** Colab nằm **ngoài** ranh giới hệ thống chạy. Nó chỉ là công cụ sản xuất ra tệp `best.pt`. Hệ thống khi vận hành **không phụ thuộc vào bất kỳ dịch vụ ngoài nào** — đây là một điểm mạnh nên nhấn mạnh khi bảo vệ.
 

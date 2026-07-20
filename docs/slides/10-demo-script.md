@@ -28,7 +28,7 @@ Ba sự thật phải nắm chắc trước khi bước vào phòng. Nếu quên
 - [ ] Chạy thử **toàn bộ** kịch bản mục 2 từ đầu đến cuối, đúng thứ tự, ít nhất **2 lần**
 - [ ] Ghi màn hình một lượt chạy thành công làm phương án dự phòng (mục 1.7)
 - [ ] Kiểm tra pin máy, mang theo sạc và cổng chuyển HDMI/VGA
-- [ ] Tắt thông báo hệ thống, tắt Zalo/Messenger, đóng Zoom (Zoom chiếm webcam)
+- [ ] Tắt thông báo hệ thống, tắt Zalo/Messenger, đóng Zoom/Teams/Meet để tránh cửa sổ chen ngang
 
 ### 1.2. Khởi động backend
 
@@ -75,13 +75,18 @@ Trường cần đọc và ý nghĩa:
 | `engine` | `yolo:best.pt+paddleocr-PP-OCRv5-mobile` | Nếu chuỗi này không có tiền tố `yolo:` thì đường chạy chính **không phải** pipeline thật |
 | `version`, `uptime_seconds` | có giá trị | — |
 
-**Bước 2 — mở trang Tổng quan** <http://localhost:5173>, xem thẻ **Trạng thái hệ thống**.
-Thẻ này hiển thị lại đúng nội dung `/health`, kèm **cảnh báo khi đang chạy chế độ mô phỏng**.
-Nếu cảnh báo đó hiện lên, nó sẽ hiện luôn trước mặt hội đồng — nên phải chủ động nói trước.
+**Bước 2 — mở <http://localhost:5173>**, ứng dụng vào thẳng trang **Nhận dạng ảnh** (trang chủ).
+Kiểm ba mục sidebar hiện đủ: Nhận dạng ảnh · Nhận dạng video · Lịch sử.
 
-**Bước 3 — đảm bảo CSDL đã có sẵn vài bản ghi.** Dashboard rỗng thì mọi biểu đồ đều rỗng,
-mở đầu bằng một màn hình trắng là mở đầu tệ. Chạy trước 5–10 ảnh để biểu đồ 7 ngày và
-biểu đồ theo nguồn có dữ liệu vẽ.
+> ⚠️ **Đổi so với bản trước.** Trang **Tổng quan** đã gỡ khỏi giao diện ngày 2026-07-20, nên **thẻ
+> Trạng thái hệ thống không còn hiển thị trên màn hình**. Từ nay `curl /health` ở Bước 1 là chỗ
+> **duy nhất** đọc được `model_loaded`. Mặt tốt: không còn nguy cơ một cảnh báo mô phỏng tự bật lên
+> giữa lúc trình bày. Mặt phải trả giá: quên chạy Bước 1 thì vào phòng mới biết mô hình chưa nạp —
+> **Bước 1 nay là bắt buộc tuyệt đối, không phải bước kiểm tra cho yên tâm.**
+
+**Bước 3 — đảm bảo CSDL đã có sẵn vài bản ghi.** Trang **Lịch sử** rỗng thì mở ra chỉ thấy trạng thái
+rỗng, và Bước 3 của kịch bản (đếm 1 lượt / 3 biển qua `GET /api/statistics`) không có nền để so sánh.
+Chạy trước 5–10 ảnh để bảng lịch sử và các bộ đếm có dữ liệu.
 
 ### 1.5. Ảnh mẫu cần chuẩn bị — bốn loại, đặt trong `demo/`
 
@@ -113,19 +118,23 @@ Suy luận chạy **trên CPU**. Theo `06-ui-documentation.md`, video **60 giây
 - Nhớ: nút **Huỷ tác vụ** hiện diện nhưng **bị vô hiệu hoá** (FR-2.6 mới đạt một phần).
   Đã lỡ bấm chạy video dài thì không dừng được — đây chính là lý do phải chọn video ngắn.
 
-### 1.7. Webcam và quyền truy cập camera
+### 1.7. Chế độ thời gian thực qua API *(tuỳ chọn — chỉ demo nếu còn giờ)*
 
-- [ ] Cắm/bật webcam, mở thử **trước** bằng ứng dụng Camera của Windows để chắc chắn thiết bị sống
-- [ ] Mở <http://localhost:5173/webcam>, bấm **Bật camera**, **cấp quyền cho trình duyệt trước**.
-      Trình duyệt ghi nhớ quyền theo origin ⇒ cấp một lần ở nhà thì vào phòng không bị hỏi lại.
-      Nếu để hỏi lúc demo, hộp thoại quyền sẽ chắn ngay giữa màn hình chiếu.
-- [ ] **Đóng mọi ứng dụng đang chiếm camera**: Zoom, Teams, Meet, OBS. Camera bị chiếm là
-      nguyên nhân lỗi webcam phổ biến nhất và khó nhận ra nhất khi đang căng thẳng.
-- [ ] Chuẩn bị sẵn **một ảnh biển số in ra giấy** hoặc mở trên điện thoại để giơ vào camera —
-      không thể dựa vào việc có xe thật trong phòng bảo vệ.
-- [ ] Chọn trước chu kỳ gửi khung hình **700 ms hoặc 1 giây**. Đừng chọn 400 ms: theo mục 6.1
-      của tài liệu giao diện, trên CPU mỗi khung mất ~300–400 ms, hạ chu kỳ **không** làm nhanh hơn,
-      chỉ làm **số khung bị bỏ** tăng vọt — và con số đó hiện công khai trên bảng đo.
+> **Thay đổi phạm vi 2026-07-20:** trang Webcam đã được **gỡ khỏi giao diện web**; chế độ thời
+> gian thực chỉ còn ở **tầng API** (`POST /api/detect/frame`). Không còn bước xin quyền camera,
+> không còn ứng dụng nào tranh chiếm thiết bị — đây là một nguồn sự cố demo đã biến mất.
+
+- [ ] Mở sẵn **một cửa sổ terminal** cạnh trình duyệt, đã `cd` về thư mục gốc dự án.
+      ⚠️ **Nay là việc bắt buộc, không còn tuỳ chọn** — Bước 3 (bắt buộc) cũng gọi `curl` vào
+      `GET /api/statistics` sau khi trang Tổng quan bị gỡ
+- [ ] Chạy thử **trước** lệnh ở Bước 5 ít nhất một lần để chắc chắn `curl` có trên máy và
+      đường dẫn ảnh mẫu đúng
+- [ ] Nếu không muốn dùng terminal: mở **Swagger** tại <http://localhost:8000/docs>, mục
+      `POST /api/detect/frame`, bấm *Try it out* rồi chọn tệp — trực quan hơn khi chiếu
+- [ ] Ghi nhớ để trả lời nếu bị hỏi về chu kỳ gửi khung: trên CPU mỗi khung mất ~300–400 ms,
+      nên client thời gian thực phải gửi ở chu kỳ **700 ms hoặc 1 giây** và dùng hàng đợi một khe
+      (bỏ khung khi khe còn bận). Hạ chu kỳ xuống 400 ms **không** làm nhanh hơn, chỉ làm
+      số khung bị bỏ tăng vọt.
 
 ### 1.8. Phương án OFFLINE — giả định phòng bảo vệ không có mạng
 
@@ -147,8 +156,33 @@ Suy luận chạy **trên CPU**. Theo `06-ui-documentation.md`, video **60 giây
 
 ## 2. Kịch bản demo 5–7 phút
 
-**Tổng: 6 phút 30 giây.** Cột thời lượng là ngân sách, không phải mục tiêu — chậm hơn 20 giây
-ở một bước thì cắt bớt bước Webcam, đừng cắt bước biển 2 dòng.
+**Tổng bắt buộc: 320 giây = 5 phút 20 giây.**
+**Tổng kể cả bước tuỳ chọn: 360 giây = 6 phút 00 giây.**
+
+> **Đổi so với bản trước (2026-07-20).** Bước mở màn "Tổng quan (Dashboard)" **45 giây đã bị xoá**
+> cùng với trang Tổng quan. Các bước còn lại được **đánh số lại liên tục**, ngân sách giảm từ
+> 365 s xuống **320 s**. Ý "khoe số liệu tổng hợp" không mất — nó chuyển vào Bước 3 dưới dạng
+> một lời gọi `GET /api/statistics`.
+
+Ngân sách này là **tổng cộng đúng bằng thời lượng ghi ở tiêu đề từng bước bên dưới** — bảng sau
+liệt kê lại để kiểm tra chéo được, sửa thời lượng bước nào thì phải sửa lại bảng này:
+
+| Bước | Nội dung | Thời lượng |
+|:-:|---|---:|
+| 2.0 | Câu mở đầu về `model_loaded` | 10 s |
+| 1 | Nhận dạng ảnh biển 1 dòng | 60 s |
+| 2 | Nhận dạng ảnh biển 2 dòng — **điểm nhấn chính** | 75 s |
+| 3 | Ảnh nhiều biển số + `GET /api/statistics` | 50 s |
+| 4 | Video | 60 s |
+| 6 | Lịch sử và tra cứu | 50 s |
+| 2.8 | Câu kết | 15 s |
+| | **Tổng bắt buộc** (10+60+75+50+60+50+15) | **320 s = 5 ph 20 gi** |
+| *5* | *Thời gian thực qua API* — **tuỳ chọn**, chạy sau Bước 4 | *40 s* |
+| | **Tổng kể cả tuỳ chọn** (320 + 40) | **360 s = 6 ph 00 gi** |
+
+Cột thời lượng là ngân sách, không phải mục tiêu — chậm hơn 20 giây
+ở một bước thì bỏ hẳn Bước 5 (thời gian thực qua API, vốn là bước tuỳ chọn), đừng cắt bước biển 2 dòng.
+Bỏ Bước 5 là còn đúng 5 phút 20 giây, vẫn nằm trong khung 5–7 phút.
 
 ### 2.0. Câu mở đầu — 10 giây, bắt buộc nói
 
@@ -166,46 +200,56 @@ Chọn **đúng một** trong hai câu, tuỳ giá trị `model_loaded` đọc �
 > **Nếu `model_loaded: false` — chỉ dùng khi cấu hình sai lúc khởi động:**
 > "Trước khi bắt đầu, em xin nói rõ: `ALPR_MODEL_PATH` đang trỏ sai nên backend chưa nạp được
 > trọng số và đang chạy phương án lùi. Endpoint `/health` báo trung thực `model_loaded: false`
-> và giao diện cũng hiện cảnh báo — hội đồng sẽ thấy ngay trên màn hình. Mô hình chính thức
+> và em đọc được điều đó bằng `curl /health` trước khi vào phòng — từ khi trang Tổng quan bị gỡ,
+> giao diện **không còn hiển thị trạng thái này**, nên em phải nói ra chứ hội đồng không tự thấy. Mô hình chính thức
 > `best.pt` đã có sẵn trên đĩa; phần em demo về **luồng nghiệp vụ và hợp đồng API đều chạy thật**."
 
 Nói câu này **trước**, chủ động. Để hội đồng tự phát hiện thì mọi thứ nói sau đó đều mất trọng lượng.
 
-### Bước 1 — Tổng quan (Dashboard) · 45 giây
+### Bước 1 — Nhận dạng ảnh biển 1 dòng · 60 giây
 
-| Thao tác | Bấm **Tổng quan** ở sidebar (hoặc mở thẳng `localhost:5173`) |
+| Thao tác | Mở `localhost:5173` — ứng dụng vào thẳng trang **Nhận dạng ảnh** (trang chủ) → kéo thả `demo/01-bien-1-dong.jpg` → bấm **Nhận dạng** |
 |---|---|
-| **Lời thoại** | "Đây là màn hình tổng quan. Em xin lưu ý hai thẻ đầu tiên: **Lượt nhận dạng** và **Biển số phát hiện** là **hai chỉ số khác nhau** — một ảnh chứa ba biển số được tính là **một lượt** và **ba biển số**. Lát nữa em sẽ chứng minh bằng ảnh thật. Bên phải là thẻ **Trạng thái hệ thống**, đọc trực tiếp từ endpoint `/health`, báo tình trạng CSDL và tình trạng nạp mô hình." |
-| **Kỳ vọng thấy** | 4 thẻ chỉ số có số liệu · thẻ Trạng thái hệ thống (kèm cảnh báo mô phỏng nếu đang stub) · biểu đồ 7 ngày **hai chuỗi** (xanh dương = lượt, xanh lá = biển số) · biểu đồ cột theo nguồn · 5 bản ghi gần đây |
-| **Nhắc** | Đừng dừng lâu ở đây. Dashboard là bối cảnh, không phải nội dung chính. |
-
-### Bước 2 — Nhận dạng ảnh biển 1 dòng · 60 giây
-
-| Thao tác | Sidebar → **Nhận dạng ảnh** → kéo thả `demo/01-bien-1-dong.jpg` → bấm **Nhận dạng** |
-|---|---|
-| **Lời thoại (lúc chờ)** | "Ảnh đang được tải lên — thanh tiến độ này đo theo **byte thật**, không phải hoạt ảnh giả. Sau khi tải xong, giao diện chuyển sang trạng thái chờ và nói rõ rằng mô hình chạy trên CPU nên có thể mất vài giây. Đây là chủ ý thiết kế: nói trước lý do chậm để người dùng không nghi ngờ hệ thống treo." |
+| **Lời thoại (lúc chờ)** | "Mở ứng dụng là vào thẳng màn hình nhận dạng ảnh — nghiệp vụ chính đặt ngay trang chủ, không có màn hình trung gian. Ảnh đang được tải lên — thanh tiến độ này đo theo **byte thật**, không phải hoạt ảnh giả. Sau khi tải xong, giao diện chuyển sang trạng thái chờ và nói rõ rằng mô hình chạy trên CPU nên có thể mất vài giây. Đây là chủ ý thiết kế: nói trước lý do chậm để người dùng không nghi ngờ hệ thống treo." |
 | **Lời thoại (khi có kết quả)** | "Kết quả gồm ảnh có vẽ khung bao và thẻ chi tiết. Xin lưu ý **hai độ tin cậy được tách riêng**: một của bước phát hiện YOLO, một của bước đọc ký tự OCR. Gộp trung bình hai số này thì khi chất lượng kém sẽ không biết bước nào đang kém — mà đó chính là phân tích cần cho chương Đánh giá." |
 | **Kỳ vọng thấy** | Bounding box đúng vị trí · thẻ kết quả có: ảnh biển đã cắt, biển số chuẩn hoá, độ tin cậy phát hiện, độ tin cậy OCR, số dòng = **1**, cờ hợp lệ định dạng VN |
 | **Nếu chuỗi thô khác chuỗi cuối** | **Dừng lại và chỉ vào nó** — xem mục 3.1, đây là điểm nhấn giá trị nhất |
 
-### Bước 3 — Nhận dạng ảnh biển 2 dòng · 75 giây · **ĐIỂM NHẤN CHÍNH**
+### Bước 2 — Nhận dạng ảnh biển 2 dòng · 75 giây · **ĐIỂM NHẤN CHÍNH**
 
 | Thao tác | Cùng trang → chọn `demo/02-bien-2-dong.jpg` → **Nhận dạng** |
 |---|---|
 | **Lời thoại (trước khi bấm)** | "Ảnh tiếp theo là biển xe máy **hai dòng**. Đây là ca khó nhất, và mức khó đã được đo: trong nghiên cứu của Laroca năm 2022 trên bộ dữ liệu Brazil, OpenALPR đạt **94,3%** trên ô tô biển một dòng nhưng chỉ **45,7%** trên xe máy biển hai dòng — chênh **48,6 điểm** trên cùng một hệ thống. Đó là số liệu Brazil, em dẫn như một mốc tham chiếu, nhưng cơ chế gây lỗi là bố cục hai dòng nên hoàn toàn áp dụng cho biển Việt Nam." |<br>⚠️ **Bắt buộc nói rõ "bộ dữ liệu Brazil"** khi trích cặp số này. Nếu rút gọn thành "OpenALPR đạt 94,3%" và hội đồng tra nguồn, sẽ thành trích dẫn sai. |
 | **Lời thoại (giải thích nguyên nhân gốc)** | "Nguyên nhân không nằm ở chất lượng ảnh mà ở **kiến trúc**: CRNN/CTC giả định alignment đơn điệu trên **một** dòng văn bản. Thêm nữa, module nhận dạng của PP-OCR resize ảnh về chiều cao cố định **48 px** — crop biển xe máy có tỉ lệ khoảng 1,36 nên mỗi dòng bị nén còn khoảng **24 px**. Giải pháp của em là **tách dòng rồi ghép ngang** (split-then-hstack): cắt biển thành hai dòng, ghép lại thành một dòng dài, rồi mới đưa vào OCR — đưa bài toán về đúng giả định mà kiến trúc kỳ vọng." |
 | **Kỳ vọng thấy** | Biển hai dòng đọc ra **một chuỗi liền mạch** · trường **số dòng = 2** · biển số đúng định dạng |
-| **Nhắc** | Đây là bước đáng dành thời gian nhất. Nếu bị cắt giờ, bỏ Webcam chứ **không bỏ bước này**. |
+| **Nhắc** | Đây là bước đáng dành thời gian nhất. Nếu bị cắt giờ, bỏ Bước 5 (thời gian thực qua API) chứ **không bỏ bước này**. |
 
-### Bước 4 — Ảnh nhiều biển số · 50 giây
+### Bước 3 — Ảnh nhiều biển số + `GET /api/statistics` · 50 giây
 
-| Thao tác | Chọn `demo/03-nhieu-bien.jpg` → **Nhận dạng** → sau khi có kết quả, quay lại **Tổng quan** |
+> **Thay cho bước Tổng quan cũ.** Trang Tổng quan đã gỡ khỏi giao diện 2026-07-20, nên hai bộ đếm
+> không còn màn hình để chiếu. Chúng vẫn phục vụ nguyên vẹn ở tầng API — bước này đọc thẳng từ đó.
+
+| Thao tác | Chọn `demo/03-nhieu-bien.jpg` → **Nhận dạng** → sau khi có kết quả, chuyển sang terminal gọi `GET /api/statistics` |
 |---|---|
-| **Lời thoại** | "Ảnh này có **ba** biển số, hệ thống phát hiện đủ cả ba. Điểm em muốn nhấn nằm ở phần thống kê: schema CSDL trong đề bài gốc **thiếu trường nhóm** — một ảnh nhiều biển sẽ bị đếm thành nhiều lượt và làm sai toàn bộ thống kê dashboard. Em đã bổ sung trường `source_job_id` và bảng `DetectionJob`. Kết quả: ảnh này làm **Biển số phát hiện tăng 3** nhưng **Lượt nhận dạng chỉ tăng 1**. Quy tắc này đã được kiểm chứng bằng test tự động." |
-| **Kỳ vọng thấy** | 3 bounding box · 3 thẻ kết quả · trên Dashboard: `total_detections` **+3**, `total_jobs` **+1** |
-| **Nhắc** | **Ghi lại hai con số trên Dashboard TRƯỚC khi chạy ảnh này.** Không có số trước thì không chứng minh được số sau. |
+| **Lời thoại** | "Ảnh này có **ba** biển số, hệ thống phát hiện đủ cả ba. Điểm em muốn nhấn nằm ở phần thống kê: schema CSDL trong đề bài gốc **thiếu trường nhóm** — một ảnh nhiều biển sẽ bị đếm thành nhiều lượt và làm sai toàn bộ phần thống kê. Em đã bổ sung trường `source_job_id` và bảng `DetectionJob`. Kết quả: ảnh này làm `total_detections` **tăng 3** nhưng `total_jobs` **chỉ tăng 1**. Em xin nói thẳng: màn hình Tổng quan đã được gỡ khỏi giao diện ngày 20 tháng 7 để thu gọn phạm vi demo, nhưng endpoint thống kê **vẫn phục vụ và vẫn có kiểm thử tích hợp** — em đọc thẳng từ API để hội đồng thấy con số thật." |
+| **Lệnh** | Xem khối lệnh bên dưới. Có thể thay bằng Swagger `localhost:8000/docs` → `GET /api/statistics` → *Try it out* nếu muốn trực quan hơn. |
+| **Kỳ vọng thấy** | 3 bounding box · 3 thẻ kết quả · trong JSON trả về: `total_detections` **+3**, `total_jobs` **+1** so với lần gọi trước |
+| **Nhắc** | **Gọi `GET /api/statistics` một lần TRƯỚC khi chạy ảnh này và ghi lại hai con số.** Không có số trước thì không chứng minh được số sau. |
 
-### Bước 5 — Video · 60 giây
+```bash
+# Gọi TRƯỚC khi nhận dạng ảnh 03 — ghi lại total_jobs và total_detections
+curl http://localhost:8000/api/statistics
+
+# Gọi LẠI sau khi nhận dạng xong — so hai lần
+curl http://localhost:8000/api/statistics
+```
+
+> **Lưu ý về đường dẫn.** Tiền tố API đọc từ `ALPR_API_PREFIX`, **mặc định `/api`** (xem
+> `backend/.env.example`), nên đường dẫn đầy đủ là `/api/statistics`. Endpoint nhận thêm tham số
+> tuỳ chọn `days` cho chuỗi số liệu theo ngày; đặc tả đầy đủ xem tài liệu API
+> (`docs/manuals/api-documentation.md`) hoặc Swagger đang chạy.
+
+### Bước 4 — Video · 60 giây
 
 | Thao tác | Sidebar → **Nhận dạng video** → chọn `demo/05-video-ngan.mp4` → **Bắt đầu xử lý** |
 |---|---|
@@ -214,27 +258,51 @@ Nói câu này **trước**, chủ động. Để hội đồng tự phát hiệ
 | **Kỳ vọng thấy** | Thanh tiến độ % + số khung đã xử lý / tổng khung · trạng thái chuyển Đang xử lý → Hoàn thành · bảng biển số đã gộp trùng |
 | **Nếu quá 60 giây** | Nói: *"Tác vụ này còn chạy, em xin chuyển sang một tác vụ đã hoàn thành từ trước để hội đồng thấy kết quả"* → mở tác vụ đã chạy sẵn ở mục 1.6 |
 
-### Bước 6 — Webcam · 60 giây
+### Bước 5 — Thời gian thực qua API · 40 giây · **TUỲ CHỌN, bỏ trước nếu thiếu giờ**
 
-| Thao tác | Sidebar → **Webcam** → **Bật camera** → giơ ảnh biển số (giấy in hoặc điện thoại) vào camera |
+> Trang Webcam đã được gỡ khỏi giao diện web ngày 2026-07-20 để thu gọn phạm vi demo. Năng lực
+> thời gian thực **vẫn còn nguyên ở tầng API** và bước này trình diễn đúng điều đó.
+
+| Thao tác | Chuyển sang cửa sổ terminal đã mở sẵn (mục 1.7) và gửi một khung hình vào endpoint thời gian thực |
 |---|---|
-| **Lời thoại** | "Nguồn thứ ba là webcam thời gian thực. Bảng đo bên trái hiển thị FPS thực tế, thời gian xử lý phía máy chủ, trọn vòng gửi–nhận, và cả **số khung bị bỏ qua** — em cố ý công khai con số này. Vòng lặp chỉ cho phép **đúng một** request đang bay; khung hình đến lúc khe còn bận thì **bị bỏ, không xếp hàng**. Nếu xếp hàng, tốc độ vào lớn hơn tốc độ ra thì độ trễ cộng dồn vô hạn và tab sẽ treo. Bỏ khung không mất gì, vì khung kế tiếp mang hình **mới hơn**." |
-| **Kỳ vọng thấy** | Hình trực tiếp · bounding box + nhãn vẽ chồng lên khung hình · bảng đo cập nhật liên tục · bảng biển số phiên: **mỗi biển một dòng** kèm số lần xuất hiện |
-| **Sau khi xong** | Bấm **Tắt** để giải phóng camera trước khi chuyển trang |
+| **Lệnh** | Xem khối lệnh bên dưới. Có thể thay bằng Swagger `localhost:8000/docs` → `POST /api/detect/frame` → *Try it out* nếu muốn trực quan hơn. |
+| **Lời thoại** | "Nguồn thứ ba là chế độ thời gian thực. Em đã gỡ trang webcam khỏi giao diện để thu gọn phần demo, nhưng năng lực thì vẫn nguyên: endpoint `POST /api/detect/frame` nhận **từng khung hình một** và trả kết quả kèm mã phiên `job_id`. Lời gọi đầu tiên không gửi `job_id`, máy chủ cấp mới; mọi khung sau gửi kèm mã đó, nhờ vậy **cả phiên chỉ tính là một lượt** thay vì mấy chục lượt. Client thời gian thực chỉ cần gửi lặp lại lệnh này theo chu kỳ khoảng 700 mili-giây, kèm quy tắc **một khe**: khung mới đến lúc khe còn bận thì bỏ, không xếp hàng — vì nếu xếp hàng, tốc độ vào lớn hơn tốc độ ra thì độ trễ cộng dồn vô hạn." |
+| **Kỳ vọng thấy** | JSON trả về gồm `job_id`, `input_type: "webcam"`, mảng `results` với biển số, hai độ tin cậy, `bbox` và `plate_line_count` |
+| **Nếu bị hỏi vì sao gỡ trang** | Trả lời ngắn theo Q&A mục **E4b** của `10-defense-qa.md`, đừng sa đà |
 
-### Bước 7 — Lịch sử và tra cứu · 50 giây
+```bash
+# Khung đầu tiên của phiên — KHÔNG gửi job_id, máy chủ sẽ cấp mới
+curl -X POST http://localhost:8000/api/detect/frame \
+  -F "file=@demo/01-bien-1-dong.jpg"
+
+# Các khung tiếp theo — gửi lại job_id nhận được ở lần gọi đầu
+curl -X POST http://localhost:8000/api/detect/frame \
+  -F "file=@demo/02-bien-2-dong.jpg" \
+  -F "job_id=<dán job_id từ phản hồi trước>"
+```
+
+> **Lưu ý về đường dẫn.** Tiền tố API đọc từ biến môi trường `ALPR_API_PREFIX`, **mặc định `/api`**
+> (xem `backend/.env.example`), nên đường dẫn đầy đủ là `/api/detect/frame`. Nếu đã đổi tiền tố
+> trong `.env` thì sửa lệnh cho khớp. Đặc tả tham số đầy đủ xem tài liệu API
+> (`docs/manuals/api-documentation.md`) hoặc Swagger đang chạy.
+
+### Bước 6 — Lịch sử và tra cứu · 50 giây
 
 | Thao tác | Sidebar → **Lịch sử** → gõ vài ký tự biển số vào ô tìm → bấm tiêu đề cột **Độ tin cậy** → mở **modal chi tiết** một dòng |
 |---|---|
-| **Lời thoại** | "Kết quả của cả ba nguồn — ảnh, video, webcam — đều chảy về cùng một bảng lịch sử. Tìm kiếm khớp một phần, có thể kết hợp lọc theo nguồn, khoảng thời gian và ngưỡng tin cậy. Xin lưu ý: **mọi bộ lọc đều được ghi lên URL**, nên tải lại trang không mất bộ lọc và một kết quả tra cứu có thể dán vào báo cáo dưới dạng đường link tái lập được." |
+| **Lời thoại** | "Kết quả của cả ba nguồn — ảnh, video và khung hình thời gian thực gửi qua API — đều chảy về cùng một bảng lịch sử. Tìm kiếm khớp một phần, có thể kết hợp lọc theo nguồn, khoảng thời gian và ngưỡng tin cậy. Xin lưu ý: **mọi bộ lọc đều được ghi lên URL**, nên tải lại trang không mất bộ lọc và một kết quả tra cứu có thể dán vào báo cáo dưới dạng đường link tái lập được." |
 | **Lời thoại (modal)** | "Modal chi tiết cho thấy đầy đủ: ảnh gốc, ảnh biển đã cắt, hai độ tin cậy tách riêng, **chuỗi OCR thô** đặt cạnh biển số sau chuẩn hoá, số dòng, toạ độ vùng biển, và mã lần tải lên `source_job_id` — chính là trường cho phép đếm đúng ảnh nhiều biển ở bước ban nãy." |
 | **Kỳ vọng thấy** | Bảng lọc đúng · URL đổi theo bộ lọc · modal đầy đủ metadata |
 | **Kết** | Bấm **Xuất CSV** (1 giây) và nói: *"Toàn bộ dữ liệu xuất được ra CSV có áp đúng bộ lọc hiện hành, phục vụ cho phần đánh giá."* |
 
 ### 2.8. Câu kết — 15 giây
 
-> "Đó là toàn bộ luồng nghiệp vụ: ba nguồn đầu vào, một đường lưu trữ, một màn hình thống kê.
-> Em xin nói rõ phần **chưa đạt và chưa đo**: OCR biển hai dòng chưa đạt chỉ tiêu — đây là kết
+> "Đó là toàn bộ luồng nghiệp vụ: ba nguồn đầu vào, một đường lưu trữ, một trang tra cứu.
+> Em xin nói rõ hai chỗ đã **chủ động thu gọn** trong ngày 20 tháng 7: trang Webcam và trang Tổng
+> quan đều đã gỡ khỏi giao diện; năng lực tương ứng vẫn còn ở tầng API và vẫn có kiểm thử. Riêng
+> việc gỡ trang Tổng quan đưa FR-4.1 — một yêu cầu mức **bắt buộc** — ra khỏi phạm vi bản này, em
+> nêu thẳng chứ không để hội đồng tự phát hiện.
+> Em cũng xin nói rõ phần **chưa đạt và chưa đo**: OCR biển hai dòng chưa đạt chỉ tiêu — đây là kết
 > quả thật, toàn bộ khoảng cách nằm ở biển xe máy; và một số chế độ như FPS webcam, xử lý video
 > thì em chưa đo. Phần phát hiện và độ trễ đầu-cuối thì đã đạt. Em xin nhận câu hỏi của hội đồng."
 
@@ -263,16 +331,16 @@ regex biến một chuỗi đúng thành chuỗi sai, chỉ nhìn cả hai mới
 
 > "Đây là chỗ dễ sai nhất trong toàn bộ phần thống kê, và nó nguy hiểm vì **trông vẫn hợp lý**.
 > Gộp hai khái niệm lại thì mọi tỉ lệ tính từ đó — biển trên lượt, thời gian trên lượt — đều
-> vô nghĩa mà không có dấu hiệu báo động nào. Nặng nhất là webcam: một phiên 30 giây gửi
-> hàng chục khung hình; nếu mỗi khung mở một job mới thì một phiên biến thành ~40 lượt tải lên
-> và webcam sẽ nuốt chửng toàn bộ thống kê. Vì vậy cả phiên webcam dùng chung **một** `job_id`."
+> vô nghĩa mà không có dấu hiệu báo động nào. Nặng nhất là chế độ thời gian thực: một phiên 30 giây gửi
+> hàng chục khung hình vào `POST /api/detect/frame`; nếu mỗi khung mở một job mới thì một phiên biến
+> thành ~40 lượt tải lên và nuốt chửng toàn bộ thống kê. Vì vậy cả phiên dùng chung **một** `job_id`."
 
 ### 3.3. `/health` báo **trung thực** `model_loaded`
 
 > "Endpoint `/health` không trả về `ok` một cách vô điều kiện. Nó thăm dò riêng CSDL và riêng
 > pipeline; chỉ khi **cả hai** đều sẵn sàng thì `status` mới là `ok`, ngược lại là `degraded`.
-> Khi trọng số không nạp được, `model_loaded` là `false` và giao diện hiện cảnh báo tương ứng —
-> và quan trọng hơn, hệ thống **không rơi về pipeline giả lập**: phương án lùi là `UnavailablePipeline`,
+> Khi trọng số không nạp được, `model_loaded` là `false` — và quan trọng hơn, hệ thống
+> **không rơi về pipeline giả lập**: phương án lùi là `UnavailablePipeline`,
 > nó **ném lỗi** thay vì trả về một biển số bịa ra trông rất thuyết phục. Em chọn để hệ thống
 > **tự tố cáo** trạng thái của nó thay vì trang trí một dấu tích xanh."
 
@@ -293,11 +361,12 @@ hầu hết pipeline thông dụng bỏ ngỏ, và biển 2 dòng chiếm phần
 | Sự cố | Xử lý ngay |
 |---|---|
 | **Backend không khởi động** | Đọc dòng lỗi cuối cùng. (1) Cổng 8000 bị chiếm ⇒ đóng tiến trình cũ, chạy lại. (2) `database_connected: false` ⇒ CSDL chưa migrate, chạy Alembic. (3) Lỗi nạp mô hình ⇒ **vẫn chạy được** với `StubPipeline`, nói rõ và demo tiếp phần luồng nghiệp vụ. **Trần thời gian: 60 giây.** Quá 60 giây thì chuyển sang video ghi màn hình và nói: *"Để không mất thời gian của hội đồng, em xin trình bày qua bản ghi màn hình đã chạy trước, phần mã nguồn em sẵn sàng mở ra khi hội đồng cần."* |
-| **Webcam không lên** | Bỏ qua **ngay**, đừng loay hoay. Nói: *"Camera đang bị ứng dụng khác chiếm, em xin phép bỏ qua phần này — luồng webcam dùng chung đúng endpoint `POST /api/detect/frame` mà em vừa demo qua ảnh, khác biệt chỉ ở chu kỳ gửi khung hình."* Rồi chuyển sang Lịch sử. **Trần: 15 giây.** |
+| **Lệnh `curl /api/statistics` ở Bước 3 lỗi** | Bước 3 là **bắt buộc**, không bỏ được — nhưng đổi được đường vào. Mở **Swagger** `localhost:8000/docs` → `GET /api/statistics` → *Try it out*. Nếu Swagger cũng không mở được: chuyển sang trang **Lịch sử**, đếm bằng mắt ba bản ghi vừa sinh và nói: *"Ba biển này mang cùng một `source_job_id` — hội đồng xem trong modal chi tiết; đó chính là trường khiến chúng được tính là một lượt."* **Trần: 20 giây.** |
+| **Lệnh `curl` ở Bước 5 lỗi** | Bỏ qua **ngay**, đừng gõ lại. Bước 5 là tuỳ chọn. Nói: *"Em xin phép bỏ qua phần này — chế độ thời gian thực dùng chung đúng pipeline với nhận dạng ảnh mà em vừa demo, khác biệt chỉ ở chỗ khung hình được gửi lặp lại theo chu kỳ và cả phiên gộp về một `job_id`."* Rồi chuyển sang Lịch sử. **Trần: 15 giây.** Nếu vẫn muốn trình diễn: mở Swagger `localhost:8000/docs` → `POST /api/detect/frame`. |
 | **Model đọc SAI biển số ngay trước mặt hội đồng** | **Bình tĩnh, không thử lại, không xin lỗi rối rít.** Biến nó thành nội dung: *"Đây là một ca sai và em xin phân tích luôn. Hệ thống đang đọc `<X>` thay vì `<Y>` — sai ở ký tự `<Z>`. Nhìn vào hai chuỗi hiển thị song song, em biết được lỗi nằm ở **bước OCR** hay ở **bước hậu xử lý** — đó chính là lý do em lưu cả chuỗi thô. Nguyên nhân có thể là <góc chụp / mờ / thiếu sáng / biển 2 dòng bị nén>. Hướng cải thiện đã xác định: bộ dữ liệu đang mở rộng từ 4.578 lên khoảng 21.000 ảnh, và huấn luyện hiện mới đến epoch 5 trên 40."* Một sinh viên **giải thích được** cái sai của mình gây ấn tượng tốt hơn một sinh viên có kết quả đẹp mà không hiểu vì sao đẹp. |
 | **Mất mạng** | Không ảnh hưởng — toàn hệ thống chạy trên `localhost`. Nói luôn ra: *"Hệ thống chạy hoàn toàn nội bộ, không phụ thuộc dịch vụ đám mây nào."* Biến sự cố thành điểm cộng về triển khai. **Điều kiện:** phải đã kiểm chứng offline theo mục 1.8. |
 | **Máy chậm, xử lý lâu** | **Đừng im lặng nhìn spinner.** Lấp bằng nội dung có ích: *"Trong lúc chờ, em xin nói rõ về hiệu năng: máy phát triển không có GPU CUDA, toàn bộ suy luận chạy trên CPU, mỗi khung mất khoảng 300–400 ms. Con số này không so sánh trực tiếp được với các hệ thống công bố trên GPU, và em ghi rõ điều đó trong phần Đánh giá."* Sự chậm đã được **giải thích trước** thì không còn là sự cố. Nếu quá 90 giây: huỷ, chuyển sang kết quả đã chạy sẵn. |
-| **Ảnh chuẩn bị sẵn bị mất** | Ba lớp dự phòng, theo thứ tự: (1) bản sao trên **USB**; (2) vài ảnh biển số lưu sẵn trong **thư viện ảnh của điện thoại** — giơ vào webcam; (3) trang **Lịch sử** vẫn còn toàn bộ kết quả đã chạy trước, mở modal chi tiết ra vẫn thấy đủ ảnh gốc, ảnh cắt và metadata. **Lớp 3 luôn có sẵn** miễn là CSDL không bị xoá. |
+| **Ảnh chuẩn bị sẵn bị mất** | Ba lớp dự phòng, theo thứ tự: (1) bản sao trên **USB**; (2) vài ảnh biển số lưu sẵn trong **thư viện ảnh của điện thoại** — chụp lại màn hình điện thoại hoặc gửi ảnh sang máy rồi tải lên như bình thường; (3) trang **Lịch sử** vẫn còn toàn bộ kết quả đã chạy trước, mở modal chi tiết ra vẫn thấy đủ ảnh gốc, ảnh cắt và metadata. **Lớp 3 luôn có sẵn** miễn là CSDL không bị xoá. |
 | **Frontend trắng trang / lỗi 5173** | Vite đặt `strictPort` nên cổng bị chiếm sẽ dừng hẳn. Đóng tiến trình Vite cũ, chạy lại `npm run dev`. Nếu không được: demo trực tiếp trên **Swagger** tại `localhost:8000/docs` — vẫn chứng minh được API chạy thật, chỉ kém trực quan. |
 | **Kết quả rỗng (ảnh không có biển số)** | Đây **không phải sự cố**, mà là hành vi đúng: *"Backend trả về HTTP 200 với danh sách rỗng, giao diện hiện trạng thái rỗng kèm gợi ý chụp lại, **không** hiện lỗi đỏ. Báo lỗi ở đây sẽ đẩy người dùng đi sửa một hệ thống đang chạy đúng."* |
 
@@ -343,11 +412,14 @@ Bỏ hết phần còn lại không tiếc.
 |:-:|---|:-:|---|
 | 0 | Câu mở đầu về `model_loaded` | 10 s | Trung thực về trạng thái mô hình (mục 2.0) |
 | 1 | **Ảnh biển 2 dòng** | 45 s | "Đây là ca khó nhất — Laroca và cộng sự (VISAPP 2022) đo trên bộ **RodoSol-ALPR của Brazil** thấy chênh **48,6 điểm** giữa biển 1 dòng (94,3%) và biển 2 dòng (45,7%). Đó là số của Brazil, không phải Việt Nam, nhưng nó cho thấy độ khó của biển 2 dòng. Em xử lý bằng tách dòng rồi ghép ngang." |
-| 2 | **Ảnh 3 biển số** + liếc Dashboard | 40 s | "Ba biển, nhưng thống kê tính **1 lượt** và **3 biển số**. Đây là lỗi thiết kế em phát hiện trong schema gốc và đã sửa bằng `source_job_id`." |
+| 2 | **Ảnh 3 biển số** + `curl /api/statistics` | 40 s | "Ba biển, nhưng thống kê tính **1 lượt** và **3 biển số**. Đây là lỗi thiết kế em phát hiện trong schema gốc và đã sửa bằng `source_job_id`." |
 | 3 | **Lịch sử — mở modal chi tiết** | 25 s | "Lưu **cả** chuỗi OCR thô lẫn biển số đã chuẩn hoá — nhờ đó **đo được** đóng góp của bước hậu xử lý." |
+| | **Tổng** (10+45+40+25) | **120 s = 2 ph** | |
 
-**Chuẩn bị cho bản rút gọn:** mở sẵn **ba tab trình duyệt** trước khi vào phòng — `/image`,
-`/` và `/history` — để không mất giây nào cho việc điều hướng.
+**Chuẩn bị cho bản rút gọn:** mở sẵn **hai tab trình duyệt** trước khi vào phòng — `/` (Nhận dạng ảnh,
+trang chủ) và `/history` (Lịch sử) — cộng **một cửa sổ terminal** đã `cd` về thư mục gốc để gọi
+`curl http://localhost:8000/api/statistics` ở Bước 2. Không còn tab `/dashboard`: trang Tổng quan
+đã gỡ khỏi giao diện 2026-07-20.
 
 **Nếu bị cắt còn 1 phút:** giữ **Bước 1** (biển 2 dòng). Đó là đóng góp kỹ thuật khó thay thế nhất.
 
@@ -368,7 +440,8 @@ Tài liệu viết theo hệ thống **hiện tại** (mô hình chính thức `
 | Tài liệu | Dùng để |
 |---|---|
 | `docs/slides/10-defense-qa.md` | Câu hỏi và trả lời dự kiến của hội đồng |
-| `docs/reports/06-ui-documentation.md` | Chi tiết 5 màn hình, 4 trạng thái, các quyết định thiết kế |
+| `docs/reports/06-ui-documentation.md` | Chi tiết các màn hình, 4 trạng thái, các quyết định thiết kế |
+| `docs/manuals/api-documentation.md` | Đặc tả `POST /api/detect/frame` và toàn bộ endpoint |
 | `README.md` mục 8 | Lệnh khởi động gốc |
 | `frontend/README.md` | Lệnh frontend, cấu hình cổng và proxy, xử lý sự cố |
 | `docs/reports/01-ocr-comparison.md` | Số liệu OpenALPR và phân tích biển 2 dòng |

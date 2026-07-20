@@ -25,7 +25,9 @@ Tài liệu này đặc tả đầy đủ các yêu cầu của hệ thống **A
 
 ### 1.2. Phạm vi hệ thống
 
-Hệ thống cho phép người dùng đưa vào **ảnh**, **video** hoặc **luồng webcam thời gian thực**, tự động phát hiện vùng biển số, đọc ký tự trên biển số, chuẩn hoá theo quy chuẩn biển số Việt Nam, lưu lịch sử vào cơ sở dữ liệu và hiển thị thống kê trên giao diện web.
+Hệ thống cho phép người dùng đưa vào **ảnh**, **video** hoặc **khung hình thời gian thực** (qua API), tự động phát hiện vùng biển số, đọc ký tự trên biển số, chuẩn hoá theo quy chuẩn biển số Việt Nam, lưu lịch sử vào cơ sở dữ liệu và hiển thị thống kê trên giao diện web.
+
+> ⚠️ **Thay đổi phạm vi 2026-07-20:** trang Webcam đã gỡ khỏi giao diện web; nhận dạng thời gian thực chỉ còn ở tầng API (`POST /api/detect/frame`). Chi tiết tại [functional-requirements.md — FR-3](functional-requirements.md#4-fr-3--nhận-dạng-thời-gian-thực-webcam).
 
 Chi tiết phạm vi in/out được đặc tả riêng tại [project-scope.md](project-scope.md).
 
@@ -90,7 +92,7 @@ Bốn nhóm chức năng chính:
 |---|---|
 | **Nhận dạng ảnh** | Tải ảnh lên, phát hiện + đọc biển số, lưu và hiển thị kết quả |
 | **Nhận dạng video** | Tải video lên, xử lý theo khung hình, xuất video đã gắn nhãn |
-| **Nhận dạng thời gian thực** | Đọc webcam, phát hiện và OCR liên tục, vẽ bounding box |
+| **Nhận dạng thời gian thực** | Nhận khung hình liên tiếp qua API, phát hiện + OCR từng khung, gộp trùng theo phiên *(chỉ ở tầng API từ 2026-07-20 — không còn trang Webcam trên giao diện)* |
 | **Dashboard** | Thống kê, lịch sử, tìm kiếm, lọc, xem trước ảnh, tải kết quả |
 
 ### 2.3. Đặc điểm người dùng
@@ -121,7 +123,7 @@ Bốn nhóm chức năng chính:
 
 - A-01: Ảnh đầu vào có biển số chiếm tối thiểu ~1.5% diện tích khung hình và đọc được bằng mắt thường.
 - A-02: Mỗi khung hình có thể chứa **nhiều biển số**; hệ thống phải xử lý được trường hợp này.
-- A-03: Người dùng truy cập bằng trình duyệt hiện đại (Chrome/Edge/Firefox bản mới), có cấp quyền webcam.
+- A-03: Người dùng truy cập bằng trình duyệt hiện đại (Chrome/Edge/Firefox bản mới). *(Điều kiện "cấp quyền webcam" đã bỏ từ 2026-07-20 — giao diện không còn dùng camera.)*
 - A-04: Hệ thống chạy trên mạng nội bộ hoặc `localhost`, không phơi ra Internet công cộng.
 
 **Phụ thuộc:**
@@ -157,7 +159,7 @@ Bốn nhóm chức năng chính:
 | mAP@0.5 (detection) | ≥ 0.90 | Trên tập test độc lập |
 | Độ chính xác biển đầy đủ (E2E) | ≥ 0.90 | Khớp tuyệt đối sau hậu xử lý |
 | Độ trễ 1 ảnh (p95) | ≤ 800 ms | **CPU-only**, xem CON-02 |
-| Webcam | ≥ 5 FPS hiệu dụng | Có áp dụng frame-skip |
+| Thời gian thực (API khung hình) | ≥ 5 FPS hiệu dụng | Frame-skip do phía gọi API đảm nhiệm (giao diện webcam đã gỡ 2026-07-20) |
 
 ---
 
@@ -165,7 +167,7 @@ Bốn nhóm chức năng chính:
 
 ### 5.1. Giao diện người dùng
 
-Ứng dụng web một trang (SPA) gồm các màn hình: Dashboard, Nhận dạng ảnh, Nhận dạng video, Webcam, Lịch sử. Chi tiết wireframe thuộc **Phase 6**.
+Ứng dụng web một trang (SPA) gồm các màn hình: **Nhận dạng ảnh (trang chủ)**, Nhận dạng video, Lịch sử, Tổng quan. Chi tiết wireframe thuộc **Phase 6**. *(Từ 2026-07-20: trang Webcam đã gỡ; trang chủ đổi từ Tổng quan sang Nhận dạng ảnh để phục vụ demo.)*
 
 ### 5.2. Giao diện lập trình (API)
 
@@ -173,7 +175,7 @@ REST API theo chuẩn OpenAPI 3.x, tự sinh tài liệu Swagger UI tại `/docs
 
 ### 5.3. Giao diện phần cứng
 
-Webcam chuẩn USB/tích hợp, truy cập qua `navigator.mediaDevices.getUserMedia` phía trình duyệt.
+Không yêu cầu phần cứng chuyên dụng. *(Trước 2026-07-20 từng yêu cầu webcam USB/tích hợp qua `getUserMedia`; yêu cầu này bỏ cùng trang Webcam — client bên ngoài muốn dùng chế độ thời gian thực tự cấp nguồn khung hình và gọi API.)*
 
 ### 5.4. Giao diện phần mềm
 

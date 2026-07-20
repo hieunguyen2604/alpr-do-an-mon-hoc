@@ -12,6 +12,7 @@
 | **M** (Must) | Bắt buộc | Thiếu ⇒ đồ án **không đạt** |
 | **S** (Should) | Nên có | Thiếu ⇒ giảm chất lượng đáng kể |
 | **C** (Could) | Có thì tốt | Làm khi còn thời gian |
+| **W** (Won't) | Không làm ở bản này | Ghi rõ lý do và ngày quyết định; có thể khôi phục sau |
 
 **Nguyên tắc viết tiêu chí chấp nhận:** mỗi tiêu chí phải **kiểm chứng được bằng một phép thử cụ thể** — hoặc bằng test tự động ở Phase 7, hoặc bằng thao tác demo quan sát được.
 
@@ -84,24 +85,34 @@ graph TB
 
 ## 4. FR-3 — Nhận dạng thời gian thực (Webcam)
 
+> ⚠️ **Thay đổi phạm vi 2026-07-20:** trang Webcam đã được **gỡ khỏi giao diện web** theo quyết định thu gọn phạm vi demo (xem Nhật ký quyết định trong CLAUDE.md). Năng lực nhận dạng thời gian thực **vẫn tồn tại ở tầng API** — `POST /api/detect/frame` với phiên gộp trùng theo `job_id`, có kiểm thử tự động — nên FR-3.2, FR-3.3, FR-3.5 vẫn được đáp ứng và kiểm chứng ở mức API. Hai yêu cầu thuần giao diện FR-3.1, FR-3.4 chuyển ưu tiên **M → W** (Won't — không triển khai ở bản này); mã giao diện tương ứng còn trong lịch sử git nếu cần khôi phục.
+
 | Mã | Yêu cầu | Ưu tiên | Tiêu chí chấp nhận |
 |---|---|:---:|---|
-| **FR-3.1** | Giao diện xin quyền và hiển thị luồng webcam của người dùng | **M** | Bấm "Bật camera" ⇒ trình duyệt hỏi quyền, sau đó hiện hình trực tiếp |
-| **FR-3.2** | Hệ thống gửi khung hình về backend để xử lý theo chu kỳ cấu hình được | **M** | Quan sát thấy lời gọi mạng đều đặn; tần suất chỉnh được qua cấu hình |
-| **FR-3.3** | Hệ thống phát hiện và nhận dạng biển số trên luồng trực tiếp | **M** | Đưa ảnh biển số trước camera ⇒ kết quả hiện trong ≤ 1 giây |
-| **FR-3.4** | Giao diện vẽ bounding box và nhãn chồng lên khung hình trực tiếp | **M** | Khung xanh bám theo biển số khi di chuyển camera |
-| **FR-3.5** | Hệ thống lưu lịch sử nhận dạng của phiên webcam, có gộp trùng | **M** | Giữ biển số trước camera 10 giây ⇒ tạo **1** bản ghi, không phải hàng chục |
+| **FR-3.1** | Giao diện xin quyền và hiển thị luồng webcam của người dùng | **W** | *(Đã gỡ khỏi giao diện 2026-07-20 — xem ghi chú đầu mục)* |
+| **FR-3.2** | Hệ thống nhận khung hình gửi về backend để xử lý theo từng yêu cầu | **M** | Gọi `POST /api/detect/frame` liên tiếp ⇒ mỗi khung được xử lý độc lập |
+| **FR-3.3** | Hệ thống phát hiện và nhận dạng biển số trên khung hình trực tiếp | **M** | Gửi khung chứa biển số ⇒ kết quả trả về trong ≤ 1 giây |
+| **FR-3.4** | Giao diện vẽ bounding box và nhãn chồng lên khung hình trực tiếp | **W** | *(Đã gỡ khỏi giao diện 2026-07-20 — xem ghi chú đầu mục)* |
+| **FR-3.5** | Hệ thống lưu lịch sử nhận dạng của phiên webcam, có gộp trùng | **M** | Gửi cùng biển số nhiều khung liên tiếp kèm `job_id` ⇒ tạo **1** bản ghi, không phải hàng chục |
 
-> **Ràng buộc hiệu năng:** do CON-02 (không có GPU), chế độ thời gian thực **bắt buộc** dùng kỹ thuật bỏ bớt khung hình (frame skipping) và/hoặc hàng đợi một khe (single-slot queue) để không dồn ứ yêu cầu. Chỉ tiêu cụ thể tại [NFR-P2](non-functional-requirements.md).
+> **Ràng buộc hiệu năng:** do CON-02 (không có GPU), chế độ thời gian thực **bắt buộc** dùng kỹ thuật bỏ bớt khung hình (frame skipping) và/hoặc hàng đợi một khe (single-slot queue) để không dồn ứ yêu cầu. Chỉ tiêu cụ thể tại [NFR-P2](non-functional-requirements.md). Ràng buộc này nay áp cho **phía gọi API** (client tự triển khai), vì giao diện webcam không còn trong phạm vi.
 
 ---
 
 ## 5. FR-4 — Dashboard, lịch sử và tra cứu
 
+> ⚠️ **Thay đổi phạm vi 2026-07-20 (lần thứ hai trong ngày).** Trang **Tổng quan (Dashboard)** đã được **gỡ khỏi giao diện web**; ứng dụng còn ba trang: Nhận dạng ảnh (trang chủ), Nhận dạng video, Lịch sử.
+>
+> **Đây là lần đầu một yêu cầu mức Must bị đưa ra khỏi phạm vi** — FR-4.1 chuyển **M → W**, FR-4.2 chuyển **S → W**. Phải nêu thẳng điều này khi bảo vệ thay vì để hội đồng tự phát hiện.
+>
+> Điều **không** thay đổi: endpoint `GET /api/statistics` và `GET /health` vẫn phục vụ, vẫn có kiểm thử tích hợp, nên dữ liệu thống kê vẫn truy vấn được — chỉ là không còn màn hình hiển thị sẵn. FR-4.3 đến FR-4.8 thuộc trang Lịch sử và **không đổi**.
+>
+> Đánh đổi thu được: gỡ thư viện biểu đồ `recharts` làm gói tải về của giao diện giảm từ ~730 KB xuống **328,8 KB** (−55%).
+
 | Mã | Yêu cầu | Ưu tiên | Tiêu chí chấp nhận |
 |---|---|:---:|---|
-| **FR-4.1** | Dashboard hiển thị các chỉ số tổng hợp: tổng lượt nhận dạng, độ tin cậy trung bình, thời gian xử lý trung bình, phân bố theo loại đầu vào | **M** | Các con số khớp với truy vấn trực tiếp trên CSDL |
-| **FR-4.2** | Dashboard hiển thị biểu đồ số lượt nhận dạng theo thời gian | **S** | Biểu đồ hiển thị đúng khi có dữ liệu; hiện trạng thái rỗng khi chưa có |
+| **FR-4.1** | Dashboard hiển thị các chỉ số tổng hợp: tổng lượt nhận dạng, độ tin cậy trung bình, thời gian xử lý trung bình, phân bố theo loại đầu vào | **W** | *(Đã gỡ khỏi giao diện 2026-07-20 — số liệu vẫn lấy được qua `GET /api/statistics`)* |
+| **FR-4.2** | Dashboard hiển thị biểu đồ số lượt nhận dạng theo thời gian | **W** | *(Đã gỡ khỏi giao diện 2026-07-20 — xem ghi chú đầu mục)* |
 | **FR-4.3** | Hiển thị danh sách lịch sử có phân trang | **M** | 1000 bản ghi ⇒ phân trang hoạt động, mỗi trang tải trong ≤ 1 giây |
 | **FR-4.4** | Tìm kiếm theo biển số, hỗ trợ khớp một phần | **M** | Tìm `51A` ⇒ trả về mọi biển số chứa `51A` |
 | **FR-4.5** | Lọc theo loại đầu vào, khoảng thời gian và ngưỡng độ tin cậy | **M** | Kết hợp nhiều bộ lọc cho kết quả giao nhau đúng |
@@ -144,14 +155,16 @@ graph TB
 | FR-5 (Dữ liệu) | Phase 5, 6 | Phase 7 — unit test |
 | FR-6 (Hệ thống) | Phase 5, 8 | Phase 7 — smoke + stress test |
 
-**Tổng cộng:** 34 yêu cầu chức năng — **24 Must**, **7 Should**, **3 Could**.
+**Tổng cộng:** 34 yêu cầu chức năng — **21 Must**, **6 Should**, **3 Could**, **4 Won't**.
 
-| Nhóm | Must | Should | Could | Tổng |
-|---|:---:|:---:|:---:|:---:|
-| FR-1 Ảnh | 7 | 0 | 0 | 7 |
-| FR-2 Video | 5 | 1 | 0 | 6 |
-| FR-3 Thời gian thực | 5 | 0 | 0 | 5 |
-| FR-4 Dashboard | 5 | 2 | 1 | 8 |
-| FR-5 Dữ liệu | 0 | 2 | 2 | 4 |
-| FR-6 Hệ thống | 2 | 2 | 0 | 4 |
-| **Tổng** | **24** | **7** | **3** | **34** |
+Bốn yêu cầu mức Won't đều đến từ **hai lần thu gọn phạm vi giao diện trong ngày 2026-07-20**: FR-3.1 và FR-3.4 (gỡ trang Webcam), FR-4.1 và FR-4.2 (gỡ trang Tổng quan). Trong đó **FR-4.1 là yêu cầu mức Must đầu tiên bị đưa ra khỏi phạm vi** — xem ghi chú đầu mục 5.
+
+| Nhóm | Must | Should | Could | Won't | Tổng |
+|---|:---:|:---:|:---:|:---:|:---:|
+| FR-1 Ảnh | 7 | 0 | 0 | 0 | 7 |
+| FR-2 Video | 5 | 1 | 0 | 0 | 6 |
+| FR-3 Thời gian thực | 3 | 0 | 0 | 2 | 5 |
+| FR-4 Dashboard, lịch sử | 4 | 1 | 1 | 2 | 8 |
+| FR-5 Dữ liệu | 0 | 2 | 2 | 0 | 4 |
+| FR-6 Hệ thống | 2 | 2 | 0 | 0 | 4 |
+| **Tổng** | **21** | **6** | **3** | **4** | **34** |

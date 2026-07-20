@@ -14,7 +14,7 @@ Chưa từng có lần build nào.
 Lần này cả hai image đã được build thật, stack đã chạy, và toàn bộ đường dây
 nhận dạng đầu-cuối đã được kiểm chứng bằng `curl` từ **ngoài** container.
 
-**Kết quả:** thành công, sau khi sửa **ba lỗi thật** phát hiện trong quá trình
+**Kết quả:** thành công, sau khi sửa **bốn lỗi thật** phát hiện trong quá trình
 build và chạy (mục 6).
 
 > ⚠️ **Về mô hình đang dùng.** Toàn bộ số đo dưới đây chạy trên
@@ -263,7 +263,7 @@ cuối cùng.
 
 ---
 
-## 7. Ba lỗi THẬT đã gặp và cách sửa
+## 7. Bốn lỗi THẬT đã gặp và cách sửa
 
 ### Lỗi 1 — `.dockerignore` không chặn được venv, image phình 2,29 GB
 
@@ -324,6 +324,58 @@ ALPR_STORAGE_ROOT: /app/storage
 Đồng thời **bỏ `env_file` khỏi service frontend**: đó là nginx phục vụ tệp
 tĩnh, biến lúc chạy không có tác dụng gì, mà nạp `.env` thì chép luôn khoá API
 Roboflow/Kaggle vào một container không cần đến chúng.
+
+### Lỗi 4 — Bind mount trên Windows làm backend chết ngay khi khởi động
+
+*(Phát hiện 20/07/2026, khi chạy lại stack sau đợt sửa giao diện.)*
+
+**Triệu chứng.** `docker compose ps` cho thấy `alpr-frontend` khoẻ mạnh nhưng
+`alpr-backend` ở trạng thái `Restarting (1)` và lặp lại vô hạn. Vết lỗi cuối:
+
+```
+File "/app/backend/core/config.py", line 496, in ensure_directories
+    directory.mkdir(parents=True, exist_ok=True)
+PermissionError: [Errno 13] Permission denied: '/app/storage/uploads'
+```
+
+**Nguyên nhân.** Image chạy máy chủ bằng người dùng không đặc quyền (UID 1000)
+và `Dockerfile.backend` đã `chown` sẵn `/app/storage` cho người dùng đó. Nhưng
+`docker-compose.yml` **gắn đè** một thư mục host lên đúng đường dẫn ấy, và bind
+mount mang theo quyền sở hữu của phía host — quyền do image đặt bị thay thế
+hoàn toàn. Trên Windows 11 + Docker Desktop 29.4.3, thư mục đó hiện ra bên
+trong container là `root:root` quyền `755`, nên UID 1000 không tạo được thư mục
+con.
+
+Điều khiến lỗi này khó thấy trước: `deployment/README.md` khi ấy khẳng định
+*"trên Windows và macOS, quyền truy cập bind mount được ánh xạ tự động nên
+không cần bước này"*. Khẳng định đó **sai**, và vì nó nằm đúng chỗ người đọc
+tìm đến khi gặp vấn đề nên nó dẫn người đọc đi sai hướng. Bài học rút ra: một
+câu tài liệu nói "trên nền tảng X thì không sao" mà chưa từng được chạy thử
+trên nền tảng X là một khẳng định chưa có bằng chứng.
+
+**Sửa.** Thêm [`deployment/docker/entrypoint-backend.sh`](../../deployment/docker/entrypoint-backend.sh).
+Container khởi động bằng `root` **chỉ đủ lâu** để `chown` ba điểm gắn ghi được
+(`/app/storage`, `/app/data`, `/home/appuser`), rồi `setpriv` **thay thế hẳn
+tiến trình** bằng máy chủ chạy dưới UID 1000. Vì `exec` thay thế chứ không sinh
+tiến trình con, không còn tiến trình `root` nào sống sót sang giai đoạn phục vụ
+— tức là vẫn giữ nguyên nguyên tắc "không chạy máy chủ bằng root".
+
+Cách kiểm chứng, chạy được bất cứ lúc nào:
+
+```bash
+docker compose exec backend sh -c 'grep ^Uid: /proc/1/status'
+# Uid:  1000  1000  1000  1000       <- PID 1 là uvicorn, không phải root
+```
+
+**Kết quả sau khi sửa.** `alpr-backend` lên `Healthy`; `/health` trả
+`model_loaded: true`; nhận dạng thật qua stack cho biển 1 dòng `51G31691`
+(0,228 s), biển 2 dòng `59K120173` (0,789 s), ảnh 3 biển (1,591 s), ảnh không
+có biển trả mảng rỗng HTTP 200; ảnh cắt được ghi ra `./storage/plates/` trên
+host đúng như thiết kế bind mount.
+
+**Lưu ý cho người vận hành.** Nếu bạn tự đặt `user:` trong compose hoặc
+`--user` trên dòng lệnh, entrypoint nhận ra mình không phải root và chạy thẳng
+lệnh mà không đụng vào quyền.
 
 ### Các lỗi được DỰ ĐOÁN nhưng KHÔNG xảy ra
 

@@ -1,0 +1,29 @@
+{
+  "sample_size": 200,
+  "seed": 20260720,
+  "source": "datasets/annotations/plate_text_labels_vn.csv",
+  "strategy_a_merge_only": {
+    "exact": 129,
+    "accuracy": 0.645,
+    "mean_ms": 346.7
+  },
+  "strategy_c_merge_plus_upper_fallback": {
+    "exact": 130,
+    "accuracy": 0.65,
+    "mean_ms": 361.97,
+    "fallback_fired": 36,
+    "fallback_rate": 0.18
+  },
+  "delta_points": 0.5,
+  "rescued": 1,
+  "regressed": 0,
+  "examples": [
+    {
+      "image": "D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/2xemay2141_jpg.rf.8db38cf073ac2129417244657b6f67f2.jpg",
+      "truth": "49F108660",
+      "a": "08660",
+      "c": "49F108660",
+      "outcome": "rescued"
+    }
+  ]
+}

@@ -183,25 +183,28 @@ Bất biến phải kiểm tra sau khi ghép: **mọi khoá xuất hiện trong 
 
 Theo đúng thứ tự: `01-front-matter.md` → `ch1-mo-dau.md` → `ch2-tong-quan.md` → `ch3-phan-tich-thiet-ke.md` → `ch4-cai-dat.md` → `ch5-thuc-nghiem.md` → `ch6-ket-luan.md` → Tài liệu tham khảo (sinh từ `references.bib`) → Phụ lục. Tệp `00-thesis-outline.md` và `THESIS-README.md` là **tài liệu công cụ, KHÔNG ghép vào quyển**.
 
-### 5.2. Ghép thô
+### 5.2. Ghép bằng script
+
+Việc ghép **đã được tự động hoá** bằng `scripts/build_thesis.py`. Chạy từ thư mục gốc dự án:
 
 ```powershell
-# Chạy từ thư mục gốc dự án
-New-Item -ItemType Directory -Force docs/papers/build
-$order = @(
-    'docs/papers/01-front-matter.md',
-    'docs/papers/ch1-mo-dau.md',
-    'docs/papers/ch2-tong-quan.md',
-    'docs/papers/ch3-phan-tich-thiet-ke.md',
-    'docs/papers/ch4-cai-dat.md',
-    'docs/papers/ch5-thuc-nghiem.md',
-    'docs/papers/ch6-ket-luan.md'
-)
-$order | ForEach-Object { Get-Content $_ -Raw; "`n`n---`n`n" } |
-    Out-File -Encoding utf8 docs/papers/build/thesis-full.md
+# Chỉ ghép Markdown -> docs/papers/thesis-full.md
+backend/.venv/Scripts/python.exe scripts/build_thesis.py --no-docx
+
+# Ghép Markdown và, nếu tìm thấy Pandoc, kết xuất thêm:
+#   docs/papers/thesis-full.docx  (từ bản ghép, --from gfm --toc --toc-depth=3)
+#   docs/slides/slides.pptx       (từ docs/slides/10-slides-outline.md)
+backend/.venv/Scripts/python.exe scripts/build_thesis.py
+
+# Ghi bản ghép ra vị trí khác
+backend/.venv/Scripts/python.exe scripts/build_thesis.py --out build/thesis-full.md --no-docx
 ```
 
-Lệnh này chỉ nối tệp. Bốn việc **phải làm sau đó**, chưa tự động hoá:
+Script nối **đúng bảy tệp** theo thứ tự ở §5.1 (danh sách khai báo tường minh trong mã, **không** dùng glob nên không nuốt nhầm `00-thesis-outline.md` hay `THESIS-README.md`), chèn dấu ngắt trang giữa các phần, và ghi ra `docs/papers/thesis-full.md`. Chạy lại luôn cho kết quả **byte-identical** (idempotent), nên có thể tái sinh bản ghép bất cứ lúc nào rồi đối chiếu bằng `diff`.
+
+> **Lưu ý về dấu ngắt trang.** Bản ghép hiện tại dùng dấu phân tách `\n\n\newpage\n\n`; do quy tắc escape của chuỗi Python, `\n` là ký tự xuống dòng nên phần `\newpage` để lại **chuỗi chữ `ewpage`** giữa các phần chứ không phải lệnh LaTeX `\newpage`. Script tái tạo **nguyên trạng** hành vi này để bản dựng khớp byte với tệp đã commit. Nếu sau này muốn dấu ngắt trang LaTeX thật, sửa hằng `SECTION_SEPARATOR` thành chuỗi thô `r"\n\n\newpage\n\n"` — đây là một thay đổi nội dung có chủ đích và sẽ làm bản ghép khác đi.
+
+Script chỉ nối tệp và kết xuất. Bốn việc **phải làm sau đó**, chưa tự động hoá:
 
 | # | Việc | Trạng thái |
 |:-:|---|---|

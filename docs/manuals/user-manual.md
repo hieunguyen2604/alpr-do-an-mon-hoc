@@ -1,6 +1,6 @@
 # Sổ tay người dùng — Hệ thống nhận dạng biển số xe Việt Nam
 
-> **Phiên bản tài liệu:** 1.0 · **Ngày cập nhật:** 19/07/2026
+> **Phiên bản tài liệu:** 1.2 · **Ngày cập nhật:** 20/07/2026
 > **Đối tượng đọc:** người vận hành hệ thống. Tài liệu này **không yêu cầu người đọc biết lập trình**.
 > Mọi thao tác được mô tả đúng như những gì hiển thị trên màn hình tại thời điểm viết tài liệu.
 
@@ -45,22 +45,18 @@ Hai bước có thể thành công hoặc thất bại độc lập với nhau. 
 
 **Ví dụ 2 — Rà soát camera cổng.** Cuối ca trực, người vận hành tải lên đoạn video ghi từ camera cổng. Hệ thống chạy qua video và liệt kê các biển số đã đi qua trong đoạn đó. Người vận hành xuất danh sách ra tệp CSV để mở bằng Excel và gửi báo cáo.
 
-**Ví dụ 3 — Kiểm tra tại chỗ.** Người vận hành mở trang Webcam, chĩa webcam về phía xe, hệ thống đọc biển số ngay trên màn hình mà không cần chụp ảnh rồi tải lên.
+**Ví dụ 3 — Tra cứu về sau.** Có người báo mất xe biển `47A`. Người vận hành vào trang Lịch sử, gõ `47A` vào ô tìm kiếm và thấy toàn bộ những lần hệ thống từng ghi nhận biển số bắt đầu bằng `47A`, kèm ảnh gốc và thời điểm.
 
-**Ví dụ 4 — Tra cứu về sau.** Có người báo mất xe biển `47A`. Người vận hành vào trang Lịch sử, gõ `47A` vào ô tìm kiếm và thấy toàn bộ những lần hệ thống từng ghi nhận biển số bắt đầu bằng `47A`, kèm ảnh gốc và thời điểm.
+### 1.3. Hai cách đưa dữ liệu vào
 
-### 1.3. Ba cách đưa dữ liệu vào
-
-Hệ thống nhận dữ liệu từ **ba nguồn**, tương ứng ba trang riêng trên giao diện:
+Hệ thống nhận dữ liệu từ **hai nguồn**, tương ứng hai trang riêng trên giao diện:
 
 ```mermaid
 flowchart LR
     A["Ảnh chụp<br/>(tệp JPG, PNG…)"] --> P
     B["Video<br/>(tệp MP4, MOV…)"] --> P
-    C["Webcam<br/>(camera gắn vào máy)"] --> P
     P["Hệ thống<br/>nhận dạng"] --> R["Chuỗi biển số<br/>+ độ tin cậy"]
     R --> H["Lịch sử<br/>(tra cứu, xuất CSV)"]
-    R --> D["Tổng quan<br/>(thống kê)"]
 ```
 
 ### 1.4. Những gì hệ thống KHÔNG làm
@@ -71,6 +67,8 @@ Cần nói rõ ngay từ đầu để tránh kỳ vọng sai:
 - Hệ thống **không nhận dạng hãng xe, màu xe, khuôn mặt người, hay tốc độ xe**.
 - Hệ thống **không cảnh báo tự động**. Nó không gửi email, không rung chuông khi thấy một biển số cụ thể.
 - Hệ thống **không phải là bằng chứng pháp lý**. Kết quả đọc được có thể sai, và mục 9 giải thích cách nhận biết khi nào nên nghi ngờ.
+
+> *Chế độ nhận dạng thời gian thực qua webcam đã được gỡ khỏi giao diện từ ngày 20/07/2026; năng lực này vẫn dùng được qua API `POST /api/detect/frame` — xem tài liệu API (`docs/manuals/api-documentation.md`) và mục 7 của sổ tay này.*
 
 ---
 
@@ -85,20 +83,12 @@ Hệ thống chạy hoàn toàn trong trình duyệt web, không phải cài ph�
 | Google Chrome (bản mới) | ✅ Khuyến nghị | Đã kiểm tra thực tế trong quá trình phát triển |
 | Microsoft Edge (bản mới) | ✅ | Cùng nền tảng với Chrome |
 | Mozilla Firefox (bản mới) | ✅ | |
-| Safari | ⚠️ Chưa kiểm tra | Chức năng webcam có thể hoạt động khác |
+| Safari | ⚠️ Chưa kiểm tra | |
 | Internet Explorer | ❌ Không dùng được | Trình duyệt đã ngừng hỗ trợ |
 
 > **Lưu ý.** Giao diện hiển thị được trên cả màn hình máy tính và màn hình điện thoại/máy tính bảng, nhưng trải nghiệm được thiết kế trước hết cho màn hình máy tính. Bảng lịch sử có nhiều cột nên trên màn hình hẹp sẽ phải kéo ngang.
 
-### 2.2. Webcam (chỉ cần cho trang Webcam)
-
-- Bất kỳ webcam nào mà hệ điều hành nhận diện được: webcam tích hợp trên laptop, hoặc webcam USB rời.
-- Nếu máy có **nhiều camera**, hệ thống sẽ hiện danh sách để chọn.
-- Camera **phải không bị ứng dụng khác chiếm dụng**. Nếu Zoom, Google Meet, Microsoft Teams hay một tab trình duyệt khác đang mở camera, hệ thống sẽ báo lỗi *"Không mở được camera vì thiết bị đang được ứng dụng khác sử dụng"*.
-
-> ⚠️ **Cảnh báo về địa chỉ truy cập.** Trình duyệt chỉ cho phép mở camera khi trang web được mở qua **`http://localhost`** hoặc qua **`https://`**. Nếu mở bằng địa chỉ IP kiểu `http://192.168.1.50:5173`, trình duyệt sẽ **chặn camera** và hệ thống hiện thông báo *"Trình duyệt chỉ cho phép dùng camera trên kết nối an toàn"*. Đây là quy định bảo mật của trình duyệt, không phải lỗi hệ thống. Hai trang Nhận dạng ảnh và Nhận dạng video **không bị ràng buộc này**.
-
-### 2.3. Định dạng tệp được hỗ trợ
+### 2.2. Định dạng tệp được hỗ trợ
 
 | Loại | Định dạng chấp nhận | Kích thước tối đa |
 |---|---|---|
@@ -109,7 +99,7 @@ Hai giới hạn này được đặt trong cấu hình hệ thống (`max_image
 
 > ⚠️ **Đổi đuôi tệp không có tác dụng.** Hệ thống nhận biết loại tệp bằng cách **đọc nội dung bên trong tệp**, không dựa vào phần đuôi tên. Đổi tên `tailieu.zip` thành `anh.jpg` sẽ **vẫn bị từ chối**. Đây là biện pháp bảo mật cố ý.
 
-### 2.4. Ảnh như thế nào thì cho kết quả tốt
+### 2.3. Ảnh như thế nào thì cho kết quả tốt
 
 Chất lượng ảnh đầu vào ảnh hưởng trực tiếp tới kết quả. Kinh nghiệm rút ra khi thử nghiệm:
 
@@ -175,7 +165,20 @@ http://localhost:5173
 
 **Bước 4 — Kiểm tra hệ thống đã sẵn sàng.**
 
-Trang đầu tiên hiện ra là trang **Tổng quan**. Nhìn xuống ô **Trạng thái hệ thống** — cả hai dòng **Cơ sở dữ liệu** và **Mô hình AI** phải báo đã sẵn sàng. Nếu dòng "Mô hình AI" báo chưa sẵn sàng, xem mục 10.
+Trang đầu tiên hiện ra là trang **Nhận dạng ảnh** (trang chủ).
+
+Giao diện **không còn màn hình hiển thị trạng thái hệ thống** — trang Tổng quan đã được gỡ ngày 20/07/2026 (xem mục 4.1). Cách kiểm tra thay thế là mở địa chỉ sau trong trình duyệt:
+
+```
+http://localhost:8000/health
+```
+
+Trình duyệt hiện ra một đoạn dữ liệu dạng chữ. Chỉ cần nhìn hai chỗ:
+
+- `"database_connected": true` — nơi lưu lịch sử đang kết nối được.
+- `"model_loaded": true` — mô hình AI đã nạp xong, sẵn sàng làm việc.
+
+Nếu `"model_loaded"` là `false`, hãy chờ vài giây rồi tải lại trang đó. Vẫn vậy thì xem mục 10.
 
 ### 3.2. Cách 2 — Chạy bằng Docker
 
@@ -215,31 +218,33 @@ Dữ liệu lịch sử đã lưu **không bị mất** khi tắt theo cả hai 
 
 ---
 
-## 4. Màn hình Tổng quan (Dashboard)
-
-Đây là trang đầu tiên hiện ra. Nó trả lời câu hỏi *"Hệ thống đã làm được bao nhiêu việc, và có đang khoẻ không?"*
+## 4. Thanh điều hướng và cách hệ thống đếm kết quả
 
 ### 4.1. Thanh điều hướng bên trái
 
-Năm mục, luôn có mặt ở mọi trang:
+Giao diện có **ba trang**. Thanh điều hướng bên trái luôn có mặt ở mọi trang, theo đúng thứ tự trên menu:
 
-| Mục | Dùng để |
-|---|---|
-| **Tổng quan** | Xem thống kê tổng hợp và trạng thái hệ thống |
-| **Nhận dạng ảnh** | Tải một tấm ảnh lên và đọc biển số trong đó |
-| **Nhận dạng video** | Tải một đoạn video lên và đọc biển số xuất hiện trong đó |
-| **Webcam** | Đọc biển số trực tiếp qua camera của máy |
-| **Lịch sử** | Tra cứu, lọc, xem chi tiết, xoá và xuất kết quả đã lưu |
+| Mục | Địa chỉ | Dùng để |
+|---|---|---|
+| **Nhận dạng ảnh** | `/` | Tải một tấm ảnh lên và đọc biển số trong đó — đây là **trang chủ**, mở giao diện là vào thẳng trang này |
+| **Nhận dạng video** | `/video` | Tải một đoạn video lên và đọc biển số xuất hiện trong đó |
+| **Lịch sử** | `/history` | Tra cứu, lọc, sắp xếp, xem chi tiết, xoá và xuất kết quả đã lưu |
+
+Địa chỉ nào không nằm trong ba địa chỉ trên sẽ **tự chuyển hướng về trang chủ** `/`.
 
 Trên màn hình hẹp, thanh này thu lại thành nút mở menu ở góc trên bên trái.
 
-### 4.2. Bốn ô số ở đầu trang
+> 🚧 **Trang Tổng quan (Dashboard) đã được gỡ khỏi giao diện từ ngày 20/07/2026** để tinh gọn ứng dụng cho trình diễn. Cùng với trang này, các ô số thống kê, biểu đồ và ô "Trạng thái hệ thống" không còn hiển thị trên bất kỳ màn hình nào.
+>
+> **Số liệu thống kê không bị xoá khỏi hệ thống.** Máy chủ vẫn phục vụ endpoint `GET /api/statistics` (số liệu tổng hợp) và `GET /health` (trạng thái cơ sở dữ liệu và mô hình AI) đúng như trước, kèm bộ test tự động — xem tài liệu API (`docs/manuals/api-documentation.md`, mục 4.3.10 và 4.3.1). Cách xem nhanh trạng thái hệ thống bằng trình duyệt: mục 3.1 bước 4.
+
+### 4.2. Hai cách đếm kết quả
 
 #### 4.2.1. ⚠️ "Lượt nhận dạng" khác "Biển số phát hiện" như thế nào
 
 **Đây là chỗ dễ hiểu nhầm nhất trong toàn bộ hệ thống.** Hai con số này gần như luôn khác nhau, và khác nhau là **đúng**, không phải lỗi.
 
-- **Lượt nhận dạng** đếm **số lần bạn đưa việc cho hệ thống**. Tải lên một tấm ảnh = 1 lượt. Tải lên một video = 1 lượt. Một phiên bật webcam = 1 lượt.
+- **Lượt nhận dạng** đếm **số lần bạn đưa việc cho hệ thống**. Tải lên một tấm ảnh = 1 lượt. Tải lên một video = 1 lượt. Một phiên gửi khung hình thời gian thực qua API (nếu có) = 1 lượt.
 - **Biển số phát hiện** đếm **số tấm biển hệ thống tìm thấy**. Một tấm ảnh có 3 chiếc xe trong đó sẽ cho 3 biển số.
 
 **Ví dụ cụ thể để ghi nhớ:**
@@ -262,37 +267,7 @@ Nếu gộp làm một, một tấm ảnh chụp cả bãi xe 20 chiếc sẽ b�
 
 **Hệ quả cần nhớ:** *Biển số phát hiện* luôn **lớn hơn hoặc bằng** *Lượt nhận dạng*. Nếu thấy ngược lại, đó là dấu hiệu bất thường cần báo người quản trị.
 
-> **Mẹo.** Trên giao diện, bên cạnh mỗi ô số có một **biểu tượng dấu hỏi nhỏ**. Rê chuột vào đó sẽ hiện đúng lời giải thích này ngay tại chỗ, không cần mở lại sổ tay.
-
-#### 4.2.2. Bảng giải nghĩa cả bốn ô
-
-| Ô số | Nghĩa chính xác | Đọc thế nào |
-|---|---|---|
-| **Lượt nhận dạng** | Số lần tải lên (ảnh / video / phiên webcam), bất kể mỗi lần tìm được bao nhiêu biển | Đây là con số "hệ thống được dùng bao nhiêu" |
-| **Biển số phát hiện** | Tổng số tấm biển tìm được, đếm từng tấm một | Đây là con số "thu về được bao nhiêu dữ liệu" |
-| **Độ tin cậy trung bình** | Mức chắc chắn trung bình. Số lớn là độ tin cậy của **bước phát hiện**; độ tin cậy của **bước đọc ký tự** ghi kèm bên cạnh | Xem mục 9.1 để biết bao nhiêu là đủ tin |
-| **Thời gian xử lý trung bình** | Số giây trung bình để phát hiện và đọc **một** tấm biển | Phụ thuộc cấu hình máy chủ; hệ thống chạy trên CPU, không dùng card đồ hoạ |
-
-> **Vì sao độ tin cậy lại có hai con số?** Vì như mục 1.1 đã nói, đây là hai bước riêng. Tách ra để biết bước nào đang kém chắc chắn: nếu bước phát hiện chắc chắn mà bước đọc ký tự thì không, vấn đề nằm ở chất lượng chữ trên biển chứ không phải ở việc tìm biển.
-
-### 4.3. Ô "Trạng thái hệ thống"
-
-Hai chỉ báo:
-
-| Chỉ báo | Nghĩa khi bình thường | Nghĩa khi có vấn đề |
-|---|---|---|
-| **Cơ sở dữ liệu** | Nơi lưu lịch sử đang kết nối được | Không lưu được kết quả mới, không tra cứu được lịch sử |
-| **Mô hình AI** | Mô hình nhận dạng đã nạp xong, sẵn sàng làm việc | **Không nhận dạng được gì cả.** Giao diện vẫn mở được nhưng mọi lần tải ảnh lên đều thất bại |
-
-> ⚠️ **Nếu "Mô hình AI" báo chưa sẵn sàng, đừng cố tải ảnh lên.** Hãy chờ vài giây (mô hình cần thời gian nạp lúc khởi động) rồi tải lại trang. Nếu vẫn vậy, xem mục 10.
-
-### 4.4. Biểu đồ và danh sách
-
-- **Biểu đồ xu hướng theo ngày** — mỗi cột/điểm là một ngày. Ngày không có hoạt động vẫn được vẽ với giá trị 0, cố ý như vậy để biểu đồ không tự động "nối liền" và làm một tuần vắng vẻ trông như một tuần bận rộn.
-- **Biểu đồ theo loại đầu vào** — tỷ lệ giữa ảnh, video và webcam. Cũng hiển thị theo cả hai cách đếm: theo *lượt* và theo *biển số*.
-- **Danh sách nhận dạng gần đây** — vài kết quả mới nhất. Bấm vào một dòng để xem chi tiết.
-
-> **Lưu ý.** Trang Tổng quan hiển thị số liệu tại thời điểm mở trang. Sau khi nhận dạng thêm, cần **tải lại trang** để thấy con số mới.
+> **Bây giờ nhìn thấy hai cách đếm này ở đâu?** Trên giao diện, mỗi dòng trong bảng **Lịch sử** là **một tấm biển** — đó là cách đếm thứ hai (mục 8). Con số **lượt** không còn hiển thị trên màn hình nào kể từ khi trang Tổng quan bị gỡ ngày 20/07/2026; cả hai con số vẫn đọc được qua API `GET /api/statistics`, ở hai trường `total_jobs` (lượt nhận dạng) và `total_detections` (biển số phát hiện) — xem tài liệu API mục 4.3.10.
 
 ---
 
@@ -302,7 +277,7 @@ Hai chỉ báo:
 
 ### 5.1. Các bước thực hiện
 
-**Bước 1 — Vào trang.** Bấm **"Nhận dạng ảnh"** ở thanh bên trái.
+**Bước 1 — Vào trang.** Đây chính là **trang chủ** — mở giao diện là vào thẳng trang này. Nếu đang ở trang khác, bấm **"Nhận dạng ảnh"** ở đầu thanh bên trái.
 
 *Màn hình sẽ thấy:* trang chia làm hai phần. Bên trái là khung **"Tải ảnh lên"** với một vùng trống có viền đứt nét. Bên phải là khung kết quả, hiện đang trống với dòng chữ mời bạn chọn ảnh.
 
@@ -344,7 +319,7 @@ Hai chỉ báo:
 
 Màn hình hiện thông báo không tìm thấy biển số nào — **đây không phải lỗi**. Hệ thống đã xử lý xong và kết luận trong ảnh không có tấm biển nào nó nhận ra được.
 
-Việc cần làm: xem lại mục 2.4 và thử ảnh khác — chụp gần hơn, sáng hơn, chính diện hơn.
+Việc cần làm: xem lại mục 2.3 và thử ảnh khác — chụp gần hơn, sáng hơn, chính diện hơn.
 
 ### 5.3. Kết quả được lưu tự động
 
@@ -424,80 +399,16 @@ Vì không trình duyệt nào chịu chờ lâu như vậy mà không báo lỗ
 
 ---
 
-## 7. Nhận dạng qua webcam
+## 7. Nhận dạng thời gian thực qua webcam — đã gỡ khỏi giao diện
 
-### 7.1. Cách hoạt động
+> 🚧 **Trang Webcam không còn trên giao diện.** Từ ngày **20/07/2026**, chế độ nhận dạng thời gian thực qua webcam đã được **gỡ khỏi giao diện web** để tinh gọn ứng dụng cho trình diễn. Giao diện hiện chỉ còn ba trang (mục 4.1).
 
-Hệ thống **chụp ảnh từ webcam theo nhịp đều đặn** rồi gửi từng ảnh đi nhận dạng. Nó không truyền video liên tục.
+Năng lực nhận dạng thời gian thực **không bị xoá khỏi hệ thống**: nó vẫn dùng được ở tầng API qua endpoint `POST /api/detect/frame`, dành cho client thời gian thực bên ngoài hoặc script demo. Cách gọi, quy tắc duy trì phiên và ví dụ đầy đủ nằm trong tài liệu API (`docs/manuals/api-documentation.md`).
 
-Vì vậy kết quả **không hiện ra tức thì** mà nhấp nháy theo nhịp: cứ mỗi lần một khung hình được xử lý xong, khung nhận dạng trên màn hình lại cập nhật.
+Hai điều người vận hành cần biết liên quan tới dữ liệu:
 
-> **Về ảnh chụp từ webcam:** các khung hình chụp ra **không được lưu lại**. Một phiên webcam vài chục giây tạo ra hàng trăm ảnh gần giống hệt nhau; giữ hết sẽ đầy ổ đĩa mà chẳng ghi lại được gì thêm. **Chỉ ảnh cắt của tấm biển** là được lưu — vì đó mới là thứ người dùng cần xem lại.
-
-### 7.2. Các bước thực hiện
-
-**Bước 1 — Vào trang.** Bấm **"Webcam"** ở thanh bên trái.
-
-**Bước 2 — Chọn camera và tốc độ chụp** (nếu cần).
-
-*Màn hình sẽ thấy:* hai ô chọn.
-
-- **Ô chọn camera** — nếu máy có nhiều camera. Trước khi cấp quyền lần đầu, danh sách có thể chưa hiện tên camera; điều này bình thường, tên sẽ hiện sau khi cấp quyền.
-- **Ô chọn nhịp chụp** — bốn lựa chọn:
-
-| Lựa chọn | Nghĩa | Khi nào chọn |
-|---|---|---|
-| Nhanh — 400 ms/khung | Chụp nhiều nhất | Máy mạnh, cần bắt xe di chuyển |
-| **Cân bằng — 700 ms/khung** | **Mặc định** | Dùng cho hầu hết trường hợp |
-| Tiết kiệm — 1 giây/khung | Chụp thưa | Máy yếu, hoặc xe đứng yên |
-| Chậm — 2 giây/khung | Chụp rất thưa | Máy rất yếu |
-
-> **Chọn "Nhanh" không làm hệ thống chạy nhanh hơn.** Đây là nhịp *thử* chụp, không phải tốc độ thực tế. Hệ thống chỉ gửi **một khung hình tại một thời điểm**. Nếu máy cần 600 ms để xử lý một khung mà bạn chọn nhịp 400 ms, kết quả không phải là nhanh hơn — mà là các khung dư bị **bỏ qua**. Mức mặc định 700 ms được chọn vì nó vừa cao hơn thời gian xử lý một khung trên máy thử nghiệm.
-
-**Bước 3 — Bấm "Bật camera".**
-
-*Màn hình sẽ thấy:* nút chuyển thành *"Đang khởi động…"*, và **trình duyệt hiện hộp thoại hỏi quyền truy cập camera** — thường ở góc trên bên trái, ngay dưới thanh địa chỉ.
-
-**Bước 4 — Cho phép truy cập camera.**
-
-Bấm **"Cho phép"** / **"Allow"** trong hộp thoại của trình duyệt.
-
-> **Đây là hộp thoại của TRÌNH DUYỆT, không phải của hệ thống.** Hệ thống không thể tự cấp quyền cho mình — vì lý do bảo mật, chỉ người ngồi trước máy mới quyết định được. Nếu bấm nhầm "Chặn", xem mục 7.3.
-
-*Màn hình sẽ thấy sau khi cho phép:* hình ảnh trực tiếp từ camera hiện trong khung lớn giữa trang. Đèn báo camera trên máy (nếu có) sáng lên.
-
-**Bước 5 — Đưa biển số vào khung hình.**
-
-*Màn hình sẽ thấy:* khi hệ thống nhận ra biển số, một khung chữ nhật vẽ chồng lên hình camera, và bảng bên dưới lần lượt thêm các biển số đọc được trong phiên này.
-
-**Bước 6 — Theo dõi các chỉ số** trong khung số liệu:
-
-| Chỉ số | Nghĩa |
-|---|---|
-| **Tốc độ thực tế** | Số khung hình thực sự xử lý được mỗi giây |
-| **Thời gian xử lý** | Máy chủ mất bao lâu cho một khung |
-| **Trọn vòng gửi–nhận** | Tổng thời gian từ lúc gửi tới lúc nhận kết quả |
-| **Khung hình đã gửi** | Tổng số khung đã gửi, kèm số khung **bỏ qua** |
-
-> **"Khung hình bị bỏ qua" là bình thường, không phải lỗi.** Khi khung trước chưa xử lý xong, khung mới bị bỏ qua thay vì xếp hàng chờ. Nếu xếp hàng, kết quả hiển thị sẽ ngày càng tụt lại so với hình ảnh thật trên màn hình.
-
-**Bước 7 — Tắt camera.** Bấm **"Tắt camera"** khi xong. Đèn camera tắt, và camera được trả lại cho các ứng dụng khác.
-
-> **Nên tắt camera khi không dùng.** Để camera bật liên tục vừa tốn tài nguyên máy, vừa khiến các ứng dụng khác không mở được camera.
-
-### 7.3. Khi trình duyệt từ chối cấp quyền camera
-
-Hệ thống hiển thị **đúng thông báo tương ứng với từng nguyên nhân**, kèm hướng dẫn khắc phục ngay trên màn hình. Bảng dưới liệt kê đầy đủ:
-
-| Thông báo trên màn hình | Nguyên nhân | Cách xử lý |
-|---|---|---|
-| *"Trình duyệt đã chặn quyền truy cập camera."* | Đã bấm "Chặn", hoặc trước đó từng chặn và trình duyệt nhớ lại | Nhấn vào **biểu tượng ổ khoá hoặc biểu tượng camera ở đầu thanh địa chỉ**, chọn **"Cho phép"** cho mục Camera, **tải lại trang**, rồi bấm "Bật camera" lần nữa |
-| *"Không tìm thấy camera nào trên thiết bị này."* | Máy không có webcam, hoặc webcam chưa cắm, hoặc bị tắt trong cài đặt hệ điều hành | Cắm webcam vào máy; kiểm tra camera đã bật trong **cài đặt quyền riêng tư của hệ điều hành**; bấm "Bật camera" lại |
-| *"Không mở được camera vì thiết bị đang được ứng dụng khác sử dụng."* | Zoom, Google Meet, Microsoft Teams hoặc một tab trình duyệt khác đang chiếm camera | **Đóng các ứng dụng đó** rồi bấm "Bật camera" lại |
-| *"Camera đã chọn không đáp ứng được cấu hình yêu cầu."* | Camera đã chọn không hỗ trợ độ phân giải hệ thống yêu cầu | **Chọn một camera khác** trong danh sách thiết bị rồi thử lại |
-| *"Trình duyệt chỉ cho phép dùng camera trên kết nối an toàn."* | Đang mở trang qua địa chỉ IP trên `http://` | Mở lại qua **`http://localhost`** hoặc qua **`https://`**. Truy cập bằng địa chỉ IP trên HTTP sẽ luôn bị trình duyệt chặn camera |
-
-> **Cách tìm nút cấp lại quyền trên Chrome/Edge:** bên trái thanh địa chỉ có một biểu tượng nhỏ (ổ khoá, hình trượt, hoặc hình camera bị gạch chéo). Bấm vào đó → tìm dòng **Camera** → đổi sang **Cho phép** → tải lại trang bằng `F5`.
+- Bản ghi có nguồn **Webcam** vẫn có thể xuất hiện ở trang Lịch sử và trong số liệu do API `GET /api/statistics` trả về — đó là dữ liệu hợp lệ, đến từ các phiên thời gian thực gọi qua API (hoặc từ trước ngày gỡ trang).
+- Khung hình gửi qua API này **không được lưu lại** — chỉ ảnh cắt của tấm biển được lưu, vì đó mới là thứ cần xem lại. Một phiên vài chục giây tạo ra hàng trăm khung gần giống hệt nhau; giữ hết sẽ đầy ổ đĩa mà không ghi thêm được thông tin gì.
 
 ---
 
@@ -505,7 +416,7 @@ Hệ thống hiển thị **đúng thông báo tương ứng với từng nguyê
 
 Trang **Lịch sử** là nơi xem lại mọi kết quả đã lưu.
 
-> **Nhắc lại quy tắc đếm.** Mỗi dòng trong bảng lịch sử là **một tấm biển số**, không phải một lần tải lên. Một tấm ảnh có 3 biển tạo ra **3 dòng** — cả ba dòng có cùng một mã tác vụ. Đây là cách đếm khác với ô "Lượt nhận dạng" ở trang Tổng quan (mục 4.2.1).
+> **Nhắc lại quy tắc đếm.** Mỗi dòng trong bảng lịch sử là **một tấm biển số**, không phải một lần tải lên. Một tấm ảnh có 3 biển tạo ra **3 dòng** — cả ba dòng có cùng một mã tác vụ. Đây là cách đếm khác với cách đếm "Lượt nhận dạng" (mục 4.2.1).
 
 ### 8.1. Tìm kiếm theo biển số
 
@@ -716,7 +627,7 @@ Mỗi kết quả có một nhãn:
 3. **Xoá bản ghi sai** ở trang Lịch sử nếu chắc chắn nó vô nghĩa (nhớ mục 8.6: xoá là vĩnh viễn).
 4. **Chụp lại ảnh gọn hơn** — khung hình càng ít thứ gây nhiễu, càng ít phát hiện nhầm.
 
-**Hiện tượng ngược lại — bỏ sót (false negative):** hệ thống **không thấy** một tấm biển đang có thật trong ảnh. Nguyên nhân thường là biển quá nhỏ trong khung hình, quá mờ, quá nghiêng, hoặc bị che. Cách khắc phục vẫn là mục 2.4: chụp gần hơn, sáng hơn, chính diện hơn.
+**Hiện tượng ngược lại — bỏ sót (false negative):** hệ thống **không thấy** một tấm biển đang có thật trong ảnh. Nguyên nhân thường là biển quá nhỏ trong khung hình, quá mờ, quá nghiêng, hoặc bị che. Cách khắc phục vẫn là mục 2.3: chụp gần hơn, sáng hơn, chính diện hơn.
 
 ### 9.5. Khi biển số hiện là "không đọc được"
 
@@ -734,17 +645,15 @@ Bản ghi này **vẫn được lưu** — cố ý như vậy, vì nó ghi nhậ
 |---|---|---|
 | Mở địa chỉ giao diện nhưng **trang trắng / không vào được** | Phần giao diện chưa chạy | Kiểm tra cửa sổ dòng lệnh chạy `npm run dev` còn mở không. Chạy lại theo mục 3.1 bước 2 |
 | Giao diện mở được nhưng **mọi thao tác báo lỗi kết nối** | Máy chủ xử lý chưa chạy hoặc đã tắt | Mở `http://localhost:8000/docs`. Không vào được nghĩa là máy chủ chưa chạy → chạy lại theo mục 3.1 bước 1 |
-| Ô **"Mô hình AI"** báo chưa sẵn sàng | Mô hình chưa nạp xong, hoặc tệp mô hình bị thiếu | Chờ khoảng 10 giây rồi tải lại trang. Vẫn vậy → báo người quản trị kiểm tra tệp mô hình trong thư mục `models/` |
-| Ô **"Cơ sở dữ liệu"** báo chưa kết nối | Chưa chạy bước tạo bảng dữ liệu, hoặc tệp CSDL bị khoá | Báo người quản trị |
-| **Tệp bị từ chối ngay khi chọn** | Sai định dạng, hoặc quá dung lượng cho phép | Ảnh: JPG/PNG/WebP/BMP ≤ 10 MB. Video: MP4/MOV/AVI/MKV ≤ 200 MB. Đổi đuôi tệp **không** giải quyết được (mục 2.3) |
-| **Chờ rất lâu mới có kết quả ảnh** | Đây là hạn chế hiệu năng đã biết của phiên bản hiện tại | Vài giây là bình thường (p95 đo được ~5,9 giây). Nếu quá 30 giây, xem dòng dưới |
+| Địa chỉ `http://localhost:8000/health` báo **`"model_loaded": false`** | Mô hình chưa nạp xong, hoặc tệp mô hình bị thiếu | Chờ khoảng 10 giây rồi tải lại địa chỉ đó. Vẫn vậy → báo người quản trị kiểm tra tệp mô hình trong thư mục `models/` |
+| Địa chỉ `http://localhost:8000/health` báo **`"database_connected": false`** | Chưa chạy bước tạo bảng dữ liệu, hoặc tệp CSDL bị khoá | Báo người quản trị |
+| **Tệp bị từ chối ngay khi chọn** | Sai định dạng, hoặc quá dung lượng cho phép | Ảnh: JPG/PNG/WebP/BMP ≤ 10 MB. Video: MP4/MOV/AVI/MKV ≤ 200 MB. Đổi đuôi tệp **không** giải quyết được (mục 2.2) |
+| **Chờ rất lâu mới có kết quả ảnh** | Máy đang bận việc khác (CPU bị chiếm) hoặc lần gọi đầu tiên sau khi khởi động (mô hình nạp lần đầu) | Bình thường kết quả về dưới 1 giây (p95 đo được 731 ms — xem mục 12.2). Nếu quá 30 giây, xem dòng dưới |
 | **Treo hẳn, không bao giờ ra kết quả** | Máy chủ gặp sự cố | Xem cửa sổ dòng lệnh máy chủ có báo lỗi không. Khởi động lại máy chủ (`Ctrl + C` rồi chạy lại) |
-| **Không tìm thấy biển số nào** trong ảnh có biển rõ ràng | Biển quá nhỏ trong khung, quá nghiêng, quá mờ, hoặc bị che | Chụp lại gần hơn và chính diện hơn (mục 2.4) |
+| **Không tìm thấy biển số nào** trong ảnh có biển rõ ràng | Biển quá nhỏ trong khung, quá nghiêng, quá mờ, hoặc bị che | Chụp lại gần hơn và chính diện hơn (mục 2.3) |
 | **Đọc sai vài ký tự** | Ảnh mờ; hoặc ký tự dễ nhầm (O/0, I/1, B/8) | Kiểm tra "chuỗi đọc thô" trong chi tiết (mục 9.2). Chụp lại rõ hơn nếu cần |
 | **Khoanh nhầm vật không phải biển số** | Phát hiện nhầm — xem mục 9.4 | Kiểm tra ảnh có vẽ khung; xoá bản ghi nếu vô nghĩa |
-| **Camera không bật được** | Nhiều nguyên nhân | Xem bảng đầy đủ ở mục 7.3 |
-| **Camera bật được nhưng hình đen** | Ống kính bị che, hoặc phòng quá tối | Kiểm tra nắp che webcam; bật đèn |
-| **Webcam chạy giật, bỏ nhiều khung** | Máy không xử lý kịp nhịp đã chọn | Đổi sang *"Tiết kiệm — 1 giây/khung"* hoặc *"Chậm — 2 giây/khung"* |
+| **Không tìm thấy trang Webcam trên menu** | Trang đã được gỡ khỏi giao diện từ 20/07/2026 | Không phải lỗi — xem mục 7. Nhận dạng thời gian thực vẫn dùng được qua API |
 | **Video xử lý mãi không xong** | Video quá dài | ⚠️ Không huỷ được từ giao diện (mục 6.3). Chờ, hoặc khởi động lại máy chủ. Lần sau chọn video ngắn |
 | **Thanh tiến độ video chạy tới lui, không có phần trăm** | Hệ thống chưa đếm xong tổng số khung hình | Bình thường, chờ thêm (mục 6.2 bước 4) |
 | **Không có nút tải video kết quả** | 🚧 Chức năng tạo video có vẽ khung chưa có (mục 6.4) | Xem kết quả qua danh sách biển số hoặc xuất CSV ở trang Lịch sử |
@@ -752,8 +661,8 @@ Bản ghi này **vẫn được lưu** — cố ý như vậy, vì nó ghi nhậ
 | **Tệp CSV mở bằng Excel bị lỗi font tiếng Việt** | Hiếm gặp — tệp đã có sẵn dấu hiệu chống lỗi font | Thử mở bằng Google Sheets, hoặc dùng chức năng "Nhập dữ liệu" của Excel và chọn mã hoá UTF-8 |
 | **Xuất CSV thiếu dữ liệu mong đợi** | Bộ lọc đang giới hạn kết quả | Bấm **"Xoá bộ lọc"** rồi xuất lại (mục 8.7) |
 | **Nút "Xuất CSV" bị mờ** | Bộ lọc hiện tại không khớp dòng nào | Nới lỏng hoặc xoá bộ lọc |
-| **Số trên trang Tổng quan không khớp** với số vừa nhận dạng | Trang Tổng quan hiển thị số liệu lúc mở trang | Tải lại trang bằng `F5` |
-| **Số "Biển số phát hiện" lớn hơn "Lượt nhận dạng"** | **Đây là bình thường, không phải lỗi** | Xem mục 4.2.1 |
+| **Không tìm thấy trang Tổng quan trên menu** | Trang đã được gỡ khỏi giao diện từ 20/07/2026 | Không phải lỗi — xem mục 4.1. Số liệu thống kê vẫn lấy được qua API `GET /api/statistics` |
+| **Số "Biển số phát hiện" lớn hơn "Lượt nhận dạng"** trong kết quả API thống kê | **Đây là bình thường, không phải lỗi** | Xem mục 4.2.1 |
 | **Lỡ xoá nhầm một bản ghi** | Không có chức năng hoàn tác | Không khôi phục được. Nếu còn ảnh gốc, hãy nhận dạng lại |
 
 > **Khi báo lỗi cho người quản trị**, hãy cung cấp: (1) bạn đang làm gì ở trang nào, (2) **mã yêu cầu** (request id) nếu thông báo lỗi có hiện, (3) ảnh chụp màn hình thông báo lỗi. Mã yêu cầu giúp tìm đúng dòng ghi chép trong nhật ký máy chủ.
@@ -789,13 +698,16 @@ Bản ghi này **vẫn được lưu** — cố ý như vậy, vì nó ghi nhậ
 **Hỏi: Dữ liệu lưu ở đâu và giữ trong bao lâu?**
 Đáp: Lưu trong cơ sở dữ liệu trên chính máy chủ, kèm ảnh trong thư mục lưu trữ. **Không có cơ chế tự động xoá theo thời gian** ở phiên bản hiện tại — dữ liệu giữ tới khi có người xoá thủ công.
 
-**Hỏi: Ảnh chụp từ webcam có bị lưu lại không?**
-Đáp: **Không.** Chỉ ảnh cắt của tấm biển được lưu. Các khung hình webcam bị bỏ đi ngay sau khi xử lý (mục 7.1).
+**Hỏi: Trang Webcam đâu rồi?**
+Đáp: Đã được **gỡ khỏi giao diện từ ngày 20/07/2026** để tinh gọn ứng dụng. Năng lực nhận dạng thời gian thực vẫn dùng được qua API `POST /api/detect/frame` — xem mục 7 và tài liệu API. Khung hình gửi qua API này không được lưu lại; chỉ ảnh cắt của tấm biển được lưu.
+
+**Hỏi: Trang Tổng quan (thống kê, biểu đồ) đâu rồi?**
+Đáp: Đã được **gỡ khỏi giao diện từ ngày 20/07/2026** để tinh gọn ứng dụng, cùng đợt với trang Webcam. Giao diện nay chỉ còn ba trang (mục 4.1). **Số liệu thống kê không bị xoá:** máy chủ vẫn phục vụ `GET /api/statistics` và `GET /health` như cũ — xem tài liệu API. Muốn xem nhanh trạng thái hệ thống bằng trình duyệt thì mở `http://localhost:8000/health` (mục 3.1 bước 4).
 
 **Hỏi: Tắt hệ thống thì mất dữ liệu không?**
 Đáp: Không. Lịch sử nằm trên đĩa và còn nguyên sau khi khởi động lại.
 
-**Hỏi: Vì sao ô "Lượt nhận dạng" và "Biển số phát hiện" khác nhau?**
+**Hỏi: Vì sao "Lượt nhận dạng" và "Biển số phát hiện" khác nhau?**
 Đáp: Đây là câu hỏi hay gặp nhất — xem mục 4.2.1. Tóm tắt: một ảnh có 3 biển = **1 lượt, 3 biển số**.
 
 **Hỏi: Vì sao đôi khi thấy hai chuỗi biển số khác nhau trong chi tiết?**
@@ -837,7 +749,7 @@ Mục này liệt kê **trung thực** hiện trạng phiên bản hiện tại.
 
 ### 12.3. Số liệu chưa đo đầy đủ
 
-Một số phép đo phụ **chưa được tiến hành** trên phiên bản này: tốc độ khung hình của webcam và một vài chỉ tiêu phi chức năng khác (ví dụ P2/P3). Các phép đo về **độ chính xác đọc ký tự** thì **đã có kết quả** — xem mục 12.2 và báo cáo OCR.
+Một số phép đo phụ **chưa được tiến hành** trên phiên bản này: tốc độ khung hình của luồng nhận dạng thời gian thực qua API `/api/detect/frame` và một vài chỉ tiêu phi chức năng khác (ví dụ P2/P3). Các phép đo về **độ chính xác đọc ký tự** thì **đã có kết quả** — xem mục 12.2 và báo cáo OCR.
 
 > ⚠️ **Không nên trích dẫn bất kỳ con số độ chính xác nào từ nguồn ngoài** để mô tả hệ thống này. Các con số công bố trong tài liệu học thuật thường đo trên bộ dữ liệu của **nước khác** và **không áp dụng được** cho hệ thống này trên dữ liệu Việt Nam.
 
@@ -857,8 +769,10 @@ Ngoài ra, do đặc điểm của dữ liệu huấn luyện hiện có, các c
 
 | Địa chỉ | Dùng để |
 |---|---|
-| `http://localhost:5173` | Giao diện chính |
+| `http://localhost:5173` | Giao diện chính — ba trang: `/` (Nhận dạng ảnh), `/video`, `/history` |
 | `http://localhost:8000/docs` | Trang kiểm tra máy chủ đã chạy chưa |
+| `http://localhost:8000/health` | Trạng thái hệ thống (`database_connected`, `model_loaded`) — thay cho ô "Trạng thái hệ thống" đã gỡ cùng trang Tổng quan |
+| `http://localhost:8000/api/statistics` | Số liệu thống kê tổng hợp dạng dữ liệu thô |
 
 ### A.2. Lệnh khởi động
 
@@ -907,7 +821,6 @@ Mọi con số nêu trong sổ tay này đều lấy từ mã nguồn hoặc t�
 |---|---|
 | Giới hạn 10 MB / 200 MB; danh sách định dạng chấp nhận | `backend/core/config.py`, `frontend/src/lib/constants.ts` |
 | Ngưỡng độ tin cậy 85% / 60% | `frontend/src/lib/constants.ts` |
-| Nhịp chụp webcam 400/700/1000/2000 ms, mặc định 700 ms | `frontend/src/components/detection/webcam/constants.ts` |
 | Nhịp hỏi tiến độ 1,5 giây | `frontend/src/lib/constants.ts` |
 | Ước tính ~200 giây xử lý cho 60 giây video | `backend/api/routes/detection.py` |
 | Thời gian khởi động 8,36 giây; 10 yêu cầu đồng thời không lỗi; độ trễ E2E p95 ≈ 731–780 ms (đạt NFR-P1) | `docs/reports/07-benchmark-report.md`, `07-benchmark-p1-resolved.json` |
@@ -915,7 +828,9 @@ Mọi con số nêu trong sổ tay này đều lấy từ mã nguồn hoặc t�
 | Các chuỗi biển ví dụ và khoảng độ tin cậy 0,94–0,9993 | Kết quả kiểm thử thực tế 10 ảnh, ghi nhận trong quá trình xác minh Phase 5 |
 | Nút "Huỷ tác vụ" bị vô hiệu hoá | `frontend/src/components/detection/video/JobProgressPanel.tsx` |
 | Video kết quả có vẽ khung chưa khả dụng | `frontend/src/components/detection/video/VideoResultPanel.tsx` |
-| Thông báo lỗi camera và hướng dẫn khắc phục | `frontend/src/components/detection/webcam/useCameraStream.ts` |
+| Trang Webcam gỡ khỏi giao diện ngày 20/07/2026 | `CLAUDE.md` — Nhật ký quyết định, dòng 2026-07-20 |
+| Trang Tổng quan (Dashboard) gỡ khỏi giao diện ngày 20/07/2026; giao diện còn ba trang | `frontend/src/App.tsx` (bảng route: `/`, `/video`, `/history`, mọi đường dẫn khác chuyển về `/`) |
+| Endpoint `GET /api/statistics` và `GET /health` vẫn phục vụ và vẫn có test | `backend/api/routes/statistics.py`, `backend/api/routes/health.py`; `tests/integration/test_api_statistics.py`, `tests/integration/test_api_health.py` |
 | Mô hình hiện dùng `models/baseline-416-v1.pt` | `README.md` mục 4, giới hạn 1 |
 
 ---

@@ -1,0 +1,113 @@
+{
+  "sample_size": 700,
+  "seed": 7,
+  "source": "datasets/annotations/plate_text_labels_vn.csv",
+  "strategy_a_merge_only": {
+    "exact": 421,
+    "accuracy": 0.6014,
+    "mean_ms": 362.41
+  },
+  "strategy_c_merge_plus_upper_fallback": {
+    "exact": 434,
+    "accuracy": 0.62,
+    "mean_ms": 383.52,
+    "fallback_fired": 148,
+    "fallback_rate": 0.2114
+  },
+  "delta_points": 1.86,
+  "rescued": 13,
+  "regressed": 0,
+  "examples": [
+    {
+      "image": "D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/5xemay2384_jpg.rf.40d01011f479256c90d5c7ef87b1d859.jpg",
+      "truth": "59C168612",
+      "a": "68612",
+      "c": "59C168612",
+      "outcome": "rescued"
+    },
+    {
+      "image": "D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/1xemay2223_jpg.rf.3f0ced80ceeb4b07c5fcd42964134431.jpg",
+      "truth": "59S135252",
+      "a": "35252",
+      "c": "59S135252",
+      "outcome": "rescued"
+    },
+    {
+      "image": "D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/2xemay2141_jpg.rf.8db38cf073ac2129417244657b6f67f2.jpg",
+      "truth": "49F108660",
+      "a": "08660",
+      "c": "49F108660",
+      "outcome": "rescued"
+    },
+    {
+      "image": "D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/5xemay491_jpg.rf.a0caf8125d9f089784d50455cc43e694.jpg",
+      "truth": "59C131162",
+      "a": "31162",
+      "c": "59C131162",
+      "outcome": "rescued"
+    },
+    {
+      "image": "D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/5xemay625_jpg.rf.0535f5bbe25e59c6a16dd9dcc71e6a0b.jpg",
+      "truth": "59P152639",
+      "a": "52639",
+      "c": "59P152639",
+      "outcome": "rescued"
+    },
+    {
+      "image": "D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/3xemay636_jpg.rf.195be865f817c86a85ca6d43288780e3.jpg",
+      "truth": "59F109596",
+      "a": "09596",
+      "c": "59F109596",
+      "outcome": "rescued"
+    },
+    {
+      "image": "D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/ndata102_jpg.rf.90ef121cd928b1c3cc06905f0a61ea17.jpg",
+      "truth": "29N172764",
+      "a": "72764",
+      "c": "29N172764",
+      "outcome": "rescued"
+    },
+    {
+      "image": "D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/7xemay2040_jpg.rf.d11c12054034f4a21991db7ce4ffb733.jpg",
+      "truth": "59V107473",
+      "a": "07473",
+      "c": "59V107473",
+      "outcome": "rescued"
+    },
+    {
+      "image": "D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay148_jpg.rf.f0aa2cd2fde16859dce6212f6ec22eed.jpg",
+      "truth": "59P133202",
+      "a": "33202",
+      "c": "59P133202",
+      "outcome": "rescued"
+    },
+    {
+      "image": "D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay2429_jpg.rf.4d8f2ccc614f1a72f1803f3b89f63190.jpg",
+      "truth": "59C165331",
+      "a": "65331",
+      "c": "59C165331",
+      "outcome": "rescued"
+    },
+    {
+      "image": "D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay2079_jpg.rf.d095f34684174d33ef7a41219d74e19a.jpg",
+      "truth": "59T101439",
+      "a": "01439",
+      "c": "59T101439",
+      "outcome": "rescued"
+    },
+    {
+      "image": "D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/ndata610_jpg.rf.89509385d133a3a64bcafa2b84538abb.jpg",
+      "truth": "70E144676",
+      "a": "44676",
+      "c": "70E144676",
+      "outcome": "rescued"
+    },
+    {
+      "image": "D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/3xemay1607_jpg.rf.40f1abcc32f61610e369457130ac2715.jpg",
+      "truth": "59H141296",
+      "a": "41296",
+      "c": "59H141296",
+      "outcome": "rescued"
+    }
+  ]
+}

@@ -3,6 +3,27 @@
 **Hệ thống nhận dạng biển số xe Việt Nam (ALPR)**
 Phần giao diện web — React 18 + Vite 5 + TypeScript 5 (strict) + TailwindCSS 3
 
+> ⚠️ **Hai thay đổi phạm vi trong ngày 2026-07-20.** Giao diện được thu gọn hai lần liên tiếp,
+> nay còn **3 trang**: **Nhận dạng ảnh** (`/`, trang chủ) → **Nhận dạng video** (`/video`) →
+> **Lịch sử** (`/history`). Mọi đường dẫn không khớp chuyển hướng về `/`.
+>
+> | # | Thay đổi | Yêu cầu bị ảnh hưởng | Năng lực còn lại |
+> |---|---|---|---|
+> | 1 | **Gỡ trang Webcam** | FR-3.1 / FR-3.4 chuyển **M → W** | Nhận dạng thời gian thực vẫn phục vụ và vẫn có kiểm thử ở **tầng API**: `POST /api/detect/frame` |
+> | 2 | **Gỡ trang Tổng quan (Dashboard)** | FR-4.1 chuyển **M → W**, FR-4.2 chuyển **S → W** | Số liệu thống kê vẫn truy vấn được và vẫn có kiểm thử ở **tầng API**: `GET /api/statistics`, `GET /health` |
+>
+> FR-4.1 là **yêu cầu mức Must đầu tiên bị gỡ khỏi phạm vi** trong toàn dự án — ghi lại ở đây
+> để lần đối chiếu sau không hiểu nhầm là sót việc. Xem
+> [functional-requirements.md](../00-requirements/functional-requirements.md).
+> Mã nguồn của cả hai trang (`pages/WebcamDetection.tsx`, `pages/Dashboard.tsx`,
+> `components/dashboard/`, `components/detection/webcam/`, `hooks/useApi.ts`,
+> các hàm `detectFrame` / `getStatistics` / `getHealth` trong `services/api.ts`)
+> **còn nguyên trong lịch sử git**.
+>
+> Hệ quả đo được: gỡ thư viện biểu đồ `recharts` cùng trang Tổng quan làm **gói tải về giảm từ
+> ~730 KB xuống 328,8 KB (giảm 55%)**; build thành công trong 2,14 s, `tsc --noEmit` 0 lỗi,
+> ESLint sạch.
+
 ---
 
 ## 1. Mục tiêu và nguyên tắc thiết kế
@@ -15,8 +36,10 @@ gộp trùng, lưu trữ — chỉ có giá trị nếu người dùng **thấy 
 
 Ba mục tiêu cụ thể:
 
-1. **Trình diễn được toàn bộ luồng nghiệp vụ** — ba nguồn đầu vào (ảnh, video, webcam),
-   tra cứu lịch sử và thống kê tổng hợp, trên một ứng dụng duy nhất.
+1. **Trình diễn được toàn bộ luồng nghiệp vụ** — hai nguồn đầu vào trên giao diện (ảnh, video)
+   và tra cứu lịch sử, trên một ứng dụng duy nhất. *(Nguồn thứ ba — khung hình thời gian thực —
+   phục vụ ở tầng API `POST /api/detect/frame`; số liệu thống kê tổng hợp phục vụ ở
+   `GET /api/statistics`. Cả hai không còn trang riêng từ 2026-07-20.)*
 2. **Trung thực về số liệu** — con số hiển thị phải nói đúng điều nó đo. Đây là yêu cầu
    nghiêm ngặt hơn thường lệ vì các số này đi thẳng vào chương Đánh giá của quyển đồ án.
 3. **Không giấu sự thật kỹ thuật** — hệ thống chạy suy luận trên CPU, chậm hơn GPU nhiều lần.
@@ -45,84 +68,49 @@ Tách bạch như vậy để người đọc mã và người dùng sản phẩ
 
 ## 2. Sơ đồ điều hướng
 
-Ứng dụng gồm **5 trang** nằm trong một khung chung (`Layout`) có sidebar cố định.
-Mọi đường dẫn không khớp đều chuyển hướng về Tổng quan, không để người dùng rơi vào ngõ cụt.
+Ứng dụng gồm **3 trang** nằm trong một khung chung (`Layout`) có sidebar cố định, theo đúng thứ tự
+menu: **Nhận dạng ảnh** (trang chủ) → **Nhận dạng video** → **Lịch sử**.
+Mọi đường dẫn không khớp đều chuyển hướng về trang chủ Nhận dạng ảnh, không để người dùng
+rơi vào ngõ cụt. *(Trang Webcam và trang Tổng quan đều đã gỡ 2026-07-20 — xem ghi chú đầu tài liệu.)*
 
 ```mermaid
 graph TD
-    Layout["Khung ứng dụng (Layout)<br/>Sidebar 5 mục + header"]
+    Layout["Khung ứng dụng (Layout)<br/>Sidebar 3 mục + header"]
 
-    Layout --> D["/ — Tổng quan<br/>(Dashboard)"]
-    Layout --> I["/image — Nhận dạng ảnh"]
+    Layout --> I["/ — Nhận dạng ảnh<br/>(trang chủ)"]
     Layout --> V["/video — Nhận dạng video"]
-    Layout --> W["/webcam — Webcam"]
     Layout --> H["/history — Lịch sử"]
 
-    NF["Mọi đường dẫn khác"] -.->|"chuyển hướng"| D
-
-    D -->|"Nhận dạng ảnh đầu tiên<br/>(trạng thái rỗng)"| I
-    D -->|"Xem tất cả<br/>(danh sách gần đây)"| H
+    NF["Mọi đường dẫn khác"] -.->|"chuyển hướng"| I
 
     I -->|"kết quả được lưu"| H
     V -->|"kết quả được lưu"| H
-    W -->|"kết quả được lưu"| H
 
     H -->|"trạng thái rỗng"| I
 
     classDef page fill:#eff6ff,stroke:#2563eb,color:#1e3a5f
     classDef shell fill:#f1f5f9,stroke:#64748b,color:#1e293b
     classDef ghost fill:#fff,stroke:#cbd5e1,color:#64748b,stroke-dasharray: 4 3
-    class D,I,V,W,H page
+    class I,V,H page
     class Layout shell
     class NF ghost
 ```
 
 **Quan hệ giữa các trang:**
 
-* Ba trang nhận dạng (ảnh / video / webcam) là **nguồn sinh dữ liệu**. Kết quả của cả ba
-  đều chảy về cùng một bảng `detection_history`, nên trang Lịch sử là **đích chung**.
-* Tổng quan là **cửa sổ đọc**: không tạo dữ liệu, chỉ tổng hợp. Vì vậy trạng thái rỗng
-  của nó dẫn thẳng sang trang Nhận dạng ảnh — đường ngắn nhất để có dữ liệu đầu tiên.
-* Lịch sử và Tổng quan **không phụ thuộc lẫn nhau**: mỗi trang tự gọi API của mình,
-  hỏng một trang không kéo đổ trang kia.
+* Hai trang nhận dạng (ảnh / video) là **nguồn sinh dữ liệu**. Kết quả của cả hai — cùng với
+  khung hình thời gian thực gửi qua API `POST /api/detect/frame` — đều chảy về cùng một bảng
+  `detection_history`, nên trang Lịch sử là **đích chung**.
+* Ba trang **không phụ thuộc lẫn nhau**: mỗi trang tự gọi API của mình, hỏng một trang không
+  kéo đổ trang kia.
+* Sau khi gỡ trang Tổng quan, giao diện **không còn màn hình chỉ-đọc-tổng-hợp** nào. Toàn bộ
+  đồ thị điều hướng vì vậy có đúng một chiều chảy: *tạo dữ liệu → tra cứu dữ liệu*.
 
 ---
 
 ## 3. Mô tả từng màn hình
 
-### 3.1. Tổng quan (`/`)
-
-![Màn hình Tổng quan](../screenshots/dashboard.png)
-
-**Chức năng:** trả lời trong một màn hình ba câu hỏi — hệ thống đã xử lý bao nhiêu,
-chất lượng ra sao, và hiện có đang khoẻ không (FR-4.1, FR-4.2, FR-6.1).
-
-**Thành phần:**
-
-| Vùng | Nội dung | Nguồn dữ liệu |
-|---|---|---|
-| Bốn thẻ chỉ số | Lượt nhận dạng · Biển số phát hiện · Độ tin cậy trung bình · Thời gian xử lý trung bình | `GET /api/statistics` |
-| Trạng thái hệ thống | Kết nối CSDL, tình trạng nạp mô hình AI, kèm cảnh báo khi đang chạy chế độ mô phỏng | `GET /health` |
-| Hoạt động theo ngày | Biểu đồ đường 7 ngày, **hai chuỗi**: lượt nhận dạng (xanh dương) và biển số phát hiện (xanh lá). Có nút chuyển Biểu đồ ⇄ Bảng | `statistics.daily_counts` |
-| Phân bố theo nguồn | Biểu đồ cột nhóm theo Ảnh / Video / Webcam, cũng hai chuỗi `job_count` và `detection_count` | `statistics.by_input_type` |
-| Nhận dạng gần đây | 5 bản ghi mới nhất theo `detected_time` | `GET /api/history?page_size=5` |
-
-**Luồng thao tác:** trang tự nạp khi mở. Nút **Làm mới** gọi lại cả ba request cùng lúc.
-
-**Bốn trạng thái:**
-
-* *Loading* — khung xương (skeleton) dựng **đúng bố cục thật**, nên khi dữ liệu về không có
-  phần tử nào nhảy chỗ. Chỉ lần nạp đầu tiên hiện skeleton; lần làm mới giữ nguyên số cũ
-  trên màn hình để trang không nhấp nháy.
-* *Empty* — chỉ khi `total_jobs == 0` **và** `total_detections == 0`. Kiểm tra cả hai là có chủ ý:
-  người đã tải lên vài ảnh không có biển số nào vẫn *đã dùng* hệ thống, nói với họ rằng
-  "chưa có dữ liệu" là sai.
-* *Error* — ba request **không** gộp thành một khối tất-cả-hoặc-không. `/health` hỏng
-  không được xoá trắng số thống kê đã về đủ. Chỉ khi request thống kê — chủ đề của trang — hỏng
-  thì mới hiện lỗi toàn trang.
-* *Success* — như ảnh chụp.
-
-### 3.2. Nhận dạng ảnh (`/image`)
+### 3.1. Nhận dạng ảnh (`/` — trang chủ)
 
 ![Màn hình Nhận dạng ảnh](../screenshots/image-detection.png)
 
@@ -162,7 +150,7 @@ chất lượng ra sao, và hiện có đang khoẻ không (FR-4.1, FR-4.2, FR-6
 Việc huỷ giữa chừng (chọn tệp khác, xoá form, rời trang) sẽ **abort** request đang bay và
 **không** bị báo là lỗi — huỷ là ý người dùng.
 
-### 3.3. Nhận dạng video (`/video`)
+### 3.2. Nhận dạng video (`/video`)
 
 ![Màn hình Nhận dạng video](../screenshots/video-detection.png)
 
@@ -195,43 +183,7 @@ vẫn bị hỏi mãi chừng nào tab còn mở.
 · *error* (tách riêng lỗi tải lên, lỗi hỏi tiến độ, lỗi nạp danh sách kết quả — ba nguyên nhân khác nhau
 nên ba nút thử lại khác nhau) · *success*.
 
-### 3.4. Webcam (`/webcam`)
-
-![Màn hình Webcam](../screenshots/webcam.png)
-
-**Chức năng:** nhận dạng thời gian thực từ camera của máy người dùng (FR-3.1 → FR-3.5).
-
-**Bố cục hai cột:** trái là camera và số đo, phải là danh sách biển số của phiên.
-
-**Thành phần:**
-
-* **Điều khiển camera** — nút Bật/Tắt, chọn thiết bị (khi máy có nhiều camera),
-  chọn chu kỳ gửi khung hình: 400 ms / 700 ms / 1 giây / 2 giây (FR-3.2).
-* **Khung hình trực tiếp** — bounding box và nhãn biển số vẽ chồng lên hình đang phát (FR-3.4).
-* **Bảng đo hiệu năng** — tốc độ thực tế (FPS đo trong 5 giây gần nhất), thời gian xử lý phía
-  máy chủ, trọn vòng gửi–nhận, số khung đã gửi và **số khung bị bỏ qua**.
-* **Bảng biển số trong phiên** — mỗi biển số **một dòng** kèm số lần xuất hiện. Biển phát hiện
-  được nhưng OCR không đọc nổi được **đếm gộp**, không liệt kê từng dòng (FR-3.5).
-
-**Luồng thao tác:** bấm **Bật camera** → trình duyệt hỏi quyền → hình hiện lên → vòng lặp
-tự động chụp và gửi khung hình → kết quả cập nhật liên tục → bấm **Tắt** để giải phóng camera.
-
-**Bốn trạng thái:** *loading* (spinner phủ lên khung trong lúc mở camera) · *empty*
-("Camera đang tắt" / "Chưa nhận được biển số nào") · *error* (hai loại lỗi tách biệt, xem dưới)
-· *success*.
-
-**Hai loại lỗi được tách riêng có chủ ý:**
-
-1. **Lỗi camera** — không cấp quyền, không có thiết bị, thiết bị bị chiếm. Hiện panel riêng
-   gồm *chuyện gì đã xảy ra* **và** *cách khắc phục cụ thể cho đúng nguyên nhân đó*. Nói
-   "không truy cập được camera" mà không nói phải cấp quyền, cắm thiết bị hay đóng Zoom
-   là để người dùng tay không.
-2. **Lỗi máy chủ** — camera vẫn tốt, chỉ là khung hình bị từ chối. Hình **vẫn giữ trên màn hình**,
-   lỗi hiện dạng dải thông báo. Sau **5 lỗi liên tiếp**, vòng lặp **tự tạm dừng** và hiện một
-   thông báo kèm nút *Tiếp tục* — thay vì đập vào backend đã chết mỗi 700 ms và nháy cùng
-   một lỗi vô tận.
-
-### 3.5. Lịch sử (`/history`)
+### 3.3. Lịch sử (`/history`)
 
 ![Màn hình Lịch sử](../screenshots/history.png)
 
@@ -266,6 +218,38 @@ Hai chi tiết kỹ thuật ảnh hưởng trực tiếp tới thứ người d�
   đến muộn của bộ lọc cũ ghi đè lên kết quả đúng.
 * Xoá dòng **cuối cùng** của một trang sẽ lùi về trang trước, thay vì nạp lại một trang không
   còn tồn tại và hiện bảng trống.
+
+### 3.4. Các trang đã gỡ khỏi giao diện (2026-07-20)
+
+Hai trang dưới đây từng tồn tại và đã được **gỡ trong ngày 2026-07-20** theo hai lần thu hẹp
+phạm vi liên tiếp. Mục này giữ lại để bản tài liệu sau không hiểu nhầm là sót việc, và để
+người bảo trì biết năng lực tương ứng nay nằm ở đâu.
+
+#### 3.4.1. Webcam — *trang đã gỡ 2026-07-20*
+
+> Gỡ theo thay đổi phạm vi thứ nhất (FR-3.1/FR-3.4 chuyển M → W — xem
+> [functional-requirements.md mục 4](../00-requirements/functional-requirements.md)).
+> Năng lực nhận dạng thời gian thực **vẫn tồn tại ở tầng API** — `POST /api/detect/frame`
+> với phiên gộp trùng theo `job_id`, có kiểm thử tự động (FR-3.2/3.3/3.5 vẫn Must ở mức API).
+> Mã nguồn của trang (route, `pages/WebcamDetection.tsx`, `components/detection/webcam/`,
+> hàm `detectFrame`) còn trong lịch sử git nếu cần khôi phục.
+
+#### 3.4.2. Tổng quan (Dashboard) — *trang đã gỡ 2026-07-20*
+
+> Gỡ theo thay đổi phạm vi thứ hai. **FR-4.1 chuyển M → W** — đây là yêu cầu mức **Must**
+> đầu tiên bị gỡ khỏi phạm vi trong toàn dự án — và **FR-4.2 chuyển S → W**.
+> Số liệu thống kê **vẫn truy vấn được nguyên vẹn** qua `GET /api/statistics`, tình trạng hệ thống
+> qua `GET /health`; cả hai endpoint vẫn phục vụ và **vẫn có kiểm thử tự động ở backend**,
+> chỉ là không còn màn hình nào của giao diện tiêu thụ chúng.
+> Mã nguồn của trang (route `/dashboard`, `pages/Dashboard.tsx`, thư mục `components/dashboard/`,
+> `hooks/useApi.ts`, các hàm `getStatistics` / `getHealth` trong `services/api.ts`, và gói
+> `recharts`) còn trong lịch sử git nếu cần khôi phục.
+> Riêng các kiểu dữ liệu `Statistics`, `StatisticsQuery`, `HealthStatus`, `InputTypeBreakdown`
+> trong `src/types/index.ts` được **giữ lại có chủ đích** — chúng là bản sao hợp đồng dữ liệu của
+> hai endpoint vẫn đang sống, nên vẫn phải khớp schema backend; lý do được ghi ngay trong tệp.
+> Ảnh chụp màn hình cũ `docs/screenshots/dashboard.png` đã được **xoá** cùng trang: giữ lại
+> một ảnh của màn hình không còn tồn tại chỉ tạo rủi ro có người dùng nhầm nó làm minh hoạ
+> giao diện hiện hành. Cần xem lại thì lấy từ lịch sử git.
 
 ---
 
@@ -339,7 +323,10 @@ sequenceDiagram
 ## 5. Bảng đối chiếu yêu cầu chức năng → màn hình
 
 Danh sách yêu cầu lấy từ `docs/00-requirements/functional-requirements.md`.
-Cột **Mức** giữ nguyên phân loại MoSCoW của tài liệu gốc (M = Must, S = Should, C = Could).
+Cột **Mức** giữ nguyên phân loại MoSCoW của tài liệu gốc (M = Must, S = Should, C = Could,
+W = Won't). Bốn mã đổi mức theo hai thay đổi phạm vi ngày 2026-07-20:
+**FR-3.1 / FR-3.4 (M → W)** khi gỡ trang Webcam, và **FR-4.1 (M → W) / FR-4.2 (S → W)**
+khi gỡ trang Tổng quan.
 
 ### FR-1 — Nhận dạng từ ảnh
 
@@ -366,20 +353,28 @@ Cột **Mức** giữ nguyên phân loại MoSCoW của tài liệu gốc (M = M
 
 ### FR-3 — Nhận dạng thời gian thực (Webcam)
 
+> Trang Webcam đã gỡ 2026-07-20 (xem mục 3.4). FR-3.2/3.3/3.5 vẫn **Must** nhưng được đáp ứng
+> và kiểm chứng ở **tầng API**, ngoài phạm vi giao diện — tương tự FR-2.2.
+
 | Mã | Yêu cầu (rút gọn) | Mức | Màn hình đáp ứng | Trạng thái |
 |---|---|---|---|---|
-| FR-3.1 | Xin quyền và hiển thị luồng webcam | M | Webcam — nút Bật camera, khung hình trực tiếp, panel lỗi có gợi ý khắc phục | ✅ |
-| FR-3.2 | Gửi khung hình theo chu kỳ cấu hình được | M | Webcam — dropdown 400 ms / 700 ms / 1 s / 2 s | ✅ |
-| FR-3.3 | Phát hiện và nhận dạng trên luồng trực tiếp | M | Webcam — `POST /api/detect/frame` | ✅ |
-| FR-3.4 | Vẽ bounding box và nhãn chồng lên khung hình | M | Webcam — overlay trên khung camera | ✅ |
-| FR-3.5 | Lưu lịch sử phiên webcam, có gộp trùng | M | Webcam — bảng biển số trong phiên (một dòng mỗi biển + số lần xuất hiện); dùng chung một `job_id` cho cả phiên | ✅ |
+| FR-3.1 | Xin quyền và hiển thị luồng webcam | W | — (trang Webcam đã gỡ 2026-07-20, mã còn trong lịch sử git) | ➖ gỡ khỏi giao diện |
+| FR-3.2 | Nhận khung hình gửi về backend theo từng yêu cầu | M | — (tầng API: `POST /api/detect/frame`) | ➖ ngoài phạm vi giao diện |
+| FR-3.3 | Phát hiện và nhận dạng trên khung hình trực tiếp | M | — (tầng API, cùng endpoint trên) | ➖ ngoài phạm vi giao diện |
+| FR-3.4 | Vẽ bounding box và nhãn chồng lên khung hình | W | — (trang Webcam đã gỡ 2026-07-20) | ➖ gỡ khỏi giao diện |
+| FR-3.5 | Lưu lịch sử phiên có gộp trùng theo `job_id` | M | — (tầng API); bản ghi tạo ra vẫn tra cứu được ở trang Lịch sử | ➖ ngoài phạm vi giao diện |
 
 ### FR-4 — Dashboard, lịch sử và tra cứu
 
+> Trang Tổng quan đã gỡ 2026-07-20 (xem mục 3.4.2). FR-4.1 chuyển **M → W** và FR-4.2 chuyển
+> **S → W**: hai yêu cầu này nói về *màn hình* thống kê, mà màn hình đó không còn.
+> Dữ liệu để dựng lại chúng thì **vẫn phục vụ đầy đủ** ở `GET /api/statistics` và vẫn có
+> kiểm thử ở backend. FR-4.3 → FR-4.8 **không đổi** — chúng thuộc trang Lịch sử.
+
 | Mã | Yêu cầu (rút gọn) | Mức | Màn hình đáp ứng | Trạng thái |
 |---|---|---|---|---|
-| FR-4.1 | Chỉ số tổng hợp: tổng lượt, độ tin cậy TB, thời gian xử lý TB, phân bố theo nguồn | M | Tổng quan — 4 thẻ chỉ số + biểu đồ theo nguồn | ✅ |
-| FR-4.2 | Biểu đồ số lượt theo thời gian | S | Tổng quan — biểu đồ 7 ngày, có chế độ bảng và trạng thái rỗng riêng | ✅ |
+| FR-4.1 | Chỉ số tổng hợp: tổng lượt, độ tin cậy TB, thời gian xử lý TB, phân bố theo nguồn | W | — (trang Tổng quan đã gỡ 2026-07-20; dữ liệu vẫn có ở `GET /api/statistics`, mã còn trong lịch sử git) | ➖ gỡ khỏi giao diện |
+| FR-4.2 | Biểu đồ số lượt theo thời gian | W | — (trang Tổng quan đã gỡ 2026-07-20; `statistics.daily_counts` vẫn được API trả về) | ➖ gỡ khỏi giao diện |
 | FR-4.3 | Danh sách lịch sử có phân trang | M | Lịch sử — bảng + phân trang 10/20/50/100 | ✅ |
 | FR-4.4 | Tìm theo biển số, khớp một phần | M | Lịch sử — ô tìm kiếm (debounce) | ✅ |
 | FR-4.5 | Lọc theo loại đầu vào, khoảng thời gian, ngưỡng tin cậy | M | Lịch sử — thanh bộ lọc, kết hợp được nhiều điều kiện | ✅ |
@@ -400,23 +395,47 @@ Cột **Mức** giữ nguyên phân loại MoSCoW của tài liệu gốc (M = M
 
 | Mã | Yêu cầu (rút gọn) | Mức | Màn hình đáp ứng | Trạng thái |
 |---|---|---|---|---|
-| FR-6.1 | Endpoint sức khoẻ báo trạng thái mô hình và CSDL | S | Tổng quan — thẻ **Trạng thái hệ thống** | ✅ (hiển thị) |
+| FR-6.1 | Endpoint sức khoẻ báo trạng thái mô hình và CSDL | S | — (tầng API: `GET /health`, vẫn phục vụ và vẫn có kiểm thử; thẻ **Trạng thái hệ thống** hiển thị nó đã đi cùng trang Tổng quan 2026-07-20) | ➖ ngoài phạm vi giao diện |
 | FR-6.2 | Log có cấu trúc cho mọi lượt và mọi lỗi | S | Toàn bộ — mỗi request mang `X-Request-ID`, mã này được hiện lại khi có lỗi | ✅ (phần đóng góp của giao diện) |
 | FR-6.3 | Lỗi thân thiện, **không** rò rỉ stack trace | M | Toàn bộ — bộ chuẩn hoá lỗi trong `services/api.ts` | ✅ |
 | FR-6.4 | Cấu hình đọc từ biến môi trường, không hard-code | M | Toàn bộ — `VITE_API_URL`, `VITE_API_TIMEOUT_MS` | ✅ |
 
-**Tổng kết:** trong 34 yêu cầu chức năng, **2 nằm ngoài phạm vi giao diện** (FR-2.2 trích khung hình,
-FR-5.3 script dọn tệp mồ côi). Trong 32 yêu cầu còn lại: **30 đã đáp ứng đầy đủ**,
-**1 đáp ứng một phần** (FR-2.6 — có tiến độ, thiếu chức năng huỷ), **1 chưa làm**
-(FR-5.4 — xoá hàng loạt, mức Could).
+**Tổng kết — cách tính.** Xuất phát từ **34** yêu cầu chức năng của
+`functional-requirements.md` (FR-1: 7 · FR-2: 6 · FR-3: 5 · FR-4: 8 · FR-5: 4 · FR-6: 4 = 34),
+trừ đi hai nhóm không thuộc phạm vi đánh giá của giao diện:
 
-Toàn bộ yêu cầu mức **M (Must)** liên quan giao diện đều đã đáp ứng đầy đủ.
+| Nhóm | Các mã | Số lượng |
+|---|---|:---:|
+| **Ngoài phạm vi giao diện** — vẫn được đáp ứng và kiểm thử, nhưng ở tầng khác | FR-2.2 (trích khung hình), FR-5.3 (script dọn tệp mồ côi), FR-3.2 / FR-3.3 / FR-3.5 (tầng API `POST /api/detect/frame`), FR-6.1 (tầng API `GET /health`) | **6** |
+| **Đã gỡ khỏi giao diện — mức W** theo hai thay đổi phạm vi 2026-07-20 | FR-3.1, FR-3.4 (gỡ trang Webcam) · FR-4.1, FR-4.2 (gỡ trang Tổng quan) | **4** |
+
+⇒ Còn lại **34 − 6 − 4 = 24** yêu cầu thuộc phạm vi đánh giá của giao diện. Trong 24 yêu cầu đó:
+
+* **22 đã đáp ứng đầy đủ**;
+* **1 đáp ứng một phần** — FR-2.6 (có tiến độ, thiếu chức năng huỷ);
+* **1 chưa làm** — FR-5.4 (xoá hàng loạt, mức Could).
+
+*(22 + 1 + 1 = 24 ✓)*
+
+**So với bản trước hai thay đổi phạm vi:** con số từng là 5 ngoài phạm vi / 2 đã gỡ /
+27 còn lại với 25 đáp ứng đầy đủ. Chênh lệch đến từ đúng ba mã: FR-4.1 và FR-4.2 chuyển sang
+nhóm "đã gỡ", FR-6.1 chuyển sang nhóm "ngoài phạm vi giao diện" (endpoint `GET /health` không
+đổi gì, chỉ là không còn màn hình nào hiển thị nó).
+
+**Về mức Must.** Toàn bộ yêu cầu mức **M (Must)** còn nằm trong phạm vi giao diện đều đã đáp ứng
+đầy đủ. Cần nói rõ điều đã đổi: **FR-4.1 là yêu cầu mức Must đầu tiên của dự án bị gỡ khỏi
+phạm vi**, chứ không phải một yêu cầu Must chưa làm xong. Đây là quyết định thu hẹp phạm vi có
+chủ đích, và dữ liệu để đáp ứng lại nó bất cứ lúc nào vẫn còn nguyên ở `GET /api/statistics`.
 
 ---
 
 ## 6. Các quyết định thiết kế đáng chú ý
 
-### 6.1. Hàng đợi một khe ở trang Webcam
+### 6.1. Hàng đợi một khe cho luồng khung hình thời gian thực
+
+> *Ghi chú 2026-07-20:* trang Webcam đã gỡ khỏi giao diện. Quyết định dưới đây được **giữ lại
+> làm tư liệu thiết kế** và nay là **yêu cầu đối với bất kỳ client nào gọi**
+> `POST /api/detect/frame` (xem ràng buộc hiệu năng ở FR-3).
 
 **Quyết định:** vòng lặp gửi khung hình chỉ cho phép **đúng một request đang bay**.
 Khi bộ đếm thời gian kích hoạt mà khe vẫn bận, khung hình đó bị **bỏ đi**, **không xếp hàng**.
@@ -444,6 +463,13 @@ sẽ bị gọi mỗi 700 ms cho tới khi người dùng đóng tab, và cùng 
 
 ### 6.2. Phân biệt "lượt nhận dạng" và "biển số phát hiện"
 
+> *Ghi chú 2026-07-20:* trang Tổng quan đã gỡ khỏi giao diện. Quyết định dưới đây được **giữ lại
+> làm tư liệu thiết kế** — phần **hợp đồng dữ liệu** của nó (`total_jobs` ≠ `total_detections`,
+> `by_input_type` tách `job_count` / `detection_count`) **vẫn còn nguyên** trong phản hồi của
+> `GET /api/statistics` và trong các kiểu dữ liệu giữ lại ở `src/types/index.ts`, nên nó là
+> **yêu cầu đối với bất kỳ client nào tiêu thụ endpoint đó**. Phần nói về cách trình bày
+> (thẻ, biểu đồ, quy ước màu) mô tả trang đã gỡ, đọc như đặc tả tham chiếu nếu dựng lại.
+
 **Quyết định:** dashboard hiển thị `total_jobs` và `total_detections` thành **hai thẻ riêng biệt,
 đặt cạnh nhau**, mỗi thẻ có nhãn khác nhau, có dòng mô tả, và có tooltip giải thích kèm ví dụ.
 Cả hai biểu đồ (theo ngày và theo nguồn) cũng vẽ **hai chuỗi** thay vì một, dùng **cùng một quy ước màu
@@ -466,8 +492,9 @@ vẫn hợp lý**. Gọi cả hai là "số lần nhận dạng" thì:
 
 Chính vì rủi ro này mà quyết định ở mục 6.1 (một `job_id` cho cả phiên webcam) là **bắt buộc**,
 không phải tuỳ chọn: gửi mỗi khung hình không kèm `job_id` sẽ mở một job mới cho **từng khung**,
-biến một phiên 30 giây thành ~40 lượt tải lên. Không có gì hỏng thấy được — dashboard chỉ lặng lẽ
-trở nên sai.
+biến một phiên 30 giây thành ~40 lượt tải lên. Không có gì hỏng thấy được — số thống kê chỉ lặng lẽ
+trở nên sai. Rủi ro này **không mất đi khi gỡ trang Tổng quan**: nó nằm ở tầng dữ liệu, và
+`GET /api/statistics` vẫn đang trả về đúng những con số đó.
 
 Bảng `by_input_type` cũng tách `job_count` và `detection_count`, và đây là lý do chọn **biểu đồ cột nhóm
 thay vì biểu đồ tròn**: biểu đồ tròn chỉ mã hoá được **một** đại lượng, nên sẽ giấu mất đúng cái khác biệt
@@ -537,10 +564,10 @@ thay vì nối vào một endpoint tự bịa. Gọi một endpoint không tồn
 
 | Mã | Yêu cầu | Cách đáp ứng | Kết luận |
 |---|---|---|---|
-| **NFR-U1** | Người dùng mới hoàn thành lượt nhận dạng ảnh đầu tiên **≤ 3 click**, không cần đọc tài liệu | (1) bấm *Nhận dạng ảnh* ở sidebar → (2) bấm khung kéo–thả và chọn tệp → (3) bấm *Nhận dạng*. Đúng **3 thao tác**. Dashboard rỗng còn rút ngắn hơn: nút *Nhận dạng ảnh đầu tiên* dẫn thẳng sang trang, còn **2 thao tác**. Mọi khung rỗng đều ghi sẵn việc cần làm tiếp | ✅ Đạt |
-| **NFR-U2** | 100% thao tác > 500 ms có phản hồi trực quan | Tải ảnh/video: thanh tiến độ **theo byte thật**. Suy luận: spinner + câu giải thích lý do chậm. Tác vụ video: phần trăm + số khung/tổng khung, cập nhật định kỳ. Webcam: chỉ báo *đang gửi* trên khung hình + bảng đo trực tiếp. Tải danh sách: skeleton lần đầu, làm mờ bảng cũ ở lần sau. Nút *Làm mới* / *Tải lại*: biểu tượng xoay + nhãn *Đang tải…*. Xoá bản ghi: nút chuyển trạng thái đang xử lý. Tải tệp về: nút hiện *Đang xuất…* | ✅ Đạt |
+| **NFR-U1** | Người dùng mới hoàn thành lượt nhận dạng ảnh đầu tiên **≤ 3 click**, không cần đọc tài liệu | Trang chủ nay chính là *Nhận dạng ảnh* (từ 2026-07-20), nên chỉ còn: (1) bấm khung kéo–thả và chọn tệp → (2) bấm *Nhận dạng* — **2 thao tác**. Trạng thái rỗng của trang Lịch sử cũng có lối đi thẳng sang trang chủ. Mọi khung rỗng đều ghi sẵn việc cần làm tiếp | ✅ Đạt |
+| **NFR-U2** | 100% thao tác > 500 ms có phản hồi trực quan | Tải ảnh/video: thanh tiến độ **theo byte thật**. Suy luận: spinner + câu giải thích lý do chậm. Tác vụ video: phần trăm + số khung/tổng khung, cập nhật định kỳ. Tải danh sách: skeleton lần đầu, làm mờ bảng cũ ở lần sau. Nút *Làm mới* / *Tải lại*: biểu tượng xoay + nhãn *Đang tải…*. Xoá bản ghi: nút chuyển trạng thái đang xử lý. Tải tệp về: nút hiện *Đang xuất…* | ✅ Đạt |
 | **NFR-U3** | Lỗi tiếng Việt, nêu nguyên nhân và cách khắc phục, không lộ mã lỗi kỹ thuật | Toàn bộ lỗi đi qua một bộ chuẩn hoá duy nhất. Lỗi camera có panel riêng gồm *nguyên nhân* + *cách sửa cụ thể theo đúng nguyên nhân*. Lỗi bộ lọc rỗng đi kèm nút *Xoá bộ lọc*. Không hiện stack trace, không hiện mã HTTP; thay vào đó là `request_id` để đối chiếu log | ✅ Đạt |
-| **NFR-U4** | Dùng được từ 1366×768 trở lên, không vỡ layout | Lưới của các thẻ chỉ số là 2 cột ở 1366px và 4 cột trên màn rộng — **không bao giờ** rớt xuống 1 cột trên ngưỡng tối thiểu. Sidebar cố định từ breakpoint `lg` (1024px) trở lên, dưới ngưỡng đó chuyển thành ngăn kéo có nút đóng. Trang ảnh và webcam dùng lưới 2 cột co giãn `minmax(0, …)` nên nội dung dài không đẩy vỡ khung. Bảng lịch sử cuộn ngang trong khung riêng. Ảnh chụp màn hình trong tài liệu này chụp ở **1440×900** | ✅ Đạt (kiểm tra bằng ảnh chụp thực tế ở 1440×900; **chưa** đo thủ công ở đúng 1366×768) |
+| **NFR-U4** | Dùng được từ 1366×768 trở lên, không vỡ layout | Sidebar cố định từ breakpoint `lg` (1024px) trở lên, dưới ngưỡng đó chuyển thành ngăn kéo có nút đóng. Trang ảnh dùng lưới 2 cột co giãn `minmax(0, …)` nên nội dung dài không đẩy vỡ khung. Bảng lịch sử và bảng kết quả video cuộn ngang trong khung riêng. Ảnh chụp màn hình trong tài liệu này chụp ở **1440×900**. *(Lưới thẻ chỉ số 2 cột / 4 cột từng được nêu ở đây đã đi cùng trang Tổng quan 2026-07-20.)* | ✅ Đạt (kiểm tra bằng ảnh chụp thực tế ở 1440×900; **chưa** đo thủ công ở đúng 1366×768) |
 | **NFR-U5** | Tương phản màu đạt WCAG AA (≥ 4,5:1) cho chữ chính | Bảng màu định nghĩa tập trung trong `tailwind.config.js` + `index.css` theo cặp nền/chữ (`surface`/`content`, `content-muted`), không rải màu tuỳ tiện trong từng thành phần. Chữ chính dùng tông rất tối trên nền trắng/xám nhạt. Trạng thái (thành công / cảnh báo / lỗi) **không chỉ dùng màu**: luôn kèm biểu tượng và chữ, nên vẫn đọc được khi mù màu | ⚠️ Đạt theo thiết kế, **chưa đo bằng công cụ** (xem mục 8) |
 
 ---
@@ -562,15 +589,19 @@ thay vì nối vào một endpoint tự bịa. Gọi một endpoint không tồn
 | # | Hạn chế | Hướng xử lý |
 |---|---|---|
 | 6 | ✅ **Đã giải quyết.** Khi tài liệu này được viết lần đầu, backend còn chạy `StubPipeline` nên biển số hiển thị là giả lập. **Hiện backend đã nạp mô hình thật** (`models/baseline-416-v1.pt`, `/health` → `model_loaded: true`) và `StubPipeline` đã bị đưa ra khỏi đường chạy chính. Đúng như dự đoán, hợp đồng API không đổi ⇒ **frontend không phải sửa dòng nào** | Còn lại: chụp lại bộ ảnh minh hoạ với kết quả nhận dạng thật (xem hạn chế 10) |
-| 7 | **NFR-U5 chưa được đo bằng công cụ.** Tương phản màu đạt theo thiết kế nhưng chưa chạy axe DevTools hay Lighthouse để có số liệu tỉ lệ tương phản cụ thể | Chạy Lighthouse Accessibility + axe DevTools trên cả 5 trang, ghi lại tỉ lệ đo được cho từng cặp màu chính |
+| 7 | **NFR-U5 chưa được đo bằng công cụ.** Tương phản màu đạt theo thiết kế nhưng chưa chạy axe DevTools hay Lighthouse để có số liệu tỉ lệ tương phản cụ thể | Chạy Lighthouse Accessibility + axe DevTools trên cả 3 trang, ghi lại tỉ lệ đo được cho từng cặp màu chính |
 | 8 | **NFR-U4 chưa kiểm tra ở đúng 1366×768.** Ảnh chụp minh hoạ ở 1440×900; bố cục đã tính cho ngưỡng 1366 nhưng chưa có bằng chứng chụp màn hình ở đúng độ phân giải đó | Chụp lại bộ ảnh ở 1366×768 và bổ sung vào `docs/screenshots/` |
 | 9 | **Chưa có kiểm thử tự động cho giao diện.** `playwright` đã nằm trong devDependencies và đã dùng để chụp ảnh màn hình, nhưng chưa có bộ test hồi quy | Viết test E2E cho luồng chính: tải ảnh → thấy kết quả; lọc lịch sử → đúng số dòng; xoá → biến mất |
-| 10 | **Ảnh chụp màn hình hiện chỉ ở trạng thái rỗng/ban đầu** với các trang Ảnh, Video và Webcam. Chưa có ảnh minh hoạ trạng thái *success* của ba trang này | Chụp bổ sung sau khi có mô hình thật và dữ liệu mẫu đủ đại diện |
+| 10 | **Ảnh chụp màn hình hiện chỉ ở trạng thái rỗng/ban đầu** với các trang Ảnh và Video (trang Webcam và trang Tổng quan đều đã gỡ 2026-07-20). Chưa có ảnh minh hoạ trạng thái *success* của hai trang này | Chụp bổ sung sau khi có mô hình thật và dữ liệu mẫu đủ đại diện |
+| 11 | **Ba ảnh chụp còn lại được chụp khi giao diện còn năm mục điều hướng và trang chủ là Tổng quan** — thanh bên trong ảnh không khớp giao diện hiện hành. (`dashboard.png` và `webcam.png` đã xoá cùng hai trang; lấy lại được từ lịch sử git nếu cần.) | **Chụp lại cả ba ảnh** trên giao diện 3 trang trước khi ghép quyển đồ án |
 
 ### 8.3. Hướng cải thiện thêm
 
-1. **Tự động làm mới dashboard** — hiện phải bấm *Làm mới* thủ công. Có thể làm mới định kỳ,
-   nhưng cần thận trọng: cập nhật ngầm khi người dùng đang đọc số sẽ gây khó chịu hơn là hữu ích.
+1. **Dựng lại màn hình thống kê nếu phạm vi được mở lại** — dữ liệu chưa mất gì: `GET /api/statistics`
+   và `GET /health` vẫn phục vụ, các kiểu dữ liệu tương ứng vẫn còn trong `src/types/index.ts`,
+   và toàn bộ mã trang cũ còn trong lịch sử git. Nếu dựng lại, cân nhắc thư viện biểu đồ nhẹ hơn
+   `recharts` — riêng gói này chiếm phần lớn phần dung lượng đã cắt được khi gỡ trang
+   (~730 KB → 328,8 KB).
 2. **Chế độ tối** — bảng màu đã tập trung ở một chỗ nên chi phí thêm không lớn.
 3. **Xem trước theo lô** — hiện mỗi lần chỉ xử lý một ảnh. Tải lên nhiều ảnh cùng lúc sẽ hữu ích
    khi cần dựng nhanh dữ liệu đánh giá.

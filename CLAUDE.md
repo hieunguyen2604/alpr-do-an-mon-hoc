@@ -166,6 +166,8 @@ Bounding boxes
 
 Recognition history
 
+> **Ghi chú 2026-07-20:** trang Webcam đã **gỡ khỏi giao diện web** theo quyết định thu gọn phạm vi (xem Nhật ký quyết định). Năng lực thời gian thực giữ ở tầng API `POST /api/detect/frame`. FR-3.1/FR-3.4 → Won't; chi tiết tại [functional-requirements.md](docs/00-requirements/functional-requirements.md#4-fr-3--nhận-dạng-thời-gian-thực-webcam).
+
 ---
 
 ## Dashboard
@@ -697,3 +699,5 @@ Các quyết định đã chốt, bổ sung cho tài liệu gốc:
 | 2026-07-19 | Biển 2 dòng xử lý bằng **split-then-hstack** (rectify → phân loại → tách → ghép ngang → OCR một lần → validate từng dòng) | trên bộ RodoSol-ALPR của Brazil, OpenALPR đo được 94,3% trên biển 1 dòng nhưng chỉ 45,7% trên biển 2 dòng (số liệu Brazil, KHÔNG phải Việt Nam) — điểm gãy đã đo, không phải rủi ro giả định | [01-ocr-comparison.md](docs/reports/01-ocr-comparison.md) mục 4.5 |
 | 2026-07-19 | **VNLP là dataset chính** của Phase 2 (có điều kiện: xin được xác nhận giấy phép, nếu không chuyển Phương án B) | Bộ duy nhất đủ quy mô và có nhãn layout cho cả 3 nhánh detector / layout classifier / OCR | [01-dataset-survey.md](docs/reports/01-dataset-survey.md) mục 5.3, 6.1 |
 | 2026-07-19 | **Charset OCR huấn luyện đủ A–Z + 0–9 (36 ký tự)**, ràng buộc hợp lệ đặt ở tầng hậu xử lý — **cấm** thu hẹp còn 20 chữ cái | Chữ `R` hợp lệ ở vị trí thứ hai của seri xe máy; charset 20 chữ làm mất thông tin ngay ở tầng mô hình, hậu xử lý không cứu được | [01-vn-plate-standards.md](docs/reports/01-vn-plate-standards.md) mục 5.2, 5.3 |
+| 2026-07-20 | **Thu gọn giao diện web còn 4 trang**: trang chủ đổi thành Nhận dạng ảnh, Tổng quan lùi cuối menu (`/dashboard`), **gỡ trang Webcam** (route, menu, page, components, hàm `detectFrame`) | Người thực hiện yêu cầu tinh gọn cho demo. FR-3.1/FR-3.4 chuyển M→W; năng lực thời gian thực giữ nguyên ở tầng API `POST /api/detect/frame` (endpoint + test không đổi) | [functional-requirements.md](docs/00-requirements/functional-requirements.md#4-fr-3--nhận-dạng-thời-gian-thực-webcam) |
+| 2026-07-20 | **Gỡ tiếp trang Tổng quan (Dashboard)** — giao diện còn **3 trang**: Nhận dạng ảnh (chủ), Nhận dạng video, Lịch sử. Xoá `pages/Dashboard.tsx`, `components/dashboard/` (10 tệp), hook `useApi`, hàm `getStatistics`/`getHealth`, và **gói `recharts`** | Người thực hiện yêu cầu. **FR-4.1 (Must) và FR-4.2 (Should) → W** — đây là lần đầu một yêu cầu **Must** bị gỡ khỏi phạm vi, phải nêu rõ khi bảo vệ. Endpoint `GET /api/statistics` và `/health` **vẫn phục vụ và vẫn có test**; FR-4.3–4.8 (lịch sử, tìm kiếm, lọc, chi tiết, tải về, sắp xếp) không đổi. Đổi lại: gói tải về giảm từ ~730 KB xuống 329 KB (−55%) | [functional-requirements.md](docs/00-requirements/functional-requirements.md#5-fr-4--dashboard-lịch-sử-và-tra-cứu) |

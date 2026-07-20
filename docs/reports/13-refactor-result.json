@@ -1,0 +1,240 @@
+{
+  "result_date": "2026-07-20",
+  "git_commit": "f0f620222245023dc3b29a5c96a6c3d54cd4128a",
+  "git_branch": "main",
+  "baseline_file": "docs/reports/13-refactor-baseline.json",
+  "overall_status": "green",
+  "summary": "Kiem thu toan bo he thong sau cac thay doi o cac phase truoc. Khong co muc nao tut so voi baseline. Khong phai hoan nguyen bat ky thay doi nao.",
+
+  "python": {
+    "pytest": {
+      "command": "backend/.venv/Scripts/python.exe -m pytest -q --tb=short",
+      "collected": 882,
+      "passed": 881,
+      "failed": 0,
+      "xfailed": 1,
+      "skipped": 0,
+      "warnings": 17,
+      "duration_seconds": 15.93,
+      "exit_code": 0,
+      "xfail_reason": "tests/integration/test_api_detection.py::TestErrorBodies::test_a_failed_image_detection_records_the_failed_job - loi da biet: DetectionService._fail_job goi db.rollback() truoc khi ghi ban ghi that bai, _create_job moi chi FLUSH nen job row bi huy; upload anh that bai khong de lai dong nao.",
+      "vs_baseline": "GIU NGUYEN (882/881/0/1)"
+    },
+    "coverage": {
+      "command": "pytest -q --cov=ai --cov=backend --cov-report=term",
+      "total_percent": 87.7,
+      "total_statements": 2931,
+      "total_missed": 317,
+      "branches": 578,
+      "partial_branches": 76,
+      "ai_layer": {
+        "ai/inference/config.py": 100.0,
+        "ai/inference/plate_rules.py": 100.0,
+        "ai/inference/normalizer.py": 98.1,
+        "ai/inference/types.py": 95.9,
+        "ai/inference/pipeline.py": 93.1,
+        "ai/inference/detector.py": 89.9,
+        "ai/inference/two_line.py": 88.8,
+        "ai/inference/recognizer.py": 84.9,
+        "ai/inference/interfaces.py": 81.8
+      },
+      "backend_business_layer": {
+        "backend/schemas/detection.py": 100.0,
+        "backend/repositories/job_repository.py": 96.2,
+        "backend/models/detection.py": 96.2,
+        "backend/services/history_service.py": 94.9,
+        "backend/services/storage_service.py": 93.7,
+        "backend/services/statistics_service.py": 92.0,
+        "backend/repositories/detection_repository.py": 90.0,
+        "backend/repositories/base.py": 81.4,
+        "backend/main.py": 63.2,
+        "backend/services/detection_service.py": 60.8,
+        "backend/models/database.py": 59.6
+      },
+      "note": "Baseline khong ghi so coverage nen day la so do lan dau, khong co muc so sanh. Hai module thap nhat (detection_service 60.8%, main 63.2%) chu yeu la nhanh xu ly video nen va lifespan startup - can moi truong that de phu."
+    },
+    "architecture_tests": {
+      "command": "pytest tests/test_architecture.py -v",
+      "collected": 18,
+      "passed": 18,
+      "failed": 0,
+      "exit_code": 0,
+      "constraints_verified": [
+        "ai/ khong import fastapi, pydantic, pydantic_settings, starlette",
+        "ai/inference/ khong import ca sqlalchemy va backend",
+        "import ai khong keo theo framework nao vao sys.modules",
+        "pipeline dung duoc tu fake khong can ML runtime",
+        "khong co duong dan tuyet doi hard-code trong ai/ va backend/",
+        "ca hai module cau hinh deu suy ra root tu __file__"
+      ]
+    }
+  },
+
+  "frontend": {
+    "tsc": {
+      "command": "npx tsc --noEmit",
+      "errors": 0,
+      "exit_code": 0,
+      "vs_baseline": "GIU NGUYEN (0 loi)"
+    },
+    "eslint": {
+      "command": "npm run lint (eslint . --ext .ts,.tsx --report-unused-disable-directives --max-warnings 0)",
+      "errors": 0,
+      "warnings": 0,
+      "exit_code": 0,
+      "vs_baseline": "GIU NGUYEN (sach)"
+    },
+    "build": {
+      "command": "npm run build (tsc --noEmit && vite build)",
+      "success": true,
+      "exit_code": 0,
+      "modules_transformed": 2480,
+      "modules_transformed_baseline": 2489,
+      "build_time_seconds": 2.95,
+      "build_time_baseline": 3.27,
+      "chunks": {
+        "index": {"file": "dist/assets/index-HfMMjWXv.js", "kb": 179.22, "gzip_kb": 58.86, "baseline_kb": 179.96, "baseline_gzip_kb": 59.07, "delta_kb": -0.74},
+        "vendor_charts": {"file": "dist/assets/generateCategoricalChart-D7SnXJiP.js", "kb": 374.97, "gzip_kb": 104.30, "baseline_kb": 374.97, "baseline_gzip_kb": 104.30, "delta_kb": 0.0},
+        "api": {"file": "dist/assets/api-BeUOBiDk.js", "kb": 52.63, "gzip_kb": 20.58},
+        "History": {"kb": 27.93, "gzip_kb": 9.09},
+        "VideoDetection": {"kb": 15.44, "gzip_kb": 5.60},
+        "Dashboard": {"kb": 15.27, "gzip_kb": 5.07},
+        "ImageDetection": {"kb": 14.88, "gzip_kb": 5.78},
+        "DailyTrendChart": {"kb": 14.21, "gzip_kb": 5.73}
+      },
+      "css_kb": 30.61,
+      "css_baseline_kb": 32.97,
+      "css_delta_kb": -2.36,
+      "vs_baseline": "TOT HON MOT CHUT: chunk khoi dong 179.22KB (< 179.96KB), CSS 30.61KB (< 32.97KB), thoi gian build 2.95s (< 3.27s). Chunk chart vendor khong doi. Code-splitting theo route van hoat dong: chi index + api + trang duoc tai luc khoi dong."
+    }
+  },
+
+  "system_smoke": {
+    "server": {
+      "command": "backend/.venv/Scripts/python.exe -m uvicorn backend.main:app --port 8156",
+      "started": true,
+      "startup_ok": true,
+      "engine": "yolo:best.pt+paddleocr-PP-OCRv5-mobile(det=PP-OCRv5_mobile_det)",
+      "model_path": "D:/DATN/models/best.pt",
+      "device": "cpu",
+      "pipeline_warmup_ms": 2639.54,
+      "detector_load_seconds": 1.232,
+      "ocr_load_ms": 815.55
+    },
+    "health": {
+      "endpoint": "GET /health",
+      "http_status": 200,
+      "status": "ok",
+      "model_loaded": true,
+      "database_connected": true,
+      "app_name": "Vietnamese ALPR API",
+      "version": "0.1.0"
+    },
+    "image_detection": [
+      {
+        "file": "demo/images/1dong-1.png",
+        "endpoint": "POST /api/detect/image",
+        "http_status": 200,
+        "plate_count": 1,
+        "plate_number": "51G31691",
+        "raw_ocr_text": "51G-316.91",
+        "detection_confidence": 0.8734,
+        "ocr_confidence": 0.9990,
+        "plate_line_count": 1,
+        "is_valid_format": true,
+        "processing_time_seconds": 0.1574,
+        "expected": "doc duoc bien",
+        "verdict": "DAT"
+      },
+      {
+        "file": "demo/images/2dong-1.png",
+        "endpoint": "POST /api/detect/image",
+        "http_status": 200,
+        "plate_count": 1,
+        "plate_number": "59K120173",
+        "raw_ocr_text": "59-K1 201.73",
+        "detection_confidence": 0.9205,
+        "ocr_confidence": 0.9535,
+        "plate_line_count": 2,
+        "is_valid_format": true,
+        "processing_time_seconds": 0.3923,
+        "expected": "doc duoc bien 2 dong",
+        "verdict": "DAT - nhanh split-then-hstack hoat dong dung, nhan dien dung 2 dong"
+      },
+      {
+        "file": "demo/images/khong-co-bien-so.jpg",
+        "endpoint": "POST /api/detect/image",
+        "http_status": 200,
+        "plate_count": 0,
+        "results": [],
+        "processing_time_seconds": 0.0529,
+        "expected": "0 ket qua, HTTP 200",
+        "verdict": "DAT - tra mang rong voi HTTP 200, khong bao loi"
+      }
+    ],
+    "history": {
+      "endpoint": "GET /api/history?page=1&page_size=5",
+      "http_status": 200,
+      "verdict": "DAT - tra ve ban ghi moi nhat (id 5566 = 59K120173) ngay sau khi nhan dang, day du truong bbox/raw_ocr_text/source_job_id"
+    },
+    "statistics": {
+      "endpoint": "GET /api/statistics",
+      "http_status": 200,
+      "total_jobs": 4358,
+      "total_detections": 5566,
+      "unique_plates": 227,
+      "valid_format_count": 5176,
+      "invalid_format_count": 247,
+      "unreadable_count": 143,
+      "average_confidence": 0.8567,
+      "average_ocr_confidence": 0.9554,
+      "average_processing_time": 0.1576,
+      "by_input_type": [
+        {"input_type": "image", "job_count": 4344, "detection_count": 4412},
+        {"input_type": "video", "job_count": 6, "detection_count": 158},
+        {"input_type": "webcam", "job_count": 8, "detection_count": 996}
+      ],
+      "verdict": "DAT - tong hop day du, co ca daily_counts va by_input_type"
+    },
+    "shutdown": {
+      "port": 8156,
+      "process_killed": true,
+      "port_released": true,
+      "verdict": "DAT - cong 8156 da giai phong sau khi tat"
+    }
+  },
+
+  "docker": {
+    "command": "docker compose config --quiet",
+    "exit_code": 0,
+    "valid": true,
+    "rebuilt": false,
+    "rebuild_justification": "Khong co Dockerfile hay file cau hinh deployment nao bi sua trong dot refactor (git status tren deployment/ chi cho thay xoa file placeholder .gitkeep). Image da build va kiem chung o Phase 8."
+  },
+
+  "baseline_comparison_table": [
+    {"muc": "pytest collected", "baseline": 882, "sau": 882, "ket_qua": "GIU NGUYEN"},
+    {"muc": "pytest passed", "baseline": 881, "sau": 881, "ket_qua": "GIU NGUYEN"},
+    {"muc": "pytest failed", "baseline": 0, "sau": 0, "ket_qua": "GIU NGUYEN"},
+    {"muc": "pytest xfailed", "baseline": 1, "sau": 1, "ket_qua": "GIU NGUYEN"},
+    {"muc": "pytest skipped", "baseline": 0, "sau": 0, "ket_qua": "GIU NGUYEN"},
+    {"muc": "pytest warnings", "baseline": 17, "sau": 17, "ket_qua": "GIU NGUYEN"},
+    {"muc": "pytest duration (s)", "baseline": 15.51, "sau": 15.93, "ket_qua": "TUONG DUONG (+0.42s, nhieu do do)"},
+    {"muc": "tsc errors", "baseline": 0, "sau": 0, "ket_qua": "GIU NGUYEN"},
+    {"muc": "eslint errors", "baseline": 0, "sau": 0, "ket_qua": "GIU NGUYEN"},
+    {"muc": "eslint warnings", "baseline": 0, "sau": 0, "ket_qua": "GIU NGUYEN"},
+    {"muc": "build success", "baseline": true, "sau": true, "ket_qua": "GIU NGUYEN"},
+    {"muc": "build modules", "baseline": 2489, "sau": 2480, "ket_qua": "TOT HON (-9 module)"},
+    {"muc": "build time (s)", "baseline": 3.27, "sau": 2.95, "ket_qua": "TOT HON (-0.32s)"},
+    {"muc": "index chunk (KB)", "baseline": 179.96, "sau": 179.22, "ket_qua": "TOT HON (-0.74KB)"},
+    {"muc": "index chunk gzip (KB)", "baseline": 59.07, "sau": 58.86, "ket_qua": "TOT HON (-0.21KB)"},
+    {"muc": "vendor chart chunk (KB)", "baseline": 374.97, "sau": 374.97, "ket_qua": "GIU NGUYEN"},
+    {"muc": "CSS (KB)", "baseline": 32.97, "sau": 30.61, "ket_qua": "TOT HON (-2.36KB)"},
+    {"muc": "NFR-M1 ai/ khong dinh fastapi", "baseline": true, "sau": true, "ket_qua": "GIU NGUYEN (18/18 test kien truc pass)"}
+  ],
+
+  "regressions": [],
+  "reverted_changes": [],
+
+  "note": "Khong co muc nao tut so voi baseline. Ba muc frontend tot hon nhe (chunk khoi dong, CSS, thoi gian build). Toan bo smoke test he thong that dat ky vong: model tai duoc tu models/best.pt, doc dung bien 1 dong va 2 dong, anh khong co bien tra 0 ket qua HTTP 200, history va statistics deu 200, cong 8156 giai phong sach. docker compose config hop le."
+}

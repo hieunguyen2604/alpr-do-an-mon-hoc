@@ -1,8 +1,8 @@
 # Báo cáo Phase 7 — Kiểm thử
 
 **Ngày đo:** 19/07/2026
-**Ngày cập nhật:** 20/07/2026 (đo lại trên mô hình chính thức `models/best.pt`)
-**Trạng thái:** Bộ kiểm thử chạy sạch (861/862 pass, 1 xfail, 0 fail). **NFR-P1 ĐẠT** trên `best.pt` (5.857 ms → **731 ms** client-side / **780 ms** in-process p95). Rò rỉ dữ liệu **đã xử lý** bằng bộ `yolo_v3`; detection đo trên `best.pt` đạt cả bốn chỉ tiêu (mAP@0.5 0,9829 / mAP@0.5:0.95 0,7834). Nút thắt còn lại là **NFR-A4/A5/A6: độ chính xác OCR biển 2 dòng** (KHÔNG ĐẠT — kết quả thật, xem báo cáo OCR).
+**Ngày cập nhật:** 20/07/2026 (đo lại trên mô hình chính thức `models/best.pt`; số lượng test cập nhật theo lần chạy hồi quy ghi tại [13-refactor-result.json](13-refactor-result.json))
+**Trạng thái:** Bộ kiểm thử chạy sạch (**882 test thu thập / 881 đạt, 1 `xfail`, 0 fail**). **NFR-P1 ĐẠT** trên `best.pt` (5.857 ms → **731 ms** client-side / **780 ms** in-process p95). Rò rỉ dữ liệu **đã xử lý** bằng bộ `yolo_v3`; detection đo trên `best.pt` đạt cả bốn chỉ tiêu (mAP@0.5 0,9829 / mAP@0.5:0.95 0,7834). Nút thắt còn lại là **NFR-A4/A5/A6: độ chính xác OCR biển 2 dòng** (KHÔNG ĐẠT — kết quả thật, xem báo cáo OCR).
 
 ---
 
@@ -110,15 +110,22 @@ backend/.venv/Scripts/python.exe -m pytest --cov=ai --cov=backend \
 
 ### 3.1. Tổng kết chạy
 
+> **Mốc số liệu.** Bảng dưới là lần chạy **mới nhất, ngày 20/07/2026**
+> (`backend/.venv/Scripts/python.exe -m pytest -q`, chạy từ gốc kho `D:/DATN`),
+> ghi lại tại [13-refactor-result.json](13-refactor-result.json). Lần chạy Phase 7
+> ban đầu (19/07/2026) thu thập **862** test / **861** đạt — con số đó nay **đã
+> lạc hậu**, bộ test được bổ sung thêm `tests/test_ocr_accuracy.py` và một test
+> trong `tests/test_recognizer.py`.
+
 | Chỉ số | Giá trị |
 |---|---|
-| Số test thu thập | **862** |
-| **Pass** | **861** |
+| Số test thu thập | **882** |
+| **Pass** | **881** |
 | **Fail** | **0** |
 | `xfail` (lỗi đã biết, có mô tả) | **1** |
 | `skip` | 0 |
 | `error` | 0 |
-| Thời gian chạy | **36,70 giây** |
+| Thời gian chạy | **15,93 giây** (lệnh `pytest -q`, không bật đo bao phủ; lần chạy Phase 7 có `--cov` mất 36,70 giây) |
 | Cảnh báo | 17 (đều là `DeprecationWarning` của thư viện bên thứ ba) |
 
 ### 3.2. Phân bố test theo tệp
@@ -138,13 +145,14 @@ backend/.venv/Scripts/python.exe -m pytest --cov=ai --cov=backend \
 | `tests/test_pipeline.py` | 31 | unit |
 | `tests/test_two_line.py` | 28 | unit |
 | `tests/backend/test_job_repository.py` | 26 | unit |
-| `tests/test_recognizer.py` | 23 | unit |
+| `tests/test_recognizer.py` | 24 | unit |
+| `tests/test_ocr_accuracy.py` | 19 | unit |
 | `tests/integration/test_api_health.py` | 9 | integration |
 | **`tests/test_architecture.py`** | **18** | **kiến trúc** |
-| **Tổng** | **862** | |
+| **Tổng** | **882** | |
 
-Chia theo mức: **668 unit** (77,5%), **176 integration** (20,4%), **18 kiến
-trúc** (2,1%).
+Chia theo mức: **688 unit** (78,0%), **176 integration** (20,0%), **18 kiến
+trúc** (2,0%).
 
 ### 3.3. Độ bao phủ — đối chiếu NFR-M2 (≥ 70%)
 
@@ -158,6 +166,14 @@ Hai con số được công bố, không phải một. Con số nào áp cho NFR
 > **NFR-M2 áp cho con số 88,1%** và **đạt** (88,1% ≥ 70%), vượt chỉ tiêu 18,1
 > điểm phần trăm.
 >
+> **Hai mốc đo, không được trộn lẫn.** Con số **88,1%** ở bảng trên là lần đo
+> Phase 7 ngày **19/07/2026** (2.900 statement). Lần đo lại ngày **20/07/2026**,
+> sau khi bộ test lên 882 và mã nguồn được tinh gọn, cho **87,7%** trên 2.931
+> statement (317 miss) — nguồn:
+> [13-refactor-result.json](13-refactor-result.json). Cả hai đều là số đo thật ở
+> hai thời điểm khác nhau; khi trích dẫn phải nêu rõ mốc và nguồn. NFR-M2 vẫn
+> **đạt** ở cả hai mốc (≥ 70%).
+>
 > **Vì sao được phép loại trừ ba gói kia — và vì sao vẫn phải công bố 42,0%.**
 > `ai/training`, `ai/evaluation`, `ai/data` là **công cụ chạy ngoại tuyến từ
 > dòng lệnh**: các điểm vào huấn luyện (kiểm chứng bằng cách chạy thật một lần
@@ -169,7 +185,8 @@ Hai con số được công bố, không phải một. Con số nào áp cho NFR
 > `.coveragerc` — nó không phải quyết định đưa ra sau khi nhìn thấy kết quả.
 
 **Bao phủ chi tiết theo module** (`--cov-report=term`, đã lọc bỏ các `__init__.py`
-đạt 100%):
+đạt 100%) — **số của lần đo Phase 7 ngày 19/07/2026**; số theo module của lần đo
+lại ngày 20/07/2026 nằm trong [13-refactor-result.json](13-refactor-result.json):
 
 | Module | Stmts | Miss | Cover |
 |---|---:|---:|---:|
@@ -816,11 +833,45 @@ Ký hiệu: ✅ đạt mục tiêu · ⚠️ chỉ đạt ngưỡng tối thiể
 | Mã | Chỉ tiêu | Mục tiêu | **Đo được** | Kết quả |
 |---|---|---|---:|:---:|
 | **NFR-M1** | `ai/` không import FastAPI/Pydantic | 0 vi phạm | **0 vi phạm** (18 test tự động, có kiểm subprocess) | ✅ |
-| **NFR-M2** | Bao phủ test tầng nghiệp vụ | ≥ 70% | **88,1%** | ✅ |
+| **NFR-M2** | Bao phủ test tầng nghiệp vụ | ≥ 70% | **88,1%** (đo Phase 7, 19/07/2026) · **87,7%** (đo lại 20/07/2026, `13-refactor-result.json`) | ✅ |
 | NFR-M3 | Mọi hàm public có type hint + docstring | 100% | *(chưa kiểm tự động)* | ⬜ |
 | **NFR-M4** | Không hard-code đường dẫn | 0 vi phạm | **0 vi phạm** | ✅ |
 | **NFR-M5** | Thay được bộ OCR không sửa tầng API | ràng buộc bằng ABC | pipeline dựng được từ fake, không cần runtime ML | ✅ |
-| NFR-M6 | Tuân thủ lint/format | ruff + black | *(chưa chạy trong đợt này)* | ⬜ |
+| **NFR-M6** | Tuân thủ lint/format | ruff + black | **black: 96/96 tệp đạt (0 tệp cần định dạng lại); ruff: 0 lỗi logic (E/F/W/I), còn 83 cảnh báo E501** | ⚠️ |
+
+> **NFR-M6 — đã đo thật (2026-07-20, đợt refactor).** Cấu hình nằm ở
+> [`pyproject.toml`](../../pyproject.toml): `line-length = 100`, `target-version = "py313"`,
+> ruff bật nhóm `E` (pycodestyle error), `F` (pyflakes), `W` (pycodestyle warning),
+> `I` (sắp xếp import). Lệnh chạy:
+>
+> ```bash
+> backend/.venv/Scripts/python.exe -m black --check .   # black 26.5.1
+> backend/.venv/Scripts/python.exe -m ruff check .      # ruff 0.15.22
+> ```
+>
+> Kết quả:
+>
+> | Công cụ | Trước đợt refactor | Sau đợt refactor |
+> |---|---:|---:|
+> | `black --check` | 1 tệp cần định dạng lại (`scripts/build_thesis.py`) | **0** — 96/96 tệp đạt |
+> | `ruff check` | 113 lỗi | **83 lỗi** |
+> | ├─ `F811` (định nghĩa trùng) | 30 | **0** |
+> | └─ `E501` (dòng quá 100 ký tự) | 83 | 83 |
+>
+> **30 lỗi `F811` là dương tính giả**, không phải lỗi mã. Chúng phát sinh ở
+> `tests/backend/test_job_repository.py`, nơi một fixture (`jobs`, `detections`,
+> `session`…) được import từ `test_repositories.py` rồi lại xuất hiện làm **tên
+> tham số** của hàm test — đúng cách pytest dùng lại fixture dùng chung. Đổi tên
+> tham số sẽ làm hỏng cơ chế tiêm fixture. Đã xử lý bằng `per-file-ignores` cho
+> `tests/**/*.py` trong `pyproject.toml`, kèm chú thích lý do — **không sửa mã test**.
+>
+> **83 lỗi `E501` còn lại là nợ kỹ thuật có chủ đích**, phân bố: `scripts/fill_chapter5.py`
+> (71), `ai/evaluation/benchmark_ocr.py` (6), `scripts/labeling/label_tool.py` (4),
+> `ai/evaluation/evaluate.py` (1), `ai/evaluation/ocr_accuracy.py` (1). Toàn bộ nằm
+> trong **chuỗi ký tự tiếng Việt dài** của các script sinh tài liệu / in báo cáo —
+> cắt dòng chỉ để lấy con số 0 sẽ làm chuỗi khó đọc hơn mà không cải thiện chất
+> lượng mã. **Không có tệp nào thuộc `ai/inference/` hay `backend/` vi phạm** —
+> nghĩa là toàn bộ mã chạy trong production đã sạch lint.
 
 ### 7.5. Chỉ tiêu chịu tải
 
@@ -834,11 +885,11 @@ Cập nhật sau đợt đo bổ sung (bộ v3, mô hình `baseline-416-v1`, cá
 
 | | Số lượng | Chi tiết |
 |---|---:|---|
-| Chỉ tiêu **đã đo** | **19** | |
+| Chỉ tiêu **đã đo** | **20** | thêm **M6** ở đợt refactor 2026-07-20 |
 | ✅ **Đạt mục tiêu** | **15** | P1, P4, P4b, P5, P6, P7a, P7b, A1, A2, A3a, A3b, R1, R2, R5, M1, M2, M4, M5, SC1 |
-| ⚠️ **Chỉ đạt ngưỡng tối thiểu, hoặc bằng chứng chưa đủ** | **2** | **R3** (nhánh ảnh tĩnh), **R4** (soak 300 s < 60 phút) |
+| ⚠️ **Chỉ đạt ngưỡng tối thiểu, hoặc bằng chứng chưa đủ** | **3** | **R3** (nhánh ảnh tĩnh), **R4** (soak 300 s < 60 phút), **M6** (black sạch tuyệt đối; ruff còn 83 `E501` trong chuỗi tiếng Việt của script sinh tài liệu — mã production sạch) |
 | ❌ **Không đạt** | **4** | **A4** (0,8734), **A5** (0,6098), **A6** (0,6555), **A7** (0,5227 — và không đại diện) |
-| ⬜ **Chưa đo được** | **5** | **P2/P3** (chưa có kịch bản webcam/video trên `best.pt`), **A9** (thiếu nhãn điều kiện ảnh), **M3** (chưa kiểm tự động), **M6** (chưa chạy lint trong đợt này) |
+| ⬜ **Chưa đo được** | **4** | **P2/P3** (chưa có kịch bản webcam/video trên `best.pt`), **A9** (thiếu nhãn điều kiện ảnh), **M3** (chưa kiểm tự động) |
 
 \* NFR-P1 đạt trên **mô hình chính thức `best.pt`, máy rảnh**: p95 = **731,15 ms**
 client-side / **780,36 ms** in-process. Con số cũ 5.857,19 ms (epoch 7, máy bận,
@@ -935,7 +986,7 @@ Xếp theo mức độ nghiêm trọng.
 | **6** | **NFR-R4 soak 300 s thay vì 1 giờ như đặc tả** | Rò rỉ bộ nhớ chậm có thể lọt lưới. Điểm tích cực: RSS **giảm** trong soak, không có dấu hiệu rò rỉ | Chạy soak 1 giờ |
 | **7** | **Frontend không có kiểm thử tự động trong đợt này** | Vitest được khai trong stack nhưng không có kết quả nào trong Phase 7. Toàn bộ NFR-U1…U5 chưa kiểm | Viết bộ test component + kiểm tương phản WCAG |
 | **8** | ✅ **Đã xử lý một phần.** Hạn chế "tập test chỉ **458 ảnh** (21 cặp trùng nội bộ)" là của lượt đo cũ trên checkpoint epoch 7 / bộ v1. Số công bố A1/A2/A3 nay đo trên **tập test v3, 1.514 ảnh** | Cỡ mẫu không còn là điểm yếu chính. Tồn dư: **vẫn chưa tính khoảng tin cậy** cho bất kỳ con số độ chính xác nào | Báo cáo kèm CI bootstrap trên tập test v3 (1.514 ảnh) |
-| **9** | NFR-M3 (type hint + docstring), NFR-M6 (lint), NFR-R5 (sống qua restart) chưa kiểm tự động | Ba chỉ tiêu bảo trì/tin cậy đang dựa vào lời hứa | Thêm `ruff`, `mypy` và một test khởi động lại vào CI |
+| **9** | ✅ **NFR-M6 đã đo thật** (đợt refactor 2026-07-20): `black --check` sạch 96/96 tệp, `ruff check` còn 83 `E501` — tất cả nằm trong chuỗi tiếng Việt của script sinh tài liệu, **không tệp nào thuộc `ai/inference/` hay `backend/`**. Cấu hình chốt ở `pyproject.toml`. Còn lại: **NFR-M3** (type hint + docstring) chưa kiểm tự động | NFR-M6 không còn là "lời hứa"; NFR-R5 đã có phép đo restart ở mục 7.3 | Thêm `ruff`/`black` vào CI để chống thoái lui; dùng `mypy` cho NFR-M3 |
 | **10** | Bộ kiểm rò rỉ đếm **cặp**, không đếm **ảnh test bị nhiễm** | Không định lượng được mức ảnh hưởng lên mAP | Sửa `leak_check.py` để xuất số ảnh riêng biệt |
 
 ---
@@ -944,9 +995,11 @@ Xếp theo mức độ nghiêm trọng.
 
 **Điều bộ kiểm thử này chứng minh được:**
 
-- Phần mềm **chạy đúng và ổn định**: 861/862 test pass, 0 fail, 88,1% bao phủ
-  tầng nghiệp vụ (vượt NFR-M2 18,1 điểm), 100% thành công qua 185 request liên
-  tục, không rò rỉ bộ nhớ trong 5 phút.
+- Phần mềm **chạy đúng và ổn định**: **881/882 test pass, 1 `xfail`, 0 fail**;
+  bao phủ tầng nghiệp vụ 88,1% ở lần đo Phase 7 ngày 19/07/2026 và 87,7% ở lần
+  đo lại ngày 20/07/2026 ([13-refactor-result.json](13-refactor-result.json)) —
+  cả hai đều vượt NFR-M2 (≥ 70%); 100% thành công qua 185 request liên tục,
+  không rò rỉ bộ nhớ trong 5 phút.
 - **Ràng buộc kiến trúc được thực thi bằng máy, không bằng lời hứa**: NFR-M1,
   M4, M5 đều có phép kiểm tự động có thể trượt, và đều đạt.
 - **Toàn bộ chỉ tiêu tầng hạ tầng đều đạt thoải mái**: truy vấn CSDL nhanh hơn

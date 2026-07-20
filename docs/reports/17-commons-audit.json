@@ -1,0 +1,447 @@
+{
+  "source": "datasets/raw/commons_vn_plates/images",
+  "summary": {
+    "total": 60,
+    "unreadable": 0,
+    "by_color": {
+      "white": 50,
+      "yellow": 1,
+      "blue": 6,
+      "red": 1,
+      "unknown": 2
+    },
+    "by_kind": {},
+    "by_color_and_kind": {},
+    "low_confidence": 2
+  },
+  "color_share_percent": {
+    "white": 83.33,
+    "yellow": 1.67,
+    "blue": 10.0,
+    "red": 1.67,
+    "unknown": 3.33
+  },
+  "missing_colors": [],
+  "records": [
+    {
+      "image_path": "datasets\\raw\\commons_vn_plates\\images\\2020_Vietnam_temporary_vehicle_reg_plate_sample.png",
+      "color": "white",
+      "color_confidence": 0.7299,
+      "kind": "",
+      "plate_text": ""
+    },
+    {
+      "image_path": "datasets\\raw\\commons_vn_plates\\images\\2020_Vietnamese_new_plates.png",
+      "color": "white",
+      "color_confidence": 0.6433,
+      "kind": "",
+      "plate_text": ""
+    },
+    {
+      "image_path": "datasets\\raw\\commons_vn_plates\\images\\2020_Vietnamese_new_plates_for_motorcycle.png",
+      "color": "white",
+      "color_confidence": 0.7115,
+      "kind": "",
+      "plate_text": ""
+    },
+    {
+      "image_path": "datasets\\raw\\commons_vn_plates\\images\\2020_Vietnamese_reg_plate_for_specialised_vehicles_template.jpg",
+      "color": "white",
+      "color_confidence": 0.7153,
+      "kind": "",
+      "plate_text": ""
+    },
+    {
+      "image_path": "datasets\\raw\\commons_vn_plates\\images\\2020_Vietnamese_vehicle_reg._plate_-_Cars.jpg",
+      "color": "white",
+      "color_confidence": 0.7736,
+      "kind": "",
+      "plate_text": ""
+    },
+    {
+      "image_path": "datasets\\raw\\commons_vn_plates\\images\\2020_Vietnamese_vehicle_reg._plate_-_Motorbikes.jpg",
+      "color": "white",
+      "color_confidence": 0.6629,
+      "kind": "",
+      "plate_text": ""
+    },
+    {
+      "image_path": "datasets\\raw\\commons_vn_plates\\images\\2021_Vietnam_Ministry_of_National_Defence_military_vehicle_plate_templates_colorized.jpg",
+      "color": "white",
+      "color_confidence": 0.6809,
+      "kind": "",
+      "plate_text": ""
+    },
+    {
+      "image_path": "datasets\\raw\\commons_vn_plates\\images\\23123123123213123123123a.jpg",
+      "color": "white",
+      "color_confidence": 0.913,
+      "kind": "",
+      "plate_text": ""
+    },
+    {
+      "image_path": "datasets\\raw\\commons_vn_plates\\images\\__1.jpg",
+      "color": "unknown",
+      "color_confidence": 0.2353,
+      "kind": "",
+      "plate_text": ""
+    },
+    {
+      "image_path": "datasets\\raw\\commons_vn_plates\\images\\__2.jpg",
+      "color": "blue",
+      "color_confidence": 0.3526,
+      "kind": "",
+      "plate_text": ""
+    },
+    {
+      "image_path": "datasets\\raw\\commons_vn_plates\\images\\Alberta_1963_license_plate_-_Number_VN_4601.jpg",
+      "color": "white",
+      "color_confidence": 0.635,
+      "kind": "",
+      "plate_text": ""
+    },
+    {
+      "image_path": "datasets\\raw\\commons_vn_plates\\images\\Arkansas_Vietnam_Veteran_license_plate.jpg",
+      "color": "white",
+      "color_confidence": 0.5469,
+      "kind": "",
+      "plate_text": ""
+    },
+    {
+      "image_path": "datasets\\raw\\commons_vn_plates\\images\\Bien_so_xe_binh_duong.jpg",
+      "color": "white",
+      "color_confidence": 0.3674,
+      "kind": "",
+      "plate_text": ""
+    },
+    {
+      "image_path": "datasets\\raw\\commons_vn_plates\\images\\Bien_so_xe_Da_Nang.jpg",
+      "color": "white",
+      "color_confidence": 0.5284,
+      "kind": "",
+      "plate_text": ""
+    },
+    {
+      "image_path": "datasets\\raw\\commons_vn_plates\\images\\Bien_so_xe_Dak_Nong.jpg",
+      "color": "white",
+      "color_confidence": 0.6062,
+      "kind": "",
+      "plate_text": ""
+    },
+    {
+      "image_path": "datasets\\raw\\commons_vn_plates\\images\\Bien_so_xe_dong_thap.jpg",
+      "color": "white",
+      "color_confidence": 0.7347,
+      "kind": "",
+      "plate_text": ""
+    },
+    {
+      "image_path": "datasets\\raw\\commons_vn_plates\\images\\Bien_so_xe_Kon_Tum.jpg",
+      "color": "white",
+      "color_confidence": 0.5143,
+      "kind": "",
+      "plate_text": ""
+    },
+    {
+      "image_path": "datasets\\raw\\commons_vn_plates\\images\\Bien_So_Xe_Nam_Dinh.jpg",
+      "color": "white",
+      "color_confidence": 0.6143,
+      "kind": "",
+      "plate_text": ""
+    },
+    {
+      "image_path": "datasets\\raw\\commons_vn_plates\\images\\Bien_so_xe_Nghe_An.jpg",
+      "color": "white",
+      "color_confidence": 0.6354,
+      "kind": "",
+      "plate_text": ""
+    },
+    {
+      "image_path": "datasets\\raw\\commons_vn_plates\\images\\Bien_so_xe_Quang_Nam.jpg",
+      "color": "white",
+      "color_confidence": 0.5152,
+      "kind": "",
+      "plate_text": ""
+    },
+    {
+      "image_path": "datasets\\raw\\commons_vn_plates\\images\\Bien_so_xe_tinh_Bac_Ninh.jpg",
+      "color": "white",
+      "color_confidence": 0.3481,
+      "kind": "",
+      "plate_text": ""
+    },
+    {
+      "image_path": "datasets\\raw\\commons_vn_plates\\images\\Bien_So_Xe_Tinh_Gia_Lai.jpg",
+      "color": "white",
+      "color_confidence": 0.7071,
+      "kind": "",
+      "plate_text": ""
+    },
+    {
+      "image_path": "datasets\\raw\\commons_vn_plates\\images\\Bien_so_xe_tinh_Quang_Tri.jpg",
+      "color": "white",
+      "color_confidence": 0.5027,
+      "kind": "",
+      "plate_text": ""
+    },
+    {
+      "image_path": "datasets\\raw\\commons_vn_plates\\images\\Bien_so_xe_tinh_Vinh_Phuc.jpg",
+      "color": "white",
+      "color_confidence": 0.6055,
+      "kind": "",
+      "plate_text": ""
+    },
+    {
+      "image_path": "datasets\\raw\\commons_vn_plates\\images\\Bien_xe_TPHCM_5_so.jpg",
+      "color": "white",
+      "color_confidence": 0.8988,
+      "kind": "",
+      "plate_text": ""
+    },
+    {
+      "image_path": "datasets\\raw\\commons_vn_plates\\images\\Bus_licenceplate_Vietnam.jpg",
+      "color": "white",
+      "color_confidence": 0.7569,
+      "kind": "",
+      "plate_text": ""
+    },
+    {
+      "image_path": "datasets\\raw\\commons_vn_plates\\images\\Bus_licenceplate_Vietnam_front.jpg",
+      "color": "white",
+      "color_confidence": 0.5966,
+      "kind": "",
+      "plate_text": ""
+    },
+    {
+      "image_path": "datasets\\raw\\commons_vn_plates\\images\\Bus_licenceplate_Vietnam_rear.jpg",
+      "color": "white",
+      "color_confidence": 0.6588,
+      "kind": "",
+      "plate_text": ""
+    },
+    {
+      "image_path": "datasets\\raw\\commons_vn_plates\\images\\Diplomatic_plate_of_Vietnam.jpg",
+      "color": "white",
+      "color_confidence": 0.6942,
+      "kind": "",
+      "plate_text": ""
+    },
+    {
+      "image_path": "datasets\\raw\\commons_vn_plates\\images\\Government_car_licenseplate_Vietnam.jpg",
+      "color": "blue",
+      "color_confidence": 0.7035,
+      "kind": "",
+      "plate_text": ""
+    },
+    {
+      "image_path": "datasets\\raw\\commons_vn_plates\\images\\Government_plate_Vietnam.jpg",
+      "color": "blue",
+      "color_confidence": 0.7278,
+      "kind": "",
+      "plate_text": ""
+    },
+    {
+      "image_path": "datasets\\raw\\commons_vn_plates\\images\\Hanoi_old_quarter_7354080248.jpg",
+      "color": "white",
+      "color_confidence": 0.3922,
+      "kind": "",
+      "plate_text": ""
+    },
+    {
+      "image_path": "datasets\\raw\\commons_vn_plates\\images\\Ho_Chi_Minh_City_Saigon_1980s_government_license_plate.jpg",
+      "color": "white",
+      "color_confidence": 0.3142,
+      "kind": "",
+      "plate_text": ""
+    },
+    {
+      "image_path": "datasets\\raw\\commons_vn_plates\\images\\Illinois_Vietnam_Veteran_license_plate.jpg",
+      "color": "white",
+      "color_confidence": 0.7382,
+      "kind": "",
+      "plate_text": ""
+    },
+    {
+      "image_path": "datasets\\raw\\commons_vn_plates\\images\\Kansas_License_Plate_Vietnam_Veteran_Flat_-_Photo_Credits_to_Nathan_Kuehn.jpg",
+      "color": "white",
+      "color_confidence": 0.7273,
+      "kind": "",
+      "plate_text": ""
+    },
+    {
+      "image_path": "datasets\\raw\\commons_vn_plates\\images\\License_plate_Vietnam_Hanoi.jpg",
+      "color": "white",
+      "color_confidence": 0.6547,
+      "kind": "",
+      "plate_text": ""
+    },
+    {
+      "image_path": "datasets\\raw\\commons_vn_plates\\images\\Ma_tinh__Bien_so_xe.png",
+      "color": "white",
+      "color_confidence": 0.9571,
+      "kind": "",
+      "plate_text": ""
+    },
+    {
+      "image_path": "datasets\\raw\\commons_vn_plates\\images\\Militair_plate_Vietnam.jpg",
+      "color": "red",
+      "color_confidence": 0.6906,
+      "kind": "",
+      "plate_text": ""
+    },
+    {
+      "image_path": "datasets\\raw\\commons_vn_plates\\images\\Norwegian_license_plate_tax_free.JPG",
+      "color": "unknown",
+      "color_confidence": 0.0894,
+      "kind": "",
+      "plate_text": ""
+    },
+    {
+      "image_path": "datasets\\raw\\commons_vn_plates\\images\\RMV_Registrar_Kaprielian_WBZ_Radio_License_Plate_Lottery_Drawing_September_10_2012_7985575442.jpg",
+      "color": "yellow",
+      "color_confidence": 0.328,
+      "kind": "",
+      "plate_text": ""
+    },
+    {
+      "image_path": "datasets\\raw\\commons_vn_plates\\images\\Ruycervantesfregoso_-_351118960.jpg",
+      "color": "white",
+      "color_confidence": 0.3457,
+      "kind": "",
+      "plate_text": ""
+    },
+    {
+      "image_path": "datasets\\raw\\commons_vn_plates\\images\\Trailer_plate_Vietnam.jpg",
+      "color": "white",
+      "color_confidence": 0.7233,
+      "kind": "",
+      "plate_text": ""
+    },
+    {
+      "image_path": "datasets\\raw\\commons_vn_plates\\images\\Truck_plate_of_Vietnam.jpg",
+      "color": "white",
+      "color_confidence": 0.7293,
+      "kind": "",
+      "plate_text": ""
+    },
+    {
+      "image_path": "datasets\\raw\\commons_vn_plates\\images\\Vietnam_CD_plate.jpg",
+      "color": "white",
+      "color_confidence": 0.6358,
+      "kind": "",
+      "plate_text": ""
+    },
+    {
+      "image_path": "datasets\\raw\\commons_vn_plates\\images\\Vietnam_Government_plate_01.jpg",
+      "color": "blue",
+      "color_confidence": 0.6469,
+      "kind": "",
+      "plate_text": ""
+    },
+    {
+      "image_path": "datasets\\raw\\commons_vn_plates\\images\\Vietnam_Government_plate_02.jpg",
+      "color": "blue",
+      "color_confidence": 0.5766,
+      "kind": "",
+      "plate_text": ""
+    },
+    {
+      "image_path": "datasets\\raw\\commons_vn_plates\\images\\Vietnam_license_plate.jpg",
+      "color": "white",
+      "color_confidence": 0.6738,
+      "kind": "",
+      "plate_text": ""
+    },
+    {
+      "image_path": "datasets\\raw\\commons_vn_plates\\images\\Vietnam_license_plate_02.jpg",
+      "color": "white",
+      "color_confidence": 0.606,
+      "kind": "",
+      "plate_text": ""
+    },
+    {
+      "image_path": "datasets\\raw\\commons_vn_plates\\images\\Vietnam_license_plate_03.jpg",
+      "color": "white",
+      "color_confidence": 0.8351,
+      "kind": "",
+      "plate_text": ""
+    },
+    {
+      "image_path": "datasets\\raw\\commons_vn_plates\\images\\Vietnam_license_plate_04.jpg",
+      "color": "white",
+      "color_confidence": 0.9916,
+      "kind": "",
+      "plate_text": ""
+    },
+    {
+      "image_path": "datasets\\raw\\commons_vn_plates\\images\\Vietnam_license_plate_05.jpg",
+      "color": "white",
+      "color_confidence": 0.9967,
+      "kind": "",
+      "plate_text": ""
+    },
+    {
+      "image_path": "datasets\\raw\\commons_vn_plates\\images\\Vietnam_license_plate_06.jpg",
+      "color": "white",
+      "color_confidence": 0.9416,
+      "kind": "",
+      "plate_text": ""
+    },
+    {
+      "image_path": "datasets\\raw\\commons_vn_plates\\images\\Vietnam_license_plate_07.jpg",
+      "color": "white",
+      "color_confidence": 0.7116,
+      "kind": "",
+      "plate_text": ""
+    },
+    {
+      "image_path": "datasets\\raw\\commons_vn_plates\\images\\Vietnam_Veteran_Kansas_License_Plate.jpg",
+      "color": "white",
+      "color_confidence": 0.8125,
+      "kind": "",
+      "plate_text": ""
+    },
+    {
+      "image_path": "datasets\\raw\\commons_vn_plates\\images\\Vietnamese_license_plate_for_Quang_Ninh.jpg",
+      "color": "white",
+      "color_confidence": 0.5394,
+      "kind": "",
+      "plate_text": ""
+    },
+    {
+      "image_path": "datasets\\raw\\commons_vn_plates\\images\\Vietnamese_numberplate_72A-076.04_BMW_M3.jpg",
+      "color": "white",
+      "color_confidence": 0.6245,
+      "kind": "",
+      "plate_text": ""
+    },
+    {
+      "image_path": "datasets\\raw\\commons_vn_plates\\images\\Vietnamese_plate_for_Ha_Noi.jpg",
+      "color": "white",
+      "color_confidence": 0.6748,
+      "kind": "",
+      "plate_text": ""
+    },
+    {
+      "image_path": "datasets\\raw\\commons_vn_plates\\images\\Vietnamese_plate_for_Ho_Chi_Minh_City.jpg",
+      "color": "white",
+      "color_confidence": 0.7557,
+      "kind": "",
+      "plate_text": ""
+    },
+    {
+      "image_path": "datasets\\raw\\commons_vn_plates\\images\\Vietnamese_plate_for_Presidents_cars_Central_Governments_cars_or_Diplomats_cars.jpg",
+      "color": "blue",
+      "color_confidence": 0.6205,
+      "kind": "",
+      "plate_text": ""
+    },
+    {
+      "image_path": "datasets\\raw\\commons_vn_plates\\images\\Xe_do_che_lam_tac_dung_de_cho_go_trai_phep_tai_khu_bao_ton_thien_nhien_Easo-_2013-11-04_10-52.jpg",
+      "color": "white",
+      "color_confidence": 0.5659,
+      "kind": "",
+      "plate_text": ""
+    }
+  ]
+}

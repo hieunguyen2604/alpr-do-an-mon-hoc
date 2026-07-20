@@ -366,13 +366,15 @@ Với 1,5 m ⇒ tối thiểu **7,5 mm** chiều cao chữ ⇒ khoảng **21 pt*
 | Vị trí | File | Kích thước |
 |---|---|---|
 | Trên, lớn | `image-detection.png` — **quan trọng nhất**, hiện kết quả AI thật với bounding box | rộng 251 mm, cao ~140 mm |
-| Dưới trái | `dashboard.png` | ~120 × 70 mm |
+| Dưới trái | `video-detection.png` | ~120 × 70 mm |
 | Dưới phải | `history.png` | ~120 × 70 mm |
 
-*(`webcam.png` và `video-detection.png` để dành cho slide, không nhồi vào poster.)*
+*(`docs/screenshots/` còn **3 tệp dùng được**: `image-detection.png` · `video-detection.png` · `history.png` — đúng ba trang của giao diện hiện hành, poster dùng cả ba. `dashboard.png` **không còn dùng**: trang Tổng quan đã gỡ khỏi giao diện 2026-07-20.)*
+
+⚠️ **Chụp lại ảnh trước khi in.** Cả 3 ảnh hiện có được chụp khi sidebar còn **5 mục** và trang chủ còn là **Tổng quan**. Giao diện nay chỉ còn **3 trang**, trang chủ là **Nhận dạng ảnh** và **không còn trang Tổng quan** — poster in ảnh cũ sẽ mâu thuẫn với dòng "3 trang" ngay bên dưới.
 
 **Nội dung chữ** (T4, 2 dòng)
-- **5 trang**: Tổng quan · Nhận dạng ảnh · Video (bất đồng bộ, `job_id`) · Webcam · Lịch sử
+- **3 trang**: Nhận dạng ảnh *(trang chủ)* · Video (bất đồng bộ, `job_id`) · Lịch sử — cộng chế độ thời gian thực và số liệu tổng hợp giữ ở tầng API (`POST /api/detect/frame`, `GET /api/statistics`)
 - Mọi vùng dữ liệu xử lý đủ **4 trạng thái**: loading / empty / error / success
 
 ⚠️ **Ảnh chụp phải ở độ phân giải gốc.** Ảnh 1920 px phóng lên 251 mm ở 300 DPI sẽ vỡ. Nếu cần, chụp lại màn hình ở chế độ độ phân giải cao hoặc chụp từng vùng rồi ghép.
@@ -392,6 +394,7 @@ Với 1,5 m ⇒ tối thiểu **7,5 mm** chiều cao chữ ⇒ khoảng **21 pt*
 - ⚠️ Chưa có tập test **xuyên bộ dữ liệu** ⇒ mAP lạc quan hơn khi triển khai
 - ⚠️ Giấy phép một phần bộ dữ liệu **chưa rõ**
 - ⚠️ Không có GPU CUDA — toàn bộ suy luận chạy CPU
+- ⚠️ **FR-4.1 (Must) + FR-4.2 (Should) đưa ra khỏi phạm vi** — trang Tổng quan gỡ khỏi giao diện 2026-07-20 để thu gọn demo; `GET /api/statistics` **vẫn phục vụ và vẫn có kiểm thử**
 
 ---
 
@@ -444,9 +447,9 @@ Với 1,5 m ⇒ tối thiểu **7,5 mm** chiều cao chữ ⇒ khoảng **21 pt*
 | 5 | ⭐ **Minh hoạ split-then-hstack 4 bước** | Khối 6 | Xuất ảnh trung gian từ `ai/inference/two_line.py` | 🔴 **Còn thiếu — ưu tiên cao nhất** |
 | 6 | Biểu đồ phân bố AR + đường ngưỡng 2,5 | Khối 6 | `datasets/statistics/` | ⬜ Cần vẽ lại cho poster |
 | 7 | Biểu đồ ngân sách độ trễ 405 ms | Khối 7 | Vẽ mới | ⬜ Cần vẽ |
-| 8 | `image-detection.png` | Khối 8 | `docs/screenshots/` | ✅ Có |
-| 9 | `dashboard.png` | Khối 8 | `docs/screenshots/` | ✅ Có |
-| 10 | `history.png` | Khối 8 | `docs/screenshots/` | ✅ Có |
+| 8 | `image-detection.png` | Khối 8 | `docs/screenshots/` | ⚠️ Có — **chụp lại** (ảnh cũ: sidebar 5 mục) |
+| 9 | `video-detection.png` | Khối 8 | `docs/screenshots/` | ⚠️ Có — **chụp lại** (ảnh cũ: sidebar 5 mục) |
+| 10 | `history.png` | Khối 8 | `docs/screenshots/` | ⚠️ Có — **chụp lại** (ảnh cũ: sidebar 5 mục) |
 | 11 | Logo trường (+ logo khoa) | Khối 0 | Xin từ khoa | ⬜ Cần lấy |
 | 12 | Mã QR repo / PDF | Khối F | Sinh sau khi chốt link | ⬜ Cần sinh |
 
@@ -471,6 +474,7 @@ Nếu họ trả lời được cả ba ⇒ bố cục đạt. Không trả lờ
 - [ ] Không có chữ nào dưới **18 pt**
 - [ ] Không có chữ nào lọt ra ngoài lề an toàn 50 mm
 - [ ] Mọi sơ đồ là **vector**, mọi ảnh chụp ≥ 2× kích thước in
+- [ ] **Ảnh chụp màn hình ở Khối 8 đã chụp lại** trên giao diện **3 trang** hiện hành (sidebar 3 mục, trang chủ là Nhận dạng ảnh, không còn Tổng quan) — không dùng bản cũ chụp lúc sidebar còn 5 mục, không dùng `dashboard.png`
 - [ ] **Dấu tiếng Việt hiển thị đúng** ở mọi cỡ chữ — kiểm riêng các chữ "ữ", "ượ", "ỹ", "ặ"
 - [ ] In thử **A3 đen trắng** — vẫn phân biệt được các khối?
 - [ ] In thử **A4 màu** — kiểm màu có lệch so với màn hình không

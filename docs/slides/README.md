@@ -165,7 +165,7 @@ Dùng **cùng bảng màu** cho slide và poster. Người xem cả hai phải n
 | 11 | `plate-rules-positions.svg` | S14 | Vẽ mới — chuỗi `59-H1 234.56` tô màu theo loại ràng buộc | ⬜ |
 | 12 | `postproc-measure.svg` | S15 | Vẽ mới — 2 nhánh `raw_ocr_text` / `plate_number` | ⬜ |
 | 13 | `latency-budget.svg` | S17, poster Khối 7 | Vẽ mới — cột xếp chồng 405 ms, vạch 800 ms | ⬜ |
-| 14 | Ảnh chụp 5 trang giao diện | S16, poster Khối 8 | ✅ Đã có ở `docs/screenshots/` | ✅ |
+| 14 | Ảnh chụp **3 trang** giao diện | S16, poster Khối 8 | `docs/screenshots/`: `image-detection.png` · `video-detection.png` · `history.png` | ⚠️ **Chụp lại** |
 
 **Render mermaid ra SVG**
 
@@ -189,8 +189,8 @@ mmdc -i architecture.mmd -o docs/images/architecture-5layer.svg -b transparent
 | 3 | Bố cục poster | ✅ Xong | — |
 | 4 | **File slide thật** | ⬜ Chưa dựng | Chọn công cụ, dựng theo outline |
 | 5 | **File poster thật** | ⬜ Chưa dựng | Dựng theo layout |
-| 6 | Hình minh hoạ | 🔄 1/14 | 13 hình cần làm — xem bảng mục 4 |
-| 7 | Ảnh chụp giao diện | ✅ Xong | 5 ảnh trong `docs/screenshots/` |
+| 6 | Hình minh hoạ | 🔄 0/14 xong · 1 phần | 13 hình cần làm + 3 ảnh chụp cần chụp lại — xem bảng mục 4 |
+| 7 | Ảnh chụp giao diện | ⚠️ **Cần chụp lại** | 3 ảnh dùng được trong `docs/screenshots/` (`image-detection` · `video-detection` · `history`). `dashboard.png` **bỏ** — trang Tổng quan đã gỡ 2026-07-20. Cả 3 ảnh chụp lúc sidebar còn 5 mục ⇒ chụp lại trên giao diện **3 trang** hiện hành trước khi nộp |
 | 8 | Kịch bản demo trực tiếp | ✅ Xong | `10-demo-script.md` |
 | 9 | **Số liệu cho S12** (kết quả detection) | ✅ **Đã có** | `models/best.pt` (YOLO11n, `imgsz=640`, split v3, 20 epoch), test v3 1.514 ảnh: mAP@0.5 = 0,9829 · mAP@0.5:0.95 = 0,7834 · P = 0,9837 · R = 0,9714 |
 | 10 | **Số liệu cho S15** (đóng góp hậu xử lý) | ✅ **Đã có** | 2.801 biển: A4 = 0,8734 · A5 = 0,6098 · A6 = 0,6555 (A6 − A5 = +4,57 điểm) — xem `docs/reports/04-ocr-report.md` |
@@ -236,7 +236,7 @@ mmdc -i architecture.mmd -o docs/images/architecture-5layer.svg -b transparent
 
 **Chuẩn bị máy — làm TRƯỚC khi vào phòng**
 - [ ] Backend đã khởi động và trả `/health` đúng
-- [ ] Frontend đã khởi động, mở sẵn trang `/image`
+- [ ] Frontend đã khởi động, mở sẵn trang `/` (Nhận dạng ảnh — trang chủ)
 - [ ] Tab Swagger mở sẵn
 - [ ] 2–3 ảnh test **đã biết chắc chạy được**, để sẵn trên desktop
 - [ ] Tắt thông báo hệ thống, tắt chế độ ngủ màn hình
@@ -248,3 +248,5 @@ mmdc -i architecture.mmd -o docs/images/architecture-5layer.svg -b transparent
 - [ ] S12/S15/S17 — ô trống ghi `—`, không có số phỏng đoán
 - [ ] Mọi con số trên slide đọc lại từ file nguồn, không chép tay
 - [ ] Ảnh nhúng hết vào file, không link ngoài
+- [ ] **S16 mô tả đúng 3 trang** (Nhận dạng ảnh · Nhận dạng video · Lịch sử) và ảnh chụp đã chụp lại
+      trên giao diện hiện hành — không còn `dashboard.png`, không còn dòng "4 trang"

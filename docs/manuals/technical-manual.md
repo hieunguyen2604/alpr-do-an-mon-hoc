@@ -1,7 +1,7 @@
 # Sổ tay kỹ thuật — Hệ thống nhận dạng biển số xe Việt Nam ứng dụng AI
 
 **Đối tượng đọc:** lập trình viên tiếp quản và bảo trì hệ thống.
-**Phiên bản tài liệu:** 1.0 — 2026-07-19.
+**Phiên bản tài liệu:** 1.1 — 2026-07-20.
 **Kho mã:** `d:/DATN`.
 
 > **Cách đọc tài liệu này.** Sổ tay kỹ thuật *không* lặp lại phần luận chứng thiết kế. Mọi câu hỏi dạng "vì sao lại thiết kế như vậy" được trả lời trong [`docs/architecture/system-architecture.md`](../architecture/system-architecture.md); mọi câu hỏi dạng "yêu cầu nào bắt buộc điều đó" được trả lời trong [`docs/00-requirements/`](../00-requirements/). Tài liệu này trả lời câu hỏi *"tôi phải làm gì để hệ thống chạy được, và tôi không được phá vỡ điều gì"*.
@@ -38,7 +38,7 @@ Hệ thống được tổ chức thành năm tầng. Điều duy nhất cần n
 ```mermaid
 flowchart TD
     subgraph L1["Tầng 1 — Giao diện (frontend/)"]
-        UI["React 18 + Vite + TypeScript<br/>5 trang: Dashboard, Image, Video, Webcam, History"]
+        UI["React 18 + Vite + TypeScript<br/>3 trang: Image (trang chủ /), Video (/video), History (/history)"]
     end
 
     subgraph L2["Tầng 2 — API (backend/api/)"]
@@ -76,6 +76,36 @@ flowchart TD
 ```
 
 Chi tiết sơ đồ tuần tự cho luồng ảnh và luồng video, sơ đồ ER đầy đủ, cùng tám quyết định kiến trúc `AD-01`…`AD-08` nằm ở [`docs/architecture/system-architecture.md`](../architecture/system-architecture.md) §4, §5, §6.1 và §8. Tài liệu này chỉ trích những quyết định có hệ quả trực tiếp lên thao tác bảo trì.
+
+> **Ghi chú 20/07/2026 — hai đợt thu gọn giao diện trong cùng một ngày.** Tầng 1 nay còn **3 trang**.
+>
+> **Bảng route hiện hành** (`frontend/src/App.tsx`, cả ba trang nạp trễ bằng `React.lazy` bên trong `Layout`):
+>
+> | Route | Component | Vai trò |
+> |---|---|---|
+> | `/` (index) | `ImageDetection` | Nhận dạng ảnh — **trang chủ** |
+> | `/video` | `VideoDetection` | Nhận dạng video |
+> | `/history` | `History` | Lịch sử và tra cứu |
+> | `*` | — | `Navigate` về `/` |
+>
+> **Đã xoá khỏi `frontend/src/`:**
+>
+> | Đợt | Tệp / thành phần | Gói npm |
+> |:--:|---|---|
+> | 1 — gỡ trang Webcam | `pages/WebcamDetection.tsx`, `components/detection/webcam/`, hàm `detectFrame` trong `services/api.ts` | — |
+> | 2 — gỡ trang Tổng quan | `pages/Dashboard.tsx`, cả thư mục `components/dashboard/` (10 tệp), `hooks/useApi.ts`, hai hàm `getStatistics` và `getHealth` trong `services/api.ts` | `recharts` |
+>
+> **Tầng backend không đổi một dòng nào.** Ba endpoint tương ứng vẫn phục vụ, vẫn nằm trong OpenAPI, vẫn có kiểm thử tích hợp:
+>
+> | Endpoint | Kiểm thử tích hợp |
+> |---|---|
+> | `POST /api/detect/frame` | `tests/integration/test_api_detection.py` |
+> | `GET /api/statistics` | `tests/integration/test_api_statistics.py` |
+> | `GET /health` | `tests/integration/test_api_health.py` |
+>
+> **Không được nói là endpoint đã bị xoá — chúng không bị xoá.** Hệ quả về yêu cầu: FR-3.1/FR-3.4 chuyển M→W ở đợt 1; **FR-4.1 chuyển M→W** (yêu cầu mức Must đầu tiên bị đưa ra khỏi phạm vi) và FR-4.2 chuyển S→W ở đợt 2 — xem `docs/00-requirements/functional-requirements.md`. Bảng đếm MoSCoW mới: 21 Must / 6 Should / 3 Could / 4 Won't trên tổng 34 FR.
+>
+> **Số liệu build sau đợt 2** (đo 20/07/2026): 48 mô-đun nguồn `.ts`/`.tsx` (trước là 60), `vite build` 1.670 mô-đun trong 2,15 s, gói tải về **328,8 KB** — giảm 55% so với ~730 KB, phần lớn nhờ gỡ `recharts`. Mã nguồn của cả hai trang còn trong lịch sử git.
 
 ### 1.2. Điểm hợp thành (composition root)
 
@@ -146,31 +176,33 @@ d:/DATN/
 │   ├── requirements.txt         # Chỉ tầng API. Không có torch/ultralytics/paddle
 │   └── requirements-inference.txt
 │
-├── frontend/src/                # Tầng 1
-│   ├── types/index.ts           # Kiểu TypeScript ánh xạ 1–1 với schema backend
-│   ├── services/api.ts          # Lớp bọc axios, một hàm cho mỗi endpoint
-│   ├── hooks/                   # useApi · useDebounce · useJobPolling
+├── frontend/src/                # Tầng 1 — 48 mô-đun .ts/.tsx
+│   ├── types/index.ts           # Kiểu TypeScript ánh xạ 1–1 với schema backend.
+│   │                            #   Statistics/StatisticsQuery/HealthStatus/
+│   │                            #   InputTypeBreakdown GIỮ có chủ đích — mục 1.1
+│   ├── services/api.ts          # Lớp bọc axios. 6 hàm gọi API + exportHistoryUrl + fileUrl
+│   ├── hooks/                   # useDebounce · useJobPolling
 │   ├── lib/                     # cn · constants · format
 │   ├── components/
 │   │   ├── ui/                  # 15 thành phần nguyên thuỷ dùng lại
-│   │   ├── detection/{image,video,webcam}/
+│   │   ├── detection/{image,video}/
 │   │   └── history/
-│   └── pages/                   # Dashboard · ImageDetection · VideoDetection
-│                                #   · WebcamDetection · History
+│   └── pages/                   # ImageDetection (trang chủ /) · VideoDetection
+│                                #   (/video) · History (/history)
 │
 ├── scripts/
 │   ├── dataset/                 # 11 script + run_pipeline.py điều phối — mục 9
 │   ├── labeling/                # extract_plates.py, label_tool.py
 │   └── benchmark_*.py           # Đo overhead API và truy vấn lịch sử
 │
-├── tests/                       # 862 test được thu thập — mục 11
+├── tests/                       # 882 test được thu thập — mục 11
 │   ├── test_architecture.py     # ⚠ Thi hành tự động NFR-M1 và NFR-M4
 │   ├── test_*.py                # Đơn vị: detector, normalizer, pipeline, plate_rules…
 │   ├── backend/                 # Kho dữ liệu, schema, dịch vụ lưu trữ
 │   └── integration/             # 4 tệp, chạy qua TestClient với pipeline giả
 │
 ├── datasets/                    # raw/ · processed/ · annotations/ · statistics/ · reports/
-├── models/                      # Trọng số. best.pt (chính thức) CHƯA TỒN TẠI — mục 14
+├── models/                      # Trọng số. best.pt (chính thức) đã có — mAP@0.5 = 0,9829
 ├── runs/                        # Kết quả các lượt huấn luyện Ultralytics
 ├── data/                        # Lưu trữ lúc chạy: alpr.db, uploads/, plates/, outputs/
 ├── deployment/docker/           # Dockerfile.backend, Dockerfile.frontend, nginx.conf
@@ -603,7 +635,7 @@ backend/.venv/Scripts/python.exe -m alembic -c backend/alembic.ini downgrade -1
 
 ### 6.5. ⚠ Quy tắc đếm thống kê theo `source_job_id`
 
-> **Đây là quy tắc dễ làm sai nhất trong toàn bộ hệ thống.** Nó chạy xuyên suốt API và mọi con số trên bảng điều khiển.
+> **Đây là quy tắc dễ làm sai nhất trong toàn bộ hệ thống.** Nó chạy xuyên suốt API và mọi con số trong đáp ứng của `GET /api/statistics`.
 
 **Phát biểu:**
 
@@ -630,7 +662,7 @@ stmt = select(func.count()).select_from(DetectionHistory)
 
 **Cạm bẫy `JOIN`.** Phương thức `_by_input_type` chạy **hai truy vấn nhóm riêng, mỗi bảng một truy vấn, rồi gộp trong Python**. Một truy vấn duy nhất `JOIN` hai bảng sẽ **nhân mỗi hàng job lên theo số detection của nó** và đếm một ảnh ba biển thành ba lượt tải lên — đúng cái sai mà module này tồn tại để ngăn, và là cái sai mà một `JOIN` gần như tự động tạo ra. Docstring trong mã ghi rõ điều này; đừng "tối ưu" thành một truy vấn.
 
-**Phương thức `count_distinct_job_ids` là gì và KHÔNG phải là gì.** Nó chạy `COUNT(DISTINCT source_job_id)` trên các hàng lịch sử **đã lọc**. Nó **không** phải con số sử dụng của bảng điều khiển: nó không nhìn thấy lượt tải lên nào không sinh ra detection nào, vì job như vậy không có hàng nào ở đây. Dùng nó làm **tử số của tỉ lệ trúng**, với `DetectionStatistics.total_jobs` làm mẫu số.
+**Phương thức `count_distinct_job_ids` là gì và KHÔNG phải là gì.** Nó chạy `COUNT(DISTINCT source_job_id)` trên các hàng lịch sử **đã lọc**. Nó **không** phải con số "lượt sử dụng" mà `GET /api/statistics` công bố: nó không nhìn thấy lượt tải lên nào không sinh ra detection nào, vì job như vậy không có hàng nào ở đây. Dùng nó làm **tử số của tỉ lệ trúng**, với `DetectionStatistics.total_jobs` làm mẫu số.
 
 Lưu ý kỹ thuật: nó đếm trên chính câu lệnh đã lọc được bọc thành subquery, để `DISTINCT` nhìn đúng tập hàng mà bộ lọc chọn — dựng lại điều kiện lần thứ hai là cách một phép đếm trôi xa khỏi danh sách mà nó được cho là đang đếm.
 
@@ -671,18 +703,20 @@ Tài liệu OpenAPI đang phục vụ phơi ra **9 đường dẫn / 10 thao tá
 
 | Phương thức | Đường dẫn | Nhóm | Chức năng | Ghi chú vận hành |
 |---|---|---|---|---|
-| `GET` | `/health` | Health | Báo mức sẵn sàng | **Luôn trả HTTP 200**, kể cả khi suy giảm. Đọc trường `status`: `ok` hoặc `degraded`. Trường `database_connected` và `model_loaded` nói rõ cái nào hỏng. `model_loaded=false` khi đang chạy đường ống thay thế — đó là hành vi đúng |
+| `GET` | `/health` | Health | Báo mức sẵn sàng | **Luôn trả HTTP 200**, kể cả khi suy giảm. Đọc trường `status`: `ok` hoặc `degraded`. Trường `database_connected` và `model_loaded` nói rõ cái nào hỏng. `model_loaded=false` khi đang chạy đường ống thay thế — đó là hành vi đúng. ⚠ **Không còn hàm gọi phía giao diện** (từ 20/07/2026); hộ tiêu thụ hiện tại là `HEALTHCHECK` của Docker, kiểm thử tích hợp và giám sát vận hành |
 | `POST` | `/api/detect/image` | Detection | Nhận dạng một ảnh | Đồng bộ. Trả kết quả ngay |
 | `POST` | `/api/detect/video` | Detection | Nhận dạng một video | **Bất đồng bộ**, trả `202 Accepted` kèm `job_id` (`AD-02`) |
-| `POST` | `/api/detect/frame` | Detection | Nhận dạng một khung webcam | Đồng bộ. Các khung cùng phiên gắn vào **cùng một job** |
+| `POST` | `/api/detect/frame` | Detection | Nhận dạng một khung webcam | Đồng bộ. Các khung cùng phiên gắn vào **cùng một job**. ⚠ **Không còn hàm gọi phía giao diện** (từ 20/07/2026); client thời gian thực gọi trực tiếp |
 | `GET` | `/api/jobs/{job_id}` | Detection | Hỏi tiến độ tác vụ | Frontend hỏi định kỳ qua hook `useJobPolling` |
 | `GET` | `/api/history` | History | Liệt kê bản ghi có tìm kiếm, lọc, sắp xếp | **Luôn phân trang, không có biến thể không phân trang.** `total` đếm số bản ghi khớp bộ lọc trên toàn bộ các trang |
 | `GET` | `/api/history/export` | History | Xuất CSV | Trả về dạng luồng (streaming) |
 | `GET` | `/api/history/{detection_id}` | History | Lấy một bản ghi | |
 | `DELETE` | `/api/history/{detection_id}` | History | Xoá một bản ghi | Xoá cả tệp liên quan (FR-5.3) |
-| `GET` | `/api/statistics` | Statistics | Số liệu tổng hợp cho bảng điều khiển | Tham số `days` giới hạn trong `[1, 365]` |
+| `GET` | `/api/statistics` | Statistics | Số liệu thống kê tổng hợp và chuỗi số liệu theo ngày | Tham số `days` giới hạn trong `[1, 365]`. ⚠ **Không còn hàm gọi phía giao diện** (từ 20/07/2026, khi trang Tổng quan bị gỡ); endpoint vẫn phục vụ và vẫn có kiểm thử tích hợp |
 
 **Không có endpoint huỷ tác vụ.** Xem mục [13.6](#136-nút-huỷ-tác-vụ-video-bị-vô-hiệu-hoá).
+
+**Ba endpoint mang dấu ⚠ vẫn hoạt động đầy đủ.** Việc không có hàm gọi trong `frontend/src/services/api.ts` là hệ quả của hai đợt thu gọn giao diện ngày 20/07/2026 (mục [1.1](#11-năm-tầng-và-chiều-phụ-thuộc)), **không** phải dấu hiệu endpoint bị gỡ hay bị bỏ rơi. Cả ba vẫn nằm trong OpenAPI đang phục vụ và vẫn nằm trong bộ kiểm thử tích hợp. Đừng xoá chúng khi dọn mã.
 
 ### 7.3. Hai lớp tệp tĩnh
 
@@ -1016,19 +1050,27 @@ Tệp `.coveragerc` bật `branch = True`, đo `source = ai, backend`.
 
 **Cả hai con số đều được báo cáo, và phải luôn được báo cáo cùng nhau:**
 
-| Phạm vi đo | Kết quả | Chỉ tiêu |
-|---|---:|---|
-| Tầng nghiệp vụ (phạm vi NFR-M2) | **88,1%** | ≥ 70% — **ĐẠT** |
-| Toàn kho, không loại trừ | **42,0%** | Không có chỉ tiêu; đây **không phải** con số NFR-M2 nói tới |
+| Phạm vi đo | Kết quả | Mốc đo và nguồn | Chỉ tiêu |
+|---|---:|---|---|
+| Tầng nghiệp vụ (phạm vi NFR-M2) | **87,7%** | 2026-07-20 — [`docs/reports/13-refactor-result.json`](../reports/13-refactor-result.json) | ≥ 70% — **ĐẠT** |
+| Tầng nghiệp vụ (phạm vi NFR-M2) | **88,1%** | Phase 7, trước đó — [`docs/reports/07-testing-report.md`](../reports/07-testing-report.md) | ≥ 70% — **ĐẠT** |
+| Toàn kho, không loại trừ | **42,0%** | Phase 7 — [`docs/reports/07-testing-report.md`](../reports/07-testing-report.md) | Không có chỉ tiêu; đây **không phải** con số NFR-M2 nói tới |
 
-Số liệu kiểm thử (đã chạy lại và xác minh): `pytest --collect-only` **thu thập 862**
-test; lần chạy đầy đủ cho **861 pass, 1 `xfail` (lỗi đã biết, có mô tả), 0 fail,
-0 skip, 0 error** ([`docs/reports/07-testing-report.md`](../reports/07-testing-report.md)
-§ bảng kết quả). Khi báo cáo phải nói rõ đang trích con số nào: **862 = số test
-*thu thập***, **861 = số test *pass***; chênh lệch đúng bằng 1 `xfail`, không phải
-một test hỏng. Con số **199** xuất hiện trong một bản tổng kết trạng thái Phase 4
-là **số cũ, không còn đúng** — đó là kết quả một lần chạy *con* chỉ gồm 5 tệp test
-của tầng AI, không phải toàn kho.
+> **Hai con số bao phủ, hai mốc đo.** 87,7% và 88,1% đều là số đo thật của **cùng
+> một phạm vi** (`ai` + `backend`) ở **hai thời điểm khác nhau**. Phải trích kèm mốc
+> và nguồn; không được trộn lẫn, và cũng không được chọn một con số rồi xoá con số kia.
+
+Số liệu kiểm thử (đã chạy lại và xác minh ngày 2026-07-20, lệnh
+`backend/.venv/Scripts/python.exe -m pytest -q` chạy từ gốc kho): **thu thập 882**
+test; lần chạy đầy đủ cho **881 pass, 1 `xfail` (lỗi đã biết, có mô tả), 0 fail,
+0 skip, 0 error, 17 cảnh báo**
+([`docs/reports/13-refactor-result.json`](../reports/13-refactor-result.json)).
+Khi báo cáo phải nói rõ đang trích con số nào: **882 = số test *thu thập***,
+**881 = số test *pass***; chênh lệch đúng bằng 1 `xfail`, không phải một test hỏng.
+Cặp số **862/861** trong các bản tài liệu trước là kết quả **một lần chạy cũ hơn**
+và đã bị thay bằng 882/881. Con số **199** xuất hiện trong một bản tổng kết trạng
+thái Phase 4 cũng **không còn đúng** — đó là kết quả một lần chạy *con* chỉ gồm 5
+tệp test của tầng AI, không phải toàn kho.
 
 `exclude_lines` bỏ qua: `pragma: no cover`, `if __name__ == '__main__':`, `if TYPE_CHECKING:`, `raise NotImplementedError`, thân `...`, `@abstractmethod`.
 
@@ -1288,7 +1330,7 @@ if not is_usable:
 | Chuỗi đọc được thật (ví dụ) | `51G-495.39`, `51F-734.20`, `47A-065.46`, `51A-897.14` — độ tin cậy OCR 0,94–0,9993 |
 | Migration | `alembic upgrade head` chạy xong: `detection_history` 18 cột, `detection_job` 11 cột |
 | Frontend | `typecheck` sạch, `lint` sạch, `build` thành công (2.381 module). 10 endpoint kiểm chứng qua HTTP thật, kiểu TypeScript khớp từng trường |
-| Kiểm thử | **862 test thu thập; 861 pass, 1 `xfail`, 0 fail, 0 skip** (xem ghi chú ở mục 11.4 về con số 199 đã lỗi thời). Bao phủ tầng nghiệp vụ **88,1%** (NFR-M2 ≥ 70% — **ĐẠT**). Toàn kho 42,0% |
+| Kiểm thử | **882 test thu thập; 881 pass, 1 `xfail`, 0 fail, 0 skip, 17 cảnh báo** (chạy 2026-07-20; xem ghi chú ở mục 11.4 về các con số 862/861 và 199 đã lỗi thời). Bao phủ tầng nghiệp vụ **87,7%** đo 2026-07-20 (`docs/reports/13-refactor-result.json`) — NFR-M2 ≥ 70% — **ĐẠT**; số đo Phase 7 trước đó là 88,1% tầng nghiệp vụ và 42,0% toàn kho (`docs/reports/07-testing-report.md`) |
 | Docker | `Dockerfile` + `compose` đã có, `docker compose config` hợp lệ |
 | Bộ dữ liệu | 15.133 ảnh, hợp nhất từ 7 bộ, còn 6 nguồn nguyên tố sau khử trùng lặp chéo bộ (9 bộ đã tải về, 2 bộ nhãn ký tự tách riêng cho OCR); khử trùng lặp chéo bộ loại **11.978/27.111 ảnh (44,2%)** trên toàn bộ ảnh của 7 bộ vào hợp nhất (ngưỡng 5, đã xoá thật). 4.019 chuỗi biển tái tạo từ 2 bộ có nhãn ký tự (2.801 hợp lệ) |
 

@@ -30,12 +30,10 @@ grep -r "fastapi\|pydantic" ai/inference/
 
 ```mermaid
 graph TB
-    subgraph L1["Tầng trình bày — React + Vite + TS"]
-        UI1[Trang Dashboard]
-        UI2[Nhận dạng ảnh]
-        UI3[Nhận dạng video]
-        UI4[Webcam thời gian thực]
-        UI5[Lịch sử & tra cứu]
+    subgraph L1["Tầng trình bày — React + Vite + TS — 3 trang"]
+        UI2["/ — Nhận dạng ảnh<br/>(TRANG CHỦ)"]
+        UI3["/video — Nhận dạng video"]
+        UI5["/history — Lịch sử & tra cứu"]
     end
 
     subgraph L2["Tầng API — FastAPI"]
@@ -81,6 +79,13 @@ graph TB
 ```
 
 **Điểm mấu chốt:** khối màu vàng (Tầng AI) **không có mũi tên nào đi lên**. Nó không biết gì về HTTP, về CSDL, hay về việc ai gọi nó. Nhờ vậy có thể kiểm thử độc lập, tái sử dụng trong script huấn luyện, và thay thế được — thoả mãn NFR-M1 và NFR-M5.
+
+> **Ghi chú (2026-07-20) — hai thay đổi phạm vi liên tiếp ở tầng trình bày.** Tầng L1 nay còn **3 trang**: Nhận dạng ảnh (`/`, trang chủ) → Nhận dạng video (`/video`) → Lịch sử (`/history`); đường dẫn không khớp chuyển hướng về `/`.
+>
+> * **Gỡ trang Webcam** — FR-3.1/FR-3.4 chuyển M → W.
+> * **Gỡ trang Tổng quan (Dashboard)** — FR-4.1 chuyển M → W (yêu cầu mức Must đầu tiên bị gỡ khỏi phạm vi), FR-4.2 chuyển S → W.
+>
+> **Tầng API (L2) không đổi một dòng nào.** Ba route `/api/detect/frame`, `/api/statistics` và `/health` vẫn được phục vụ đầy đủ và vẫn có kiểm thử ở backend; `StatisticsService` ở tầng L3 cũng giữ nguyên. Thứ đã đổi là **bên tiêu thụ**: ba route này nay được gọi bởi **client bên ngoài** (script, công cụ giám sát, hoặc một giao diện dựng sau này), chứ không còn trang giao diện nào trong L1 gọi tới. Đây là minh chứng trực tiếp cho nguyên tắc số 1: thu hẹp tầng trình bày **không** kéo theo sửa đổi nào ở các tầng dưới.
 
 ---
 
@@ -251,10 +256,10 @@ erDiagram
 | Migration Alembic khởi tạo gồm cả 2 bảng | 5 |
 | `ALPRPipeline` phải trả về `raw_ocr_text` và `ocr_confidence` tách biệt | 4 |
 | Bộ chuẩn hoá phải xác định và trả về `plate_line_count` | 4 |
-| Thống kê dashboard đếm theo `source_job_id`, **không** đếm theo số dòng `DetectionHistory` | 5, 6 |
+| Thống kê ở `GET /api/statistics` đếm theo `source_job_id`, **không** đếm theo số dòng `DetectionHistory` | 5, 6 |
 | Báo cáo đánh giá so sánh độ chính xác trước/sau hậu xử lý (NFR-A5 vs A6) | 7 |
 
-> **Vì sao đây là vấn đề đáng nêu, không phải chi tiết vụn vặt:** thiếu `source_job_id`, một ảnh chứa 3 biển số sẽ thành 3 bản ghi rời rạc không liên hệ gì với nhau — dashboard sẽ đếm thành "3 lượt nhận dạng" thay vì "1 ảnh có 3 biển số". Toàn bộ phần thống kê ở FR-4.1 sẽ sai lệch.
+> **Vì sao đây là vấn đề đáng nêu, không phải chi tiết vụn vặt:** thiếu `source_job_id`, một ảnh chứa 3 biển số sẽ thành 3 bản ghi rời rạc không liên hệ gì với nhau — `GET /api/statistics` sẽ đếm thành "3 lượt nhận dạng" thay vì "1 ảnh có 3 biển số", và toàn bộ số liệu thống kê sẽ sai lệch. *(Ghi chú 2026-07-20: trang Tổng quan hiển thị các số này đã được gỡ và FR-4.1 chuyển sang mức W, nhưng endpoint vẫn phục vụ — rủi ro đếm sai nằm ở tầng dữ liệu nên **không** mất đi cùng trang.)*
 
 ---
 
@@ -296,7 +301,7 @@ DATN/
 |---|---|---|---|---|
 | AD-01 | Tách tầng AI khỏi tầng API | Package độc lập | NFR-M1, kiểm thử được, tái dùng trong script huấn luyện | Thêm một lớp gián tiếp |
 | AD-02 | Xử lý video | Bất đồng bộ + `job_id` | Vượt timeout HTTP (NFR-SC3) | Frontend phải hỏi tiến độ định kỳ |
-| AD-03 | Webcam thời gian thực | Frontend gửi từng khung qua HTTP | Đơn giản, dễ debug, đủ cho ~5 FPS | Nếu cần FPS cao hơn phải chuyển WebSocket |
+| AD-03 | Nhận dạng thời gian thực | Client gửi từng khung qua HTTP (`/api/detect/frame`) | Đơn giản, dễ debug, đủ cho ~5 FPS | Nếu cần FPS cao hơn phải chuyển WebSocket. *Từ 2026-07-20 trang Webcam đã gỡ khỏi giao diện — bên gửi khung là client API, endpoint và kiểm thử không đổi* |
 | AD-04 | Gộp trùng biển số | Theo chuỗi ký tự + cửa sổ thời gian | Đơn giản hơn nhiều so với tracking, đủ dùng (FR-2.4) | Kém chính xác khi hai xe cùng biển... thực tế không xảy ra |
 | AD-05 | Backend suy luận | PyTorch trước, ONNX/OpenVINO nếu cần | Ưu tiên chạy đúng rồi mới tối ưu | Có thể phải làm lại bước xuất mô hình |
 | AD-06 | Thiết bị | Cấu hình được, mặc định `cpu` | CON-02 | — |

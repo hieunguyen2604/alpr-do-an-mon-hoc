@@ -7,16 +7,7 @@
 
 import { useState } from 'react';
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
-import {
-  Camera,
-  History as HistoryIcon,
-  Image as ImageIcon,
-  LayoutDashboard,
-  Menu,
-  ScanLine,
-  Video,
-  X,
-} from 'lucide-react';
+import { History as HistoryIcon, Image as ImageIcon, Menu, ScanLine, Video, X } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 
 /** One entry in the sidebar. */
@@ -31,19 +22,13 @@ interface NavigationItem {
 }
 
 /**
- * The five destinations of the application.
+ * The three destinations of the application.
  *
  * Also drives the header title, so a route and its label can never disagree.
  */
 const NAVIGATION_ITEMS: readonly NavigationItem[] = [
   {
     to: '/',
-    label: 'Tổng quan',
-    description: 'Thống kê tổng hợp và biểu đồ theo thời gian',
-    icon: LayoutDashboard,
-  },
-  {
-    to: '/image',
     label: 'Nhận dạng ảnh',
     description: 'Tải ảnh lên và nhận dạng biển số',
     icon: ImageIcon,
@@ -53,12 +38,6 @@ const NAVIGATION_ITEMS: readonly NavigationItem[] = [
     label: 'Nhận dạng video',
     description: 'Tải video lên, xử lý nền và theo dõi tiến độ',
     icon: Video,
-  },
-  {
-    to: '/webcam',
-    label: 'Webcam',
-    description: 'Nhận dạng thời gian thực từ camera',
-    icon: Camera,
   },
   {
     to: '/history',

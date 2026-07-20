@@ -22,12 +22,14 @@ Máy phát triển **không có GPU CUDA** (ràng buộc CON-02 — chỉ có In
 | Mã | Chỉ tiêu | Mục tiêu | Ngưỡng tối thiểu | Phương pháp đo |
 |---|---|---|---|---|
 | **NFR-P1** | Độ trễ E2E một ảnh (p95) | ≤ 800 ms | ≤ 1500 ms | 100 ảnh test, đo p50/p95/p99 |
-| **NFR-P2** | Tốc độ khung hình chế độ webcam | ≥ 5 FPS hiệu dụng | ≥ 3 FPS | Đo trong 60 giây liên tục |
+| **NFR-P2** | Tốc độ khung hình chế độ thời gian thực (webcam) | ≥ 5 FPS hiệu dụng | ≥ 3 FPS | Đo trong 60 giây liên tục, ở **tầng API** (xem ghi chú dưới bảng) |
 | **NFR-P3** | Tốc độ xử lý video | ≥ 0.3× thời gian thực | ≥ 0.15× | Video 60 giây xử lý ≤ 200 giây |
 | **NFR-P4** | Thời gian nạp mô hình khi khởi động | ≤ 15 giây | ≤ 30 giây | Đo từ lúc khởi động đến khi `/health` báo sẵn sàng |
 | **NFR-P5** | Overhead của API (không tính thời gian suy luận) | ≤ 50 ms | ≤ 100 ms | So sánh tổng thời gian request và thời gian pipeline |
 | **NFR-P6** | Thời gian phản hồi truy vấn lịch sử (10.000 bản ghi) | ≤ 500 ms | ≤ 1000 ms | Đo có phân trang và bộ lọc |
 | **NFR-P7** | Bộ nhớ thường trú của backend | ≤ 2 GB | ≤ 4 GB | Theo dõi RSS khi chạy tải liên tục |
+
+> **Ghi chú NFR-P2 (2026-07-20):** giao diện webcam đã gỡ khỏi phạm vi (FR-3.1/FR-3.4 chuyển M → W — xem [functional-requirements.md](functional-requirements.md)). Chỉ tiêu **giữ nguyên** nhưng được đo ở **tầng API**: gọi `POST /api/detect/frame` liên tục trong 60 giây và tính FPS hiệu dụng. Phía gọi API tự triển khai bỏ bớt khung hình (frame skipping) và/hoặc hàng đợi một khe để không dồn ứ yêu cầu.
 
 **Phân rã ngân sách độ trễ NFR-P1** *(ước lượng ban đầu, sẽ hiệu chỉnh sau Phase 3–4)*:
 
@@ -149,11 +151,11 @@ Hệ thống chạy nội bộ (giả định A-04), nên mô hình đe doạ �
 
 Bảng này dùng làm bảng "chốt hạ" trình bày khi bảo vệ:
 
-| Hạng mục | Chỉ tiêu | Trạng thái |
+| Hạng mục | Chỉ tiêu | Trạng thái *(cập nhật 2026-07-20)* |
 |---|---|---|
-| mAP@0.5 | ≥ 0.90 | ⏳ Chờ Phase 3 |
-| Độ chính xác E2E | ≥ 0.88 | ⏳ Chờ Phase 4 |
-| Độ trễ 1 ảnh (p95, CPU) | ≤ 800 ms | ⏳ Chờ Phase 7 |
-| Webcam FPS (CPU) | ≥ 5 | ⏳ Chờ Phase 7 |
-| Bao phủ test | ≥ 70% | ⏳ Chờ Phase 7 |
-| Triển khai một lệnh | `docker compose up` | ⏳ Chờ Phase 8 |
+| mAP@0.5 | ≥ 0.90 | ✅ **0,9829** trên `models/best.pt`, tập test split v3 ([07-benchmark-report.md](../reports/07-benchmark-report.md)) |
+| Độ chính xác E2E | ≥ 0.88 | ❌ **0,5227** (A7, khớp tuyệt đối toàn pipeline — [05-results.json](../reports/05-results.json) T5.6e). Nút thắt là OCR biển 2 dòng: biển 1 dòng đạt 0,9489 nhưng biển 2 dòng chỉ 0,581 (A6). Phân tích và hướng khắc phục tại ch5/ch6 |
+| Độ trễ 1 ảnh (p95, CPU) | ≤ 800 ms | ✅ **731,15 ms** client-side / 780,36 ms in-process, đo trên `best.pt` máy rảnh ([07-benchmark-report.md](../reports/07-benchmark-report.md)) |
+| Webcam FPS (CPU) | ≥ 5 | ⬜ **Chưa đo trên `best.pt`** — đo ở tầng API `POST /api/detect/frame` (giao diện webcam đã gỡ 2026-07-20) |
+| Bao phủ test | ≥ 70% | ✅ **882 test thu thập / 881 đạt + 1 `xfail`, 0 fail**. Bao phủ tầng nghiệp vụ: **87,7%** (đo 20/07/2026, [13-refactor-result.json](../reports/13-refactor-result.json)); **88,1%** ở lần đo Phase 7 trước đó ([07-testing-report.md](../reports/07-testing-report.md) mục 3.3). Cả hai mốc đều đạt |
+| Triển khai một lệnh | `docker compose up` | ✅ Đã dựng và xác minh chạy được ([08-deployment-guide.md](../reports/08-deployment-guide.md)) |
