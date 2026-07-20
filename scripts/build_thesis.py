@@ -158,6 +158,58 @@ def find_pandoc() -> Path | None:
     return Path(on_path) if on_path else None
 
 
+PANDOC_VERSION = "3.10"
+"""Pinned so a rebuilt document is byte-comparable with an earlier one.
+
+Pandoc changes its DOCX styling between minor versions; letting the version
+float would make "the chapter text did not change but the .docx did" a routine
+and unexplainable event.
+"""
+
+PANDOC_URL = (
+    f"https://github.com/jgm/pandoc/releases/download/{PANDOC_VERSION}/"
+    f"pandoc-{PANDOC_VERSION}-windows-x86_64.zip"
+)
+
+
+def fetch_pandoc() -> Path | None:
+    """Download the pinned Pandoc build into ``tools/`` and return its path.
+
+    Exists so that ``tools/pandoc-3.10`` -- 221 MB of vendored binary, and by far
+    the largest thing in the working tree -- can be deleted without stranding the
+    document build. Before this, removing it left no record anywhere of which
+    version had been used or where it came from, which turns a disk-space clean-up
+    into an unbounded archaeology task months later.
+
+    Returns:
+        Path to ``pandoc.exe``, or ``None`` when the download or extraction
+        failed. Failure is reported and returned rather than raised: the caller
+        already knows how to build the Markdown without Pandoc.
+    """
+    import urllib.request
+    import zipfile
+
+    target = REPO_ROOT / "tools"
+    target.mkdir(parents=True, exist_ok=True)
+    archive = target / f"pandoc-{PANDOC_VERSION}.zip"
+
+    print(f"[info] Downloading Pandoc {PANDOC_VERSION} (~30 MB) ...")
+    try:
+        urllib.request.urlretrieve(PANDOC_URL, archive)
+        with zipfile.ZipFile(archive) as zf:
+            zf.extractall(target)
+    except Exception as error:  # noqa: BLE001 - report and let the caller continue
+        print(f"[warn] could not fetch Pandoc: {error}")
+        return None
+    finally:
+        archive.unlink(missing_ok=True)
+
+    found = find_pandoc()
+    if found is None:
+        print("[warn] Pandoc archive extracted but no pandoc.exe was found")
+    return found
+
+
 def run_pandoc(pandoc: Path, args: list[str]) -> None:
     """Invoke Pandoc with the given arguments, surfacing failures loudly.
 
@@ -237,6 +289,14 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         )
     )
     parser.add_argument(
+        "--fetch-pandoc",
+        action="store_true",
+        help=(
+            f"Download Pandoc {PANDOC_VERSION} into tools/ if it is not already "
+            "present. Use after deleting the vendored copy to reclaim disk space."
+        ),
+    )
+    parser.add_argument(
         "--out",
         type=Path,
         default=PAPERS_DIR / "thesis-full.md",
@@ -275,10 +335,13 @@ def main(argv: list[str] | None = None) -> int:
         return 0
 
     pandoc = find_pandoc()
+    if pandoc is None and args.fetch_pandoc:
+        pandoc = fetch_pandoc()
     if pandoc is None:
         print(
             "[info] Pandoc not found (checked tools/pandoc-3.10 and PATH); "
-            "skipping DOCX/PPTX export.",
+            "skipping DOCX/PPTX export. Re-run with --fetch-pandoc to download "
+            f"the pinned build ({PANDOC_VERSION}).",
             file=sys.stderr,
         )
         return 0

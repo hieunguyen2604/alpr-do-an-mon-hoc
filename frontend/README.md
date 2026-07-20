@@ -159,9 +159,6 @@ frontend/
     │   ├── format.ts           # Định dạng số, phần trăm, ngày giờ theo chuẩn Việt Nam
     │   └── cn.ts               # Ghép chuỗi class có điều kiện
     │
-    ├── utils/
-    │   └── format.ts           # Re-export tương thích, đã @deprecated → dùng @/lib/format
-    │
     ├── components/
     │   ├── Layout.tsx          # Sidebar 3 mục (ảnh → video → lịch sử), header,
     │   │                       # vùng nội dung

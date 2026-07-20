@@ -363,7 +363,7 @@ PHỤ LỤC ...................................................................
 
 Nhận dạng biển số xe tự động (ALPR) là bài toán nền tảng của bãi đỗ xe thông minh, thu phí không dừng và giám sát giao thông. Tại Việt Nam, biển số hai dòng chiếm tỷ lệ lớn do mật độ xe máy cao, trong khi đa số bộ dữ liệu quốc tế chỉ có biển một dòng, khiến các mô hình huấn luyện trên dữ liệu nước ngoài không áp dụng trực tiếp được. Khác biệt này đã được đo lường: trên bộ RodoSol-ALPR của Brazil, hệ thống OpenALPR đạt 94,3% với ô tô biển một dòng nhưng chỉ 45,7% với xe máy biển hai dòng [1]<!-- laroca_2022_crossdataset -->.
 
-Đồ án xây dựng một hệ thống ALPR hoàn chỉnh cho biển số xe Việt Nam theo hướng tiếp cận hai giai đoạn: phát hiện vùng biển số bằng YOLO11, nhận dạng ký tự bằng PaddleOCR, và hậu xử lý bằng bộ luật chuẩn hoá theo quy chuẩn hiện hành. Hệ thống hỗ trợ cả biển một dòng và hai dòng, nhận đầu vào là ảnh, video hoặc luồng webcam, và suy luận hoàn toàn trên CPU.
+Đồ án xây dựng một hệ thống ALPR hoàn chỉnh cho biển số xe Việt Nam theo hướng tiếp cận hai giai đoạn: phát hiện vùng biển số bằng YOLO11, nhận dạng ký tự bằng PaddleOCR, và hậu xử lý bằng bộ luật chuẩn hoá theo quy chuẩn hiện hành. Hệ thống hỗ trợ cả biển một dòng và hai dòng, nhận đầu vào là ảnh, video hoặc khung hình thời gian thực gửi qua API (endpoint `POST /api/detect/frame`), và suy luận hoàn toàn trên CPU.
 
 Đóng góp chính là bộ luật hậu xử lý **ràng buộc theo vị trí ký tự**, xây dựng trên Thông tư 79/2024/TT-BCA [2]<!-- bocongan_2024_tt79 --> và QCVN 08:2024/BCA [3]<!-- bocongan_2024_qcvn08 -->: mã tỉnh thuộc 81 giá trị hợp lệ, chữ cái sê-ri thứ nhất và thứ hai thuộc hai tập ký tự khác nhau. Cách tiếp cận này khắc phục hạn chế của các hệ thống áp một danh sách ký tự phẳng cho toàn chuỗi.
 
@@ -385,7 +385,7 @@ Trên tập kiểm tra của split v3 (1.514 ảnh, đã khử trùng lặp gi�
 
 Automatic License Plate Recognition (ALPR) underpins smart parking systems, electronic toll collection, and traffic surveillance. In Vietnam, the task presents characteristics that prevent the direct reuse of models trained on foreign data: two-line plates account for a large share of vehicles because of the country's high motorcycle density, whereas most international datasets contain single-line plates only. The severity of this gap has been quantified: on the Brazilian RodoSol-ALPR dataset, the OpenALPR system reached 94.3% on single-line car plates but only 45.7% on two-line motorcycle plates — a gap of 48.6 percentage points [1]<!-- laroca_2022_crossdataset -->.
 
-This thesis develops a complete ALPR system for Vietnamese license plates following a two-stage approach: plate region detection with a YOLO11 model, character recognition with PaddleOCR, and post-processing through a normalization rule set derived from the applicable national regulations. The system supports both single-line and two-line plates, accepts images, video files, or a live webcam stream as input, and performs inference entirely on CPU.
+This thesis develops a complete ALPR system for Vietnamese license plates following a two-stage approach: plate region detection with a YOLO11 model, character recognition with PaddleOCR, and post-processing through a normalization rule set derived from the applicable national regulations. The system supports both single-line and two-line plates, accepts images, video files, or real-time frames submitted through the API (the `POST /api/detect/frame` endpoint) as input, and performs inference entirely on CPU.
 
 The principal contribution is a **position-constrained post-processing rule set** grounded in Circular 79/2024/TT-BCA [2]<!-- bocongan_2024_tt79 --> and the national technical regulation QCVN 08:2024/BCA [3]<!-- bocongan_2024_qcvn08 -->: the province code is restricted to 81 valid values, and the first and second serial letters are drawn from two different character sets. This design corrects a limitation of systems that apply a single flat character whitelist across the entire plate string.
 
@@ -552,13 +552,25 @@ Bổ sung hai yêu cầu phân tích phục vụ chương đánh giá:
 
 > **Vì sao các chỉ tiêu độ trễ này "rộng rãi" hơn số liệu thường thấy trong các bài báo ALPR.** Máy phát triển của đồ án **không có GPU CUDA** (ràng buộc CON-02). Việc huấn luyện diễn ra trên GPU miễn phí của Colab/Kaggle, nhưng **toàn bộ suy luận và phần demo bảo vệ chạy trên CPU**. Các bài báo ALPR thường đo trên RTX/V100 và công bố vài chục mili-giây; đặt hai loại số liệu này cạnh nhau là so sánh sai. Đây là lý do mọi số liệu hiệu năng của đồ án đều **bắt buộc công bố kèm cấu hình phần cứng** — xem mục 1.4.2.
 
-**(c) Nhóm chỉ tiêu chức năng, chất lượng phần mềm và triển khai:** hiện thực **34 yêu cầu chức năng** (22 *Must*, 7 *Should*, 3 *Could*, 2 *Won't* — hai yêu cầu thuần giao diện FR-3.1/FR-3.4 chuyển mức khi gỡ trang webcam khỏi giao diện ngày 2026-07-20, năng lực thời gian thực giữ nguyên ở tầng API) tổ chức thành **sáu nhóm** — nhận dạng ảnh, nhận dạng video, nhận dạng thời gian thực qua API, dashboard thống kê–lịch sử, quản lý dữ liệu, và hệ thống–vận hành (chi tiết ở mục 3.1.3); **tách biệt kiến trúc bắt buộc** (NFR-M1: mã pipeline AI **không import bất cứ thành phần nào của FastAPI**, kiểm chứng bằng phân tích import); **khả năng thay thế bộ OCR** không phải sửa mã tầng API (NFR-M5); **độ bao phủ kiểm thử tầng nghiệp vụ ≥ 70%** (NFR-M2); và **khởi động một lệnh duy nhất** `docker compose up` trên máy sạch, demo hoạt động **không cần kết nối Internet**.
+**(c) Nhóm chỉ tiêu chức năng, chất lượng phần mềm và triển khai:** hiện thực **34 yêu cầu chức năng** (21 *Must*, 6 *Should*, 3 *Could*, 4 *Won't*) tổ chức thành **sáu nhóm** — nhận dạng ảnh, nhận dạng video, nhận dạng thời gian thực qua API, thống kê – lịch sử – tra cứu, quản lý dữ liệu, và hệ thống–vận hành (chi tiết ở mục 3.1.3); **tách biệt kiến trúc bắt buộc** (NFR-M1: mã pipeline AI **không import bất cứ thành phần nào của FastAPI**, kiểm chứng bằng phân tích import); **khả năng thay thế bộ OCR** không phải sửa mã tầng API (NFR-M5); **độ bao phủ kiểm thử tầng nghiệp vụ ≥ 70%** (NFR-M2); và **khởi động một lệnh duy nhất** `docker compose up` trên máy sạch, demo hoạt động **không cần kết nối Internet**.
+
+> ### Bốn yêu cầu mức *Won't* — phải nói thẳng
+>
+> Bốn yêu cầu ở mức *Won't* đều là **yêu cầu thuần giao diện**, cùng chuyển mức trong hai đợt thu gọn phạm vi giao diện web ngày **2026-07-20**:
+>
+> | Đợt | Yêu cầu | Chuyển mức | Năng lực còn lại |
+> |:--:|---|:--:|---|
+> | 1 — gỡ trang Webcam | FR-3.1, FR-3.4 | **M → W** | Nhận dạng thời gian thực vẫn phục vụ và vẫn có kiểm thử ở tầng API: `POST /api/detect/frame` |
+> | 2 — gỡ trang Tổng quan (Dashboard) | FR-4.1 | **M → W** | Số liệu thống kê vẫn truy vấn được và vẫn có kiểm thử tích hợp ở tầng API: `GET /api/statistics`, `GET /health` |
+> | 2 — gỡ trang Tổng quan (Dashboard) | FR-4.2 | **S → W** | Như trên (biểu đồ theo thời gian nằm trong cùng đáp ứng của `GET /api/statistics`) |
+>
+> **FR-4.1 là yêu cầu mức *Must* đầu tiên và duy nhất bị đưa ra khỏi phạm vi trong toàn bộ đồ án.** Điều này được nêu ở đây, ở mục 3.1.3, ở mục 6.3 và trong đặc tả yêu cầu, chứ không để hội đồng tự phát hiện. Đây là một **quyết định phạm vi có chủ đích** nhằm thu gọn phần demo, không phải một hạng mục bị bỏ sót: cả bốn yêu cầu đều mất **màn hình hiển thị**, không mất **năng lực hệ thống**, và mã giao diện tương ứng còn nguyên trong lịch sử git. Đánh đổi đo được của đợt 2: gỡ thư viện biểu đồ `recharts` cùng trang Tổng quan làm gói tải về của giao diện giảm từ ~730 KB xuống **328,8 KB** (−55%).
 
 ### 1.2.3. Tiêu chí thành công
 
 Đề tài được coi là thành công khi **đồng thời** đạt năm điều kiện sau:
 
-1. Toàn bộ yêu cầu mức *Must* hoạt động được và demo được.
+1. Toàn bộ yêu cầu mức *Must* hoạt động được và demo được — hiểu theo bộ 21 yêu cầu *Must* **sau** hai đợt thu gọn phạm vi giao diện ngày 2026-07-20. Bốn yêu cầu đã chuyển sang mức *Won't* (FR-3.1, FR-3.4, FR-4.1, FR-4.2) **không** được tính là đạt; trong đó FR-4.1 vốn ở mức *Must*, xem khung ghi chú ở mục 1.2.2(c).
 2. Toàn bộ chỉ tiêu ở **ngưỡng tối thiểu** nêu tại mục 1.2.2 được đáp ứng và **đo đạc có bằng chứng**.
 3. Toàn bộ 12 sản phẩm bàn giao của lộ trình tồn tại.
 4. Hệ thống khởi động được trên máy sạch bằng một lệnh `docker compose up`.
@@ -586,7 +598,7 @@ Bổ sung hai yêu cầu phân tích phục vụ chương đánh giá:
 |---|---|
 | **(a) Trí tuệ nhân tạo** | Huấn luyện bộ phát hiện biển số YOLO11 trên dữ liệu Việt Nam; so sánh các biến thể kích thước mô hình (n / s / m) để chọn điểm cân bằng tốc độ – độ chính xác, kèm huấn luyện YOLO26n song song làm đối chứng (mục 2.8.1); **benchmark các engine OCR ứng viên** trên chính tập kiểm thử biển số Việt Nam rồi tích hợp engine thắng cuộc (đã tinh chỉnh) để nhận dạng ký tự trên vùng đã cắt; hậu xử lý bằng biểu thức chính quy và luật kiểm tra tính hợp lệ theo vị trí; **hỗ trợ cả biển một dòng và hai dòng**; đánh giá đầy đủ (mAP, precision, recall, F1, ma trận nhầm lẫn, đường cong loss); đo hiệu năng suy luận trên CPU |
 | **(b) Dữ liệu** | Thu thập, gộp và làm sạch các bộ dữ liệu công khai; kiểm tra và sửa nhãn; loại bỏ ảnh trùng lặp; tăng cường dữ liệu (augmentation); chia tập train / val / test **có kiểm soát rò rỉ dữ liệu**; thống kê và trực quan hoá |
-| **(c) Phần mềm** | REST API bằng FastAPI có tài liệu Swagger tự sinh; nhận dạng từ ảnh, video và khung hình thời gian thực gửi qua API (`POST /api/detect/frame`); lưu lịch sử bằng SQLite + SQLAlchemy + Alembic; giao diện web React + Vite + TypeScript + TailwindCSS gồm bốn trang (trang webcam đã gỡ khỏi giao diện theo thu gọn phạm vi 2026-07-20); dashboard thống kê, lịch sử, tìm kiếm, lọc; đóng gói bằng Docker và Docker Compose |
+| **(c) Phần mềm** | REST API bằng FastAPI có tài liệu Swagger tự sinh; nhận dạng từ ảnh, video và khung hình thời gian thực gửi qua API (`POST /api/detect/frame`); lưu lịch sử bằng SQLite + SQLAlchemy + Alembic; giao diện web React + Vite + TypeScript + TailwindCSS gồm **ba trang** — Nhận dạng ảnh (trang chủ), Nhận dạng video, Lịch sử — sau hai đợt thu gọn phạm vi ngày 2026-07-20 đã gỡ trang Webcam rồi tới trang Tổng quan (Dashboard); lịch sử, tìm kiếm, lọc, xem chi tiết và tải về trên giao diện, còn số liệu thống kê tổng hợp phục vụ ở tầng API (`GET /api/statistics`); đóng gói bằng Docker và Docker Compose |
 | **(d) Kiểm thử và tài liệu** | Unit test, integration test, kiểm thử độ chính xác AI, kiểm thử hiệu năng và chịu tải; bộ tài liệu học thuật và kỹ thuật đầy đủ |
 
 ### 1.3.3. Phạm vi ngoài nghiên cứu
@@ -745,9 +757,9 @@ Các con số vượt 99% xuất hiện trong tài liệu ALPR quốc tế là s
 
 ### 1.6.2. Đóng góp (a) — Hệ thống hoàn chỉnh từ mô hình AI đến giao diện và triển khai
 
-Sản phẩm là một hệ thống có **kiến trúc phần mềm**, không phải một tập script rời rạc: pipeline AI tách biệt hoàn toàn khỏi tầng API (NFR-M1, kiểm chứng được bằng phân tích import), interface trừu tượng cho phép thay thế engine OCR mà không sửa mã tầng API (NFR-M5), REST API có tài liệu tự sinh, giao diện web bốn màn hình (thu gọn từ năm sau khi gỡ trang webcam ngày 2026-07-20 — năng lực thời gian thực giữ ở tầng API), cơ sở dữ liệu có migration, bộ kiểm thử độ bao phủ ≥ 70%, và đóng gói Docker khởi động một lệnh.
+Sản phẩm là một hệ thống có **kiến trúc phần mềm**, không phải một tập script rời rạc: pipeline AI tách biệt hoàn toàn khỏi tầng API (NFR-M1, kiểm chứng được bằng phân tích import), interface trừu tượng cho phép thay thế engine OCR mà không sửa mã tầng API (NFR-M5), REST API có tài liệu tự sinh, giao diện web **ba màn hình** (thu gọn từ năm qua hai đợt gỡ trang ngày 2026-07-20 — năng lực thời gian thực và số liệu thống kê đều giữ ở tầng API), cơ sở dữ liệu có migration, bộ kiểm thử độ bao phủ ≥ 70%, và đóng gói Docker khởi động một lệnh.
 
-> **Mức độ hoàn thành tại thời điểm viết.** Bốn hạng mục đầu — tách tầng AI, interface trừu tượng, REST API có tài liệu tự sinh, cơ sở dữ liệu có migration — **đã được cài đặt và xác minh bằng yêu cầu HTTP thật**. Giao diện web **đã hoàn thành** và build sạch. Chỉ tiêu độ bao phủ kiểm thử ≥ 70% **đã đạt và đã đo**: 88,1% ở tầng nghiệp vụ (42,0% trên toàn kho), với 861 test đạt / 1 xfail / 0 thất bại. Đóng gói Docker và Docker Compose **đã hoàn thành**. Số liệu chi tiết của từng hạng mục được báo cáo ở **Chương 5**.
+> **Mức độ hoàn thành tại thời điểm viết.** Bốn hạng mục đầu — tách tầng AI, interface trừu tượng, REST API có tài liệu tự sinh, cơ sở dữ liệu có migration — **đã được cài đặt và xác minh bằng yêu cầu HTTP thật**. Giao diện web **đã hoàn thành** và build sạch. Chỉ tiêu độ bao phủ kiểm thử ≥ 70% **đã đạt và đã đo**: **87,7%** ở tầng nghiệp vụ theo lần đo mới nhất ngày 2026-07-20 (`docs/reports/13-refactor-result.json`; lần đo ở Phase 7 trước đó là 88,1% theo `docs/reports/07-testing-report.md`, và 42,0% trên toàn kho), với **882 test thu thập / 881 đạt / 1 xfail / 0 thất bại**. Đóng gói Docker và Docker Compose **đã hoàn thành**. Số liệu chi tiết của từng hạng mục được báo cáo ở **Chương 5**.
 
 Khảo sát ở Phase 1 cho thấy hệ sinh thái mã nguồn mở ALPR Việt Nam chủ yếu gồm các script rời rạc **không công bố số liệu độ chính xác** và **không có kiến trúc phần mềm**. Đây là **khoảng trống kỹ nghệ** chứ không phải khoảng trống thuật toán — nhưng vẫn là khoảng trống có thật.
 
@@ -2171,7 +2183,7 @@ Hai điểm A3 và A4 đáng được nhấn mạnh vì chúng phân biệt mộ
 |---|---|
 | **Mã** | UC-03 |
 | **Tác nhân chính** | Client thời gian thực (trước 2026-07-20: người vận hành, qua trang Webcam của giao diện) |
-| **Tiền điều kiện** | Trình duyệt hỗ trợ `navigator.mediaDevices.getUserMedia`; người dùng cấp quyền camera |
+| **Tiền điều kiện** | Client có sẵn một nguồn thu hình và có thể mã hoá khung hình thành JPEG / PNG; máy chủ đang chạy và nạp được trọng số mô hình |
 | **Hậu điều kiện thành công** | Các biển số quan sát được trong phiên đã được lưu, có gộp trùng; toàn bộ phiên là **một** bản ghi tác vụ |
 
 **Luồng sự kiện chính:**
@@ -2198,12 +2210,24 @@ Một chi tiết thiết kế nhỏ nhưng quan trọng: nếu `job_id` gửi l�
 | FR-1 | FR-1.1 → 1.7 | Nhận dạng từ ảnh tĩnh | 7 | 0 | 0 | 0 | **7** |
 | FR-2 | FR-2.1 → 2.6 | Nhận dạng từ video | 5 | 1 | 0 | 0 | **6** |
 | FR-3 | FR-3.1 → 3.5 | Nhận dạng thời gian thực (tầng API) | 3 | 0 | 0 | 2 | **5** |
-| FR-4 | FR-4.1 → 4.8 | Dashboard, lịch sử và tra cứu | 5 | 2 | 1 | 0 | **8** |
+| FR-4 | FR-4.1 → 4.8 | Thống kê, lịch sử và tra cứu | 4 | 1 | 1 | 2 | **8** |
 | FR-5 | FR-5.1 → 5.4 | Quản lý dữ liệu | 0 | 2 | 2 | 0 | **4** |
 | FR-6 | FR-6.1 → 6.4 | Hệ thống và vận hành | 2 | 2 | 0 | 0 | **4** |
-| | | **Tổng cộng** | **22** | **7** | **3** | **2** | **34** |
+| | | **Tổng cộng** | **21** | **6** | **3** | **4** | **34** |
 
-> Hai yêu cầu mức Won't là FR-3.1 và FR-3.4 — hai yêu cầu thuần giao diện của nhóm FR-3, chuyển từ Must khi trang Webcam được gỡ khỏi giao diện web (2026-07-20).
+> ### Bốn yêu cầu mức Won't và hai đợt thu gọn phạm vi ngày 2026-07-20
+>
+> Cả bốn yêu cầu mức Won't đều là **yêu cầu thuần giao diện**, và đều chuyển mức trong cùng một ngày qua hai đợt thu gọn phạm vi giao diện web liên tiếp:
+>
+> | Đợt | Trang bị gỡ | Yêu cầu | Chuyển mức | Năng lực còn lại (vẫn phục vụ, vẫn có kiểm thử) |
+> |:--:|---|---|:--:|---|
+> | 1 | Webcam (`/webcam`) | FR-3.1, FR-3.4 | **M → W** | `POST /api/detect/frame` — phiên gộp trùng theo `job_id` |
+> | 2 | Tổng quan / Dashboard (`/dashboard`) | FR-4.1 | **M → W** | `GET /api/statistics`, `GET /health` |
+> | 2 | Tổng quan / Dashboard (`/dashboard`) | FR-4.2 | **S → W** | `GET /api/statistics` (chuỗi số liệu theo ngày nằm trong cùng đáp ứng) |
+>
+> **Phải nói thẳng: FR-4.1 là yêu cầu mức *Must* đầu tiên — và duy nhất — bị đưa ra khỏi phạm vi trong toàn bộ đồ án.** Trước đó, mọi thay đổi phạm vi chỉ đụng tới các yêu cầu mức Should trở xuống hoặc tới các yêu cầu thuần hiển thị của một năng lực vẫn còn nguyên. Ở đợt thứ hai, một chỉ tiêu từng được xếp là *bắt buộc* đã bị hạ mức. Bảng đếm ở trên vì vậy giảm từ 22/7/3/2 xuống **21/6/3/4**, và mục 6.3 của Chương 6 ghi nhận đây là một **hạn chế thật** chứ không phải một dòng ghi chú hành chính.
+>
+> Điều **không** thay đổi: cả hai đợt chỉ gỡ **màn hình hiển thị**, không gỡ **năng lực hệ thống**. Các endpoint tương ứng vẫn phục vụ, vẫn nằm trong tài liệu OpenAPI, và vẫn có kiểm thử tích hợp ở backend (`tests/integration/test_api_statistics.py`, `test_api_health.py`). Mã giao diện của cả hai trang còn nguyên trong lịch sử git. Đánh đổi đo được của đợt 2: gỡ thư viện biểu đồ `recharts` cùng trang Tổng quan làm gói tải về của giao diện giảm từ ~730 KB xuống **328,8 KB** (−55%).
 
 #### b) Nội dung cốt lõi của từng nhóm
 
@@ -2217,7 +2241,15 @@ Yêu cầu gộp trùng (FR-2.4) là điểm dễ bị bỏ sót nhất trong c�
 
 **FR-3 — Nhận dạng thời gian thực (5 yêu cầu: 3 Must, 2 Won't).** Nhóm này ban đầu gồm 5 yêu cầu Must, bao trùm việc xin quyền và hiển thị luồng webcam, gửi khung hình về máy chủ theo chu kỳ cấu hình được, nhận dạng trên luồng trực tiếp, vẽ chồng bounding box lên hình ảnh đang chạy, và lưu lịch sử phiên có gộp trùng. **Theo quyết định thu gọn phạm vi ngày 2026-07-20**, trang Webcam được gỡ khỏi giao diện web: hai yêu cầu thuần giao diện FR-3.1 (xin quyền, hiển thị luồng) và FR-3.4 (vẽ chồng bounding box) chuyển mức **M → W**; ba yêu cầu còn lại (FR-3.2, FR-3.3, FR-3.5) vẫn là Must và được đáp ứng, kiểm chứng **ở tầng API** qua `POST /api/detect/frame` với phiên gộp trùng theo `job_id`. Ràng buộc hiệu năng của nhóm gắn chặt với việc không có GPU và được cụ thể hoá thành chỉ tiêu định lượng NFR-P2.
 
-**FR-4 — Dashboard, lịch sử và tra cứu (8 yêu cầu: 5 Must, 2 Should, 1 Could).** Đây là nhóm đông yêu cầu nhất. Nội dung gồm: các chỉ số tổng hợp trên dashboard (tổng lượt sử dụng, độ tin cậy trung bình, thời gian xử lý trung bình, phân bố theo loại đầu vào), biểu đồ số lượt theo thời gian, danh sách lịch sử có phân trang, tìm kiếm theo biển số hỗ trợ khớp một phần, lọc theo loại đầu vào — khoảng thời gian — ngưỡng độ tin cậy, xem chi tiết một bản ghi với đầy đủ metadata, tải về ảnh kết quả, và sắp xếp theo cột.
+**FR-4 — Thống kê, lịch sử và tra cứu (8 yêu cầu: 4 Must, 1 Should, 1 Could, 2 Won't).** Đây là nhóm đông yêu cầu nhất, và cũng là nhóm chịu tác động nặng nhất của thay đổi phạm vi. Nội dung ban đầu gồm: các chỉ số tổng hợp trên màn hình Tổng quan (tổng lượt sử dụng, độ tin cậy trung bình, thời gian xử lý trung bình, phân bố theo loại đầu vào — FR-4.1), biểu đồ số lượt theo thời gian (FR-4.2), danh sách lịch sử có phân trang, tìm kiếm theo biển số hỗ trợ khớp một phần, lọc theo loại đầu vào — khoảng thời gian — ngưỡng độ tin cậy, xem chi tiết một bản ghi với đầy đủ metadata, tải về ảnh kết quả, và sắp xếp theo cột.
+
+**Theo quyết định thu gọn phạm vi ngày 2026-07-20 (đợt thứ hai trong ngày)**, trang Tổng quan (Dashboard) được gỡ khỏi giao diện web: **FR-4.1 chuyển M → W** và **FR-4.2 chuyển S → W**. Cần nhấn mạnh hai điều, theo đúng thứ tự quan trọng.
+
+Thứ nhất, **đây là lần đầu một yêu cầu mức Must bị đưa ra khỏi phạm vi**. Nó không được trình bày như một chi tiết kỹ thuật nhỏ, vì nó không phải: một chỉ tiêu từng được xếp loại "thiếu ⇒ đồ án không đạt" nay không còn được đáp ứng ở tầng giao diện.
+
+Thứ hai, phạm vi mất đi là phạm vi **hiển thị**, không phải phạm vi **năng lực**. Toàn bộ phép tính thống kê vẫn nằm trong `StatisticsService` (mục 3.3.2), vẫn phơi ra qua `GET /api/statistics` với đầy đủ các chỉ số và chuỗi số liệu theo ngày mà FR-4.1 và FR-4.2 yêu cầu, vẫn xuất hiện trong tài liệu OpenAPI, và vẫn có kiểm thử tích hợp ở backend. Thiết kế API ở mục 3.3.3 **giữ nguyên không sửa một dòng nào** — đó chính là bằng chứng thực tế cho nguyên tắc tách tầng ở mục 3.2: một thay đổi ở tầng trình bày không lan xuống các tầng dưới.
+
+Sáu yêu cầu còn lại của nhóm — **FR-4.3 đến FR-4.8**, toàn bộ thuộc màn hình Lịch sử — **không đổi mức và không đổi nội dung**.
 
 **FR-5 — Quản lý dữ liệu (4 yêu cầu: 2 Should, 2 Could).** Nhóm này gồm xoá bản ghi kèm xoá tệp ảnh liên quan (không để lại tệp mồ côi), xuất lịch sử đã áp bộ lọc ra CSV hoặc JSON, script dọn dẹp tệp không còn bản ghi tham chiếu, và xoá hàng loạt. Một chi tiết nhỏ nhưng thực dụng trong tiêu chí chấp nhận: tệp CSV phải được mã hoá UTF-8 **có BOM**, nếu không Excel sẽ hiển thị sai toàn bộ ký tự tiếng Việt.
 
@@ -2232,7 +2264,7 @@ Yêu cầu gộp trùng (FR-2.4) là điểm dễ bị bỏ sót nhất trong c�
 | FR-1 (Ảnh) | Phase 3, 4, 5, 6 | Unit test + integration test |
 | FR-2 (Video) | Phase 5, 6 | Integration test + performance test |
 | FR-3 (Thời gian thực) | Phase 5 (tầng API — phần giao diện đã gỡ 2026-07-20) | Performance test |
-| FR-4 (Dashboard) | Phase 5, 6 | Integration test + UI test |
+| FR-4 (Thống kê, lịch sử) | Phase 5, 6 (FR-4.1/4.2 chỉ còn ở tầng API — trang Tổng quan đã gỡ 2026-07-20) | Integration test (`test_api_statistics.py`, `test_api_health.py`) + UI test cho FR-4.3 → 4.8 |
 | FR-5 (Dữ liệu) | Phase 5, 6 | Unit test |
 | FR-6 (Hệ thống) | Phase 5, 8 | Smoke test + stress test |
 
@@ -2380,7 +2412,6 @@ graph TB
         UI1[Nhận dạng ảnh<br/>— trang chủ]
         UI2[Nhận dạng video]
         UI3[Lịch sử và tra cứu]
-        UI4[Tổng quan]
     end
 
     subgraph L2["Tầng 2 — Giao diện lập trình (FastAPI)"]
@@ -2430,7 +2461,7 @@ graph TB
     style L5 fill:#dcfce7,stroke:#16a34a
 ```
 
-> **Ghi chú thay đổi phạm vi 2026-07-20:** tầng trình bày còn **bốn trang** — trang Webcam thời gian thực đã được gỡ khỏi giao diện. Endpoint `POST /detect/frame` **vẫn giữ nguyên ở tầng 2** và phục vụ các client thời gian thực gọi API trực tiếp, không qua tầng trình bày.
+> **Ghi chú thay đổi phạm vi 2026-07-20 (hai đợt trong ngày):** tầng trình bày còn **ba trang** — trang Webcam thời gian thực và trang Tổng quan (Dashboard) đều đã được gỡ khỏi giao diện. **Tầng 2 đến tầng 5 không đổi một dòng nào:** `POST /detect/frame`, `GET /statistics` và `GET /health` vẫn giữ nguyên ở tầng 2, `StatisticsService` vẫn giữ nguyên ở tầng 3, và cả ba endpoint đều vẫn có kiểm thử tích hợp. Chúng nay phục vụ client gọi API trực tiếp thay vì phục vụ một trang giao diện. Sự kiện này là một phép thử ngoài dự kiến cho nguyên tắc phụ thuộc một chiều của kiến trúc: gỡ hai màn hình ở tầng trên cùng không gây một thay đổi nào ở bốn tầng dưới.
 
 **Trách nhiệm của từng tầng:**
 
@@ -2748,7 +2779,7 @@ Tầng nghiệp vụ gồm bốn service, mỗi service phụ trách một nhóm
 |---|---|---|
 | `DetectionService` | Điều phối toàn bộ nghiệp vụ nhận dạng: tạo tác vụ, gọi pipeline, lưu ảnh, ghi bản ghi, xử lý video nền, gộp trùng, quản lý vòng đời tác vụ | Pipeline (qua giao thức trừu tượng), `StorageService`, các repository |
 | `HistoryService` | Truy vấn lịch sử có lọc, sắp xếp, phân trang; lấy chi tiết một bản ghi; xoá bản ghi kèm tệp; xuất dữ liệu | `StorageService`, repository |
-| `StatisticsService` | Tổng hợp các chỉ số dashboard và chuỗi số liệu theo ngày | Repository |
+| `StatisticsService` | Tổng hợp các chỉ số thống kê và chuỗi số liệu theo ngày (phục vụ `GET /api/statistics`) | Repository |
 | `StorageService` | Lưu, đọc và xoá tệp trong kho tệp; sinh tên tệp an toàn từ UUID; ánh xạ đường dẫn nội bộ sang URL công khai | Cấu hình |
 
 #### a) Hợp đồng pipeline được khai báo bằng giao thức cấu trúc
@@ -2933,54 +2964,44 @@ Vòng lặp hỏi tiến độ ở phía giao diện chạy độc lập với v
 ```mermaid
 sequenceDiagram
     autonumber
-    actor U as Người dùng
-    participant BR as Trình duyệt
-    participant FE as Client thời gian thực
+    participant RT as Client thời gian thực
     participant API as Tầng API
     participant SVC as DetectionService
     participant AI as Pipeline AI
     participant DB as CSDL
 
-    U->>FE: Bấm "Bật camera"
-    FE->>BR: getUserMedia({ video: true })
-    BR->>U: Hỏi quyền truy cập camera
-    U->>BR: Cho phép
-    BR-->>FE: MediaStream
-    FE->>U: Hiển thị luồng video trực tiếp
+    Note over RT: Trách nhiệm phía client — hàng đợi một khe:<br/>bỏ khung mới nếu khung trước chưa có kết quả
 
-    Note over FE: Hàng đợi một khe:<br/>bỏ khung mới nếu khung trước chưa xong
-
-    FE->>FE: Chụp khung hình đầu tiên, mã hoá JPEG
-    FE->>API: POST /api/detect/frame (không kèm job_id)
+    RT->>RT: Mở nguồn thu hình, chụp khung đầu tiên, mã hoá JPEG
+    RT->>API: POST /api/detect/frame (không kèm job_id)
     API->>SVC: detect_frame(bytes, job_id = None)
     SVC->>DB: Tạo DetectionJob (input_type = webcam)
     SVC->>AI: process(frame)
     AI-->>SVC: PipelineResult
     SVC->>DB: Ghi bản ghi biển số
     SVC-->>API: Kết quả kèm job_id
-    API-->>FE: 200 — { results, job_id }
-    FE->>FE: Ghi nhớ job_id cho cả phiên
-    FE->>U: Vẽ bounding box chồng lên khung hình
+    API-->>RT: 200 — { results, job_id }
+    RT->>RT: Ghi nhớ job_id cho cả phiên
 
-    loop Mỗi chu kỳ chụp, đến khi người dùng dừng
-        FE->>FE: Nếu còn khung đang chờ kết quả → bỏ khung này
-        FE->>API: POST /api/detect/frame (kèm job_id của phiên)
+    loop Mỗi chu kỳ chụp, đến khi client kết thúc phiên
+        RT->>RT: Nếu còn khung đang chờ kết quả → bỏ khung này
+        RT->>API: POST /api/detect/frame (kèm job_id của phiên)
         API->>SVC: detect_frame(bytes, job_id)
         SVC->>DB: Gắn vào tác vụ đang chạy, tăng processed_frames
         SVC->>AI: process(frame)
         AI-->>SVC: PipelineResult
         SVC->>SVC: Gộp trùng trong phạm vi phiên
         SVC-->>API: Kết quả
-        API-->>FE: 200
-        FE->>U: Cập nhật lớp phủ bounding box và bảng biển số của phiên
+        API-->>RT: 200
+        RT->>RT: Sử dụng kết quả theo nhu cầu (hiển thị, cảnh báo, ghi log…)
     end
 
-    U->>FE: Bấm "Tắt camera"
-    FE->>BR: Dừng MediaStream
-    FE->>U: Hiển thị tổng kết phiên
+    RT->>RT: Đóng nguồn thu hình, kết thúc phiên
 ```
 
-Ba chi tiết thiết kế thể hiện trên sơ đồ này. Thứ nhất, **hàng đợi một khe nằm ở phía giao diện**, không phải phía máy chủ — việc bỏ khung nên xảy ra trước khi khung hình được truyền qua mạng, chứ không phải sau khi máy chủ đã nhận và giải mã. Thứ hai, `job_id` do máy chủ sinh ở lời gọi đầu tiên và được giao diện ghi nhớ, nhờ đó toàn bộ phiên là một tác vụ duy nhất. Thứ ba, việc gộp trùng diễn ra trong phạm vi phiên: giữ một biển số trước camera trong mười giây tạo ra một bản ghi, không phải hàng chục.
+*Ghi chú:* trước ngày 2026-07-20, client trong sơ đồ này chính là trang Webcam của giao diện web; nay giao diện không còn trang đó, nên sơ đồ mô tả **hợp đồng tương tác cho một client bất kỳ** gọi `POST /api/detect/frame`.
+
+Ba chi tiết thiết kế thể hiện trên sơ đồ này. Thứ nhất, **hàng đợi một khe nằm ở phía client**, không phải phía máy chủ — việc bỏ khung nên xảy ra trước khi khung hình được truyền qua mạng, chứ không phải sau khi máy chủ đã nhận và giải mã; đây là một ràng buộc client phải tự tuân thủ, máy chủ không áp đặt được. Thứ hai, `job_id` do máy chủ sinh ở lời gọi đầu tiên và được client ghi nhớ, nhờ đó toàn bộ phiên là một tác vụ duy nhất. Thứ ba, việc gộp trùng diễn ra trong phạm vi phiên: giữ một biển số trước ống kính trong mười giây tạo ra một bản ghi, không phải hàng chục.
 
 ---
 
@@ -3141,7 +3162,7 @@ Sai lệch cụ thể phát sinh ở phần thống kê (FR-4.1). Chỉ số "t�
 
 Mức độ sai lệch không nhỏ. Với ảnh giao thông trung bình chứa 2–3 biển số, chỉ số sử dụng bị nhân lên 2–3 lần. Với video, sai lệch còn nghiêm trọng hơn: một video duy nhất có thể sinh ra hàng chục biển số sau khi gộp trùng, và toàn bộ số đó sẽ bị tính là hàng chục lượt sử dụng riêng biệt.
 
-Điều nguy hiểm nhất của lỗi này là nó **không tự bộc lộ**. Không có ngoại lệ, không có dòng log, không có giá trị vô lý trên màn hình. Dashboard vẫn hiển thị các con số trông hoàn toàn hợp lý, chỉ có điều chúng sai — và chúng sai theo một hướng có lợi cho ấn tượng ban đầu, khiến hệ thống trông như được sử dụng nhiều hơn thực tế.
+Điều nguy hiểm nhất của lỗi này là nó **không tự bộc lộ**. Không có ngoại lệ, không có dòng log, không có giá trị vô lý ở đầu ra. Đáp ứng của `GET /api/statistics` vẫn mang các con số trông hoàn toàn hợp lý, chỉ có điều chúng sai — và chúng sai theo một hướng có lợi cho ấn tượng ban đầu, khiến hệ thống trông như được sử dụng nhiều hơn thực tế. Lập luận này **không mất hiệu lực** khi trang Tổng quan bị gỡ khỏi giao diện ngày 2026-07-20: phép tính vẫn nằm ở `StatisticsService` và vẫn phục vụ qua API, nên một khoá nhóm sai vẫn cho ra một con số sai — chỉ là nó sai trong JSON thay vì sai trên màn hình.
 
 Với `source_job_id`, hai loại thống kê được phân biệt rạch ròi và mỗi loại có định nghĩa rõ ràng:
 
@@ -3219,7 +3240,7 @@ Cuối cùng, việc giữ lại các trường hợp thất bại còn mang gi�
 
 ### 3.5.1. Sơ đồ điều hướng
 
-Giao diện được xây dựng dưới dạng ứng dụng một trang (Single Page Application) với bốn màn hình chính, chia sẻ chung một khung bố cục gồm thanh điều hướng và vùng nội dung:
+Giao diện được xây dựng dưới dạng ứng dụng một trang (Single Page Application) với **ba màn hình** chính, chia sẻ chung một khung bố cục gồm thanh điều hướng và vùng nội dung:
 
 ```mermaid
 graph LR
@@ -3228,9 +3249,7 @@ graph LR
     ROOT --> P1["/<br/>Nhận dạng ảnh (trang chủ)"]
     ROOT --> P2["/video<br/>Nhận dạng video"]
     ROOT --> P3["/history<br/>Lịch sử và tra cứu"]
-    ROOT --> P4["/dashboard<br/>Tổng quan (cuối menu)"]
 
-    P4 -.->|"bấm vào một mục<br/>hoạt động gần đây"| P3
     P3 -.->|"bấm vào một dòng"| M1["Hộp thoại chi tiết<br/>bản ghi"]
     P3 -.->|"bấm nút xoá"| M2["Hộp thoại<br/>xác nhận xoá"]
     P2 -.->|"tác vụ hoàn tất"| P3
@@ -3242,24 +3261,24 @@ graph LR
     style M2 fill:#fef9c3,stroke:#ca8a04
 ```
 
-> **Ghi chú thay đổi phạm vi 2026-07-20:** so với thiết kế ban đầu (năm màn hình, Dashboard là trang chủ), màn hình Webcam (`/webcam`) đã được **gỡ khỏi giao diện** để thu gọn phạm vi demo — năng lực thời gian thực giữ nguyên ở tầng API (`POST /api/detect/frame`); đồng thời trang chủ chuyển sang **Nhận dạng ảnh** và Tổng quan lùi về cuối thanh điều hướng (`/dashboard`).
+> **Ghi chú thay đổi phạm vi 2026-07-20 — hai đợt liên tiếp trong cùng một ngày.** Thiết kế ban đầu có **năm màn hình** và Dashboard là trang chủ. Đợt thứ nhất gỡ màn hình Webcam (`/webcam`) và chuyển trang chủ sang **Nhận dạng ảnh**; đợt thứ hai gỡ tiếp màn hình **Tổng quan / Dashboard** (`/dashboard`). Cả hai đợt đều nhằm thu gọn phạm vi demo, và cả hai đều **không** gỡ năng lực nào ở tầng dưới: `POST /api/detect/frame`, `GET /api/statistics` và `GET /health` vẫn phục vụ và vẫn có kiểm thử tích hợp. Hệ quả về yêu cầu: FR-3.1/FR-3.4 chuyển M → W ở đợt 1, **FR-4.1 chuyển M → W** và FR-4.2 chuyển S → W ở đợt 2 — xem khung ghi chú ở mục 3.1.3(a) về việc đây là yêu cầu mức Must đầu tiên bị đưa ra khỏi phạm vi. Mã giao diện của cả hai màn hình còn nguyên trong lịch sử git.
 
-Cấu trúc điều hướng cố ý giữ ở mức **phẳng**: bốn màn hình chính đều truy cập được trực tiếp từ thanh điều hướng, không có màn hình nào bị lồng sâu. Chi tiết một bản ghi và xác nhận xoá được trình bày dưới dạng hộp thoại chồng lên trang lịch sử thay vì một trang riêng, để người dùng không mất ngữ cảnh danh sách và các bộ lọc đang áp dụng khi xem xong một bản ghi.
+Cấu trúc điều hướng cố ý giữ ở mức **phẳng**: ba màn hình chính đều truy cập được trực tiếp từ thanh điều hướng, không có màn hình nào bị lồng sâu. Chi tiết một bản ghi và xác nhận xoá được trình bày dưới dạng hộp thoại chồng lên trang lịch sử thay vì một trang riêng, để người dùng không mất ngữ cảnh danh sách và các bộ lọc đang áp dụng khi xem xong một bản ghi.
 
 Mọi đường dẫn không khớp đều được chuyển hướng về trang chủ (Nhận dạng ảnh) thay vì hiển thị trang lỗi.
 
 ### 3.5.2. Mô tả các màn hình chính
 
-#### a) Dashboard (Tổng quan)
+#### a) Màn hình Tổng quan / Dashboard (đã gỡ khỏi giao diện 2026-07-20)
 
-Màn hình tổng quan, truy cập tại `/dashboard` và đặt ở cuối thanh điều hướng (trước thay đổi phạm vi 2026-07-20, đây là màn hình mặc định khi mở ứng dụng). Bố cục gồm bốn khối:
+Thiết kế ban đầu có màn hình Tổng quan tại `/dashboard`, gồm hàng thẻ chỉ số tổng hợp (tổng lượt sử dụng đếm theo tác vụ, tổng số biển đã đọc đếm theo bản ghi lịch sử, độ tin cậy trung bình, thời gian xử lý trung bình — FR-4.1), biểu đồ xu hướng theo ngày (FR-4.2), biểu đồ phân bố theo loại đầu vào, danh sách hoạt động gần đây, và một thẻ trạng thái hệ thống đọc từ endpoint sức khoẻ.
 
-1. **Hàng thẻ chỉ số** — các con số tổng hợp: tổng số lượt sử dụng (đếm theo tác vụ), tổng số biển số đã đọc (đếm theo bản ghi lịch sử), độ tin cậy trung bình, thời gian xử lý trung bình. Việc hai con số đầu được tính từ hai bảng khác nhau là hệ quả trực tiếp của quyết định thiết kế ở mục 3.4.3(c).
-2. **Biểu đồ xu hướng theo ngày** — số lượt nhận dạng theo thời gian, có bộ chọn độ dài cửa sổ.
-3. **Biểu đồ phân bố theo loại đầu vào** — tỉ trọng ảnh, video và webcam.
-4. **Danh sách hoạt động gần đây** — các lượt nhận dạng mới nhất, bấm vào để chuyển sang màn hình lịch sử.
+**Theo quyết định thu gọn phạm vi ngày 2026-07-20, màn hình này đã được gỡ khỏi giao diện web** — cùng đợt với việc chuyển **FR-4.1 từ Must sang Won't** và FR-4.2 từ Should sang Won't (mục 3.1.3a). Toàn bộ số liệu vẫn truy vấn được qua `GET /api/statistics` và `GET /health`, hai endpoint vẫn phục vụ và vẫn có kiểm thử tích hợp; mã trang cùng các thành phần biểu đồ còn trong lịch sử git.
 
-Ngoài ra, một thẻ trạng thái hệ thống hiển thị kết quả của endpoint sức khoẻ. Thẻ này hiển thị rõ khi hệ thống đang ở trạng thái `degraded` do dùng pipeline mô phỏng — một quyết định thiết kế nhất quán với nguyên tắc không để trạng thái mô phỏng bị nhầm với trạng thái vận hành thật.
+Hai lập luận thiết kế của màn hình này vẫn còn hiệu lực và vì thế được giữ lại ở đây, vì chúng ràng buộc chính đáp ứng của API chứ không chỉ ràng buộc cách vẽ:
+
+- **Hai con số "lượt sử dụng" và "số biển đã đọc" phải tính từ hai bảng khác nhau**, đúng theo quyết định thiết kế dữ liệu ở mục 3.4.3(c). Gộp chúng làm một là cách tạo ra một con số sai không tự bộc lộ.
+- **Trạng thái `degraded` phải hiển thị rõ**, để trạng thái chạy pipeline mô phỏng không bị nhầm với trạng thái vận hành thật. Ràng buộc này nay nằm ở chính trường `status` của `GET /health`, và trách nhiệm hiển thị chuyển sang phía client gọi API.
 
 #### b) Màn hình nhận dạng ảnh
 
@@ -3296,7 +3315,7 @@ Nguyên tắc này áp dụng cho **mọi** thành phần lấy dữ liệu từ
 | 3 | **Rỗng** | Thông báo giải thích vì sao chưa có gì, kèm gợi ý hành động tiếp theo | Màn hình trắng không phân biệt được với lỗi kỹ thuật |
 | 4 | **Lỗi** | Thông báo tiếng Việt nêu nguyên nhân và cách khắc phục, kèm khả năng thử lại | Người dùng bế tắc, không biết nên làm gì |
 
-Trạng thái rỗng đáng được nhấn mạnh vì nó thường bị bỏ sót nhất. Với hệ thống này, trạng thái rỗng xuất hiện ở nhiều chỗ có ý nghĩa khác nhau: dashboard khi chưa có lượt nhận dạng nào, bảng lịch sử khi bộ lọc không khớp bản ghi nào, và kết quả nhận dạng khi ảnh không chứa biển số. Ba tình huống này cần ba thông điệp khác nhau — "chưa có dữ liệu, hãy thử nhận dạng một ảnh", "không có bản ghi nào khớp bộ lọc, hãy nới lỏng điều kiện", và "không phát hiện được biển số trong ảnh này". Dùng chung một thông điệp cho cả ba sẽ khiến người dùng không biết vấn đề nằm ở đâu.
+Trạng thái rỗng đáng được nhấn mạnh vì nó thường bị bỏ sót nhất. Với hệ thống này, trạng thái rỗng xuất hiện ở nhiều chỗ có ý nghĩa khác nhau: bảng lịch sử khi chưa có lượt nhận dạng nào, bảng lịch sử khi bộ lọc không khớp bản ghi nào, và kết quả nhận dạng khi ảnh không chứa biển số. Ba tình huống này cần ba thông điệp khác nhau — "chưa có dữ liệu, hãy thử nhận dạng một ảnh", "không có bản ghi nào khớp bộ lọc, hãy nới lỏng điều kiện", và "không phát hiện được biển số trong ảnh này". Dùng chung một thông điệp cho cả ba sẽ khiến người dùng không biết vấn đề nằm ở đâu. *(Trường hợp thứ nhất trước 2026-07-20 xuất hiện trên màn hình Tổng quan; sau khi màn hình này được gỡ, nó biểu hiện ở bảng lịch sử rỗng.)*
 
 Trường hợp thứ ba là biểu hiện ở tầng giao diện của cùng một quyết định đã xuất hiện ở tầng API (trả mã 200 với danh sách rỗng) và ở tầng thiết kế pipeline (trả kết quả rỗng, không ném ngoại lệ). Ba tầng nhất quán với nhau về ngữ nghĩa: **không tìm thấy không phải là lỗi**.
 
@@ -3324,7 +3343,7 @@ Nguyên tắc vận hành đi kèm: **chi tiết kỹ thuật không bị vứt 
 
 **Bố cục thích ứng.** Giao diện hoạt động đúng từ độ phân giải 1366×768 trở lên (NFR-U4). Đây là độ phân giải phổ biến của máy chiếu trong phòng bảo vệ, nên yêu cầu này có tính thực dụng trực tiếp.
 
-**Trạng thái cài đặt.** Phần giao diện **đã hoàn thành**: cấu trúc điều hướng, khung bố cục và toàn bộ thành phần của bốn màn hình hiện hành đã được cài đặt, bản build production chạy sạch (màn hình webcam từng được cài đặt đầy đủ và đã gỡ 2026-07-20 theo thu gọn phạm vi; endpoint `POST /api/detect/frame` của backend nay phục vụ client API, không còn trang giao diện gọi tới). Chi tiết cài đặt cùng ảnh chụp màn hình được trình bày ở **Chương 4**; các hạng mục còn dở (đáng chú ý là nút huỷ tác vụ video) được ghi nhận ở mục 4.7.
+**Trạng thái cài đặt.** Phần giao diện **đã hoàn thành**: cấu trúc điều hướng, khung bố cục và toàn bộ thành phần của **ba màn hình hiện hành** đã được cài đặt, bản build production chạy sạch. Hai màn hình khác — Webcam và Tổng quan — từng được cài đặt đầy đủ và đã gỡ ngày 2026-07-20 theo hai đợt thu gọn phạm vi; ba endpoint tương ứng của backend (`POST /api/detect/frame`, `GET /api/statistics`, `GET /health`) nay phục vụ client API, không còn trang giao diện gọi tới. Chi tiết cài đặt cùng ảnh chụp màn hình được trình bày ở **Chương 4**; các hạng mục còn dở (đáng chú ý là nút huỷ tác vụ video) được ghi nhận ở mục 4.7.
 
 ---
 
@@ -3332,7 +3351,7 @@ Nguyên tắc vận hành đi kèm: **chi tiết kỹ thuật không bị vứt 
 
 Chương này đã trình bày toàn bộ quá trình phân tích yêu cầu và thiết kế hệ thống nhận dạng biển số xe Việt Nam.
 
-Về **phân tích yêu cầu**, đồ án xác định ba tác nhân tương tác trực tiếp và chín use case, đặc tả 34 yêu cầu chức năng tổ chức thành 6 nhóm (22 bắt buộc, 7 nên có, 3 có thì tốt, 2 không triển khai ở bản này — hai yêu cầu thuần giao diện FR-3.1/FR-3.4, chuyển mức khi gỡ trang webcam 2026-07-20), mỗi yêu cầu kèm một tiêu chí chấp nhận kiểm chứng được. Yêu cầu phi chức năng được đặt ở dạng chỉ tiêu định lượng, trong đó điểm cần nhấn mạnh là **mọi chỉ tiêu hiệu năng đều là chỉ tiêu đo trên CPU**. Việc không có GPU được xác lập là một ràng buộc thiết kế nghiêm túc chứ không phải một hạn chế tạm thời, vì nó cố định trong toàn bộ vòng đời đồ án, thay đổi độ trễ theo bậc độ lớn chứ không theo tỉ lệ phần trăm, chi phối việc lựa chọn thành phần ở mọi tầng, và trực tiếp sinh ra hai quyết định kiến trúc — xử lý video bất đồng bộ và bỏ khung có kiểm soát ở chế độ webcam.
+Về **phân tích yêu cầu**, đồ án xác định ba tác nhân tương tác trực tiếp và chín use case, đặc tả 34 yêu cầu chức năng tổ chức thành 6 nhóm (**21 bắt buộc, 6 nên có, 3 có thì tốt, 4 không triển khai ở bản này**), mỗi yêu cầu kèm một tiêu chí chấp nhận kiểm chứng được. Bốn yêu cầu mức Won't đều thuần giao diện và đều chuyển mức trong hai đợt thu gọn phạm vi ngày 2026-07-20: FR-3.1/FR-3.4 khi gỡ trang Webcam, FR-4.1/FR-4.2 khi gỡ trang Tổng quan — trong đó **FR-4.1 là yêu cầu mức Must đầu tiên bị đưa ra khỏi phạm vi**, một sự việc được ghi thẳng ở mục 3.1.3(a) và được đánh giá là hạn chế thật ở Chương 6. Cả bốn đều mất màn hình hiển thị chứ không mất năng lực: các endpoint tương ứng vẫn phục vụ và vẫn có kiểm thử tích hợp. Yêu cầu phi chức năng được đặt ở dạng chỉ tiêu định lượng, trong đó điểm cần nhấn mạnh là **mọi chỉ tiêu hiệu năng đều là chỉ tiêu đo trên CPU**. Việc không có GPU được xác lập là một ràng buộc thiết kế nghiêm túc chứ không phải một hạn chế tạm thời, vì nó cố định trong toàn bộ vòng đời đồ án, thay đổi độ trễ theo bậc độ lớn chứ không theo tỉ lệ phần trăm, chi phối việc lựa chọn thành phần ở mọi tầng, và trực tiếp sinh ra hai quyết định kiến trúc — xử lý video bất đồng bộ và bỏ khung có kiểm soát ở chế độ webcam.
 
 Về **kiến trúc**, hệ thống được tổ chức thành năm tầng theo nguyên tắc phụ thuộc một chiều. Quyết định kiến trúc quan trọng nhất là **tách hoàn toàn tầng AI khỏi tầng API**: package nhận dạng không import bất kỳ thành phần nào của framework web. Ba lợi ích của quyết định này — kiểm thử độc lập, tái sử dụng trong script huấn luyện và đánh giá, thay thế engine mà không sửa tầng API — không phải lập luận lý thuyết mà đang được sử dụng trong thực tế: nhờ nó, toàn bộ phần mềm đã được xây dựng và chạy được với một pipeline mô phỏng trước khi mô hình được huấn luyện. Ràng buộc này được kiểm chứng bằng hai công cụ bổ trợ nhau: kiểm tra tĩnh các câu lệnh import và kiểm tra động danh sách module đã nạp lúc chạy — phép thứ hai bắt được cả import muộn lẫn import bắc cầu mà phép thứ nhất bỏ sót.
 
@@ -3340,7 +3359,7 @@ Về **thiết kế chi tiết**, chương đã đặc tả cấu trúc lớp c�
 
 Về **thiết kế cơ sở dữ liệu**, mô hình gồm hai bảng có quan hệ một–nhiều. Năm quyết định thiết kế dữ liệu được phân tích kỹ, và điểm chung của cả năm là chúng bảo vệ **tính đúng đắn của các số liệu sẽ được công bố ở chương đánh giá**: tách hai cột độ tin cậy để phân tích lỗi được; lưu cả chuỗi OCR thô lẫn chuỗi đã sửa để đo được đóng góp định lượng của khối hậu xử lý; thêm khoá nhóm tác vụ để thống kê sử dụng không bị thổi phồng theo số biển số trên mỗi ảnh; lưu số dòng của biển vì chuỗi ký tự tự nó nhập nhằng giữa biển ô tô và biển xe máy; và cho phép các cột OCR rỗng để những trường hợp đọc không ra vẫn nằm trong mẫu số khi tính độ chính xác. Mỗi quyết định trong số này, nếu bỏ qua, đều dẫn tới một con số sai mà **không có gì báo hiệu** — đó là lý do chúng được cân nhắc ngay từ khâu thiết kế lược đồ chứ không để lại xử lý sau.
 
-Về **giao diện người dùng**, chương trình bày sơ đồ điều hướng phẳng gồm bốn màn hình (sau thu gọn phạm vi 2026-07-20, gỡ màn hình webcam), mô tả chức năng từng màn hình, và xác lập hai nguyên tắc trải nghiệm bắt buộc: bốn trạng thái phải xử lý cho mọi thành phần hiển thị dữ liệu, và quy tắc soạn thông báo lỗi tiếng Việt gồm ba phần nguyên nhân — giải thích — hướng khắc phục.
+Về **giao diện người dùng**, chương trình bày sơ đồ điều hướng phẳng gồm **ba màn hình** (sau hai đợt thu gọn phạm vi ngày 2026-07-20 đã gỡ màn hình Webcam rồi tới màn hình Tổng quan), mô tả chức năng từng màn hình, và xác lập hai nguyên tắc trải nghiệm bắt buộc: bốn trạng thái phải xử lý cho mọi thành phần hiển thị dữ liệu, và quy tắc soạn thông báo lỗi tiếng Việt gồm ba phần nguyên nhân — giải thích — hướng khắc phục.
 
 Cần nói rõ giới hạn của chương này. Nội dung trình bày ở đây là **thiết kế và trạng thái cài đặt của thiết kế**, không phải kết quả thực nghiệm. Tầng API, tầng nghiệp vụ, tầng dữ liệu và lược đồ cơ sở dữ liệu đã được cài đặt và xác minh bằng lời gọi HTTP thực tế; giao diện đã hoàn thiện và build sạch; hệ thống **đã chạy pipeline nhận dạng thật với mô hình chính thức** `models/best.pt`. Mô hình đối chứng `models/baseline-416-v1.pt` không dùng làm kết quả đánh giá được (sai độ phân giải và split có rò rỉ). Toàn bộ số liệu về độ chính xác của mô hình, độ trễ thực đo trên CPU, mức đóng góp thực tế của khối hậu xử lý và độ chính xác tách theo số dòng biển số **được trình bày ở Chương 5**. Việc chương này tập trung vào tính đúng đắn có thể kiểm chứng của thiết kế, thay vì trình bày trước các con số thuộc chương đánh giá, là một lựa chọn có chủ đích về phương pháp.
 
@@ -4015,7 +4034,7 @@ Bốn trường mang ý nghĩa vượt ra ngoài việc lưu trữ đơn thuần
 
 **`ocr_confidence` tách khỏi `confidence`.** Hai độ tin cậy **không bao giờ được gộp**. `confidence` là mức chắc chắn của *bộ phát hiện* rằng nó đang nhìn vào một biển số; `ocr_confidence` là mức chắc chắn của *OCR* về các ký tự. Một giá trị thấp ở mỗi cột có ý nghĩa hoàn toàn khác nhau, và một con số duy nhất không diễn đạt được cả hai. Việc tách thành hai cột cũng chính là thứ ngăn hai giá trị này bị hoán đổi cho nhau — tên cột trong CSDL được đặt trùng tên thuộc tính trên `PlateDetection`/`PlateRecognition` để tầng lưu trữ thực hiện **sao chép từng trường** thay vì phiên dịch.
 
-**`source_job_id` trên mọi dòng, và **không cho phép NULL**.** Một lần tải lên có thể chứa nhiều biển số. Không có khoá nhóm, một bức ảnh ba xe trở thành ba dòng không liên hệ, và bảng điều khiển báo "3 lượt nhận dạng" trong khi câu trả lời trung thực là "1 lượt tải lên chứa 3 biển số". Cột được đặt **bắt buộc** vì thống kê sử dụng được định nghĩa là số tác vụ phân biệt; một dòng không có tác vụ sẽ vô hình với các phép đếm đó nhưng vẫn xuất hiện trong danh sách lịch sử, khiến hai khung nhìn của cùng một dữ liệu mâu thuẫn nhau. Ràng buộc `NOT NULL` biến sự mâu thuẫn đó thành lỗi lúc chèn thay vì thành một con số sai âm thầm trên bảng điều khiển.
+**`source_job_id` trên mọi dòng, và **không cho phép NULL**.** Một lần tải lên có thể chứa nhiều biển số. Không có khoá nhóm, một bức ảnh ba xe trở thành ba dòng không liên hệ, và `GET /api/statistics` báo "3 lượt nhận dạng" trong khi câu trả lời trung thực là "1 lượt tải lên chứa 3 biển số". Cột được đặt **bắt buộc** vì thống kê sử dụng được định nghĩa là số tác vụ phân biệt; một dòng không có tác vụ sẽ vô hình với các phép đếm đó nhưng vẫn xuất hiện trong danh sách lịch sử, khiến hai khung nhìn của cùng một dữ liệu mâu thuẫn nhau. Ràng buộc `NOT NULL` biến sự mâu thuẫn đó thành lỗi lúc chèn thay vì thành một con số sai âm thầm trong đáp ứng thống kê.
 
 **`plate_line_count`.** Giá trị `1` hoặc `2`, cho phép báo cáo độ chính xác **tách riêng cho biển một dòng và biển hai dòng** — hai lớp có hành vi rất khác nhau, như mục 4.2.5 đã phân tích. Nếu không có cột này, con số chính xác tổng hợp sẽ che giấu đúng điểm khó nhất của bài toán.
 
@@ -4083,7 +4102,7 @@ Hệ quả trực tiếp cho kiểm thử: `app.dependency_overrides[get_pipelin
   ```
 
   Nhờ đó một biển số đứng yên không đọc được co lại thành một dòng, trong khi một biển khác thật sự ở vị trí khác trong khung vẫn có dòng riêng.
-- *Ghi tiến độ mỗi 10 khung đã xử lý* (`_PROGRESS_COMMIT_EVERY = 10`). Commit mỗi khung biến một video hai phút thành hàng nghìn giao dịch ghi cạnh tranh với các truy vấn đọc của bảng điều khiển; commit chỉ ở cuối sẽ để thanh tiến độ đứng yên ở 0 suốt tác vụ — đúng thứ mà endpoint này tồn tại để ngăn.
+- *Ghi tiến độ mỗi 10 khung đã xử lý* (`_PROGRESS_COMMIT_EVERY = 10`). Commit mỗi khung biến một video hai phút thành hàng nghìn giao dịch ghi cạnh tranh với các truy vấn đọc của lịch sử và thống kê; commit chỉ ở cuối sẽ để thanh tiến độ đứng yên ở 0 suốt tác vụ — đúng thứ mà endpoint này tồn tại để ngăn.
 - *Đọc kích thước khung hình **trước** khi `capture.release()`.* Truy vấn các thuộc tính này sau khi giải phóng trả về 0 trên mọi backend, khiến hệ thống báo video kích thước 0×0 và mọi hộp bao mà frontend co giãn theo đó đều sụp về không.
 - *Tiến độ khi không biết tổng số khung* trả về **0,99** thay vì 1,0, vì báo 1,0 trước khi tác vụ xong sẽ khiến client ngừng hỏi và bỏ lỡ kết quả.
 - *Kiểm tra huỷ bằng cách đọc lại từ CSDL* (`db.refresh(job, attribute_names=["status"])`), vì lệnh huỷ đến trên một phiên khác và phiên nền sẽ không bao giờ quan sát được nó nếu chỉ tin vào đối tượng trong bộ nhớ.
@@ -4132,7 +4151,7 @@ Trạng thái đã kiểm chứng: `/health` hiện trả về `model_loaded = t
 | 7 | `GET` | `/api/history/export` | 200 | Xuất CSV các bản ghi khớp bộ lọc |
 | 8 | `GET` | `/api/history/{detection_id}` | 200 | Chi tiết một bản ghi |
 | 9 | `DELETE` | `/api/history/{detection_id}` | **204** | Xoá một bản ghi |
-| 10 | `GET` | `/api/statistics` | 200 | Số liệu tổng hợp cho bảng điều khiển |
+| 10 | `GET` | `/api/statistics` | 200 | Số liệu thống kê tổng hợp và chuỗi số liệu theo ngày |
 
 *(Bảng liệt kê 10 dòng = 10 thao tác. Trong đó `/health` nằm ngoài tiền tố `/api`; dưới tiền tố `/api` có 8 đường dẫn mang 9 thao tác. Cách đếm chi tiết ở `docs/manuals/api-documentation.md` mục 4.2.)*
 
@@ -4146,7 +4165,7 @@ Ba lựa chọn mã trạng thái đáng giải thích:
 
 Tài liệu OpenAPI được sinh tự động và phục vụ tại `/docs` (Swagger UI), `/redoc` và `/openapi.json`. Ba đường dẫn này do **FastAPI tự sinh** (tham số `docs_url`, `redoc_url`, `openapi_url`), là hạ tầng tài liệu của framework chứ không phải hợp đồng API do nhóm thiết kế, nên **không được tính vào 10 endpoint** kể trên. Mô tả API nêu rõ hai điểm dễ hiểu sai nhất — sự phân biệt *job* với *detection*, và sự tách biệt hai độ tin cậy — ngay trong phần mô tả cấp cao nhất, chứ không để trong chú thích từng trường.
 
-Toàn bộ 10 endpoint đã được kiểm chứng bằng lời gọi HTTP thật từ frontend, với kiểu TypeScript khớp từng trường.
+Toàn bộ 10 endpoint đã được kiểm chứng bằng lời gọi HTTP thật từ frontend, với kiểu TypeScript khớp từng trường (phép kiểm chứng thực hiện trước hai đợt thu gọn phạm vi giao diện ngày 2026-07-20; hợp đồng của cả 10 endpoint không đổi kể từ đó — xem mục 4.4.2).
 
 ### 4.3.6. Xử lý lỗi, log có cấu trúc và `request_id`
 
@@ -4283,38 +4302,56 @@ Tham số `errors="backslashreplace"` là **tuyến phòng thủ thứ hai**: n�
 
 ### 4.4.1. Cấu trúc và bộ component dùng chung
 
-Frontend là ứng dụng React + TypeScript dựng bằng Vite, gồm **5 trang** và khoảng 50 mô-đun `.tsx`/`.ts`:
+Frontend là ứng dụng React + TypeScript dựng bằng Vite, gồm **3 trang** và 48 mô-đun `.tsx`/`.ts`:
 
 ```
 frontend/src/
-├── pages/           5 trang: Dashboard, ImageDetection, VideoDetection,
-│                    WebcamDetection, History
+├── pages/           3 trang: ImageDetection (trang chủ /), VideoDetection
+│                    (/video), History (/history)
 ├── components/
 │   ├── ui/          15 component nguyên thuỷ dùng chung
-│   ├── dashboard/   8 component + chartTheme
 │   ├── detection/
 │   │   ├── image/   BoundingBoxOverlay, DetectionSummary,
 │   │   │            ImageUploadPanel, PlateResultCard
-│   │   ├── video/   JobProgressPanel, VideoResultPanel, VideoUploadPanel
-│   │   └── webcam/  CameraStage, CameraControls, CaptureMetricsPanel,
-│   │                SessionPlateTable, useCameraStream, useFrameCaptureLoop
+│   │   └── video/   JobProgressPanel, VideoResultPanel, VideoUploadPanel
 │   └── history/     HistoryTable, HistoryFilters, HistoryDetailModal,
 │                    DeleteHistoryDialog, useHistoryQuery
 ├── services/api.ts  Lớp gọi API duy nhất
-├── types/index.ts   464 dòng — ánh xạ kiểu với backend
-├── hooks/           useApi, useDebounce, useJobPolling
+├── types/index.ts   472 dòng — ánh xạ kiểu với backend
+├── hooks/           useDebounce, useJobPolling
 └── lib/             cn, constants, format
 ```
 
+> **Ghi chú thay đổi phạm vi 2026-07-20 — hai đợt liên tiếp trong cùng một ngày.**
+>
+> | Đợt | Đã gỡ khỏi `frontend/src/` | Còn lại ở tầng API (endpoint, test, benchmark **không đổi**) |
+> |:--:|---|---|
+> | 1 | `pages/WebcamDetection.tsx`, `components/detection/webcam/` (CameraStage, CameraControls, CaptureMetricsPanel, SessionPlateTable, useCameraStream, useFrameCaptureLoop), hàm `detectFrame` trong `services/api.ts` | `POST /api/detect/frame` |
+> | 2 | `pages/Dashboard.tsx`, cả thư mục `components/dashboard/` (10 tệp: 8 component + `chartTheme.ts` + `index.ts`), `hooks/useApi.ts`, hai hàm `getStatistics` và `getHealth` trong `services/api.ts`, và gói npm `recharts` | `GET /api/statistics`, `GET /health` — **vẫn có kiểm thử tích hợp** ở `tests/integration/test_api_statistics.py` và `test_api_health.py` |
+>
+> Đợt 1 đồng thời chuyển trang chủ từ Dashboard sang Nhận dạng ảnh. Sau đợt 2, số mô-đun frontend giảm từ 60 xuống **48** (12 tệp bị gỡ), và mọi đường dẫn không khớp `Navigate` về `/`. Mã nguồn của cả hai trang còn trong lịch sử git nếu cần khôi phục. Hệ quả về yêu cầu — FR-3.1/FR-3.4 và **FR-4.1 (mức Must)**/FR-4.2 chuyển sang Won't — được phân tích ở mục 3.1.3(a).
+>
+> Các kiểu dữ liệu `Statistics`, `StatisticsQuery`, `HealthStatus` và `InputTypeBreakdown` trong `types/index.ts` được **giữ lại có chủ đích**: chúng là bản sao hợp đồng của hai endpoint vẫn đang phục vụ, nên xoá chúng sẽ làm mất phần ánh xạ kiểu của một phần API còn sống.
+
 Bộ component nguyên thuỷ trong `ui/` gồm 15 phần tử: `Badge`, `Button`, `Card`, `ConfidenceBar`, `EmptyState`, `ErrorState`, `FileDropzone`, `Modal`, `Pagination`, `PlateChip`, `ProgressBar`, `Skeleton`, `Spinner`, `StatCard`, `Table`. Hai trong số này đáng nêu vì chúng mã hoá tri thức miền chứ không chỉ hình thức: `PlateChip` hiển thị chuỗi biển số bằng phông chữ đơn cách với khoảng cách chữ mở rộng (để `0` và `O` phân biệt được bằng mắt), và `ConfidenceBar` hiển thị một độ tin cậy kèm nhãn ngưỡng thay vì chỉ một con số trần.
 
-Trạng thái kiểm chứng: `tsc --noEmit` sạch, ESLint sạch, `vite build` thành công với **2.381 mô-đun**.
+Trạng thái kiểm chứng (đo lại ngày 2026-07-20 sau đợt gỡ thứ hai): `tsc --noEmit` sạch, ESLint sạch, `vite build` thành công trong 2,15 giây với **1.670 mô-đun** — giảm từ 2.381 mô-đun của bản build trước đó. Tổng kích thước gói tải về giảm từ khoảng **730 KB xuống 328,8 KB (−55%)**, phần lớn nhờ gỡ thư viện biểu đồ `recharts` cùng trang Tổng quan. Chi tiết từng chunk: `index` 178,11 KB, `api` 54,92 KB, `History` 30,80 KB, CSS 28,82 KB, `ImageDetection` 16,42 KB, `VideoDetection` 15,33 KB, cùng ba chunk nhỏ dưới 5 KB.
 
 ### 4.4.2. Tầng gọi API và ánh xạ kiểu dữ liệu
 
 `services/api.ts` là **nơi duy nhất trong frontend biết về axios hoặc mã trạng thái HTTP**. Component gọi các hàm được export và nhận về hoặc dữ liệu đã có kiểu, hoặc một promise bị từ chối mang `ApiError` — một hình dạng đã chuẩn hoá, sẵn sàng để hiển thị. Ranh giới này giữ mối bận tâm về truyền tải nằm ngoài các trang.
 
-Chín hàm gọi API tương ứng một–một với chín trong số 10 endpoint: `detectImage`, `detectVideo`, `detectFrame`, `getJob`, `getHistory`, `getHistoryDetail`, `deleteHistory`, `getStatistics`, `getHealth`. Thêm hai hàm phụ trợ dựng URL: `exportHistoryUrl` — phủ nốt endpoint thứ mười, `GET /api/history/export`, vốn được tải bằng điều hướng trực tiếp chứ không qua axios — và `fileUrl`. Chín hàm gọi cộng `exportHistoryUrl` phủ đủ **10 endpoint**.
+**Sáu hàm gọi API** tương ứng một–một với sáu trong số 10 endpoint: `detectImage`, `detectVideo`, `getJob`, `getHistory`, `getHistoryDetail`, `deleteHistory`. Thêm hai hàm phụ trợ dựng URL: `exportHistoryUrl` — phủ endpoint thứ bảy, `GET /api/history/export`, vốn được tải bằng điều hướng trực tiếp chứ không qua axios — và `fileUrl`.
+
+**Ba endpoint còn lại không còn hàm gọi phía giao diện**, cả ba đều là hệ quả của hai đợt thu gọn phạm vi ngày 2026-07-20, và cả ba đều vẫn hoạt động nguyên vẹn ở backend:
+
+| Endpoint | Hàm cũ đã gỡ | Đợt | Ai gọi nay |
+|---|---|:--:|---|
+| `POST /api/detect/frame` | `detectFrame` | 1 — gỡ trang Webcam | Client thời gian thực gọi API trực tiếp |
+| `GET /api/statistics` | `getStatistics` | 2 — gỡ trang Tổng quan | Script phân tích, kiểm thử tích hợp, client bên ngoài |
+| `GET /health` | `getHealth` | 2 — gỡ trang Tổng quan | `HEALTHCHECK` của Docker, kiểm thử tích hợp, giám sát vận hành |
+
+Số hàm gọi API vì vậy giảm từ tám xuống **sáu**. Cần phân biệt rõ hai chuyện dễ bị đánh đồng: **hàm gọi ở tầng giao diện bị xoá**, còn **endpoint thì không** — cả ba vẫn nằm trong tài liệu OpenAPI đang phục vụ và vẫn có kiểm thử tích hợp ở `tests/integration/`. Riêng `GET /health` còn có một hộ tiêu thụ không phải người dùng: chỉ thị `HEALTHCHECK` trong `Dockerfile.backend` (mục 4.6.1) gọi chính nó.
 
 **Không hostname nào được viết cứng.** Origin của máy chủ đọc từ biến môi trường lúc build và **mặc định là rỗng**, khiến mọi yêu cầu là cùng-origin và tương đối: máy chủ dev của Vite proxy chúng tới backend, còn trong production một reverse proxy phục vụ cả bundle lẫn API từ một host. Một triển khai được **cấu hình**, không phải **build lại**.
 
@@ -4326,13 +4363,15 @@ return configured.replace(/\/+$/, '').replace(/\/api$/, '');
 
 Giá trị cấu hình kết thúc bằng `/api` là đang chỉ *API base* chứ không phải *origin*. Hậu tố được cắt đi, vì nếu không thì endpoint `/health` — vốn **chủ ý nằm ngoài tiền tố `/api`** — sẽ không còn với tới được.
 
-**Ánh xạ kiểu.** Tệp `types/index.ts` (464 dòng) khai báo các interface phản chiếu đúng các schema Pydantic của backend: `DetectionResult`, `DetectionResponse`, `DetectionHistory`, `DetectionJob`, `Statistics`, `HealthStatus`, `ApiErrorResponse`, cùng các kiểu hợp `InputType`, `JobStatus`, `PlateLineCount`. Đáng chú ý là `PlateLineCount` được khai báo là `1 | 2` chứ không phải `number` — trình biên dịch TypeScript do đó bắt được ngay tại chỗ mọi phép gán một giá trị khác. Đây là cách kiểu tĩnh mã hoá lại ràng buộc `CHECK (plate_line_count IN (1,2))` của CSDL ở đầu bên kia của đường truyền.
+**Ánh xạ kiểu.** Tệp `types/index.ts` (472 dòng) khai báo các interface phản chiếu đúng các schema Pydantic của backend: `DetectionResult`, `DetectionResponse`, `DetectionHistory`, `DetectionJob`, `Statistics`, `StatisticsQuery`, `HealthStatus`, `InputTypeBreakdown`, `ApiErrorResponse`, cùng các kiểu hợp `InputType`, `JobStatus`, `PlateLineCount`. Bốn kiểu `Statistics`, `StatisticsQuery`, `HealthStatus` và `InputTypeBreakdown` **được giữ lại có chủ đích** sau khi trang Tổng quan bị gỡ (2026-07-20): hợp đồng mà chúng mô tả vẫn còn sống ở `GET /api/statistics` và `GET /health`, nên xoá chúng đi sẽ khiến tệp này không còn phản chiếu đủ bề mặt API. Đáng chú ý là `PlateLineCount` được khai báo là `1 | 2` chứ không phải `number` — trình biên dịch TypeScript do đó bắt được ngay tại chỗ mọi phép gán một giá trị khác. Đây là cách kiểu tĩnh mã hoá lại ràng buộc `CHECK (plate_line_count IN (1,2))` của CSDL ở đầu bên kia của đường truyền.
 
-Toàn bộ 10 endpoint đã được kiểm chứng bằng HTTP thật với kiểu TypeScript khớp từng trường.
+Toàn bộ 10 endpoint đã được kiểm chứng bằng HTTP thật với kiểu TypeScript khớp từng trường. Phép kiểm chứng này thực hiện **trước 2026-07-20**, khi frontend còn gọi đủ 10 endpoint; nó vẫn còn hiệu lực vì hợp đồng của cả 10 endpoint không đổi kể từ đó, và các kiểu tương ứng (`DetectionResponse` cho `/detect/frame`, `Statistics` cho `/statistics`, `HealthStatus` cho `/health`) vẫn được duy trì trong `types/index.ts`. Ba endpoint nay không có trang giao diện gọi tới tiếp tục được kiểm chứng bằng **kiểm thử tích hợp ở backend** thay vì bằng lời gọi từ trình duyệt.
 
-### 4.4.3. Hàng đợi một khe ở trang webcam
+### 4.4.3. Hàng đợi một khe ở trang webcam (đã gỡ khỏi giao diện 2026-07-20)
 
-Đây là quyết định cài đặt đáng chú ý nhất của frontend, nằm trong `useFrameCaptureLoop.ts`.
+> **Ghi chú thay đổi phạm vi:** trang webcam cùng toàn bộ mã mô tả trong mục này đã được **gỡ khỏi frontend** ngày 2026-07-20 theo quyết định thu gọn phạm vi demo; mã nguồn còn trong lịch sử git. Năng lực thời gian thực giữ nguyên ở tầng API (`POST /api/detect/frame`), và kỹ thuật hàng đợi một khe trình bày dưới đây trở thành **khuyến nghị bắt buộc cho bất kỳ client nào** gọi endpoint đó (mục 3.1.2d). Mục này được giữ lại như một mô tả kỹ thuật ở thì quá khứ, vì lập luận thiết kế của nó vẫn đúng và cần cho việc tái lập.
+
+Đây từng là quyết định cài đặt đáng chú ý nhất của frontend, nằm trong `useFrameCaptureLoop.ts` (đã gỡ cùng trang webcam).
 
 **Vấn đề.** Suy luận chạy trên CPU ở khoảng **5 FPS**. Một bộ đếm giờ ngây thơ kích hoạt mỗi 700 ms và `await` từng phản hồi sẽ, ngay khi một khung hình mất 900 ms, khởi động yêu cầu thứ hai *trước khi* yêu cầu thứ nhất trở về. Từ thời điểm đó trở đi, tồn đọng chỉ có tăng: độ trễ cộng dồn, lớp phủ hộp bao trôi ngày càng xa khỏi hình ảnh thực tế, và tab trình duyệt cuối cùng đứng hình dưới sức nặng của các lần tải lên đang chờ.
 
@@ -4395,21 +4434,23 @@ record.raw_ocr_text !== null && record.plate_number !== null
 
 Ý nghĩa thiết kế của lựa chọn này: nó biến một cột CSDL phục vụ nghiên cứu thành **bằng chứng nhìn thấy được ngay trong lúc trình diễn**. Người xem không phải tin lời khẳng định rằng khối hậu xử lý có tác dụng; họ thấy trực tiếp chuỗi `3OA12345` trở thành `30A12345` trên chính bức ảnh vừa đưa vào. Đồng thời, vì dòng so sánh **chỉ hiện khi có thay đổi**, giao diện không bị lộn xộn bởi các trường hợp mà hậu xử lý không can thiệp — vốn là đa số.
 
-### 4.4.5. Phân biệt "lượt nhận dạng" và "biển số phát hiện" trên bảng điều khiển
+### 4.4.5. Phân biệt "lượt nhận dạng" và "biển số phát hiện"
+
+> **Ghi chú thay đổi phạm vi:** phần giao diện mô tả trong mục này thuộc trang Tổng quan (Dashboard) và **đã được gỡ ngày 2026-07-20**. Hai tầng dưới — CSDL và API — **không đổi**, và chính chúng là nơi sự phân biệt này được thi hành. Mục được giữ lại vì lập luận vẫn còn hiệu lực và vì bất kỳ client nào đọc `GET /api/statistics` đều phải hiểu đúng hai trường này.
 
 Đây là điểm dễ hiểu sai nhất của toàn hệ thống, và nó được xử lý nhất quán ở cả ba tầng.
 
-- **Tầng CSDL**: `detection_job` đếm lượt, `detection_history` đếm biển số; khoá `source_job_id` nối hai bên (mục 4.3.2).
-- **Tầng API**: `StatisticsResponse` có hai trường tách biệt, `total_jobs` và `total_detections`. Mô tả OpenAPI cấp cao nhất nêu rõ: *"An image containing three vehicles is one job and three detections."*
-- **Tầng giao diện**: hai thẻ số liệu riêng, mỗi thẻ kèm một `InfoTooltip` giải thích bằng tiếng Việt.
+- **Tầng CSDL** *(không đổi)*: `detection_job` đếm lượt, `detection_history` đếm biển số; khoá `source_job_id` nối hai bên (mục 4.3.2).
+- **Tầng API** *(không đổi)*: `StatisticsResponse` có hai trường tách biệt, `total_jobs` và `total_detections`. Mô tả OpenAPI cấp cao nhất nêu rõ: *"An image containing three vehicles is one job and three detections."*
+- **Tầng giao diện** *(đã gỡ 2026-07-20)*: trang Tổng quan từng hiển thị hai thẻ số liệu riêng, mỗi thẻ kèm một `InfoTooltip` giải thích bằng tiếng Việt.
 
-Nội dung hai tooltip được viết để loại bỏ mọi mơ hồ:
+Nội dung hai tooltip khi đó được viết để loại bỏ mọi mơ hồ:
 
 > **Lượt nhận dạng** — "Mỗi lần tải lên một ảnh, một video hoặc một phiên webcam được tính là một lượt — bất kể trong đó có bao nhiêu biển số."
 
 > **Biển số phát hiện** — "Đếm theo từng biển số, không phải theo tệp. Một ảnh chứa 3 biển số được tính là 1 lượt nhận dạng nhưng 3 biển số phát hiện."
 
-Vì sao điều này quan trọng đến mức cần một component tooltip riêng: nếu gộp hai khái niệm, con số "lượt sử dụng" bị thổi phồng lên đúng bằng **số biển số trung bình trên mỗi ảnh**. Sai lệch đó không tạo ra giá trị vô lý — nó chỉ tạo ra một con số lớn hơn sự thật một cách nhất quán, tức là loại sai lệch khó phát hiện nhất. Việc đặt lời giải thích ngay cạnh con số, thay vì trong tài liệu, là cách bảo đảm người đọc bảng điều khiển hiểu đúng thứ họ đang nhìn.
+Vì sao điều này quan trọng đến mức từng cần một component tooltip riêng: nếu gộp hai khái niệm, con số "lượt sử dụng" bị thổi phồng lên đúng bằng **số biển số trung bình trên mỗi ảnh**. Sai lệch đó không tạo ra giá trị vô lý — nó chỉ tạo ra một con số lớn hơn sự thật một cách nhất quán, tức là loại sai lệch khó phát hiện nhất. Khi còn trang giao diện, cách xử lý là đặt lời giải thích ngay cạnh con số thay vì để trong tài liệu. Sau khi trang bị gỡ, gánh nặng đó chuyển sang **mô tả trường trong tài liệu OpenAPI** — nơi duy nhất còn lại mà người đọc số liệu gặp trước khi diễn giải chúng, và cũng là lý do mô tả này được viết ở cấp cao nhất chứ không giấu trong chú thích từng trường.
 
 Tầng `StatisticsService` giữ nguyên sự phân biệt này trong mọi phép tính dẫn xuất: phân rã theo loại đầu vào cũng đếm **cả hai** (lượt và biển số) cho mỗi loại, thay vì chọn một.
 
@@ -4658,9 +4699,9 @@ Không điểm nào phát sinh từ một sai lầm trong bản thân thiết k�
 
 Chương này đã trình bày quá trình hiện thực hoá thiết kế của Chương 3 thành mã nguồn chạy được, trên một máy trạm Windows không có GPU CUDA.
 
-**Về khối lượng và trạng thái.** Hệ thống gồm tầng AI (11 mô-đun, 4.171 dòng trong `ai/inference/` cộng các gói huấn luyện, đánh giá và dữ liệu), tầng backend (21 mô-đun không kể `__init__.py`, 10 endpoint REST, 2 bảng CSDL với 18 và 11 cột), tầng frontend (5 trang, khoảng 50 mô-đun, 15 component nguyên thuỷ dùng chung), một đường ống dữ liệu 6 bước và cấu hình đóng gói Docker hai dịch vụ. Trạng thái đã kiểm chứng bằng chạy thật: backend trả `model_loaded=true` với engine `yolo:...+paddleocr-PP-OCRv5-mobile`, 10/10 ảnh test nhận dạng được biển số với các chuỗi đọc đúng như `51G-495.39`, `51F-734.20`, `47A-065.46`, `51A-897.14` (độ tin cậy OCR 0,94–0,9993); frontend typecheck sạch, lint sạch, build thành công 2.381 mô-đun, 10 endpoint kiểm chứng qua HTTP thật với kiểu TypeScript khớp từng trường; bộ kiểm thử tự động chạy qua với bao phủ tầng nghiệp vụ **88,1%** (NFR-M2 yêu cầu ≥ 70%: **đạt**) và bao phủ toàn kho 42,0%.
+**Về khối lượng và trạng thái.** Hệ thống gồm tầng AI (11 mô-đun, 4.171 dòng trong `ai/inference/` cộng các gói huấn luyện, đánh giá và dữ liệu), tầng backend (21 mô-đun không kể `__init__.py`, 10 endpoint REST, 2 bảng CSDL với 18 và 11 cột), tầng frontend (**3 trang sau hai đợt thu gọn phạm vi ngày 2026-07-20, 48 mô-đun**, 15 component nguyên thuỷ dùng chung), một đường ống dữ liệu 6 bước và cấu hình đóng gói Docker hai dịch vụ. Trạng thái đã kiểm chứng bằng chạy thật: backend trả `model_loaded=true` với engine `yolo:...+paddleocr-PP-OCRv5-mobile`, 10/10 ảnh test nhận dạng được biển số với các chuỗi đọc đúng như `51G-495.39`, `51F-734.20`, `47A-065.46`, `51A-897.14` (độ tin cậy OCR 0,94–0,9993); frontend typecheck sạch, lint sạch, build thành công **1.670 mô-đun** trong 2,15 giây với gói tải về **328,8 KB** (giảm 55% so với ~730 KB trước khi gỡ `recharts`), 10 endpoint kiểm chứng qua HTTP thật với kiểu TypeScript khớp từng trường (phép kiểm chứng thực hiện trước hai đợt gỡ trang; ba endpoint nay không có trang giao diện gọi tới vẫn được kiểm chứng bằng kiểm thử tích hợp); bộ kiểm thử tự động chạy qua với bao phủ tầng nghiệp vụ **87,7%** ở lần đo mới nhất ngày 2026-07-20 (`docs/reports/13-refactor-result.json`) — NFR-M2 yêu cầu ≥ 70%: **đạt**; lần đo ở Phase 7 trước đó là 88,1% với bao phủ toàn kho 42,0% (`docs/reports/07-testing-report.md`).
 
-> **Ghi chú về số lượng test.** Con số đã được kiểm chứng bằng cách chạy lại thật tại thời điểm viết chương này. `pytest --collect-only` **thu thập 862 test**; lần chạy đầy đủ cho **861 pass, 1 `xfail` (lỗi đã biết, có mô tả), 0 fail, 0 skip, 0 error**. Cần phân biệt hai con số khác nhau: **862 là số test *thu thập*,** còn **861 là số test *pass*** — chênh lệch đúng bằng 1 `xfail`, không phải một test hỏng. Con số **199** từng xuất hiện trong một bản tổng kết trạng thái Phase 4 là **số cũ, không còn đúng**: đó là kết quả một lần chạy *con* chỉ gồm 5 tệp test của tầng AI, không phải toàn kho. Hai con số bao phủ (88,1% và 42,0%) thống nhất giữa các nguồn và được dùng ở đây.
+> **Ghi chú về số lượng test.** Con số đã được kiểm chứng bằng cách chạy lại thật (`backend/.venv/Scripts/python.exe -m pytest -q` từ gốc kho, ngày 2026-07-20). Lần chạy này **thu thập 882 test**; kết quả là **881 pass, 1 `xfail` (lỗi đã biết, có mô tả), 0 fail, 0 skip, 0 error, 17 cảnh báo**. Cần phân biệt hai con số khác nhau: **882 là số test *thu thập*,** còn **881 là số test *pass*** — chênh lệch đúng bằng 1 `xfail`, không phải một test hỏng. Cặp số **862/861** xuất hiện trong các bản tài liệu trước là kết quả **một lần chạy cũ hơn**, đã bị thay bằng cặp 882/881. Con số **199** từng xuất hiện trong một bản tổng kết trạng thái Phase 4 cũng **không còn đúng**: đó là kết quả một lần chạy *con* chỉ gồm 5 tệp test của tầng AI, không phải toàn kho. Về bao phủ, số mới nhất là **87,7%** tầng nghiệp vụ (2026-07-20, `docs/reports/13-refactor-result.json`); số Phase 7 trước đó là **88,1%** tầng nghiệp vụ và **42,0%** toàn kho (`docs/reports/07-testing-report.md`) — cả hai đều là số đo thật ở hai thời điểm khác nhau, không được trộn lẫn.
 
 **Về đóng góp kỹ thuật.** Ba khối trong chương này là công trình của đồ án chứ không phải thư viện có sẵn:
 
@@ -5395,7 +5436,9 @@ Bốn hướng tấn công khối OCR, xếp theo chi phí thực hiện tăng d
 3. **Xuất mô hình nhận dạng sang ONNX Runtime** để bỏ hoàn toàn phụ thuộc runtime PaddlePaddle.
 4. **Thay bằng một mô hình nhận dạng chuyên cho biển số**, huấn luyện riêng trên tập ký tự hẹp (10 chữ số + tập chữ cái hợp lệ) thay vì dùng mô hình đa ngữ tổng quát. Đây là hướng có tiềm năng cải thiện lớn nhất nhưng cũng tốn công nhất, và đã được ghi vào phạm vi mở rộng của đề tài.
 
-### 5.7.4. Chế độ webcam và xử lý video (NFR-P2, NFR-P3)
+### 5.7.4. Chế độ webcam (tầng API) và xử lý video (NFR-P2, NFR-P3)
+
+> Từ 2026-07-20, trang Webcam đã được gỡ khỏi giao diện web (thu gọn phạm vi — mục 3.1.3b); chế độ thời gian thực chỉ còn ở tầng API. Phép đo NFR-P2 vì vậy được thực hiện bằng kịch bản gọi trực tiếp `POST /api/detect/frame`, không qua giao diện.
 
 <!-- {{T5.7d}} hieu nang che do webcam va xu ly video -->
 
@@ -5504,7 +5547,7 @@ Bảng dưới là bảng tổng hợp trình bày khi bảo vệ. Nó liệt k�
 |:---:|---|---:|---:|---:|:---:|:---:|
 | **NFR-P — Hiệu năng** | | | | | | |
 | P1 | Độ trễ E2E một ảnh, p95 | ≤ 1500 ms | ≤ 800 ms | **731,15 ms** *(client-side, đã xác minh)* | ✅ | 5.7.1 |
-| P2 | Tốc độ khung hình webcam | ≥ 3 FPS | ≥ 5 FPS | — | ⬜ | 5.7.4 |
+| P2 | Tốc độ khung hình webcam (tầng API) | ≥ 3 FPS | ≥ 5 FPS | — | ⬜ | 5.7.4 |
 | P3 | Tốc độ xử lý video | ≥ 0,15× | ≥ 0,3× | — | ⬜ | 5.7.4 |
 | P4 | Thời gian nạp mô hình | ≤ 30 s | ≤ 15 s | **6,41 s** | ✅ | 5.7.5 |
 | P4b | Khởi động đến khi `/health` sẵn sàng | ≤ 30 s | ≤ 15 s | **8,36 s** | ✅ | 5.7.5 |
@@ -5535,7 +5578,7 @@ Bảng dưới là bảng tổng hợp trình bày khi bảo vệ. Nó liệt k�
 | SC3 | Tác vụ video chạy nền, không chặn | bắt buộc | — | — | ⬜ | 5.7.5 |
 | **NFR-M — Khả năng bảo trì** | | | | | | |
 | M1 | Mã AI tách biệt hoàn toàn khỏi mã API | 0 vi phạm | 0 vi phạm | — | ⬜ | 5.9.2 |
-| M2 | Độ bao phủ test tầng nghiệp vụ | ≥ 70% | ≥ 70% | **88,1%** | ✅ | 5.9.2 |
+| M2 | Độ bao phủ test tầng nghiệp vụ | ≥ 70% | ≥ 70% | **87,7%** (2026-07-20) | ✅ | 5.9.2 |
 | M3 | Type hint và docstring cho hàm public | 100% | 100% | — | ⬜ | 5.9.2 |
 | M4 | Không hard-code đường dẫn | 0 vi phạm | 0 vi phạm | — | ⬜ | 5.9.2 |
 | M5 | Thay được bộ OCR mà không sửa mã API | ràng buộc bằng interface | — | — | ⬜ | 5.9.2 |
@@ -5573,16 +5616,20 @@ Nhóm NFR-M, S, C, U được kiểm chứng bằng bộ kiểm thử tự độ
 
 | Hạng mục | **Đo được** | Chỉ tiêu | Kết quả |
 |---|---:|---:|:---:|
-| Tổng số test thu thập | **862** | — | n/a |
-| Số test pass | **861** | — | ✅ |
+| Tổng số test thu thập | **882** | — | n/a |
+| Số test pass | **881** | — | ✅ |
 | Số test xfail (dự kiến thất bại) | **1** | — | n/a |
 | Số test fail | **0** | 0 | ✅ |
-| Độ bao phủ **tầng nghiệp vụ** | **88,1%** | ≥ 70% (NFR-M2) | ✅ |
-| Độ bao phủ **toàn kho mã** | **42,0%** | — | n/a |
+| Số test skip | **0** | — | n/a |
+| Độ bao phủ **tầng nghiệp vụ** (đo 2026-07-20) | **87,7%** | ≥ 70% (NFR-M2) | ✅ |
+| Độ bao phủ **tầng nghiệp vụ** (đo ở Phase 7, trước đó) | **88,1%** | ≥ 70% (NFR-M2) | ✅ |
+| Độ bao phủ **toàn kho mã** (đo ở Phase 7) | **42,0%** | — | n/a |
 
-Chênh lệch giữa 88,1% và 42,0% là chênh lệch **có chủ ý và cần giải thích**, không phải dấu hiệu kiểm thử thiếu sót. Chỉ tiêu NFR-M2 đặt ngưỡng cho **tầng nghiệp vụ** — nơi chứa logic có thể sai một cách âm thầm: luật hậu xử lý biển số, xác thực đầu vào, thao tác cơ sở dữ liệu. Con số 42,0% toàn kho bao gồm cả mã script tiện ích, mã sinh biểu đồ, mã tải bộ dữ liệu — những phần mà chi phí viết test cao còn rủi ro sai thầm lặng thấp. Việc công bố **cả hai con số** thay vì chỉ con số cao hơn là điều kiện để bảng này trung thực; công bố riêng 88,1% mà không nói mẫu số là một dạng chọn lọc số liệu có lợi.
+> **Nguồn và mốc đo.** Bốn dòng đầu lấy từ lần chạy `backend/.venv/Scripts/python.exe -m pytest -q` tại gốc kho ngày 2026-07-20 (882 thu thập / 881 pass / 1 `xfail` / 0 fail / 0 skip / 17 cảnh báo), ghi trong `docs/reports/13-refactor-result.json`. Cặp số **862/861** trong các bản tài liệu trước là kết quả một lần chạy cũ hơn và đã bị thay thế. Về bao phủ: **87,7%** là số đo mới nhất cùng ngày 2026-07-20 (`docs/reports/13-refactor-result.json`, 2.931 câu lệnh / 317 bỏ sót); **88,1%** và **42,0%** là số đo ở Phase 7 (`docs/reports/07-testing-report.md`). Cả hai đều là số đo thật ở hai thời điểm khác nhau — giữ nguyên cả hai kèm mốc thời gian thay vì chọn một con số rồi xoá con số kia.
 
-Test `xfail` duy nhất phải được nêu tên và giải thích khi công bố: nó đánh dấu một hành vi đã biết là chưa đúng và được ghi nhận công khai, chứ không phải một test bị vô hiệu hoá để bảng kết quả sạch.
+Chênh lệch giữa 88,1% và 42,0% (cùng một mốc đo Phase 7) là chênh lệch **có chủ ý và cần giải thích**, không phải dấu hiệu kiểm thử thiếu sót. Chỉ tiêu NFR-M2 đặt ngưỡng cho **tầng nghiệp vụ** — nơi chứa logic có thể sai một cách âm thầm: luật hậu xử lý biển số, xác thực đầu vào, thao tác cơ sở dữ liệu. Con số 42,0% toàn kho bao gồm cả mã script tiện ích, mã sinh biểu đồ, mã tải bộ dữ liệu — những phần mà chi phí viết test cao còn rủi ro sai thầm lặng thấp. Việc công bố **cả hai con số** thay vì chỉ con số cao hơn là điều kiện để bảng này trung thực; công bố riêng 88,1% mà không nói mẫu số là một dạng chọn lọc số liệu có lợi.
+
+Test `xfail` duy nhất phải được nêu tên và giải thích khi công bố: nó đánh dấu một hành vi đã biết là chưa đúng và được ghi nhận công khai, chứ không phải một test bị vô hiệu hoá để bảng kết quả sạch. Cụ thể, đó là `tests/integration/test_api_detection.py::TestErrorBodies::test_a_failed_image_detection_records_the_failed_job`: `DetectionService._fail_job` gọi `db.rollback()` trước khi ghi bản ghi thất bại, trong khi `_create_job` mới chỉ `flush`, nên dòng job bị huỷ — một lần tải ảnh thất bại hiện **không để lại dòng nào** trong bảng `DetectionJob`.
 
 ---
 
@@ -5655,7 +5702,7 @@ Bốn nhóm kết quả dưới đây đều trỏ về ô đã điền số th�
 
 3. **Biển một dòng về cơ bản đã giải xong.** Tách theo layout (T5.6c) cho thấy biển một dòng đạt 1 − CER = 0,9900 và A6 = 0,9489 (vượt mục tiêu 0,90). Toàn bộ việc "OCR không đạt" ở con số tổng là do quần thể biển hai dòng (79,8% tập) kéo xuống — một phát hiện có định vị rõ ràng, không phải một thất bại mơ hồ.
 
-4. **Hiệu năng và kiến trúc phần mềm đều đạt.** NFR-P1 đạt (p95 = 731 ms < 800 ms, đã xác minh, 5.7.1); mọi chỉ tiêu ngoài đường suy luận đạt với biên rộng (overhead API 19,01 ms, truy vấn lịch sử 18,71 ms — nhanh hơn mục tiêu ~27 lần); soak 300 giây thành công 100% trên 1.684 yêu cầu, không rò rỉ bộ nhớ; chịu 10 yêu cầu đồng thời so với ngưỡng 5. Độ bao phủ test tầng nghiệp vụ 88,1%, 861/862 test pass.
+4. **Hiệu năng và kiến trúc phần mềm đều đạt.** NFR-P1 đạt (p95 = 731 ms < 800 ms, đã xác minh, 5.7.1); mọi chỉ tiêu ngoài đường suy luận đạt với biên rộng (overhead API 19,01 ms, truy vấn lịch sử 18,71 ms — nhanh hơn mục tiêu ~27 lần); soak 300 giây thành công 100% trên 1.684 yêu cầu, không rò rỉ bộ nhớ; chịu 10 yêu cầu đồng thời so với ngưỡng 5. Độ bao phủ test tầng nghiệp vụ 87,7% (đo 2026-07-20), 881/882 test pass.
 
 5. **Bản thân tính trung thực của quy trình đánh giá là một kết quả.** Mục 5.3.3 (phát hiện lập luận vòng tròn trong kiểm chứng rò rỉ), mục 5.7.1 (bác bỏ con số độ trễ cũ 5.857 ms bị nhiễm tải), và mục 5.8.1 (thừa nhận ba biến cùng đổi, giải thích vì sao mAP thấp hơn baseline lại đáng tin hơn) là những đóng góp phương pháp luận có giá trị dù không phải con số cao.
 
@@ -5780,7 +5827,7 @@ Không lệnh nào dưới đây được chạy trước khi hoàn tất ba vi�
 | **T5.7a** | Độ trễ E2E | `docs/reports/07-benchmark-system.json` | `python -m ai.evaluation.benchmark_system --weights models/best.pt --images datasets/processed/yolo_v3/images/test --imgsz 640 --limit 100 --device cpu --output docs/reports/07-benchmark-system.json` |
 | **T5.7b** | Phân rã ngân sách độ trễ | cùng tệp T5.7a | cùng lệnh — hình `docs/reports/figures/07-latency-budget.png`. Cột "ước lượng Phase 0" lấy từ `docs/00-requirements/non-functional-requirements.md` §1 |
 | **T5.7c** | So sánh backend suy luận | `docs/reports/07-benchmark-optimized.json` | `python -m ai.evaluation.benchmark_cpu --weights models/best.pt --backends pytorch onnx openvino --imgsz 640 --runs 50 --warmup 5` |
-| **T5.7d** | Webcam và video | *(cần sinh)* | Chưa có script chuyên dụng. Cần bổ sung kịch bản đo FPS webcam 60 giây và đo thời gian xử lý video 60 giây, kèm **định nghĩa tường minh** của "FPS hiệu dụng" |
+| **T5.7d** | Webcam và video | *(cần sinh)* | Chưa có script chuyên dụng. Cần bổ sung kịch bản đo FPS webcam 60 giây **gọi trực tiếp `POST /api/detect/frame`** (trang webcam đã gỡ khỏi giao diện 2026-07-20) và đo thời gian xử lý video 60 giây, kèm **định nghĩa tường minh** của "FPS hiệu dụng" |
 | **T5.7e** | Chịu tải, bộ nhớ, độ tin cậy | `docs/reports/07-stress-load.json`, `07-stress-db.json`, `07-api-overhead.json`, `07-leak-check.json` | `python -m ai.evaluation.stress_test --weights models/best.pt --concurrency 1 2 5 10 --soak-seconds 300`; `python scripts/benchmark_api_overhead.py`; `python scripts/benchmark_history_query.py` |
 | **T5.8** | So sánh baseline ↔ chính thức | T5.5a + `models/baseline-416-v1.results.csv` | Không có lệnh mới — ghép số từ hai nguồn đã có |
 | **T5.9** | Đối chiếu toàn bộ NFR | tổng hợp mọi tệp trên | `python scripts/aggregate_benchmark_report.py` để gộp, phần NFR-M/S/C/U lấy từ `docs/reports/07-testing-report.md` |
@@ -5807,7 +5854,7 @@ Không lệnh nào dưới đây được chạy trước khi hoàn tất ba vi�
 
 1. **T5.5c — phân rã mAP theo dải kích thước box.** `ai/evaluation/evaluate.py` hiện chỉ phân rã theo layout. Cần thêm nhóm theo tỉ lệ diện tích box.
 2. **T5.6b — bảng phân rã đóng góp theo từng nhóm luật hậu xử lý.** Cần cơ chế bật/tắt từng nhóm luật trong `ai/inference/plate_rules.py` rồi chạy lại phép đo, để quy đóng góp về từng nhóm.
-3. **T5.7d — kịch bản đo webcam và video.** Chưa tồn tại. Phải kèm định nghĩa tường minh của "FPS hiệu dụng".
+3. **T5.7d — kịch bản đo webcam và video.** Chưa tồn tại. Đo qua API (`POST /api/detect/frame`) vì trang webcam đã gỡ khỏi giao diện; phải kèm định nghĩa tường minh của "FPS hiệu dụng".
 
 ### E. Quy tắc bất di bất dịch khi điền
 
@@ -5844,8 +5891,8 @@ Có một nguyên tắc chi phối toàn chương, kế thừa trực tiếp t�
 | **Phase 3 — Huấn luyện bộ phát hiện** | Mô hình chính thức `models/best.pt` — YOLO11n [1]<!-- jocher_2024_yolo11 -->, 2.590.035 tham số, `imgsz=640`, 20 epoch trên CPU — đạt mAP@0.5 = 0,9829 trên tập test v3. |
 | **Phase 4 — Nhận dạng ký tự và hậu xử lý** | Khối OCR dựng trên PaddleOCR PP-OCRv5 mobile [2]<!-- cui_2026_ppocrv5 --> cộng bộ luật hậu xử lý theo vị trí; đo được đóng góp thuần **+4,57 điểm** của khối hậu xử lý trên 2.801 biển có nhãn chuỗi. |
 | **Phase 5 — Backend** | Backend FastAPI với **10 thao tác trên 9 đường dẫn**, xác minh bằng HTTP sống (`/health` trả `model_loaded: true`), Alembic migrate xong, Swagger render đầy đủ, chốt mốc M5. |
-| **Phase 6 — Frontend** | Ứng dụng React một trang, build sạch, khớp toàn bộ 10 thao tác API, phủ năm màn hình (Dashboard, Nhận dạng ảnh, Video, Webcam, Lịch sử). |
-| **Phase 7 — Kiểm thử và đo hiệu năng** | 862 test thu thập, **861 pass, 1 xfail, 0 fail**, độ bao phủ tầng nghiệp vụ 88,1%; toàn bộ chỉ tiêu hiệu năng ngoài đường suy luận được đo và đạt. |
+| **Phase 6 — Frontend** | Ứng dụng React một trang, build sạch, khớp toàn bộ 10 thao tác API, phủ năm màn hình tại thời điểm chốt phase (Dashboard, Nhận dạng ảnh, Video, Webcam, Lịch sử). *Ngày 2026-07-20, giao diện được thu gọn hai đợt liên tiếp còn **ba màn hình** — Nhận dạng ảnh (trang chủ), Nhận dạng video, Lịch sử: đợt 1 gỡ trang Webcam, đợt 2 gỡ trang Tổng quan (Dashboard). Cả hai năng lực đều giữ nguyên ở tầng API (`POST /api/detect/frame`, `GET /api/statistics`, `GET /health`) và đều còn kiểm thử tích hợp; hệ quả về yêu cầu — gồm việc **FR-4.1 mức Must bị đưa ra khỏi phạm vi** — ghi ở mục 6.3.6.* |
+| **Phase 7 — Kiểm thử và đo hiệu năng** | **882 test thu thập, 881 pass, 1 xfail, 0 fail, 0 skip** (lần chạy 2026-07-20, `docs/reports/13-refactor-result.json`); độ bao phủ tầng nghiệp vụ **87,7%** cùng mốc đó — số đo ở Phase 7 trước đó là 88,1% (`docs/reports/07-testing-report.md`); toàn bộ chỉ tiêu hiệu năng ngoài đường suy luận được đo và đạt. |
 | **Phase 8 — Đóng gói Docker** | Hai image, stack `docker compose up` chạy được trên máy sạch, kiểm bằng `curl` từ ngoài container, chốt mốc M8. |
 | **Phase 9 — Tài liệu** | Quyển đồ án — Chương 1 đến Chương 4 hoàn tất trước, Chương 5 và Chương 6 hoàn tất sau khi có `best.pt` và số liệu thực nghiệm. |
 | **Phase 10 — Bảo vệ** | Khung 21 slide, poster, kịch bản demo và 56 câu hỏi phản biện dự kiến. |
@@ -5878,7 +5925,7 @@ Bảng dưới đây đặt cạnh nhau **chỉ tiêu đã cam kết ở Phase 0
 | P7b | RSS máy chủ backend (GB) | ≤ 2 | **0,806** | ✅ đạt |
 | R4 | Tỉ lệ thành công soak 300 s | ≥ 99% | **100%** (1.684 yêu cầu) | ✅ đạt |
 | SC1 | Số yêu cầu đồng thời ổn định | ≥ 5 | **10** | ✅ đạt |
-| M2 | Độ bao phủ test tầng nghiệp vụ | — | **88,1%** (861/862 pass) | (tham chiếu) |
+| M2 | Độ bao phủ test tầng nghiệp vụ | — | **87,7%** đo 2026-07-20 (881/882 pass, 1 xfail); trước đó Phase 7 đo 88,1% | (tham chiếu) |
 
 \* A7 = 0,5227 phải đọc như **cận dưới bi quan** — nó đo trên ảnh crop biển số (ngoài phân bố huấn luyện của bộ phát hiện), khiến tỉ lệ bỏ sót ở tầng phát hiện bị thổi phồng; xem phân tích ở mục 6.3.1.
 
@@ -6022,13 +6069,38 @@ Có hai nhóm khiếm khuyết cần thừa nhận rõ ràng, tránh để ngư�
 | R5 | CSDL sống sót qua khởi động lại | Chưa chạy kịch bản khởi động lại | Chưa tới lượt (khắc phục được) |
 | A9 | Tách theo điều kiện ảnh | **Bộ dữ liệu không có nhãn điều kiện ảnh** | Thiếu điều kiện (hạn chế thật) |
 
-Sự phân biệt ở cột cuối là quan trọng: P2, P3, R5 chỉ là *chưa tới lượt đo* và khắc phục được bằng cách viết kịch bản; còn NFR-A9 là *không đo được vì thiếu nhãn* — đây mới là một hạn chế thật của công trình, chỉ khắc phục được bằng gán nhãn thủ công cho một tập con.
+Sự phân biệt ở cột cuối là quan trọng: P2, P3, R5 chỉ là *chưa tới lượt đo* và khắc phục được bằng cách viết kịch bản; còn NFR-A9 là *không đo được vì thiếu nhãn* — đây mới là một hạn chế thật của công trình, chỉ khắc phục được bằng gán nhãn thủ công cho một tập con. Riêng P2, kịch bản đo sẽ gọi trực tiếp `POST /api/detect/frame`, vì trang Webcam của giao diện đã được gỡ theo quyết định thu gọn phạm vi ngày 2026-07-20 — một quyết định phạm vi có chủ đích, không phải một khiếm khuyết cài đặt; mã giao diện tương ứng còn nguyên trong lịch sử git.
 
-### 6.3.6. SQLite chỉ cho phép một tiến trình ghi tại một thời điểm
+### 6.3.6. Một yêu cầu mức *Must* (FR-4.1) đã bị đưa ra khỏi phạm vi
+
+*Mức nghiêm trọng: trung bình. Đây là hạn chế duy nhất của đồ án phát sinh từ một **quyết định** chứ không từ một giới hạn kỹ thuật, và vì thế càng phải nói thẳng.*
+
+Ngày 2026-07-20, giao diện web được thu gọn hai đợt liên tiếp: đợt thứ nhất gỡ trang Webcam, đợt thứ hai gỡ trang Tổng quan (Dashboard). Ứng dụng còn **ba trang** — Nhận dạng ảnh (trang chủ), Nhận dạng video, Lịch sử.
+
+Hệ quả về yêu cầu, ghi đúng như nó là:
+
+| Yêu cầu | Mức cũ | Mức mới | Nội dung |
+|---|:--:|:--:|---|
+| FR-3.1 | M | W | Xin quyền và hiển thị luồng webcam |
+| FR-3.4 | M | W | Vẽ chồng bounding box lên khung hình trực tiếp |
+| **FR-4.1** | **M** | **W** | **Dashboard hiển thị các chỉ số tổng hợp** |
+| FR-4.2 | S | W | Biểu đồ số lượt nhận dạng theo thời gian |
+
+Bảng đếm MoSCoW vì vậy chuyển từ 22/7/3/2 sang **21 Must / 6 Should / 3 Could / 4 Won't** trên tổng 34 yêu cầu.
+
+**FR-4.1 là yêu cầu mức *Must* đầu tiên và duy nhất bị đưa ra khỏi phạm vi trong toàn bộ đồ án.** Theo đúng quy ước MoSCoW đã chốt ở Phase 0, mức *Must* nghĩa là "thiếu ⇒ đồ án không đạt". Tiêu chí thành công số 1 ở mục 1.2.3 — "toàn bộ yêu cầu mức *Must* hoạt động được và demo được" — do đó chỉ đúng khi hiểu theo bộ 21 yêu cầu *Must* **sau** thay đổi phạm vi, chứ không đúng với bộ 22 yêu cầu ban đầu. Đây là một hạn chế thật, không phải một thủ tục hành chính, và nó được nêu ở đây thay vì để hội đồng tự đối chiếu bảng yêu cầu mà phát hiện ra.
+
+Điều cần nói ngay sau đó, để bức tranh không bị méo theo chiều ngược lại: **phần mất đi là màn hình hiển thị, không phải năng lực hệ thống.** Toàn bộ phép tính thống kê vẫn nằm trong `StatisticsService`, vẫn phơi ra qua `GET /api/statistics` với đầy đủ các chỉ số mà FR-4.1 và FR-4.2 đòi hỏi (tổng lượt, tổng biển số, độ tin cậy trung bình, thời gian xử lý trung bình, phân bố theo loại đầu vào, chuỗi số liệu theo ngày), vẫn nằm trong tài liệu OpenAPI đang phục vụ, và **vẫn có kiểm thử tích hợp** — `tests/integration/test_api_statistics.py` và `test_api_health.py` đều nằm trong bộ 882 test. Không một endpoint nào bị xoá. Sáu yêu cầu FR-4.3 đến FR-4.8 (lịch sử, tìm kiếm, lọc, chi tiết, tải về, sắp xếp) không đổi mức và vẫn dùng được đầy đủ trên trang Lịch sử.
+
+*Đánh đổi thu được:* gỡ thư viện biểu đồ `recharts` cùng trang Tổng quan làm gói tải về của giao diện giảm từ khoảng **730 KB xuống 328,8 KB (−55%)**, và số mô-đun frontend giảm từ 60 xuống 48.
+
+*Biện pháp giảm thiểu đã áp dụng:* mã nguồn của cả hai trang còn nguyên trong lịch sử git, và các kiểu dữ liệu `Statistics`, `StatisticsQuery`, `HealthStatus`, `InputTypeBreakdown` được **giữ lại có chủ đích** trong `frontend/src/types/index.ts` để hợp đồng của phần API còn sống không bị mất theo trang. Việc khôi phục vì vậy là một thao tác phục hồi có chi phí thấp, không phải xây mới — triển khai ở mục 6.4.6.
+
+### 6.3.7. SQLite chỉ cho phép một tiến trình ghi tại một thời điểm
 
 *Mức nghiêm trọng: thấp trong phạm vi đồ án, cần nêu vì là câu hỏi phản biện dễ gặp.*
 
-Hệ thống dùng SQLite cho lớp dữ liệu. SQLite khoá ghi ở mức toàn tệp: chỉ **một tiến trình ghi tại một thời điểm**. Với bối cảnh triển khai nội bộ, một người vận hành, mà đồ án nhắm tới (giả định A-04), đây không phải nút thắt — phép đo chịu tải cho thấy hệ thống xử lý ổn định 10 yêu cầu đồng thời và soak 300 giây thành công 100%. Nhưng nếu triển khai đa người dùng ghi đồng thời, giới hạn này sẽ trở thành thực. Hướng khắc phục là chuyển sang PostgreSQL (mục 6.4.6); nhờ đã dùng SQLAlchemy 2.0 như tầng trừu tượng, việc chuyển này không đụng đến mã nghiệp vụ.
+Hệ thống dùng SQLite cho lớp dữ liệu. SQLite khoá ghi ở mức toàn tệp: chỉ **một tiến trình ghi tại một thời điểm**. Với bối cảnh triển khai nội bộ, một người vận hành, mà đồ án nhắm tới (giả định A-04), đây không phải nút thắt — phép đo chịu tải cho thấy hệ thống xử lý ổn định 10 yêu cầu đồng thời và soak 300 giây thành công 100%. Nhưng nếu triển khai đa người dùng ghi đồng thời, giới hạn này sẽ trở thành thực. Hướng khắc phục là chuyển sang PostgreSQL (mục 6.4.7); nhờ đã dùng SQLAlchemy 2.0 như tầng trừu tượng, việc chuyển này không đụng đến mã nghiệp vụ.
 
 ---
 
@@ -6069,9 +6141,25 @@ Dù NFR-P1 đã đạt (6.3.4), phân rã ngân sách cho thấy còn dư địa
 
 Hiện tại, khi xử lý video, hệ thống gộp các lần nhận dạng trùng theo **chuỗi ký tự** — cách này gãy khi OCR đọc sai cùng một biển ở các khung khác nhau thành các chuỗi khác nhau. Hướng đúng là **bám vết đối tượng qua khung hình** bằng thuật toán như SORT hoặc DeepSORT: gán một ID theo dõi ổn định cho mỗi xe/biển xuyên suốt các khung, rồi gộp theo ID thay vì theo chuỗi. Cách này vừa ổn định hơn trước lỗi OCR lẻ tẻ, vừa mở đường cho việc **bỏ phiếu theo thời gian** (chọn chuỗi xuất hiện nhiều nhất qua nhiều khung của cùng một track) để nâng độ chính xác video vượt độ chính xác từng khung.
 
-### 6.4.6. Chuyển sang PostgreSQL nếu triển khai đa người dùng
+Một hướng mở liên quan là **khôi phục giao diện thời gian thực** — trình bày chung với hướng khôi phục màn hình thống kê ở mục 6.4.6 ngay dưới đây, vì cả hai cùng một bản chất và cùng một cách làm.
 
-Để chữa hạn chế 6.3.6, khi triển khai thực tế có nhiều người ghi đồng thời, nên chuyển lớp dữ liệu từ SQLite sang **PostgreSQL** — vốn hỗ trợ nhiều tiến trình ghi đồng thời và điều khiển đồng thời ở mức hàng. Nhờ toàn bộ truy cập dữ liệu đã đi qua SQLAlchemy 2.0 và tầng repository, việc chuyển đổi giới hạn ở lớp cấu hình kết nối và migration, **không** đụng đến mã nghiệp vụ hay mã API. Đây là một ví dụ nữa cho thấy các quyết định kiến trúc bảo thủ ở đầu dự án (dùng ORM thay vì SQL thô, tách repository khỏi service) trả cổ tức ở giai đoạn mở rộng.
+### 6.4.6. Khôi phục hai màn hình đã gỡ, từ lịch sử git
+
+Đây là hướng chữa trực tiếp cho hạn chế 6.3.6, và là hướng **rẻ nhất trong toàn bộ mục 6.4** — nó không đòi hỏi nghiên cứu, dữ liệu hay huấn luyện, chỉ đòi hỏi một quyết định về phạm vi.
+
+Hai màn hình bị gỡ ngày 2026-07-20 — **Webcam** và **Tổng quan (Dashboard)** — đều nằm trong tình trạng giống nhau ở ba điểm, và chính ba điểm này làm cho việc khôi phục là *phục hồi* chứ không phải *xây mới*:
+
+1. **Năng lực phía máy chủ chưa bao giờ bị gỡ.** `POST /api/detect/frame` phục vụ FR-3.x; `GET /api/statistics` và `GET /health` phục vụ FR-4.1/FR-4.2. Cả ba vẫn nằm trong tài liệu OpenAPI đang chạy và đều có kiểm thử tích hợp trong bộ 882 test.
+2. **Mã giao diện còn nguyên trong lịch sử git** — gồm `pages/WebcamDetection.tsx` cùng cơ chế hàng đợi một khe mô tả ở mục 4.4.3, `pages/Dashboard.tsx`, cả thư mục `components/dashboard/`, hook `useApi.ts`, và các hàm `detectFrame` / `getStatistics` / `getHealth` trong `services/api.ts`.
+3. **Hợp đồng kiểu vẫn được duy trì** trong `frontend/src/types/index.ts` (`DetectionResponse`, `Statistics`, `StatisticsQuery`, `HealthStatus`, `InputTypeBreakdown`), nên mã khôi phục sẽ biên dịch lại đúng vào cùng các kiểu mà backend đang trả về.
+
+Quy trình khôi phục vì thế gồm ba bước: lấy lại tệp từ lịch sử git, nối lại route trong `App.tsx` và mục tương ứng trong thanh điều hướng, rồi chạy `tsc --noEmit` cùng `vite build` để xác nhận hợp đồng kiểu chưa trôi. Chỉ một điểm cần cân nhắc lại chứ không phục hồi nguyên trạng: **thư viện biểu đồ**. Việc gỡ `recharts` là thứ mang lại phần lớn mức giảm 730 KB → 328,8 KB, nên nếu dựng lại màn hình thống kê thì nên chọn một thư viện nhẹ hơn, hoặc nạp trễ (lazy-load) riêng phần biểu đồ để không kéo lại toàn bộ chi phí đã cắt được.
+
+Cần đặt hướng này đúng chỗ trong thang ưu tiên: nó **khôi phục một chỉ tiêu đã cam kết** (FR-4.1 mức Must) chứ không nâng chất lượng nhận dạng. Nếu chỉ có thể làm một việc, mục 6.4.1 vẫn là việc đáng làm trước — nhưng nếu mục tiêu là tuyên bố đồ án đáp ứng đủ bộ yêu cầu *Must* ban đầu, thì đây là hướng duy nhất đưa được FR-4.1 trở lại.
+
+### 6.4.7. Chuyển sang PostgreSQL nếu triển khai đa người dùng
+
+Để chữa hạn chế 6.3.7, khi triển khai thực tế có nhiều người ghi đồng thời, nên chuyển lớp dữ liệu từ SQLite sang **PostgreSQL** — vốn hỗ trợ nhiều tiến trình ghi đồng thời và điều khiển đồng thời ở mức hàng. Nhờ toàn bộ truy cập dữ liệu đã đi qua SQLAlchemy 2.0 và tầng repository, việc chuyển đổi giới hạn ở lớp cấu hình kết nối và migration, **không** đụng đến mã nghiệp vụ hay mã API. Đây là một ví dụ nữa cho thấy các quyết định kiến trúc bảo thủ ở đầu dự án (dùng ORM thay vì SQL thô, tách repository khỏi service) trả cổ tức ở giai đoạn mở rộng.
 
 ---
 
@@ -6079,7 +6167,7 @@ Hiện tại, khi xử lý video, hệ thống gộp các lần nhận dạng tr
 
 Đồ án đặt ra mục tiêu xây dựng một hệ thống nhận dạng biển số xe Việt Nam hoàn chỉnh, chạy trên CPU, hỗ trợ cả biển một dòng và hai dòng. Đối chiếu trung thực với mục tiêu đó, kết quả có thể tổng kết trong ba mệnh đề, không tô hồng và cũng không tự hạ thấp.
 
-**Thứ nhất, hệ thống hoàn chỉnh và chạy được — điều này là chắc chắn, kiểm chứng được, không phải lời hứa.** Bốn tầng backend–frontend–AI–dữ liệu được đóng gói Docker, khởi động một lệnh, xác minh bằng HTTP sống và bằng stack Docker kiểm từ ngoài container. Bộ phát hiện đạt **toàn bộ** chỉ tiêu với biên rộng (mAP@0.5 = 0,9829, mAP@0.5:0.95 = 0,7834). Mọi chỉ tiêu hiệu năng, độ tin cậy và chịu tải đều đạt, gồm cả NFR-P1 (p95 = 731 ms) sau khi giải quyết một mâu thuẫn số liệu tồn đọng.
+**Thứ nhất, hệ thống hoàn chỉnh và chạy được — điều này là chắc chắn, kiểm chứng được, không phải lời hứa.** Bốn tầng backend–frontend–AI–dữ liệu được đóng gói Docker, khởi động một lệnh, xác minh bằng HTTP sống và bằng stack Docker kiểm từ ngoài container. Bộ phát hiện đạt **toàn bộ** chỉ tiêu với biên rộng (mAP@0.5 = 0,9829, mAP@0.5:0.95 = 0,7834). Mọi chỉ tiêu hiệu năng, độ tin cậy và chịu tải đều đạt, gồm cả NFR-P1 (p95 = 731 ms) sau khi giải quyết một mâu thuẫn số liệu tồn đọng. Một điều chỉnh phải nói kèm ngay ở đây để mệnh đề này không bị đọc rộng hơn sự thật: giao diện web đã được thu gọn còn **ba màn hình** ngày 2026-07-20, và cùng đợt đó **một yêu cầu mức *Must* — FR-4.1, màn hình thống kê tổng hợp — bị đưa ra khỏi phạm vi** (mục 6.3.6). Năng lực tương ứng vẫn phục vụ và vẫn có kiểm thử ở tầng API, nhưng bộ yêu cầu *Must* mà hệ thống đáp ứng là bộ **21**, không phải bộ 22 ban đầu.
 
 **Thứ hai, đồ án đo được hai đại lượng mà tài liệu Việt Nam chưa công bố tách bạch.** Đóng góp thuần của khối hậu xử lý theo luật — **+4,57 điểm**, 128 biển sửa đúng, 0 biển làm hỏng — được lượng hoá thay vì mô tả định tính. Và rủi ro R-04 được đo bằng **số liệu Việt Nam thật**: chênh lệch **36,79 điểm** độ chính xác chuỗi giữa biển một dòng và biển hai dòng, cùng bậc độ lớn với mốc 48,6 điểm mà Laroca và cộng sự đo trên RodoSol-ALPR của **Brazil** [4]<!-- laroca_2022_crossdataset --> — một analogue quốc tế, không phải số Việt Nam.
 
