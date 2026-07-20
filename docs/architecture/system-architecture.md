@@ -318,4 +318,4 @@ Với chỉ tiêu ~5 FPS trên CPU (NFR-P2), chi phí thiết lập HTTP không 
 | Thuật toán tách biển 2 dòng | Phase 4 |
 | Đặc tả chi tiết endpoint API | Phase 5 |
 | Wireframe và design system giao diện | Phase 6 |
-| Có xuất ONNX/OpenVINO hay không | Phase 7 — chỉ khi NFR-P1 không đạt |
+| Có xuất ONNX/OpenVINO hay không | Phase 7 — tiêu chí đặt ra: chỉ làm khi NFR-P1 không đạt. **Kết quả thực tế: NFR-P1 ĐẠT** (p95 731,15 ms client-side / 780,36 ms in-process, mục tiêu 800 ms, đo trên `models/best.pt`) ⇒ việc xuất ONNX/OpenVINO là **tuỳ chọn tăng tốc**, không bắt buộc |

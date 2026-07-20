@@ -48,6 +48,11 @@ export default defineConfig({
   },
   build: {
     outDir: 'dist',
-    sourcemap: true,
+    // Production sourcemaps are deliberately off. They added ~3.1 MB to `dist`
+    // — more than four times the size of the application itself — while being
+    // useful only to someone debugging the minified bundle, which is not part
+    // of how this build is used (demo and submission). Debugging happens
+    // against the dev server, where Vite always serves sourcemaps.
+    sourcemap: false,
   },
 });

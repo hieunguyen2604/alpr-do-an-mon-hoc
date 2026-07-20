@@ -14,7 +14,7 @@ Thư mục này chứa **khung nội dung**, không chứa file slide đã dựn
 | [`10-defense-qa.md`](10-defense-qa.md) | 40+ câu hỏi phản biện, câu trả lời, cảnh báo trả lời sai | ✅ Xong |
 | [`../poster/10-poster-layout.md`](../poster/10-poster-layout.md) | Bố cục poster A0 dọc — 12 khối, bảng font size, bảng màu | ✅ Xong |
 | `10-slides.md` hoặc `.pptx` | **File slide thật** | ⬜ Chưa dựng |
-| `10-demo-script.md` | Kịch bản demo trực tiếp | ⬜ Chưa viết |
+| [`10-demo-script.md`](10-demo-script.md) | Kịch bản demo trực tiếp | ✅ Xong |
 | `../poster/poster-A0.pdf` | **File poster thật** | ⬜ Chưa dựng |
 
 ---
@@ -191,10 +191,10 @@ mmdc -i architecture.mmd -o docs/images/architecture-5layer.svg -b transparent
 | 5 | **File poster thật** | ⬜ Chưa dựng | Dựng theo layout |
 | 6 | Hình minh hoạ | 🔄 1/14 | 13 hình cần làm — xem bảng mục 4 |
 | 7 | Ảnh chụp giao diện | ✅ Xong | 5 ảnh trong `docs/screenshots/` |
-| 8 | Kịch bản demo trực tiếp | ⬜ Chưa viết | `10-demo-script.md` |
-| 9 | **Số liệu cho S12** (kết quả detection) | ❌ **Chờ Phase 3** | Train xong 40 epoch → `evaluate.py --split test` |
-| 10 | **Số liệu cho S15** (đóng góp hậu xử lý) | ❌ **Chờ Phase 4 + 7** | Cần 2 bộ Roboflow có nhãn ký tự |
-| 11 | **Số liệu cho S17** (hiệu năng CPU) | ❌ **Chờ Phase 7** | Kiểm thử hiệu năng chưa làm |
+| 8 | Kịch bản demo trực tiếp | ✅ Xong | `10-demo-script.md` |
+| 9 | **Số liệu cho S12** (kết quả detection) | ✅ **Đã có** | `models/best.pt` (YOLO11n, `imgsz=640`, split v3, 20 epoch), test v3 1.514 ảnh: mAP@0.5 = 0,9829 · mAP@0.5:0.95 = 0,7834 · P = 0,9837 · R = 0,9714 |
+| 10 | **Số liệu cho S15** (đóng góp hậu xử lý) | ✅ **Đã có** | 2.801 biển: A4 = 0,8734 · A5 = 0,6098 · A6 = 0,6555 (A6 − A5 = +4,57 điểm) — xem `docs/reports/04-ocr-report.md` |
+| 11 | **Số liệu cho S17** (hiệu năng CPU) | ✅ **Đã có** | NFR-P1 đạt: p95 = 731,15 ms client-side / 780,36 ms in-process (mục tiêu 800 ms); phân rã OCR 64,3% / detect 34,2% |
 | 12 | Tập dượt tính giờ | ⬜ Chưa làm | Chạy thử ≥ 2 lần, bấm giờ |
 
 ### Ba slide còn ô trống — quy tắc xử lý

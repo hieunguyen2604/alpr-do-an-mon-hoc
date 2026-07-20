@@ -259,6 +259,13 @@ xếp theo mức đóng góp:
 
 ### 4.3. Hệ quả kiến trúc — luật Amdahl áp lên chính dự án này
 
+> ⛔ **MỤC 4.3 ĐÃ BỊ BÁC BỎ — giữ nguyên văn làm tư liệu lịch sử, KHÔNG trích dẫn.**
+> Tỷ trọng thật trên `models/best.pt` là **OCR 64,3% / phát hiện 34,2%** (T5.7b),
+> không phải 93,3% / 6,5%. Con số 93,3% dưới đây đo trên checkpoint epoch 7 khi
+> hệ thống còn lỗi crop khiến PaddleOCR đọc ảnh quá lớn (~1.322 ms/ảnh). Xem
+> đính chính ở **mục 4.5** và **mục 5bis.3**, nguồn thẩm quyền
+> [`07-benchmark-p1-resolved.json`](07-benchmark-p1-resolved.json).
+
 Với OCR chiếm **93,3%** thời gian, mọi tối ưu ở bốn bước còn lại đều **vô nghĩa
 về mặt số học**:
 
@@ -811,11 +818,8 @@ Chuỗi nguyên nhân, mỗi bước đều có số đo hậu thuẫn:
 > | Tỷ trọng phát hiện | **6,5%** | **34,2%** (T5.7b) |
 >
 > **Câu "trượt thật, không phải tạo tác của phép đo" là sai — nó ĐÚNG LÀ tạo tác
-> của phép đo.** Nguyên nhân: (1) tiến trình huấn luyện chiếm ~793% CPU song song
-> làm nhiễm vùng mẫu p95; (2) checkpoint epoch 7 chứ không phải `best.pt`; (3) lỗi
-> crop quá lớn khiến PaddleOCR đọc trên ảnh crop ~1322 ms/ảnh (mục 8 của
-> [04-ocr-report.md](04-ocr-report.md)). Chi tiết ở
-> [07-benchmark-p1-resolved.json](07-benchmark-p1-resolved.json).
+> của phép đo.** Ba nguyên nhân và hai giả thuyết bị bác bỏ đã trình bày ở **khối
+> "ĐỌC TRƯỚC" đầu báo cáo (§0)**; không lặp lại ở đây.
 >
 > Đồng thời, quy kết ở bước 3 của mục 9.2 — *"ước lượng 120 ms lấy từ tài liệu
 > đo trên GPU"* — cũng sai: **120 ms là con số đúng** cho PP-OCRv5-mobile trên

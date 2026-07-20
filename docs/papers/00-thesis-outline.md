@@ -8,7 +8,7 @@
 | Mã tài liệu | `THESIS-OUTLINE-v1.0` |
 | Giai đoạn | Phase 9 — Documentation (khởi động sớm, song song Phase 2–4) |
 | Ngày lập | 2026-07-19 |
-| Trạng thái | **Khung đã chốt — Chương 1–3 viết được ngay; Chương 4–6 chờ dữ liệu thực nghiệm** |
+| Trạng thái | **Khung đã chốt — cả sáu chương đã viết xong (cập nhật 2026-07-20)** |
 
 ---
 
@@ -26,7 +26,7 @@ Tài liệu này là **bản thiết kế của quyển đồ án**, không ph�
 
 ## 1. Trạng thái thực tế của dự án tại thời điểm lập đề cương
 
-Phần này tồn tại để người đọc đề cương hiểu **vì sao** ba chương cuối chưa viết được.
+Phần này tồn tại để người đọc đề cương biết mỗi chương dựa trên nền tảng kỹ thuật nào. Tính đến 2026-07-20, **cả sáu chương đều đã viết xong**.
 
 | Hạng mục | Trạng thái | Hệ quả với quyển đồ án |
 |---|---|---|
@@ -37,9 +37,7 @@ Phần này tồn tại để người đọc đề cương hiểu **vì sao** b
 | **Huấn luyện mô hình** | ✅ **Mô hình chính thức `best.pt` đã xong** (`imgsz=640`, split v3, 20 epoch): detection đạt cả bốn chỉ tiêu (mAP@0.5 0,9829). `baseline-416-v1.pt` giữ làm đối chứng | **Chương 5 đã viết được**: số công bố lấy từ `best.pt`, không dùng số baseline (sai độ phân giải + rò rỉ) |
 | Pipeline nhận dạng đang chạy | ✅ `ALPRPipeline` **thật** — `/health` trả `model_loaded: true`, engine `yolo:best.pt+paddleocr-PP-OCRv5-mobile` | Số liệu đánh giá Chương 5 đo trên `best.pt` |
 
-> **Điểm phải nói thẳng khi bảo vệ.** Trong giai đoạn Phase 5–7, hệ thống từng chạy bằng một pipeline giả lập (`StubPipeline`) cài đúng giao diện trừu tượng của tầng AI. Đó là lựa chọn kiến trúc có chủ đích chứ không phải thiếu sót: nó cho phép phát triển và kiểm thử toàn bộ backend, cơ sở dữ liệu và giao diện **trước khi** có trọng số, đồng thời chứng minh trên thực tế rằng ràng buộc NFR-M5 (thay được bộ nhận dạng mà không sửa mã tầng API) là khả thi.
->
-> **Trạng thái hiện tại:** `StubPipeline` **đã bị đưa ra khỏi đường chạy chính** — nó chỉ chạy khi đặt tường minh `ALPR_USE_STUB=true`, còn phương án lùi khi thiếu trọng số là `UnavailablePipeline`, vốn **ném lỗi** thay vì bịa ra biển số. Đường chạy chính là pipeline thật với mô hình chính thức `best.pt`. Quy tắc vẫn giữ nguyên hiệu lực: **không một con số nào do stub sinh ra được phép vào Chương 5**, và số của `baseline-416-v1.pt` (đối chứng) không được báo cáo như kết quả đạt chỉ tiêu — số công bố lấy từ `best.pt`.
+> **Điểm phải nói thẳng khi bảo vệ.** Trong giai đoạn Phase 5–7 hệ thống từng chạy bằng pipeline giả lập `StubPipeline`; nay stub đã ra khỏi đường chạy chính và **không một con số nào do stub hay `baseline-416-v1.pt` sinh ra được phép vào Chương 5** — số công bố lấy từ `best.pt`. Giải thích đầy đủ lý do dùng stub, cơ chế `ALPR_USE_STUB` / `UnavailablePipeline` và ranh giới số liệu: xem `THESIS-README.md` §2.
 
 ---
 
@@ -71,15 +69,15 @@ Ký hiệu rút gọn dùng trong toàn bộ đề cương:
 
 | Phần | Tên | Ước lượng số trang | Trạng thái |
 |:---:|---|:---:|---|
-| — | Phần đầu quyển (bìa → abstract) | 10–12 | ✅ Viết được ngay |
-| **1** | Mở đầu | 8–10 | ✅ Viết được ngay |
-| **2** | Tổng quan và cơ sở lý thuyết | 28–34 | ✅ Viết được ngay |
-| **3** | Phân tích và thiết kế hệ thống | 22–26 | ✅ Viết được ngay |
-| **4** | Cài đặt hệ thống | 20–24 | ⛔ **CHƯA VIẾT** |
-| **5** | Thực nghiệm và đánh giá | 22–28 | ⛔ **CHƯA VIẾT** |
-| **6** | Kết luận và hướng phát triển | 5–7 | ⛔ **CHƯA VIẾT** |
+| — | Phần đầu quyển (bìa → abstract) | 10–12 | ✅ **Đã viết** (`01-front-matter.md`) |
+| **1** | Mở đầu | 8–10 | ✅ **Đã viết** (`ch1-mo-dau.md`) |
+| **2** | Tổng quan và cơ sở lý thuyết | 28–34 | ✅ **Đã viết** (`ch2-tong-quan.md`) |
+| **3** | Phân tích và thiết kế hệ thống | 22–26 | ✅ **Đã viết** (`ch3-phan-tich-thiet-ke.md`) |
+| **4** | Cài đặt hệ thống | 20–24 | ✅ **Đã viết** (`ch4-cai-dat.md`) |
+| **5** | Thực nghiệm và đánh giá | 22–28 | ✅ **Đã viết** (`ch5-thuc-nghiem.md`) |
+| **6** | Kết luận và hướng phát triển | 5–7 | ✅ **Đã viết** (`ch6-ket-luan.md`) |
 | — | Tài liệu tham khảo | 8–12 | 🔵 Sinh từ `BIB` khi ghép |
-| — | Phụ lục | 6–10 | ⛔ Chờ Chương 4–5 |
+| — | Phụ lục | 6–10 | 🔵 Trích từ Chương 4–5 khi ghép |
 | | **Tổng dự kiến** | **129–163** | |
 
 > Ước lượng theo khổ A4, font 13pt, giãn dòng 1,5 — quy ước phổ biến của đồ án tốt nghiệp đại học Việt Nam. Con số chỉ mang tính định hướng phân bổ công sức; **không được coi là chỉ tiêu phải đạt**. Viết đủ ý quan trọng hơn viết đủ trang.
@@ -90,7 +88,7 @@ Ký hiệu rút gọn dùng trong toàn bộ đề cương:
 
 ## 4. CHƯƠNG 1 — MỞ ĐẦU
 
-**Trạng thái:** ✅ Viết được ngay · **Ước lượng:** 8–10 trang
+**Trạng thái:** ✅ **Đã viết** — tệp `docs/papers/ch1-mo-dau.md` · **Độ dài ước lượng:** 8–10 trang
 **Nguồn chính:** `SRS` §1–2, `SCOPE`, `RESEARCH` §2.8, §2.11, `TIME`
 
 Chương này trả lời bốn câu hỏi theo đúng thứ tự: *vì sao làm*, *làm gì*, *làm đến đâu*, *làm bằng cách nào*. Nó phải đọc được độc lập — người đọc chỉ đọc Chương 1 vẫn nắm được toàn bộ đề tài.
@@ -106,7 +104,7 @@ Chương này trả lời bốn câu hỏi theo đúng thứ tự: *vì sao làm
 **Số liệu bắt buộc phải có trích dẫn ở mục này:**
 
 - Quy mô xe máy tại Việt Nam <!-- dantri_2024_77trieuxemay -->
-- Chênh lệch độ chính xác biển một dòng ↔ biển hai dòng: 94,3% ↔ 45,7%, chênh 48,6 điểm phần trăm <!-- laroca_2022_crossdataset -->
+- Chênh lệch độ chính xác biển một dòng ↔ biển hai dòng **đo trên bộ RodoSol-ALPR (Brazil)**: 94,3% ↔ 45,7%, chênh 48,6 điểm phần trăm <!-- laroca_2022_crossdataset -->
   > ⚠️ **Cảnh báo trích dẫn bắt buộc.** Cặp số này đo trên **RodoSol-ALPR (Brazil)**, **không phải dữ liệu Việt Nam**. Chỉ được dẫn như một *analogue* định lượng về độ khó của biển hai dòng. Trình bày nó như số liệu Việt Nam là lỗi trích dẫn nghiêm trọng. Nguồn gốc cảnh báo: `DATASET` §4.2.4, `RESEARCH` §2.8.2.
 
 ### 1.2. Mục tiêu đề tài
@@ -157,7 +155,7 @@ Chương này trả lời bốn câu hỏi theo đúng thứ tự: *vì sao làm
 
 ## 5. CHƯƠNG 2 — TỔNG QUAN VÀ CƠ SỞ LÝ THUYẾT
 
-**Trạng thái:** ✅ Viết được ngay · **Ước lượng:** 28–34 trang
+**Trạng thái:** ✅ **Đã viết** — tệp `docs/papers/ch2-tong-quan.md` · **Độ dài ước lượng:** 28–34 trang
 **Nguồn chính:** `RESEARCH` (toàn bộ), `VNPLATE`, `YOLO`, `OCR`, `TECH`, `DATASET`
 
 Đây là chương dài nhất và là chương có sẵn nhiều nguyên liệu nhất. Phần lớn công việc là **biên tập và cô đọng** sáu báo cáo Phase 1 thành văn bản liền mạch, không phải nghiên cứu mới.
@@ -275,7 +273,7 @@ Mục 2.5.5 là **mục kỹ thuật quan trọng nhất của Chương 2**. Nó
 
 ## 6. CHƯƠNG 3 — PHÂN TÍCH VÀ THIẾT KẾ HỆ THỐNG
 
-**Trạng thái:** ✅ Viết được ngay · **Ước lượng:** 22–26 trang
+**Trạng thái:** ✅ **Đã viết** — tệp `docs/papers/ch3-phan-tich-thiet-ke.md` · **Độ dài ước lượng:** 22–26 trang
 **Nguồn chính:** `SRS`, `FR`, `NFR`, `ARCH`, `VNPLATE` §8–9, `OCR` §4
 
 Chương này mô tả **thiết kế**, không mô tả **mã nguồn**. Ranh giới với Chương 4: Chương 3 trả lời *"hệ thống được thiết kế thế nào và vì sao"*; Chương 4 trả lời *"nó được cài đặt bằng gì và ra sao"*.
@@ -372,97 +370,114 @@ Bảng **AD-01 … AD-08** (`ARCH` §8), mỗi dòng gồm: quyết định, l�
 
 ---
 
-## 7. CHƯƠNG 4 — CÀI ĐẶT HỆ THỐNG ⛔ CHƯA VIẾT
+## 7. CHƯƠNG 4 — CÀI ĐẶT HỆ THỐNG ✅ ĐÃ VIẾT
 
-**Trạng thái:** ⛔ **CHƯA VIẾT ĐƯỢC** · **Ước lượng khi viết:** 20–24 trang
+**Trạng thái:** ✅ **Đã viết** — tệp `docs/papers/ch4-cai-dat.md` · **Độ dài ước lượng:** 20–24 trang
 
-### Vì sao chưa viết được
+### Điều kiện tiền đề — đều đã thoả
 
-Chương này mô tả cài đặt thực tế của **toàn bộ** hệ thống. Hai khối lớn chưa tồn tại:
-
-| Khối | Trạng thái | Chặn mục nào |
+| Khối | Trạng thái | Phục vụ mục nào |
 |---|---|---|
-| Bộ dữ liệu đã làm sạch | Phase 2 chưa hoàn thành | 4.2 |
-| Mô hình `best.pt` | **Chưa huấn luyện** | 4.3, và gián tiếp 4.4, 4.5 |
-| Module OCR + hậu xử lý thực | Phụ thuộc `best.pt` để có vùng cắt thật | 4.4, 4.5 |
-| Frontend | Đang xây dựng | 4.7 |
+| Bộ dữ liệu đã làm sạch | ✅ Split v3 đã chốt: train 10.592 / val 3.027 / test 1.514 | 4.5 |
+| Mô hình `best.pt` | ✅ **Đã huấn luyện xong** (YOLO11n, `imgsz=640`, split v3, 20 epoch; mAP@0.5 0,9829) | 4.2 |
+| Module OCR + hậu xử lý thực | ✅ Đã cài đặt và đo (A5 0,6098 → A6 0,6555) | 4.2 |
+| Backend | ✅ Đã chạy — 10 endpoint | 4.3 |
+| Frontend | ✅ **Hoàn thành**, build sạch | 4.4 |
+| Docker / Docker Compose | ✅ Đã đóng gói | 4.6 |
 
-Backend (4.6) **đã cài đặt xong và chạy được**, nên về nguyên tắc mục 4.6 viết được ngay. Tuy nhiên viết lẻ một mục giữa một chương rỗng sẽ tạo ra tài liệu chắp vá; hợp lý hơn là viết cả chương sau khi có `best.pt`.
+### Khung mục thực tế của chương đã viết
 
-### Khung mục dự kiến
-
-| Mục | Nội dung | Điều kiện để viết được |
-|---|---|---|
-| 4.1. Môi trường phát triển và triển khai | Cấu hình local, môi trường huấn luyện từ xa, môi trường Docker (`ENV`) | ✅ Sẵn sàng |
-| 4.2. Xây dựng bộ dữ liệu | Thu thập, gộp, làm sạch, kiểm tra nhãn, khử trùng lặp, chia tập, augmentation | ⛔ Phase 2 |
-| 4.3. Huấn luyện mô hình phát hiện | Cấu hình siêu tham số, quy trình huấn luyện trên Colab/Kaggle, đường cong loss | ⛔ Phase 3 |
-| 4.4. Cài đặt module nhận dạng ký tự | Tích hợp PaddleOCR, xử lý biển hai dòng | ⛔ Phase 4 |
-| 4.5. Cài đặt khối chuẩn hoá và hậu xử lý | Hằng số, regex, bảng luật sửa lỗi theo vị trí | ⛔ Phase 4 |
-| 4.6. Cài đặt backend | Router, service, repository, model, migration | ✅ **Đã cài đặt xong** |
-| 4.7. Cài đặt frontend | Các màn hình, gọi API, vẽ overlay | 🔵 Đang xây dựng |
-| 4.8. Đóng gói Docker | Dockerfile, docker-compose | ⛔ Phase 8 |
-| 4.9. Tóm tắt chương | | |
+| Mục | Nội dung |
+|---|---|
+| 4.1. Môi trường và công cụ phát triển | Cấu hình local, môi trường huấn luyện từ xa, môi trường Docker (`ENV`) |
+| 4.2. Cài đặt tầng AI | Detector YOLO11n, tích hợp PaddleOCR, xử lý biển hai dòng, khối chuẩn hoá và hậu xử lý theo vị trí |
+| 4.3. Cài đặt backend | Router, service, repository, model, migration |
+| 4.4. Cài đặt frontend | Các màn hình, gọi API, vẽ overlay |
+| 4.5. Xây dựng bộ dữ liệu | Thu thập, gộp, làm sạch, kiểm tra nhãn, khử trùng lặp, chia tập, augmentation |
+| 4.6. Triển khai bằng Docker | Dockerfile, docker-compose |
+| 4.7. Những chỗ cài đặt lệch khỏi thiết kế ở Chương 3, và lý do | |
+| 4.8. Kết luận chương | |
 
 ---
 
-## 8. CHƯƠNG 5 — THỰC NGHIỆM VÀ ĐÁNH GIÁ ⛔ CHƯA VIẾT
+## 8. CHƯƠNG 5 — THỰC NGHIỆM VÀ ĐÁNH GIÁ ✅ ĐÃ VIẾT
 
-**Trạng thái:** ⛔ **CHƯA VIẾT ĐƯỢC — cần kết quả huấn luyện** · **Ước lượng khi viết:** 22–28 trang
+**Trạng thái:** ✅ **Đã viết** — tệp `docs/papers/ch5-thuc-nghiem.md` · **Độ dài ước lượng:** 22–28 trang
 
-### Vì sao chưa viết được
+### Nguồn số liệu của chương
 
-**Mô hình chính thức chưa huấn luyện xong.** Hệ thống hiện chạy pipeline **thật** với `models/baseline-416-v1.pt` (`/health` báo `model_loaded: true`), nhưng mô hình đó **không dùng làm số liệu Chương 5** được, vì hai khiếm khuyết độc lập: nó huấn luyện ở `imgsz=416` trong khi chỉ tiêu NFR-A1/A2 đặt ở 640, và nó dùng split v1 vốn **có rò rỉ train↔test** (619 cặp ảnh gần trùng ở ngưỡng phash 10). Lượt huấn luyện chính thức (`imgsz=640`, split v3) **đang chạy**; ngoài ra NFR-A4/A5/A6/A7 vẫn **chưa đo**. Vì vậy chưa có con số nào trong chương này viết được từ trạng thái hiện tại.
+Mô hình chính thức `models/best.pt` (YOLO11n, `imgsz=640`, split v3, 20 epoch) **đã huấn luyện xong**; `/health` báo `model_loaded: true` với engine `yolo:best.pt+paddleocr-PP-OCRv5-mobile`. Toàn bộ số công bố trong chương lấy từ mô hình này.
 
-> **Đây là ranh giới liêm chính học thuật của toàn bộ đồ án.** Mọi cám dỗ điền số "tạm cho có" vào chương này phải bị từ chối. Một quyển đồ án thiếu Chương 5 nhưng trung thực về lý do vẫn bảo vệ được; một quyển có Chương 5 với số liệu bịa thì không.
+`models/baseline-416-v1.pt` **chỉ còn là mô hình đối chứng** và **tuyệt đối không dùng làm số liệu công bố**, vì hai khiếm khuyết độc lập: huấn luyện ở `imgsz=416` trong khi chỉ tiêu NFR-A1/A2 đặt ở 640, và dùng split v1 vốn **có rò rỉ train↔test** (619 cặp ảnh gần trùng ở ngưỡng phash 10). Số của nó (mAP@0.5 0,9933; mAP@0.5:0.95 0,8597) **cao hơn** `best.pt` chính vì rò rỉ thổi phồng — đây là ví dụ điển hình cần nêu khi bảo vệ.
 
-### Khung mục dự kiến
+**Kết quả chính đã đo:**
+
+| Nhóm | Kết quả | Ngưỡng | Kết luận |
+|---|---|---|---|
+| Detection (NFR-A1/A2/A3) | mAP@0.5 0,9829 · mAP@0.5:0.95 0,7834 · P 0,9837 · R 0,9714 | — | ✅ Đạt cả bốn |
+| NFR-A4 (1 − CER) | 0,8734 | 0,92 | ❌ Chưa đạt |
+| NFR-A5 (trước hậu xử lý) | 0,6098 | 0,80 | ❌ Chưa đạt |
+| NFR-A6 (sau hậu xử lý) | 0,6555 (+4,57 điểm; 128 biển sửa đúng, 0 biển hỏng) | 0,85 | ❌ Chưa đạt |
+| NFR-A7 (end-to-end) | 0,5227 | 0,82 | ❌ Chưa đạt |
+| NFR-A8 (tách theo layout) | 1 dòng A6 0,9489 (567 mẫu) ↔ 2 dòng A6 0,5810 (2.234 mẫu); chênh 36,79 điểm | — | ✅ Đã đo |
+| NFR-P1 (độ trễ ảnh p95) | 731,15 ms client-side / 780,36 ms in-process | 800 ms | ✅ Đạt |
+
+> **Ranh giới liêm chính học thuật.** Bốn chỉ tiêu A4–A7 **chưa đạt ngưỡng** và chương đã ghi đúng như vậy. Không được làm tròn lên, không được đổi ngưỡng cho khớp kết quả. Một quyển trung thực về chỉ tiêu chưa đạt vẫn bảo vệ được; một quyển sửa số thì không.
+
+### Khung mục thực tế của chương đã viết
 
 | Mục | Nội dung | Chỉ tiêu đối chiếu |
 |---|---|---|
-| 5.1. Thiết lập thực nghiệm | Cấu hình phần cứng, bộ dữ liệu, tập test, giao thức đo | `NFR` §0 |
-| 5.2. Kết quả huấn luyện | Đường cong loss, so sánh biến thể n / s / m | `SCOPE` §2.1 |
-| 5.3. Đánh giá bộ phát hiện | mAP@0.5, mAP@0.5:0.95, precision, recall, F1, ma trận nhầm lẫn | NFR-A1, A2, A3 |
-| 5.4. Đánh giá OCR và hậu xử lý | CER; **độ chính xác trước và sau hậu xử lý, đo tách bạch** | NFR-A4, **A5 vs A6** |
-| 5.5. Đánh giá end-to-end | Độ chính xác toàn trình | NFR-A7 |
-| 5.6. **Đánh giá tách theo layout** | Biển một dòng ↔ biển hai dòng | **NFR-A8** |
-| 5.7. Đánh giá theo điều kiện ảnh | Ban ngày / ban đêm / nghiêng / mờ — nếu bộ dữ liệu có nhãn phù hợp | NFR-A9 |
-| 5.8. Đánh giá hiệu năng trên CPU | Độ trễ p50/p95/p99, FPS webcam, tốc độ xử lý video, bộ nhớ | NFR-P1…P7 |
-| 5.9. So sánh runtime suy luận | PyTorch vs ONNX Runtime vs OpenVINO — thí nghiệm E2 (`YOLO`) | `TECH` §9 |
-| 5.10. Kết quả kiểm thử phần mềm | Unit, integration, độ bao phủ, kiểm thử chịu tải | NFR-M2, R1…R5 |
-| 5.11. Phân tích lỗi | Các trường hợp thất bại điển hình, ma trận nhầm lẫn ký tự 36×36 | `VNPLATE` §9.8 |
-| 5.12. Đối chiếu toàn bộ chỉ tiêu NFR | Bảng "chốt hạ" trình bày khi bảo vệ | `NFR` §9 |
-| 5.13. Tóm tắt chương | | |
+| 5.1. Mục tiêu và phương pháp đánh giá | Giao thức đo, định nghĩa chỉ tiêu | `NFR` §0 |
+| 5.2. Môi trường thực nghiệm | Cấu hình phần cứng, số luồng, backend suy luận | `NFR` §0 |
+| 5.3. Bộ dữ liệu thực nghiệm | Split v3, khử trùng lặp, kiểm tra rò rỉ | — |
+| 5.4. Quá trình huấn luyện | Siêu tham số, đường cong loss | `SCOPE` §2.1 |
+| 5.5. Đánh giá bộ phát hiện biển số | mAP@0.5, mAP@0.5:0.95, precision, recall | NFR-A1, A2, A3 |
+| 5.6. Đánh giá khối OCR và hậu xử lý | CER; **độ chính xác trước và sau hậu xử lý, đo tách bạch**; tách theo layout | NFR-A4, **A5 vs A6**, A7, **A8** |
+| 5.7. Đánh giá hiệu năng | Độ trễ p50/p95/p99, nạp mô hình, overhead API, truy vấn, bộ nhớ | NFR-P1…P7 |
+| 5.8. Khảo sát ảnh hưởng của độ phân giải và chất lượng split | 416/v1 ↔ 640/v3, phân tích rò rỉ | — |
+| 5.9. Đối chiếu toàn bộ chỉ tiêu phi chức năng | Bảng "chốt hạ" trình bày khi bảo vệ | `NFR` §9 |
+| 5.10. Phân tích lỗi | Các trường hợp thất bại điển hình | `VNPLATE` §9.8 |
+| 5.11. Bàn luận | | |
+| 5.12. Kết luận chương | | |
+| Phụ lục kỹ thuật | Ánh xạ số liệu và lệnh tái lập | — |
 
-**Hai mục là đóng góp học thuật cốt lõi, không được bỏ:**
+> **Các phép đo chưa thực hiện, đã ghi rõ trong chương:** NFR-P2 (FPS webcam), NFR-P3 (tốc độ xử lý video), NFR-A9 (đánh giá theo điều kiện ảnh — bộ dữ liệu không có nhãn phù hợp), NFR-R5.
 
-- **5.4** — hiệu số giữa NFR-A5 và NFR-A6 chính là đóng góp định lượng của khối hậu xử lý (mục 1.5.2).
-- **5.6** — bảng tách theo layout lấp đúng khoảng trống đã xác định: chưa nghiên cứu Việt Nam nào công bố hai con số này tách bạch trên cùng một hệ thống (`RESEARCH` §2.8.2, §2.11.3).
+**Hai nội dung là đóng góp học thuật cốt lõi, không được bỏ:**
+
+- **Hiệu số A6 − A5 = +4,57 điểm** (0,6098 → 0,6555; 128 biển sửa đúng, 0 biển hỏng) chính là đóng góp định lượng của khối hậu xử lý (mục 1.5.2).
+- **Bảng tách theo layout** (1 dòng A6 0,9489 ↔ 2 dòng A6 0,5810, chênh 36,79 điểm) lấp đúng khoảng trống đã xác định: chưa nghiên cứu Việt Nam nào công bố hai con số này tách bạch trên cùng một hệ thống (`RESEARCH` §2.8.2, §2.11.3).
 
 ---
 
-## 9. CHƯƠNG 6 — KẾT LUẬN VÀ HƯỚNG PHÁT TRIỂN ⛔ CHƯA VIẾT
+## 9. CHƯƠNG 6 — KẾT LUẬN VÀ HƯỚNG PHÁT TRIỂN ✅ ĐÃ VIẾT
 
-**Trạng thái:** ⛔ **CHƯA VIẾT ĐƯỢC — phụ thuộc Chương 5** · **Ước lượng khi viết:** 5–7 trang
+**Trạng thái:** ✅ **Đã viết** — tệp `docs/papers/ch6-ket-luan.md` · **Độ dài ước lượng:** 5–7 trang
 
-Chương kết luận phải đối chiếu kết quả thật với mục tiêu đề ra ở Chương 1. Không có Chương 5 thì không có gì để đối chiếu.
+Chương kết luận đối chiếu kết quả thật ở Chương 5 với mục tiêu đề ra ở Chương 1.
 
-### Khung mục dự kiến
+### Khung mục thực tế của chương đã viết
 
-| Mục | Nội dung | Nguồn nguyên liệu đã có |
-|---|---|---|
-| 6.1. Kết quả đạt được | Đối chiếu với mục tiêu 1.2 và tiêu chí thành công `SCOPE` §6 | Một phần đã có |
-| 6.2. Hạn chế của đồ án | | **Phần lớn đã xác định sẵn** — xem bên dưới |
-| 6.3. Hướng phát triển | | **Phần lớn đã xác định sẵn** — xem bên dưới |
-| 6.4. Kết luận chung | | |
+| Mục | Nội dung |
+|---|---|
+| 6.1. Tổng kết công việc đã thực hiện | Toàn bộ 11 phase |
+| 6.2. Các kết quả đạt được | Đối chiếu với mục tiêu 1.2 và tiêu chí thành công `SCOPE` §6 |
+| 6.3. Các hạn chế của đồ án | Xem danh sách bên dưới |
+| 6.4. Hướng phát triển | Xem danh sách bên dưới |
+| 6.5. Kết luận chung | |
 
-**Mục 6.2 — các hạn chế đã được xác định trước từ Phase 0–1**, chỉ cần bổ sung hạn chế phát sinh từ kết quả thực nghiệm:
+**Mục 6.3 — các hạn chế**, gồm nhóm đã xác định trước từ Phase 0–1 và nhóm phát sinh từ kết quả thực nghiệm:
+
+- **Bốn chỉ tiêu độ chính xác chưa đạt ngưỡng đề ra:** A4 0,8734 (ngưỡng 0,92), A5 0,6098 (0,80), A6 0,6555 (0,85), A7 0,5227 (0,82). Nguyên nhân chi phối là biển hai dòng — chiếm 79,8% tập đánh giá nhưng A6 chỉ đạt 0,5810 so với 0,9489 của biển một dòng.
+- **Một số phép đo chưa thực hiện:** NFR-P2 (FPS webcam), NFR-P3 (video), NFR-A9, NFR-R5.
 
 - SQLite chỉ cho phép **một tiến trình ghi tại một thời điểm**; hướng khắc phục là chuyển sang PostgreSQL nếu triển khai thực tế (`NFR` §8). Đây là câu hỏi phản biện rất dễ gặp.
 - Mọi số liệu hiệu năng là **số liệu CPU**, không so sánh trực tiếp được với các con số FPS đo trên GPU (`RESEARCH` §2.11.5).
 - Bảng luật sửa lỗi OCR dựa trên suy luận hình dạng ký tự, chưa hiệu chỉnh bằng ma trận nhầm lẫn đo được (`VNPLATE` §9.8).
 - Đồ án không giải quyết các thách thức mở: độ phân giải thấp, tổng quát hoá xuyên tập dữ liệu, che khuất nặng (`RESEARCH` §2.10, §2.11.5).
 
-**Mục 6.3 — các hướng phát triển đã được xác định trước:**
+**Mục 6.4 — các hướng phát triển đã được xác định trước:**
 
 - Bám vết đối tượng qua khung hình (SORT/DeepSORT) thay cho gộp trùng theo chuỗi ký tự (`SCOPE` §3).
 - Huấn luyện riêng một mô hình OCR cho biển số Việt Nam thay vì dùng PaddleOCR pre-trained (`SCOPE` §3).
@@ -481,7 +496,7 @@ Chương kết luận phải đối chiếu kết quả thật với mục tiêu
 | Phụ lục B | Toàn bộ regex và bảng luật sửa lỗi (`VNPLATE` §8, §9) | ✅ Sẵn sàng |
 | Phụ lục C | Đặc tả đầy đủ 34 yêu cầu chức năng (`FR`) | ✅ Sẵn sàng |
 | Phụ lục D | Đặc tả API / trích Swagger | 🔵 Backend đã chạy — trích được |
-| Phụ lục E | Bảng số liệu thực nghiệm chi tiết | ⛔ Chờ Chương 5 |
+| Phụ lục E | Bảng số liệu thực nghiệm chi tiết | ✅ Sẵn sàng — trích từ phụ lục kỹ thuật của Chương 5 và `docs/reports/05-results.json` |
 
 > **Lưu ý về nhóm *Further reading* trong `BIB`.** 21 entry ở nhóm `% === Further reading (not cited) ===` **chưa được trích ở bất kỳ báo cáo Phase 1 nào**. Trước khi dùng bất kỳ entry nào trong số đó cho quyển đồ án, phải đọc và kiểm chứng lại nguồn, rồi chuyển entry lên đúng mục chủ đề trong `.bib`. Không được `\cite{}` thẳng từ nhóm này (`CITEMAP`).
 
@@ -489,18 +504,18 @@ Chương kết luận phải đối chiếu kết quả thật với mục tiêu
 
 ## 11. Thứ tự viết đề nghị
 
-Không viết theo thứ tự chương. Thứ tự dưới đây tối ưu theo mức độ sẵn sàng của nguyên liệu:
+Không viết theo thứ tự chương. Thứ tự dưới đây tối ưu theo mức độ sẵn sàng của nguyên liệu — **các bước 1–7 đều đã hoàn thành**:
 
-| Bước | Việc | Phụ thuộc |
-|:---:|---|---|
-| 1 | Phần đầu quyển: danh mục từ viết tắt, hai abstract | ✅ Không |
-| 2 | **Chương 2** — nhiều nguyên liệu nhất, ít phụ thuộc nhất | ✅ Không |
-| 3 | **Chương 3** — backend đã chạy, thiết kế đã được kiểm chứng | ✅ Không |
-| 4 | **Chương 1** — viết sau Chương 2–3 để phần đóng góp bám sát nội dung thật | Bước 2, 3 |
-| 5 | Chương 4 | ⛔ `best.pt` |
-| 6 | Chương 5 | ⛔ Chương 4 |
-| 7 | Chương 6 | ⛔ Chương 5 |
-| 8 | Mục 1.6 (cấu trúc quyển) + mục lục + danh mục hình/bảng | ⛔ Toàn bộ |
+| Bước | Việc | Phụ thuộc | Trạng thái |
+|:---:|---|---|---|
+| 1 | Phần đầu quyển: danh mục từ viết tắt, hai abstract | ✅ Không | ✅ Xong (abstract đã cập nhật số thật) |
+| 2 | **Chương 2** — nhiều nguyên liệu nhất, ít phụ thuộc nhất | ✅ Không | ✅ Xong |
+| 3 | **Chương 3** — backend đã chạy, thiết kế đã được kiểm chứng | ✅ Không | ✅ Xong |
+| 4 | **Chương 1** — viết sau Chương 2–3 để phần đóng góp bám sát nội dung thật | Bước 2, 3 | ✅ Xong |
+| 5 | Chương 4 | `best.pt` | ✅ Xong |
+| 6 | Chương 5 | Chương 4 | ✅ Xong |
+| 7 | Chương 6 | Chương 5 | ✅ Xong |
+| 8 | Mục lục + danh mục hình/bảng + ghép quyển + điền thông tin cá nhân | Toàn bộ | 🔵 Việc còn lại duy nhất |
 
 `TIME` §5 đã ghi sẵn: *"Viết chương Tổng quan và Cơ sở lý thuyết của đồ án"* là việc nên chen vào thời gian chờ huấn luyện ở Phase 2–4. Thứ tự trên là hiện thực hoá khuyến nghị đó.
 
@@ -510,6 +525,6 @@ Không viết theo thứ tự chương. Thứ tự dưới đây tối ưu theo 
 
 Đề cương này cố định cấu trúc sáu chương của quyển đồ án, ánh xạ từng mục về tài liệu nguồn Phase 0–1 tương ứng, và ước lượng 129–163 trang cho toàn quyển.
 
-Ba chương đầu (**Mở đầu**, **Tổng quan và cơ sở lý thuyết**, **Phân tích và thiết kế hệ thống**) viết được ngay vì toàn bộ nguyên liệu đã hoàn thành và đã qua kiểm chứng đối kháng ở Phase 0–1, và vì backend đã chạy được nên phần thiết kế mô tả một hệ thống có thật.
+Ba chương đầu (**Mở đầu**, **Tổng quan và cơ sở lý thuyết**, **Phân tích và thiết kế hệ thống**) viết trước vì toàn bộ nguyên liệu đã hoàn thành và đã qua kiểm chứng đối kháng ở Phase 0–1, và vì backend đã chạy được nên phần thiết kế mô tả một hệ thống có thật.
 
-**Chương 4 (Cài đặt) nay đã viết xong** — hệ thống đã chạy pipeline thật với `models/baseline-416-v1.pt` nên chương này mô tả được một bản cài đặt có thật. Hai chương còn lại (**Thực nghiệm và đánh giá**, **Kết luận**) **vẫn chưa viết được**, nguyên nhân trực tiếp là **mô hình chính thức chưa huấn luyện xong** (`models/best.pt` đang chạy ở `imgsz=640` trên split v3) và **NFR-A4/A5/A6/A7 chưa đo**. Đề cương ghi rõ điều kiện tháo gỡ cho từng mục thay vì để trống, để khi có `best.pt` thì việc viết tiếp là điền vào khung đã dựng sẵn chứ không phải thiết kế lại từ đầu.
+**Cả sáu chương nay đã viết xong.** Mô hình chính thức `models/best.pt` (YOLO11n, `imgsz=640`, split v3, 20 epoch) đã huấn luyện xong với mAP@0.5 0,9829, và toàn bộ NFR-A4/A5/A6/A7 cùng NFR-P1 đã đo, nên **Chương 5 (Thực nghiệm và đánh giá)** và **Chương 6 (Kết luận)** đều đã viết với số liệu thật. `models/baseline-416-v1.pt` chỉ còn giữ vai trò đối chứng và không đóng góp con số nào vào Chương 5. Việc còn lại của quyển đồ án là ghép quyển: sinh mục lục và danh mục hình/bảng, điền thông tin cá nhân vào trang bìa và các biểu mẫu của khoa.

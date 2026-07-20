@@ -194,9 +194,36 @@ CHƯƠNG 3. PHÂN TÍCH VÀ THIẾT KẾ HỆ THỐNG ..........................
     3.8. Các quyết định thiết kế và đánh đổi
     3.9. Tóm tắt chương
 
-CHƯƠNG 4. CÀI ĐẶT HỆ THỐNG ................................................   [chưa viết]
-CHƯƠNG 5. THỰC NGHIỆM VÀ ĐÁNH GIÁ .........................................   [chưa viết]
-CHƯƠNG 6. KẾT LUẬN VÀ HƯỚNG PHÁT TRIỂN ....................................   [chưa viết]
+CHƯƠNG 4. CÀI ĐẶT HỆ THỐNG ................................................
+    4.1. Môi trường và công cụ phát triển
+    4.2. Cài đặt tầng AI
+    4.3. Cài đặt backend
+    4.4. Cài đặt frontend
+    4.5. Xây dựng bộ dữ liệu
+    4.6. Triển khai bằng Docker
+    4.7. Những chỗ cài đặt lệch khỏi thiết kế ở Chương 3, và lý do
+    4.8. Kết luận chương
+
+CHƯƠNG 5. THỰC NGHIỆM VÀ ĐÁNH GIÁ .........................................
+    5.1. Mục tiêu và phương pháp đánh giá
+    5.2. Môi trường thực nghiệm
+    5.3. Bộ dữ liệu thực nghiệm
+    5.4. Quá trình huấn luyện
+    5.5. Đánh giá bộ phát hiện biển số
+    5.6. Đánh giá khối OCR và hậu xử lý
+    5.7. Đánh giá hiệu năng
+    5.8. Khảo sát ảnh hưởng của độ phân giải và chất lượng split
+    5.9. Đối chiếu toàn bộ chỉ tiêu phi chức năng
+    5.10. Phân tích lỗi
+    5.11. Bàn luận
+    5.12. Kết luận chương
+
+CHƯƠNG 6. KẾT LUẬN VÀ HƯỚNG PHÁT TRIỂN ....................................
+    6.1. Tổng kết công việc đã thực hiện
+    6.2. Các kết quả đạt được
+    6.3. Các hạn chế của đồ án
+    6.4. Hướng phát triển
+    6.5. Kết luận chung
 
 TÀI LIỆU THAM KHẢO ........................................................
 PHỤ LỤC ...................................................................
@@ -220,8 +247,8 @@ PHỤ LỤC ...................................................................
 | Hình 3.4 | Sơ đồ tuần tự — nhận dạng ảnh | — | Chờ Chương 3 |
 | Hình 3.5 | Sơ đồ tuần tự — nhận dạng video bất đồng bộ | — | Chờ Chương 3 |
 | Hình 3.6 | Sơ đồ thực thể – liên kết của cơ sở dữ liệu | — | Chờ Chương 3 |
-| Hình 4.x | *(các hình của Chương 4)* | — | ⛔ Chờ huấn luyện mô hình |
-| Hình 5.x | *(các hình của Chương 5 — đường cong loss, ma trận nhầm lẫn, biểu đồ độ trễ…)* | — | ⛔ Chờ huấn luyện mô hình |
+| Hình 4.x | *(các hình của Chương 4)* | — | Chờ Chương 4 |
+| Hình 5.x | *(các hình của Chương 5 — đường cong loss, ma trận nhầm lẫn, biểu đồ độ trễ…)* | — | Chờ Chương 5 |
 
 ---
 
@@ -240,8 +267,8 @@ PHỤ LỤC ...................................................................
 | Bảng 3.3 | Ràng buộc, giả định và phụ thuộc | — | Chờ Chương 3 |
 | Bảng 3.4 | Đặc tả trường của bảng `DetectionHistory` | — | Chờ Chương 3 |
 | Bảng 3.5 | Các quyết định thiết kế AD-01 … AD-08 | — | Chờ Chương 3 |
-| Bảng 4.x | *(các bảng của Chương 4)* | — | ⛔ Chờ huấn luyện mô hình |
-| Bảng 5.x | *(các bảng của Chương 5 — kết quả detection, OCR, end-to-end, tách theo layout, hiệu năng CPU, đối chiếu NFR…)* | — | ⛔ Chờ huấn luyện mô hình |
+| Bảng 4.x | *(các bảng của Chương 4)* | — | Chờ Chương 4 |
+| Bảng 5.x | *(các bảng của Chương 5 — kết quả detection, OCR, end-to-end, tách theo layout, hiệu năng CPU, đối chiếu NFR…)* | — | Chờ Chương 5 |
 
 ---
 
@@ -340,7 +367,9 @@ Nhận dạng biển số xe tự động (ALPR) là bài toán nền tảng c�
 
 Đóng góp chính là bộ luật hậu xử lý **ràng buộc theo vị trí ký tự**, xây dựng trên Thông tư 79/2024/TT-BCA [2]<!-- bocongan_2024_tt79 --> và QCVN 08:2024/BCA [3]<!-- bocongan_2024_qcvn08 -->: mã tỉnh thuộc 81 giá trị hợp lệ, chữ cái sê-ri thứ nhất và thứ hai thuộc hai tập ký tự khác nhau. Cách tiếp cận này khắc phục hạn chế của các hệ thống áp một danh sách ký tự phẳng cho toàn chuỗi.
 
-Về mặt kỹ nghệ, đồ án cài đặt kiến trúc phân tầng tách biệt tầng AI khỏi tầng API, gồm backend FastAPI, giao diện web React và đóng gói Docker. Kết quả thực nghiệm định lượng sẽ được trình bày ở Chương 5.
+Về mặt kỹ nghệ, đồ án cài đặt kiến trúc phân tầng tách biệt tầng AI khỏi tầng API, gồm backend FastAPI, giao diện web React và đóng gói Docker.
+
+Trên tập kiểm tra của split v3 (1.514 ảnh, đã khử trùng lặp giữa các tập), bộ phát hiện YOLO11n đạt mAP@0.5 = 0,9829 và mAP@0.5:0.95 = 0,7834 (precision 0,9837; recall 0,9714). Khối nhận dạng đạt độ chính xác mức ký tự (1 − CER) 0,8734; độ chính xác toàn chuỗi tăng từ 0,6098 lên 0,6555 nhờ bộ luật hậu xử lý (sửa đúng 128 biển, không làm hỏng biển nào), và độ chính xác end-to-end đạt 0,5227. Khoảng cách lớn nhất nằm ở layout: biển một dòng đạt 0,9489 còn biển hai dòng chỉ đạt 0,5810 — chênh 36,79 điểm phần trăm, trong khi biển hai dòng chiếm 79,8% tập đánh giá. Độ trễ xử lý một ảnh ở phân vị 95 là 731,15 ms trên CPU, đạt chỉ tiêu 800 ms. Chi tiết và phân tích lỗi được trình bày ở Chương 5.
 
 **Từ khoá:** nhận dạng biển số xe, biển số Việt Nam, YOLO11, PaddleOCR, biển số hai dòng, hậu xử lý theo vị trí, suy luận trên CPU.
 
@@ -360,7 +389,9 @@ This thesis develops a complete ALPR system for Vietnamese license plates follow
 
 The principal contribution is a **position-constrained post-processing rule set** grounded in Circular 79/2024/TT-BCA [2]<!-- bocongan_2024_tt79 --> and the national technical regulation QCVN 08:2024/BCA [3]<!-- bocongan_2024_qcvn08 -->: the province code is restricted to 81 valid values, and the first and second serial letters are drawn from two different character sets. This design corrects a limitation of systems that apply a single flat character whitelist across the entire plate string.
 
-From a software engineering perspective, the thesis implements a layered architecture that fully decouples the AI layer from the API layer, comprising a FastAPI backend, a React web interface, and Docker packaging. Quantitative experimental results will be reported in Chapter 5, once model training has been completed.
+From a software engineering perspective, the thesis implements a layered architecture that fully decouples the AI layer from the API layer, comprising a FastAPI backend, a React web interface, and Docker packaging.
+
+On the held-out test split (1,514 images, de-duplicated across splits), the YOLO11n detector reaches mAP@0.5 = 0.9829 and mAP@0.5:0.95 = 0.7834 (precision 0.9837, recall 0.9714). The recognition stage attains a character-level accuracy (1 − CER) of 0.8734; full-string accuracy rises from 0.6098 to 0.6555 under the post-processing rule set (128 plates corrected, none corrupted), and end-to-end accuracy reaches 0.5227. The dominant gap is layout-related: single-line plates score 0.9489 whereas two-line plates score only 0.5810 — a 36.79 percentage-point gap — while two-line plates constitute 79.8% of the evaluation set. The 95th-percentile latency for a single image is 731.15 ms on CPU, meeting the 800 ms target. Chapter 5 reports the full results and error analysis.
 
 **Keywords:** license plate recognition, Vietnamese license plates, YOLO11, PaddleOCR, two-line plates, position-constrained post-processing, CPU inference.
 
@@ -375,13 +406,13 @@ From a software engineering perspective, the thesis implements a layered archite
 | C. Lời cam đoan | 🟡 Mẫu chuẩn | Điền tên, địa danh, ngày tháng |
 | D. Lời cảm ơn | 🟡 Mẫu | Điền tên, cá nhân hoá nếu muốn |
 | E. Mục lục | ⚪ Placeholder | Sinh tự động sau khi ghép đủ 6 chương |
-| F. Danh mục hình vẽ | ⚪ Placeholder | Sinh tự động; Chương 4–5 chờ huấn luyện mô hình |
-| G. Danh mục bảng biểu | ⚪ Placeholder | Sinh tự động; Chương 4–5 chờ huấn luyện mô hình |
-| H. **Danh mục từ viết tắt** | ✅ **Hoàn chỉnh** | Bổ sung mục mới phát sinh khi viết Chương 4–5 |
-| I. **Tóm tắt đồ án (tiếng Việt)** | ✅ **Hoàn chỉnh — bản v1** | Bổ sung một câu kết quả định lượng sau khi có Chương 5 |
-| J. **Abstract (tiếng Anh)** | ✅ **Hoàn chỉnh — bản v1** | Như trên |
+| F. Danh mục hình vẽ | ⚪ Placeholder | Sinh tự động khi ghép quyển (Chương 4 và 5 đã viết xong) |
+| G. Danh mục bảng biểu | ⚪ Placeholder | Sinh tự động khi ghép quyển (Chương 4 và 5 đã viết xong) |
+| H. **Danh mục từ viết tắt** | ✅ **Hoàn chỉnh** | Rà lại một lượt khi ghép quyển |
+| I. **Tóm tắt đồ án (tiếng Việt)** | ✅ **Hoàn chỉnh — bản v2, đã có số liệu thật** | — |
+| J. **Abstract (tiếng Anh)** | ✅ **Hoàn chỉnh — bản v2, đã có số liệu thật** | — |
 
-> **Lưu ý bắt buộc về hai bản tóm tắt.** Cả hai được viết ở trạng thái **chưa có kết quả thực nghiệm**, và đã ghi rõ điều đó bằng câu *"Kết quả thực nghiệm định lượng sẽ được trình bày ở Chương 5"* / *"will be reported in Chapter 5"*. Khi mô hình đã huấn luyện xong, **phải cập nhật lại cả hai bản** để thay câu đó bằng các con số thật (mAP, độ chính xác end-to-end, độ trễ p95). Không được nộp quyển hoàn chỉnh mà vẫn giữ nguyên câu này.
+> **Ghi chú về hai bản tóm tắt.** Bản v1 được viết khi mô hình chính thức chưa huấn luyện xong nên kết lại bằng câu *"Kết quả thực nghiệm định lượng sẽ được trình bày ở Chương 5"* / *"will be reported in Chapter 5, once model training has been completed"*. Mô hình `models/best.pt` (YOLO11n, `imgsz=640`, split v3, 20 epoch) **đã huấn luyện xong** và toàn bộ chỉ tiêu NFR-A4/A5/A6/A7 cùng NFR-P1 **đã đo**, nên bản v2 hiện tại đã thay câu chờ đó bằng số liệu thật. Mọi lần cập nhật số liệu về sau **phải sửa đồng thời cả hai bản** để tiếng Việt và tiếng Anh không lệch nhau.
 >
 > **Cảnh báo trích dẫn — áp dụng cho cả hai bản tóm tắt.** Cặp số 94,3% / 45,7% được đo trên **RodoSol-ALPR (Brazil)**, **không phải trên dữ liệu Việt Nam**. Cả hai bản đã ghi rõ nguồn gốc bộ dữ liệu ngay trong câu văn. Tuyệt đối không được rút gọn thành "OpenALPR đạt 94,3% trên biển một dòng" mà bỏ mất mệnh đề nêu bộ dữ liệu — làm vậy sẽ biến một *analogue* định lượng thành một tuyên bố sai về dữ liệu Việt Nam.
 >

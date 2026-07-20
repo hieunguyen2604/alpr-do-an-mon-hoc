@@ -639,8 +639,8 @@ bộ dùng cho phát hiện có hộp nhưng không có chữ; hai bộ OCR có 
 vì vậy buộc phải đo trên chính ảnh crop, tức bắt bộ phát hiện đi tìm một biển số **chiếm gần
 hết khung hình** — hoàn toàn ngoài phân bố mà nó được huấn luyện. Hệ quả hiện rõ trong bảng:
 **bỏ sót 11,96 % là lỗi phát hiện, không phải lỗi OCR**; cùng những ảnh đó, khối OCR đạt A6 =
-0,6555 khi được đưa crop trực tiếp. Phase 7 đo được mAP50 = 0,9935 cho bộ phát hiện trên ảnh
-hiện trường thật.
+0,6555 khi được đưa crop trực tiếp. Trên ảnh hiện trường thật, bộ phát hiện `best.pt` đo được
+mAP@0.5 = **0,9829** trên tập test v3 (nguồn: `05-results.json` → `T5.5a.map50`).
 
 **Một điểm tích cực đáng ghi nhận:** phép đo này **không bị rò rỉ dữ liệu**.
 `roboflow_ocr_plate` và `roboflow_ocr_conversion` không nằm trong `merged_v2` hay bất kỳ split

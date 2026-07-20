@@ -151,7 +151,7 @@ Bốn chỉ tiêu độ chính xác OCR đều không đạt:
 
 Kết luận: **hướng khắc phục bắt buộc nằm ở tầng nhận dạng — huấn luyện hoặc thay mô hình OCR chuyên cho biển số hai dòng — chứ không ở tầng hậu xử lý** (triển khai ở mục 6.4.1). Việc trút thêm luật vào `plate_rules.py` sẽ không đụng đến nút thắt thật.
 
-**Một cảnh báo hiệu lực về con số A7 = 0,5227.** Con số này bị hạ thêm bởi giới hạn của giao thức đo, không hoàn toàn phản ánh năng lực đọc của hệ thống. Nó được đo trên ảnh **crop biển số** (vì không bộ dữ liệu nào trong đồ án vừa có ảnh toàn cảnh vừa có nhãn chuỗi biển). Ảnh chỉ chứa mỗi biển số chiếm gần hết khung là **ngoài phân bố huấn luyện** của bộ phát hiện — vốn học trên ảnh giao thông đầy đủ — nên tỉ lệ bỏ sót ở tầng phát hiện bị thổi phồng lên 11,96%. Trên ảnh hiện trường thật, bộ phát hiện gần như không bỏ sót (mAP@0.5 ≈ 0,9935). Vì vậy A7 nên đọc như **cận dưới bi quan**; đo A7 đúng cách đòi hỏi một tập test hiện trường có nhãn chuỗi, việc chưa làm được (mục 6.4.3).
+**Một cảnh báo hiệu lực về con số A7 = 0,5227.** Con số này đo trên ảnh **crop biển số** — ngoài phân bố huấn luyện của bộ phát hiện — nên tỉ lệ bỏ sót 11,96% bị thổi phồng và A7 phải đọc như **cận dưới bi quan**, không phải ước lượng điểm. Lập luận và số liệu đầy đủ ở **mục 5.6.5**; đo A7 đúng cách đòi hỏi một tập test hiện trường có nhãn chuỗi, việc chưa làm được (mục 6.4.3).
 
 ### 6.3.2. Rò rỉ dữ liệu tồn dư không khử được bằng băm tri giác
 
@@ -177,9 +177,9 @@ Tập train và tập test được lấy từ **cùng sáu nguồn nguyên tố
 
 NFR-P1 **đạt mục tiêu**: độ trễ E2E một ảnh, p95 = **731,15 ms**, dưới mục tiêu 800 ms (dư 68,85 ms) và thoả cả ngưỡng tối thiểu 1.500 ms. Con số công bố này đo **client-side qua HTTP** trên `best.pt`, máy rảnh (CPU idle ~5%, không có tiến trình huấn luyện chạy song song), warmup rồi đo 100 ảnh test v3. Một phép đo độc lập **in-process** (gọi thẳng pipeline trong tiến trình) cho p95 = **780,36 ms** — hai con số **đồng thuận trong phạm vi ~7%** (biến động lấy mẫu CPU), cùng khẳng định độ trễ E2E thật ở khoảng **700–780 ms**.
 
-Phải ghi lại vì sao con số này từng bị nghi ngờ. Một báo cáo trước đây ghi p95 = **5.857 ms** và kết luận NFR-P1 "không đạt" — chênh **7,5 lần** so với con số hiện tại. Phép đo cũ đã bị **bác bỏ** sau khi truy nguyên ba nguyên nhân: (1) nó **bị nhiễu do tranh chấp CPU** — có một tiến trình huấn luyện chiếm gần 800% CPU chạy song song lúc đo, đẩy đuôi phân phối lên; (2) nó đo trên một **checkpoint trung gian**, không phải `best.pt` chính thức; (3) checkpoint đó có **lỗi crop** khiến PaddleOCR chạy cả khối phát hiện văn bản trên ảnh lớn, thổi phồng phần OCR. Cần loại tường minh hai giả thuyết dễ nêu: **không** phải "cold-start / oneDNN chưa tắt" — server chạy với `enable_mkldnn=false` và warmup ngay khi khởi động, cold-start đo được chỉ ~176 ms p95; và **không** phải "baseline vốn chậm" — đo client-side, baseline cho ~763,75 ms p95, gần y hệt `best.pt`. Con số 5.857 ms không đến từ mô hình mà đến từ **điều kiện đo bị nhiễm**.
+Phải ghi lại vì sao con số này từng bị nghi ngờ. Một báo cáo trước đây ghi p95 = **5.857 ms** và kết luận NFR-P1 "không đạt" — chênh **7,5 lần** so với con số hiện tại. Phép đo cũ đã bị **bác bỏ** vì điều kiện đo bị nhiễm, chứ không vì mô hình chậm; toàn bộ quá trình truy nguyên (ba nguyên nhân, và việc loại tường minh hai giả thuyết thay thế) trình bày ở **mục 5.7.1**.
 
-Phân rã ngân sách độ trễ thật (T5.7b) cho thấy nút thắt còn lại nằm ở đâu: OCR chiếm **64,3%** (112,55 ms/biển), phát hiện chiếm **34,2%** (59,83 ms), phần còn lại (giải mã, chuẩn hoá) không đáng kể — tổng suy luận thuần 175,06 ms/biển. Đây **không** phải tỉ lệ 93,3% / 6,7% của báo cáo cũ. Kết luận: kiến trúc phần mềm và độ trễ **không phải vấn đề**; tối ưu thêm là tuỳ chọn chứ không bắt buộc (mục 6.4.4).
+Phân rã ngân sách độ trễ thật (T5.7b): OCR chiếm **64,3%** (112,55 ms/biển), phát hiện chiếm **34,2%** (59,83 ms) — **không** phải tỉ lệ 93,3% / 6,7% của báo cáo cũ. Kết luận: kiến trúc phần mềm và độ trễ **không phải vấn đề**; tối ưu thêm là tuỳ chọn chứ không bắt buộc (mục 6.4.4).
 
 ### 6.3.5. Nút "Huỷ tác vụ" video chưa hoàn chỉnh; một số chỉ tiêu chưa đo
 

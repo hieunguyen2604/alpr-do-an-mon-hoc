@@ -1366,8 +1366,22 @@ của nó — nhưng bù lại phản hồi được truyền theo luồng.
 | Chi phí xử lý video | ~200 giây CPU cho mỗi 60 giây tư liệu | NFR-SC3 |
 | Bước lấy mẫu khung hình | mỗi 5 khung | `Settings.frame_stride` |
 
-Về độ trễ đầu-cuối (NFR-P1), kết quả đo hiện tại **chưa đạt ngưỡng đặt ra**;
-số liệu và phân tích sẽ được trình bày ở Chương 5.
+Về độ trễ đầu-cuối (NFR-P1), kết quả đo hiện tại **ĐẠT**: p95 = **731,15 ms**
+(đo client-side qua HTTP) và **780,36 ms** (đo in-process), đều dưới mục tiêu
+**800 ms** và ngưỡng tối thiểu 1.500 ms. Phép đo thực hiện trên mô hình chính
+thức `models/best.pt` khi máy rảnh, warmup trước rồi đo 100 ảnh test. Phân rã độ
+trễ: OCR **64,3%** (112,55 ms/biển), phát hiện **34,2%** (59,83 ms).
+
+Nguồn xác minh: [`docs/reports/07-benchmark-p1-resolved.json`](../reports/07-benchmark-p1-resolved.json);
+phân tích đầy đủ ở Chương 5 (mục 5.7).
+
+> Con số cũ **5.857 ms** từng ghi trong bản nháp Phase 7 **đã bị bác bỏ** — nó đo
+> khi một tiến trình huấn luyện chiếm ~793% CPU song song, trên checkpoint
+> `best-cpu-epoch7.pt` chứ không phải `best.pt`, và trên một hệ thống còn lỗi
+> crop khiến PaddleOCR đọc trên ảnh quá lớn (~1.322 ms/ảnh).
+
+Lưu ý: **NFR-P2** (FPS webcam) và **NFR-P3** (tốc độ xử lý video) **chưa được đo**
+trên `best.pt`.
 
 ### 4.6.5 Giới hạn không có cơ chế kiểm soát
 

@@ -215,22 +215,22 @@ Epoch tốt nhất theo mAP@0.5:0.95 trên val: **20** (20 epoch đã chạy).
 | Chênh lệch A6 − A7 (điểm %) | — | — | 13,28 | n/a |
 | **Số mẫu** | — | — | **2.801** | n/a |
 
-> ⚠ **Cảnh báo hiệu lực:** Con so nay do tren anh CROP bien so, khong phai anh hien truong, vi khong bo du lieu nao trong do an co dong thoi anh toan canh va chuoi bien so. Bo detect duoc huan luyen tren anh giao thong day du nen mot tam anh chi co bien so chiem gan het khung la NGOAI PHAN BO: phan lon that bai la do detect khong bat duoc box, khong phai do OCR doc sai (xem e2e.exact_given_detected va e2e.missed_by_detector). Phase 7 do duoc mAP50 = 0,9935 cho bo detect tren anh hien truong that. De do NFR-A7 dung cach can gan nhan chuoi bien so cho mot phan bo test cua yolo_v2 -- viec nay CHUA lam.
+> ⚠ **Cảnh báo hiệu lực:** Con so nay do tren anh CROP bien so, khong phai anh hien truong, vi khong bo du lieu nao trong do an co dong thoi anh toan canh va chuoi bien so. Bo detect duoc huan luyen tren anh giao thong day du nen mot tam anh chi co bien so chiem gan het khung la NGOAI PHAN BO: phan lon that bai la do detect khong bat duoc box, khong phai do OCR doc sai (xem e2e.exact_given_detected va e2e.missed_by_detector). Mo hinh chinh thuc best.pt dat mAP@0.5 = 0,9829 tren tap test v3 (1.514 anh) — tuc bo phat hien hoat dong tot tren anh hien truong; that bai o phep do A7 den tu viec dua anh CROP vao bo phat hien, ngoai phan bo huan luyen cua no. De do NFR-A7 dung cach can gan nhan chuoi bien so cho mot phan bo test cua yolo_v2 -- viec nay CHUA lam.
 
 ## {{T5.7a}} Độ trễ đầu-cuối một ảnh (NFR-P1)
 
 | Chỉ số | Ngưỡng tối thiểu | Mục tiêu | **Đo trên `baseline-416-v1.pt`** | **Đo trên mô hình đang đánh giá** | Kết quả |
 |---|---:|---:|---:|---:|:---:|
 | Độ trễ E2E p50 (ms) | — | — | — | 419,06 | n/a |
-| **Độ trễ E2E p95 (ms)** | **≤ 1500** | **≤ 800** | **5.857,19** | **780,36** | **✅ đạt** |
+| **Độ trễ E2E p95 (ms)** | **≤ 1500** | **≤ 800** | **763,75** | **780,36** | **✅ đạt** |
 | Độ trễ E2E p99 (ms) | — | — | — | 948,42 | n/a |
 | Độ trễ trung bình (ms) | — | — | — | 374,65 | n/a |
 | Độ lệch chuẩn (ms) | — | — | — | — | n/a |
 | Số ảnh đo | — | — | 100 | **100** | n/a |
-| Bội số vượt ngưỡng tối thiểu | — | — | 3,90× | 0,52× | n/a |
-| Bội số vượt mục tiêu | — | — | 7,32× | 0,98× | n/a |
+| Bội số vượt ngưỡng tối thiểu | — | — | 0,51× | 0,52× | n/a |
+| Bội số vượt mục tiêu | — | — | 0,95× | 0,98× | n/a |
 
-> Số biển trung bình mỗi ảnh: 1,33. Hai cột **không thay thế được cho nhau** — chúng đo hai mô hình ở hai độ phân giải khác nhau.
+> Số biển trung bình mỗi ảnh: 1,33. Hai cột **không thay thế được cho nhau** — chúng đo hai mô hình ở hai độ phân giải khác nhau; cột baseline là **client-side warm p95 qua HTTP, máy rảnh** (`07-benchmark-p1-resolved.json`), cột mô hình đang đánh giá là in-process. Con số cũ **5.857,19 ms** từng ghi cho baseline **đã bị bác bỏ** (nhiễm tải cạnh tranh + sai checkpoint + lỗi crop).
 
 ## {{T5.7b}} Phân rã ngân sách độ trễ theo từng bước
 
@@ -284,7 +284,7 @@ Epoch tốt nhất theo mAP@0.5:0.95 trên val: **20** (20 epoch đã chạy).
 | mAP biển một dòng | **0,9856** | 0,9884 | — |
 | mAP biển hai dòng | **0,9592** | 0,9675 | — |
 | Chênh lệch theo layout (điểm %) | **2,6** | 2,09 | — |
-| Độ trễ E2E p95 (ms) | **5.857,19** | 780,36 | — |
+| Độ trễ E2E p95 (ms) | **763,75** | 780,36 | — |
 
 > ⚠ Ba bien thay doi dong thoi (imgsz, bo du lieu + cach chia, so epoch) va chung tac dong NGUOC CHIEU nhau. Phat bieu duy nhat duoc phep la mo ta: 'cau hinh A cho X, cau hinh B cho Y'. Khong duoc quy ket nguyen nhan cho bat ky bien nao.
 

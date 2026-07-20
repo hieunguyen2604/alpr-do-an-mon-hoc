@@ -218,7 +218,7 @@ Các nhóm khác phải tự sửa lỗi này bằng cách chạy mô hình dete
 
 Đây là bộ đáng chú ý nhất sau CCPD, vì lý do đặc biệt: RodoSol có **số lượng mẫu "dễ" (ô tô biển 1 dòng) và "khó" (xe máy biển 2 dòng) bằng nhau**, với tập test gồm 4.000 ô tô và 4.000 xe máy ([Laroca et al., VISAPP 2022](https://arxiv.org/pdf/2201.00267)).
 
-Bằng chứng định lượng nổi bật nhất về độ khó của biển 2 dòng đến từ chính bộ này: OpenALPR nhận đúng **3.772/4.000 ô tô (94,3%)** nhưng **chỉ 1.827/4.000 xe máy (45,7%)** ([Laroca et al., VISAPP 2022](https://arxiv.org/pdf/2201.00267)). Chênh lệch **48,6 điểm phần trăm**. Ngoài ra, toàn bộ 12 phương pháp và 2 hệ thống thương mại được đánh giá đều **không vượt quá 70%** recognition rate trên bộ này.
+Bằng chứng định lượng nổi bật nhất về độ khó của biển 2 dòng đến từ chính bộ này: trên **RodoSol-ALPR (Brazil)**, OpenALPR đạt **94,3%** trên biển 1 dòng nhưng chỉ **45,7%** trên biển 2 dòng — chênh **48,6 điểm phần trăm** ([Laroca et al., VISAPP 2022](https://arxiv.org/pdf/2201.00267)). Số đếm gốc, danh sách 12 phương pháp không vượt 70% và phân tích nguyên nhân ở tầng CTC: xem [01-ocr-comparison.md mục 4.1.1](01-ocr-comparison.md). Kết luận cần cho báo cáo này: **bắt buộc phải có bộ tách layout 1 dòng / 2 dòng**.
 
 > **Cảnh báo trích dẫn bắt buộc.** Cặp số 94,3% / 45,7% được đo trên **RodoSol-ALPR (Brazil)**, **không phải trên dữ liệu Việt Nam**. Chỉ được dùng làm dẫn chứng tương đương (analogue) về độ khó của biển 2 dòng, tuyệt đối không được trình bày như số liệu Việt Nam.
 
@@ -399,7 +399,7 @@ Tồn tại công cụ sinh dữ liệu tổng hợp riêng cho biển số Vi�
 
 Đây là công cụ quan trọng vì hai lý do:
 1. Bằng chứng 2 ở mục 5.1 cho thấy sinh dữ liệu mang lại lợi ích rất lớn khi số ảnh thật ít — chênh **31,8 điểm** tại mốc 60 ảnh thật ([arXiv:1808.08410](https://ar5iv.labs.arxiv.org/html/1808.08410)).
-2. Cho phép **cân bằng phân bố ký tự**. Chữ cái **thứ nhất** của seri biển số Việt Nam chỉ lấy trong tập 20 chữ (A B C D E F G H K L M N P S T U V X Y Z), còn chữ cái **thứ hai** của seri xe máy lấy trong một tập 20 chữ khác — tập này **có R** và **không có G**; do đó **charset an toàn cho mô hình OCR là 21 chữ cái** (20 chữ ∪ {R}) ([báo cáo 01-vn-plate-standards.md, mục 5.2–5.3](01-vn-plate-standards.md)). Dữ liệu thật thường thiếu nghiêm trọng các ký tự hiếm — đặc biệt là chính chữ **R**, vốn chỉ xuất hiện ở vị trí thứ hai của seri xe máy. Generator bù được đúng chỗ này.
+2. Cho phép **cân bằng phân bố ký tự**. Chữ cái **thứ nhất** của seri biển số Việt Nam chỉ lấy trong tập 20 chữ (A B C D E F G H K L M N P S T U V X Y Z), còn chữ cái **thứ hai** của seri xe máy lấy trong một tập 20 chữ khác — tập này **có R** và **không có G**; do đó tập chữ cái **thực sự dùng được** là hợp của hai danh sách, gồm 21 chữ (20 chữ ∪ {R}) — nhưng **charset huấn luyện của mô hình OCR vẫn phải đủ A–Z + 0–9 (36 ký tự)**, ràng buộc hợp lệ đặt ở tầng hậu xử lý (xem mục 5.5) ([báo cáo 01-vn-plate-standards.md, mục 5.2–5.3](01-vn-plate-standards.md)). Dữ liệu thật thường thiếu nghiêm trọng các ký tự hiếm — đặc biệt là chính chữ **R**, vốn chỉ xuất hiện ở vị trí thứ hai của seri xe máy. Generator bù được đúng chỗ này.
 
 ### 5.5. Khai thác ràng buộc miền — lợi thế miễn phí
 
@@ -407,21 +407,9 @@ Bộ ký tự chữ cái dùng trên biển số Việt Nam là tập con của 
 
 > ### ⚠️ Đính chính bắt buộc: tập loại trừ chỉ có **5 chữ**, chữ **R hợp lệ**
 >
-> Một mệnh đề lưu hành rộng — và **sai** — là "6 chữ cái I, J, O, Q, R, W không bao giờ xuất hiện trên biển số Việt Nam". Nó xuất phát từ phép trừ số học 26 − 20 = 6 áp dụng cho **duy nhất** danh sách chữ cái ở **vị trí thứ nhất** của seri.
+> Tập bị loại trừ khỏi toàn hệ thống chỉ gồm **5 chữ**: `I`, `J`, `O`, `Q`, `W`. Chữ **`R` hợp lệ** ở vị trí chữ cái thứ hai của seri biển xe máy, nên mệnh đề "6 chữ cái không bao giờ xuất hiện" (từ phép trừ 26 − 20 = 6) là **sai**. Hệ quả bắt buộc: **charset của mô hình OCR phải huấn luyện đủ A–Z + 0–9 (36 ký tự)**, ràng buộc hợp lệ chỉ đặt ở tầng hậu xử lý; **tuyệt đối không** đưa `R` vào danh sách ký tự cấm.
 >
-> Thực tế theo Thông tư 79/2024/TT-BCA có **hai danh sách chữ cái khác nhau**:
-> - Chữ cái **thứ nhất** của seri: 20 chữ — A B C D E F G H K L M N P S T U V X Y Z;
-> - Chữ cái **thứ hai** của seri xe máy: một tập 20 chữ khác — **có R**, **không có G**.
->
-> Hợp của hai danh sách cho tập ký tự thực sự dùng được. Vì vậy tập **bị loại trừ khỏi toàn hệ thống chỉ gồm 5 chữ: `I`, `J`, `O`, `Q`, `W`**. Chữ **`R` là hợp lệ** và phải được giữ.
->
-> **Hệ quả cho hậu xử lý:** chỉ được ánh xạ sửa lỗi cho `O→0`, `I→1`, `Q→0` (và cân nhắc `J`, `W`). **Tuyệt đối không** đưa `R` vào danh sách ký tự cấm — làm vậy sẽ sai hệ thống trên mọi biển xe máy có `R` ở vị trí thứ hai của seri.
->
-> **Hệ quả cho charset của mô hình OCR:** charset an toàn là **21 chữ cái** = 20 chữ ∪ {R}, tức `[A-HK-NPR-VXYZ]`. **Khuyến nghị kỹ thuật:** huấn luyện với charset đầy đủ **A–Z + 0–9** (36 ký tự) và chỉ áp ràng buộc hợp lệ ở **tầng hậu xử lý**. Lý do: nếu mô hình không học chữ `R`, thông tin mất ngay ở tầng mô hình và hậu xử lý **không thể cứu được**; ngược lại, ràng buộc ở hậu xử lý thì sửa được và ghi log được.
->
-> Nguồn: [báo cáo 01-vn-plate-standards.md, mục 5.2–5.3](01-vn-plate-standards.md), dẫn Thông tư 79/2024/TT-BCA (hiệu lực 01/01/2025).
-
-*Lưu ý kiểm chứng — hạn chế phải ghi kèm mỗi khi nhắc tới hai danh sách chữ cái này: **chưa đối chiếu được toàn văn Điều 34 Thông tư 79/2024/TT-BCA**. Bản PDF chính thức trên cổng Chính phủ là bản scan không có lớp text, còn `thuvienphapluat.vn` trả về HTTP 403 với truy cập tự động. Phải OCR bản PDF hoặc lấy bản DOC trước khi hard-code vào regex validation. Nguồn [Tran et al., IJMRAP 2023](http://ijmrap.com/wp-content/uploads/2023/05/IJMRAP-V5N11P102Y23.pdf) xuất bản 05/2023 — **trước cả TT 24/2023 lẫn TT 79/2024** — nên chỉ được dùng làm tham chiếu lịch sử, không phải căn cứ pháp lý.*
+> Lập luận đầy đủ, hai danh sách chữ cái, và **hạn chế kiểm chứng** (chưa đối chiếu được toàn văn Điều 34 Thông tư 79/2024/TT-BCA) trình bày ở [01-vn-plate-standards.md mục 5.2–5.3](01-vn-plate-standards.md) — bản chuẩn, phải trích kèm mỗi khi nhắc tới hai danh sách này.
 
 ---
 

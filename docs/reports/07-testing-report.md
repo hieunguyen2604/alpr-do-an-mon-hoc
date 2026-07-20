@@ -417,24 +417,11 @@ vẫn đúng nguyên vẹn, và nó là kết luận có giá trị nhất của
 >
 > Bản trước của mục này còn viết thêm: *"chi tiết «khoảng cách nhỏ nhất = 6» ở cả
 > ba cặp split là dấu vết lộ liễu của điều đó — phân bố bị cắt cụt đúng tại
-> ngưỡng"*. **Lập luận phụ này SAI, và đã được bác bỏ bằng phép đo.**
->
-> Nguồn: `datasets/reports/v3/visual_inspection.json → hash_parity_finding`.
-> Khoảng cách Hamming giữa hai giá trị `imagehash.phash` trên corpus này **luôn
-> là số chẵn**. Lý do là tính chất của chính hàm băm: `phash` đặt một bit cho mỗi
-> hệ số DCT lớn hơn trung vị, nên **mọi** hash đều có đúng 32 bit bật. Hai hash
-> cùng trọng số `w` thoả `d = 2·(w − |A ∧ B|)`, tức `d` luôn chẵn.
->
-> Kiểm chứng: cả **15.133** hash đều có popcount chẵn (parity-0: 15.133,
-> parity-1: 0); trong **4.498.500** cặp lấy mẫu có **4.498.500 cặp chẵn, 0 cặp lẻ**.
->
-> Vậy "nhỏ nhất = 6" **không** phải phân bố bị cắt cụt: 6 đơn giản là **giá trị
-> chẵn kế tiếp sau ngưỡng 5**. Không có giá trị 6 nào bị chặn, và giá trị lẻ thì
-> không tồn tại để mà xuất hiện.
->
-> **Hệ quả vận hành:** mọi ngưỡng lẻ đều lãng phí — 11 hành xử hệt 10, 13 hệt 12,
-> 15 hệt 14. Điều này giải thích vì sao bảng ở mục 6.7 cho ngưỡng 15 và ngưỡng 14
-> ra **cùng một** số cặp.
+> ngưỡng"*. **Lập luận phụ này SAI, và đã được bác bỏ bằng phép đo.** Khoảng cách
+> Hamming giữa hai giá trị `imagehash.phash` trên corpus này **luôn là số chẵn**,
+> nên "nhỏ nhất = 6" chỉ là giá trị chẵn kế tiếp sau ngưỡng 5 chứ không phải phân
+> bố bị cắt cụt; hệ quả vận hành là mọi ngưỡng lẻ đều vô nghĩa (15 hệt 14). Chứng
+> minh và số liệu kiểm chứng: [`02-dataset-report.md` §6bis.1](02-dataset-report.md).
 >
 > Kết luận vòng tròn **không phụ thuộc** vào lập luận phụ này. Nó đứng vững chỉ
 > bằng một sự kiện: cùng hàm băm, cùng ngưỡng, dùng cho cả khâu chia lẫn khâu kiểm.
@@ -535,26 +522,13 @@ bộ nguồn làm phân bố rộng ra thật, không chỉ làm số ảnh to r
 
 #### 6.5.1. Một cáo buộc trong bản trước đã bị bác bỏ
 
-Bản trước nêu:
-
-> *"Rò rỉ còn vắt qua nguồn: `hf_vn_plates_segment_000032.png` ↔
-> `roboflow_school_fuhih_001383.jpg` (d = 10) ⇒ cùng một tấm ảnh nằm ở hai bộ dữ
-> liệu khác nhau, dedup ngưỡng 5 không bắt được."*
-
-**Đã kiểm tra bằng mắt. Cáo buộc này SAI.** Nguồn:
-`datasets/reports/v3/visual_inspection.json → corrections_to_phase7`.
-
-| | Ảnh trái | Ảnh phải |
-|---|---|---|
-| Tệp | `hf_vn_plates_segment_000032.png` | `roboflow_school_fuhih_001383.jpg` |
-| Xe | Toyota Land Cruiser | Toyota Hiace (xe van) |
-| Biển số | **52Y-6490** | **51F-220.29** |
-| Dấu thời gian | — | 06/12/2017 10:37:53 |
-
-**Hai xe khác nhau, hai biển số khác nhau — chỉ chung một camera barrier cố định.**
-Đây không phải trùng lặp; đây là **dương tính giả** của `phash` trên một corpus
-bị chi phối bởi camera tĩnh: hai khung hình cùng cảnh thì nền giống nhau gần
-hết, nên khoảng cách hash nhỏ dù vật thể khác hẳn.
+Bản trước cáo buộc cặp `hf_vn_plates_segment_000032.png` ↔
+`roboflow_school_fuhih_001383.jpg` (d = 10) là "cùng một tấm ảnh nằm ở hai bộ dữ
+liệu khác nhau". **Đã kiểm tra bằng mắt: cáo buộc SAI** — đó là hai xe khác nhau
+(Land Cruiser 52Y-6490 vs Hiace 51F-220.29) chỉ chung một camera barrier cố
+định, tức **dương tính giả** của `phash` trên corpus bị camera tĩnh chi phối.
+Bảng đối chiếu đầy đủ: [`02-dataset-report.md` §6bis.3 và khối đính chính kèm
+theo](02-dataset-report.md).
 
 Ghi lại sai sót này là bắt buộc: bản trước đã kết luận "cùng một tấm ảnh" **chỉ
 từ khoảng cách hash, không mở ảnh ra xem**. Đó đúng là lỗi phương pháp mà mục 6
@@ -659,29 +633,12 @@ ban đầu không lường trước.
 | 15 | 122.837 | 382 | 12.690 | 83,9% | 11.673 | 77,1% | ❌ *(hệt 14 — tính chẵn)* |
 | 20 | 1.471.347 | 1 | 15.133 | 100,0% | **15.133** | **100,0%** | ❌ |
 
-**Hiện tượng chi phối: bao đóng bắc cầu bị thẩm thấu (percolation).** Gom nhóm
-theo quan hệ "gần nhau ở ngưỡng t" là quan hệ **không bắc cầu**, nhưng thuật
-toán hợp nhất (`union-find`) buộc phải lấy bao đóng bắc cầu. Trên corpus bị
-camera tĩnh chi phối, A gần B và B gần C thì A và C bị kéo vào cùng nhóm dù
-chúng chẳng liên quan. Nâng ngưỡng làm chuỗi này nối dài, và ở một điểm nào đó
-toàn bộ corpus sụp vào **một** thành phần khổng lồ.
-
-Bảng trên định vị chính xác điểm đó:
-
-- **Ở ngưỡng 12**, thành phần lớn nhất đã chiếm **54,6%** corpus. Nó vẫn "vừa"
-  train (70%) về mặt số học, nhưng nó sẽ **chiếm 78% tập train** — nghĩa là
-  train gần như chỉ còn một cụm cảnh duy nhất, còn val/test lấy phần còn lại.
-  Phép chia vẫn chạy nhưng **mất hết ý nghĩa phân tầng**.
-- **Từ ngưỡng 14 trở lên**, thành phần lớn nhất vượt 70% ⇒ **không thể** chia
-  70/20/10 nữa. Ngưỡng 15 mà bản trước đề nghị dùng để kiểm chứng là **bất khả
-  thi để chia**, và (theo tính chẵn ở mục 6.1) nó còn **giống hệt ngưỡng 14**.
-- **Ở ngưỡng 10**, thành phần lớn nhất là 4.411 ảnh = 29,1% corpus, **vừa gọn
-  trong train** (chiếm 41,6% tập train) và phép chia phân tầng vẫn giữ được hình
-  dạng.
-
-**Ngưỡng 10 vì vậy là giá trị cao nhất thoả đồng thời hai điều kiện:** (a) vẫn
-còn xác nhận được trùng lặp thật bằng mắt (mục 6.6), và (b) chưa làm phép chia
-sụp đổ. Đây là lựa chọn có căn cứ đo đạc, không phải con số chọn cho tiện.
+**Ngưỡng 10 là giá trị cao nhất thoả đồng thời hai điều kiện:** (a) vẫn còn xác
+nhận được trùng lặp thật bằng mắt (mục 6.6), và (b) chưa làm phép chia sụp đổ vì
+hiện tượng **bao đóng bắc cầu bị thẩm thấu** — từ ngưỡng 12 trở lên thành phần
+liên thông lớn nhất nuốt quá nửa corpus, và từ 14 trở lên vượt 70% nên **không
+thể** chia 70/20/10 nữa. Lập luận percolation đầy đủ và phân tích từng mức ngưỡng
+10 / 12 / 14: [`02-dataset-report.md` §6bis.2](02-dataset-report.md).
 
 #### 6.7.2. Chi phí của việc chia lại
 
@@ -695,32 +652,15 @@ Việc gom nhóm ở ngưỡng 10 **không miễn phí**. Nguồn:
 | Đơn vị đơn lẻ còn lại | 6.735 | Chỉ số này mới là "bậc tự do" thật của phép chia |
 | Mười nhóm lớn nhất | 4.411 · 368 · 170 · 168 · 70 · 63 · 44 · 35 · 20 · 18 | Phân bố đuôi dài cực đoan — một nhóm áp đảo, phần còn lại nhỏ |
 
-**Hệ quả phải chấp nhận:** vì thành phần 4.411 ảnh bị ghim vào train, **tỷ lệ
-nguồn giữa ba split không còn cân bằng như bộ v2**:
-
-| Nguồn | train | val | test |
-|---|---:|---:|---:|
-| `roboflow_school_fuhih` | 4.912 | 1.387 | 569 |
-| `hf_vn_plates_segment` | 3.304 | 743 | **328** |
-| `roboflow_traffic_camera` | 1.902 | 725 | **535** |
-| `roboflow_eric_nguyen` | 230 | 77 | 46 |
-| `roboflow_demo_tracking` | 153 | 61 | 21 |
-| `roboflow_cuong_ta` | 91 | 34 | 15 |
-
-Tập test nghiêng về `roboflow_traffic_camera` (35,3% test so với 18,0% train) và
-nhẹ đi ở `hf_vn_plates_segment` (21,7% test so với 31,2% train). **Đây thực chất
-là một hiệu ứng tốt** — tập test lệch **ra xa** phân bố train làm nó khó hơn,
-tức là ước lượng thu được **bi quan** chứ không lạc quan. Nhưng nó phải được
-công bố, vì nó có nghĩa là v3 test **không** phải mẫu ngẫu nhiên đại diện cho
-corpus.
-
-Cân bằng số dòng biển (phân tầng) thì vẫn giữ được:
-
-| Split | 1 dòng | 2 dòng | không rõ |
-|---|---:|---:|---:|
-| train | 1.634 | 8.930 | 28 |
-| val | 467 | 2.552 | 8 |
-| test | 234 | 1.276 | 4 |
+**Hệ quả phải chấp nhận:** vì thành phần 4.411 ảnh bị ghim vào train, tỷ lệ
+nguồn giữa ba split **không còn cân bằng như bộ v2** — tập test nghiêng về
+`roboflow_traffic_camera` (35,3% test so với 18,0% train) và nhẹ đi ở
+`hf_vn_plates_segment` (21,7% so với 31,2%). Đây thực chất là **hiệu ứng có lợi**
+(test lệch ra xa train ⇒ ước lượng bi quan chứ không lạc quan), nhưng phải công
+bố vì nó có nghĩa là v3 test **không** phải mẫu ngẫu nhiên đại diện cho corpus.
+Cân bằng số dòng biển (tiêu chí phân tầng) thì vẫn giữ được ở cả ba split.
+Bảng phân bố nguồn và bảng số dòng biển đầy đủ:
+[`02-dataset-report.md` §6bis.5](02-dataset-report.md).
 
 ### 6.8. Hướng xử lý — ba việc cụ thể, xếp theo mức độ quan trọng
 
@@ -772,20 +712,11 @@ Ký hiệu: ✅ đạt mục tiêu · ⚠️ chỉ đạt ngưỡng tối thiể
 > (in-process, T5.7a), đều **dưới mục tiêu 800 ms**. Nguồn:
 > [07-benchmark-p1-resolved.json](07-benchmark-p1-resolved.json), [05-tables.md §T5.7a](05-tables.md).
 >
-> **Vì sao con số cũ 5.857 ms sai (chênh 7,5 lần):**
->
-> 1. **Nhiễm do tải cạnh tranh (chính):** đo khi một tiến trình huấn luyện chiếm
->    ~793% CPU song song — p95 rơi đúng vùng mẫu bị nhiễm. Đo lại trên máy rảnh:
->    p95 chỉ còn 731 ms.
-> 2. **Sai mô hình:** 5.857 ms đo trên `best-cpu-epoch7.pt` (checkpoint giữa
->    chừng), không phải `best.pt`.
-> 3. **Lỗi crop + OCR đọc rộng ở epoch 7:** crop quá lớn khiến PaddleOCR chạy cả
->    khối text-detection trên ảnh lớn, đẩy OCR lên ~1322 ms/ảnh. Sau khi sửa, OCR
->    chỉ còn ~112,55 ms/biển.
-> 4. **Giả thuyết oneDNN/cold-start bị bác bỏ:** server chạy với `enable_mkldnn=false`
->    và cold-start p95 chỉ 176 ms (pipeline warmup ngay lúc khởi động).
-> 5. **Giả thuyết "baseline vốn chậm" cũng bị bác bỏ:** baseline-416-v1 đo
->    client-side ra 763,75 ms, gần y hệt best.pt (731 ms).
+> **Vì sao con số cũ 5.857 ms sai (chênh 7,5 lần):** phép đo cũ bị nhiễm bởi tải
+> cạnh tranh (~793% CPU), chạy trên sai checkpoint (`best-cpu-epoch7.pt`) và có
+> lỗi crop đẩy OCR lên ~1.322 ms/ảnh; hai giả thuyết thay thế (oneDNN/cold-start,
+> "baseline vốn chậm") đều đã bị bác bỏ bằng số đo. Truy nguyên đầy đủ năm điểm:
+> [07-benchmark-report.md §0 và §9.2](07-benchmark-report.md).
 >
 > **Phân rã bước trên `best.pt` (T5.7b):** OCR ~112,55 ms/biển = **64,3%**, detect
 > ~59,83 ms = **34,2%**, decode 2,65 ms, normalize 0,03 ms. OCR vẫn là bước tốn
@@ -831,8 +762,8 @@ Ký hiệu: ✅ đạt mục tiêu · ⚠️ chỉ đạt ngưỡng tối thiể
 > chiếm gần hết khung hình — hoàn toàn **ngoài phân bố** huấn luyện. Hệ quả (T5.6e):
 > **tỉ lệ biển bị bỏ sót ở tầng phát hiện 11,96%**, tỉ lệ phát hiện đúng nhưng đọc
 > sai chuỗi 40,63%; A7 với điều kiện đã phát hiện được biển = 0,5937. Đây phần lớn
-> là lỗi **bố cục đầu vào**, không phải lỗi OCR — Phase 7 đo được mAP50 = 0,9935
-> cho bộ phát hiện trên ảnh hiện trường thật. Việc cần làm: gán nhãn chuỗi cho
+> là lỗi **bố cục đầu vào**, không phải lỗi OCR — trên ảnh hiện trường thật, bộ
+> phát hiện `best.pt` đo được mAP@0.5 = **0,9829** (T5.5a, tập test v3). Việc cần làm: gán nhãn chuỗi cho
 > 300–500 ảnh của tập test `yolo_v3`. **Chưa làm.**
 
 > #### ✅ ĐÃ GIẢI QUYẾT — A1/A2/A3 đo trên `best.pt` train đúng split v3
@@ -1003,7 +934,7 @@ Xếp theo mức độ nghiêm trọng.
 | **5** | ✅ **Đã xử lý.** NFR-P1 đo lại trên máy rảnh với `best.pt`: p95 731 ms (client) / 780 ms (in-process), **đạt** | Con số cũ 5.857 ms bị nhiễm do tải cạnh tranh — đã bác bỏ | — |
 | **6** | **NFR-R4 soak 300 s thay vì 1 giờ như đặc tả** | Rò rỉ bộ nhớ chậm có thể lọt lưới. Điểm tích cực: RSS **giảm** trong soak, không có dấu hiệu rò rỉ | Chạy soak 1 giờ |
 | **7** | **Frontend không có kiểm thử tự động trong đợt này** | Vitest được khai trong stack nhưng không có kết quả nào trong Phase 7. Toàn bộ NFR-U1…U5 chưa kiểm | Viết bộ test component + kiểm tương phản WCAG |
-| **8** | Tập test chỉ **458 ảnh**, trong đó có 21 cặp trùng nội bộ | Khoảng tin cậy quanh mọi con số độ chính xác rộng hơn giá trị điểm gợi ý; không có khoảng tin cậy nào được tính | Dùng tập test v2 (1.515 ảnh) và báo cáo kèm CI bootstrap |
+| **8** | ✅ **Đã xử lý một phần.** Hạn chế "tập test chỉ **458 ảnh** (21 cặp trùng nội bộ)" là của lượt đo cũ trên checkpoint epoch 7 / bộ v1. Số công bố A1/A2/A3 nay đo trên **tập test v3, 1.514 ảnh** | Cỡ mẫu không còn là điểm yếu chính. Tồn dư: **vẫn chưa tính khoảng tin cậy** cho bất kỳ con số độ chính xác nào | Báo cáo kèm CI bootstrap trên tập test v3 (1.514 ảnh) |
 | **9** | NFR-M3 (type hint + docstring), NFR-M6 (lint), NFR-R5 (sống qua restart) chưa kiểm tự động | Ba chỉ tiêu bảo trì/tin cậy đang dựa vào lời hứa | Thêm `ruff`, `mypy` và một test khởi động lại vào CI |
 | **10** | Bộ kiểm rò rỉ đếm **cặp**, không đếm **ảnh test bị nhiễm** | Không định lượng được mức ảnh hưởng lên mAP | Sửa `leak_check.py` để xuất số ảnh riêng biệt |
 

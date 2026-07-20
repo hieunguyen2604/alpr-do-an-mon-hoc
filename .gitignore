@@ -103,3 +103,4 @@ datasets/annotations/verify_samples/**
 # Bản export ONNX/OpenVINO của baseline (epoch7) — tái tạo bằng ai/training/export.py.
 # Giữ export của model chính thức: models/best.onnx.
 models/checkpoints/exported/**
+tools/

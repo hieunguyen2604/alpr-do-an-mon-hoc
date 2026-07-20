@@ -1574,9 +1574,11 @@ tiên giải quyết ở Phase 3** bằng cách bổ sung một bộ nguồn đ�
       (10.758 ảnh) — phương án này giờ đã khả thi, khác với v1.
 - [ ] **Bổ sung sê-ri xe điện `MD` vào ngữ pháp biển số** (D-17). 100 biển hợp lệ đang bị từ chối;
       nếu không sửa, khối hậu xử lý sẽ từ chối 100% biển xe điện trong hệ thống thật.
-- [ ] **Kiểm chứng `processed/yolo_v2/` nạp được vào Ultralytics**: chạy một lệnh train 1 epoch và
-      **xác nhận số ảnh nạp được đúng bằng 10.590 / 3.028 / 1.515**. Ultralytics có thể âm thầm bỏ
-      ảnh "corrupt" mà chỉ in cảnh báo — phải kiểm tra con số này trước mọi lần huấn luyện thật.
+- [x] ~~**Kiểm chứng `processed/yolo_v2/` nạp được vào Ultralytics**~~ — mục này đã **lạc hậu**: `yolo_v2`
+      đã bị thay bằng **`yolo_v3`**, và lượt huấn luyện chính thức (`runs/final-640-v3/`, 20 epoch) đã nạp
+      trọn bộ v3 với **10.592 / 3.027 / 1.514** ảnh, tức việc kiểm chứng đã được thực hiện trên chính bộ
+      dùng để huấn luyện. Cảnh báo gốc vẫn còn giá trị và giữ lại: Ultralytics có thể âm thầm bỏ ảnh
+      "corrupt" mà chỉ in cảnh báo — phải đối chiếu số ảnh nạp được trước mọi lần huấn luyện thật.
 - [ ] **Tách một bộ nguồn làm tập test xuyên dataset** (D-03, D-09). Đề xuất
       `roboflow_traffic_camera` (3.162 ảnh) vì bối cảnh chụp khác biệt nhất so với phần còn lại.
       Đây là việc **quan trọng nhất còn lại** để mọi con số mAP trở nên đáng tin.

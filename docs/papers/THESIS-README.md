@@ -20,19 +20,19 @@ docs/papers/
 ├── THESIS-README.md          ← tài liệu này — quy ước biên soạn
 ├── 00-thesis-outline.md      ← đề cương chi tiết toàn quyển (đến cấp 3)
 ├── 01-front-matter.md        ← bìa, cam đoan, cảm ơn, mục lục, danh mục, abstract
-├── 02-chuong-1-mo-dau.md                     ← chưa tạo
-├── 03-chuong-2-tong-quan-co-so-ly-thuyet.md  ← chưa tạo
-├── 04-chuong-3-phan-tich-thiet-ke.md         ← chưa tạo
-├── 05-chuong-4-cai-dat.md                    ← chưa tạo (chờ huấn luyện mô hình)
-├── 06-chuong-5-thuc-nghiem-danh-gia.md       ← chưa tạo (chờ huấn luyện mô hình)
-├── 07-chuong-6-ket-luan.md                   ← chưa tạo (chờ Chương 5)
-├── 08-tai-lieu-tham-khao.md                  ← chưa tạo (sinh từ references.bib)
-├── 09-phu-luc.md                             ← chưa tạo
+├── ch1-mo-dau.md             ← ✅ đã viết — Chương 1
+├── ch2-tong-quan.md          ← ✅ đã viết — Chương 2
+├── ch3-phan-tich-thiet-ke.md ← ✅ đã viết — Chương 3
+├── ch4-cai-dat.md            ← ✅ đã viết — Chương 4
+├── ch5-thuc-nghiem.md        ← ✅ đã viết — Chương 5
+├── ch6-ket-luan.md           ← ✅ đã viết — Chương 6
 └── build/                    ← đầu ra khi ghép — KHÔNG sửa tay, KHÔNG commit
     └── thesis-full.md
 ```
 
-**Quy tắc đặt tên tệp:** `<số thứ tự 2 chữ số>-<slug không dấu, gạch nối>.md`. Số thứ tự quyết định thứ tự ghép, nên **không được đổi** sau khi đã đặt. Nếu cần chèn tệp vào giữa, dùng hậu tố chữ (`04a-…`) thay vì đánh số lại toàn bộ.
+Phần **Tài liệu tham khảo** sinh từ `docs/references.bib` khi ghép, còn **Phụ lục** trích từ các tài liệu nguồn (xem `00-thesis-outline.md` §10) — cả hai không tồn tại dưới dạng tệp riêng trong thư mục này.
+
+**Quy tắc đặt tên tệp:** các tệp chương dùng tiền tố `ch<số chương>-<slug không dấu, gạch nối>.md`; hai tệp không phải chương giữ tiền tố số (`00-`, `01-`) và đứng trước khi ghép. Thứ tự ghép là: `01-front-matter.md` → `ch1` → … → `ch6` → tài liệu tham khảo → phụ lục. **Không đổi tên tệp chương** sau khi đã đặt, vì mọi tham chiếu chéo trong `00-thesis-outline.md` và tài liệu này đều trỏ theo tên hiện tại.
 
 ### Các thư mục liên quan
 
@@ -50,17 +50,17 @@ docs/papers/
 
 | Tệp | Chương | Trạng thái | Điều kiện chặn |
 |---|---|---|---|
-| `01-front-matter.md` | Phần đầu quyển | 🟢 **Xong phần làm được** — danh mục từ viết tắt và hai abstract hoàn chỉnh; bìa/cam đoan/cảm ơn là mẫu chờ điền; mục lục và danh mục hình/bảng là placeholder | — |
-| `02-…` | 1. Mở đầu | 🟡 **Viết được ngay** | — |
-| `03-…` | 2. Tổng quan và cơ sở lý thuyết | 🟡 **Viết được ngay** | — |
-| `04-…` | 3. Phân tích và thiết kế hệ thống | 🟡 **Viết được ngay** | — |
-| `05-…` | 4. Cài đặt hệ thống | 🟢 **ĐÃ VIẾT** (`ch4-cai-dat.md`) | — |
-| `06-…` | 5. Thực nghiệm và đánh giá | 🟢 **ĐÃ VIẾT** (`ch5-thuc-nghiem.md`) | Số liệu đã đầy đủ (`05-tables.md`) |
-| `07-…` | 6. Kết luận và hướng phát triển | 🟢 **ĐÃ VIẾT** (`ch6-ket-luan.md`) | — |
-| `08-…` | Tài liệu tham khảo | ⚪ Sinh khi ghép | Toàn bộ chương |
-| `09-…` | Phụ lục | 🟡 Một phần viết được ngay (A, B, C, D) | Phụ lục E chờ Chương 5 |
+| `01-front-matter.md` | Phần đầu quyển | 🟢 **Xong phần làm được** — danh mục từ viết tắt và hai abstract hoàn chỉnh (đã cập nhật số liệu thật); bìa/cam đoan/cảm ơn là mẫu chờ điền; mục lục và danh mục hình/bảng là placeholder | — |
+| `ch1-mo-dau.md` | 1. Mở đầu | 🟢 **ĐÃ VIẾT** | — |
+| `ch2-tong-quan.md` | 2. Tổng quan và cơ sở lý thuyết | 🟢 **ĐÃ VIẾT** | — |
+| `ch3-phan-tich-thiet-ke.md` | 3. Phân tích và thiết kế hệ thống | 🟢 **ĐÃ VIẾT** | — |
+| `ch4-cai-dat.md` | 4. Cài đặt hệ thống | 🟢 **ĐÃ VIẾT** | — |
+| `ch5-thuc-nghiem.md` | 5. Thực nghiệm và đánh giá | 🟢 **ĐÃ VIẾT** | Số liệu đã đầy đủ (`docs/reports/05-results.json`) |
+| `ch6-ket-luan.md` | 6. Kết luận và hướng phát triển | 🟢 **ĐÃ VIẾT** | — |
+| — | Tài liệu tham khảo | ⚪ Sinh khi ghép từ `references.bib` | — |
+| — | Phụ lục | 🟢 Nguyên liệu đã sẵn (A, B, C, D, E) | — |
 
-### Vì sao hai chương cuối chưa viết được
+### Nền tảng kỹ thuật của Chương 5 và Chương 6
 
 Hệ thống chạy **pipeline thật**: `ALPRPipeline` với mô hình chính thức `models/best.pt`, `/health` báo `model_loaded: true`, engine `yolo:best.pt+paddleocr-PP-OCRv5-mobile`.
 
@@ -129,7 +129,7 @@ Hình hoặc bảng lấy/phỏng theo nguồn khác **bắt buộc** ghi nguồ
 Mọi số liệu, mọi mệnh đề lấy từ nguồn khác **phải có trích dẫn**, gồm **hai phần đi liền nhau**:
 
 ```markdown
-...hệ thống OpenALPR đạt 94,3% trên biển một dòng [1]<!-- laroca_2022_crossdataset -->
+...trên bộ RodoSol-ALPR (Brazil), hệ thống OpenALPR đạt 94,3% với biển một dòng [1]<!-- laroca_2022_crossdataset -->
 ```
 
 | Phần | Vai trò |
@@ -181,15 +181,23 @@ Bất biến phải kiểm tra sau khi ghép: **mọi khoá xuất hiện trong 
 
 ### 5.1. Thứ tự ghép
 
-Theo đúng thứ tự số của tên tệp: `01-front-matter.md` → `02-…` → … → `09-phu-luc.md`. Tệp `00-thesis-outline.md` và `THESIS-README.md` là **tài liệu công cụ, KHÔNG ghép vào quyển**.
+Theo đúng thứ tự: `01-front-matter.md` → `ch1-mo-dau.md` → `ch2-tong-quan.md` → `ch3-phan-tich-thiet-ke.md` → `ch4-cai-dat.md` → `ch5-thuc-nghiem.md` → `ch6-ket-luan.md` → Tài liệu tham khảo (sinh từ `references.bib`) → Phụ lục. Tệp `00-thesis-outline.md` và `THESIS-README.md` là **tài liệu công cụ, KHÔNG ghép vào quyển**.
 
 ### 5.2. Ghép thô
 
 ```powershell
 # Chạy từ thư mục gốc dự án
 New-Item -ItemType Directory -Force docs/papers/build
-Get-ChildItem docs/papers/0[1-9]-*.md | Sort-Object Name |
-    ForEach-Object { Get-Content $_.FullName -Raw; "`n`n---`n`n" } |
+$order = @(
+    'docs/papers/01-front-matter.md',
+    'docs/papers/ch1-mo-dau.md',
+    'docs/papers/ch2-tong-quan.md',
+    'docs/papers/ch3-phan-tich-thiet-ke.md',
+    'docs/papers/ch4-cai-dat.md',
+    'docs/papers/ch5-thuc-nghiem.md',
+    'docs/papers/ch6-ket-luan.md'
+)
+$order | ForEach-Object { Get-Content $_ -Raw; "`n`n---`n`n" } |
     Out-File -Encoding utf8 docs/papers/build/thesis-full.md
 ```
 
@@ -245,16 +253,17 @@ Rút từ quy tắc của Phase 0–1, áp dụng nguyên cho quyển đồ án:
 
 ## 7. Việc tiếp theo
 
-| Thứ tự | Việc | Điều kiện |
+| Thứ tự | Việc | Trạng thái |
 |:-:|---|---|
-| 1 | Viết **Chương 2** — nhiều nguyên liệu nhất, không phụ thuộc gì | ✅ Làm được ngay |
-| 2 | Viết **Chương 3** — backend đã chạy, thiết kế đã kiểm chứng | ✅ Làm được ngay |
-| 3 | Viết **Chương 1** — viết sau 2 và 3 để phần đóng góp bám sát nội dung thật | Sau bước 1, 2 |
-| 4 | Viết Phụ lục A, B, C, D | ✅ Làm được ngay |
-| 5 | Điền thông tin cá nhân vào `01-front-matter.md` §A, C, D | Cần thông tin từ người thực hiện |
-| 6 | Xác nhận yêu cầu định dạng và biểu mẫu của khoa | Cần liên hệ khoa |
-| 7 | **Huấn luyện mô hình** | ⛔ Chặn Chương 4, 5, 6 |
-| 8 | Viết Chương 4 → 5 → 6, cập nhật hai abstract | Sau bước 7 |
-| 9 | Ghép quyển, đánh lại trích dẫn, kết xuất | Sau bước 8 |
+| 1 | Viết **Chương 2** — nhiều nguyên liệu nhất, không phụ thuộc gì | ✅ Xong |
+| 2 | Viết **Chương 3** — backend đã chạy, thiết kế đã kiểm chứng | ✅ Xong |
+| 3 | Viết **Chương 1** | ✅ Xong |
+| 4 | **Huấn luyện mô hình chính thức `best.pt`** | ✅ Xong (mAP@0.5 0,9829) |
+| 5 | Viết Chương 4 → 5 → 6 | ✅ Xong |
+| 6 | Cập nhật hai bản tóm tắt bằng số liệu thật | ✅ Xong (bản v2) |
+| 7 | Viết Phụ lục A, B, C, D, E | 🔵 Trích khi ghép — nguyên liệu đã sẵn |
+| 8 | Điền thông tin cá nhân vào `01-front-matter.md` §A, C, D | 🔵 Cần thông tin từ người thực hiện |
+| 9 | Xác nhận yêu cầu định dạng và biểu mẫu của khoa | 🔵 Cần liên hệ khoa |
+| 10 | Ghép quyển, sinh mục lục và danh mục hình/bảng, đánh lại trích dẫn, kết xuất | 🔵 Việc cuối |
 
-**Bước 7 là nút thắt duy nhất của cả quyển đồ án.** Bốn hạng mục đầu tiên (Chương 1, 2, 3 và bốn phụ lục) — khoảng 60–70 trang, tức quá nửa số trang thân bài — làm được ngay mà không cần chờ gì.
+**Nút thắt kỹ thuật đã tháo:** mô hình chính thức đã huấn luyện xong và cả sáu chương đã viết với số liệu thật. Ba việc còn lại (bước 8, 9, 10) đều là việc hành chính và ghép bản, **không** phụ thuộc thêm kết quả kỹ thuật nào. Riêng bước 8 và 9 cần đầu vào từ người thực hiện và từ khoa nên không tự làm được.

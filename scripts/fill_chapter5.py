@@ -825,7 +825,11 @@ def measure_latency(args: argparse.Namespace, weights: Path, store: ResultStore)
                 ),
                 "boi_so_vuot_muc_tieu": (None if p95 is None else round(p95 / 800.0, 2)),
                 "ket_qua_nfr_p1": verdict("NFR-P1", p95),
-                "moc_baseline_416_v1_p95_ms": 5857.19,
+                # 763,75 ms = client-side warm p95 cua baseline-416-v1 do lai tren
+                # may ranh (07-benchmark-p1-resolved.json). Con so cu 5857,19 ms
+                # DA BI BAC BO (nhiem tai canh tranh + sai checkpoint + loi crop)
+                # — khong duoc dung lai lam moc baseline.
+                "moc_baseline_416_v1_p95_ms": 763.75,
                 "tep_nguon": str(output),
             },
         )
@@ -2023,7 +2027,9 @@ def build_comparison(store: ResultStore, weights: Path) -> None:
         "map50_mot_dong": 0.9856,
         "map50_hai_dong": 0.9592,
         "chenh_layout_diem_pt": 2.6,
-        "do_tre_p95_ms": 5857.19,
+        # Client-side warm p95 qua HTTP, may ranh (07-benchmark-p1-resolved.json).
+        # Con so cu 5857,19 ms da bi bac bo — khong dung lai.
+        "do_tre_p95_ms": 763.75,
     }
     official = {
         "imgsz": 640,
@@ -2501,12 +2507,15 @@ def render_markdown(store: ResultStore, meta: dict[str, Any]) -> str:
         add(f"| Độ trễ trung bình (ms) | — | — | {EM_DASH} | {cell(payload['mean_ms'], 2)} | n/a |")
         add(f"| Độ lệch chuẩn (ms) | — | — | {EM_DASH} | {cell(payload['std_ms'], 2)} | n/a |")
         add(f"| Số ảnh đo | — | — | 100 | **{vni(payload['so_anh_do'])}** | n/a |")
-        add(f"| Bội số vượt ngưỡng tối thiểu | — | — | 3,90× | {cell(payload['boi_so_vuot_nguong_toi_thieu'], 2)}× | n/a |")
-        add(f"| Bội số vượt mục tiêu | — | — | 7,32× | {cell(payload['boi_so_vuot_muc_tieu'], 2)}× | n/a |")
+        add(f"| Bội số vượt ngưỡng tối thiểu | — | — | 0,51× | {cell(payload['boi_so_vuot_nguong_toi_thieu'], 2)}× | n/a |")
+        add(f"| Bội số vượt mục tiêu | — | — | 0,95× | {cell(payload['boi_so_vuot_muc_tieu'], 2)}× | n/a |")
         add("")
         add(f"> Số biển trung bình mỗi ảnh: {cell(payload['so_bien_trung_binh_moi_anh'], 2)}. "
             f"Hai cột **không thay thế được cho nhau** — chúng đo hai mô hình ở hai "
-            f"độ phân giải khác nhau.")
+            f"độ phân giải khác nhau; cột baseline là **client-side warm p95 qua HTTP, "
+            f"máy rảnh** (`07-benchmark-p1-resolved.json`), cột mô hình đang đánh giá là "
+            f"in-process. Con số cũ **5.857,19 ms** từng ghi cho baseline **đã bị bác bỏ** "
+            f"(nhiễm tải cạnh tranh + sai checkpoint + lỗi crop).")
     else:
         add(f"*(chưa đo)* — {payload.get('ly_do')}")
     add("")
@@ -2622,6 +2631,11 @@ def render_markdown(store: ResultStore, meta: dict[str, Any]) -> str:
     add(f"| Độ trễ E2E p95 (ms) | **{vn(base['do_tre_p95_ms'], 2)}** | {cell(off['do_tre_p95_ms'], 2)} | — |")
     add("")
     add(f"> ⚠ {payload['canh_bao_quy_ket']}")
+    add(">")
+    add("> Dòng độ trễ: cột baseline là client-side warm p95 qua HTTP trên máy rảnh "
+        "(`07-benchmark-p1-resolved.json`); cột mô hình đang đánh giá là in-process (T5.7a). "
+        "Con số cũ 5.857,19 ms từng ghi cho baseline đã bị **bác bỏ** "
+        "(nhiễm tải cạnh tranh + sai checkpoint + lỗi crop).")
     add("")
 
     # ---------------- T5.9 ----------------

@@ -1328,8 +1328,10 @@ def main(argv: list[str] | None = None) -> int:
                     "chiem gan het khung la NGOAI PHAN BO: phan lon that bai la "
                     "do detect khong bat duoc box, khong phai do OCR doc sai "
                     "(xem e2e.exact_given_detected va e2e.missed_by_detector). "
-                    "Phase 7 do duoc mAP50 = 0,9935 cho bo detect tren anh hien "
-                    "truong that. De do NFR-A7 dung cach can gan nhan chuoi bien "
+                    "Mo hinh chinh thuc best.pt dat mAP@0.5 = 0,9829 tren tap "
+                    "test v3 (1.514 anh) — tuc bo phat hien hoat dong tot tren "
+                    "anh hien truong; that bai o phep do A7 den tu viec dua anh "
+                    "CROP vao bo phat hien, ngoai phan bo huan luyen cua no. De do NFR-A7 dung cach can gan nhan chuoi bien "
                     "so cho mot phan bo test cua yolo_v2 -- viec nay CHUA lam."
                 ),
             },
