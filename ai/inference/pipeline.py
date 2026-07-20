@@ -49,6 +49,8 @@ import numpy as np
 from ai.inference.config import InferenceConfig
 from ai.inference.exceptions import ALPRError, InvalidImageError
 from ai.inference.interfaces import BaseDetector, BaseNormalizer, BaseRecognizer
+from ai.inference.plate_color import classify_plate_color
+from ai.inference.two_line import split_two_line
 from ai.inference.types import (
     BoundingBox,
     DetectionResult,
@@ -58,7 +60,14 @@ from ai.inference.types import (
     PlateRecognition,
 )
 
-__all__ = ["STAGE_NAMES", "ALPRPipeline", "build_default_pipeline"]
+__all__ = [
+    "STAGE_NAMES",
+    "ALPRPipeline",
+    "build_default_pipeline",
+    "should_rescue_two_line",
+    "rescue_two_line_upper",
+    "refine_kind_with_color",
+]
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -152,9 +161,7 @@ class ALPRPipeline:
         reproducible if it names the detector *and* the recogniser that
         produced it.
         """
-        return (
-            f"{self._safe_name(self._detector)}+{self._safe_name(self._recognizer)}"
-        )
+        return f"{self._safe_name(self._detector)}+{self._safe_name(self._recognizer)}"
 
     @property
     def is_ready(self) -> bool:
@@ -328,6 +335,16 @@ class ALPRPipeline:
         plate_image = self._crop(image, detection.bbox)
         elapsed["crop"] = time.perf_counter() - crop_started
 
+        # Colour is read from the crop, not the string, and answers a question no
+        # rule over the characters can: a business vehicle's yellow plate and a
+        # State vehicle's blue one carry the *same* layout as a private
+        # vehicle's white one. Computed before normalisation because the family
+        # classifier below uses it to break exactly that tie. Cheap (a histogram
+        # over the centre of one small crop) and it never raises -- an unreadable
+        # colour comes back as "unknown".
+        color = classify_plate_color(plate_image) if plate_image is not None else None
+        color_name = color.color.value if color is not None else ""
+
         recognition: PlateRecognition | None = None
         if plate_image is not None:
             ocr_started = time.perf_counter()
@@ -336,8 +353,23 @@ class ALPRPipeline:
 
             if recognition is not None:
                 normalize_started = time.perf_counter()
-                recognition = self._normalize(recognition, detection, index)
+                recognition = self._normalize(recognition, detection, index, color_name)
                 elapsed["normalize"] = time.perf_counter() - normalize_started
+
+                if should_rescue_two_line(recognition):
+                    retry_started = time.perf_counter()
+                    recognition = rescue_two_line_upper(
+                        self._recognizer,
+                        self._normalizer,
+                        plate_image,
+                        recognition,
+                        context={
+                            "plate_index": index,
+                            "bbox": detection.bbox.to_xyxy(),
+                        },
+                        color=color_name,
+                    )
+                    elapsed["ocr"] += time.perf_counter() - retry_started
 
         return (
             DetectionResult(
@@ -345,6 +377,8 @@ class ALPRPipeline:
                 recognition=recognition,
                 plate_image=plate_image,
                 processing_time=sum(elapsed.values()),
+                plate_color=color.color.value if color is not None else "",
+                plate_color_confidence=round(color.confidence, 4) if color is not None else 0.0,
             ),
             elapsed,
         )
@@ -418,8 +452,7 @@ class ALPRPipeline:
             return None
         except Exception as error:  # noqa: BLE001 - a third-party engine may raise anything
             _LOGGER.exception(
-                "Unexpected OCR error for one plate, keeping the detection "
-                "without text",
+                "Unexpected OCR error for one plate, keeping the detection without text",
                 extra={
                     "plate_index": index,
                     "bbox": detection.bbox.to_xyxy(),
@@ -434,6 +467,7 @@ class ALPRPipeline:
         recognition: PlateRecognition,
         detection: PlateDetection,
         index: int,
+        plate_color: str = "",
     ) -> PlateRecognition:
         """Correct and validate the raw string read from one plate.
 
@@ -460,12 +494,20 @@ class ALPRPipeline:
             measure what this stage contributes.
         """
         raw_source = recognition.text or recognition.raw_text
+        kind = ""
+        display_text = ""
 
         try:
             detailed = getattr(self._normalizer, "normalize_detailed", None)
             if callable(detailed):
                 outcome = detailed(raw_source, line_count=recognition.line_count)
                 text, is_valid = outcome.text, outcome.is_valid_format
+                # The family and the human-readable rendering are both already
+                # computed inside the normalizer. Dropping them here -- as this
+                # method used to -- is what made an army plate reach the user
+                # labelled "wrong format" with nothing to explain why.
+                kind = refine_kind_with_color(outcome, plate_color, recognition.line_count)
+                display_text = _format_for_display(self._normalizer, text, recognition.line_count)
             else:
                 text, is_valid = self._normalizer.normalize(raw_source)
         except Exception as error:  # noqa: BLE001 - never lose a plate to a rule bug
@@ -486,6 +528,8 @@ class ALPRPipeline:
             confidence=recognition.confidence,
             line_count=recognition.line_count,
             is_valid_format=is_valid,
+            kind=kind,
+            display_text=display_text,
         )
 
     @staticmethod
@@ -535,9 +579,7 @@ class ALPRPipeline:
                 f"(height, width, channels), got {image.ndim} (shape={image.shape})."
             )
         if image.shape[0] <= 0 or image.shape[1] <= 0:
-            raise InvalidImageError(
-                f"Input image has a zero-sized axis (shape={image.shape})."
-            )
+            raise InvalidImageError(f"Input image has a zero-sized axis (shape={image.shape}).")
 
 
 def build_default_pipeline(config: InferenceConfig | None = None) -> ALPRPipeline:
@@ -579,3 +621,235 @@ def build_default_pipeline(config: InferenceConfig | None = None) -> ALPRPipelin
         normalizer=VietnamesePlateNormalizer(),
         config=resolved,
     )
+
+
+# --------------------------------------------------------------------------- #
+# Two-line rescue -- shared by the pipeline and the evaluation harness
+# --------------------------------------------------------------------------- #
+def should_rescue_two_line(recognition: PlateRecognition) -> bool:
+    """Decide whether a two-line read is worth a second, narrower attempt.
+
+    Args:
+        recognition: The already-normalised result of the first attempt.
+
+    Returns:
+        ``True`` only for a two-line plate whose normalised text failed format
+        validation while still carrying some text. A result that already
+        validated is never retried, which is what makes the rescue structurally
+        unable to regress a plate that was read correctly the first time.
+    """
+    return (
+        recognition.line_count == 2
+        and not recognition.is_valid_format
+        and bool(recognition.raw_text)
+    )
+
+
+def rescue_two_line_upper(
+    recognizer: BaseRecognizer,
+    normalizer: BaseNormalizer,
+    plate_image: ImageArray,
+    recognition: PlateRecognition,
+    context: dict[str, object] | None = None,
+    color: str = "",
+) -> PlateRecognition:
+    """Re-read the upper half alone and prepend it to a failed two-line read.
+
+    Why this exists
+    ---------------
+    A two-line crop is read by cutting it into overlapping halves, stacking them
+    side by side and running OCR **once** on the resulting strip. That design is
+    not incidental. Reading each half separately and joining the two strings
+    scores 3.5% against the strip's 64.5% on a 200-plate sample, because the
+    halves overlap on purpose and the overlap band then gets read twice,
+    duplicating characters -- ``84G122593`` comes back as ``84-G124E009.01225.93``.
+    Merging first is precisely what lets the text detector discard that band.
+
+    The strip has one failure mode of its own. When the upper line sits low in a
+    loosely-cropped plate, the detector finds a single text region -- the lower
+    line -- and the province code and serial letter are lost outright.
+    ``29E-015.66`` comes back as ``015.66``: five bare digits matching no
+    Vietnamese layout, so validation correctly rejects it. This matches the
+    measured error profile, where deletions outnumber substitutions on two-line
+    plates: a whole missing line is what a deletion-dominated profile looks like.
+
+    The upper half **on its own** reads fine in those cases -- ``29E`` at 0.98
+    confidence for that plate. So this function spends one extra OCR call on it
+    and re-normalises ``upper + strip``, keeping the attempt only if the combined
+    string validates.
+
+    Measured on 900 two-line plates over two independent samples: +1.86 points on
+    700 (60.14% to 62.00%, 13 rescued) and +0.5 on 200, with **zero** regressions
+    in either. The extra call fires on about a fifth of two-line crops -- only
+    those that had already failed -- for roughly 22 ms of mean latency. See
+    ``docs/reports/15-two-line-fallback-700.json``.
+
+    Kept as a free function rather than a private pipeline method on purpose:
+    ``ai/evaluation/ocr_accuracy.py`` drives the recogniser and the normalizer
+    directly, without constructing a pipeline. Were the rescue a method, the
+    published NFR-A5/A6/A7 figures would measure a code path that production does
+    not use -- the evaluation would silently understate the shipped system.
+
+    Args:
+        recognizer: The OCR engine to spend the extra call on.
+        normalizer: The stage that decides whether the combined string is a
+            valid Vietnamese plate. Its verdict is the only accept criterion.
+        plate_image: The original crop, before any splitting.
+        recognition: The failed, already-normalised first attempt.
+        context: Optional fields merged into the log records, so a caller that
+            has a plate index or bounding box can make the entry traceable.
+        color: Background colour of the crop, forwarded so the rescued string
+            is classified with the same evidence as a first-attempt one.
+
+    Returns:
+        A recognition carrying the recovered plate number, or the unchanged
+        argument when the retry produces nothing that validates. Any failure
+        inside the retry returns the original result: a rescue attempt must never
+        cost more than it can win.
+    """
+    extra: dict[str, object] = dict(context or {})
+    kind = ""
+    display_text = ""
+
+    try:
+        upper, _lower = split_two_line(plate_image)
+        upper_read = recognizer.recognize(upper)
+        combined = f"{upper_read.text}{recognition.raw_text}"
+
+        detailed = getattr(normalizer, "normalize_detailed", None)
+        if callable(detailed):
+            outcome = detailed(combined, line_count=2)
+            text, is_valid = outcome.text, outcome.is_valid_format
+            # The rescued string is a different plate number from the one the
+            # first attempt produced, so its family and rendering have to be
+            # recomputed here. Carrying the first attempt's values over would
+            # describe a string that no longer exists.
+            kind = refine_kind_with_color(outcome, color, 2)
+            display_text = _format_for_display(normalizer, text, 2)
+        else:
+            text, is_valid = normalizer.normalize(combined)
+    except Exception as error:  # noqa: BLE001 - a rescue must not become a failure
+        _LOGGER.warning(
+            "Upper-line rescue failed, keeping the first result",
+            extra={**extra, "error": f"{type(error).__name__}: {error}"},
+        )
+        return recognition
+
+    if not is_valid:
+        return recognition
+
+    _LOGGER.info(
+        "Upper-line rescue recovered a two-line plate",
+        extra={
+            **extra,
+            "first_attempt": recognition.text,
+            "recovered": text,
+            "upper_fragment": upper_read.text,
+        },
+    )
+    return PlateRecognition(
+        text=text,
+        raw_text=recognition.raw_text,
+        confidence=recognition.confidence,
+        line_count=2,
+        is_valid_format=True,
+        kind=kind,
+        display_text=display_text,
+    )
+
+
+def _format_for_display(normalizer: BaseNormalizer, text: str, line_count: int) -> str:
+    """Render a plate string with the separators the physical plate carries.
+
+    Args:
+        normalizer: The injected normalizer. ``format_for_display`` is an
+            optional capability beyond :class:`BaseNormalizer`, so it is probed.
+        text: The bare normalised string, e.g. ``"29E01566"``.
+        line_count: Lines on the plate, forwarded to disambiguate layouts that
+            share a character pattern.
+
+    Returns:
+        The formatted string, e.g. ``"29E-015.66"``. Falls back to ``text``
+        unchanged when the normalizer cannot format or raises -- a cosmetic
+        step must never cost a plate that was read correctly.
+    """
+    formatter = getattr(normalizer, "format_for_display", None)
+    if not callable(formatter):
+        return text
+    try:
+        return formatter(text, line_count=line_count) or text
+    except Exception:  # noqa: BLE001 - presentation must not break recognition
+        _LOGGER.debug("format_for_display failed for %r, showing the bare string", text)
+        return text
+
+
+# Which string-level candidate a colour should promote. A blue background is
+# the *only* evidence that separates a state-agency plate from a private one:
+# `80A-123.45` is a legal string for both, so the character classifier reports
+# them as equally plausible candidates and picks the commoner one.
+_COLOR_PREFERRED_KINDS: Final[dict[str, tuple[str, ...]]] = {
+    "blue": ("blue_car", "blue_motorcycle"),
+}
+
+
+def refine_kind_with_color(outcome: object, color: str, line_count: int) -> str:
+    """Resolve a string-level plate-family ambiguity using the plate's colour.
+
+    The ambiguity being resolved
+    ----------------------------
+    Vietnamese plate layouts are not unique to a plate family. Asked to classify
+    ``80A12345``, the character rules return four candidates -- ``car``,
+    ``motorcycle_old``, ``blue_car``, ``blue_motorcycle`` -- and flag the result
+    ambiguous, because every one of them is a legal reading of that string. The
+    normalizer then has to pick one, and picks the commonest: ``car``.
+
+    That answer is right most of the time and silently wrong for every State
+    vehicle, whose plate carries the same characters on a **blue** field. No
+    amount of work on the regular expressions can fix it: the distinction is not
+    in the string. It is in the pixels, which this stage has.
+
+    So the colour is allowed to promote a candidate the string already
+    considered plausible -- and nothing more. It cannot invent a family the
+    character rules rejected, which keeps a misread colour from fabricating a
+    classification: the worst a wrong colour can do is choose the wrong member of
+    a set the string itself called equally likely.
+
+    Args:
+        outcome: The normalizer's detailed result, carrying ``decision.kind`` and
+            ``decision.candidates``.
+        color: Background colour from :func:`~ai.inference.plate_color.classify_plate_color`.
+        line_count: Lines on the plate, used to choose between the car and the
+            motorcycle member of a promoted pair.
+
+    Returns:
+        The refined plate-kind string, or the original verdict when the colour
+        offers no evidence -- unknown colour, a colour with no preferred family,
+        or a string the rules classified unambiguously.
+    """
+    decision = getattr(outcome, "decision", None)
+    original = getattr(getattr(decision, "kind", None), "value", "")
+    if decision is None or not original:
+        return original
+
+    preferred = _COLOR_PREFERRED_KINDS.get(color)
+    if preferred is None:
+        return original
+
+    candidates = {
+        getattr(candidate, "value", "") for candidate in getattr(decision, "candidates", ())
+    }
+    if original not in candidates:
+        # The string was classified unambiguously -- military, diplomatic,
+        # special. Colour must not overrule a definite reading.
+        return original
+
+    for candidate in preferred:
+        if candidate not in candidates:
+            continue
+        wants_motorcycle = candidate.endswith("motorcycle")
+        if wants_motorcycle == (line_count == 2):
+            return candidate
+
+    # The preferred family is plausible but its car/motorcycle split disagrees
+    # with the line count. Trust the line count -- it is measured, not inferred.
+    return original

@@ -149,9 +149,7 @@ class TestMagicByteDetection:
         assert detect_media_type(wave) not in _ALL_ACCEPTED_TYPES
 
     @pytest.mark.parametrize("data", [EXE_BYTES, PDF_BYTES, ZIP_BYTES])
-    def test_an_unrecognised_format_never_reports_an_accepted_type(
-        self, data: bytes
-    ) -> None:
+    def test_an_unrecognised_format_never_reports_an_accepted_type(self, data: bytes) -> None:
         """What matters is that the answer is outside the allow-list.
 
         The exact string depends on whether the optional ``libmagic`` binding is
@@ -198,9 +196,7 @@ class TestUploadValidation:
         with pytest.raises(ValidationError):
             storage.validate_upload(b"", kind=MediaKind.IMAGE)
 
-    def test_rejects_an_oversized_image(
-        self, storage: StorageService, settings: Settings
-    ) -> None:
+    def test_rejects_an_oversized_image(self, storage: StorageService, settings: Settings) -> None:
         oversized = JPEG_BYTES + b"\x00" * settings.max_image_size_bytes
         with pytest.raises(FileTooLargeError):
             storage.validate_upload(oversized, kind=MediaKind.IMAGE)
@@ -209,9 +205,7 @@ class TestUploadValidation:
         self, storage: StorageService, settings: Settings
     ) -> None:
         """The limit is inclusive; only *exceeding* it is refused."""
-        exact = JPEG_BYTES + b"\x00" * (
-            settings.max_image_size_bytes - len(JPEG_BYTES)
-        )
+        exact = JPEG_BYTES + b"\x00" * (settings.max_image_size_bytes - len(JPEG_BYTES))
         assert len(exact) == settings.max_image_size_bytes
         assert storage.validate_upload(exact, kind=MediaKind.IMAGE) == "image/jpeg"
 
@@ -227,32 +221,22 @@ class TestUploadValidation:
         with pytest.raises(FileTooLargeError):
             storage.validate_upload(oversized_garbage, kind=MediaKind.IMAGE)
 
-    def test_rejects_an_executable_renamed_as_an_image(
-        self, storage: StorageService
-    ) -> None:
+    def test_rejects_an_executable_renamed_as_an_image(self, storage: StorageService) -> None:
         """NFR-S1, stated as the attack it prevents."""
         with pytest.raises(UnsupportedMediaTypeError):
-            storage.validate_upload(
-                EXE_BYTES, kind=MediaKind.IMAGE, original_filename="photo.jpg"
-            )
+            storage.validate_upload(EXE_BYTES, kind=MediaKind.IMAGE, original_filename="photo.jpg")
 
     @pytest.mark.parametrize("data", [PDF_BYTES, ZIP_BYTES])
-    def test_rejects_any_unlisted_format(
-        self, storage: StorageService, data: bytes
-    ) -> None:
+    def test_rejects_any_unlisted_format(self, storage: StorageService, data: bytes) -> None:
         with pytest.raises(UnsupportedMediaTypeError):
             storage.validate_upload(data, kind=MediaKind.IMAGE)
 
-    def test_a_video_is_not_accepted_by_the_image_endpoint(
-        self, storage: StorageService
-    ) -> None:
+    def test_a_video_is_not_accepted_by_the_image_endpoint(self, storage: StorageService) -> None:
         """Accepting one would send a 200 MB file into the single-image path."""
         with pytest.raises(UnsupportedMediaTypeError):
             storage.validate_upload(MP4_BYTES, kind=MediaKind.IMAGE)
 
-    def test_an_image_is_not_accepted_by_the_video_endpoint(
-        self, storage: StorageService
-    ) -> None:
+    def test_an_image_is_not_accepted_by_the_video_endpoint(self, storage: StorageService) -> None:
         with pytest.raises(UnsupportedMediaTypeError):
             storage.validate_upload(JPEG_BYTES, kind=MediaKind.VIDEO)
 
@@ -269,9 +253,7 @@ class TestUploadValidation:
 class TestGeneratedFilenames:
     """NFR-S2: the client's filename is discarded, never reused."""
 
-    def test_the_stored_name_is_a_uuid_hex_string(
-        self, storage: StorageService
-    ) -> None:
+    def test_the_stored_name_is_a_uuid_hex_string(self, storage: StorageService) -> None:
         stored = storage.save_upload(
             JPEG_BYTES, kind=MediaKind.IMAGE, original_filename="holiday.jpg"
         )
@@ -309,16 +291,12 @@ class TestGeneratedFilenames:
         Every rule for sanitising a filename has an encoding that slips past
         it, so the design removes the code path instead of guarding it.
         """
-        stored = storage.save_upload(
-            JPEG_BYTES, kind=MediaKind.IMAGE, original_filename=hostile
-        )
+        stored = storage.save_upload(JPEG_BYTES, kind=MediaKind.IMAGE, original_filename=hostile)
         assert stored.path.parent == settings.upload_dir
         assert stored.path.is_file()
         assert settings.storage_root.resolve() in stored.path.resolve().parents
 
-    def test_two_uploads_of_identical_bytes_do_not_collide(
-        self, storage: StorageService
-    ) -> None:
+    def test_two_uploads_of_identical_bytes_do_not_collide(self, storage: StorageService) -> None:
         """A name that merely collides would destroy another user's file."""
         first = storage.save_upload(JPEG_BYTES, kind=MediaKind.IMAGE)
         second = storage.save_upload(JPEG_BYTES, kind=MediaKind.IMAGE)
@@ -339,35 +317,27 @@ class TestGeneratedFilenames:
         self, storage: StorageService, data: bytes, suffix: str
     ) -> None:
         """Not from the upload -- a PNG sent as ``x.jpg`` is stored as ``.png``."""
-        stored = storage.save_upload(
-            data, kind=MediaKind.IMAGE, original_filename="misleading.jpg"
-        )
+        stored = storage.save_upload(data, kind=MediaKind.IMAGE, original_filename="misleading.jpg")
         assert stored.path.suffix == suffix
 
 
 class TestStoredFileMetadata:
     """What ``save_upload`` reports back about the file it wrote."""
 
-    def test_records_the_detected_type_and_the_real_size(
-        self, storage: StorageService
-    ) -> None:
+    def test_records_the_detected_type_and_the_real_size(self, storage: StorageService) -> None:
         stored = storage.save_upload(JPEG_BYTES, kind=MediaKind.IMAGE)
         assert stored.media_type == "image/jpeg"
         assert stored.size_bytes == len(JPEG_BYTES)
         assert stored.path.read_bytes() == JPEG_BYTES
 
-    def test_the_relative_path_uses_posix_separators(
-        self, storage: StorageService
-    ) -> None:
+    def test_the_relative_path_uses_posix_separators(self, storage: StorageService) -> None:
         """A Windows backslash in the database would break the URL after a move
         to the Linux container."""
         stored = storage.save_upload(JPEG_BYTES, kind=MediaKind.IMAGE)
         assert "\\" not in stored.relative_path
         assert stored.relative_path.startswith("uploads/")
 
-    def test_the_url_is_the_prefix_plus_the_relative_path(
-        self, storage: StorageService
-    ) -> None:
+    def test_the_url_is_the_prefix_plus_the_relative_path(self, storage: StorageService) -> None:
         stored = storage.save_upload(JPEG_BYTES, kind=MediaKind.IMAGE)
         assert stored.url == f"{FILES_URL_PREFIX}/{stored.relative_path}"
         assert stored.url.startswith("/files/uploads/")
@@ -444,23 +414,17 @@ class TestPlateCropStorage:
         assert stored.path.is_file()
         assert stored.media_type == "image/jpeg"
 
-    def test_the_name_carries_the_job_and_the_plate_index(
-        self, storage: StorageService
-    ) -> None:
+    def test_the_name_carries_the_job_and_the_plate_index(self, storage: StorageService) -> None:
         """So the crops of one upload sort together on disk."""
         stored = storage.save_plate_crop(self._crop(), job_id="job-1", index=2)
         assert stored.path.name == "job-1-plate-2.jpg"
 
-    def test_several_plates_of_one_job_get_distinct_names(
-        self, storage: StorageService
-    ) -> None:
+    def test_several_plates_of_one_job_get_distinct_names(self, storage: StorageService) -> None:
         first = storage.save_plate_crop(self._crop(), job_id="job-1", index=0)
         second = storage.save_plate_crop(self._crop(), job_id="job-1", index=1)
         assert first.path != second.path
 
-    def test_the_stored_crop_is_a_readable_jpeg(
-        self, storage: StorageService
-    ) -> None:
+    def test_the_stored_crop_is_a_readable_jpeg(self, storage: StorageService) -> None:
         stored = storage.save_plate_crop(self._crop(), job_id="job-1", index=0)
         assert detect_media_type(stored.path.read_bytes()) == "image/jpeg"
 
@@ -469,18 +433,14 @@ class TestPlateCropStorage:
         with pytest.raises(ValidationError):
             storage.save_plate_crop(empty, job_id="job-1", index=0)
 
-    def test_stores_an_output_image(
-        self, storage: StorageService, settings: Settings
-    ) -> None:
+    def test_stores_an_output_image(self, storage: StorageService, settings: Settings) -> None:
         stored = storage.save_output_image(self._crop(), job_id="job-1")
         assert stored.path.parent == settings.output_dir
         assert stored.path.name == "job-1-result.jpg"
 
     def test_refuses_an_empty_output_image(self, storage: StorageService) -> None:
         with pytest.raises(ValidationError):
-            storage.save_output_image(
-                np.zeros((0, 0, 3), dtype=np.uint8), job_id="job-1"
-            )
+            storage.save_output_image(np.zeros((0, 0, 3), dtype=np.uint8), job_id="job-1")
 
 
 class TestDeletion:
@@ -503,9 +463,7 @@ class TestDeletion:
         assert storage.delete_file(stored.relative_path) is False
 
     @pytest.mark.parametrize("value", [None, ""])
-    def test_an_absent_path_is_a_no_op(
-        self, storage: StorageService, value: str | None
-    ) -> None:
+    def test_an_absent_path_is_a_no_op(self, storage: StorageService, value: str | None) -> None:
         assert storage.delete_file(value) is False
 
     def test_a_traversing_delete_is_refused(self, storage: StorageService) -> None:
@@ -516,9 +474,7 @@ class TestDeletion:
 class TestUrlConversion:
     """Turning a stored path into something safe to publish."""
 
-    def test_builds_a_url_under_the_files_prefix(
-        self, storage: StorageService
-    ) -> None:
+    def test_builds_a_url_under_the_files_prefix(self, storage: StorageService) -> None:
         assert storage.to_url("plates/x.jpg") == "/files/plates/x.jpg"
 
     @pytest.mark.parametrize("value", [None, ""])

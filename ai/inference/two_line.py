@@ -117,8 +117,7 @@ def _validate_image(image: ImageArray, argument_name: str) -> None:
         )
     if image.size == 0 or image.shape[0] == 0 or image.shape[1] == 0:
         raise InvalidImageError(
-            f"{argument_name} must have a positive width and height, "
-            f"got shape {image.shape}"
+            f"{argument_name} must have a positive width and height, " f"got shape {image.shape}"
         )
 
 
@@ -232,13 +231,9 @@ def split_two_line(
     _validate_image(image, "image")
 
     if not 0.0 < upper_end_ratio <= 1.0:
-        raise ValueError(
-            f"upper_end_ratio must be within (0.0, 1.0], got {upper_end_ratio}"
-        )
+        raise ValueError(f"upper_end_ratio must be within (0.0, 1.0], got {upper_end_ratio}")
     if not 0.0 <= lower_start_ratio < 1.0:
-        raise ValueError(
-            f"lower_start_ratio must be within [0.0, 1.0), got {lower_start_ratio}"
-        )
+        raise ValueError(f"lower_start_ratio must be within [0.0, 1.0), got {lower_start_ratio}")
 
     height = image.shape[0]
     upper_end = int(upper_end_ratio * height)
@@ -414,13 +409,9 @@ def preprocess_plate(
             f"got {clahe_tile_grid_size}"
         )
     if upscale_to_height is not None and upscale_to_height <= 0:
-        raise ValueError(
-            f"upscale_to_height must be positive, got {upscale_to_height}"
-        )
+        raise ValueError(f"upscale_to_height must be positive, got {upscale_to_height}")
     if downscale_to_height is not None and downscale_to_height <= 0:
-        raise ValueError(
-            f"downscale_to_height must be positive, got {downscale_to_height}"
-        )
+        raise ValueError(f"downscale_to_height must be positive, got {downscale_to_height}")
     if (
         upscale_to_height is not None
         and downscale_to_height is not None
@@ -451,8 +442,7 @@ def preprocess_plate(
             working = clahe.apply(working)
         else:
             _LOGGER.warning(
-                "Skipping CLAHE: it needs a single-channel image, "
-                "enable to_grayscale to use it",
+                "Skipping CLAHE: it needs a single-channel image, enable to_grayscale to use it",
                 extra={"channels": working.shape[2]},
             )
 
@@ -490,9 +480,7 @@ def _resize_to_height(image: ImageArray, height: int) -> ImageArray:
     return cv2.resize(image, (width, height), interpolation=interpolation)
 
 
-def _match_channels(
-    first: ImageArray, second: ImageArray
-) -> tuple[ImageArray, ImageArray]:
+def _match_channels(first: ImageArray, second: ImageArray) -> tuple[ImageArray, ImageArray]:
     """Promote both images to BGR when their channel counts differ.
 
     ``np.hstack`` refuses arrays whose trailing dimensions disagree, so a

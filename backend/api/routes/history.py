@@ -211,9 +211,7 @@ def _build_filter(
 def list_history(
     db: DbSession,
     history: HistoryDep,
-    page: Annotated[
-        int, Query(ge=1, description="Page number, starting at 1.", examples=[1])
-    ] = 1,
+    page: Annotated[int, Query(ge=1, description="Page number, starting at 1.", examples=[1])] = 1,
     page_size: Annotated[
         int,
         Query(
@@ -387,9 +385,7 @@ def _stream_csv(
 
     session = SessionLocal()
     try:
-        yield from history.export_csv(
-            session, criteria=criteria, sort_by=sort_by, order=order
-        )
+        yield from history.export_csv(session, criteria=criteria, sort_by=sort_by, order=order)
     finally:
         session.close()
 

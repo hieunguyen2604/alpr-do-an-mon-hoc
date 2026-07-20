@@ -17,6 +17,7 @@ import { Download, ImageOff, Wand2 } from 'lucide-react';
 import { Badge, Button, ConfidenceBar } from '@/components/ui';
 import { cn } from '@/lib/cn';
 import { NO_VALUE, formatProcessingTime } from '@/lib/format';
+import { plateClassBadges } from '@/lib/plateClass';
 import type { DetectionResult } from '@/types';
 
 /** Props of {@link PlateResultCard}. */
@@ -132,16 +133,24 @@ export function PlateResultCard({
                 hasPlateText ? 'text-content' : 'text-content-muted',
               )}
             >
-              {result.plate_number ?? 'Không đọc được'}
+              {result.plate_display ?? result.plate_number ?? 'Không đọc được'}
             </span>
 
-            {/* Wording, not colour alone, carries the meaning (NFR-U5). */}
+            {/* Wording, not colour alone, carries the meaning (NFR-U5).
+                The badges describe what the plate *is* before judging whether
+                its string parsed: an army plate fails civil validation by
+                design, and labelling that "wrong format" contradicts a reading
+                the system got right. */}
             {hasPlateText ? (
-              <Badge variant={result.is_valid_format ? 'success' : 'warning'}>
-                {result.is_valid_format
-                  ? 'Đúng định dạng biển số'
-                  : 'Sai định dạng biển số'}
-              </Badge>
+              plateClassBadges(
+                result.is_valid_format,
+                result.plate_kind,
+                result.plate_color,
+              ).map((badge) => (
+                <Badge key={badge.label} variant={badge.tone} title={badge.title}>
+                  {badge.label}
+                </Badge>
+              ))
             ) : (
               <Badge variant="neutral">Không đọc được ký tự</Badge>
             )}

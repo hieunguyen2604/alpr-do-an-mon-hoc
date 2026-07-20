@@ -149,20 +149,12 @@ def upgrade() -> None:
             name="ck_detection_history_bbox_positive",
         ),
     )
-    op.create_index(
-        "ix_detection_history_plate_number", "detection_history", ["plate_number"]
-    )
-    op.create_index(
-        "ix_detection_history_detected_time", "detection_history", ["detected_time"]
-    )
-    op.create_index(
-        "ix_detection_history_input_type", "detection_history", ["input_type"]
-    )
+    op.create_index("ix_detection_history_plate_number", "detection_history", ["plate_number"])
+    op.create_index("ix_detection_history_detected_time", "detection_history", ["detected_time"])
+    op.create_index("ix_detection_history_input_type", "detection_history", ["input_type"])
     # Statistics group and count by this column, and deleting a job cascades
     # through it. Without the index both are full table scans.
-    op.create_index(
-        "ix_detection_history_source_job_id", "detection_history", ["source_job_id"]
-    )
+    op.create_index("ix_detection_history_source_job_id", "detection_history", ["source_job_id"])
     # The history screen's default query is "newest first, optionally filtered
     # by input type". One composite index satisfies the filter and the ordering
     # together, which is what keeps the paginated query inside NFR-P6 at
@@ -180,9 +172,7 @@ def downgrade() -> None:
         "ix_detection_history_input_type_detected_time",
         table_name="detection_history",
     )
-    op.drop_index(
-        "ix_detection_history_source_job_id", table_name="detection_history"
-    )
+    op.drop_index("ix_detection_history_source_job_id", table_name="detection_history")
     op.drop_index("ix_detection_history_input_type", table_name="detection_history")
     op.drop_index("ix_detection_history_detected_time", table_name="detection_history")
     op.drop_index("ix_detection_history_plate_number", table_name="detection_history")

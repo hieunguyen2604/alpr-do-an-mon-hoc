@@ -61,9 +61,7 @@ P3_FLOOR_RATIO: Final[float] = 0.15
 R4_TARGET_SUCCESS: Final[float] = 99.0
 R4_SPECIFIED_MINUTES: Final[float] = 60.0
 
-IMAGE_SUFFIXES: Final[frozenset[str]] = frozenset(
-    {".jpg", ".jpeg", ".png", ".bmp", ".webp"}
-)
+IMAGE_SUFFIXES: Final[frozenset[str]] = frozenset({".jpg", ".jpeg", ".png", ".bmp", ".webp"})
 
 
 # --------------------------------------------------------------------------
@@ -96,8 +94,16 @@ def start_server(
     handle = log_path.open("ab")
     return subprocess.Popen(
         [
-            sys.executable, "-m", "uvicorn", "backend.main:app",
-            "--host", "127.0.0.1", "--port", str(port), "--log-level", "warning",
+            sys.executable,
+            "-m",
+            "uvicorn",
+            "backend.main:app",
+            "--host",
+            "127.0.0.1",
+            "--port",
+            str(port),
+            "--log-level",
+            "warning",
         ],
         cwd=str(_PROJECT_ROOT),
         env=environment,
@@ -405,9 +411,7 @@ def measure_video_throughput(
         "total_frames_reported": final.get("total_frames"),
         "processed_frames": processed,
         "detection_count": final.get("detection_count"),
-        "seconds_per_processed_frame": (
-            round(total_s / processed, 4) if processed else None
-        ),
+        "seconds_per_processed_frame": (round(total_s / processed, 4) if processed else None),
         "realtime_ratio": round(ratio, 4),
         "target_ratio": P3_TARGET_RATIO,
         "floor_ratio": P3_FLOOR_RATIO,
@@ -463,9 +467,7 @@ def run_soak(
             name, blob = payloads[sent % len(payloads)]
             request_start = time.perf_counter()
             try:
-                response = client.post(
-                    endpoint, files={"file": (name, blob, "image/jpeg")}
-                )
+                response = client.post(endpoint, files={"file": (name, blob, "image/jpeg")})
                 elapsed_ms = (time.perf_counter() - request_start) * 1000.0
                 sent += 1
                 if response.status_code == 200:
@@ -481,14 +483,15 @@ def run_soak(
             if now >= next_sample:
                 rss = server_rss_gb(server_pid)
                 if rss is not None:
-                    rss_trace.append(
-                        {"elapsed_s": round(now - started, 1), "rss_gb": rss}
-                    )
+                    rss_trace.append({"elapsed_s": round(now - started, 1), "rss_gb": rss})
                 next_sample = now + 30.0
                 LOGGER.info(
                     "  soak %.1f/%.1f min | %d requests | %.2f%% ok | RSS %s GB",
-                    (now - started) / 60.0, minutes, sent,
-                    100.0 * succeeded / sent if sent else 0.0, rss,
+                    (now - started) / 60.0,
+                    minutes,
+                    sent,
+                    100.0 * succeeded / sent if sent else 0.0,
+                    rss,
                 )
 
     elapsed_s = time.perf_counter() - started
@@ -561,8 +564,12 @@ def snapshot_database(base_url: str, api_prefix: str, sample_size: int) -> dict[
     with httpx.Client(timeout=60.0) as client:
         listing = client.get(
             f"{base_url}{api_prefix}/history",
-            params={"page": 1, "page_size": sample_size, "sort_by": "detected_time",
-                    "order": "desc"},
+            params={
+                "page": 1,
+                "page_size": sample_size,
+                "sort_by": "detected_time",
+                "order": "desc",
+            },
         )
         listing.raise_for_status()
         body = listing.json()
@@ -640,8 +647,12 @@ def build_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument("--images", default="datasets/processed/yolo/images/test")
     parser.add_argument("--video", default="demo/demo-video.mp4")
-    parser.add_argument("--frame-images", type=int, default=40,
-                        help="How many distinct images stand in for camera frames.")
+    parser.add_argument(
+        "--frame-images",
+        type=int,
+        default=40,
+        help="How many distinct images stand in for camera frames.",
+    )
     parser.add_argument("--soak-images", type=int, default=40)
     parser.add_argument("--webcam-seconds", type=float, default=60.0)
     parser.add_argument("--capture-fps", type=float, default=30.0)
@@ -655,11 +666,13 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--output", default="docs/reports/07-benchmark-data-v2.json")
     parser.add_argument("--skip-soak", action="store_true")
     parser.add_argument(
-        "--skip-restart", action="store_true",
+        "--skip-restart",
+        action="store_true",
         help="Skip NFR-R5. Useful for a second run that only re-measures speed.",
     )
     parser.add_argument(
-        "--model-path", default=None,
+        "--model-path",
+        default=None,
         help=(
             "Override ALPR_MODEL_PATH for the server. Omit to measure the "
             "configuration the project actually ships."
@@ -673,8 +686,11 @@ def _log_hardware(hardware: dict[str, Any]) -> None:
     LOGGER.info("=" * 78)
     LOGGER.info(
         "CPU: %s | %s physical / %s logical cores | %.2f GB RAM | %s",
-        hardware["cpu_name"], hardware["physical_cores"],
-        hardware["logical_cores"], hardware["ram_total_gb"], hardware["platform"],
+        hardware["cpu_name"],
+        hardware["physical_cores"],
+        hardware["logical_cores"],
+        hardware["ram_total_gb"],
+        hardware["platform"],
     )
     if hardware.get("competing_processes"):
         LOGGER.warning("Competing CPU load present -- every timing below is PESSIMISTIC:")
@@ -756,28 +772,38 @@ def main(argv: list[str] | None = None) -> int:
         # -- NFR-P2 ------------------------------------------------------
         LOGGER.info("NFR-P2: webcam frame rate over %.0f s ...", args.webcam_seconds)
         report["nfr_p2_webcam_fps"] = measure_webcam_fps(
-            base_url, args.api_prefix, frame_images,
-            args.webcam_seconds, args.capture_fps,
+            base_url,
+            args.api_prefix,
+            frame_images,
+            args.webcam_seconds,
+            args.capture_fps,
         )
         p2 = report["nfr_p2_webcam_fps"]
         LOGGER.info(
             "NFR-P2: %.2f FPS effective (%d ok / %.1f s) -- %s",
-            p2["effective_fps"], p2["frames_succeeded"],
-            p2["window_seconds"], p2["status"],
+            p2["effective_fps"],
+            p2["frames_succeeded"],
+            p2["window_seconds"],
+            p2["status"],
         )
 
         # -- NFR-P3 ------------------------------------------------------
         LOGGER.info("NFR-P3: processing %s ...", video.name)
         report["nfr_p3_video_throughput"] = measure_video_throughput(
-            base_url, args.api_prefix, video, settings.frame_stride,
-            args.poll_interval, args.video_timeout,
+            base_url,
+            args.api_prefix,
+            video,
+            settings.frame_stride,
+            args.poll_interval,
+            args.video_timeout,
         )
         p3 = report["nfr_p3_video_throughput"]
         LOGGER.info(
             "NFR-P3: %.3fx real time (%.1f s of video in %.1f s) -- %s",
             p3.get("realtime_ratio", 0.0),
             (p3.get("video") or {}).get("duration_s", 0.0),
-            p3.get("total_wall_s", 0.0), p3["status"],
+            p3.get("total_wall_s", 0.0),
+            p3["status"],
         )
 
         # -- NFR-R4 ------------------------------------------------------
@@ -787,14 +813,19 @@ def main(argv: list[str] | None = None) -> int:
         else:
             LOGGER.info("NFR-R4: soaking for %.0f minutes ...", args.soak_minutes)
             report["nfr_r4_soak"] = run_soak(
-                base_url, args.api_prefix, soak_images,
-                args.soak_minutes, server.pid,
+                base_url,
+                args.api_prefix,
+                soak_images,
+                args.soak_minutes,
+                server.pid,
             )
             r4 = report["nfr_r4_soak"]
             LOGGER.info(
                 "NFR-R4: %.3f%% success over %d requests in %.1f min -- %s",
-                r4["success_rate_percent"], r4["requests_sent"],
-                r4["duration_minutes_run"], r4["status"],
+                r4["success_rate_percent"],
+                r4["requests_sent"],
+                r4["duration_minutes_run"],
+                r4["status"],
             )
 
         # -- NFR-R5, first half ------------------------------------------
@@ -813,9 +844,7 @@ def main(argv: list[str] | None = None) -> int:
             "reason": "--skip-restart",
         }
         report["summary"] = _summarise(report)
-        output_path.write_text(
-            json.dumps(report, indent=2, ensure_ascii=False), encoding="utf-8"
-        )
+        output_path.write_text(json.dumps(report, indent=2, ensure_ascii=False), encoding="utf-8")
         LOGGER.info("Report written to %s", output_path)
         for line in report["summary"]["verdicts"]:
             LOGGER.info("  %s", line)
@@ -849,9 +878,7 @@ def main(argv: list[str] | None = None) -> int:
         stop_server(server2)
 
     report["summary"] = _summarise(report)
-    output_path.write_text(
-        json.dumps(report, indent=2, ensure_ascii=False), encoding="utf-8"
-    )
+    output_path.write_text(json.dumps(report, indent=2, ensure_ascii=False), encoding="utf-8")
     LOGGER.info("Report written to %s", output_path)
     for line in report["summary"]["verdicts"]:
         LOGGER.info("  %s", line)

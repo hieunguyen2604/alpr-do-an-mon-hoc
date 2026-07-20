@@ -212,8 +212,7 @@ def configure_logging(level: str = "INFO", *, log_file: Path | None = None) -> N
     numeric_level = logging.getLevelName(level.upper())
     if not isinstance(numeric_level, int):
         raise ValueError(
-            f"Unknown log level {level!r}; expected one of "
-            "DEBUG, INFO, WARNING, ERROR, CRITICAL"
+            f"Unknown log level {level!r}; expected one of DEBUG, INFO, WARNING, ERROR, CRITICAL"
         )
 
     handlers: list[logging.Handler] = [logging.StreamHandler(sys.stderr)]
@@ -449,9 +448,7 @@ def summarise_distribution(values: Sequence[float], name: str) -> dict[str, Any]
     mean = sum(ordered) / count
 
     middle = count // 2
-    median = (
-        ordered[middle] if count % 2 else (ordered[middle - 1] + ordered[middle]) / 2.0
-    )
+    median = ordered[middle] if count % 2 else (ordered[middle - 1] + ordered[middle]) / 2.0
 
     variance = sum((value - mean) ** 2 for value in ordered) / count
     return {

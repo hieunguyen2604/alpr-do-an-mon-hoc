@@ -31,9 +31,7 @@ def _poly(x0: float, y0: float, x1: float, y1: float) -> list[list[float]]:
     return [[x0, y0], [x1, y0], [x1, y1], [x0, y1]]
 
 
-def _result(
-    texts: list[str], scores: list[float], polys: list[Any] | None
-) -> dict[str, Any]:
+def _result(texts: list[str], scores: list[float], polys: list[Any] | None) -> dict[str, Any]:
     """Build one PaddleOCR-3.x-shaped result mapping."""
     payload: dict[str, Any] = {"rec_texts": texts, "rec_scores": scores}
     if polys is not None:
@@ -58,9 +56,7 @@ class FakeEngine:
 
 def _recognizer(results: list[Any] | Exception, **kwargs: Any) -> PaddleOcrRecognizer:
     """Build a recogniser wired to a fake engine."""
-    return PaddleOcrRecognizer(
-        InferenceConfig(), engine=FakeEngine(results), **kwargs
-    )
+    return PaddleOcrRecognizer(InferenceConfig(), engine=FakeEngine(results), **kwargs)
 
 
 class TestContract:
@@ -109,9 +105,7 @@ class TestRecognizeFlow:
 
     def test_one_line_plate_is_not_split(self) -> None:
         """A wide crop keeps its aspect ratio through to the engine."""
-        recognizer = _recognizer(
-            [_result(["51A-12345"], [0.98], [_poly(10, 20, 500, 90)])]
-        )
+        recognizer = _recognizer([_result(["51A-12345"], [0.98], [_poly(10, 20, 500, 90)])])
         crop = np.full((110, 520, 3), 255, dtype=np.uint8)
         recognition = recognizer.recognize(crop)
 
@@ -145,9 +139,7 @@ class TestRecognizeFlow:
 
     def test_unreadable_crop_returns_empty_instead_of_raising(self) -> None:
         """A blurred plate is a normal outcome that must still be recorded."""
-        recognition = _recognizer([]).recognize(
-            np.full((110, 520, 3), 255, dtype=np.uint8)
-        )
+        recognition = _recognizer([]).recognize(np.full((110, 520, 3), 255, dtype=np.uint8))
 
         assert recognition.text == ""
         assert recognition.raw_text == ""
@@ -168,9 +160,7 @@ class TestRecognizeFlow:
         """
         crop = np.full((OCR_INPUT_HEIGHT, 520, 3), 255, dtype=np.uint8)
         engine = FakeEngine([])
-        PaddleOcrRecognizer(
-            InferenceConfig(), preprocess=False, engine=engine
-        ).recognize(crop)
+        PaddleOcrRecognizer(InferenceConfig(), preprocess=False, engine=engine).recognize(crop)
 
         np.testing.assert_array_equal(engine.seen[0], crop)
 

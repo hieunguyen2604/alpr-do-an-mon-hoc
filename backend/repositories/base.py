@@ -106,9 +106,7 @@ class BaseRepository(Generic[ModelT, IdT]):
                 failure would name a line that looks unrelated.
         """
         if not hasattr(self.__class__, "model"):
-            raise TypeError(
-                f"{self.__class__.__name__} must declare a 'model' class attribute"
-            )
+            raise TypeError(f"{self.__class__.__name__} must declare a 'model' class attribute")
         self.session = session
 
     # -- Introspection ----------------------------------------------------
@@ -369,9 +367,7 @@ class BaseRepository(Generic[ModelT, IdT]):
         for start in range(0, len(unique_ids), _BULK_DELETE_CHUNK):
             chunk = unique_ids[start : start + _BULK_DELETE_CHUNK]
             stmt = delete(self.model).where(self._pk.in_(chunk))
-            result = self.session.execute(
-                stmt, execution_options={"synchronize_session": False}
-            )
+            result = self.session.execute(stmt, execution_options={"synchronize_session": False})
             deleted += result.rowcount or 0
 
         # Identity-map entries for the deleted rows are now stale: a session

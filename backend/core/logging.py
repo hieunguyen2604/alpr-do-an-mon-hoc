@@ -358,9 +358,7 @@ class JsonFormatter(logging.Formatter):
         """
         timestamp = dt.datetime.fromtimestamp(record.created, tz=dt.timezone.utc)
         payload: dict[str, Any] = {
-            "timestamp": timestamp.isoformat(timespec="milliseconds").replace(
-                "+00:00", "Z"
-            ),
+            "timestamp": timestamp.isoformat(timespec="milliseconds").replace("+00:00", "Z"),
             "level": record.levelname,
             "logger": record.name,
             "message": record.getMessage(),

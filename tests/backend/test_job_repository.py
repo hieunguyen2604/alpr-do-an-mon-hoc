@@ -55,9 +55,7 @@ class TestJobListing:
                 created_at=_NOW + dt.timedelta(days=offset),
             )
 
-    def test_lists_every_job_by_default(
-        self, assorted: None, jobs: JobRepository
-    ) -> None:
+    def test_lists_every_job_by_default(self, assorted: None, jobs: JobRepository) -> None:
         rows, total = jobs.list_paginated()
         assert total == 5
         assert len(rows) == 5
@@ -66,24 +64,16 @@ class TestJobListing:
         _, total = jobs.list_paginated(status=JobStatus.COMPLETED)
         assert total == 2
 
-    def test_filters_by_input_type(
-        self, assorted: None, jobs: JobRepository
-    ) -> None:
+    def test_filters_by_input_type(self, assorted: None, jobs: JobRepository) -> None:
         _, total = jobs.list_paginated(input_type=InputType.VIDEO)
         assert total == 2
 
-    def test_filters_by_a_half_open_time_window(
-        self, assorted: None, jobs: JobRepository
-    ) -> None:
-        _, total = jobs.list_paginated(
-            start_time=_NOW, end_time=_NOW + dt.timedelta(days=1)
-        )
+    def test_filters_by_a_half_open_time_window(self, assorted: None, jobs: JobRepository) -> None:
+        _, total = jobs.list_paginated(start_time=_NOW, end_time=_NOW + dt.timedelta(days=1))
         assert total == 1
 
     def test_combines_filters(self, assorted: None, jobs: JobRepository) -> None:
-        _, total = jobs.list_paginated(
-            input_type=InputType.IMAGE, status=JobStatus.COMPLETED
-        )
+        _, total = jobs.list_paginated(input_type=InputType.IMAGE, status=JobStatus.COMPLETED)
         assert total == 2
 
     def test_paginates(self, assorted: None, jobs: JobRepository) -> None:
@@ -91,22 +81,16 @@ class TestJobListing:
         assert len(rows) == 2
         assert total == 5
 
-    def test_sorts_newest_first_by_default(
-        self, assorted: None, jobs: JobRepository
-    ) -> None:
+    def test_sorts_newest_first_by_default(self, assorted: None, jobs: JobRepository) -> None:
         rows, _ = jobs.list_paginated()
         times = [row.created_at for row in rows]
         assert times == sorted(times, reverse=True)
 
-    def test_an_unknown_sort_key_is_refused(
-        self, assorted: None, jobs: JobRepository
-    ) -> None:
+    def test_an_unknown_sort_key_is_refused(self, assorted: None, jobs: JobRepository) -> None:
         with pytest.raises(ValidationError):
             jobs.list_paginated(sort_by="detections")
 
-    def test_lists_only_unfinished_jobs(
-        self, assorted: None, jobs: JobRepository
-    ) -> None:
+    def test_lists_only_unfinished_jobs(self, assorted: None, jobs: JobRepository) -> None:
         """Used at start-up to find jobs abandoned by a killed process.
 
         Nothing will advance those, so they would otherwise sit at partial
@@ -142,9 +126,7 @@ class TestJobProgress:
         assert updated.processed_frames == 50
         assert updated.progress == pytest.approx(0.5)
 
-    def test_the_first_report_moves_the_job_out_of_pending(
-        self, jobs: JobRepository
-    ) -> None:
+    def test_the_first_report_moves_the_job_out_of_pending(self, jobs: JobRepository) -> None:
         """The first progress report is proof the worker picked the job up."""
         job = jobs.create_job(input_type=InputType.VIDEO, total_frames=10)
         assert job.status == JobStatus.PENDING.value
@@ -178,15 +160,11 @@ class TestJobProgress:
         assert final.status == JobStatus.CANCELLED.value
         assert final.processed_frames == 0
 
-    def test_updating_an_unknown_job_returns_none(
-        self, jobs: JobRepository
-    ) -> None:
+    def test_updating_an_unknown_job_returns_none(self, jobs: JobRepository) -> None:
         """The worker reads ``None`` as "the job was deleted underneath me"."""
         assert jobs.update_progress("nope", progress=0.5) is None
 
-    def test_a_revised_total_frame_count_is_accepted(
-        self, jobs: JobRepository
-    ) -> None:
+    def test_a_revised_total_frame_count_is_accepted(self, jobs: JobRepository) -> None:
         """The true count is often only known once decoding has started."""
         job = jobs.create_job(input_type=InputType.VIDEO)
         jobs.update_progress(job.id, processed_frames=5, total_frames=50)
@@ -195,9 +173,7 @@ class TestJobProgress:
         assert updated.total_frames == 50
         assert updated.progress == pytest.approx(0.1)
 
-    def test_a_negative_frame_count_is_floored_at_zero(
-        self, jobs: JobRepository
-    ) -> None:
+    def test_a_negative_frame_count_is_floored_at_zero(self, jobs: JobRepository) -> None:
         job = jobs.create_job(input_type=InputType.VIDEO)
         jobs.update_progress(job.id, processed_frames=-5)
         assert jobs.get_by_id(job.id).processed_frames == 0
@@ -207,9 +183,7 @@ class TestJobProgress:
         assert jobs.mark_processing(job.id).status == JobStatus.PROCESSING.value
         assert jobs.mark_cancelled(job.id).status == JobStatus.CANCELLED.value
 
-    def test_a_completed_job_records_when_it_finished(
-        self, jobs: JobRepository
-    ) -> None:
+    def test_a_completed_job_records_when_it_finished(self, jobs: JobRepository) -> None:
         job = jobs.create_job(input_type=InputType.VIDEO)
         jobs.mark_completed(job.id)
 
@@ -217,9 +191,7 @@ class TestJobProgress:
         assert finished.completed_at is not None
         assert finished.is_finished is True
 
-    def test_a_transition_on_an_unknown_job_returns_none(
-        self, jobs: JobRepository
-    ) -> None:
+    def test_a_transition_on_an_unknown_job_returns_none(self, jobs: JobRepository) -> None:
         assert jobs.mark_processing("nope") is None
         assert jobs.mark_completed("nope") is None
         assert jobs.mark_failed("nope", "reason") is None

@@ -241,7 +241,9 @@ def find_within_split_duplicates(
     rows, cols = np.nonzero(close)
 
     pairs: list[DuplicatePair] = []
-    for row, col in zip(rows.tolist()[:max_pairs_recorded], cols.tolist()[:max_pairs_recorded], strict=True):
+    for row, col in zip(
+        rows.tolist()[:max_pairs_recorded], cols.tolist()[:max_pairs_recorded], strict=True
+    ):
         pairs.append(
             DuplicatePair(
                 split_a=split.name,

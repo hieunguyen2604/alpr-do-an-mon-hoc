@@ -150,9 +150,7 @@ class TestAiPackageHasNoFrameworkImports:
             )
             if forbidden in imported:
                 offenders.append(str(path.relative_to(PROJECT_ROOT)))
-        assert not offenders, (
-            f"NFR-M1 violated: {offenders} import {forbidden!r}"
-        )
+        assert not offenders, f"NFR-M1 violated: {offenders} import {forbidden!r}"
 
     def test_the_evaluation_harness_keeps_its_backend_imports_function_local(
         self,
@@ -173,9 +171,7 @@ class TestAiPackageHasNoFrameworkImports:
                 start=1,
             ):
                 if not line.startswith((" ", "\t")) and _IMPORT_PATTERN.match(line):
-                    head = (
-                        _imported_top_level_modules(line) or {""}
-                    ).pop()
+                    head = (_imported_top_level_modules(line) or {""}).pop()
                     if head in {"backend", "sqlalchemy"}:
                         offenders.append(
                             f"{path.relative_to(PROJECT_ROOT)}:{number}: {line.strip()}"
@@ -222,17 +218,13 @@ class TestImportingAiDoesNotLoadTheFramework:
             "print('LOADED:' + ','.join(loaded))\n"
         )
         result = self._run(snippet)
-        assert result.returncode == 0, (
-            f"importing ai.inference failed:\n{result.stdout}\n{result.stderr}"
-        )
-        line = [
-            row for row in result.stdout.splitlines() if row.startswith("LOADED:")
-        ]
+        assert (
+            result.returncode == 0
+        ), f"importing ai.inference failed:\n{result.stdout}\n{result.stderr}"
+        line = [row for row in result.stdout.splitlines() if row.startswith("LOADED:")]
         assert line, f"probe produced no verdict:\n{result.stdout}\n{result.stderr}"
         loaded = line[0].removeprefix("LOADED:").strip()
-        assert loaded == "", (
-            f"NFR-M1 violated: importing ai.inference loaded {loaded}"
-        )
+        assert loaded == "", f"NFR-M1 violated: importing ai.inference loaded {loaded}"
 
     def test_every_inference_module_imports_cleanly_on_its_own(self) -> None:
         """Each module must be importable without the rest of the world.
@@ -254,9 +246,9 @@ class TestImportingAiDoesNotLoadTheFramework:
             "print('LOADED:' + ','.join(sorted(n for n in forbidden if n in sys.modules)))\n"
         )
         result = self._run(snippet)
-        assert result.returncode == 0, (
-            f"importing the inference modules failed:\n{result.stdout}\n{result.stderr}"
-        )
+        assert (
+            result.returncode == 0
+        ), f"importing the inference modules failed:\n{result.stdout}\n{result.stderr}"
         loaded = result.stdout.split("LOADED:")[-1].strip()
         assert loaded == "", f"NFR-M1 violated: modules loaded {loaded}"
 
@@ -288,13 +280,11 @@ class TestImportingAiDoesNotLoadTheFramework:
             "print('HEAVY:' + ','.join(sorted(heavy)))\n"
         )
         result = self._run(snippet)
-        assert result.returncode == 0, (
-            f"building the pipeline from fakes failed:\n{result.stdout}\n{result.stderr}"
-        )
+        assert (
+            result.returncode == 0
+        ), f"building the pipeline from fakes failed:\n{result.stdout}\n{result.stderr}"
         heavy = result.stdout.split("HEAVY:")[-1].strip()
-        assert heavy == "", (
-            f"the pipeline pulled in an ML runtime it should not need: {heavy}"
-        )
+        assert heavy == "", f"the pipeline pulled in an ML runtime it should not need: {heavy}"
 
 
 class TestNoHardCodedPaths:
@@ -324,9 +314,7 @@ class TestNoHardCodedPaths:
                 if stripped.startswith("#"):
                     continue
                 if self._ABSOLUTE_LITERAL.search(line):
-                    offenders.append(
-                        f"{path.relative_to(PROJECT_ROOT)}:{number}: {stripped}"
-                    )
+                    offenders.append(f"{path.relative_to(PROJECT_ROOT)}:{number}: {stripped}")
         assert not offenders, "NFR-M4 violated by:\n" + "\n".join(offenders)
 
     def test_both_configuration_modules_derive_their_root_from_file(self) -> None:
@@ -335,6 +323,6 @@ class TestNoHardCodedPaths:
             PROJECT_ROOT / "backend" / "core" / "config.py",
         ):
             text = module.read_text(encoding="utf-8")
-            assert "Path(__file__).resolve().parents" in text, (
-                f"{module} should derive PROJECT_ROOT from its own location"
-            )
+            assert (
+                "Path(__file__).resolve().parents" in text
+            ), f"{module} should derive PROJECT_ROOT from its own location"

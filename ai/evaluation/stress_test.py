@@ -109,7 +109,11 @@ def describe_hardware() -> dict[str, Any]:
     for proc in procs:
         try:
             usage = proc.cpu_percent(None)
-            if usage >= 25.0 and proc.pid != os.getpid() and proc.info.get("name") != "System Idle Process":
+            if (
+                usage >= 25.0
+                and proc.pid != os.getpid()
+                and proc.info.get("name") != "System Idle Process"
+            ):
                 cmd = " ".join(proc.info.get("cmdline") or [])[:120]
                 competing.append(f"pid={proc.pid} cpu={usage:.0f}% {cmd or proc.info.get('name')}")
         except Exception:  # noqa: BLE001
@@ -184,9 +188,7 @@ def invoke_once(pipeline: Any, image: Any) -> RequestOutcome:
         return RequestOutcome(latency_ms=elapsed, ok=True, plates=len(result.results))
     except Exception as exc:  # noqa: BLE001
         elapsed = (time.perf_counter() - started) * 1000.0
-        return RequestOutcome(
-            latency_ms=elapsed, ok=False, error=f"{type(exc).__name__}: {exc}"
-        )
+        return RequestOutcome(latency_ms=elapsed, ok=False, error=f"{type(exc).__name__}: {exc}")
 
 
 def run_concurrency_level(
@@ -320,9 +322,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--weights", default="models/checkpoints/best-cpu-epoch7.pt")
     parser.add_argument("--images", default="datasets/processed/yolo/images/test")
     parser.add_argument("--image-pool", type=int, default=20)
-    parser.add_argument(
-        "--concurrency", type=int, nargs="+", default=list(DEFAULT_CONCURRENCY)
-    )
+    parser.add_argument("--concurrency", type=int, nargs="+", default=list(DEFAULT_CONCURRENCY))
     parser.add_argument(
         "--requests-per-level",
         type=int,
@@ -349,9 +349,13 @@ def main(argv: list[str] | None = None) -> int:
 
     hardware = describe_hardware()
     LOGGER.info("=" * 72)
-    LOGGER.info("CPU: %s | %s physical / %s logical cores | %.2f GB RAM",
-                hardware["cpu_name"], hardware["physical_cores"],
-                hardware["logical_cores"], hardware["ram_total_gb"])
+    LOGGER.info(
+        "CPU: %s | %s physical / %s logical cores | %.2f GB RAM",
+        hardware["cpu_name"],
+        hardware["physical_cores"],
+        hardware["logical_cores"],
+        hardware["ram_total_gb"],
+    )
     if hardware["competing_processes"]:
         LOGGER.warning("Competing CPU load present -- throughput below is PESSIMISTIC:")
         for entry in hardware["competing_processes"]:
@@ -366,9 +370,7 @@ def main(argv: list[str] | None = None) -> int:
     import cv2
 
     weights = Path(args.weights).expanduser().resolve()
-    image_paths = discover_images(
-        Path(args.images).expanduser().resolve(), args.image_pool
-    )
+    image_paths = discover_images(Path(args.images).expanduser().resolve(), args.image_pool)
     images = [img for img in (cv2.imread(str(p)) for p in image_paths) if img is not None]
     LOGGER.info("Loaded %d image(s) into memory", len(images))
 
@@ -422,9 +424,7 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.soak_seconds > 0:
         LOGGER.info("--- Soak for %.0f s (NFR-R4) ---", args.soak_seconds)
-        report["soak"] = run_soak(
-            pipeline, images, args.soak_seconds, args.soak_concurrency
-        )
+        report["soak"] = run_soak(pipeline, images, args.soak_seconds, args.soak_concurrency)
         LOGGER.info(
             "Soak: %d request(s), success rate %.4f (%s), RSS %+.3f GB",
             report["soak"]["requests"],

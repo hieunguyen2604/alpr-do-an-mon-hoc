@@ -101,9 +101,7 @@ class APIError(Exception):
 
     status_code: int = _HTTP_INTERNAL_SERVER_ERROR
     error_code: str = "INTERNAL_ERROR"
-    default_user_message: str = (
-        "Đã xảy ra lỗi không mong muốn. Vui lòng thử lại sau."
-    )
+    default_user_message: str = "Đã xảy ra lỗi không mong muốn. Vui lòng thử lại sau."
 
     def __init__(
         self,
@@ -254,8 +252,7 @@ class FileTooLargeError(APIError):
     status_code = _HTTP_PAYLOAD_TOO_LARGE
     error_code = "FILE_TOO_LARGE"
     default_user_message = (
-        "Tệp tải lên vượt quá dung lượng cho phép. "
-        "Vui lòng chọn tệp có kích thước nhỏ hơn."
+        "Tệp tải lên vượt quá dung lượng cho phép. Vui lòng chọn tệp có kích thước nhỏ hơn."
     )
 
     @classmethod
@@ -313,8 +310,7 @@ class UnsupportedMediaTypeError(APIError):
     status_code = _HTTP_UNSUPPORTED_MEDIA_TYPE
     error_code = "UNSUPPORTED_MEDIA_TYPE"
     default_user_message = (
-        "Định dạng tệp không được hỗ trợ. "
-        "Vui lòng tải lên ảnh (JPG, PNG) hoặc video (MP4, AVI)."
+        "Định dạng tệp không được hỗ trợ. Vui lòng tải lên ảnh (JPG, PNG) hoặc video (MP4, AVI)."
     )
 
     @classmethod

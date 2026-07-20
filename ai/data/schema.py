@@ -134,9 +134,7 @@ SERIAL_FIRST_LETTERS: Final[str] = "ABCDEFGHKLMNPSTUVXYZ"
 SERIAL_SECOND_LETTERS_MOTORCYCLE: Final[str] = "ABCDEFHKLMNPRSTUVXYZ"
 """Second serial letter on motorcycle plates: ``R`` is allowed, ``G`` is not."""
 
-OCR_SAFE_CHARSET: Final[str] = "0123456789" + "".join(
-    sorted(set(SERIAL_FIRST_LETTERS) | {"R"})
-)
+OCR_SAFE_CHARSET: Final[str] = "0123456789" + "".join(sorted(set(SERIAL_FIRST_LETTERS) | {"R"}))
 """Digits plus the 21 letters that can actually occur (20 serial letters + ``R``).
 
 Use this for **post-processing constraints only**.
@@ -485,9 +483,7 @@ class BoxRecord:
         try:
             x_center, y_center, width, height = (float(value) for value in parts[1:5])
         except ValueError as exc:
-            raise LabelParseError(
-                f"coordinates {parts[1:5]!r} are not all numeric"
-            ) from exc
+            raise LabelParseError(f"coordinates {parts[1:5]!r} are not all numeric") from exc
 
         plate_text: str | None = None
         line_count: LineCount | None = None
@@ -659,9 +655,7 @@ class ImageRecord:
         """
         issues: list[str] = []
         if self.width <= 0 or self.height <= 0:
-            issues.append(
-                f"image dimensions must be positive, got {self.width}x{self.height}"
-            )
+            issues.append(f"image dimensions must be positive, got {self.width}x{self.height}")
         for index, box in enumerate(self.boxes):
             for message in box.validate(min_area=min_box_area):
                 issues.append(f"box {index}: {message}")
@@ -832,9 +826,7 @@ def write_yolo_label_file(
         OSError: If the file cannot be created.
     """
     label_path.parent.mkdir(parents=True, exist_ok=True)
-    lines = [
-        box.to_yolo_line(precision=precision, include_extras=include_extras) for box in boxes
-    ]
+    lines = [box.to_yolo_line(precision=precision, include_extras=include_extras) for box in boxes]
     content = "\n".join(lines)
     if content:
         content += "\n"

@@ -107,9 +107,7 @@ def test_province_code_counts() -> None:
     assert len(UNUSED_PROVINCE_CODES) == 8
     assert not PROVINCE_CODES & UNUSED_PROVINCE_CODES
     # Together they must tile the whole 11..99 range with no gap and no overlap.
-    assert PROVINCE_CODES | UNUSED_PROVINCE_CODES == {
-        str(code) for code in range(11, 100)
-    }
+    assert PROVINCE_CODES | UNUSED_PROVINCE_CODES == {str(code) for code in range(11, 100)}
 
 
 @pytest.mark.parametrize(
@@ -154,45 +152,73 @@ def test_ocr_charsets() -> None:
 
 SECTION_8_6_CASES: list[tuple[str, str, str, bool, set[str]]] = [
     (
-        "30A-123.45", "30A12345", "RE_CAR", True,
-        {"RE_CAR", "RE_MOTORCYCLE_OLD", "RE_MOTORCYCLE_ANY",
-         "RE_BLUE_CAR", "RE_BLUE_MOTORCYCLE"},
+        "30A-123.45",
+        "30A12345",
+        "RE_CAR",
+        True,
+        {"RE_CAR", "RE_MOTORCYCLE_OLD", "RE_MOTORCYCLE_ANY", "RE_BLUE_CAR", "RE_BLUE_MOTORCYCLE"},
     ),
     (
-        "51K-999.99", "51K99999", "RE_CAR", True,
-        {"RE_CAR", "RE_MOTORCYCLE_OLD", "RE_MOTORCYCLE_ANY",
-         "RE_BLUE_CAR", "RE_BLUE_MOTORCYCLE"},
+        "51K-999.99",
+        "51K99999",
+        "RE_CAR",
+        True,
+        {"RE_CAR", "RE_MOTORCYCLE_OLD", "RE_MOTORCYCLE_ANY", "RE_BLUE_CAR", "RE_BLUE_MOTORCYCLE"},
     ),
     (
-        "29-AA 002.33", "29AA00233", "RE_MOTORCYCLE_NEW", True,
+        "29-AA 002.33",
+        "29AA00233",
+        "RE_MOTORCYCLE_NEW",
+        True,
         {"RE_MOTORCYCLE_NEW", "RE_MOTORCYCLE_ANY"},
     ),
     (
-        "29-HA 002.33", "29HA00233", "RE_MOTORCYCLE_NEW", True,
+        "29-HA 002.33",
+        "29HA00233",
+        "RE_MOTORCYCLE_NEW",
+        True,
         {"RE_MOTORCYCLE_NEW", "RE_MOTORCYCLE_ANY"},
     ),
     (
-        "29-B1 123.45", "29B112345", "RE_MOTORCYCLE_OLD", True,
+        "29-B1 123.45",
+        "29B112345",
+        "RE_MOTORCYCLE_OLD",
+        True,
         {"RE_MOTORCYCLE_OLD", "RE_MOTORCYCLE_ANY", "RE_BLUE_MOTORCYCLE"},
     ),
     (
-        "80B-001.23", "80B00123", "RE_CAR", True,
+        "80B-001.23",
+        "80B00123",
+        "RE_CAR",
+        True,
         {"RE_CAR", "RE_BLUE_CAR"},
     ),
     (
-        "80B1-234.56", "80B123456", "RE_MOTORCYCLE_OLD", True,
+        "80B1-234.56",
+        "80B123456",
+        "RE_MOTORCYCLE_OLD",
+        True,
         {"RE_MOTORCYCLE_OLD", "RE_MOTORCYCLE_ANY", "RE_BLUE_MOTORCYCLE"},
     ),
     (
-        "29LD-123.45", "29LD12345", "RE_SPECIAL", True,
+        "29LD-123.45",
+        "29LD12345",
+        "RE_SPECIAL",
+        True,
         {"RE_SPECIAL", "RE_MOTORCYCLE_NEW", "RE_MOTORCYCLE_ANY"},
     ),
     (
-        "80-001-NG-01", "80001NG01", "RE_DIPLOMATIC", True,
+        "80-001-NG-01",
+        "80001NG01",
+        "RE_DIPLOMATIC",
+        True,
         {"RE_DIPLOMATIC"},
     ),
     (
-        "TM-1234", "TM1234", "RE_MILITARY", True,
+        "TM-1234",
+        "TM1234",
+        "RE_MILITARY",
+        True,
         {"RE_MILITARY"},
     ),
     ("13A-123.45", "13A12345", "RE_CAR", False, set()),
@@ -200,17 +226,25 @@ SECTION_8_6_CASES: list[tuple[str, str, str, bool, set[str]]] = [
     ("30O-123.45", "30O12345", "RE_CAR", False, set()),
     ("29-AG 123.45", "29AG12345", "RE_MOTORCYCLE_NEW", False, set()),
     (
-        "29-AR 123.45", "29AR12345", "RE_MOTORCYCLE_NEW", True,
+        "29-AR 123.45",
+        "29AR12345",
+        "RE_MOTORCYCLE_NEW",
+        True,
         {"RE_MOTORCYCLE_NEW", "RE_MOTORCYCLE_ANY"},
     ),
     (
-        "80N-123.45", "80N12345", "RE_BLUE_CAR", False,
+        "80N-123.45",
+        "80N12345",
+        "RE_BLUE_CAR",
+        False,
         {"RE_CAR", "RE_MOTORCYCLE_OLD", "RE_MOTORCYCLE_ANY"},
     ),
     (
-        "29B1-1234", "29B11234", "RE_CAR", True,
-        {"RE_CAR", "RE_MOTORCYCLE_OLD", "RE_MOTORCYCLE_ANY",
-         "RE_BLUE_CAR", "RE_BLUE_MOTORCYCLE"},
+        "29B1-1234",
+        "29B11234",
+        "RE_CAR",
+        True,
+        {"RE_CAR", "RE_MOTORCYCLE_OLD", "RE_MOTORCYCLE_ANY", "RE_BLUE_CAR", "RE_BLUE_MOTORCYCLE"},
     ),
 ]
 """The section 8.6 table: raw input, cleaned form, pattern under test, expected

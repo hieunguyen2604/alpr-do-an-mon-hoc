@@ -192,9 +192,7 @@ class JobRepository(BaseRepository[DetectionJob, str]):
             state that has never occurred still appears in the dashboard.
         """
         stmt = select(DetectionJob.status, func.count()).group_by(DetectionJob.status)
-        observed = {
-            str(row[0]): int(row[1] or 0) for row in self.session.execute(stmt).all()
-        }
+        observed = {str(row[0]): int(row[1] or 0) for row in self.session.execute(stmt).all()}
         return {status.value: observed.get(status.value, 0) for status in JobStatus}
 
     def count_detections(self, job_id: str) -> int:
@@ -300,9 +298,7 @@ class JobRepository(BaseRepository[DetectionJob, str]):
         """
         return self._transition(job_id, JobStatus.PROCESSING)
 
-    def mark_completed(
-        self, job_id: str, *, output_path: str | None = None
-    ) -> DetectionJob | None:
+    def mark_completed(self, job_id: str, *, output_path: str | None = None) -> DetectionJob | None:
         """Mark a job finished successfully.
 
         Forces ``progress`` to exactly ``1.0``. The worker's last computed

@@ -337,9 +337,7 @@ def _annotate(image: Any, case: ErrorCase) -> Any:
 
     bar = np.full((_ANNOTATION_BAR_HEIGHT, _ANNOTATION_WIDTH, 3), 255, dtype=np.uint8)
     font = cv2.FONT_HERSHEY_SIMPLEX
-    cv2.putText(
-        bar, f"GT  : {case.ground_truth}", (8, 22), font, 0.55, (0, 120, 0), 1, cv2.LINE_AA
-    )
+    cv2.putText(bar, f"GT  : {case.ground_truth}", (8, 22), font, 0.55, (0, 120, 0), 1, cv2.LINE_AA)
     cv2.putText(
         bar,
         f"PRED: {case.prediction or '(empty)'}",
@@ -402,9 +400,7 @@ def export_cases(
             shutil.rmtree(class_dir, ignore_errors=True)
         class_dir.mkdir(parents=True, exist_ok=True)
 
-        selected = (
-            class_cases[:limit_per_class] if limit_per_class > 0 else class_cases
-        )
+        selected = class_cases[:limit_per_class] if limit_per_class > 0 else class_cases
         for index, case in enumerate(selected, start=1):
             source = Path(case.image_path)
             if not source.is_file():
@@ -489,9 +485,7 @@ def _summary_payload(
             for (true, predicted), count in substitutions.most_common(30)
         ],
         "error_positions": {str(k): v for k, v in sorted(positions.items())},
-        "ground_truth_lengths_of_failures": {
-            str(k): v for k, v in sorted(lengths.items())
-        },
+        "ground_truth_lengths_of_failures": {str(k): v for k, v in sorted(lengths.items())},
         "confident_but_wrong": [
             {
                 "image_path": case.image_path,
@@ -622,8 +616,7 @@ def _write_markdown(payload: dict[str, Any], destination: Path) -> None:
     )
     if payload["error_positions"]:
         lines.extend(
-            f"| {position} | {count} |"
-            for position, count in payload["error_positions"].items()
+            f"| {position} | {count} |" for position, count in payload["error_positions"].items()
         )
     else:
         lines.append("| _khong co_ | - |")
@@ -834,9 +827,7 @@ def main(argv: list[str] | None = None) -> int:
     _write_chart(payload, output_dir / "error_classes.png")
 
     if not args.no_export:
-        exported = export_cases(
-            cases, output_dir, args.annotate, args.limit_per_class
-        )
+        exported = export_cases(cases, output_dir, args.annotate, args.limit_per_class)
         for error_class, count in sorted(exported.items()):
             LOGGER.info("Exported %d crop(s) into %s", count, output_dir / error_class)
 

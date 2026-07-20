@@ -83,12 +83,8 @@ class BoundingBoxSchema(BaseModel):
         description="Top edge of the box in pixels, measured from the image's top side.",
         examples=[318],
     )
-    width: int = Field(
-        ..., gt=0, description="Width of the box in pixels.", examples=[186]
-    )
-    height: int = Field(
-        ..., gt=0, description="Height of the box in pixels.", examples=[64]
-    )
+    width: int = Field(..., gt=0, description="Width of the box in pixels.", examples=[186])
+    height: int = Field(..., gt=0, description="Height of the box in pixels.", examples=[64])
 
 
 class DetectionResultSchema(BaseModel):
@@ -141,9 +137,57 @@ class DetectionResultSchema(BaseModel):
     is_valid_format: bool = Field(
         default=False,
         description=(
-            "Whether the recognized text matches a known Vietnamese license "
-            "plate format. False flags the result rather than discarding it."
+            "Whether the recognized text matches a known **civil** Vietnamese "
+            "plate format. False flags the result rather than discarding it. "
+            "Read this together with `plate_kind`: an army plate is a genuine "
+            "plate that is deliberately reported as false, because it lies "
+            "outside the civil registration system. Presenting such a result as "
+            "'wrong format' misrepresents it."
         ),
+    )
+    plate_kind: str | None = Field(
+        default=None,
+        description=(
+            "Plate family inferred from the character string: `car`, "
+            "`motorcycle_new`, `motorcycle_old`, `blue_car`, `blue_motorcycle`, "
+            "`special`, `diplomatic`, `military`, `unknown`. Note what this "
+            "cannot see: a commercial vehicle's yellow plate carries the same "
+            "layout as a private vehicle's white one, so both report `car`. "
+            "Use `plate_color` to separate them."
+        ),
+        examples=["car"],
+    )
+    plate_color: str | None = Field(
+        default=None,
+        description=(
+            "Background colour read from the cropped image: `white`, `yellow`, "
+            "`blue`, `red`, or `unknown`. Per Circular 79/2024/TT-BCA: white = "
+            "private/business entity, yellow = commercial transport, blue = "
+            "state agency, red = army. Complements `plate_kind` rather than "
+            "replacing it -- a diplomatic plate has a white background like a "
+            "private one, and only its string reveals what it is."
+        ),
+        examples=["yellow"],
+    )
+    plate_color_confidence: float | None = Field(
+        default=None,
+        ge=0.0,
+        le=1.0,
+        description=(
+            "Fraction of sampled pixels supporting `plate_color`. Not a "
+            "probability: it is the margin the colour decision rests on."
+        ),
+        examples=[0.69],
+    )
+    plate_display: str | None = Field(
+        default=None,
+        description=(
+            "Plate number rendered with the separators the physical plate "
+            "carries, e.g. `29E-015.66` for `29E01566`. Provided for display "
+            "only -- search, comparison and accuracy measurement all use the "
+            "bare `plate_number`."
+        ),
+        examples=["29E-015.66"],
     )
     plate_line_count: int | None = Field(
         default=None,
@@ -217,13 +261,10 @@ class DetectionResponse(BaseModel):
     image_url: str | None = Field(
         default=None,
         description=(
-            "URL of the stored source image. Null for webcam frames, which are "
-            "not persisted."
+            "URL of the stored source image. Null for webcam frames, which are not persisted."
         ),
     )
-    image_width: int = Field(
-        default=0, ge=0, description="Width in pixels of the processed image."
-    )
+    image_width: int = Field(default=0, ge=0, description="Width in pixels of the processed image.")
     image_height: int = Field(
         default=0, ge=0, description="Height in pixels of the processed image."
     )
@@ -274,14 +315,32 @@ class DetectionHistoryResponse(BaseModel):
     bbox_w: int = Field(..., description="Width of the plate box, in pixels.")
     bbox_h: int = Field(..., description="Height of the plate box, in pixels.")
     is_valid_format: bool = Field(
-        ..., description="Whether the plate text matches a Vietnamese plate format."
+        ...,
+        description=(
+            "Whether the plate text matches a **civil** Vietnamese plate format. "
+            "Read together with `plate_kind`: army plates report false by design."
+        ),
+    )
+    plate_kind: str | None = Field(
+        default=None,
+        description="Plate family inferred from the string, e.g. `car`, `military`.",
+        examples=["car"],
+    )
+    plate_color: str | None = Field(
+        default=None,
+        description="Background colour read from the crop: `white`, `yellow`, `blue`, `red`.",
+        examples=["yellow"],
+    )
+    plate_color_confidence: float | None = Field(
+        default=None,
+        ge=0.0,
+        le=1.0,
+        description="Fraction of sampled pixels supporting `plate_color`.",
     )
     plate_line_count: int | None = Field(
         default=None, description="Number of text lines on the plate: 1 or 2."
     )
-    processing_time: float = Field(
-        ..., ge=0.0, description="Seconds spent processing this plate."
-    )
+    processing_time: float = Field(..., ge=0.0, description="Seconds spent processing this plate.")
     detected_time: dt.datetime = Field(
         ..., description="UTC timestamp of when the plate was detected."
     )
@@ -361,15 +420,11 @@ class DetectionJobResponse(BaseModel):
         default=None,
         description="Total frames to process for a video, or null if not applicable.",
     )
-    processed_frames: int = Field(
-        default=0, description="Number of frames processed so far."
-    )
+    processed_frames: int = Field(default=0, description="Number of frames processed so far.")
     detection_count: int = Field(
         default=0, description="Number of license plates found by this job so far."
     )
-    created_at: dt.datetime = Field(
-        ..., description="UTC timestamp of when the job was accepted."
-    )
+    created_at: dt.datetime = Field(..., description="UTC timestamp of when the job was accepted.")
     completed_at: dt.datetime | None = Field(
         default=None,
         description="UTC timestamp of when the job finished, or null if still running.",
@@ -456,12 +511,8 @@ class InputTypeCountSchema(BaseModel):
 
     model_config = ConfigDict(from_attributes=True)
 
-    input_type: InputTypeLiteral = Field(
-        ..., description="The input type being counted."
-    )
-    job_count: int = Field(
-        ..., ge=0, description="Number of uploads or sessions of this type."
-    )
+    input_type: InputTypeLiteral = Field(..., description="The input type being counted.")
+    job_count: int = Field(..., ge=0, description="Number of uploads or sessions of this type.")
     detection_count: int = Field(
         ..., ge=0, description="Number of license plates found across those uploads."
     )
@@ -551,9 +602,7 @@ class StatisticsResponse(BaseModel):
         ge=0.0,
         description="Mean seconds spent per detected plate, or null if none.",
     )
-    jobs_today: int = Field(
-        default=0, ge=0, description="Uploads and sessions created today, UTC."
-    )
+    jobs_today: int = Field(default=0, ge=0, description="Uploads and sessions created today, UTC.")
     detections_today: int = Field(
         default=0, ge=0, description="License plates detected today, UTC."
     )

@@ -17,7 +17,7 @@ import pytest
 from ai.inference.config import InferenceConfig
 from ai.inference.exceptions import InvalidImageError, RecognitionError
 from ai.inference.interfaces import BaseDetector, BaseNormalizer, BaseRecognizer
-from ai.inference.pipeline import STAGE_NAMES, ALPRPipeline
+from ai.inference.pipeline import STAGE_NAMES, ALPRPipeline, refine_kind_with_color
 from ai.inference.types import BoundingBox, ImageArray, PlateDetection, PlateRecognition
 
 
@@ -208,9 +208,7 @@ class TestNoPlateFound:
 # --------------------------------------------------------------------- #
 class TestSuccessfulRun:
     def test_produces_one_result_per_detection(self) -> None:
-        detector = FakeDetector(
-            [make_detection(10, 10, 60, 20), make_detection(90, 40, 50, 20)]
-        )
+        detector = FakeDetector([make_detection(10, 10, 60, 20), make_detection(90, 40, 50, 20)])
         result = build(detector=detector).process(make_image())
         assert result.plate_count == 2
         assert result.recognized_count == 2
@@ -295,9 +293,7 @@ class TestFailureContainment:
                 raise ValueError("rule bug")
 
         detector = FakeDetector([make_detection(0, 0, 40, 20)])
-        result = build(detector=detector, normalizer=ExplodingNormalizer()).process(
-            make_image()
-        )
+        result = build(detector=detector, normalizer=ExplodingNormalizer()).process(make_image())
         recognition = result.results[0].recognition
         assert recognition is not None, "the plate must survive a normalizer crash"
         assert recognition.text == "51F73420"
@@ -305,9 +301,7 @@ class TestFailureContainment:
     def test_a_box_outside_the_image_is_skipped_not_fatal(self) -> None:
         detector = FakeDetector([make_detection(500, 500, 40, 20)])
         recognizer = FakeRecognizer()
-        result = build(detector=detector, recognizer=recognizer).process(
-            make_image(200, 100)
-        )
+        result = build(detector=detector, recognizer=recognizer).process(make_image(200, 100))
         assert result.plate_count == 1
         assert result.results[0].plate_image is None
         assert result.results[0].recognition is None
@@ -362,3 +356,228 @@ class TestWarmup:
         recognizer = FakeRecognizer()
         build(detector=ExplodingDetector(), recognizer=recognizer).warmup()
         assert recognizer.warmup_calls == 1, "the second stage must still be warmed"
+
+
+# --------------------------------------------------------------------- #
+# Two-line rescue: re-reading the upper half after a failed strip read
+# --------------------------------------------------------------------- #
+class TwoLineRecognizer(BaseRecognizer):
+    """Reproduces the strip failure mode: the upper line is lost, alone it reads.
+
+    Call 1 is the merged strip, which the real engine sometimes reads as the
+    lower line only. Every later call is the upper half on its own, which reads
+    correctly -- exactly the asymmetry the rescue path exists to exploit.
+    """
+
+    def __init__(self, strip_text: str = "01566", upper_text: str = "29E") -> None:
+        self._strip_text = strip_text
+        self._upper_text = upper_text
+        self.calls = 0
+        self.warmup_calls = 0
+
+    @property
+    def name(self) -> str:
+        return "two-line-recognizer"
+
+    def recognize(self, plate_image: ImageArray) -> PlateRecognition:
+        self.calls += 1
+        text = self._strip_text if self.calls == 1 else self._upper_text
+        return PlateRecognition(
+            text=text,
+            raw_text=text,
+            confidence=0.9,
+            line_count=2 if self.calls == 1 else 1,
+            is_valid_format=False,
+        )
+
+    def warmup(self) -> None:
+        self.warmup_calls += 1
+
+
+class LengthNormalizer(BaseNormalizer):
+    """Accepts a string only once it is long enough to be a plate.
+
+    Stands in for the real format rules: `01566` alone is rejected, and the
+    same string with its province code and serial letter restored is accepted.
+    """
+
+    def __init__(self, minimum_length: int = 8) -> None:
+        self.minimum_length = minimum_length
+        self.received: list[str] = []
+
+    def normalize(self, raw_text: str) -> tuple[str, bool]:
+        self.received.append(raw_text)
+        cleaned = raw_text.replace("-", "").replace(".", "")
+        return cleaned, len(cleaned) >= self.minimum_length
+
+
+class TestTwoLineRescue:
+    def test_recovers_a_plate_whose_upper_line_was_lost(self) -> None:
+        recognizer = TwoLineRecognizer()
+        detector = FakeDetector([make_detection(10, 10, 60, 40)])
+
+        result = build(
+            detector=detector, recognizer=recognizer, normalizer=LengthNormalizer()
+        ).process(make_image())
+
+        recognition = result.results[0].recognition
+        assert recognition is not None
+        assert recognition.text == "29E01566", "the upper fragment must be prepended"
+        assert recognition.is_valid_format is True
+        assert recognizer.calls == 2, "exactly one extra OCR call, not a full re-run"
+
+    def test_a_valid_first_read_is_never_retried(self) -> None:
+        recognizer = TwoLineRecognizer(strip_text="29E01566")
+        detector = FakeDetector([make_detection(10, 10, 60, 40)])
+
+        result = build(
+            detector=detector, recognizer=recognizer, normalizer=LengthNormalizer()
+        ).process(make_image())
+
+        assert recognizer.calls == 1, "a plate that already validated must not be re-read"
+        assert result.results[0].recognition is not None
+        assert result.results[0].recognition.text == "29E01566"
+
+    def test_keeps_the_first_result_when_the_retry_still_fails(self) -> None:
+        recognizer = TwoLineRecognizer(strip_text="01566", upper_text="")
+        detector = FakeDetector([make_detection(10, 10, 60, 40)])
+
+        result = build(
+            detector=detector, recognizer=recognizer, normalizer=LengthNormalizer()
+        ).process(make_image())
+
+        recognition = result.results[0].recognition
+        assert recognition is not None
+        assert recognition.text == "01566", "a failed rescue must not overwrite the original"
+        assert recognition.is_valid_format is False
+
+    def test_a_raising_retry_does_not_lose_the_plate(self) -> None:
+        class ExplodingOnRetry(TwoLineRecognizer):
+            def recognize(self, plate_image: ImageArray) -> PlateRecognition:
+                if self.calls >= 1:
+                    self.calls += 1
+                    raise RecognitionError("retry exploded")
+                return super().recognize(plate_image)
+
+        result = build(
+            detector=FakeDetector([make_detection(10, 10, 60, 40)]),
+            recognizer=ExplodingOnRetry(),
+            normalizer=LengthNormalizer(),
+        ).process(make_image())
+
+        recognition = result.results[0].recognition
+        assert recognition is not None, "a failed rescue must never drop the detection"
+        assert recognition.text == "01566"
+
+    def test_single_line_plates_are_never_retried(self) -> None:
+        recognizer = FakeRecognizer(text="51F1")
+        result = build(
+            detector=FakeDetector([make_detection(10, 10, 60, 40)]),
+            recognizer=recognizer,
+            normalizer=LengthNormalizer(),
+        ).process(make_image())
+
+        assert recognizer.calls == 1, "the rescue is scoped to two-line plates only"
+        assert result.results[0].recognition is not None
+
+    def test_the_rescue_still_reports_family_and_display_text(self) -> None:
+        """A rescued plate is a different string, so both must be recomputed.
+
+        Carrying the failed attempt's classification forward would describe a
+        plate number that no longer exists — and leaving them empty, as the
+        first version of the rescue did, silently stripped the very fields the
+        interface uses to avoid mislabelling a plate.
+        """
+
+        class KindAwareNormalizer(LengthNormalizer):
+            def normalize_detailed(self, raw_text: str, line_count: int | None = None) -> object:
+                cleaned, valid = self.normalize(raw_text)
+
+                class _Kind:
+                    value = "car"
+
+                class _Decision:
+                    kind = _Kind()
+
+                class _Outcome:
+                    text = cleaned
+                    is_valid_format = valid
+                    decision = _Decision()
+
+                return _Outcome()
+
+            def format_for_display(self, text: str, line_count: int | None = None) -> str:
+                return f"{text[:3]}-{text[3:6]}.{text[6:]}"
+
+        result = build(
+            detector=FakeDetector([make_detection(10, 10, 60, 40)]),
+            recognizer=TwoLineRecognizer(),
+            normalizer=KindAwareNormalizer(),
+        ).process(make_image())
+
+        recognition = result.results[0].recognition
+        assert recognition is not None
+        assert recognition.text == "29E01566"
+        assert recognition.kind == "car", "the rescued string must be reclassified"
+        assert recognition.display_text == "29E-015.66"
+
+
+# --------------------------------------------------------------------- #
+# Resolving a string-level ambiguity with the plate's colour
+# --------------------------------------------------------------------- #
+class _Kind:
+    """Minimal stand-in for ``PlateKind``: anything with a ``.value``."""
+
+    def __init__(self, value: str) -> None:
+        self.value = value
+
+
+class _Decision:
+    def __init__(self, kind: str, candidates: tuple[str, ...]) -> None:
+        self.kind = _Kind(kind)
+        self.candidates = tuple(_Kind(name) for name in candidates)
+
+
+class _Outcome:
+    def __init__(self, kind: str, candidates: tuple[str, ...]) -> None:
+        self.decision = _Decision(kind, candidates)
+
+
+_AMBIGUOUS = ("car", "motorcycle_old", "blue_car", "blue_motorcycle")
+
+
+class TestColorResolvesKindAmbiguity:
+    def test_blue_promotes_a_car_to_a_state_plate(self) -> None:
+        """`80A-123.45` is a legal string for both a private and a State car."""
+        outcome = _Outcome("car", _AMBIGUOUS)
+        assert refine_kind_with_color(outcome, "blue", 1) == "blue_car"
+
+    def test_blue_promotes_a_motorcycle_by_line_count(self) -> None:
+        outcome = _Outcome("motorcycle_old", _AMBIGUOUS)
+        assert refine_kind_with_color(outcome, "blue", 2) == "blue_motorcycle"
+
+    @pytest.mark.parametrize("color", ["white", "yellow", "unknown", ""])
+    def test_other_colours_leave_the_string_verdict_alone(self, color: str) -> None:
+        """Only blue carries family evidence; yellow is handled at the label layer."""
+        outcome = _Outcome("car", _AMBIGUOUS)
+        assert refine_kind_with_color(outcome, color, 1) == "car"
+
+    @pytest.mark.parametrize("kind", ["military", "diplomatic", "special"])
+    def test_colour_cannot_overrule_an_unambiguous_string(self, kind: str) -> None:
+        """A misread colour must not be able to reclassify a definite reading.
+
+        An army plate whose crop is misjudged as blue stays an army plate: the
+        colour may only promote a family the character rules already listed as
+        plausible.
+        """
+        outcome = _Outcome(kind, (kind,))
+        assert refine_kind_with_color(outcome, "blue", 1) == kind
+
+    def test_line_count_wins_when_it_contradicts_the_promotion(self) -> None:
+        """A two-line plate cannot become `blue_car`; the line count is measured."""
+        outcome = _Outcome("car", ("car", "blue_car"))
+        assert refine_kind_with_color(outcome, "blue", 2) == "car"
+
+    def test_an_outcome_without_a_classification_is_handled(self) -> None:
+        """`BaseNormalizer` promises only `normalize`; absence must not raise."""
+        assert refine_kind_with_color(object(), "blue", 1) == ""

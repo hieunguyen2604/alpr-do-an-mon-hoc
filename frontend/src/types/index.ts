@@ -34,6 +34,34 @@ export type JobStatus =
 export type PlateLineCount = 1 | 2;
 
 /**
+ * Plate family inferred from the character string.
+ *
+ * Mirrors `ai.inference.plate_rules.PlateKind`. Note what a string cannot
+ * express: a commercial vehicle's yellow plate carries the same layout as a
+ * private vehicle's white one, so both report `car`. See {@link PlateColor}.
+ */
+export type PlateKind =
+  | 'car'
+  | 'motorcycle_new'
+  | 'motorcycle_old'
+  | 'blue_car'
+  | 'blue_motorcycle'
+  | 'special'
+  | 'diplomatic'
+  | 'military'
+  | 'unknown';
+
+/**
+ * Background colour read from the cropped plate.
+ *
+ * Per Circular 79/2024/TT-BCA: white = private or domestic organisation,
+ * yellow = commercial transport, blue = state agency, red = army. Complements
+ * {@link PlateKind} rather than replacing it — a diplomatic plate is white like
+ * a private one, and only its string tells them apart.
+ */
+export type PlateColor = 'white' | 'yellow' | 'blue' | 'red' | 'unknown';
+
+/**
  * Sortable columns of the history list (FR-4.8).
  *
  * Mirrors `SortField` in `backend/services/history_service.py`, which is a
@@ -119,8 +147,33 @@ export interface DetectionResult {
   ocr_confidence: number | null;
   /** Where the plate sits in the source image. */
   bbox: BoundingBox;
-  /** Whether `plate_number` matches a known Vietnamese plate format. */
+  /**
+   * Whether `plate_number` matches a known **civil** Vietnamese plate format.
+   *
+   * Do not render this alone. An army plate is a genuine plate that reports
+   * `false` by design, because it lies outside the civil registration system —
+   * showing that as "wrong format" contradicts a correct reading. Pass it
+   * through `plateClassBadges` together with `plate_kind`.
+   */
   is_valid_format: boolean;
+  /**
+   * Plate family inferred from the character string. `null` on records stored
+   * before 2026-07-20, when the classification was computed and then discarded.
+   */
+  plate_kind: PlateKind | null;
+  /**
+   * Background colour read from the crop. Carries what no rule over the string
+   * can: a commercial vehicle's yellow plate and a private vehicle's white one
+   * are the same string.
+   */
+  plate_color: PlateColor | null;
+  /** Fraction of sampled pixels supporting `plate_color`. Not a probability. */
+  plate_color_confidence: number | null;
+  /**
+   * `plate_number` with the separators the physical plate carries, e.g.
+   * `29E-015.66`. Display only — search and comparison use `plate_number`.
+   */
+  plate_display: string | null;
   /** 1 or 2. Reported so accuracy can be split by plate layout. */
   plate_line_count: PlateLineCount | null;
   /** Seconds spent on this plate: detection plus OCR. */
@@ -194,7 +247,15 @@ export interface DetectionHistory {
   bbox_y: number;
   bbox_w: number;
   bbox_h: number;
+  /** Civil-format verdict. Read together with `plate_kind` — see the note on
+   * {@link DetectionResult.is_valid_format}. */
   is_valid_format: boolean;
+  /** Plate family from the string. `null` on rows stored before 2026-07-20. */
+  plate_kind: PlateKind | null;
+  /** Background colour from the crop. `null` on rows stored before 2026-07-20. */
+  plate_color: PlateColor | null;
+  /** Fraction of sampled pixels supporting `plate_color`. */
+  plate_color_confidence: number | null;
   plate_line_count: PlateLineCount | null;
   /** Seconds. */
   processing_time: number;
@@ -334,7 +395,15 @@ export interface DetectionsOverTimePoint {
 }
 
 /**
- * Dashboard aggregates, from `GET /api/statistics` (FR-4.1, FR-4.2).
+ * Aggregates from `GET /api/statistics` (was FR-4.1, FR-4.2).
+ *
+ * **No consumer in this application since 2026-07-20.** The Dashboard page was
+ * removed from the interface, so nothing in `src/` reads this type today. It is
+ * kept because the endpoint it mirrors is still served and still tested — this
+ * file is the frontend's copy of the wire contract, and dropping the mirror
+ * while the contract lives would make a future dashboard, or any external
+ * client, start from a blank page. Do not "clean it up" without also checking
+ * `backend/api/routes/statistics.py`.
  *
  * `total_jobs` and `total_detections` are separate on purpose and must not be used
  * interchangeably. One image containing three plates is **one** job and

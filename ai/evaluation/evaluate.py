@@ -108,9 +108,7 @@ _TWO_LINE_TOKENS: Final[tuple[str, ...]] = (
 )
 
 # IoU thresholds used for the mAP@0.5:0.95 average, matching the COCO protocol.
-_COCO_IOU_THRESHOLDS: Final[tuple[float, ...]] = tuple(
-    round(0.5 + 0.05 * i, 2) for i in range(10)
-)
+_COCO_IOU_THRESHOLDS: Final[tuple[float, ...]] = tuple(round(0.5 + 0.05 * i, 2) for i in range(10))
 
 
 # --------------------------------------------------------------------------- #
@@ -289,9 +287,7 @@ def resolve_split_images(data_yaml: Path, descriptor: dict[str, Any], split: str
         if not candidate.is_absolute():
             candidate = (root / candidate).resolve()
         if candidate.is_dir():
-            images.extend(
-                p for p in candidate.rglob("*") if p.suffix.lower() in _IMAGE_SUFFIXES
-            )
+            images.extend(p for p in candidate.rglob("*") if p.suffix.lower() in _IMAGE_SUFFIXES)
         elif candidate.is_file() and candidate.suffix.lower() == ".txt":
             for line in candidate.read_text(encoding="utf-8").splitlines():
                 line = line.strip()
@@ -310,8 +306,7 @@ def resolve_split_images(data_yaml: Path, descriptor: dict[str, Any], split: str
         LOGGER.warning("%d listed image(s) are missing from disk", missing)
     if not existing:
         raise ValueError(
-            f"No images found for split {split!r} under {root}. Check the paths "
-            f"in {data_yaml}."
+            f"No images found for split {split!r} under {root}. Check the paths " f"in {data_yaml}."
         )
     return existing
 
@@ -470,7 +465,9 @@ def read_ground_truth(
 # --------------------------------------------------------------------------- #
 # Metric computation
 # --------------------------------------------------------------------------- #
-def iou(box_a: tuple[float, float, float, float], box_b: tuple[float, float, float, float]) -> float:
+def iou(
+    box_a: tuple[float, float, float, float], box_b: tuple[float, float, float, float]
+) -> float:
     """Intersection-over-union of two axis-aligned boxes.
 
     Args:
@@ -615,12 +612,7 @@ def evaluate_group(
     metrics.precision = metrics.true_positives / denominator if denominator else 0.0
     metrics.recall = metrics.true_positives / len(ground_truth)
     if metrics.precision + metrics.recall > 0.0:
-        metrics.f1 = (
-            2.0
-            * metrics.precision
-            * metrics.recall
-            / (metrics.precision + metrics.recall)
-        )
+        metrics.f1 = 2.0 * metrics.precision * metrics.recall / (metrics.precision + metrics.recall)
 
     metrics.ap50, metrics.pr_curve = compute_average_precision(outcomes, len(ground_truth))
     per_threshold = []
@@ -694,9 +686,7 @@ def run_predictions(
                 x1, y1, x2, y2 = (float(v) for v in xyxy)
                 width, height = x2 - x1, y2 - y1
                 group = (
-                    SINGLE_LINE
-                    if height > 0.0 and (width / height) >= ar_threshold
-                    else TWO_LINE
+                    SINGLE_LINE if height > 0.0 and (width / height) >= ar_threshold else TWO_LINE
                 )
                 predictions.append(
                     PredictionBox(
@@ -1147,9 +1137,7 @@ def build_parser() -> argparse.ArgumentParser:
         default=None,
         help="Report basename (default: derived from the weights file and split).",
     )
-    parser.add_argument(
-        "--no-plots", action="store_true", help="Skip PNG generation."
-    )
+    parser.add_argument("--no-plots", action="store_true", help="Skip PNG generation.")
     parser.add_argument(
         "--skip-ultralytics-val",
         action="store_true",
@@ -1211,9 +1199,7 @@ def _log_table(metrics_by_group: dict[str, GroupMetrics], overall: GroupMetrics)
     two = metrics_by_group.get(TWO_LINE)
     if single and two and single.num_ground_truth and two.num_ground_truth:
         gap = single.ap50 - two.ap50
-        LOGGER.info(
-            "NFR-A8 gap (single-line AP@0.5 minus two-line AP@0.5): %+.4f", gap
-        )
+        LOGGER.info("NFR-A8 gap (single-line AP@0.5 minus two-line AP@0.5): %+.4f", gap)
         if gap > 0.10:
             LOGGER.warning(
                 "Two-line plates lag single-line by more than 10 AP points. This "
@@ -1359,10 +1345,7 @@ def main(argv: list[str] | None = None) -> int:
             or ""
         )
         plots["latency_histogram"] = str(
-            plot_latency(
-                speed_samples, figures_dir / f"{basename}_latency.png", args.device
-            )
-            or ""
+            plot_latency(speed_samples, figures_dir / f"{basename}_latency.png", args.device) or ""
         )
 
     report = {

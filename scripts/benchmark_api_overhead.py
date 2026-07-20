@@ -63,8 +63,16 @@ def start_server(port: int, weights: Path, log_path: Path) -> subprocess.Popen[b
     handle = log_path.open("wb")
     return subprocess.Popen(
         [
-            sys.executable, "-m", "uvicorn", "backend.main:app",
-            "--host", "127.0.0.1", "--port", str(port), "--log-level", "warning",
+            sys.executable,
+            "-m",
+            "uvicorn",
+            "backend.main:app",
+            "--host",
+            "127.0.0.1",
+            "--port",
+            str(port),
+            "--log-level",
+            "warning",
         ],
         cwd=str(_PROJECT_ROOT),
         env=environment,
@@ -120,9 +128,7 @@ def measure_overhead(
             payload = path.read_bytes()
             started = time.perf_counter()
             try:
-                response = client.post(
-                    endpoint, files={"file": (path.name, payload, "image/jpeg")}
-                )
+                response = client.post(endpoint, files={"file": (path.name, payload, "image/jpeg")})
             except Exception as exc:  # noqa: BLE001
                 failures.append(f"{type(exc).__name__}: {exc}")
                 continue
@@ -199,8 +205,10 @@ def main(argv: list[str] | None = None) -> int:
     LOGGER.info("=" * 72)
     LOGGER.info(
         "CPU: %s | %s physical / %s logical cores | %.2f GB RAM",
-        hardware["cpu_name"], hardware["physical_cores"],
-        hardware["logical_cores"], hardware["ram_total_gb"],
+        hardware["cpu_name"],
+        hardware["physical_cores"],
+        hardware["logical_cores"],
+        hardware["ram_total_gb"],
     )
     if hardware["competing_processes"]:
         LOGGER.warning("Competing CPU load present -- timings below are PESSIMISTIC:")
@@ -228,13 +236,15 @@ def main(argv: list[str] | None = None) -> int:
         if ready_s is None:
             LOGGER.error(
                 "Server did not become ready within %.0f s. See %s",
-                args.startup_timeout, log_path,
+                args.startup_timeout,
+                log_path,
             )
             report["error"] = "server did not become ready"
             report["nfr_p4_startup"] = {"measured_s": None, "status": "NOT_MEASURED"}
         else:
-            LOGGER.info("/health ready after %.2f s (model_loaded=%s)",
-                        ready_s, health.get("model_loaded"))
+            LOGGER.info(
+                "/health ready after %.2f s (model_loaded=%s)", ready_s, health.get("model_loaded")
+            )
             report["nfr_p4_startup"] = {
                 "measured_s": round(ready_s, 2),
                 "target_s": P4_TARGET_S,
@@ -248,7 +258,9 @@ def main(argv: list[str] | None = None) -> int:
                     "pipeline, so the overhead below is NOT measured against real "
                     "inference. Treat it as invalid."
                 )
-                report["warning"] = "model_loaded=false; overhead not measured against real inference"
+                report["warning"] = (
+                    "model_loaded=false; overhead not measured against real inference"
+                )
 
             LOGGER.info("Sending %d request(s) to /detect/image ...", len(images))
             overhead = measure_overhead(base_url, args.api_prefix, images, args.warmup)
@@ -268,7 +280,9 @@ def main(argv: list[str] | None = None) -> int:
                 overhead["status"] = "PASS" if p95 <= P5_TARGET_MS else "FAIL"
                 LOGGER.info(
                     "Overhead p50=%.2f ms p95=%.2f ms (target %.0f ms) -- %s",
-                    overhead["overhead"]["p50_ms"], p95, P5_TARGET_MS,
+                    overhead["overhead"]["p50_ms"],
+                    p95,
+                    P5_TARGET_MS,
                     overhead["status"],
                 )
                 LOGGER.info(

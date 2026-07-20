@@ -268,13 +268,9 @@ class HistoryService:
         if criteria.date_to is not None:
             statement = statement.where(DetectionHistory.detected_time <= criteria.date_to)
         if criteria.min_confidence is not None:
-            statement = statement.where(
-                DetectionHistory.confidence >= criteria.min_confidence
-            )
+            statement = statement.where(DetectionHistory.confidence >= criteria.min_confidence)
         if criteria.job_id:
-            statement = statement.where(
-                DetectionHistory.source_job_id == criteria.job_id
-            )
+            statement = statement.where(DetectionHistory.source_job_id == criteria.job_id)
         return statement
 
     @staticmethod

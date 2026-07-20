@@ -57,7 +57,7 @@ import logging
 import sys
 from collections import Counter, defaultdict
 from pathlib import Path
-from typing import Any, Final, Iterable, Sequence
+from typing import Any, Final, Sequence
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
@@ -210,7 +210,6 @@ def compute_statistics(records: Sequence[ImageRecord]) -> dict[str, Any]:
     line_counts_per_split: dict[str, Counter[str]] = defaultdict(Counter)
     line_count_labelled = 0
     line_count_guessed = 0
-
 
     for record in records:
         per_split[record.split] += 1
@@ -389,9 +388,7 @@ def compute_plate_text_statistics(csv_path: Path) -> dict[str, Any]:
         "length_histogram": dict(sorted(lengths.items())),
         "length_histogram_valid_only": dict(sorted(lengths_valid.items())),
         "line_count_distribution": dict(sorted(line_counts.items())),
-        "per_dataset": {
-            name: dict(counter) for name, counter in sorted(per_dataset.items())
-        },
+        "per_dataset": {name: dict(counter) for name, counter in sorted(per_dataset.items())},
     }
 
 
@@ -517,9 +514,7 @@ def _chart_splits(plt: Any, summary: dict[str, Any], output_dir: Path) -> list[P
     axes[0].bar(names, values, color=ACCENT)
     total = sum(values) or 1
     for index, value in enumerate(values):
-        axes[0].text(
-            index, value, f"{value}\n{100 * value / total:.1f}%", ha="center", va="bottom"
-        )
+        axes[0].text(index, value, f"{value}\n{100 * value / total:.1f}%", ha="center", va="bottom")
     axes[0].set_title("Images per split")
     axes[0].set_ylabel("images")
     axes[0].margins(y=0.18)
@@ -577,9 +572,7 @@ def _chart_box_area(plt: Any, records: Sequence[ImageRecord], output_dir: Path) 
     Returns:
         A single-element list, or empty when there are no boxes.
     """
-    areas = [
-        box.area * 100 for record in records for box in record.boxes if box.area > 0
-    ]
+    areas = [box.area * 100 for record in records for box in record.boxes if box.area > 0]
     if not areas:
         return []
 
@@ -601,9 +594,7 @@ def _chart_box_area(plt: Any, records: Sequence[ImageRecord], output_dir: Path) 
     return [_save(plt, figure, output_dir / "box_area.png")]
 
 
-def _chart_aspect_ratio(
-    plt: Any, records: Sequence[ImageRecord], output_dir: Path
-) -> list[Path]:
+def _chart_aspect_ratio(plt: Any, records: Sequence[ImageRecord], output_dir: Path) -> list[Path]:
     """Chart the box aspect-ratio distribution with the plate-standard markers.
 
     Args:
@@ -674,9 +665,7 @@ def _chart_aspect_ratio(
     return [_save(plt, figure, output_dir / "aspect_ratio.png")]
 
 
-def _chart_image_sizes(
-    plt: Any, records: Sequence[ImageRecord], output_dir: Path
-) -> list[Path]:
+def _chart_image_sizes(plt: Any, records: Sequence[ImageRecord], output_dir: Path) -> list[Path]:
     """Chart the distribution of source image resolutions.
 
     Args:
@@ -701,7 +690,9 @@ def _chart_image_sizes(
 
     sizes = Counter(f"{w}x{h}" for w, h in zip(widths, heights))
     common = sizes.most_common(10)
-    axes[1].barh([name for name, _ in reversed(common)], [n for _, n in reversed(common)], color=ACCENT)
+    axes[1].barh(
+        [name for name, _ in reversed(common)], [n for _, n in reversed(common)], color=ACCENT
+    )
     axes[1].set_title("Ten most common resolutions")
     axes[1].set_xlabel("images")
     axes[1].margins(x=0.15)
@@ -767,9 +758,7 @@ def _chart_characters(plt: Any, summary: dict[str, Any], output_dir: Path) -> li
     counts = [frequency[character] for character in characters]
     colours = [WARN if character in "IJOQW" else ACCENT for character in characters]
     axis.bar(characters, counts, color=colours)
-    axis.set_title(
-        "Character frequency (red = letters that should never appear on a VN plate)"
-    )
+    axis.set_title("Character frequency (red = letters that should never appear on a VN plate)")
     axis.set_xlabel("character")
     axis.set_ylabel("occurrences")
 
@@ -957,8 +946,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     line_estimate = summary["line_count_estimate"]
     LOGGER.info(
         "Line count     : %s (%s, threshold %.1f; %d labelled / %d heuristic)",
-        ", ".join(f"{key}-line={value}" for key, value in line_estimate["counts"].items())
-        or "n/a",
+        ", ".join(f"{key}-line={value}" for key, value in line_estimate["counts"].items()) or "n/a",
         line_estimate["method"],
         line_estimate["threshold"],
         line_estimate["labelled_boxes"],

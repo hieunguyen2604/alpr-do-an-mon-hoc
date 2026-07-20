@@ -277,9 +277,7 @@ class VietnamesePlateNormalizer(BaseNormalizer):
             corrections=corrections,
         )
 
-    def detect_plate_kind(
-        self, text: str, line_count: int | None = None
-    ) -> KindDecision:
+    def detect_plate_kind(self, text: str, line_count: int | None = None) -> KindDecision:
         """Classify a cleaned plate string.
 
         Patterns are tried in the priority order of
@@ -328,8 +326,7 @@ class VietnamesePlateNormalizer(BaseNormalizer):
             # A one-line plate cannot be a motorcycle plate (section 7.1).
             best = PlateKind.CAR
             is_ambiguous = any(
-                pair <= candidate_set - {PlateKind.MOTORCYCLE_OLD}
-                for pair in _AMBIGUOUS_PAIRS
+                pair <= candidate_set - {PlateKind.MOTORCYCLE_OLD} for pair in _AMBIGUOUS_PAIRS
             )
             resolved = True
 
@@ -397,8 +394,7 @@ class VietnamesePlateNormalizer(BaseNormalizer):
 
         if decision.kind is PlateKind.DIPLOMATIC:
             return (
-                f"{groups['province']}-{groups['country']}-"
-                f"{groups['code']}-{groups['number']}"
+                f"{groups['province']}-{groups['country']}-" f"{groups['code']}-{groups['number']}"
             )
         if decision.kind is PlateKind.MILITARY:
             return f"{groups['unit']}-{groups['number']}"

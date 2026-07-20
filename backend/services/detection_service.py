@@ -23,15 +23,15 @@ Protocol is structural: Phase 4's ``ALPRPipeline`` satisfies it by having the
 right methods, while remaining entirely unaware that this file exists.
 
 .. important::
-   **TODO (Phase 4) -- replace the stub.** :class:`StubPipeline` fabricates
-   results. It exists so the API, the database and the frontend can be built
-   and demonstrated end to end before the model is trained, and it is wired in
-   by :func:`backend.main.build_pipeline` **only when the configured weights
-   file is absent**. When Phase 3/4 produce ``models/best.pt`` and
-   ``ai.inference.pipeline.ALPRPipeline``, the single change required is in
-   ``backend/main.py``: construct the real pipeline instead. Nothing in this
-   module, in ``backend/api`` or in the schemas needs to be touched. The stub
-   reports ``is_ready = False``, so ``/health`` answers ``"degraded"`` and no
+   :class:`StubPipeline` fabricates results. It existed so the API, the
+   database and the frontend could be built and demonstrated end to end before
+   the model was trained; since Phase 4 wired the real
+   ``ai.inference.pipeline.ALPRPipeline`` into
+   :func:`backend.main.build_pipeline`, the stub is installed **only on
+   explicit opt-in** (``ALPR_USE_STUB``). When the weights are missing the
+   composition root installs :class:`UnavailablePipeline` instead, which fails
+   every request cleanly rather than inventing plates. The stub reports
+   ``is_ready = False``, so ``/health`` answers ``"degraded"`` and no
    demonstration can silently pass off fabricated plates as real ones.
 """
 
@@ -45,6 +45,7 @@ import numpy as np
 from sqlalchemy.orm import Session
 
 from ai.inference.exceptions import ALPRError
+from ai.inference.normalizer import VietnamesePlateNormalizer
 from ai.inference.types import (
     BoundingBox,
     DetectionResult,
@@ -59,8 +60,8 @@ from backend.core.logging import get_logger, request_context
 from backend.models.detection import DetectionHistory, DetectionJob, InputType, JobStatus, utcnow
 from backend.schemas.detection import (
     BoundingBoxSchema,
-    DetectionResponse,
     DetectionJobResponse,
+    DetectionResponse,
     DetectionResultSchema,
 )
 from backend.services.storage_service import MediaKind, StorageService
@@ -74,6 +75,13 @@ __all__ = [
 ]
 
 logger = get_logger(__name__)
+
+_NORMALIZER = VietnamesePlateNormalizer()
+"""Shared, stateless formatter for the display rendering of a stored plate.
+
+Module-level because it holds no per-request state and constructing one per
+response would recompile the same regular expressions on every history page.
+"""
 
 _PROGRESS_COMMIT_EVERY: Final[int] = 10
 """Processed frames between two progress writes.
@@ -305,9 +313,7 @@ class UnavailablePipeline:
             ai.inference.exceptions.ALPRError: Always. The service layer turns
                 this into a ``ProcessingError`` with a Vietnamese user message.
         """
-        raise ALPRError(
-            f"Recognition pipeline is not available: {self._reason}"
-        )
+        raise ALPRError(f"Recognition pipeline is not available: {self._reason}")
 
     def warmup(self) -> None:
         """Do nothing; there is no model to prime."""
@@ -350,6 +356,34 @@ def to_job_response(job: DetectionJob, storage: StorageService) -> DetectionJobR
     )
 
 
+def _display_text(plate_number: str | None, line_count: int | None) -> str | None:
+    """Render a stored plate number with the separators the real plate carries.
+
+    Derived on read rather than stored: the separators are a pure function of the
+    plate string, so persisting them would be a second copy of the same fact --
+    one that could drift, and one that historical rows written before this
+    feature would be missing anyway.
+
+    Args:
+        plate_number: The bare stored string, e.g. ``"29E01566"``.
+        line_count: Lines on the plate, forwarded to disambiguate layouts that
+            share a character pattern.
+
+    Returns:
+        The formatted string, e.g. ``"29E-015.66"``; ``None`` when there is no
+        plate number; or the input unchanged if it matches no known layout --
+        an unrecognised string is shown exactly as read, never dressed up to
+        look like a valid plate.
+    """
+    if not plate_number:
+        return None
+    try:
+        return _NORMALIZER.format_for_display(plate_number, line_count=line_count)
+    except Exception:  # noqa: BLE001 - presentation must never break a response
+        logger.debug("format_for_display failed for %r", plate_number)
+        return plate_number
+
+
 def _to_result_schema(row: DetectionHistory, storage: StorageService) -> DetectionResultSchema:
     """Map a persisted detection row to the per-plate response model.
 
@@ -365,10 +399,12 @@ def _to_result_schema(row: DetectionHistory, storage: StorageService) -> Detecti
         raw_ocr_text=row.raw_ocr_text,
         detection_confidence=row.confidence,
         ocr_confidence=row.ocr_confidence,
-        bbox=BoundingBoxSchema(
-            x=row.bbox_x, y=row.bbox_y, width=row.bbox_w, height=row.bbox_h
-        ),
+        bbox=BoundingBoxSchema(x=row.bbox_x, y=row.bbox_y, width=row.bbox_w, height=row.bbox_h),
         is_valid_format=row.is_valid_format,
+        plate_kind=row.plate_kind,
+        plate_color=row.plate_color,
+        plate_color_confidence=row.plate_color_confidence,
+        plate_display=_display_text(row.plate_number, row.plate_line_count),
         plate_line_count=row.plate_line_count,
         processing_time=row.processing_time,
         plate_image_url=storage.to_url(row.plate_image_path),
@@ -742,12 +778,13 @@ class DetectionService:
         )
 
         job.processed_frames = processed
-        # TODO (Phase 4): render an annotated copy of the video and set
+        # TODO: render an annotated copy of the video and set
         # ``job.output_path`` to it, so the client can download a result video
-        # rather than only the per-plate rows. Deferred because drawing boxes on
-        # every frame requires the real detector's per-frame output, which the
-        # stub does not meaningfully provide -- annotating fabricated boxes onto
-        # a real video would produce a convincing-looking but false artefact.
+        # rather than only the per-plate rows. Known limitation, deliberately
+        # kept out of scope: on the CPU-only target machine re-encoding every
+        # frame with boxes drawn on it would multiply the processing time of a
+        # job, and the dashboard already exposes the per-plate crops that the
+        # pipeline persisted for verification.
         self._finish_job(job, status=JobStatus.COMPLETED)
         db.commit()
 
@@ -784,7 +821,9 @@ class DetectionService:
                 # row, while a genuinely different plate elsewhere in the frame
                 # still gets its own.
                 bbox = entry.detection.bbox
-                key = f"unread@{(bbox.x + bbox.width // 2) // 32},{(bbox.y + bbox.height // 2) // 32}"
+                key = (
+                    f"unread@{(bbox.x + bbox.width // 2) // 32},{(bbox.y + bbox.height // 2) // 32}"
+                )
                 score = entry.detection.confidence
 
             existing = best_by_key.get(key)
@@ -892,9 +931,7 @@ class DetectionService:
         db.flush()
         return job
 
-    def _resume_or_create_webcam_job(
-        self, db: Session, job_id: str | None
-    ) -> DetectionJob:
+    def _resume_or_create_webcam_job(self, db: Session, job_id: str | None) -> DetectionJob:
         """Find the webcam session a frame belongs to, or start a new one.
 
         An unknown or finished identifier starts a fresh session rather than
@@ -1108,6 +1145,12 @@ class DetectionService:
                 bbox_h=bbox.height,
                 is_valid_format=bool(recognition.is_valid_format) if recognition else False,
                 plate_line_count=recognition.line_count if recognition else None,
+                # Vehicle-class attributes. Stored as NULL rather than "" when
+                # absent, matching how the text columns above treat "nothing
+                # read": one value for "not recorded", not two.
+                plate_kind=(recognition.kind or None) if recognition else None,
+                plate_color=entry.plate_color or None,
+                plate_color_confidence=entry.plate_color_confidence or None,
                 processing_time=entry.processing_time,
                 detected_time=detected_at,
                 source_job_id=job.id,

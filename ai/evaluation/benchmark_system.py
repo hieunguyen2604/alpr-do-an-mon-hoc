@@ -51,6 +51,8 @@ from typing import Any
 
 import numpy as np
 
+from ai.evaluation.stress_test import percentiles
+
 LOGGER = logging.getLogger("benchmark_system")
 
 IMAGE_SUFFIXES: frozenset[str] = frozenset(
@@ -170,7 +172,9 @@ def log_hardware(info: HardwareInfo) -> None:
     LOGGER.info("MEASUREMENT ENVIRONMENT (every number below is relative to this)")
     LOGGER.info("=" * 72)
     LOGGER.info("CPU              : %s", info.cpu_name)
-    LOGGER.info("Cores            : %s physical / %s logical", info.physical_cores, info.logical_cores)
+    LOGGER.info(
+        "Cores            : %s physical / %s logical", info.physical_cores, info.logical_cores
+    )
     LOGGER.info("RAM              : %.2f GB", info.ram_total_gb)
     LOGGER.info("OS / Python      : %s / %s", info.platform, info.python_version)
     LOGGER.info("torch            : %s (threads=%s)", info.torch_version, info.torch_threads)
@@ -200,29 +204,6 @@ def discover_images(root: Path, limit: int) -> list[Path]:
     if not found:
         raise FileNotFoundError(f"No images under {root}")
     return found[:limit] if limit > 0 else found
-
-
-def percentiles(values: Sequence[float]) -> dict[str, float]:
-    """p50/p95/p99 plus mean/min/max, all rounded to two decimals."""
-    if not values:
-        return {}
-    ordered = sorted(values)
-
-    def pick(fraction: float) -> float:
-        if len(ordered) == 1:
-            return ordered[0]
-        index = min(len(ordered) - 1, max(0, int(round(fraction * (len(ordered) - 1)))))
-        return ordered[index]
-
-    return {
-        "samples": len(ordered),
-        "mean_ms": round(statistics.fmean(ordered), 2),
-        "p50_ms": round(pick(0.50), 2),
-        "p95_ms": round(pick(0.95), 2),
-        "p99_ms": round(pick(0.99), 2),
-        "min_ms": round(ordered[0], 2),
-        "max_ms": round(ordered[-1], 2),
-    }
 
 
 def measure_model_load(model_path: Path, device: str) -> tuple[Any, float]:
@@ -398,16 +379,12 @@ def summarise_stage_budget(stage_rows: Sequence[StageTimings]) -> dict[str, Any]
         for field_name in fields
     }
     total = sum(medians.values()) or 1.0
-    shares = {
-        field_name: round(100.0 * value / total, 1) for field_name, value in medians.items()
-    }
+    shares = {field_name: round(100.0 * value / total, 1) for field_name, value in medians.items()}
     return {
         "median_ms": medians,
         "share_percent": shares,
         "median_total_ms": round(total, 2),
-        "mean_plates_per_image": round(
-            statistics.fmean(row.plates_found for row in stage_rows), 2
-        ),
+        "mean_plates_per_image": round(statistics.fmean(row.plates_found for row in stage_rows), 2),
         "samples": len(stage_rows),
     }
 
@@ -454,8 +431,11 @@ def plot_results(report: dict[str, Any], figures_dir: Path) -> list[str]:
         bars = axis.barh(labels, values, color="#2563EB")
         for bar, value in zip(bars, values, strict=True):
             axis.text(
-                bar.get_width(), bar.get_y() + bar.get_height() / 2, f" {value:.1f} ms",
-                va="center", fontsize=9,
+                bar.get_width(),
+                bar.get_y() + bar.get_height() / 2,
+                f" {value:.1f} ms",
+                va="center",
+                fontsize=9,
             )
         axis.set_xlabel("Median milliseconds per image")
         axis.set_title(f"Measured latency budget by stage\n{report['hardware']['cpu_name']}")
@@ -473,7 +453,9 @@ def plot_results(report: dict[str, Any], figures_dir: Path) -> list[str]:
         keys = ["p50_ms", "p95_ms", "p99_ms"]
         x = np.arange(len(keys))
         axis.bar(x - 0.2, [pt.get(k, 0) for k in keys], 0.4, label="PyTorch (.pt)", color="#2563EB")
-        axis.bar(x + 0.2, [onnx.get(k, 0) for k in keys], 0.4, label="ONNX Runtime", color="#16A34A")
+        axis.bar(
+            x + 0.2, [onnx.get(k, 0) for k in keys], 0.4, label="ONNX Runtime", color="#16A34A"
+        )
         axis.set_xticks(x)
         axis.set_xticklabels([k.replace("_ms", "") for k in keys])
         axis.set_ylabel("Detector latency (ms)")
@@ -548,7 +530,11 @@ def main(argv: list[str] | None = None) -> int:
     except Exception as exc:  # noqa: BLE001
         LOGGER.warning("warmup() raised: %s", exc)
     warmup_seconds = time.perf_counter() - started
-    LOGGER.info("Warmup took %.2f s (ready after %.2f s total)", warmup_seconds, load_seconds + warmup_seconds)
+    LOGGER.info(
+        "Warmup took %.2f s (ready after %.2f s total)",
+        warmup_seconds,
+        load_seconds + warmup_seconds,
+    )
 
     rss_loaded = process_rss_gb()
 
@@ -596,7 +582,9 @@ def main(argv: list[str] | None = None) -> int:
                 backends["speedup_p50"] = round(speedup, 3)
                 LOGGER.info(
                     "ONNX speedup at p50: %.2fx (%.1f ms -> %.1f ms)",
-                    speedup, pt_p50, onnx_p50,
+                    speedup,
+                    pt_p50,
+                    onnx_p50,
                 )
         else:
             backends["onnx"] = {"error": "export failed or file missing"}
@@ -656,7 +644,9 @@ def main(argv: list[str] | None = None) -> int:
     LOGGER.info("=" * 72)
     for requirement, verdict in verdicts.items():
         status = "PASS" if verdict.get("meets_target") else "FAIL"
-        LOGGER.info("%-8s %s  %s", requirement, status, NFR_TARGETS.get(requirement, {}).get("name", ""))
+        LOGGER.info(
+            "%-8s %s  %s", requirement, status, NFR_TARGETS.get(requirement, {}).get("name", "")
+        )
     LOGGER.info("Report written to %s", destination)
     LOGGER.info("=" * 72)
     return 0

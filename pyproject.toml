@@ -1,0 +1,67 @@
+# Cấu hình công cụ chất lượng mã Python (NFR-M6: ruff + black).
+#
+# line-length = 100 khớp với chiều dài dòng phổ biến của mã hiện có, tránh
+# reformat ồ ạt vô nghĩa. Ruff chỉ bật các nhóm lỗi cơ bản (E/F/W) và sắp xếp
+# import (I); các nhóm style gây tranh cãi KHÔNG bật — để phase Refactor cân nhắc.
+#
+# Cấu hình pytest nằm riêng ở pytest.ini (không gộp vào đây để tránh đổi hành vi).
+
+[tool.ruff]
+line-length = 100
+target-version = "py313"
+extend-exclude = [
+    "backend/.venv",
+    "datasets",
+    "models",
+    "runs",
+    "node_modules",
+    "notebooks",
+    "htmlcov",
+    "storage",
+]
+
+[tool.ruff.lint]
+# E: pycodestyle errors, F: pyflakes, W: pycodestyle warnings, I: isort.
+select = ["E", "F", "W", "I"]
+
+[tool.ruff.lint.per-file-ignores]
+# Trong pytest, một fixture được import từ module khác rồi lại xuất hiện làm tên
+# tham số của test. Ruff coi đó là "định nghĩa lại" (F811), nhưng đây chính là
+# cách pytest dùng lại fixture dùng chung — đổi tên tham số sẽ làm hỏng test.
+"tests/**/*.py" = ["F811"]
+
+# E501 (dòng quá dài) được tắt ở đúng bốn tệp sinh báo cáo dưới đây, và chỉ ở đó.
+#
+# Lý do: nội dung vượt 100 ký tự trong các tệp này là **chuỗi nguyên khối của một
+# định dạng khác** — một hàng bảng Markdown, một dòng tiêu đề căn cột, hoặc một
+# quy tắc CSS trong mẫu HTML nhúng. Cắt chúng xuống dòng không làm mã dễ đọc hơn:
+# nó phá vỡ sự tương ứng một-dòng-mã ↔ một-dòng-đầu-ra vốn là thứ giúp đối chiếu
+# mã với báo cáo sinh ra, và mỗi lần cắt là một cơ hội làm sai khoảng trắng của
+# bảng Markdown (lỗi chỉ lộ ra khi render, không lộ khi chạy test).
+#
+# Đây là ngoại lệ **có phạm vi hẹp và có lý do**, không phải cách hạ chuẩn:
+# mọi tệp khác trong dự án vẫn phải sạch E501. Nếu thêm tệp vào danh sách này,
+# phải ghi rõ lý do ở đây.
+"scripts/fill_chapter5.py" = ["E501"]      # 71 hàng bảng Markdown của chương 5
+"ai/evaluation/benchmark_ocr.py" = ["E501"] # 6 hàng bảng kết quả OCR
+"ai/evaluation/ocr_accuracy.py" = ["E501"]  # 1 đoạn văn giải thích trong báo cáo
+"ai/evaluation/evaluate.py" = ["E501"]      # 1 dòng tiêu đề căn cột của bảng số
+"scripts/labeling/label_tool.py" = ["E501"] # 4 quy tắc CSS trong mẫu HTML nhúng
+
+[tool.ruff.lint.isort]
+known-first-party = ["ai", "backend", "scripts", "tests", "tools"]
+
+[tool.black]
+line-length = 100
+target-version = ["py313"]
+extend-exclude = '''
+/(
+    \.venv
+  | node_modules
+  | datasets
+  | models
+  | runs
+  | htmlcov
+  | storage
+)/
+'''

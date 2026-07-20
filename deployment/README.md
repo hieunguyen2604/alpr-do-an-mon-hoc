@@ -112,7 +112,7 @@ ra kết quả giả. Đó là chủ ý (`UnavailablePipeline` trong `backend/ma
 
 **Vì sao phải `mkdir -p storage` thủ công?** `./storage` được gắn theo kiểu
 bind mount. Nếu thư mục chưa tồn tại, Docker sẽ tự tạo nó **với quyền sở hữu
-của `root`**. Trong khi đó container chạy bằng người dùng không phải root
+của `root`**. Trong khi đó máy chủ chạy bằng người dùng không phải root
 (UID 1000), nên tiến trình sẽ không ghi được vào đó và mọi thao tác tải tệp
 lên đều hỏng. Tự tạo thư mục trước sẽ khiến nó thuộc về người dùng hiện tại.
 
@@ -123,8 +123,35 @@ APP_UID=$(id -u)
 APP_GID=$(id -g)
 ```
 
-rồi build lại. Trên **Windows (Docker Desktop)** và **macOS**, quyền truy cập
-bind mount được ánh xạ tự động nên không cần bước này.
+rồi build lại.
+
+> **🔴 Đính chính (2026-07-20).** Phiên bản trước của mục này viết rằng *"trên
+> Windows (Docker Desktop) và macOS, quyền truy cập bind mount được ánh xạ tự
+> động nên không cần bước này"*. **Khẳng định đó sai** và đã gây sự cố thật:
+> trên máy phát triển của nhóm (Windows 11 + Docker Desktop 29.4.3), thư mục
+> host gắn vào hiện ra bên trong container là `root:root` quyền `755`, nên
+> UID 1000 không tạo được `/app/storage/uploads`. Container backend **chết
+> ngay khi khởi động** và lặp lại vô hạn:
+>
+> ```
+> PermissionError: [Errno 13] Permission denied: '/app/storage/uploads'
+> ```
+>
+> **Cách sửa đã áp dụng** (không cần thao tác thủ công nữa): image backend nay
+> có entrypoint [`entrypoint-backend.sh`](docker/entrypoint-backend.sh). Nó
+> khởi động bằng `root` **chỉ đủ lâu** để `chown` ba điểm gắn ghi được
+> (`/app/storage`, `/app/data`, `/home/appuser`), rồi dùng `setpriv` **thay thế
+> hẳn tiến trình** bằng máy chủ chạy dưới UID 1000. Không còn tiến trình `root`
+> nào sống sót sang lúc phục vụ — kiểm chứng được bằng:
+>
+> ```bash
+> docker compose exec backend sh -c 'grep ^Uid: /proc/1/status'
+> # Uid:  1000  1000  1000  1000
+> ```
+>
+> Nếu bạn tự đặt `user:` trong compose hoặc `--user` trên dòng lệnh, entrypoint
+> nhận ra mình không phải root và chạy thẳng lệnh, không đụng vào quyền — người
+> vận hành giữ toàn quyền quyết định.
 
 ---
 

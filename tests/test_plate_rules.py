@@ -475,13 +475,9 @@ class TestConfusionTableAsymmetry:
 
     def test_the_tables_are_not_mutual_inverses(self) -> None:
         round_tripped = {
-            letter: TO_LETTER.get(digit)
-            for letter, digit in TO_DIGIT.items()
-            if digit in TO_LETTER
+            letter: TO_LETTER.get(digit) for letter, digit in TO_DIGIT.items() if digit in TO_LETTER
         }
-        differing = {
-            letter for letter, back in round_tripped.items() if back != letter
-        }
+        differing = {letter for letter, back in round_tripped.items() if back != letter}
         assert differing, "the tables would be symmetric, which the module denies"
         assert "O" in differing
 

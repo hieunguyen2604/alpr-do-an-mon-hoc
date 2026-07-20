@@ -46,9 +46,7 @@ LOGGER = logging.getLogger("ai.evaluation.benchmark_cpu")
 
 DEFAULT_OUTPUT_DIR: Final[Path] = PROJECT_ROOT / "docs" / "reports"
 
-_IMAGE_SUFFIXES: Final[frozenset[str]] = frozenset(
-    {".jpg", ".jpeg", ".png", ".bmp", ".webp"}
-)
+_IMAGE_SUFFIXES: Final[frozenset[str]] = frozenset({".jpg", ".jpeg", ".png", ".bmp", ".webp"})
 
 # Backend name -> (file suffix produced by ai.training.export, human label).
 _BACKENDS: Final[dict[str, tuple[str, str]]] = {
@@ -130,9 +128,7 @@ def discover_images(source: Path, limit: int) -> list[Path]:
     if source.is_file():
         images = [source]
     else:
-        images = sorted(
-            p for p in source.rglob("*") if p.suffix.lower() in _IMAGE_SUFFIXES
-        )
+        images = sorted(p for p in source.rglob("*") if p.suffix.lower() in _IMAGE_SUFFIXES)
     if not images:
         raise FileNotFoundError(f"No images found under {source}")
     return images[:limit] if limit > 0 else images
@@ -384,9 +380,7 @@ def main(argv: list[str] | None = None) -> int:
             results[backend] = {"ok": False, "error": "artefact not found"}
             continue
         LOGGER.info("Benchmarking %s (%s)...", backend, model_path.name)
-        results[backend] = benchmark_backend(
-            model_path, images, args.imgsz, args.runs, args.warmup
-        )
+        results[backend] = benchmark_backend(model_path, images, args.imgsz, args.runs, args.warmup)
         if not results[backend]["ok"]:
             LOGGER.error("  %s failed: %s", backend, results[backend].get("error"))
 
@@ -411,11 +405,7 @@ def main(argv: list[str] | None = None) -> int:
         if not data.get("ok"):
             LOGGER.info("%-14s%s", name, "  (unavailable)")
             continue
-        speedup = (
-            f"{baseline / data['mean_ms']:.2f}x"
-            if baseline and data["mean_ms"] > 0
-            else "-"
-        )
+        speedup = f"{baseline / data['mean_ms']:.2f}x" if baseline and data["mean_ms"] > 0 else "-"
         LOGGER.info(
             "%-14s%9.2f%9.2f%9.2f%9.2f%9.2f%9.2f%8.1f%10s",
             name,

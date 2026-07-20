@@ -55,7 +55,7 @@ import sys
 from collections import Counter, defaultdict
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Final, Iterable, Sequence
+from typing import Any, Final, Sequence
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
@@ -135,9 +135,7 @@ def parse_ratios(values: Sequence[float]) -> tuple[float, float, float]:
     return (values[0] / total, values[1] / total, values[2] / total)
 
 
-def load_duplicate_groups(
-    groups_path: Path, manifest_path: Path | None
-) -> dict[str, int]:
+def load_duplicate_groups(groups_path: Path, manifest_path: Path | None) -> dict[str, int]:
     """Load the duplicate group index and translate it onto merged file names.
 
     ``deduplicate.py`` is normally run over ``datasets/raw``, whose paths no
@@ -189,9 +187,7 @@ def load_duplicate_groups(
 
     translated: dict[str, int] = {}
     for original_path, group_id in raw_groups.items():
-        mapped = source_to_new.get(original_path) or source_to_new.get(
-            Path(original_path).name
-        )
+        mapped = source_to_new.get(original_path) or source_to_new.get(Path(original_path).name)
         key = mapped or Path(original_path).name
         translated[key] = int(group_id)
 
@@ -356,9 +352,7 @@ def assign_units(
     return assignment
 
 
-def verify_no_leakage(
-    units: Sequence[SplitUnit], assignment: dict[str, str]
-) -> list[str]:
+def verify_no_leakage(units: Sequence[SplitUnit], assignment: dict[str, str]) -> list[str]:
     """Confirm that no duplicate group was split across two splits.
 
     This re-derives the guarantee from the final assignment rather than trusting
@@ -383,9 +377,7 @@ def verify_no_leakage(
         for image_path in unit.images:
             previous = image_to_split.get(image_path.name)
             if previous is not None and previous != split:
-                violations.append(
-                    f"{image_path.name} appears in both {previous} and {split}"
-                )
+                violations.append(f"{image_path.name} appears in both {previous} and {split}")
             image_to_split[image_path.name] = split
 
     return violations
@@ -484,16 +476,12 @@ def _write_plain_label(source: Path, destination: Path) -> None:
     try:
         boxes = parse_yolo_label_file(source)
     except Exception as exc:  # noqa: BLE001 - report, never abort a whole split
-        LOGGER.warning(
-            "Cannot parse %s (%s); copying it through unchanged.", source, exc
-        )
+        LOGGER.warning("Cannot parse %s (%s); copying it through unchanged.", source, exc)
         destination.write_bytes(source.read_bytes())
         return
 
     lines = [box.to_yolo_line(include_extras=False) for box in boxes]
-    destination.write_text(
-        "\n".join(lines) + ("\n" if lines else ""), encoding="utf-8"
-    )
+    destination.write_text("\n".join(lines) + ("\n" if lines else ""), encoding="utf-8")
 
 
 def _place(source: Path, destination: Path, *, link: bool) -> None:
@@ -669,8 +657,8 @@ def main(argv: Sequence[str] | None = None) -> int:
     input_dir = (args.input_dir or (paths.processed / "merged")).expanduser().resolve()
     output_dir = (args.output_dir or (paths.processed / "yolo")).expanduser().resolve()
     groups_path = (
-        args.duplicate_groups or (paths.reports / "duplicate_groups.json")
-    ).expanduser().resolve()
+        (args.duplicate_groups or (paths.reports / "duplicate_groups.json")).expanduser().resolve()
+    )
 
     try:
         ratios = parse_ratios(args.ratios)

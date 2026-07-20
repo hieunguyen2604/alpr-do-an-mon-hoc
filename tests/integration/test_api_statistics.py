@@ -40,9 +40,7 @@ def upload_image(client: TestClient) -> dict:
     Returns:
         The decoded detection response.
     """
-    response = client.post(
-        IMAGE_URL, files={"file": ("car.jpg", encode_jpeg(), "image/jpeg")}
-    )
+    response = client.post(IMAGE_URL, files={"file": ("car.jpg", encode_jpeg(), "image/jpeg")})
     assert response.status_code == 200
     return response.json()
 
@@ -120,8 +118,7 @@ class TestCountingJobsVersusPlates:
         self, client: TestClient, pipeline: FakePipeline
     ) -> None:
         pipeline.plates = [
-            (f"51F-{index:05d}", f"51F{index:05d}", 0.9, 0.8, True)
-            for index in range(20)
+            (f"51F-{index:05d}", f"51F{index:05d}", 0.9, 0.8, True) for index in range(20)
         ]
         upload_image(client)
 
@@ -183,9 +180,7 @@ class TestEmptyDatabase:
         assert stats["average_ocr_confidence"] is None
         assert stats["average_processing_time"] is None
 
-    def test_the_breakdown_still_lists_every_input_type(
-        self, client: TestClient
-    ) -> None:
+    def test_the_breakdown_still_lists_every_input_type(self, client: TestClient) -> None:
         """A bar chart missing a category looks like a rendering fault."""
         stats = client.get(STATISTICS_URL).json()
         assert {entry["input_type"] for entry in stats["by_input_type"]} == {
@@ -218,9 +213,7 @@ class TestFormatCounters:
         assert stats["invalid_format_count"] == 1
         assert stats["unreadable_count"] == 1
         assert (
-            stats["valid_format_count"]
-            + stats["invalid_format_count"]
-            + stats["unreadable_count"]
+            stats["valid_format_count"] + stats["invalid_format_count"] + stats["unreadable_count"]
             == stats["total_detections"]
         )
 
@@ -324,15 +317,10 @@ class TestInputTypeBreakdown:
             ("29A1-22222", "29A122222", 0.8, 0.7, True),
         ]
         upload_image(client)
-        client.post(
-            "/api/detect/frame", files={"file": ("f.jpg", encode_jpeg(), "image/jpeg")}
-        )
+        client.post("/api/detect/frame", files={"file": ("f.jpg", encode_jpeg(), "image/jpeg")})
 
         stats = client.get(STATISTICS_URL).json()
-        assert (
-            sum(entry["job_count"] for entry in stats["by_input_type"])
-            == stats["total_jobs"]
-        )
+        assert sum(entry["job_count"] for entry in stats["by_input_type"]) == stats["total_jobs"]
         assert (
             sum(entry["detection_count"] for entry in stats["by_input_type"])
             == stats["total_detections"]
@@ -342,9 +330,7 @@ class TestInputTypeBreakdown:
         self, client: TestClient, pipeline: FakePipeline
     ) -> None:
         pipeline.plates = [("51F-11111", "51F11111", 0.9, 0.8, True)]
-        client.post(
-            "/api/detect/frame", files={"file": ("f.jpg", encode_jpeg(), "image/jpeg")}
-        )
+        client.post("/api/detect/frame", files={"file": ("f.jpg", encode_jpeg(), "image/jpeg")})
 
         stats = client.get(STATISTICS_URL).json()
         by_type = {entry["input_type"]: entry for entry in stats["by_input_type"]}
@@ -355,15 +341,11 @@ class TestInputTypeBreakdown:
 class TestDailyTrend:
     """The per-day series behind the trend chart."""
 
-    def test_returns_one_entry_per_requested_day(
-        self, client: TestClient
-    ) -> None:
+    def test_returns_one_entry_per_requested_day(self, client: TestClient) -> None:
         stats = client.get(STATISTICS_URL, params={"days": 7}).json()
         assert len(stats["daily_counts"]) == 7
 
-    def test_the_series_is_continuous_and_oldest_first(
-        self, client: TestClient
-    ) -> None:
+    def test_the_series_is_continuous_and_oldest_first(self, client: TestClient) -> None:
         """Days with no activity are zeros, not omissions: a chart fed only the
         active days draws a straight line across a quiet week and its x-axis
         silently stops being uniform."""
@@ -407,16 +389,12 @@ class TestDailyTrend:
         assert 1 <= len(stats["daily_counts"]) <= 365
 
     @pytest.mark.parametrize("days", [0, -1, 366, 10_000])
-    def test_an_out_of_range_window_is_refused(
-        self, client: TestClient, days: int
-    ) -> None:
+    def test_an_out_of_range_window_is_refused(self, client: TestClient, days: int) -> None:
         """Unbounded, the response would carry one object per day forever."""
         assert client.get(STATISTICS_URL, params={"days": days}).status_code == 422
 
     @pytest.mark.parametrize("days", [1, 7, 30, 365])
-    def test_accepts_the_documented_range(
-        self, client: TestClient, days: int
-    ) -> None:
+    def test_accepts_the_documented_range(self, client: TestClient, days: int) -> None:
         response = client.get(STATISTICS_URL, params={"days": days})
         assert response.status_code == 200
         assert len(response.json()["daily_counts"]) == days
@@ -483,9 +461,7 @@ class TestHistoricalData:
         stats = client.get(STATISTICS_URL, params={"days": 3}).json()
         assert sum(entry["job_count"] for entry in stats["daily_counts"]) == 1
 
-    def test_a_long_window_includes_it(
-        self, client: TestClient, old_and_new: None
-    ) -> None:
+    def test_a_long_window_includes_it(self, client: TestClient, old_and_new: None) -> None:
         stats = client.get(STATISTICS_URL, params={"days": 30}).json()
         assert sum(entry["job_count"] for entry in stats["daily_counts"]) == 2
 
@@ -512,17 +488,13 @@ class TestResponseShape:
         }
         assert expected <= set(stats)
 
-    def test_the_two_counting_families_are_separate_fields(
-        self, client: TestClient
-    ) -> None:
+    def test_the_two_counting_families_are_separate_fields(self, client: TestClient) -> None:
         """A single ``total`` would make the distinction unrepresentable."""
         stats = client.get(STATISTICS_URL).json()
         assert "total_jobs" in stats
         assert "total_detections" in stats
 
-    def test_no_counter_is_ever_negative(
-        self, client: TestClient, pipeline: FakePipeline
-    ) -> None:
+    def test_no_counter_is_ever_negative(self, client: TestClient, pipeline: FakePipeline) -> None:
         pipeline.plates = [("51F-11111", "51F11111", 0.9, 0.8, True)]
         upload_image(client)
 

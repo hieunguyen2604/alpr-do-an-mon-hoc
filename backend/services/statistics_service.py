@@ -92,9 +92,7 @@ class StatisticsService:
         if not 1 <= days <= MAX_TREND_DAYS:
             raise ValidationError(
                 f"days must be within [1, {MAX_TREND_DAYS}], got {days}",
-                user_message=(
-                    f"Số ngày thống kê phải nằm trong khoảng 1 đến {MAX_TREND_DAYS}."
-                ),
+                user_message=(f"Số ngày thống kê phải nằm trong khoảng 1 đến {MAX_TREND_DAYS}."),
             )
 
         today = utcnow().date()
@@ -212,9 +210,7 @@ class StatisticsService:
         """
         job_counts = dict(
             db.execute(
-                select(DetectionJob.input_type, func.count()).group_by(
-                    DetectionJob.input_type
-                )
+                select(DetectionJob.input_type, func.count()).group_by(DetectionJob.input_type)
             ).all()
         )
         detection_counts = dict(
@@ -234,9 +230,7 @@ class StatisticsService:
             for kind in InputType
         ]
 
-    def _daily_counts(
-        self, db: Session, *, days: int, today: dt.date
-    ) -> list[DailyCountSchema]:
+    def _daily_counts(self, db: Session, *, days: int, today: dt.date) -> list[DailyCountSchema]:
         """Build the per-day activity series for the trend chart.
 
         Days with no activity are emitted as zeros rather than omitted. A chart

@@ -135,9 +135,7 @@ def image() -> np.ndarray:
 class TestModelLoading:
     """Failures while loading weights must surface as ModelLoadError."""
 
-    def test_missing_weights_file_raises_model_load_error(
-        self, tmp_path: Path
-    ) -> None:
+    def test_missing_weights_file_raises_model_load_error(self, tmp_path: Path) -> None:
         """A missing file must fail loudly, naming the path that was tried."""
         missing = tmp_path / "models" / "best.pt"
         config = InferenceConfig(model_path=missing)
@@ -162,9 +160,7 @@ class TestModelLoading:
             YoloPlateDetector(config, model_loader=loader)
         assert calls == []
 
-    def test_directory_instead_of_file_raises_model_load_error(
-        self, tmp_path: Path
-    ) -> None:
+    def test_directory_instead_of_file_raises_model_load_error(self, tmp_path: Path) -> None:
         """Pointing at a directory is a configuration mistake, not a crash."""
         directory = tmp_path / "weights_dir"
         directory.mkdir()
@@ -190,9 +186,7 @@ class TestModelLoading:
 
     def test_onnx_weights_are_accepted(self, tmp_path: Path) -> None:
         """ONNX exports must load through the same code path as .pt weights."""
-        detector, _ = make_detector(
-            tmp_path, names={0: "license_plate"}, weights_name="best.onnx"
-        )
+        detector, _ = make_detector(tmp_path, names={0: "license_plate"}, weights_name="best.onnx")
         assert detector.name == "yolo:best.onnx"
 
     def test_name_property_reports_the_weights_in_use(self, tmp_path: Path) -> None:
@@ -221,9 +215,7 @@ class TestInvalidImages:
             (42, "scalar instead of array"),
         ],
     )
-    def test_invalid_image_raises(
-        self, tmp_path: Path, bad_image: Any, reason: str
-    ) -> None:
+    def test_invalid_image_raises(self, tmp_path: Path, bad_image: Any, reason: str) -> None:
         detector, fake = make_detector(tmp_path, names={0: "license_plate"})
         with pytest.raises(InvalidImageError):
             detector.detect(bad_image)
@@ -254,9 +246,7 @@ class TestCoordinateConversion:
         assert detection.bbox.to_xyxy() == (100, 50, 220, 110)
         assert detection.confidence == pytest.approx(0.9, abs=1e-6)
 
-    def test_float_coordinates_are_rounded(
-        self, tmp_path: Path, image: np.ndarray
-    ) -> None:
+    def test_float_coordinates_are_rounded(self, tmp_path: Path, image: np.ndarray) -> None:
         boxes = FakeBoxes([[10.4, 20.6, 50.5, 80.4]], [0.5], [0])
         detector, _ = make_detector(tmp_path, names={0: "license_plate"}, boxes=boxes)
 
@@ -274,23 +264,17 @@ class TestCoordinateConversion:
         (detection,) = detector.detect(image)
 
         assert detection.bbox.to_xyxy() == (0, 0, 640, 480)
-        crop = image[
-            detection.bbox.y : detection.bbox.y2, detection.bbox.x : detection.bbox.x2
-        ]
+        crop = image[detection.bbox.y : detection.bbox.y2, detection.bbox.x : detection.bbox.x2]
         assert crop.shape == (480, 640, 3)
 
-    def test_swapped_corners_are_normalised(
-        self, tmp_path: Path, image: np.ndarray
-    ) -> None:
+    def test_swapped_corners_are_normalised(self, tmp_path: Path, image: np.ndarray) -> None:
         boxes = FakeBoxes([[220.0, 110.0, 100.0, 50.0]], [0.7], [0])
         detector, _ = make_detector(tmp_path, names={0: "license_plate"}, boxes=boxes)
 
         (detection,) = detector.detect(image)
         assert detection.bbox.to_xyxy() == (100, 50, 220, 110)
 
-    def test_degenerate_box_is_skipped_not_raised(
-        self, tmp_path: Path, image: np.ndarray
-    ) -> None:
+    def test_degenerate_box_is_skipped_not_raised(self, tmp_path: Path, image: np.ndarray) -> None:
         """One collapsed box must not lose the good boxes in the same frame."""
         boxes = FakeBoxes(
             [[10.0, 10.0, 10.0, 40.0], [100.0, 50.0, 220.0, 110.0]],
@@ -333,9 +317,7 @@ class TestCoordinateConversion:
 class TestClassFiltering:
     """Only license-plate boxes may leave the detector."""
 
-    def test_single_class_model_keeps_everything(
-        self, tmp_path: Path, image: np.ndarray
-    ) -> None:
+    def test_single_class_model_keeps_everything(self, tmp_path: Path, image: np.ndarray) -> None:
         boxes = FakeBoxes([[10.0, 10.0, 50.0, 30.0]], [0.9], [0])
         detector, _ = make_detector(tmp_path, names={0: "license_plate"}, boxes=boxes)
         assert len(detector.detect(image)) == 1
@@ -355,9 +337,7 @@ class TestClassFiltering:
         assert len(detections) == 1
         assert detections[0].bbox.to_xyxy() == (60, 60, 120, 90)
 
-    def test_coco_style_model_yields_no_plates(
-        self, tmp_path: Path, image: np.ndarray
-    ) -> None:
+    def test_coco_style_model_yields_no_plates(self, tmp_path: Path, image: np.ndarray) -> None:
         """The COCO checkpoint has no plate class: an empty list, never an error."""
         coco_names = {index: f"class_{index}" for index in range(80)}
         coco_names.update({0: "person", 2: "car", 3: "motorcycle"})
@@ -370,9 +350,7 @@ class TestClassFiltering:
 
         assert detector.detect(image) == []
 
-    def test_alias_class_names_are_recognised(
-        self, tmp_path: Path, image: np.ndarray
-    ) -> None:
+    def test_alias_class_names_are_recognised(self, tmp_path: Path, image: np.ndarray) -> None:
         boxes = FakeBoxes([[10.0, 10.0, 50.0, 30.0]], [0.9], [1])
         names = {0: "car", 1: "License-Plate"}
         detector, _ = make_detector(tmp_path, names=names, boxes=boxes)
@@ -404,9 +382,7 @@ class TestClassFiltering:
 class TestInference:
     """Thresholds, empty results, failures and warm-up."""
 
-    def test_config_thresholds_are_forwarded(
-        self, tmp_path: Path, image: np.ndarray
-    ) -> None:
+    def test_config_thresholds_are_forwarded(self, tmp_path: Path, image: np.ndarray) -> None:
         detector, fake = make_detector(
             tmp_path,
             names={0: "license_plate"},
@@ -424,16 +400,12 @@ class TestInference:
         assert call["device"] == "cpu"
         assert call["verbose"] is False
 
-    def test_no_boxes_returns_empty_list(
-        self, tmp_path: Path, image: np.ndarray
-    ) -> None:
+    def test_no_boxes_returns_empty_list(self, tmp_path: Path, image: np.ndarray) -> None:
         """No plate in the image is a normal outcome, not an error."""
         detector, _ = make_detector(tmp_path, names={0: "license_plate"}, boxes=None)
         assert detector.detect(image) == []
 
-    def test_empty_boxes_object_returns_empty_list(
-        self, tmp_path: Path, image: np.ndarray
-    ) -> None:
+    def test_empty_boxes_object_returns_empty_list(self, tmp_path: Path, image: np.ndarray) -> None:
         detector, _ = make_detector(
             tmp_path, names={0: "license_plate"}, boxes=FakeBoxes([], [], [])
         )
@@ -450,12 +422,8 @@ class TestInference:
         with pytest.raises(DetectionError, match="CUDA out of memory"):
             detector.detect(image)
 
-    def test_warmup_runs_one_inference_at_configured_size(
-        self, tmp_path: Path
-    ) -> None:
-        detector, fake = make_detector(
-            tmp_path, names={0: "license_plate"}, imgsz=320
-        )
+    def test_warmup_runs_one_inference_at_configured_size(self, tmp_path: Path) -> None:
+        detector, fake = make_detector(tmp_path, names={0: "license_plate"}, imgsz=320)
         detector.warmup()
 
         (call,) = fake.predict_calls
@@ -463,13 +431,9 @@ class TestInference:
         assert call["source"].dtype == np.uint8
         assert not call["source"].any(), "warm-up must use a black image"
 
-    def test_detect_after_warmup_still_works(
-        self, tmp_path: Path, image: np.ndarray
-    ) -> None:
+    def test_detect_after_warmup_still_works(self, tmp_path: Path, image: np.ndarray) -> None:
         boxes = FakeBoxes([[10.0, 10.0, 50.0, 30.0]], [0.9], [0])
-        detector, fake = make_detector(
-            tmp_path, names={0: "license_plate"}, boxes=boxes
-        )
+        detector, fake = make_detector(tmp_path, names={0: "license_plate"}, boxes=boxes)
         detector.warmup()
         assert len(detector.detect(image)) == 1
         assert len(fake.predict_calls) == 2
@@ -494,9 +458,7 @@ def test_detector_implements_base_detector(tmp_path: Path) -> None:
 
 def test_module_is_framework_free() -> None:
     """NFR-M1: the ai package must not depend on the web framework layer."""
-    source = (PROJECT_ROOT / "ai" / "inference" / "detector.py").read_text(
-        encoding="utf-8"
-    )
+    source = (PROJECT_ROOT / "ai" / "inference" / "detector.py").read_text(encoding="utf-8")
     for line in source.splitlines():
         stripped = line.strip()
         if stripped.startswith(("import ", "from ")):

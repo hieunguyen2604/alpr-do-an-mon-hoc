@@ -41,26 +41,20 @@ class TestHealthyService:
         assert response.status_code == 200
         assert response.json()["status"] == "ok"
 
-    def test_reports_both_dependencies_separately(
-        self, client: TestClient
-    ) -> None:
+    def test_reports_both_dependencies_separately(self, client: TestClient) -> None:
         """One flag each, because they fail independently."""
         body = client.get(HEALTH_URL).json()
         assert body["database_connected"] is True
         assert body["model_loaded"] is True
 
-    def test_carries_the_service_identity_and_uptime(
-        self, client: TestClient
-    ) -> None:
+    def test_carries_the_service_identity_and_uptime(self, client: TestClient) -> None:
         body = client.get(HEALTH_URL).json()
         assert body["app_name"] == "ALPR test"
         assert body["version"] == "test"
         assert body["uptime_seconds"] >= 0.0
         assert body["timestamp"]
 
-    def test_sits_at_the_root_not_behind_the_api_prefix(
-        self, client: TestClient
-    ) -> None:
+    def test_sits_at_the_root_not_behind_the_api_prefix(self, client: TestClient) -> None:
         """A health check that moves when the API prefix changes is not much of
         a health check."""
         assert client.get(HEALTH_URL).status_code == 200
@@ -70,21 +64,15 @@ class TestHealthyService:
 class TestDegradedService:
     """A dependency that cannot serve requests must be visible from outside."""
 
-    def test_an_unavailable_pipeline_reports_degraded(
-        self, app: FastAPI
-    ) -> None:
-        app.dependency_overrides[get_pipeline] = lambda: UnavailablePipeline(
-            "weights not found"
-        )
+    def test_an_unavailable_pipeline_reports_degraded(self, app: FastAPI) -> None:
+        app.dependency_overrides[get_pipeline] = lambda: UnavailablePipeline("weights not found")
         body = TestClient(app).get(HEALTH_URL).json()
 
         assert body["status"] == "degraded"
         assert body["model_loaded"] is False
         assert body["database_connected"] is True
 
-    def test_the_stub_pipeline_also_reports_degraded(
-        self, app: FastAPI
-    ) -> None:
+    def test_the_stub_pipeline_also_reports_degraded(self, app: FastAPI) -> None:
         """The stub fabricates plate numbers, so a deployment running on it must
         never be able to look healthy."""
         app.dependency_overrides[get_pipeline] = lambda: StubPipeline()
@@ -93,9 +81,7 @@ class TestDegradedService:
         assert body["status"] == "degraded"
         assert body["model_loaded"] is False
 
-    def test_the_status_is_still_http_200_when_degraded(
-        self, app: FastAPI
-    ) -> None:
+    def test_the_status_is_still_http_200_when_degraded(self, app: FastAPI) -> None:
         """The endpoint answering at all is information; the body says what is
         wrong. Failing the status line would make "degraded" indistinguishable
         from "unreachable"."""
@@ -120,9 +106,7 @@ class TestDegradedService:
         assert body["model_loaded"] is False
         assert body["status"] == "degraded"
 
-    def test_the_reason_a_pipeline_is_unavailable_is_not_published(
-        self, app: FastAPI
-    ) -> None:
+    def test_the_reason_a_pipeline_is_unavailable_is_not_published(self, app: FastAPI) -> None:
         """NFR-S4: the health body says *that* the model is unavailable, not
         which path on the server it failed to load from."""
         app.dependency_overrides[get_pipeline] = lambda: UnavailablePipeline(

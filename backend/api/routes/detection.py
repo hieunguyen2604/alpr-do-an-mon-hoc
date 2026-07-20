@@ -241,9 +241,7 @@ def detect_video(
         ProcessingError: If the file could not be stored.
     """
     payload = _read_upload(file, limit_bytes=settings.max_video_size_bytes)
-    job = detection.create_video_job(
-        db, data=payload, original_filename=file.filename
-    )
+    job = detection.create_video_job(db, data=payload, original_filename=file.filename)
 
     # Queued rather than awaited. The task opens its own session and its own
     # log context, because this request's session closes as soon as the 202 is

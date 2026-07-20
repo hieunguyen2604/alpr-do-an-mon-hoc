@@ -86,9 +86,7 @@ def seeded(db: Session) -> list[DetectionHistory]:
     ]
 
     rows: list[DetectionHistory] = []
-    for index, (key, plate, raw, confidence, ocr, valid, offset) in enumerate(
-        specification
-    ):
+    for index, (key, plate, raw, confidence, ocr, valid, offset) in enumerate(specification):
         row = DetectionHistory(
             plate_number=plate,
             raw_ocr_text=raw,
@@ -124,9 +122,7 @@ class TestListing:
         assert body["total"] == 6
         assert len(body["items"]) == 6
 
-    def test_an_empty_history_is_a_valid_empty_page(
-        self, client: TestClient
-    ) -> None:
+    def test_an_empty_history_is_a_valid_empty_page(self, client: TestClient) -> None:
         body = client.get(HISTORY_URL).json()
         assert body["total"] == 0
         assert body["items"] == []
@@ -184,9 +180,7 @@ class TestPagination:
     ) -> None:
         seen: list[int] = []
         for page in (1, 2, 3):
-            body = client.get(
-                HISTORY_URL, params={"page": page, "page_size": 2}
-            ).json()
+            body = client.get(HISTORY_URL, params={"page": page, "page_size": 2}).json()
             seen.extend(item["id"] for item in body["items"])
         assert len(seen) == 6
         assert len(set(seen)) == 6
@@ -210,9 +204,7 @@ class TestPagination:
         assert body["total"] == 6
 
     @pytest.mark.parametrize("page_size", [0, 101, 100_000])
-    def test_an_out_of_range_page_size_is_refused(
-        self, client: TestClient, page_size: int
-    ) -> None:
+    def test_an_out_of_range_page_size_is_refused(self, client: TestClient, page_size: int) -> None:
         """``?page_size=100000`` would undo the pagination entirely."""
         assert client.get(HISTORY_URL, params={"page_size": page_size}).status_code == 422
 
@@ -273,12 +265,8 @@ class TestPartialSearch:
         body = client.get(HISTORY_URL, params={"search": "51F_12345"}).json()
         assert body["total"] == 0
 
-    def test_an_overlong_search_term_is_refused(
-        self, client: TestClient
-    ) -> None:
-        assert client.get(
-            HISTORY_URL, params={"search": "x" * 200}
-        ).status_code == 422
+    def test_an_overlong_search_term_is_refused(self, client: TestClient) -> None:
+        assert client.get(HISTORY_URL, params={"search": "x" * 200}).status_code == 422
 
 
 class TestFiltering:
@@ -299,9 +287,7 @@ class TestFiltering:
         assert body["total"] == expected
 
     def test_rejects_an_unknown_input_type(self, client: TestClient) -> None:
-        assert client.get(
-            HISTORY_URL, params={"input_type": "satellite"}
-        ).status_code == 422
+        assert client.get(HISTORY_URL, params={"input_type": "satellite"}).status_code == 422
 
     def test_filters_by_format_validity(
         self, client: TestClient, seeded: list[DetectionHistory]
@@ -319,12 +305,8 @@ class TestFiltering:
         assert all(item["confidence"] >= 0.8 for item in body["items"])
 
     @pytest.mark.parametrize("value", [-0.5, 1.5])
-    def test_rejects_an_out_of_range_confidence(
-        self, client: TestClient, value: float
-    ) -> None:
-        assert client.get(
-            HISTORY_URL, params={"min_confidence": value}
-        ).status_code == 422
+    def test_rejects_an_out_of_range_confidence(self, client: TestClient, value: float) -> None:
+        assert client.get(HISTORY_URL, params={"min_confidence": value}).status_code == 422
 
     def test_filters_by_date_range(
         self, client: TestClient, seeded: list[DetectionHistory]
@@ -350,9 +332,7 @@ class TestFiltering:
         assert response.status_code == 400
         assert response.json()["error"] == "VALIDATION_ERROR"
 
-    def test_filters_by_job(
-        self, client: TestClient, seeded: list[DetectionHistory]
-    ) -> None:
+    def test_filters_by_job(self, client: TestClient, seeded: list[DetectionHistory]) -> None:
         """The plates of one upload, which is what ``source_job_id`` groups."""
         job_id = seeded[0].source_job_id
         body = client.get(HISTORY_URL, params={"job_id": job_id}).json()
@@ -362,9 +342,7 @@ class TestFiltering:
     def test_combines_search_and_input_type(
         self, client: TestClient, seeded: list[DetectionHistory]
     ) -> None:
-        body = client.get(
-            HISTORY_URL, params={"search": "51F", "input_type": "image"}
-        ).json()
+        body = client.get(HISTORY_URL, params={"search": "51F", "input_type": "image"}).json()
         assert body["total"] == 2
 
     def test_combines_three_filters(
@@ -393,9 +371,7 @@ class TestFiltering:
         self, client: TestClient, seeded: list[DetectionHistory]
     ) -> None:
         """A total that ignores the filters makes the page counter wrong."""
-        body = client.get(
-            HISTORY_URL, params={"input_type": "image", "page_size": 1}
-        ).json()
+        body = client.get(HISTORY_URL, params={"input_type": "image", "page_size": 1}).json()
         assert len(body["items"]) == 1
         assert body["total"] == 3
         assert body["total_pages"] == 3
@@ -404,15 +380,11 @@ class TestFiltering:
 class TestSorting:
     """Ordering, in both directions, over several columns."""
 
-    @pytest.mark.parametrize(
-        "field", ["detected_time", "confidence", "processing_time", "id"]
-    )
+    @pytest.mark.parametrize("field", ["detected_time", "confidence", "processing_time", "id"])
     def test_sorts_descending(
         self, client: TestClient, seeded: list[DetectionHistory], field: str
     ) -> None:
-        items = client.get(
-            HISTORY_URL, params={"sort_by": field, "order": "desc"}
-        ).json()["items"]
+        items = client.get(HISTORY_URL, params={"sort_by": field, "order": "desc"}).json()["items"]
         values = [item[field] for item in items]
         assert values == sorted(values, reverse=True)
 
@@ -420,9 +392,7 @@ class TestSorting:
     def test_sorts_ascending(
         self, client: TestClient, seeded: list[DetectionHistory], field: str
     ) -> None:
-        items = client.get(
-            HISTORY_URL, params={"sort_by": field, "order": "asc"}
-        ).json()["items"]
+        items = client.get(HISTORY_URL, params={"sort_by": field, "order": "asc"}).json()["items"]
         values = [item[field] for item in items]
         assert values == sorted(values)
 
@@ -436,9 +406,7 @@ class TestSorting:
         descending = client.get(
             HISTORY_URL, params={"sort_by": "confidence", "order": "desc"}
         ).json()["items"]
-        assert [item["id"] for item in ascending] == [
-            item["id"] for item in reversed(descending)
-        ]
+        assert [item["id"] for item in ascending] == [item["id"] for item in reversed(descending)]
 
     def test_sorts_by_plate_number(
         self, client: TestClient, seeded: list[DetectionHistory]
@@ -452,13 +420,14 @@ class TestSorting:
 
     def test_an_unknown_sort_key_is_refused(self, client: TestClient) -> None:
         """The value ends up in an ``ORDER BY``; an enum rejects it up front."""
-        assert client.get(
-            HISTORY_URL, params={"sort_by": "; DROP TABLE detection_history"}
-        ).status_code == 422
+        assert (
+            client.get(
+                HISTORY_URL, params={"sort_by": "; DROP TABLE detection_history"}
+            ).status_code
+            == 422
+        )
 
-    def test_an_unknown_sort_direction_is_refused(
-        self, client: TestClient
-    ) -> None:
+    def test_an_unknown_sort_direction_is_refused(self, client: TestClient) -> None:
         assert client.get(HISTORY_URL, params={"order": "sideways"}).status_code == 422
 
 
@@ -553,9 +522,7 @@ class TestCsvExport:
     def test_the_export_honours_the_search_term(
         self, client: TestClient, seeded: list[DetectionHistory]
     ) -> None:
-        exported = client.get(
-            EXPORT_URL, params={"search": "51F"}
-        ).content.decode("utf-8-sig")
+        exported = client.get(EXPORT_URL, params={"search": "51F"}).content.decode("utf-8-sig")
         rows = list(csv.reader(io.StringIO(exported)))
         assert len(rows) - 1 == 2
 
@@ -578,9 +545,7 @@ class TestCsvExport:
         rows = list(csv.reader(io.StringIO(content.decode("utf-8-sig"))))
         assert len(rows) == 1
 
-    def test_an_export_of_an_empty_history_still_works(
-        self, client: TestClient
-    ) -> None:
+    def test_an_export_of_an_empty_history_still_works(self, client: TestClient) -> None:
         content = client.get(EXPORT_URL).content
         assert content.startswith(UTF8_BOM)
 
@@ -629,10 +594,7 @@ class TestDeletion:
 
         db.expire_all()
         assert db.get(DetectionHistory, target) is None
-        assert (
-            db.execute(select(func.count()).select_from(DetectionHistory)).scalar_one()
-            == 5
-        )
+        assert db.execute(select(func.count()).select_from(DetectionHistory)).scalar_one() == 5
 
     def test_the_deleted_record_disappears_from_the_listing(
         self, client: TestClient, seeded: list[DetectionHistory]
@@ -644,9 +606,7 @@ class TestDeletion:
         assert body["total"] == 5
         assert target not in {item["id"] for item in body["items"]}
 
-    def test_deleting_an_unknown_record_is_a_404(
-        self, client: TestClient
-    ) -> None:
+    def test_deleting_an_unknown_record_is_a_404(self, client: TestClient) -> None:
         """Not a silent success: a client must be able to tell a completed
         delete from one that named the wrong identifier."""
         response = client.delete(f"{HISTORY_URL}/999999")

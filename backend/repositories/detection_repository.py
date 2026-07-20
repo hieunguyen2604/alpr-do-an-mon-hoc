@@ -185,8 +185,7 @@ class HistoryFilter:
             raise ValidationError(
                 f"end_time {self.end_time!r} precedes start_time {self.start_time!r}",
                 user_message=(
-                    "Khoảng thời gian không hợp lệ: "
-                    "ngày kết thúc phải sau ngày bắt đầu."
+                    "Khoảng thời gian không hợp lệ: ngày kết thúc phải sau ngày bắt đầu."
                 ),
             )
 
@@ -340,14 +339,10 @@ class DetectionRepository(BaseRepository[DetectionHistory, int]):
             )
 
         if filters.source_job_id is not None:
-            stmt = stmt.where(
-                DetectionHistory.source_job_id == filters.source_job_id
-            )
+            stmt = stmt.where(DetectionHistory.source_job_id == filters.source_job_id)
 
         if filters.is_valid_format is not None:
-            stmt = stmt.where(
-                DetectionHistory.is_valid_format.is_(filters.is_valid_format)
-            )
+            stmt = stmt.where(DetectionHistory.is_valid_format.is_(filters.is_valid_format))
 
         if filters.has_text is not None:
             has_text = DetectionHistory.plate_number.is_not(None) & (
@@ -488,9 +483,7 @@ class DetectionRepository(BaseRepository[DetectionHistory, int]):
         """
         ids = list(
             self.session.execute(
-                select(DetectionHistory.id).where(
-                    DetectionHistory.source_job_id == job_id
-                )
+                select(DetectionHistory.id).where(DetectionHistory.source_job_id == job_id)
             )
             .scalars()
             .all()
@@ -534,9 +527,7 @@ class DetectionRepository(BaseRepository[DetectionHistory, int]):
         """
         # Reuses the filter object purely for its validation, so that the
         # statistics endpoint rejects the same bad input as the history one.
-        HistoryFilter(
-            input_type=input_type, start_time=start_time, end_time=end_time
-        )
+        HistoryFilter(input_type=input_type, start_time=start_time, end_time=end_time)
         if trend_days < 1:
             raise ValidationError(
                 f"trend_days must be positive, got {trend_days}",
@@ -556,9 +547,7 @@ class DetectionRepository(BaseRepository[DetectionHistory, int]):
             jobs_today=self._count_jobs(today_start, today_end, input_type),
             detections_today=self._count_detections(today_start, today_end, input_type),
             by_input_type=self._by_input_type(start_time, end_time),
-            daily_counts=self._daily_counts(
-                start_time, end_time, input_type, trend_days
-            ),
+            daily_counts=self._daily_counts(start_time, end_time, input_type, trend_days),
             **detection_totals,
         )
 
@@ -596,16 +585,14 @@ class DetectionRepository(BaseRepository[DetectionHistory, int]):
 
         stmt = select(
             func.count().label("total_detections"),
-            func.count(
-                func.distinct(case((has_text, DetectionHistory.plate_number)))
-            ).label("unique_plates"),
+            func.count(func.distinct(case((has_text, DetectionHistory.plate_number)))).label(
+                "unique_plates"
+            ),
             func.sum(
                 case((has_text & DetectionHistory.is_valid_format.is_(True), 1), else_=0)
             ).label("valid_format_count"),
             func.sum(
-                case(
-                    (has_text & DetectionHistory.is_valid_format.is_(False), 1), else_=0
-                )
+                case((has_text & DetectionHistory.is_valid_format.is_(False), 1), else_=0)
             ).label("invalid_format_count"),
             func.sum(case((~has_text, 1), else_=0)).label("unreadable_count"),
             func.avg(DetectionHistory.confidence).label("average_confidence"),
@@ -613,9 +600,7 @@ class DetectionRepository(BaseRepository[DetectionHistory, int]):
             func.avg(DetectionHistory.processing_time).label("average_processing_time"),
         ).select_from(DetectionHistory)
 
-        stmt = self._apply_time_window(
-            stmt, DetectionHistory.detected_time, start_time, end_time
-        )
+        stmt = self._apply_time_window(stmt, DetectionHistory.detected_time, start_time, end_time)
         if input_type is not None:
             stmt = stmt.where(DetectionHistory.input_type == input_type)
 
@@ -652,12 +637,8 @@ class DetectionRepository(BaseRepository[DetectionHistory, int]):
         Returns:
             The number of jobs in the window.
         """
-        stmt = select(func.count(func.distinct(DetectionJob.id))).select_from(
-            DetectionJob
-        )
-        stmt = self._apply_time_window(
-            stmt, DetectionJob.created_at, start_time, end_time
-        )
+        stmt = select(func.count(func.distinct(DetectionJob.id))).select_from(DetectionJob)
+        stmt = self._apply_time_window(stmt, DetectionJob.created_at, start_time, end_time)
         if input_type is not None:
             stmt = stmt.where(DetectionJob.input_type == input_type)
         return int(self.session.execute(stmt).scalar_one() or 0)
@@ -679,9 +660,7 @@ class DetectionRepository(BaseRepository[DetectionHistory, int]):
             The number of history rows in the window.
         """
         stmt = select(func.count()).select_from(DetectionHistory)
-        stmt = self._apply_time_window(
-            stmt, DetectionHistory.detected_time, start_time, end_time
-        )
+        stmt = self._apply_time_window(stmt, DetectionHistory.detected_time, start_time, end_time)
         if input_type is not None:
             stmt = stmt.where(DetectionHistory.input_type == input_type)
         return int(self.session.execute(stmt).scalar_one() or 0)
@@ -714,23 +693,17 @@ class DetectionRepository(BaseRepository[DetectionHistory, int]):
         job_stmt = select(
             DetectionJob.input_type, func.count(func.distinct(DetectionJob.id))
         ).group_by(DetectionJob.input_type)
-        job_stmt = self._apply_time_window(
-            job_stmt, DetectionJob.created_at, start_time, end_time
-        )
-        job_counts = {
-            str(row[0]): int(row[1] or 0)
-            for row in self.session.execute(job_stmt).all()
-        }
+        job_stmt = self._apply_time_window(job_stmt, DetectionJob.created_at, start_time, end_time)
+        job_counts = {str(row[0]): int(row[1] or 0) for row in self.session.execute(job_stmt).all()}
 
-        detection_stmt = select(
-            DetectionHistory.input_type, func.count()
-        ).group_by(DetectionHistory.input_type)
+        detection_stmt = select(DetectionHistory.input_type, func.count()).group_by(
+            DetectionHistory.input_type
+        )
         detection_stmt = self._apply_time_window(
             detection_stmt, DetectionHistory.detected_time, start_time, end_time
         )
         detection_counts = {
-            str(row[0]): int(row[1] or 0)
-            for row in self.session.execute(detection_stmt).all()
+            str(row[0]): int(row[1] or 0) for row in self.session.execute(detection_stmt).all()
         }
 
         return [
@@ -787,9 +760,7 @@ class DetectionRepository(BaseRepository[DetectionHistory, int]):
         # emitted series cover exactly the same period. Deriving them
         # separately is how a chart ends up with a leading or trailing day that
         # is always zero.
-        bound_start = dt.datetime.combine(
-            first_day, dt.time.min, tzinfo=dt.timezone.utc
-        )
+        bound_start = dt.datetime.combine(first_day, dt.time.min, tzinfo=dt.timezone.utc)
         bound_end = dt.datetime.combine(
             last_day, dt.time.min, tzinfo=dt.timezone.utc
         ) + dt.timedelta(days=1)
@@ -803,23 +774,19 @@ class DetectionRepository(BaseRepository[DetectionHistory, int]):
         if input_type is not None:
             job_stmt = job_stmt.where(DetectionJob.input_type == input_type)
         jobs_by_day = {
-            _as_date(row[0]): int(row[1] or 0)
-            for row in self.session.execute(job_stmt).all()
+            _as_date(row[0]): int(row[1] or 0) for row in self.session.execute(job_stmt).all()
         }
 
-        detection_stmt = select(
-            func.date(DetectionHistory.detected_time), func.count()
-        ).group_by(func.date(DetectionHistory.detected_time))
+        detection_stmt = select(func.date(DetectionHistory.detected_time), func.count()).group_by(
+            func.date(DetectionHistory.detected_time)
+        )
         detection_stmt = self._apply_time_window(
             detection_stmt, DetectionHistory.detected_time, bound_start, bound_end
         )
         if input_type is not None:
-            detection_stmt = detection_stmt.where(
-                DetectionHistory.input_type == input_type
-            )
+            detection_stmt = detection_stmt.where(DetectionHistory.input_type == input_type)
         detections_by_day = {
-            _as_date(row[0]): int(row[1] or 0)
-            for row in self.session.execute(detection_stmt).all()
+            _as_date(row[0]): int(row[1] or 0) for row in self.session.execute(detection_stmt).all()
         }
 
         series: list[DailyCount] = []

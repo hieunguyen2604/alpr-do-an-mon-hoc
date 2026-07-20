@@ -361,9 +361,7 @@ class Settings(BaseSettings):
         level = value.strip().upper()
         valid = {"CRITICAL", "ERROR", "WARNING", "INFO", "DEBUG", "NOTSET"}
         if level not in valid:
-            raise ValueError(
-                f"log_level must be one of {sorted(valid)}, got {value!r}"
-            )
+            raise ValueError(f"log_level must be one of {sorted(valid)}, got {value!r}")
         return level
 
     @model_validator(mode="after")

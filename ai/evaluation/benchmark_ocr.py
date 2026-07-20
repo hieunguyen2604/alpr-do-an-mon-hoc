@@ -87,7 +87,7 @@ from collections import Counter
 from dataclasses import asdict, dataclass, field
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Final, Iterable, Sequence
+from typing import Any, Final, Sequence
 
 from ai.inference.config import PROJECT_ROOT, InferenceConfig
 from ai.inference.exceptions import ALPRError
@@ -114,9 +114,7 @@ __all__ = [
 
 LOGGER = logging.getLogger("ai.evaluation.benchmark_ocr")
 
-DEFAULT_LABELS_PATH: Final[Path] = (
-    PROJECT_ROOT / "datasets" / "annotations" / "plate_labels.csv"
-)
+DEFAULT_LABELS_PATH: Final[Path] = PROJECT_ROOT / "datasets" / "annotations" / "plate_labels.csv"
 """Where the hand-made plate transcriptions are expected to live."""
 
 DEFAULT_OUTPUT_DIR: Final[Path] = PROJECT_ROOT / "docs" / "reports" / "04-ocr-benchmark"
@@ -320,9 +318,7 @@ def character_error_rate(reference: str, hypothesis: str) -> float:
     """
     if not reference:
         return 0.0 if not hypothesis else 1.0
-    distance = sum(
-        1 for operation, _, _ in align(reference, hypothesis) if operation != "equal"
-    )
+    distance = sum(1 for operation, _, _ in align(reference, hypothesis) if operation != "equal")
     return distance / len(reference)
 
 
@@ -404,8 +400,7 @@ def load_labels(
 
         for row_number, row in enumerate(reader, start=2):
             normalised = {
-                (key or "").strip().lower(): (value or "").strip()
-                for key, value in row.items()
+                (key or "").strip().lower(): (value or "").strip() for key, value in row.items()
             }
             row_split = normalised.get("split") or None
             if split is not None and row_split != split:
@@ -471,9 +466,7 @@ def _parse_line_count(value: str | None) -> int | None:
 # ---------------------------------------------------------------------------
 
 
-def build_recognizer(
-    engine: str, config: InferenceConfig, preprocess: bool
-) -> BaseRecognizer:
+def build_recognizer(engine: str, config: InferenceConfig, preprocess: bool) -> BaseRecognizer:
     """Construct the recogniser named on the command line.
 
     This indirection is the point of :class:`~ai.inference.interfaces.BaseRecognizer`
@@ -565,9 +558,7 @@ def run_benchmark(
 
         image = cv2.imread(str(record.image_path))
         if image is None:
-            outcome.skipped.append(
-                (record.row_number, f"cannot decode image: {record.image_path}")
-            )
+            outcome.skipped.append((record.row_number, f"cannot decode image: {record.image_path}"))
             continue
 
         height, width = image.shape[0], image.shape[1]
@@ -687,9 +678,7 @@ def _accuracy_block(samples: Sequence[SampleResult]) -> dict[str, Any]:
         "char_accuracy_post_norm": round(1.0 - cer_post, 4),
         "cer_pre_norm": round(cer_pre, 4),
         "cer_post_norm": round(cer_post, 4),
-        "valid_format_rate": round(
-            sum(1 for s in samples if s.is_valid_format) / count, 4
-        ),
+        "valid_format_rate": round(sum(1 for s in samples if s.is_valid_format) / count, 4),
         "empty_read_rate": round(sum(1 for s in samples if not s.raw_text) / count, 4),
         "mean_confidence": round(statistics.fmean(s.confidence for s in samples), 4),
     }
@@ -750,9 +739,7 @@ def summarize(outcome: BenchmarkOutcome) -> dict[str, Any]:
             },
         },
         "latency": _latency_block(samples),
-        "line_count_source": dict(
-            Counter(sample.line_count_source for sample in samples)
-        ),
+        "line_count_source": dict(Counter(sample.line_count_source for sample in samples)),
         "failed_crops": sum(1 for sample in samples if sample.error is not None),
         "skipped_rows": len(outcome.skipped),
     }
@@ -1271,13 +1258,9 @@ def main(argv: list[str] | None = None) -> int:
     LOGGER.info("Engine        : %s", args.engine)
     LOGGER.info("Pre-processing: %s", "off" if args.no_preprocess else "on")
 
-    config = InferenceConfig(
-        two_line_aspect_ratio_threshold=args.aspect_ratio_threshold
-    )
+    config = InferenceConfig(two_line_aspect_ratio_threshold=args.aspect_ratio_threshold)
     try:
-        recognizer = build_recognizer(
-            args.engine, config, preprocess=not args.no_preprocess
-        )
+        recognizer = build_recognizer(args.engine, config, preprocess=not args.no_preprocess)
     except ValueError as error:
         LOGGER.error("%s", error)
         return 2
@@ -1321,9 +1304,7 @@ def main(argv: list[str] | None = None) -> int:
         },
         "summary": summary,
         "confusion_matrix": build_confusion_matrix(outcome.samples),
-        "confusion_matrix_post_norm": build_confusion_matrix(
-            outcome.samples, use_post_norm=True
-        ),
+        "confusion_matrix_post_norm": build_confusion_matrix(outcome.samples, use_post_norm=True),
         "skipped": [
             {"row": row_number, "reason": reason} for row_number, reason in outcome.skipped
         ],

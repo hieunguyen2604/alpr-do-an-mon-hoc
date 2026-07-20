@@ -111,9 +111,7 @@ class TestPathResolution:
         config = InferenceConfig(model_path=Path("models") / "x.pt")
         assert config.model_path == PROJECT_ROOT / "models" / "x.pt"
 
-    def test_a_user_home_path_is_expanded(
-        self, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_a_user_home_path_is_expanded(self, monkeypatch: pytest.MonkeyPatch) -> None:
         monkeypatch.setenv("ALPR_MODEL_PATH", "~/weights.pt")
         resolved = InferenceConfig.from_env().model_path
         assert "~" not in str(resolved)
@@ -123,9 +121,7 @@ class TestPathResolution:
 class TestReadingValues:
     """Each supported variable reaches its field."""
 
-    def test_reads_every_documented_variable(
-        self, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_reads_every_documented_variable(self, monkeypatch: pytest.MonkeyPatch) -> None:
         monkeypatch.setenv("ALPR_DEVICE", "cuda")
         monkeypatch.setenv("ALPR_CONF_THRESHOLD", "0.4")
         monkeypatch.setenv("ALPR_IOU_THRESHOLD", "0.6")
@@ -144,18 +140,14 @@ class TestReadingValues:
         assert config.ocr_use_gpu is True
         assert config.two_line_aspect_ratio_threshold == 3.0
 
-    def test_surrounding_whitespace_is_stripped(
-        self, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_surrounding_whitespace_is_stripped(self, monkeypatch: pytest.MonkeyPatch) -> None:
         monkeypatch.setenv("ALPR_DEVICE", "  cuda  ")
         monkeypatch.setenv("ALPR_CONF_THRESHOLD", "  0.5  ")
         config = InferenceConfig.from_env()
         assert config.device == "cuda"
         assert config.conf_threshold == 0.5
 
-    def test_an_empty_variable_is_treated_as_unset(
-        self, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_an_empty_variable_is_treated_as_unset(self, monkeypatch: pytest.MonkeyPatch) -> None:
         """A stray ``ALPR_DEVICE=`` in a shell profile must not blank a setting."""
         monkeypatch.setenv("ALPR_DEVICE", "")
         monkeypatch.setenv("ALPR_IMGSZ", "   ")
@@ -193,23 +185,17 @@ class TestInvalidEnvironmentValuesRaise:
     @pytest.mark.parametrize(
         "key", ["ALPR_CONF_THRESHOLD", "ALPR_IOU_THRESHOLD", "ALPR_TWO_LINE_ASPECT_RATIO"]
     )
-    def test_a_non_numeric_float_raises(
-        self, monkeypatch: pytest.MonkeyPatch, key: str
-    ) -> None:
+    def test_a_non_numeric_float_raises(self, monkeypatch: pytest.MonkeyPatch, key: str) -> None:
         monkeypatch.setenv(key, "high")
         with pytest.raises(ValueError, match="not a valid number"):
             InferenceConfig.from_env()
 
-    def test_a_non_integer_imgsz_raises(
-        self, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_a_non_integer_imgsz_raises(self, monkeypatch: pytest.MonkeyPatch) -> None:
         monkeypatch.setenv("ALPR_IMGSZ", "640.5")
         with pytest.raises(ValueError, match="not a valid integer"):
             InferenceConfig.from_env()
 
-    def test_an_unrecognised_boolean_raises(
-        self, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_an_unrecognised_boolean_raises(self, monkeypatch: pytest.MonkeyPatch) -> None:
         monkeypatch.setenv("ALPR_OCR_USE_GPU", "maybe")
         with pytest.raises(ValueError, match="not a valid boolean"):
             InferenceConfig.from_env()
@@ -260,9 +246,7 @@ class TestFieldValidation:
         assert config.conf_threshold == value
 
     @pytest.mark.parametrize("value", [0, -32, 100, 641, 33])
-    def test_rejects_an_imgsz_that_is_not_a_positive_multiple_of_32(
-        self, value: int
-    ) -> None:
+    def test_rejects_an_imgsz_that_is_not_a_positive_multiple_of_32(self, value: int) -> None:
         """A non-multiple is silently resized by YOLO, so the configured number
         would not be the number actually used."""
         with pytest.raises(ValueError, match="multiple of 32"):
@@ -289,9 +273,7 @@ class TestFieldValidation:
 class TestConfigurationIsInjectable:
     """The dataclass is what makes the pipeline testable without the environment."""
 
-    def test_a_test_can_build_exactly_the_configuration_it_needs(
-        self, tmp_path: Path
-    ) -> None:
+    def test_a_test_can_build_exactly_the_configuration_it_needs(self, tmp_path: Path) -> None:
         config = InferenceConfig(
             model_path=tmp_path / "w.pt",
             device="cpu",

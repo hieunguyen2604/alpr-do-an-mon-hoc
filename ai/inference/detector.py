@@ -476,9 +476,7 @@ class YoloPlateDetector(BaseDetector):
                 f"{image.shape[2]} (shape={image.shape})."
             )
         if image.shape[0] <= 0 or image.shape[1] <= 0:
-            raise InvalidImageError(
-                f"Input image has a zero-sized axis (shape={image.shape})."
-            )
+            raise InvalidImageError(f"Input image has a zero-sized axis (shape={image.shape}).")
 
     def _convert_predictions(
         self, predictions: Any, width: int, height: int
@@ -532,9 +530,7 @@ class YoloPlateDetector(BaseDetector):
             bbox = self._build_clamped_bbox(corners, width, height)
             if bbox is None:
                 continue
-            detections.append(
-                PlateDetection(bbox=bbox, confidence=float(confidence))
-            )
+            detections.append(PlateDetection(bbox=bbox, confidence=float(confidence)))
         return detections
 
     def _is_plate_class(self, class_id: int) -> bool:
@@ -552,9 +548,7 @@ class YoloPlateDetector(BaseDetector):
         return class_id in self._plate_class_ids
 
     @staticmethod
-    def _build_clamped_bbox(
-        corners: np.ndarray, width: int, height: int
-    ) -> BoundingBox | None:
+    def _build_clamped_bbox(corners: np.ndarray, width: int, height: int) -> BoundingBox | None:
         """Clamp a raw ``xyxy`` box to the image and convert it to a bounding box.
 
         YOLO can emit boxes that stick out past the image border by a pixel or

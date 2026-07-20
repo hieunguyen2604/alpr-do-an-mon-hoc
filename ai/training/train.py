@@ -157,9 +157,7 @@ def resolve_device(requested: str) -> str:
         ) from error
 
     has_cuda = bool(torch.cuda.is_available())
-    has_mps = bool(getattr(torch.backends, "mps", None)) and bool(
-        torch.backends.mps.is_available()
-    )
+    has_mps = bool(getattr(torch.backends, "mps", None)) and bool(torch.backends.mps.is_available())
 
     normalised = requested.strip().lower()
     if normalised == "auto":
@@ -179,8 +177,7 @@ def resolve_device(requested: str) -> str:
     elif normalised.startswith("cuda") or normalised.isdigit() or "," in normalised:
         if not has_cuda:
             LOGGER.error(
-                "Requested device %r but no CUDA GPU is visible to PyTorch; "
-                "falling back to CPU",
+                "Requested device %r but no CUDA GPU is visible to PyTorch; falling back to CPU",
                 requested,
             )
             device = "cpu"
@@ -433,9 +430,7 @@ def _validate_dataset(config: TrainingConfig) -> None:
             f"{config.data} is missing required key(s): {missing}. "
             "An Ultralytics dataset descriptor needs at least train/val/names."
         )
-    LOGGER.info(
-        "Dataset: %s | classes=%s", config.data, list(payload["names"]) or "<empty>"
-    )
+    LOGGER.info("Dataset: %s | classes=%s", config.data, list(payload["names"]) or "<empty>")
 
 
 def run_training(
@@ -699,9 +694,7 @@ def build_parser() -> argparse.ArgumentParser:
     return parser
 
 
-def _apply_overrides(
-    config: TrainingConfig, args: argparse.Namespace
-) -> TrainingConfig:
+def _apply_overrides(config: TrainingConfig, args: argparse.Namespace) -> TrainingConfig:
     """Apply command-line overrides on top of a loaded configuration.
 
     Rebuilding the dataclass (rather than mutating it) re-runs validation, so an
@@ -761,9 +754,7 @@ def main(argv: list[str] | None = None) -> int:
     """
     args = build_parser().parse_args(argv)
 
-    logging.basicConfig(
-        level=logging.INFO, format="%(levelname)s | %(message)s", stream=sys.stdout
-    )
+    logging.basicConfig(level=logging.INFO, format="%(levelname)s | %(message)s", stream=sys.stdout)
 
     try:
         config = TrainingConfig.from_yaml(args.config)
@@ -795,9 +786,7 @@ def main(argv: list[str] | None = None) -> int:
         LOGGER.info("--print-config given; exiting without training.")
         return 0
 
-    models_dir = (
-        Path(args.models_dir).expanduser() if args.models_dir else DEFAULT_MODELS_DIR
-    )
+    models_dir = Path(args.models_dir).expanduser() if args.models_dir else DEFAULT_MODELS_DIR
     if not models_dir.is_absolute():
         models_dir = PROJECT_ROOT / models_dir
 

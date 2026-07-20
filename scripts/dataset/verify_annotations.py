@@ -141,9 +141,7 @@ class VerificationReport:
     aspect_ratios: list[float] = field(default_factory=list)
     boxes_per_image: list[int] = field(default_factory=list)
     box_areas: list[float] = field(default_factory=list)
-    per_dataset: dict[str, Counter[str]] = field(
-        default_factory=lambda: defaultdict(Counter)
-    )
+    per_dataset: dict[str, Counter[str]] = field(default_factory=lambda: defaultdict(Counter))
 
     @property
     def error_count(self) -> int:
@@ -158,9 +156,7 @@ class VerificationReport:
     @property
     def images_with_errors(self) -> int:
         """Return how many distinct images carry at least one error."""
-        return len(
-            {issue.image for issue in self.issues if issue.severity == SEVERITY_ERROR}
-        )
+        return len({issue.image for issue in self.issues if issue.severity == SEVERITY_ERROR})
 
 
 def load_image_dimensions(image_path: Path) -> tuple[int, int] | None:
@@ -583,9 +579,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     )
 
     LOGGER.info("=" * 70)
-    LOGGER.info(
-        "Images clean : %s", format_count(report.images_ok, report.images_checked)
-    )
+    LOGGER.info("Images clean : %s", format_count(report.images_ok, report.images_checked))
     LOGGER.info("Boxes checked: %d", report.boxes_checked)
     LOGGER.info("Errors       : %d", report.error_count)
     LOGGER.info("Warnings     : %d", report.warning_count)

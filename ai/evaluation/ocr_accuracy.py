@@ -103,7 +103,7 @@ import statistics
 import sys
 import time
 from collections import Counter, defaultdict
-from dataclasses import asdict, dataclass, field
+from dataclasses import asdict, dataclass
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Final, Sequence
@@ -115,9 +115,10 @@ from ai.evaluation.benchmark_ocr import align, build_confusion_matrix
 from ai.inference.config import PROJECT_ROOT, InferenceConfig
 from ai.inference.exceptions import ALPRError
 from ai.inference.normalizer import VietnamesePlateNormalizer
+from ai.inference.pipeline import rescue_two_line_upper, should_rescue_two_line
 from ai.inference.plate_rules import TO_DIGIT, TO_LETTER, clean_text
 from ai.inference.recognizer import PaddleOcrRecognizer
-from ai.inference.two_line import merge_two_line, split_two_line
+from ai.inference.types import PlateRecognition
 
 __all__ = [
     "CANONICAL_ASPECT_RATIO",
@@ -144,12 +145,8 @@ the motorcycle plate is 140 x 190 mm (1.357). Applied only because the label
 corpus was exported as squares; see the module docstring.
 """
 
-DEFAULT_LABELS_PATH: Final[Path] = (
-    PROJECT_ROOT / "datasets" / "annotations" / "plate_labels.csv"
-)
-DEFAULT_OUTPUT_PATH: Final[Path] = (
-    PROJECT_ROOT / "docs" / "reports" / "04-ocr-accuracy.json"
-)
+DEFAULT_LABELS_PATH: Final[Path] = PROJECT_ROOT / "datasets" / "annotations" / "plate_labels.csv"
+DEFAULT_OUTPUT_PATH: Final[Path] = PROJECT_ROOT / "docs" / "reports" / "04-ocr-accuracy.json"
 DEFAULT_FIGURE_DIR: Final[Path] = PROJECT_ROOT / "docs" / "reports" / "figures"
 DEFAULT_ERROR_DIR: Final[Path] = PROJECT_ROOT / "docs" / "reports" / "04-ocr-errors"
 
@@ -199,6 +196,10 @@ class Sample:
         e2e_raw_detected: Whether the detector fired on the unrepaired image.
         no_repair_text: Normalised output when the aspect-ratio repair is
             skipped -- the ablation of caveat 1.
+        rescued_upper_line: Whether the two-line upper-half rescue supplied the
+            final answer. Recorded per sample so the contribution of that step
+            can be reported separately instead of being folded silently into
+            NFR-A6.
         error: Message when a stage raised, else ``None``.
     """
 
@@ -218,6 +219,7 @@ class Sample:
     e2e_raw_text: str | None = None
     e2e_raw_detected: bool = False
     no_repair_text: str | None = None
+    rescued_upper_line: bool = False
     error: str | None = None
 
 
@@ -273,9 +275,7 @@ def corpus_cer(pairs: Sequence[tuple[str, str]]) -> float:
     distance = 0
     length = 0
     for truth, prediction in pairs:
-        distance += sum(
-            1 for operation, _, _ in align(truth, prediction) if operation != "equal"
-        )
+        distance += sum(1 for operation, _, _ in align(truth, prediction) if operation != "equal")
         length += len(truth)
     return distance / length if length else 0.0
 
@@ -355,9 +355,7 @@ def accuracy_block(samples: Sequence[Sample]) -> dict[str, Any]:
         "cer_pre_norm": round(cer_pre, 4),
         "cer_post_norm": round(cer_post, 4),
         "mean_per_sample_cer_post_norm": round(
-            statistics.fmean(
-                corpus_cer([(s.truth, s.plate_number)]) for s in samples
-            ),
+            statistics.fmean(corpus_cer([(s.truth, s.plate_number)]) for s in samples),
             4,
         ),
         # NFR-A5 / NFR-A6
@@ -371,17 +369,11 @@ def accuracy_block(samples: Sequence[Sample]) -> dict[str, Any]:
             1 for s in samples if s.raw_ocr_text == s.truth and s.plate_number != s.truth
         ),
         # Diagnostics
-        "valid_format_rate": round(
-            sum(1 for s in samples if s.is_valid_format) / count, 4
-        ),
-        "empty_read_rate": round(
-            sum(1 for s in samples if not s.raw_ocr_text) / count, 4
-        ),
+        "valid_format_rate": round(sum(1 for s in samples if s.is_valid_format) / count, 4),
+        "empty_read_rate": round(sum(1 for s in samples if not s.raw_ocr_text) / count, 4),
         "mean_confidence": round(statistics.fmean(s.confidence for s in samples), 4),
         "error_classes": {
-            name: sum(
-                1 for s in samples if classify_error(s.truth, s.plate_number) == name
-            )
+            name: sum(1 for s in samples if classify_error(s.truth, s.plate_number) == name)
             for name in ERROR_CLASSES
         },
     }
@@ -412,13 +404,11 @@ def accuracy_block(samples: Sequence[Sample]) -> dict[str, Any]:
             block["e2e"]["unrepaired_input"] = {
                 "count": len(unrepaired),
                 "exact": round(
-                    sum(1 for s in unrepaired if s.e2e_raw_text == s.truth)
-                    / len(unrepaired),
+                    sum(1 for s in unrepaired if s.e2e_raw_text == s.truth) / len(unrepaired),
                     4,
                 ),
                 "detection_rate": round(
-                    sum(1 for s in unrepaired if s.e2e_raw_detected)
-                    / len(unrepaired),
+                    sum(1 for s in unrepaired if s.e2e_raw_detected) / len(unrepaired),
                     4,
                 ),
             }
@@ -539,11 +529,27 @@ def measure_crops(
             sample.error = f"{type(error).__name__}: {error}"
         sample.ocr_ms = round((time.perf_counter() - started) * 1000.0, 3)
 
-        outcome = normalizer.normalize_detailed(
-            sample.raw_ocr_text, line_count=sample.line_count
-        )
+        outcome = normalizer.normalize_detailed(sample.raw_ocr_text, line_count=sample.line_count)
         sample.plate_number = outcome.text
         sample.is_valid_format = outcome.is_valid_format
+
+        # The same rescue the pipeline applies, invoked through the same shared
+        # function. Measuring without it would publish an NFR-A5/A6 figure for a
+        # code path production does not run -- understating the shipped system by
+        # roughly two points on two-line plates.
+        candidate = PlateRecognition(
+            text=outcome.text,
+            raw_text=sample.raw_ocr_text,
+            confidence=sample.confidence,
+            line_count=sample.line_count,
+            is_valid_format=outcome.is_valid_format,
+        )
+        if should_rescue_two_line(candidate):
+            rescued = rescue_two_line_upper(recognizer, normalizer, repaired, candidate)
+            if rescued.is_valid_format:
+                sample.plate_number = rescued.text
+                sample.is_valid_format = True
+                sample.rescued_upper_line = True
 
         if ablate_repair:
             try:
@@ -690,8 +696,7 @@ def confusion_recommendations(confusion: dict[str, Any]) -> dict[str, Any]:
         table has to invert.
     """
     observed: dict[tuple[str, str], int] = {
-        (item["true"], item["predicted"]): item["count"]
-        for item in confusion["top_confusions"]
+        (item["true"], item["predicted"]): item["count"] for item in confusion["top_confusions"]
     }
     charset = confusion["charset"]
     matrix = confusion["matrix"]
@@ -785,9 +790,7 @@ def propose_table_updates(confusion: dict[str, Any]) -> dict[str, Any]:
             A ``(character, count)`` pair, or ``(None, 0)`` when never observed.
         """
         column = index[predicted]
-        scored = [
-            (candidate, matrix[index[candidate]][column]) for candidate in candidates
-        ]
+        scored = [(candidate, matrix[index[candidate]][column]) for candidate in candidates]
         scored = [item for item in scored if item[1] > 0]
         if not scored:
             return None, 0
@@ -884,8 +887,7 @@ def _export_errors(
             # from writing to the same file. Without it the exported count and
             # the files on disk disagree, and the report says so wrongly.
             name = (
-                f"{ordinal:02d}_{sample.line_count}line"
-                f"_true-{sample.truth}_got-{predicted}.jpg"
+                f"{ordinal:02d}_{sample.line_count}line" f"_true-{sample.truth}_got-{predicted}.jpg"
             )
             safe = "".join(c if c.isalnum() or c in "-_." else "_" for c in name)
             if cv2.imwrite(str(folder / safe), image):
@@ -899,7 +901,9 @@ def _export_errors(
 # ---------------------------------------------------------------------------
 
 
-def _write_charts(payload: dict[str, Any], samples: Sequence[Sample], figure_dir: Path) -> list[str]:
+def _write_charts(
+    payload: dict[str, Any], samples: Sequence[Sample], figure_dir: Path
+) -> list[str]:
     """Render the report's PNG charts.
 
     Charts are best-effort: a Matplotlib problem must not lose a measurement
@@ -1063,9 +1067,7 @@ def build_parser() -> argparse.ArgumentParser:
     """
     parser = argparse.ArgumentParser(
         prog="python -m ai.evaluation.ocr_accuracy",
-        description=(
-            "Measure NFR-A4 to NFR-A8 on the reconstructed plate-string labels."
-        ),
+        description=("Measure NFR-A4 to NFR-A8 on the reconstructed plate-string labels."),
     )
     parser.add_argument("--labels", default=str(DEFAULT_LABELS_PATH))
     parser.add_argument("--output", default=str(DEFAULT_OUTPUT_PATH))
@@ -1169,9 +1171,7 @@ def _reanalyse(report_path: Path, figure_dir: Path) -> int:
         }
     )
     payload["confusion_matrix"] = confusion
-    payload["confusion_matrix_post_norm"] = build_confusion_matrix(
-        shims, use_post_norm=True
-    )
+    payload["confusion_matrix_post_norm"] = build_confusion_matrix(shims, use_post_norm=True)
     payload["plate_rules_review"] = confusion_recommendations(confusion)
     payload["reanalysed_at"] = datetime.now(timezone.utc).isoformat(timespec="seconds")
     payload["figures"] = _write_charts(payload, samples, figure_dir)
@@ -1194,9 +1194,7 @@ def main(argv: list[str] | None = None) -> int:
     Returns:
         ``0`` on success, ``2`` when the label file is missing.
     """
-    logging.basicConfig(
-        level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s"
-    )
+    logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
     logging.getLogger("ai.inference").setLevel(logging.ERROR)
     args = build_parser().parse_args(argv)
 
@@ -1377,19 +1375,9 @@ def main(argv: list[str] | None = None) -> int:
             },
             "e2e_ms": {
                 "count": len(e2e_latencies),
-                "mean": (
-                    round(statistics.fmean(e2e_latencies), 2) if e2e_latencies else None
-                ),
-                "p50": (
-                    round(_percentile(e2e_latencies, 0.50), 2)
-                    if e2e_latencies
-                    else None
-                ),
-                "p95": (
-                    round(_percentile(e2e_latencies, 0.95), 2)
-                    if e2e_latencies
-                    else None
-                ),
+                "mean": (round(statistics.fmean(e2e_latencies), 2) if e2e_latencies else None),
+                "p50": (round(_percentile(e2e_latencies, 0.50), 2) if e2e_latencies else None),
+                "p95": (round(_percentile(e2e_latencies, 0.95), 2) if e2e_latencies else None),
             },
             "note": (
                 "Do tren cac anh crop 640x640 cua bo nhan, KHONG phai anh hien "

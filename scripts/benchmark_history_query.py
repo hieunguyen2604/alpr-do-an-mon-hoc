@@ -146,7 +146,9 @@ def benchmark_history_queries(factory: Any, row_count: int, repeats: int) -> dic
         "page_50_no_filter": {"page": 50, "page_size": 20, "filters": None},
         "deep_page_400": {"page": 400, "page_size": 20, "filters": None},
         "filter_input_type": {
-            "page": 1, "page_size": 20, "filters": HistoryFilter(input_type="image"),
+            "page": 1,
+            "page_size": 20,
+            "filters": HistoryFilter(input_type="image"),
         },
         "filter_time_range": {
             "page": 1,
@@ -157,17 +159,19 @@ def benchmark_history_queries(factory: Any, row_count: int, repeats: int) -> dic
             ),
         },
         "filter_confidence": {
-            "page": 1, "page_size": 20, "filters": HistoryFilter(min_confidence=0.8),
+            "page": 1,
+            "page_size": 20,
+            "filters": HistoryFilter(min_confidence=0.8),
         },
         "filter_plate_substring": {
-            "page": 1, "page_size": 20, "filters": HistoryFilter(plate_number="51A"),
+            "page": 1,
+            "page_size": 20,
+            "filters": HistoryFilter(plate_number="51A"),
         },
         "combined_filters": {
             "page": 1,
             "page_size": 20,
-            "filters": HistoryFilter(
-                input_type="image", min_confidence=0.7, is_valid_format=True
-            ),
+            "filters": HistoryFilter(input_type="image", min_confidence=0.7, is_valid_format=True),
         },
     }
 
@@ -194,7 +198,10 @@ def benchmark_history_queries(factory: Any, row_count: int, repeats: int) -> dic
             }
             LOGGER.info(
                 "  %-24s p50=%7.2f ms  p95=%7.2f ms  matched=%6d  %s",
-                name, stats["p50_ms"], stats["p95_ms"], matched,
+                name,
+                stats["p50_ms"],
+                stats["p95_ms"],
+                matched,
                 "PASS" if passed else "FAIL",
             )
 
@@ -232,8 +239,10 @@ def main(argv: list[str] | None = None) -> int:
     LOGGER.info("=" * 72)
     LOGGER.info(
         "CPU: %s | %s physical / %s logical cores | %.2f GB RAM",
-        hardware["cpu_name"], hardware["physical_cores"],
-        hardware["logical_cores"], hardware["ram_total_gb"],
+        hardware["cpu_name"],
+        hardware["physical_cores"],
+        hardware["logical_cores"],
+        hardware["ram_total_gb"],
     )
     if hardware["competing_processes"]:
         LOGGER.warning("Competing CPU load present -- timings below are PESSIMISTIC:")
@@ -264,7 +273,8 @@ def main(argv: list[str] | None = None) -> int:
     LOGGER.info(
         "NFR-P6  %s  (worst p95 %.2f ms, target %.0f ms)",
         "PASS" if payload["meets_target"] else "FAIL",
-        payload["worst_p95_ms"], P6_TARGET_MS,
+        payload["worst_p95_ms"],
+        P6_TARGET_MS,
     )
     LOGGER.info("Report written to %s", destination)
     LOGGER.info("=" * 72)

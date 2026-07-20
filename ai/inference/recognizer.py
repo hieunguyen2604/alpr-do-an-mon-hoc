@@ -294,9 +294,7 @@ class PaddleOcrRecognizer(BaseRecognizer):
         self._validate_crop(plate_image)
 
         started = time.perf_counter()
-        line_count = estimate_line_count(
-            plate_image, self._config.two_line_aspect_ratio_threshold
-        )
+        line_count = estimate_line_count(plate_image, self._config.two_line_aspect_ratio_threshold)
 
         ocr_input = plate_image
         if line_count == 2:
@@ -362,9 +360,7 @@ class PaddleOcrRecognizer(BaseRecognizer):
         model-loading problem surfaces on the first real call.
         """
         try:
-            blank = np.full(
-                (_WARMUP_HEIGHT, _WARMUP_WIDTH, 3), 255, dtype=np.uint8
-            )
+            blank = np.full((_WARMUP_HEIGHT, _WARMUP_WIDTH, 3), 255, dtype=np.uint8)
             started = time.perf_counter()
             self.recognize(blank)
             _LOGGER.info(
@@ -495,13 +491,11 @@ class PaddleOcrRecognizer(BaseRecognizer):
         """
         if plate_image is None or not isinstance(plate_image, np.ndarray):
             raise InvalidImageError(
-                "plate_image must be a NumPy array, got "
-                f"{type(plate_image).__name__}"
+                "plate_image must be a NumPy array, got " f"{type(plate_image).__name__}"
             )
         if plate_image.ndim not in (2, 3):
             raise InvalidImageError(
-                "plate_image must be a 2-D or 3-D array, got "
-                f"{plate_image.ndim} dimensions"
+                "plate_image must be a 2-D or 3-D array, got " f"{plate_image.ndim} dimensions"
             )
         if plate_image.size == 0 or 0 in plate_image.shape[:2]:
             raise InvalidImageError(
@@ -608,9 +602,7 @@ def _drop_short_fragments(
                 "dropped": dropped,
                 "tallest_fragment_height": round(tallest, 1),
                 "min_height": round(minimum, 1),
-                "dropped_texts": [
-                    text for _, height, text, _ in fragments if height < minimum
-                ],
+                "dropped_texts": [text for _, height, text, _ in fragments if height < minimum],
             },
         )
     return kept

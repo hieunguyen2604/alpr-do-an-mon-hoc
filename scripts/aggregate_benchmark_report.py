@@ -121,7 +121,10 @@ def plot_leak_distribution(dataset_root: Path, destination: Path) -> str | None:
     figure, axis = plt.subplots(figsize=(9, 4.5))
     axis.hist(nearest, bins=range(0, int(nearest.max()) + 2), color="#2563EB", edgecolor="white")
     axis.axvline(
-        5.5, color="#DC2626", linestyle="--", linewidth=2,
+        5.5,
+        color="#DC2626",
+        linestyle="--",
+        linewidth=2,
         label="dedup threshold used when building the split (5)",
     )
     axis.set_xlabel("Hamming distance from a test image to its nearest train image (64-bit phash)")
@@ -171,67 +174,140 @@ def main(argv: list[str] | None = None) -> int:
     if system:
         e2e = system.get("nfr_p1_e2e_latency", {})
         rows.append(
-            verdict("NFR-P1", "End-to-end latency for one image, p95",
-                    e2e.get("p95_ms"), 800.0, "ms", floor=1500.0)
+            verdict(
+                "NFR-P1",
+                "End-to-end latency for one image, p95",
+                e2e.get("p95_ms"),
+                800.0,
+                "ms",
+                floor=1500.0,
+            )
         )
         p4 = system.get("nfr_verdicts", {}).get("NFR-P4", {})
         rows.append(
-            verdict("NFR-P4", "Model load to pipeline ready",
-                    p4.get("measured_ready_s"), 15.0, "s")
+            verdict("NFR-P4", "Model load to pipeline ready", p4.get("measured_ready_s"), 15.0, "s")
         )
         p7 = system.get("nfr_verdicts", {}).get("NFR-P7", {})
         rows.append(
-            verdict("NFR-P7a", "Resident memory of the in-process pipeline",
-                    p7.get("rss_peak_gb"), 2.0, "GB")
+            verdict(
+                "NFR-P7a",
+                "Resident memory of the in-process pipeline",
+                p7.get("rss_peak_gb"),
+                2.0,
+                "GB",
+            )
         )
 
     if api:
         overhead = api.get("nfr_p5_api_overhead", {}).get("overhead", {})
         rows.append(
-            verdict("NFR-P5", "API overhead above pipeline time, p95",
-                    overhead.get("p95_ms"), 50.0, "ms", floor=100.0)
+            verdict(
+                "NFR-P5",
+                "API overhead above pipeline time, p95",
+                overhead.get("p95_ms"),
+                50.0,
+                "ms",
+                floor=100.0,
+            )
         )
         startup = api.get("nfr_p4_startup", {})
         rows.append(
-            verdict("NFR-P4b", "Server start until /health reports ready",
-                    startup.get("measured_s"), 15.0, "s")
+            verdict(
+                "NFR-P4b",
+                "Server start until /health reports ready",
+                startup.get("measured_s"),
+                15.0,
+                "s",
+            )
         )
         rows.append(
-            verdict("NFR-P7b", "Resident memory of the uvicorn server under load",
-                    api.get("nfr_p7_server_rss", {}).get("measured_gb"), 2.0, "GB")
+            verdict(
+                "NFR-P7b",
+                "Resident memory of the uvicorn server under load",
+                api.get("nfr_p7_server_rss", {}).get("measured_gb"),
+                2.0,
+                "GB",
+            )
         )
 
     if load and "concurrency" in load:
         concurrency = load["concurrency"]
         rows.append(
-            verdict("NFR-SC1", "Highest error-free concurrency",
-                    float(concurrency.get("max_error_free_concurrency", 0)), 5.0,
-                    "concurrent requests", lower_is_better=False)
+            verdict(
+                "NFR-SC1",
+                "Highest error-free concurrency",
+                float(concurrency.get("max_error_free_concurrency", 0)),
+                5.0,
+                "concurrent requests",
+                lower_is_better=False,
+            )
         )
     if load and "soak" in load:
         rows.append(
-            verdict("NFR-R4", "Success rate during the soak",
-                    load["soak"].get("success_rate"), 0.99, "fraction",
-                    lower_is_better=False)
+            verdict(
+                "NFR-R4",
+                "Success rate during the soak",
+                load["soak"].get("success_rate"),
+                0.99,
+                "fraction",
+                lower_is_better=False,
+            )
         )
 
     if database:
         payload = database.get("nfr_p6_history_query", {})
         rows.append(
-            verdict("NFR-P6", "History query over 10,000 rows, worst p95",
-                    payload.get("worst_p95_ms"), 500.0, "ms")
+            verdict(
+                "NFR-P6",
+                "History query over 10,000 rows, worst p95",
+                payload.get("worst_p95_ms"),
+                500.0,
+                "ms",
+            )
         )
 
     if detection:
         reference = detection.get("metrics_reference_ultralytics", {})
-        rows.append(verdict("NFR-A1", "Detection mAP@0.5",
-                            reference.get("mAP@0.5"), 0.90, "", lower_is_better=False))
-        rows.append(verdict("NFR-A2", "Detection mAP@0.5:0.95",
-                            reference.get("mAP@0.5:0.95"), 0.65, "", lower_is_better=False))
-        rows.append(verdict("NFR-A3a", "Detection precision",
-                            reference.get("precision"), 0.92, "", lower_is_better=False))
-        rows.append(verdict("NFR-A3b", "Detection recall",
-                            reference.get("recall"), 0.90, "", lower_is_better=False))
+        rows.append(
+            verdict(
+                "NFR-A1",
+                "Detection mAP@0.5",
+                reference.get("mAP@0.5"),
+                0.90,
+                "",
+                lower_is_better=False,
+            )
+        )
+        rows.append(
+            verdict(
+                "NFR-A2",
+                "Detection mAP@0.5:0.95",
+                reference.get("mAP@0.5:0.95"),
+                0.65,
+                "",
+                lower_is_better=False,
+            )
+        )
+        rows.append(
+            verdict(
+                "NFR-A3a",
+                "Detection precision",
+                reference.get("precision"),
+                0.92,
+                "",
+                lower_is_better=False,
+            )
+        )
+        rows.append(
+            verdict(
+                "NFR-A3b",
+                "Detection recall",
+                reference.get("recall"),
+                0.90,
+                "",
+                lower_is_better=False,
+            )
+        )
 
     passes = sum(1 for row in rows if row["status"] == "PASS")
     failures = [row["requirement"] for row in rows if row["status"] == "FAIL"]
@@ -239,9 +315,7 @@ def main(argv: list[str] | None = None) -> int:
     leakage: dict[str, Any] = {}
     if leak5:
         leakage["at_threshold_5"] = {
-            "cross_split_near_duplicate_pairs": leak5.get(
-                "total_cross_split_near_duplicate_pairs"
-            ),
+            "cross_split_near_duplicate_pairs": leak5.get("total_cross_split_near_duplicate_pairs"),
             "verdict": leak5.get("verdict"),
             "comparisons": leak5.get("cross_split_comparisons"),
             "within_split": leak5.get("within_split"),
@@ -302,12 +376,16 @@ def main(argv: list[str] | None = None) -> int:
     for row in rows:
         LOGGER.info(
             "%-9s %-12s %-42s measured=%s target=%s",
-            row["requirement"], row["status"], row["description"],
-            row["measured"], row["target"],
+            row["requirement"],
+            row["status"],
+            row["description"],
+            row["measured"],
+            row["target"],
         )
     LOGGER.info("-" * 72)
-    LOGGER.info("%d/%d requirements met. Failing: %s",
-                passes, len(rows), ", ".join(failures) or "none")
+    LOGGER.info(
+        "%d/%d requirements met. Failing: %s", passes, len(rows), ", ".join(failures) or "none"
+    )
     LOGGER.info("Report written to %s", destination)
     LOGGER.info("=" * 72)
     return 0

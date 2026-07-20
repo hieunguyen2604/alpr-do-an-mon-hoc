@@ -354,7 +354,9 @@ def read_json(path: Path) -> dict[str, Any]:
 # --------------------------------------------------------------------------- #
 # _meta — cau hinh do
 # --------------------------------------------------------------------------- #
-def collect_meta(args: argparse.Namespace, weights: Path, num_test_images: int | None) -> dict[str, Any]:
+def collect_meta(
+    args: argparse.Namespace, weights: Path, num_test_images: int | None
+) -> dict[str, Any]:
     """Thu thap toan bo ngu canh do de gan vao ket qua.
 
     Nguyen tac 1 cua Chuong 5 doi hoi moi con so hieu nang phai cong bo kem cau
@@ -459,14 +461,22 @@ def measure_detection(args: argparse.Namespace, weights: Path, store: ResultStor
     out_dir = reports_dir(args)
     report_path = out_dir / f"03-evaluation-{name}.json"
     argv = [
-        "--weights", str(weights),
-        "--data", str(args.data),
-        "--split", args.split,
-        "--imgsz", str(args.imgsz),
-        "--device", "cpu",
-        "--ar-threshold", "2.5",
-        "--name", name,
-        "--output-dir", str(out_dir),
+        "--weights",
+        str(weights),
+        "--data",
+        str(args.data),
+        "--split",
+        args.split,
+        "--imgsz",
+        str(args.imgsz),
+        "--device",
+        "cpu",
+        "--ar-threshold",
+        "2.5",
+        "--name",
+        name,
+        "--output-dir",
+        str(out_dir),
     ]
     if args.skip_slow:
         argv += ["--max-images", "200", "--speed-samples", "50", "--skip-ultralytics-val"]
@@ -613,9 +623,9 @@ def measure_size_bands(args: argparse.Namespace, weights: Path, store: ResultSto
     LOGGER.info("=== [2/7] Detection tach theo dai kich thuoc hop gioi han ===")
     try:
         from PIL import Image
+        from ultralytics import YOLO
 
         from ai.evaluation import evaluate as ev
-        from ultralytics import YOLO
     except ImportError as error:
         store.skip("T5.5c", f"thieu thu vien: {error}")
         return
@@ -640,9 +650,7 @@ def measure_size_bands(args: argparse.Namespace, weights: Path, store: ResultSto
     try:
         ground_truth, _ = ev.read_ground_truth(images, class_names, 2.5)
         model = YOLO(str(weights))
-        predictions, _ = ev.run_predictions(
-            model, images, args.imgsz, args.conf, 0.45, "cpu", 2.5
-        )
+        predictions, _ = ev.run_predictions(model, images, args.imgsz, args.conf, 0.45, "cpu", 2.5)
     except Exception as error:  # noqa: BLE001
         store.skip("T5.5c", f"khong chay duoc suy luan: {error!r}")
         return
@@ -782,13 +790,20 @@ def measure_latency(args: argparse.Namespace, weights: Path, store: ResultStore)
     out_dir = reports_dir(args)
     output = out_dir / f"05-benchmark-system-{weights.stem}.json"
     argv = [
-        "--weights", str(weights),
-        "--images", str(images_root),
-        "--imgsz", str(args.imgsz),
-        "--limit", str(limit),
-        "--device", "cpu",
-        "--output", str(output),
-        "--figures-dir", str(out_dir / "figures"),
+        "--weights",
+        str(weights),
+        "--images",
+        str(images_root),
+        "--imgsz",
+        str(args.imgsz),
+        "--limit",
+        str(limit),
+        "--device",
+        "cpu",
+        "--output",
+        str(output),
+        "--figures-dir",
+        str(out_dir / "figures"),
     ]
     if args.skip_slow:
         argv.append("--skip-onnx")
@@ -820,9 +835,7 @@ def measure_latency(args: argparse.Namespace, weights: Path, store: ResultStore)
                 "max_ms": e2e.get("max_ms"),
                 "so_anh_do": e2e.get("samples"),
                 "so_bien_trung_binh_moi_anh": report.get("mean_plates_per_image"),
-                "boi_so_vuot_nguong_toi_thieu": (
-                    None if p95 is None else round(p95 / 1500.0, 2)
-                ),
+                "boi_so_vuot_nguong_toi_thieu": (None if p95 is None else round(p95 / 1500.0, 2)),
                 "boi_so_vuot_muc_tieu": (None if p95 is None else round(p95 / 800.0, 2)),
                 "ket_qua_nfr_p1": verdict("NFR-P1", p95),
                 # 763,75 ms = client-side warm p95 cua baseline-416-v1 do lai tren
@@ -951,13 +964,20 @@ def measure_backends(args: argparse.Namespace, weights: Path, store: ResultStore
     images_root = Path(args.data).parent / "images" / args.split
     backends = ["pytorch", *sorted(exports)]
     argv = [
-        "--weights", str(weights),
-        "--images", str(images_root),
-        "--backends", *backends,
-        "--imgsz", str(args.imgsz),
-        "--runs", "10" if args.skip_slow else "50",
-        "--warmup", "3" if args.skip_slow else "5",
-        "--output-dir", str(reports_dir(args)),
+        "--weights",
+        str(weights),
+        "--images",
+        str(images_root),
+        "--backends",
+        *backends,
+        "--imgsz",
+        str(args.imgsz),
+        "--runs",
+        "10" if args.skip_slow else "50",
+        "--warmup",
+        "3" if args.skip_slow else "5",
+        "--output-dir",
+        str(reports_dir(args)),
     ]
     try:
         bench.main(argv)
@@ -1138,12 +1158,18 @@ def measure_ocr(args: argparse.Namespace, weights: Path, store: ResultStore) -> 
     out_dir = reports_dir(args)
     output = out_dir / "05-ocr-accuracy.json"
     argv = [
-        "--labels", str(labels),
-        "--output", str(output),
-        "--detector", str(weights),
-        "--detector-imgsz", str(args.imgsz),
-        "--figures", str(out_dir / "figures"),
-        "--errors-dir", str(out_dir / "05-ocr-errors"),
+        "--labels",
+        str(labels),
+        "--output",
+        str(output),
+        "--detector",
+        str(weights),
+        "--detector-imgsz",
+        str(args.imgsz),
+        "--figures",
+        str(out_dir / "figures"),
+        "--errors-dir",
+        str(out_dir / "05-ocr-errors"),
     ]
     if args.skip_slow:
         argv += ["--limit", "60", "--e2e-limit", "30", "--no-ablation"]
@@ -1209,7 +1235,6 @@ def measure_ocr(args: argparse.Namespace, weights: Path, store: ResultStore) -> 
     wrong_both = None
     if isinstance(count, int) and count and a6 is not None:
         broke = contribution.get("plates_broken") or 0
-        fixed = contribution.get("plates_fixed") or 0
         wrong_both = int(round((1 - a6) * count)) - broke
         wrong_both = max(wrong_both, 0)
     store.put(
@@ -1250,6 +1275,7 @@ def measure_ocr(args: argparse.Namespace, weights: Path, store: ResultStore) -> 
             % (one.get("count"), two.get("count")),
         )
     else:
+
         def diff(key: str) -> float | None:
             """Chenh lech mot dong tru hai dong, diem phan tram."""
             a, b = one.get(key), two.get(key)
@@ -1323,9 +1349,7 @@ def measure_ocr(args: argparse.Namespace, weights: Path, store: ResultStore) -> 
                     "doc_thanh": predicted,
                     "so_lan": item.get("count"),
                     "ty_le_trong_tong_thay_the": (
-                        None
-                        if not total_subs
-                        else round(item.get("count", 0) / total_subs, 4)
+                        None if not total_subs else round(item.get("count", 0) / total_subs, 4)
                     ),
                     "co_trong_bang_luat": bool(forward or backward),
                     "bang_luat": forward or backward,
@@ -1519,9 +1543,7 @@ def measure_errors(args: argparse.Namespace, ocr_report: Path | None, store: Res
             # dong nay bi CO Y de trong.
             "mau_so_rieng": store.value("T5.6e", "so_mau"),
             "khong_chia_chung_mau_so": True,
-            "ly_do_neu_thieu": (
-                None if e1_cases is not None else "phu thuoc T5.6e — chua do duoc"
-            ),
+            "ly_do_neu_thieu": (None if e1_cases is not None else "phu thuoc T5.6e — chua do duoc"),
         },
         "E2": {
             "ten": "Phát hiện nhầm",
@@ -1610,12 +1632,21 @@ def measure_stress(args: argparse.Namespace, weights: Path, store: ResultStore) 
     images_root = Path(args.data).parent / "images" / args.split
     output = reports_dir(args) / "05-stress-test.json"
     argv = [
-        "--weights", str(weights),
-        "--images", str(images_root),
-        "--concurrency", "1", "2", "5", "10",
-        "--soak-seconds", "300",
-        "--device", "cpu",
-        "--output", str(output),
+        "--weights",
+        str(weights),
+        "--images",
+        str(images_root),
+        "--concurrency",
+        "1",
+        "2",
+        "5",
+        "10",
+        "--soak-seconds",
+        "300",
+        "--device",
+        "cpu",
+        "--output",
+        str(output),
     ]
     try:
         stress.main(argv)
@@ -1666,9 +1697,20 @@ def collect_library_versions(store: ResultStore) -> None:
     """
     LOGGER.info("Thu thap phien ban thu vien cho T5.2b")
     packages = (
-        "ultralytics", "torch", "torchvision", "paddleocr", "paddlepaddle",
-        "onnxruntime", "openvino", "opencv-python", "numpy", "fastapi",
-        "uvicorn", "sqlalchemy", "imagehash", "pytest",
+        "ultralytics",
+        "torch",
+        "torchvision",
+        "paddleocr",
+        "paddlepaddle",
+        "onnxruntime",
+        "openvino",
+        "opencv-python",
+        "numpy",
+        "fastapi",
+        "uvicorn",
+        "sqlalchemy",
+        "imagehash",
+        "pytest",
     )
     versions: dict[str, Any] = {}
     for name in packages:
@@ -1706,7 +1748,9 @@ def collect_training_curve(store: ResultStore, run_dir: Path) -> None:
         return
     try:
         with csv_path.open(encoding="utf-8", newline="") as handle:
-            rows = [{k.strip(): v.strip() for k, v in row.items()} for row in csv.DictReader(handle)]
+            rows = [
+                {k.strip(): v.strip() for k, v in row.items()} for row in csv.DictReader(handle)
+            ]
     except OSError as error:
         store.skip("T5.4b", f"khong doc duoc {csv_path}: {error}")
         return
@@ -1932,9 +1976,7 @@ def measure_source_distribution(args: argparse.Namespace, store: ResultStore) ->
     grand_total = sum(sum(b.values()) for b in per_source.values())
     totals = {name: sum(b[name] for b in per_source.values()) for name in splits}
     # Ti le tong the cua tung split, dung lam moc de phat hien nguon lech.
-    overall_share = {
-        name: (totals[name] / grand_total if grand_total else None) for name in splits
-    }
+    overall_share = {name: (totals[name] / grand_total if grand_total else None) for name in splits}
 
     rows: dict[str, Any] = {}
     skewed: list[str] = []
@@ -1971,9 +2013,7 @@ def measure_source_distribution(args: argparse.Namespace, store: ResultStore) ->
         {
             "theo_nguon": rows,
             "so_to_hop_xuat_xu": len(rows),
-            "nguon_nguyen_to": dict(
-                sorted(atomic_sources.items(), key=lambda item: -item[1])
-            ),
+            "nguon_nguyen_to": dict(sorted(atomic_sources.items(), key=lambda item: -item[1])),
             "so_nguon_nguyen_to": len(atomic_sources),
             "tong": {
                 "tong_so_anh": grand_total,
@@ -2042,15 +2082,21 @@ def build_comparison(store: ResultStore, weights: Path) -> None:
         "map5095": store.value("T5.5a", "map5095"),
         "precision": store.value("T5.5a", "precision"),
         "recall": store.value("T5.5a", "recall"),
-        "map50_mot_dong": (store.value("T5.5b", "mot_dong") or {}).get("map50")
-        if isinstance(store.value("T5.5b", "mot_dong"), dict)
-        else None,
-        "map50_hai_dong": (store.value("T5.5b", "hai_dong") or {}).get("map50")
-        if isinstance(store.value("T5.5b", "hai_dong"), dict)
-        else None,
-        "chenh_layout_diem_pt": (store.value("T5.5b", "chenh_lech_diem_pt") or {}).get("map50")
-        if isinstance(store.value("T5.5b", "chenh_lech_diem_pt"), dict)
-        else None,
+        "map50_mot_dong": (
+            (store.value("T5.5b", "mot_dong") or {}).get("map50")
+            if isinstance(store.value("T5.5b", "mot_dong"), dict)
+            else None
+        ),
+        "map50_hai_dong": (
+            (store.value("T5.5b", "hai_dong") or {}).get("map50")
+            if isinstance(store.value("T5.5b", "hai_dong"), dict)
+            else None
+        ),
+        "chenh_layout_diem_pt": (
+            (store.value("T5.5b", "chenh_lech_diem_pt") or {}).get("map50")
+            if isinstance(store.value("T5.5b", "chenh_lech_diem_pt"), dict)
+            else None
+        ),
         "do_tre_p95_ms": store.value("T5.7a", "p95_ms"),
     }
     store.put(
@@ -2082,43 +2128,150 @@ def build_nfr_summary(store: ResultStore) -> list[dict[str, Any]]:
     layout_gap = layout_b.get("map50") if isinstance(layout_b, dict) else None
 
     rows: list[dict[str, Any]] = [
-        {"ma": "P1", "chi_tieu": "Độ trễ E2E một ảnh, p95 (ms)", "do_duoc": store.value("T5.7a", "p95_ms"), "nfr": "NFR-P1"},
-        {"ma": "P2", "chi_tieu": "Tốc độ khung hình webcam (FPS)", "do_duoc": None, "nfr": None,
-         "ly_do": "chua co kich ban do webcam — muc D.3 cua ch5-thuc-nghiem.md"},
-        {"ma": "P3", "chi_tieu": "Tốc độ xử lý video (× thời gian thực)", "do_duoc": None, "nfr": None,
-         "ly_do": "chua co kich ban do video"},
-        {"ma": "P4", "chi_tieu": "Thời gian nạp mô hình (s)", "do_duoc": 6.41, "nfr": "NFR-P4",
-         "ghi_chu": "do tren baseline-416-v1.pt"},
-        {"ma": "P5", "chi_tieu": "Overhead API, p95 (ms)", "do_duoc": 19.01, "nfr": "NFR-P5",
-         "ghi_chu": "do tren baseline-416-v1.pt"},
-        {"ma": "P6", "chi_tieu": "Truy vấn 10.000 bản ghi, p95 (ms)", "do_duoc": 18.71, "nfr": "NFR-P6",
-         "ghi_chu": "do tren baseline-416-v1.pt"},
+        {
+            "ma": "P1",
+            "chi_tieu": "Độ trễ E2E một ảnh, p95 (ms)",
+            "do_duoc": store.value("T5.7a", "p95_ms"),
+            "nfr": "NFR-P1",
+        },
+        {
+            "ma": "P2",
+            "chi_tieu": "Tốc độ khung hình webcam (FPS)",
+            "do_duoc": None,
+            "nfr": None,
+            "ly_do": "chua co kich ban do webcam — muc D.3 cua ch5-thuc-nghiem.md",
+        },
+        {
+            "ma": "P3",
+            "chi_tieu": "Tốc độ xử lý video (× thời gian thực)",
+            "do_duoc": None,
+            "nfr": None,
+            "ly_do": "chua co kich ban do video",
+        },
+        {
+            "ma": "P4",
+            "chi_tieu": "Thời gian nạp mô hình (s)",
+            "do_duoc": 6.41,
+            "nfr": "NFR-P4",
+            "ghi_chu": "do tren baseline-416-v1.pt",
+        },
+        {
+            "ma": "P5",
+            "chi_tieu": "Overhead API, p95 (ms)",
+            "do_duoc": 19.01,
+            "nfr": "NFR-P5",
+            "ghi_chu": "do tren baseline-416-v1.pt",
+        },
+        {
+            "ma": "P6",
+            "chi_tieu": "Truy vấn 10.000 bản ghi, p95 (ms)",
+            "do_duoc": 18.71,
+            "nfr": "NFR-P6",
+            "ghi_chu": "do tren baseline-416-v1.pt",
+        },
         {"ma": "P7a", "chi_tieu": "RSS pipeline (GB)", "do_duoc": 0.759, "nfr": "NFR-P7a"},
         {"ma": "P7b", "chi_tieu": "RSS máy chủ backend (GB)", "do_duoc": 0.806, "nfr": "NFR-P7b"},
-        {"ma": "A1", "chi_tieu": "mAP@0.5 của bộ phát hiện", "do_duoc": store.value("T5.5a", "map50"), "nfr": "NFR-A1"},
-        {"ma": "A2", "chi_tieu": "mAP@0.5:0.95 của bộ phát hiện", "do_duoc": store.value("T5.5a", "map5095"), "nfr": "NFR-A2"},
-        {"ma": "A3-P", "chi_tieu": "Precision phát hiện", "do_duoc": store.value("T5.5a", "precision"), "nfr": "NFR-A3p"},
-        {"ma": "A3-R", "chi_tieu": "Recall phát hiện", "do_duoc": store.value("T5.5a", "recall"), "nfr": "NFR-A3r"},
-        {"ma": "A4", "chi_tieu": "1 − CER (mức ký tự)", "do_duoc": store.value("T5.6a", "char_accuracy_sau"), "nfr": "NFR-A4"},
-        {"ma": "A5", "chi_tieu": "Chuỗi đầy đủ trước hậu xử lý", "do_duoc": store.value("T5.6b", "a5_truoc_hau_xu_ly"), "nfr": "NFR-A5"},
-        {"ma": "A6", "chi_tieu": "Chuỗi đầy đủ sau hậu xử lý", "do_duoc": store.value("T5.6b", "a6_sau_hau_xu_ly"), "nfr": "NFR-A6"},
-        {"ma": "A6−A5", "chi_tieu": "Đóng góp của khối hậu xử lý (điểm %)", "do_duoc": store.value("T5.6b", "muc_cai_thien_diem_pt"), "nfr": None},
-        {"ma": "A7", "chi_tieu": "Độ chính xác E2E toàn trình", "do_duoc": store.value("T5.6e", "a7_e2e"), "nfr": "NFR-A7"},
-        {"ma": "A8", "chi_tieu": "Chênh lệch layout, detection (điểm %)", "do_duoc": layout_gap, "nfr": None},
-        {"ma": "A9", "chi_tieu": "Tách theo điều kiện ảnh", "do_duoc": None, "nfr": None,
-         "ly_do": "bo du lieu KHONG co nhan dieu kien anh — day la han che that, khong "
-                  "phai 'chua toi luot do'. Khong duoc gan nhan bang suy doan."},
-        {"ma": "R4", "chi_tieu": "Tỉ lệ thành công soak 300 s", "do_duoc": store.value("T5.7e", "soak_ty_le_thanh_cong"), "nfr": "NFR-R4"},
-        {"ma": "R5", "chi_tieu": "CSDL sống sót qua khởi động lại", "do_duoc": None, "nfr": None,
-         "ly_do": "chua chay kich ban khoi dong lai"},
-        {"ma": "SC1", "chi_tieu": "Số yêu cầu đồng thời xử lý ổn định", "do_duoc": store.value("T5.7e", "so_yeu_cau_dong_thoi_on_dinh"), "nfr": "NFR-SC1"},
-        {"ma": "M2", "chi_tieu": "Độ bao phủ test tầng nghiệp vụ", "do_duoc": 0.881, "nfr": None,
-         "ghi_chu": "861/862 test pass, 1 xfail, 0 fail; toan kho 42,0%"},
+        {
+            "ma": "A1",
+            "chi_tieu": "mAP@0.5 của bộ phát hiện",
+            "do_duoc": store.value("T5.5a", "map50"),
+            "nfr": "NFR-A1",
+        },
+        {
+            "ma": "A2",
+            "chi_tieu": "mAP@0.5:0.95 của bộ phát hiện",
+            "do_duoc": store.value("T5.5a", "map5095"),
+            "nfr": "NFR-A2",
+        },
+        {
+            "ma": "A3-P",
+            "chi_tieu": "Precision phát hiện",
+            "do_duoc": store.value("T5.5a", "precision"),
+            "nfr": "NFR-A3p",
+        },
+        {
+            "ma": "A3-R",
+            "chi_tieu": "Recall phát hiện",
+            "do_duoc": store.value("T5.5a", "recall"),
+            "nfr": "NFR-A3r",
+        },
+        {
+            "ma": "A4",
+            "chi_tieu": "1 − CER (mức ký tự)",
+            "do_duoc": store.value("T5.6a", "char_accuracy_sau"),
+            "nfr": "NFR-A4",
+        },
+        {
+            "ma": "A5",
+            "chi_tieu": "Chuỗi đầy đủ trước hậu xử lý",
+            "do_duoc": store.value("T5.6b", "a5_truoc_hau_xu_ly"),
+            "nfr": "NFR-A5",
+        },
+        {
+            "ma": "A6",
+            "chi_tieu": "Chuỗi đầy đủ sau hậu xử lý",
+            "do_duoc": store.value("T5.6b", "a6_sau_hau_xu_ly"),
+            "nfr": "NFR-A6",
+        },
+        {
+            "ma": "A6−A5",
+            "chi_tieu": "Đóng góp của khối hậu xử lý (điểm %)",
+            "do_duoc": store.value("T5.6b", "muc_cai_thien_diem_pt"),
+            "nfr": None,
+        },
+        {
+            "ma": "A7",
+            "chi_tieu": "Độ chính xác E2E toàn trình",
+            "do_duoc": store.value("T5.6e", "a7_e2e"),
+            "nfr": "NFR-A7",
+        },
+        {
+            "ma": "A8",
+            "chi_tieu": "Chênh lệch layout, detection (điểm %)",
+            "do_duoc": layout_gap,
+            "nfr": None,
+        },
+        {
+            "ma": "A9",
+            "chi_tieu": "Tách theo điều kiện ảnh",
+            "do_duoc": None,
+            "nfr": None,
+            "ly_do": "bo du lieu KHONG co nhan dieu kien anh — day la han che that, khong "
+            "phai 'chua toi luot do'. Khong duoc gan nhan bang suy doan.",
+        },
+        {
+            "ma": "R4",
+            "chi_tieu": "Tỉ lệ thành công soak 300 s",
+            "do_duoc": store.value("T5.7e", "soak_ty_le_thanh_cong"),
+            "nfr": "NFR-R4",
+        },
+        {
+            "ma": "R5",
+            "chi_tieu": "CSDL sống sót qua khởi động lại",
+            "do_duoc": None,
+            "nfr": None,
+            "ly_do": "chua chay kich ban khoi dong lai",
+        },
+        {
+            "ma": "SC1",
+            "chi_tieu": "Số yêu cầu đồng thời xử lý ổn định",
+            "do_duoc": store.value("T5.7e", "so_yeu_cau_dong_thoi_on_dinh"),
+            "nfr": "NFR-SC1",
+        },
+        {
+            "ma": "M2",
+            "chi_tieu": "Độ bao phủ test tầng nghiệp vụ",
+            "do_duoc": 0.881,
+            "nfr": None,
+            "ghi_chu": "861/862 test pass, 1 xfail, 0 fail; toan kho 42,0%",
+        },
     ]
     for row in rows:
         code = row.get("nfr")
-        row["ket_qua"] = verdict(code, row.get("do_duoc")) if code else (
-            "⬜ chưa đo" if row.get("do_duoc") is None else "n/a"
+        row["ket_qua"] = (
+            verdict(code, row.get("do_duoc"))
+            if code
+            else ("⬜ chưa đo" if row.get("do_duoc") is None else "n/a")
         )
     store.put("T5.9", {"dong": rows})
     return rows
@@ -2162,7 +2315,8 @@ def render_markdown(store: ResultStore, meta: dict[str, Any]) -> str:
     add("")
     add(f"*Sinh lúc {meta['thoi_diem_do']} bằng `scripts/fill_chapter5.py`.*")
     add("")
-    add("> **Điều kiện đo — bắt buộc đọc kèm mọi bảng bên dưới.** "
+    add(
+        "> **Điều kiện đo — bắt buộc đọc kèm mọi bảng bên dưới.** "
         f"CPU {meta.get('cpu_ten')}, {meta.get('so_nhan_vat_ly') or EM_DASH} nhân vật lý / "
         f"{meta.get('so_nhan_logic') or EM_DASH} nhân logic, RAM "
         f"{cell(meta.get('ram_tong_gb'), 2)} GB, {meta.get('he_dieu_hanh')}, "
@@ -2170,10 +2324,13 @@ def render_markdown(store: ResultStore, meta: dict[str, Any]) -> str:
         f"ultralytics {meta.get('ultralytics')}, `device=cpu`, kích thước lô = 1. "
         f"Mô hình: `{meta.get('duong_dan_model')}`. Bộ dữ liệu: "
         f"`{meta.get('dataset_yaml')}`, split `{meta.get('split')}`, "
-        f"{vni(meta.get('so_anh_split'))} ảnh.")
+        f"{vni(meta.get('so_anh_split'))} ảnh."
+    )
     add("")
-    add("Ô ghi `—` là ô **chưa đo được**; lý do cụ thể nằm ở khoá `ly_do` trong "
-        "`docs/reports/05-results.json`. Không được điền 0 vào các ô đó.")
+    add(
+        "Ô ghi `—` là ô **chưa đo được**; lý do cụ thể nằm ở khoá `ly_do` trong "
+        "`docs/reports/05-results.json`. Không được điền 0 vào các ô đó."
+    )
     add("")
     add("---")
     add("")
@@ -2203,7 +2360,9 @@ def render_markdown(store: ResultStore, meta: dict[str, Any]) -> str:
         if payload.get("canh_bao"):
             add(f"> ⚠ {payload['canh_bao']}")
             add("")
-        add("| Ngưỡng Hamming | v1 — số cặp train↔test | v2 — số cặp train↔test | **v3 — số cặp train↔test** | Ô này có mang thông tin mới không? |")
+        add(
+            "| Ngưỡng Hamming | v1 — số cặp train↔test | v2 — số cặp train↔test | **v3 — số cặp train↔test** | Ô này có mang thông tin mới không? |"
+        )
         add("|:---:|---:|---:|---:|---|")
         for key in sorted(payload["theo_nguong"], key=lambda x: int(x)):
             row = payload["theo_nguong"][key]
@@ -2213,13 +2372,17 @@ def render_markdown(store: ResultStore, meta: dict[str, Any]) -> str:
                 label += " (trùng khít bit-hash)"
             v1 = EM_DASH if row["v1_so_cap"] is None else f"**{vni(row['v1_so_cap'])}**"
             v2 = EM_DASH if row["v2_so_cap"] is None else f"**{vni(row['v2_so_cap'])}**"
-            add(f"| {label} | {v1} | {v2} | **{vni(row['v3_so_cap'])}** | {row['mang_thong_tin_moi']} |")
+            add(
+                f"| {label} | {v1} | {v2} | **{vni(row['v3_so_cap'])}** | {row['mang_thong_tin_moi']} |"
+            )
         add("")
-        add(f"> Mẫu số: {vni(payload['so_anh_train'])} ảnh train × "
+        add(
+            f"> Mẫu số: {vni(payload['so_anh_train'])} ảnh train × "
             f"{vni(payload['so_anh_split_danh_gia'])} ảnh `{payload['split_danh_gia']}` = "
             f"{vni(payload['so_cap_da_so_sanh'])} cặp đã so sánh. Phương pháp: "
             f"{payload['phuong_phap']}. Khoảng cách Hamming nhỏ nhất quan sát được: "
-            f"**{vni(payload['khoang_cach_nho_nhat'])}**.")
+            f"**{vni(payload['khoang_cach_nho_nhat'])}**."
+        )
         add(">")
         add(f"> {payload['ghi_chu']}")
     else:
@@ -2231,7 +2394,9 @@ def render_markdown(store: ResultStore, meta: dict[str, Any]) -> str:
     add("")
     payload = store.get("T5.3c")
     if store.measured("T5.3c"):
-        add("| Nguồn dữ liệu | Tổng số ảnh | Train (số / %) | Val (số / %) | Test (số / %) | Ghi chú |")
+        add(
+            "| Nguồn dữ liệu | Tổng số ảnh | Train (số / %) | Val (số / %) | Test (số / %) | Ghi chú |"
+        )
         add("|---|---:|---:|---:|---:|---|")
 
         def share_cell(count: Any, share: Any) -> str:
@@ -2257,12 +2422,14 @@ def render_markdown(store: ResultStore, meta: dict[str, Any]) -> str:
         )
         add("")
         skewed = payload["nguon_lech_qua_nguong"]
-        add(f"> {payload['so_to_hop_xuat_xu']} tổ hợp xuất xứ, dựng từ "
+        add(
+            f"> {payload['so_to_hop_xuat_xu']} tổ hợp xuất xứ, dựng từ "
             f"**{payload['so_nguon_nguyen_to']} nguồn nguyên tố**: "
             f"{', '.join(f'`{s}`' for s in payload['nguon_nguyen_to'])}. Nguồn lệch quá "
             f"{vn(SOURCE_SKEW_LIMIT_POINTS, 0)} điểm phần trăm ở tập test: "
             f"{', '.join(f'`{s}`' for s in skewed) if skewed else '**không có**'}. "
-            f"Số bản ghi không rõ split: {vni(payload['so_ban_ghi_khong_ro_split'])}.")
+            f"Số bản ghi không rõ split: {vni(payload['so_ban_ghi_khong_ro_split'])}."
+        )
         add(">")
         add(f"> {payload['ghi_chu']}")
     else:
@@ -2274,7 +2441,9 @@ def render_markdown(store: ResultStore, meta: dict[str, Any]) -> str:
     add("")
     payload = store.get("T5.4b")
     if store.measured("T5.4b"):
-        add("| Epoch | `box_loss` (val) | `cls_loss` (val) | `dfl_loss` (val) | mAP@0.5 | mAP@0.5:0.95 | Precision | Recall |")
+        add(
+            "| Epoch | `box_loss` (val) | `cls_loss` (val) | `dfl_loss` (val) | mAP@0.5 | mAP@0.5:0.95 | Precision | Recall |"
+        )
         add("|:---:|---:|---:|---:|---:|---:|---:|---:|")
         for index in sorted(payload["theo_epoch"], key=lambda x: int(x)):
             row = payload["theo_epoch"][index]
@@ -2284,8 +2453,10 @@ def render_markdown(store: ResultStore, meta: dict[str, Any]) -> str:
                 f"**{cell(row['map5095'])}** | {cell(row['precision'])} | {cell(row['recall'])} |"
             )
         add("")
-        add(f"Epoch tốt nhất theo mAP@0.5:0.95 trên val: **{payload['epoch_tot_nhat_theo_map5095'] or EM_DASH}** "
-            f"({payload['so_epoch_da_chay']} epoch đã chạy).")
+        add(
+            f"Epoch tốt nhất theo mAP@0.5:0.95 trên val: **{payload['epoch_tot_nhat_theo_map5095'] or EM_DASH}** "
+            f"({payload['so_epoch_da_chay']} epoch đã chạy)."
+        )
         if payload.get("canh_bao"):
             add("")
             add(f"> ⚠ {payload['canh_bao']}")
@@ -2300,14 +2471,26 @@ def render_markdown(store: ResultStore, meta: dict[str, Any]) -> str:
     if store.measured("T5.5a"):
         add("| Chỉ số | Mã NFR | Ngưỡng tối thiểu | Mục tiêu | **Đo được** | Kết quả |")
         add("|---|:---:|---:|---:|---:|:---:|")
-        add(f"| mAP@0.5 | NFR-A1 | 0,85 | 0,90 | **{cell(payload['map50'])}** | {verdict('NFR-A1', payload['map50'])} |")
-        add(f"| mAP@0.5:0.95 | NFR-A2 | 0,55 | 0,65 | **{cell(payload['map5095'])}** | {verdict('NFR-A2', payload['map5095'])} |")
-        add(f"| Precision | NFR-A3 | 0,88 | 0,92 | **{cell(payload['precision'])}** | {verdict('NFR-A3p', payload['precision'])} |")
-        add(f"| Recall | NFR-A3 | 0,85 | 0,90 | **{cell(payload['recall'])}** | {verdict('NFR-A3r', payload['recall'])} |")
+        add(
+            f"| mAP@0.5 | NFR-A1 | 0,85 | 0,90 | **{cell(payload['map50'])}** | {verdict('NFR-A1', payload['map50'])} |"
+        )
+        add(
+            f"| mAP@0.5:0.95 | NFR-A2 | 0,55 | 0,65 | **{cell(payload['map5095'])}** | {verdict('NFR-A2', payload['map5095'])} |"
+        )
+        add(
+            f"| Precision | NFR-A3 | 0,88 | 0,92 | **{cell(payload['precision'])}** | {verdict('NFR-A3p', payload['precision'])} |"
+        )
+        add(
+            f"| Recall | NFR-A3 | 0,85 | 0,90 | **{cell(payload['recall'])}** | {verdict('NFR-A3r', payload['recall'])} |"
+        )
         add(f"| F1 | — | — | — | {cell(payload['f1'])} | n/a |")
-        add(f"| Ngưỡng confidence dùng khi đo | — | — | — | {cell(payload['conf_toi_uu_theo_f1'], 2)} | n/a |")
+        add(
+            f"| Ngưỡng confidence dùng khi đo | — | — | — | {cell(payload['conf_toi_uu_theo_f1'], 2)} | n/a |"
+        )
         add(f"| Số ảnh tập test | — | — | — | **{vni(payload['so_anh_tap_test'])}** | n/a |")
-        add(f"| Số đối tượng nhãn thật | — | — | — | **{vni(payload['so_doi_tuong_nhan_that'])}** | n/a |")
+        add(
+            f"| Số đối tượng nhãn thật | — | — | — | **{vni(payload['so_doi_tuong_nhan_that'])}** | n/a |"
+        )
         add("")
         add(f"> Nguồn chỉ số: `{payload['nguon_chi_so']}`. {payload['conf_ghi_chu']}")
     else:
@@ -2322,22 +2505,31 @@ def render_markdown(store: ResultStore, meta: dict[str, Any]) -> str:
         one, two, gap = payload["mot_dong"], payload["hai_dong"], payload["chenh_lech_diem_pt"]
         add("| Chỉ số | Biển **một dòng** | Biển **hai dòng** | Chênh lệch (điểm %) | Mẫu số |")
         add("|---|---:|---:|---:|---:|")
-        add(f"| Số đối tượng nhãn thật | {vni(one['so_doi_tuong'])} | {vni(two['so_doi_tuong'])} | n/a | "
-            f"{vni((one['so_doi_tuong'] or 0) + (two['so_doi_tuong'] or 0))} |")
+        add(
+            f"| Số đối tượng nhãn thật | {vni(one['so_doi_tuong'])} | {vni(two['so_doi_tuong'])} | n/a | "
+            f"{vni((one['so_doi_tuong'] or 0) + (two['so_doi_tuong'] or 0))} |"
+        )
         for key, label in (
-            ("map50", "mAP@0.5"), ("map5095", "mAP@0.5:0.95"),
-            ("precision", "Precision"), ("recall", "Recall"), ("f1", "F1"),
+            ("map50", "mAP@0.5"),
+            ("map5095", "mAP@0.5:0.95"),
+            ("precision", "Precision"),
+            ("recall", "Recall"),
+            ("f1", "F1"),
         ):
             add(f"| {label} | {cell(one[key])} | {cell(two[key])} | {cell(gap[key], 2)} | |")
         add("")
-        add(f"> Ngưỡng tỉ lệ khung hình: {cell(payload['nguong_ty_le_khung_hinh'], 1)}. "
+        add(
+            f"> Ngưỡng tỉ lệ khung hình: {cell(payload['nguong_ty_le_khung_hinh'], 1)}. "
             f"Tỉ lệ ô được suy bằng heuristic: {cell(payload['ty_le_o_suy_bang_heuristic'])}. "
-            f"{payload['canh_bao_heuristic']}")
+            f"{payload['canh_bao_heuristic']}"
+        )
         add(">")
         moc = payload["moc_baseline_416_v1"]
-        add(f"> Mốc baseline (`baseline-416-v1.pt`, split v1, imgsz 416): một dòng "
+        add(
+            f"> Mốc baseline (`baseline-416-v1.pt`, split v1, imgsz 416): một dòng "
             f"{vn(moc['map50_mot_dong'])} so với hai dòng {vn(moc['map50_hai_dong'])}, "
-            f"chênh {vn(moc['chenh_diem_pt'], 1)} điểm. {moc['ghi_chu']}")
+            f"chênh {vn(moc['chenh_diem_pt'], 1)} điểm. {moc['ghi_chu']}"
+        )
     else:
         add(f"*(chưa đo)* — {payload.get('ly_do')}")
     add("")
@@ -2347,7 +2539,9 @@ def render_markdown(store: ResultStore, meta: dict[str, Any]) -> str:
     add("")
     payload = store.get("T5.5c")
     if store.measured("T5.5c"):
-        add("| Dải kích thước (diện tích box / diện tích ảnh) | Số đối tượng | Tỉ lệ trong tập test | mAP@0.5 | mAP@0.5:0.95 | Recall |")
+        add(
+            "| Dải kích thước (diện tích box / diện tích ảnh) | Số đối tượng | Tỉ lệ trong tập test | mAP@0.5 | mAP@0.5:0.95 | Recall |"
+        )
         add("|---|---:|---:|---:|---:|---:|")
         for band, _, _ in SIZE_BANDS:
             row = payload["dai"][band]
@@ -2359,13 +2553,17 @@ def render_markdown(store: ResultStore, meta: dict[str, Any]) -> str:
                 f"{cell(row['map50'])} | {cell(row['map5095'])} | {cell(row['recall'])} |"
             )
         total = payload["toan_tap"]
-        add(f"| **Toàn tập test** | **{vni(total['so_doi_tuong'])}** | 100% | "
-            f"**{cell(total['map50'])}** | **{cell(total['map5095'])}** | **{cell(total['recall'])}** |")
+        add(
+            f"| **Toàn tập test** | **{vni(total['so_doi_tuong'])}** | 100% | "
+            f"**{cell(total['map50'])}** | **{cell(total['map5095'])}** | **{cell(total['recall'])}** |"
+        )
         add("")
-        add(f"> Đo trên {vni(payload['so_anh'])} ảnh. "
+        add(
+            f"> Đo trên {vni(payload['so_anh'])} ảnh. "
             f"Số box không gán được dải: {vni(payload['so_box_khong_gan_duoc_dai'])}. "
             f"Dòng có ⚠ là dòng dưới 30 đối tượng — **không có ý nghĩa thống kê**, "
-            f"không được đưa vào so sánh. {payload['ghi_chu']}")
+            f"không được đưa vào so sánh. {payload['ghi_chu']}"
+        )
     else:
         add(f"*(chưa đo)* — {payload.get('ly_do')}")
     add("")
@@ -2375,11 +2573,17 @@ def render_markdown(store: ResultStore, meta: dict[str, Any]) -> str:
     add("")
     payload = store.get("T5.6a")
     if store.measured("T5.6a"):
-        add("| Chỉ số | Ngưỡng tối thiểu | Mục tiêu | **Đo được (trước hậu xử lý)** | **Đo được (sau hậu xử lý)** | Kết quả |")
+        add(
+            "| Chỉ số | Ngưỡng tối thiểu | Mục tiêu | **Đo được (trước hậu xử lý)** | **Đo được (sau hậu xử lý)** | Kết quả |"
+        )
         add("|---|---:|---:|---:|---:|:---:|")
-        add(f"| 1 − CER (NFR-A4) | 0,92 | 0,95 | {cell(payload['char_accuracy_truoc'])} | "
-            f"**{cell(payload['char_accuracy_sau'])}** | {payload['ket_qua_nfr_a4']} |")
-        add(f"| CER | ≤ 0,08 | ≤ 0,05 | {cell(payload['cer_truoc'])} | {cell(payload['cer_sau'])} | n/a |")
+        add(
+            f"| 1 − CER (NFR-A4) | 0,92 | 0,95 | {cell(payload['char_accuracy_truoc'])} | "
+            f"**{cell(payload['char_accuracy_sau'])}** | {payload['ket_qua_nfr_a4']} |"
+        )
+        add(
+            f"| CER | ≤ 0,08 | ≤ 0,05 | {cell(payload['cer_truoc'])} | {cell(payload['cer_sau'])} | n/a |"
+        )
         for label, key in (
             ("Số ký tự nhãn thật ($N$)", "N_so_ky_tu_nhan_that"),
             ("Số ký tự thay thế ($S$)", "S_thay_the"),
@@ -2389,13 +2593,17 @@ def render_markdown(store: ResultStore, meta: dict[str, Any]) -> str:
             value = payload[key]
             text = EM_DASH if value in (None, NOT_MEASURED) else vni(value)
             add(f"| {label} | — | — | {text} | {text} | n/a |")
-        add(f"| **Số biển có nhãn chuỗi (mẫu số)** | — | — | **{vni(payload['so_mau'])}** | **{vni(payload['so_mau'])}** | n/a |")
+        add(
+            f"| **Số biển có nhãn chuỗi (mẫu số)** | — | — | **{vni(payload['so_mau'])}** | **{vni(payload['so_mau'])}** | n/a |"
+        )
         add("")
         if payload.get("S_D_I_ly_do"):
             add(f"> ⚠ S/D/I chưa tách được: {payload['S_D_I_ly_do']}")
         elif payload.get("S_D_I_nguon"):
-            add(f"> {payload['S_D_I_nguon']} Ba cột $S$/$D$/$I$ đo trên **chuỗi thô "
-                f"trước hậu xử lý**, nên chúng giống nhau ở cả hai cột đo được.")
+            add(
+                f"> {payload['S_D_I_nguon']} Ba cột $S$/$D$/$I$ đo trên **chuỗi thô "
+                f"trước hậu xử lý**, nên chúng giống nhau ở cả hai cột đo được."
+            )
         add("")
         add(f"> Phân bố số ca theo loại lỗi: `{payload.get('so_ca_theo_loai_loi')}`.")
     else:
@@ -2409,16 +2617,30 @@ def render_markdown(store: ResultStore, meta: dict[str, Any]) -> str:
     if store.measured("T5.6b"):
         add("| Chỉ số | Mã NFR | Ngưỡng tối thiểu | Mục tiêu | **Đo được** | Kết quả |")
         add("|---|:---:|---:|---:|---:|:---:|")
-        add(f"| Độ chính xác chuỗi **trước** hậu xử lý | NFR-A5 | 0,80 | 0,85 | **{cell(payload['a5_truoc_hau_xu_ly'])}** | {payload['ket_qua_nfr_a5']} |")
-        add(f"| Độ chính xác chuỗi **sau** hậu xử lý | NFR-A6 | 0,85 | 0,90 | **{cell(payload['a6_sau_hau_xu_ly'])}** | {payload['ket_qua_nfr_a6']} |")
-        add(f"| **Mức cải thiện (A6 − A5), điểm %** | — | — | — | **{cell(payload['muc_cai_thien_diem_pt'], 2)}** | n/a |")
-        add(f"| Số biển **được sửa đúng** nhờ hậu xử lý | — | — | — | {vni(payload['so_bien_duoc_sua_dung'])} | n/a |")
-        add(f"| Số biển **bị hậu xử lý làm hỏng** | — | — | — | {vni(payload['so_bien_bi_lam_hong'])} | n/a |")
-        add(f"| Số biển sai cả trước lẫn sau | — | — | — | {vni(payload['so_bien_sai_ca_truoc_lan_sau'])} | n/a |")
+        add(
+            f"| Độ chính xác chuỗi **trước** hậu xử lý | NFR-A5 | 0,80 | 0,85 | **{cell(payload['a5_truoc_hau_xu_ly'])}** | {payload['ket_qua_nfr_a5']} |"
+        )
+        add(
+            f"| Độ chính xác chuỗi **sau** hậu xử lý | NFR-A6 | 0,85 | 0,90 | **{cell(payload['a6_sau_hau_xu_ly'])}** | {payload['ket_qua_nfr_a6']} |"
+        )
+        add(
+            f"| **Mức cải thiện (A6 − A5), điểm %** | — | — | — | **{cell(payload['muc_cai_thien_diem_pt'], 2)}** | n/a |"
+        )
+        add(
+            f"| Số biển **được sửa đúng** nhờ hậu xử lý | — | — | — | {vni(payload['so_bien_duoc_sua_dung'])} | n/a |"
+        )
+        add(
+            f"| Số biển **bị hậu xử lý làm hỏng** | — | — | — | {vni(payload['so_bien_bi_lam_hong'])} | n/a |"
+        )
+        add(
+            f"| Số biển sai cả trước lẫn sau | — | — | — | {vni(payload['so_bien_sai_ca_truoc_lan_sau'])} | n/a |"
+        )
         add(f"| **Số mẫu (biển có nhãn chuỗi)** | — | — | — | **{vni(payload['so_mau'])}** | n/a |")
         add("")
-        add(f"> Nhánh diễn giải phải giữ lại ở mục 5.6.2: **nhánh {payload['nhanh_dien_giai'] or '?'}** "
-            f"(A nếu hiệu số dương, B nếu bằng 0 hoặc âm).")
+        add(
+            f"> Nhánh diễn giải phải giữ lại ở mục 5.6.2: **nhánh {payload['nhanh_dien_giai'] or '?'}** "
+            f"(A nếu hiệu số dương, B nếu bằng 0 hoặc âm)."
+        )
         add(">")
         breakdown = payload["phan_ra_theo_nhom_luat"]
         add(f"> Bảng phân rã theo nhóm luật: *(chưa đo)* — {breakdown['ly_do']}")
@@ -2435,10 +2657,18 @@ def render_markdown(store: ResultStore, meta: dict[str, Any]) -> str:
         add("| Chỉ số | Biển **một dòng** | Biển **hai dòng** | Chênh lệch (điểm %) |")
         add("|---|---:|---:|---:|")
         add(f"| Số mẫu có nhãn chuỗi | **{vni(one['so_mau'])}** | **{vni(two['so_mau'])}** | n/a |")
-        add(f"| 1 − CER (NFR-A4) | {cell(one['char_accuracy'])} | {cell(two['char_accuracy'])} | {cell(gap['char_accuracy'], 2)} |")
-        add(f"| Chuỗi đúng **trước** hậu xử lý (A5) | {cell(one['a5'])} | {cell(two['a5'])} | {cell(gap['a5'], 2)} |")
-        add(f"| Chuỗi đúng **sau** hậu xử lý (A6) | {cell(one['a6'])} | {cell(two['a6'])} | {cell(gap['a6'], 2)} |")
-        add(f"| Mức cải thiện do hậu xử lý (A6 − A5) | {cell(one['gain_points'], 2)} | {cell(two['gain_points'], 2)} | n/a |")
+        add(
+            f"| 1 − CER (NFR-A4) | {cell(one['char_accuracy'])} | {cell(two['char_accuracy'])} | {cell(gap['char_accuracy'], 2)} |"
+        )
+        add(
+            f"| Chuỗi đúng **trước** hậu xử lý (A5) | {cell(one['a5'])} | {cell(two['a5'])} | {cell(gap['a5'], 2)} |"
+        )
+        add(
+            f"| Chuỗi đúng **sau** hậu xử lý (A6) | {cell(one['a6'])} | {cell(two['a6'])} | {cell(gap['a6'], 2)} |"
+        )
+        add(
+            f"| Mức cải thiện do hậu xử lý (A6 − A5) | {cell(one['gain_points'], 2)} | {cell(two['gain_points'], 2)} | n/a |"
+        )
         add(f"| Độ chính xác E2E (A7) | {cell(one['a7'])} | {cell(two['a7'])} | {EM_DASH} |")
         add("")
         add(f"> {payload['moc_tham_chieu']}")
@@ -2451,7 +2681,9 @@ def render_markdown(store: ResultStore, meta: dict[str, Any]) -> str:
     add("")
     payload = store.get("T5.6d")
     if store.measured("T5.6d"):
-        add("| Hạng | Ký tự thật | Ký tự bị đọc thành | Số lần | Tỉ lệ trong tổng số lỗi thay thế | Bảng luật hiện có phủ cặp này không? | Hướng ánh xạ có đúng không? |")
+        add(
+            "| Hạng | Ký tự thật | Ký tự bị đọc thành | Số lần | Tỉ lệ trong tổng số lỗi thay thế | Bảng luật hiện có phủ cặp này không? | Hướng ánh xạ có đúng không? |"
+        )
         add("|:---:|:---:|:---:|---:|---:|:---:|---|")
         for item in payload["top_cap_nham"]:
             covered = item.get("co_trong_bang_luat")
@@ -2464,12 +2696,14 @@ def render_markdown(store: ResultStore, meta: dict[str, Any]) -> str:
                 f"{covered_text} | {item.get('huong_anh_xa') or EM_DASH} |"
             )
         add("")
-        add(f"> Ma trận `{payload['kich_thuoc_ma_tran']}`, mẫu số "
+        add(
+            f"> Ma trận `{payload['kich_thuoc_ma_tran']}`, mẫu số "
             f"{vni(payload['so_mau'])} biển có nhãn chuỗi, tổng số lỗi thay thế "
             f"(S) = {vni(payload['tong_so_thay_the'])}. Cột tỉ lệ lấy S làm mẫu số, "
             f"không lấy tổng của riêng nhóm dẫn đầu. Bảng đối chiếu ngược — các cặp "
             f"**có trong bảng luật nhưng không quan sát thấy** — nằm ở khoá "
-            f"`doi_chieu_bang_luat.unobserved` trong `05-results.json`.")
+            f"`doi_chieu_bang_luat.unobserved` trong `05-results.json`."
+        )
     else:
         add(f"*(chưa đo)* — {payload.get('ly_do')}")
     add("")
@@ -2481,11 +2715,21 @@ def render_markdown(store: ResultStore, meta: dict[str, Any]) -> str:
     if store.measured("T5.6e"):
         add("| Chỉ số | Ngưỡng tối thiểu | Mục tiêu | **Đo được** | Kết quả |")
         add("|---|---:|---:|---:|:---:|")
-        add(f"| Độ chính xác E2E (NFR-A7) | 0,82 | 0,88 | **{cell(payload['a7_e2e'])}** | {payload['ket_qua_nfr_a7']} |")
-        add(f"| Độ chính xác E2E **với điều kiện đã phát hiện được biển** | — | — | {cell(payload['a7_voi_dieu_kien_da_phat_hien'])} | n/a |")
-        add(f"| Tỉ lệ biển **bị bỏ sót** ở tầng phát hiện | — | — | {cell(payload['ty_le_bien_bi_bo_sot'])} | n/a |")
-        add(f"| Tỉ lệ biển phát hiện đúng nhưng **đọc sai chuỗi** | — | — | {cell(payload['ty_le_phat_hien_dung_nhung_doc_sai'])} | n/a |")
-        add(f"| Chênh lệch A6 − A7 (điểm %) | — | — | {cell(payload['chenh_lech_a6_tru_a7'], 2)} | n/a |")
+        add(
+            f"| Độ chính xác E2E (NFR-A7) | 0,82 | 0,88 | **{cell(payload['a7_e2e'])}** | {payload['ket_qua_nfr_a7']} |"
+        )
+        add(
+            f"| Độ chính xác E2E **với điều kiện đã phát hiện được biển** | — | — | {cell(payload['a7_voi_dieu_kien_da_phat_hien'])} | n/a |"
+        )
+        add(
+            f"| Tỉ lệ biển **bị bỏ sót** ở tầng phát hiện | — | — | {cell(payload['ty_le_bien_bi_bo_sot'])} | n/a |"
+        )
+        add(
+            f"| Tỉ lệ biển phát hiện đúng nhưng **đọc sai chuỗi** | — | — | {cell(payload['ty_le_phat_hien_dung_nhung_doc_sai'])} | n/a |"
+        )
+        add(
+            f"| Chênh lệch A6 − A7 (điểm %) | — | — | {cell(payload['chenh_lech_a6_tru_a7'], 2)} | n/a |"
+        )
         add(f"| **Số mẫu** | — | — | **{vni(payload['so_mau'])}** | n/a |")
         if payload.get("canh_bao_hieu_luc"):
             add("")
@@ -2499,23 +2743,33 @@ def render_markdown(store: ResultStore, meta: dict[str, Any]) -> str:
     add("")
     payload = store.get("T5.7a")
     if store.measured("T5.7a"):
-        add("| Chỉ số | Ngưỡng tối thiểu | Mục tiêu | **Đo trên `baseline-416-v1.pt`** | **Đo trên mô hình đang đánh giá** | Kết quả |")
+        add(
+            "| Chỉ số | Ngưỡng tối thiểu | Mục tiêu | **Đo trên `baseline-416-v1.pt`** | **Đo trên mô hình đang đánh giá** | Kết quả |"
+        )
         add("|---|---:|---:|---:|---:|:---:|")
         add(f"| Độ trễ E2E p50 (ms) | — | — | {EM_DASH} | {cell(payload['p50_ms'], 2)} | n/a |")
-        add(f"| **Độ trễ E2E p95 (ms)** | **≤ 1500** | **≤ 800** | **{vn(payload['moc_baseline_416_v1_p95_ms'], 2)}** | **{cell(payload['p95_ms'], 2)}** | **{payload['ket_qua_nfr_p1']}** |")
+        add(
+            f"| **Độ trễ E2E p95 (ms)** | **≤ 1500** | **≤ 800** | **{vn(payload['moc_baseline_416_v1_p95_ms'], 2)}** | **{cell(payload['p95_ms'], 2)}** | **{payload['ket_qua_nfr_p1']}** |"
+        )
         add(f"| Độ trễ E2E p99 (ms) | — | — | {EM_DASH} | {cell(payload['p99_ms'], 2)} | n/a |")
         add(f"| Độ trễ trung bình (ms) | — | — | {EM_DASH} | {cell(payload['mean_ms'], 2)} | n/a |")
         add(f"| Độ lệch chuẩn (ms) | — | — | {EM_DASH} | {cell(payload['std_ms'], 2)} | n/a |")
         add(f"| Số ảnh đo | — | — | 100 | **{vni(payload['so_anh_do'])}** | n/a |")
-        add(f"| Bội số vượt ngưỡng tối thiểu | — | — | 0,51× | {cell(payload['boi_so_vuot_nguong_toi_thieu'], 2)}× | n/a |")
-        add(f"| Bội số vượt mục tiêu | — | — | 0,95× | {cell(payload['boi_so_vuot_muc_tieu'], 2)}× | n/a |")
+        add(
+            f"| Bội số vượt ngưỡng tối thiểu | — | — | 0,51× | {cell(payload['boi_so_vuot_nguong_toi_thieu'], 2)}× | n/a |"
+        )
+        add(
+            f"| Bội số vượt mục tiêu | — | — | 0,95× | {cell(payload['boi_so_vuot_muc_tieu'], 2)}× | n/a |"
+        )
         add("")
-        add(f"> Số biển trung bình mỗi ảnh: {cell(payload['so_bien_trung_binh_moi_anh'], 2)}. "
+        add(
+            f"> Số biển trung bình mỗi ảnh: {cell(payload['so_bien_trung_binh_moi_anh'], 2)}. "
             f"Hai cột **không thay thế được cho nhau** — chúng đo hai mô hình ở hai "
             f"độ phân giải khác nhau; cột baseline là **client-side warm p95 qua HTTP, "
             f"máy rảnh** (`07-benchmark-p1-resolved.json`), cột mô hình đang đánh giá là "
             f"in-process. Con số cũ **5.857,19 ms** từng ghi cho baseline **đã bị bác bỏ** "
-            f"(nhiễm tải cạnh tranh + sai checkpoint + lỗi crop).")
+            f"(nhiễm tải cạnh tranh + sai checkpoint + lỗi crop)."
+        )
     else:
         add(f"*(chưa đo)* — {payload.get('ly_do')}")
     add("")
@@ -2525,7 +2779,9 @@ def render_markdown(store: ResultStore, meta: dict[str, Any]) -> str:
     add("")
     payload = store.get("T5.7b")
     if store.measured("T5.7b"):
-        add("| Bước xử lý | Ước lượng Phase 0 (ms) | **Đo thật (ms)** | Chênh lệch (lần) | % tổng thời gian |")
+        add(
+            "| Bước xử lý | Ước lượng Phase 0 (ms) | **Đo thật (ms)** | Chênh lệch (lần) | % tổng thời gian |"
+        )
         add("|---|---:|---:|---:|---:|")
         for key in PHASE0_BUDGET_MS:
             row = payload["buoc"][key]
@@ -2536,12 +2792,16 @@ def render_markdown(store: ResultStore, meta: dict[str, Any]) -> str:
                 f"{EM_DASH if share is None else vn(share, 1) + '%'} |"
             )
         total = payload["tong"]
-        add(f"| **Tổng (một biển số)** | **{vn(total['uoc_luong_phase0_ms'], 0)}** | "
-            f"**{cell(total['do_that_ms'], 2)}** | **{cell(total['chenh_lech_lan'], 2)}** | **100%** |")
+        add(
+            f"| **Tổng (một biển số)** | **{vn(total['uoc_luong_phase0_ms'], 0)}** | "
+            f"**{cell(total['do_that_ms'], 2)}** | **{cell(total['chenh_lech_lan'], 2)}** | **100%** |"
+        )
         add("")
-        add(f"> Mẫu số: {vni(payload['so_mau'])} ảnh, trung bình "
+        add(
+            f"> Mẫu số: {vni(payload['so_mau'])} ảnh, trung bình "
             f"{cell(payload['so_bien_trung_binh_moi_anh'], 2)} biển mỗi ảnh. "
-            f"{payload['ghi_chu']}")
+            f"{payload['ghi_chu']}"
+        )
     else:
         add(f"*(chưa đo)* — {payload.get('ly_do')}")
     add("")
@@ -2551,7 +2811,9 @@ def render_markdown(store: ResultStore, meta: dict[str, Any]) -> str:
     add("")
     payload = store.get("T5.7c")
     if store.measured("T5.7c"):
-        add("| Backend | Độ trễ **chỉ bộ phát hiện** p50 (ms) | p95 (ms) | Tăng tốc so với PyTorch | Độ trễ **E2E** p95 (ms) | Cải thiện E2E (%) | mAP@0.5 sau khi xuất |")
+        add(
+            "| Backend | Độ trễ **chỉ bộ phát hiện** p50 (ms) | p95 (ms) | Tăng tốc so với PyTorch | Độ trễ **E2E** p95 (ms) | Cải thiện E2E (%) | mAP@0.5 sau khi xuất |"
+        )
         add("|---|---:|---:|---:|---:|---:|---:|")
         for name, row in payload["backend"].items():
             speedup = row.get("tang_toc_so_voi_pytorch")
@@ -2561,11 +2823,15 @@ def render_markdown(store: ResultStore, meta: dict[str, Any]) -> str:
                 f"{EM_DASH} | {EM_DASH} | {EM_DASH} |"
             )
         add("")
-        add(f"> Cột E2E và mAP sau khi xuất **chưa đo**: {payload['backend'].get('pytorch', {}).get('map50_ly_do', '')}")
+        add(
+            f"> Cột E2E và mAP sau khi xuất **chưa đo**: {payload['backend'].get('pytorch', {}).get('map50_ly_do', '')}"
+        )
         add(">")
-        add(f"> Tỉ trọng bộ phát hiện trong tổng thời gian: "
+        add(
+            f"> Tỉ trọng bộ phát hiện trong tổng thời gian: "
             f"{cell(payload['ty_trong_bo_phat_hien_phan_tram'], 1)}%. "
-            f"{payload['ghi_chu_amdahl']}")
+            f"{payload['ghi_chu_amdahl']}"
+        )
     else:
         add(f"*(chưa đo)* — {payload.get('ly_do')}")
     add("")
@@ -2583,29 +2849,62 @@ def render_markdown(store: ResultStore, meta: dict[str, Any]) -> str:
     payload = store.get("T5.7e")
     add("| Chỉ số | Mã NFR | Ngưỡng tối thiểu | Mục tiêu | **Đo được** | Kết quả |")
     add("|---|:---:|---:|---:|---:|:---:|")
-    prior = (payload.get("moc_da_do_truoc_do") or {}) if store.measured("T5.7e") else {
-        "nfr_p4_nap_model_s": 6.41, "nfr_p4b_health_s": 8.36,
-        "nfr_p5_api_overhead_p95_ms": 19.01, "nfr_p6_truy_van_10000_p95_ms": 18.71,
-        "nfr_p7a_rss_pipeline_gb": 0.759, "nfr_p7b_rss_server_gb": 0.806,
-    }
-    add(f"| Thời gian nạp mô hình (giây) | NFR-P4 | ≤ 30 | ≤ 15 | {vn(prior['nfr_p4_nap_model_s'], 2)} *(baseline)* | ✅ đạt |")
-    add(f"| Khởi động đến khi `/health` sẵn sàng (giây) | NFR-P4b | ≤ 30 | ≤ 15 | {vn(prior['nfr_p4b_health_s'], 2)} *(baseline)* | ✅ đạt |")
-    add(f"| Overhead của API, p95 (ms) | NFR-P5 | ≤ 100 | ≤ 50 | {vn(prior['nfr_p5_api_overhead_p95_ms'], 2)} *(baseline)* | ✅ đạt |")
-    add(f"| Truy vấn lịch sử 10.000 bản ghi, p95 (ms) | NFR-P6 | ≤ 1000 | ≤ 500 | {vn(prior['nfr_p6_truy_van_10000_p95_ms'], 2)} *(baseline)* | ✅ đạt |")
-    add(f"| RSS pipeline (GB) | NFR-P7a | ≤ 4 | ≤ 2 | {vn(prior['nfr_p7a_rss_pipeline_gb'], 3)} *(baseline)* | ✅ đạt |")
-    add(f"| RSS máy chủ backend (GB) | NFR-P7b | ≤ 4 | ≤ 2 | {vn(prior['nfr_p7b_rss_server_gb'], 3)} *(baseline)* | ✅ đạt |")
+    prior = (
+        (payload.get("moc_da_do_truoc_do") or {})
+        if store.measured("T5.7e")
+        else {
+            "nfr_p4_nap_model_s": 6.41,
+            "nfr_p4b_health_s": 8.36,
+            "nfr_p5_api_overhead_p95_ms": 19.01,
+            "nfr_p6_truy_van_10000_p95_ms": 18.71,
+            "nfr_p7a_rss_pipeline_gb": 0.759,
+            "nfr_p7b_rss_server_gb": 0.806,
+        }
+    )
+    add(
+        f"| Thời gian nạp mô hình (giây) | NFR-P4 | ≤ 30 | ≤ 15 | {vn(prior['nfr_p4_nap_model_s'], 2)} *(baseline)* | ✅ đạt |"
+    )
+    add(
+        f"| Khởi động đến khi `/health` sẵn sàng (giây) | NFR-P4b | ≤ 30 | ≤ 15 | {vn(prior['nfr_p4b_health_s'], 2)} *(baseline)* | ✅ đạt |"
+    )
+    add(
+        f"| Overhead của API, p95 (ms) | NFR-P5 | ≤ 100 | ≤ 50 | {vn(prior['nfr_p5_api_overhead_p95_ms'], 2)} *(baseline)* | ✅ đạt |"
+    )
+    add(
+        f"| Truy vấn lịch sử 10.000 bản ghi, p95 (ms) | NFR-P6 | ≤ 1000 | ≤ 500 | {vn(prior['nfr_p6_truy_van_10000_p95_ms'], 2)} *(baseline)* | ✅ đạt |"
+    )
+    add(
+        f"| RSS pipeline (GB) | NFR-P7a | ≤ 4 | ≤ 2 | {vn(prior['nfr_p7a_rss_pipeline_gb'], 3)} *(baseline)* | ✅ đạt |"
+    )
+    add(
+        f"| RSS máy chủ backend (GB) | NFR-P7b | ≤ 4 | ≤ 2 | {vn(prior['nfr_p7b_rss_server_gb'], 3)} *(baseline)* | ✅ đạt |"
+    )
     if store.measured("T5.7e"):
-        add(f"| Số yêu cầu đồng thời xử lý ổn định | NFR-SC1 | ≥ 5 | ≥ 5 | **{vni(payload['so_yeu_cau_dong_thoi_on_dinh'])}** | {verdict('NFR-SC1', payload['so_yeu_cau_dong_thoi_on_dinh'])} |")
+        add(
+            f"| Số yêu cầu đồng thời xử lý ổn định | NFR-SC1 | ≥ 5 | ≥ 5 | **{vni(payload['so_yeu_cau_dong_thoi_on_dinh'])}** | {verdict('NFR-SC1', payload['so_yeu_cau_dong_thoi_on_dinh'])} |"
+        )
         rate = payload.get("soak_ty_le_thanh_cong")
-        add(f"| Tỉ lệ thành công soak 300 giây | NFR-R4 | ≥ 99% | ≥ 99% | **{EM_DASH if rate is None else vn(rate * 100, 1) + '%'} ({vni(payload['soak_so_yeu_cau'])} yêu cầu)** | {verdict('NFR-R4', rate)} |")
-        add(f"| Tăng RSS sau soak (GB) | — | không có | không có | {cell(payload['soak_tang_rss_gb'], 3)} | n/a |")
-        add(f"| Cơ sở dữ liệu sống sót qua khởi động lại | NFR-R5 | 100% | 100% | {EM_DASH} | ⬜ chưa đo |")
+        add(
+            f"| Tỉ lệ thành công soak 300 giây | NFR-R4 | ≥ 99% | ≥ 99% | **{EM_DASH if rate is None else vn(rate * 100, 1) + '%'} ({vni(payload['soak_so_yeu_cau'])} yêu cầu)** | {verdict('NFR-R4', rate)} |"
+        )
+        add(
+            f"| Tăng RSS sau soak (GB) | — | không có | không có | {cell(payload['soak_tang_rss_gb'], 3)} | n/a |"
+        )
+        add(
+            f"| Cơ sở dữ liệu sống sót qua khởi động lại | NFR-R5 | 100% | 100% | {EM_DASH} | ⬜ chưa đo |"
+        )
         add("")
     else:
-        add(f"| Số yêu cầu đồng thời xử lý ổn định | NFR-SC1 | ≥ 5 | ≥ 5 | {EM_DASH} | ⬜ chưa đo |")
-        add(f"| Tỉ lệ thành công soak 300 giây | NFR-R4 | ≥ 99% | ≥ 99% | 100% (185/185) *(baseline)* | ✅ đạt |")
+        add(
+            f"| Số yêu cầu đồng thời xử lý ổn định | NFR-SC1 | ≥ 5 | ≥ 5 | {EM_DASH} | ⬜ chưa đo |"
+        )
+        add(
+            "| Tỉ lệ thành công soak 300 giây | NFR-R4 | ≥ 99% | ≥ 99% | 100% (185/185) *(baseline)* | ✅ đạt |"
+        )
         add(f"| Tăng RSS sau soak (GB) | — | không có | không có | {EM_DASH} | ⬜ chưa đo |")
-        add(f"| Cơ sở dữ liệu sống sót qua khởi động lại | NFR-R5 | 100% | 100% | {EM_DASH} | ⬜ chưa đo |")
+        add(
+            f"| Cơ sở dữ liệu sống sót qua khởi động lại | NFR-R5 | 100% | 100% | {EM_DASH} | ⬜ chưa đo |"
+        )
         add("")
         add(f"> ⚠ Phần chịu tải chưa chạy lại cho mô hình này: {payload.get('ly_do', '')}")
         add("")
@@ -2619,23 +2918,43 @@ def render_markdown(store: ResultStore, meta: dict[str, Any]) -> str:
     add("|---|---:|---:|---:|")
     add(f"| `imgsz` | {base['imgsz']} | **{off['imgsz']}** | +{off['imgsz'] - base['imgsz']} px |")
     add(f"| Bộ dữ liệu | {base['bo_du_lieu']} | **{off['bo_du_lieu']}** | ×3,3 |")
-    add(f"| Ngưỡng gộp trùng lặp | {base['nguong_gop_trung_lap']} | **{off['nguong_gop_trung_lap']}** | +5 |")
+    add(
+        f"| Ngưỡng gộp trùng lặp | {base['nguong_gop_trung_lap']} | **{off['nguong_gop_trung_lap']}** | +5 |"
+    )
     add(f"| Số epoch | {base['so_epoch']} | {vni(off['so_epoch'])} | — |")
-    add(f"| mAP@0.5 | **{vn(base['map50'])}** *(epoch 38)* | **{cell(off['map50'])}** | {cell(None if off['map50'] is None else (off['map50'] - base['map50']))} |")
-    add(f"| mAP@0.5:0.95 | **{vn(base['map5095'])}** *(epoch 38)* | **{cell(off['map5095'])}** | {cell(None if off['map5095'] is None else (off['map5095'] - base['map5095']))} |")
-    add(f"| Precision | **{vn(base['precision'])}** | {cell(off['precision'])} | {cell(None if off['precision'] is None else (off['precision'] - base['precision']))} |")
-    add(f"| Recall | **{vn(base['recall'])}** | {cell(off['recall'])} | {cell(None if off['recall'] is None else (off['recall'] - base['recall']))} |")
-    add(f"| mAP biển một dòng | **{vn(base['map50_mot_dong'])}** | {cell(off['map50_mot_dong'])} | — |")
-    add(f"| mAP biển hai dòng | **{vn(base['map50_hai_dong'])}** | {cell(off['map50_hai_dong'])} | — |")
-    add(f"| Chênh lệch theo layout (điểm %) | **{vn(base['chenh_layout_diem_pt'], 1)}** | {cell(off['chenh_layout_diem_pt'], 2)} | — |")
-    add(f"| Độ trễ E2E p95 (ms) | **{vn(base['do_tre_p95_ms'], 2)}** | {cell(off['do_tre_p95_ms'], 2)} | — |")
+    add(
+        f"| mAP@0.5 | **{vn(base['map50'])}** *(epoch 38)* | **{cell(off['map50'])}** | {cell(None if off['map50'] is None else (off['map50'] - base['map50']))} |"
+    )
+    add(
+        f"| mAP@0.5:0.95 | **{vn(base['map5095'])}** *(epoch 38)* | **{cell(off['map5095'])}** | {cell(None if off['map5095'] is None else (off['map5095'] - base['map5095']))} |"
+    )
+    add(
+        f"| Precision | **{vn(base['precision'])}** | {cell(off['precision'])} | {cell(None if off['precision'] is None else (off['precision'] - base['precision']))} |"
+    )
+    add(
+        f"| Recall | **{vn(base['recall'])}** | {cell(off['recall'])} | {cell(None if off['recall'] is None else (off['recall'] - base['recall']))} |"
+    )
+    add(
+        f"| mAP biển một dòng | **{vn(base['map50_mot_dong'])}** | {cell(off['map50_mot_dong'])} | — |"
+    )
+    add(
+        f"| mAP biển hai dòng | **{vn(base['map50_hai_dong'])}** | {cell(off['map50_hai_dong'])} | — |"
+    )
+    add(
+        f"| Chênh lệch theo layout (điểm %) | **{vn(base['chenh_layout_diem_pt'], 1)}** | {cell(off['chenh_layout_diem_pt'], 2)} | — |"
+    )
+    add(
+        f"| Độ trễ E2E p95 (ms) | **{vn(base['do_tre_p95_ms'], 2)}** | {cell(off['do_tre_p95_ms'], 2)} | — |"
+    )
     add("")
     add(f"> ⚠ {payload['canh_bao_quy_ket']}")
     add(">")
-    add("> Dòng độ trễ: cột baseline là client-side warm p95 qua HTTP trên máy rảnh "
+    add(
+        "> Dòng độ trễ: cột baseline là client-side warm p95 qua HTTP trên máy rảnh "
         "(`07-benchmark-p1-resolved.json`); cột mô hình đang đánh giá là in-process (T5.7a). "
         "Con số cũ 5.857,19 ms từng ghi cho baseline đã bị **bác bỏ** "
-        "(nhiễm tải cạnh tranh + sai checkpoint + lỗi crop).")
+        "(nhiễm tải cạnh tranh + sai checkpoint + lỗi crop)."
+    )
     add("")
 
     # ---------------- T5.9 ----------------
@@ -2660,7 +2979,9 @@ def render_markdown(store: ResultStore, meta: dict[str, Any]) -> str:
     add("")
     payload = store.get("T5.10")
     if store.measured("T5.10"):
-        add("| Mã | Loại lỗi | Số ca | Tỉ lệ trong tổng số ca sai | Tỉ lệ trong toàn tập đánh giá | Biển một dòng | Biển hai dòng |")
+        add(
+            "| Mã | Loại lỗi | Số ca | Tỉ lệ trong tổng số ca sai | Tỉ lệ trong toàn tập đánh giá | Biển một dòng | Biển hai dòng |"
+        )
         add("|:---:|---|---:|---:|---:|---:|---:|")
         for code, row in payload["loai_loi"].items():
             count = row.get("so_ca")
@@ -2674,24 +2995,34 @@ def render_markdown(store: ResultStore, meta: dict[str, Any]) -> str:
                 f"{vni(row.get('mot_dong')) if row.get('mot_dong') is not None else EM_DASH} | "
                 f"{vni(row.get('hai_dong')) if row.get('hai_dong') is not None else EM_DASH} |"
             )
-        add(f"| | **Tổng số ca sai** | **{vni(payload['tong_so_ca_sai'])}** | 100% | "
-            f"{EM_DASH if not payload['ty_le_loi'] else vn(payload['ty_le_loi'] * 100, 2) + '%'} | — | — |")
-        add(f"| | **Tổng số ca đánh giá (mẫu số)** | **{vni(payload['tong_so_ca_danh_gia'])}** | n/a | 100% | — | — |")
+        add(
+            f"| | **Tổng số ca sai** | **{vni(payload['tong_so_ca_sai'])}** | 100% | "
+            f"{EM_DASH if not payload['ty_le_loi'] else vn(payload['ty_le_loi'] * 100, 2) + '%'} | — | — |"
+        )
+        add(
+            f"| | **Tổng số ca đánh giá (mẫu số)** | **{vni(payload['tong_so_ca_danh_gia'])}** | n/a | 100% | — | — |"
+        )
         add("")
         other = payload["cac_loai_khac"]
         e1 = payload["loai_loi"]["E1"]
-        add(f"> **Mẫu số của E1 khác mẫu số của E3–E6.** E1 lấy từ lượt đo E2E của "
+        add(
+            f"> **Mẫu số của E1 khác mẫu số của E3–E6.** E1 lấy từ lượt đo E2E của "
             f"bảng T5.6e ({vni(e1.get('mau_so_rieng'))} mẫu), còn E3–E6 lấy từ lượt "
             f"đo trên vùng cắt ({vni(payload['tong_so_ca_danh_gia'])} mẫu). Hai cột "
             f"tỉ lệ vì vậy **cố ý để trống ở dòng E1** — gộp chung một mẫu số sẽ cho "
             f"ra con số vô nghĩa. Tỉ lệ E1 trên mẫu số riêng của nó: "
-            f"{EM_DASH if e1.get('ty_le_tren_mau_so_rieng') is None else vn(e1['ty_le_tren_mau_so_rieng'] * 100, 2) + '%'}.")
+            f"{EM_DASH if e1.get('ty_le_tren_mau_so_rieng') is None else vn(e1['ty_le_tren_mau_so_rieng'] * 100, 2) + '%'}."
+        )
         add(">")
-        add(f"> E2 (phát hiện nhầm) để `—`: số dương tính giả nằm ở bảng T5.5a và "
-            f"cũng không cùng mẫu số với E3–E6.")
+        add(
+            "> E2 (phát hiện nhầm) để `—`: số dương tính giả nằm ở bảng T5.5a và "
+            "cũng không cùng mẫu số với E3–E6."
+        )
         add(">")
-        add(f"> Hai loại lỗi ngoài khung E1–E6: `empty_read` = {vni(other['empty_read'])}, "
-            f"`mixed` = {vni(other['mixed'])}. {other['ghi_chu']}")
+        add(
+            f"> Hai loại lỗi ngoài khung E1–E6: `empty_read` = {vni(other['empty_read'])}, "
+            f"`mixed` = {vni(other['mixed'])}. {other['ghi_chu']}"
+        )
     else:
         add(f"*(chưa đo)* — {payload.get('ly_do')}")
     add("")
@@ -2722,14 +3053,20 @@ def print_summary(store: ResultStore, meta: dict[str, Any]) -> None:
         f"{meta.get('so_nhan_logic')} luong | device=cpu | {meta.get('he_dieu_hanh')}"
     )
     print(f"Model: {meta.get('duong_dan_model')}")
-    print(f"Dataset: {meta.get('dataset_yaml')} | split={meta.get('split')} | "
-          f"{meta.get('so_anh_split')} anh")
+    print(
+        f"Dataset: {meta.get('dataset_yaml')} | split={meta.get('split')} | "
+        f"{meta.get('so_anh_split')} anh"
+    )
     print("-" * 88)
     print(f"{'MA':<8}{'CHI TIEU':<44}{'DO DUOC':>16}{'KET QUA':>20}")
     print("-" * 88)
     for row in store.get("T5.9").get("dong", []):
         value = row.get("do_duoc")
-        text = "—" if value is None else (f"{float(value):.4f}" if isinstance(value, (int, float)) else str(value))
+        text = (
+            "—"
+            if value is None
+            else (f"{float(value):.4f}" if isinstance(value, (int, float)) else str(value))
+        )
         print(f"{row['ma']:<8}{row['chi_tieu'][:43]:<44}{text:>16}{row['ket_qua']:>20}")
     print("-" * 88)
 
@@ -2776,9 +3113,7 @@ def build_parser() -> argparse.ArgumentParser:
         ),
     )
     parser.add_argument("--data", default=str(DEFAULT_DATA_YAML), help="Dataset yaml.")
-    parser.add_argument(
-        "--split", default="test", choices=("test", "val"), help="Split danh gia."
-    )
+    parser.add_argument("--split", default="test", choices=("test", "val"), help="Split danh gia.")
     parser.add_argument("--imgsz", type=int, default=640, help="Kich thuoc anh suy luan.")
     parser.add_argument("--conf", type=float, default=0.25, help="Nguong confidence.")
     parser.add_argument(
@@ -2852,9 +3187,7 @@ def resolve_outputs(args: argparse.Namespace) -> tuple[Path, Path]:
         Cap ``(out_json, out_md)``.
     """
     directory = SMOKE_DIR if args.skip_slow else PROJECT_ROOT / "docs" / "reports"
-    out_json = (
-        Path(args.out_json) if args.out_json else directory / DEFAULT_OUT_JSON.name
-    )
+    out_json = Path(args.out_json) if args.out_json else directory / DEFAULT_OUT_JSON.name
     out_md = Path(args.out_md) if args.out_md else directory / DEFAULT_OUT_MD.name
     return out_json, out_md
 
@@ -2905,13 +3238,20 @@ def main(argv: Sequence[str] | None = None) -> int:
         ("T5.3b", f"ro ri train<->{args.split} o cac nguong Hamming {LEAK_THRESHOLDS}"),
         ("T5.3c", "phan bo nguon du lieu giua cac split (tu split_manifest.csv)"),
         ("T5.4b", f"duong cong huan luyen tu {args.run_dir}/results.csv"),
-        ("T5.5a + T5.5b", f"detection tong the va tach theo layout ({weights.name}, split {args.split})"),
+        (
+            "T5.5a + T5.5b",
+            f"detection tong the va tach theo layout ({weights.name}, split {args.split})",
+        ),
         ("T5.5c", "detection tach theo dai kich thuoc box (5 dai)"),
         ("T5.7a + T5.7b", "do tre E2E p50/p95/p99 va phan ra ngan sach tung buoc"),
         ("T5.7c", "so sanh PyTorch / ONNX / OpenVINO (neu tim thay ban xuat)"),
         ("T5.6a...T5.6e", "OCR: CER, chuoi truoc/sau hau xu ly, layout, ma tran nham lan, E2E"),
         ("T5.10", "phan loai loi E1...E6"),
-        ("T5.7e", "chiu tai va soak 300 giay" + (" — SE BI BO QUA (--skip-slow)" if args.skip_slow else "")),
+        (
+            "T5.7e",
+            "chiu tai va soak 300 giay"
+            + (" — SE BI BO QUA (--skip-slow)" if args.skip_slow else ""),
+        ),
         ("T5.8 + T5.9", "tong hop so sanh va doi chieu NFR"),
     ]
 
@@ -2924,15 +3264,19 @@ def main(argv: Sequence[str] | None = None) -> int:
         print(f"  dataset       : {args.data}")
         print(f"  split         : {args.split} ({count_split_images(args)} anh)")
         print(f"  imgsz         : {args.imgsz}")
-        print(f"  nhan chuoi OCR: {find_label_file() or 'KHONG TIM THAY — NFR-A4...A7 se ghi chua do'}")
+        print(
+            f"  nhan chuoi OCR: {find_label_file() or 'KHONG TIM THAY — NFR-A4...A7 se ghi chua do'}"
+        )
         print(f"  ban xuat      : {find_exports(weights) or 'KHONG CO — T5.7c se ghi chua do'}")
         print(f"  skip-slow     : {args.skip_slow}")
         dry_json, dry_md = resolve_outputs(args)
         print(f"  out-json      : {dry_json}")
         print(f"  out-md        : {dry_md}")
         if args.skip_slow:
-            print("  LUU Y         : --skip-slow ghi vao thu muc chay thu, KHONG ghi de "
-                  "len bao cao cong bo")
+            print(
+                "  LUU Y         : --skip-slow ghi vao thu muc chay thu, KHONG ghi de "
+                "len bao cao cong bo"
+            )
         print()
         for code, what in steps:
             print(f"  [{code:<14}] {what}")
@@ -2948,7 +3292,9 @@ def main(argv: Sequence[str] | None = None) -> int:
         meta["canh_bao_trong_so"] = fallback_warning
 
     if not weights.exists():
-        LOGGER.error("Khong tim thay trong so %s — moi phep do phu thuoc no se ghi 'chua do'", weights)
+        LOGGER.error(
+            "Khong tim thay trong so %s — moi phep do phu thuoc no se ghi 'chua do'", weights
+        )
 
     # Cac buoc doc lap: mot buoc that bai khong duoc chan cac buoc con lai.
     tasks: list[tuple[str, Callable[[], None]]] = [

@@ -185,9 +185,21 @@ class PlateRecognition:
             ``detection_history.ocr_confidence`` -- kept apart from the
             detector's own confidence.
         line_count: Number of text lines on the plate, ``1`` or ``2``.
-        is_valid_format: Whether :attr:`text` matches a known Vietnamese plate
-            format. ``False`` does not mean the record is discarded -- it is
-            stored and flagged, so that failures remain measurable.
+        is_valid_format: Whether :attr:`text` matches a known **civil**
+            Vietnamese plate format. ``False`` does not mean the record is
+            discarded -- it is stored and flagged, so that failures remain
+            measurable. Read it together with :attr:`kind`: an army plate is a
+            perfectly real plate that is deliberately reported as ``False``,
+            because it is outside the civil registration system. Presenting that
+            to a user as "wrong format" would be wrong.
+        kind: Plate family inferred from the character string --
+            :class:`~ai.inference.plate_rules.PlateKind`, as a plain string so
+            this layer's types stay free of enum imports at the boundary. Empty
+            when classification did not run.
+        display_text: :attr:`text` rendered with the separators the physical
+            plate carries, e.g. ``"29E-015.66"`` for ``"29E01566"``. Kept
+            alongside rather than instead of :attr:`text`, because comparisons,
+            searches and accuracy measurements must all run on the bare string.
     """
 
     text: str
@@ -195,6 +207,8 @@ class PlateRecognition:
     confidence: float
     line_count: int
     is_valid_format: bool
+    kind: str = ""
+    display_text: str = ""
 
 
 @dataclass(slots=True)
@@ -220,12 +234,21 @@ class DetectionResult:
             arrays have no scalar truth value, so comparing them inside a
             dataclass would raise.
         processing_time: Seconds spent on this plate, detection plus OCR.
+        plate_color: Background colour of the crop --
+            :class:`~ai.inference.plate_color.PlateColor`, as a plain string.
+            Carries information no regular expression can recover: a business
+            vehicle's yellow plate and a private vehicle's white one hold the
+            *same* character layout, so only the colour separates them.
+        plate_color_confidence: Fraction of sampled pixels supporting
+            :attr:`plate_color`, ``0.0`` when the colour was not read.
     """
 
     detection: PlateDetection
     recognition: PlateRecognition | None = None
     plate_image: ImageArray | None = field(default=None, repr=False, compare=False)
     processing_time: float = 0.0
+    plate_color: str = ""
+    plate_color_confidence: float = 0.0
 
     @property
     def has_text(self) -> bool:

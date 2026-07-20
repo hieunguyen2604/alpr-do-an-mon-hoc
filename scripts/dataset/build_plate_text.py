@@ -477,9 +477,7 @@ def build_rows(
                 continue
 
             result = reconstruct(boxes, gap_ratio=gap_ratio)
-            outcome = normalizer.normalize_detailed(
-                result.plate_text, line_count=result.line_count
-            )
+            outcome = normalizer.normalize_detailed(result.plate_text, line_count=result.line_count)
             is_valid = bool(outcome.is_valid_format and outcome.text == result.plate_text)
 
             notes = list(result.notes)
@@ -532,9 +530,7 @@ def summarise(rows: Sequence[dict[str, Any]]) -> dict[str, Any]:
     domestic_valid = sum(1 for row in domestic if row["is_valid_format"])
 
     return {
-        "charsets": {
-            spec.directory: spec.charset for spec in DATASET_SPECS if spec.charset
-        },
+        "charsets": {spec.directory: spec.charset for spec in DATASET_SPECS if spec.charset},
         "vietnamese_only": {
             "foreign_source_images": len(foreign),
             "vietnamese_candidate_images": len(domestic),
@@ -544,9 +540,7 @@ def summarise(rows: Sequence[dict[str, Any]]) -> dict[str, Any]:
         "per_dataset": {
             name: {
                 **dict(counter),
-                "valid_format_rate": round(
-                    counter["valid_format"] / max(1, counter["images"]), 4
-                ),
+                "valid_format_rate": round(counter["valid_format"] / max(1, counter["images"]), 4),
                 "line_count_distribution": dict(sorted(line_counts[name].items())),
             }
             for name, counter in per_dataset.items()

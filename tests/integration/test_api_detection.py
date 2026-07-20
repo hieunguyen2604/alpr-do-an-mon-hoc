@@ -16,8 +16,6 @@ executable in disguise -- are tested as carefully as the happy one.
 
 from __future__ import annotations
 
-from pathlib import Path
-
 import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import func, select
@@ -51,17 +49,13 @@ def upload(client: TestClient, data: bytes, filename: str = "car.jpg") -> object
     Returns:
         The HTTP response.
     """
-    return client.post(
-        IMAGE_URL, files={"file": (filename, data, "image/jpeg")}
-    )
+    return client.post(IMAGE_URL, files={"file": (filename, data, "image/jpeg")})
 
 
 class TestSuccessfulImageDetection:
     """The happy path, checked in the response, the database and on disk."""
 
-    def test_returns_200_with_the_recognised_plate(
-        self, client: TestClient
-    ) -> None:
+    def test_returns_200_with_the_recognised_plate(self, client: TestClient) -> None:
         response = upload(client, encode_jpeg())
         assert response.status_code == 200
 
@@ -71,17 +65,13 @@ class TestSuccessfulImageDetection:
         assert body["input_type"] == "image"
         assert body["job_id"]
 
-    def test_reports_both_confidences_separately(
-        self, client: TestClient
-    ) -> None:
+    def test_reports_both_confidences_separately(self, client: TestClient) -> None:
         """A single merged number could not express either failure mode."""
         result = upload(client, encode_jpeg()).json()["results"][0]
         assert result["detection_confidence"] == pytest.approx(0.94)
         assert result["ocr_confidence"] == pytest.approx(0.87)
 
-    def test_reports_the_raw_and_the_corrected_string(
-        self, client: TestClient
-    ) -> None:
+    def test_reports_the_raw_and_the_corrected_string(self, client: TestClient) -> None:
         """Comparing the two is how the correction step is measured."""
         result = upload(client, encode_jpeg()).json()["results"][0]
         assert result["plate_number"] == "51F-12345"
@@ -92,9 +82,7 @@ class TestSuccessfulImageDetection:
         assert body["image_width"] == 320
         assert body["image_height"] == 240
 
-    def test_writes_one_job_and_one_detection_row(
-        self, client: TestClient, db: Session
-    ) -> None:
+    def test_writes_one_job_and_one_detection_row(self, client: TestClient, db: Session) -> None:
         body = upload(client, encode_jpeg()).json()
 
         job = db.get(DetectionJob, body["job_id"])
@@ -103,25 +91,23 @@ class TestSuccessfulImageDetection:
         assert job.status == JobStatus.COMPLETED.value
         assert job.progress == 1.0
 
-        rows = db.execute(
-            select(DetectionHistory).where(
-                DetectionHistory.source_job_id == body["job_id"]
+        rows = (
+            db.execute(
+                select(DetectionHistory).where(DetectionHistory.source_job_id == body["job_id"])
             )
-        ).scalars().all()
+            .scalars()
+            .all()
+        )
         assert len(rows) == 1
         assert rows[0].plate_number == "51F-12345"
         assert rows[0].raw_ocr_text == "51FI2345"
 
-    def test_the_persisted_row_matches_the_response(
-        self, client: TestClient, db: Session
-    ) -> None:
+    def test_the_persisted_row_matches_the_response(self, client: TestClient, db: Session) -> None:
         """The two views of one detection must not drift apart."""
         body = upload(client, encode_jpeg()).json()
         result = body["results"][0]
         row = db.execute(
-            select(DetectionHistory).where(
-                DetectionHistory.source_job_id == body["job_id"]
-            )
+            select(DetectionHistory).where(DetectionHistory.source_job_id == body["job_id"])
         ).scalar_one()
 
         assert row.confidence == pytest.approx(result["detection_confidence"])
@@ -141,9 +127,7 @@ class TestSuccessfulImageDetection:
         assert stored[0].suffix == ".jpg"
         assert body["image_url"].startswith("/files/uploads/")
 
-    def test_stores_a_crop_for_each_plate(
-        self, client: TestClient, settings: Settings
-    ) -> None:
+    def test_stores_a_crop_for_each_plate(self, client: TestClient, settings: Settings) -> None:
         body = upload(client, encode_jpeg()).json()
         crops = list(settings.plate_dir.iterdir())
         assert len(crops) == 1
@@ -166,18 +150,14 @@ class TestSuccessfulImageDetection:
         assert str(settings.upload_dir) not in raw
 
     def test_accepts_a_png_as_well(self, client: TestClient) -> None:
-        response = client.post(
-            IMAGE_URL, files={"file": ("shot.png", encode_png(), "image/png")}
-        )
+        response = client.post(IMAGE_URL, files={"file": ("shot.png", encode_png(), "image/png")})
         assert response.status_code == 200
 
     def test_the_type_is_taken_from_the_bytes_not_the_extension(
         self, client: TestClient, settings: Settings
     ) -> None:
         """A PNG uploaded as ``.jpg`` is stored as ``.png``."""
-        client.post(
-            IMAGE_URL, files={"file": ("lying.jpg", encode_png(), "image/jpeg")}
-        )
+        client.post(IMAGE_URL, files={"file": ("lying.jpg", encode_png(), "image/jpeg")})
         stored = list(settings.upload_dir.iterdir())
         assert stored[0].suffix == ".png"
 
@@ -199,10 +179,7 @@ class TestMultiplePlatesAreOneJob:
         assert len(body["results"]) == 3
 
         assert db.execute(select(func.count()).select_from(DetectionJob)).scalar_one() == 1
-        assert (
-            db.execute(select(func.count()).select_from(DetectionHistory)).scalar_one()
-            == 3
-        )
+        assert db.execute(select(func.count()).select_from(DetectionHistory)).scalar_one() == 3
 
     def test_every_row_shares_the_returned_job_id(
         self, client: TestClient, pipeline: FakePipeline, db: Session
@@ -213,9 +190,7 @@ class TestMultiplePlatesAreOneJob:
         ]
         body = upload(client, encode_jpeg()).json()
 
-        job_ids = set(
-            db.execute(select(DetectionHistory.source_job_id)).scalars().all()
-        )
+        job_ids = set(db.execute(select(DetectionHistory.source_job_id)).scalars().all())
         assert job_ids == {body["job_id"]}
 
     def test_each_plate_gets_its_own_crop_file(
@@ -260,9 +235,7 @@ class TestNoPlateFoundIsSuccess:
         job = db.get(DetectionJob, body["job_id"])
         assert job is not None
         assert job.status == JobStatus.COMPLETED.value
-        assert db.execute(
-            select(func.count()).select_from(DetectionHistory)
-        ).scalar_one() == 0
+        assert db.execute(select(func.count()).select_from(DetectionHistory)).scalar_one() == 0
 
 
 class TestUnreadablePlateIsStillRecorded:
@@ -297,9 +270,7 @@ class TestUnreadablePlateIsStillRecorded:
 class TestRejectedUploads:
     """The untrusted input surface."""
 
-    def test_an_executable_renamed_as_a_jpeg_is_refused_with_415(
-        self, client: TestClient
-    ) -> None:
+    def test_an_executable_renamed_as_a_jpeg_is_refused_with_415(self, client: TestClient) -> None:
         """NFR-S1: the extension and the Content-Type header are both ignored.
 
         Both are chosen by whoever uploads the file, so the only trustworthy
@@ -312,12 +283,8 @@ class TestRejectedUploads:
         assert response.status_code == 415
         assert response.json()["error"] == "UNSUPPORTED_MEDIA_TYPE"
 
-    def test_a_pdf_renamed_as_a_jpeg_is_refused_with_415(
-        self, client: TestClient
-    ) -> None:
-        response = client.post(
-            IMAGE_URL, files={"file": ("scan.jpg", PDF_BYTES, "image/jpeg")}
-        )
+    def test_a_pdf_renamed_as_a_jpeg_is_refused_with_415(self, client: TestClient) -> None:
+        response = client.post(IMAGE_URL, files={"file": ("scan.jpg", PDF_BYTES, "image/jpeg")})
         assert response.status_code == 415
 
     def test_a_rejected_upload_writes_nothing_at_all(
@@ -335,9 +302,7 @@ class TestRejectedUploads:
         self, client: TestClient, settings: Settings
     ) -> None:
         oversized = encode_jpeg() + b"\x00" * settings.max_image_size_bytes
-        response = client.post(
-            IMAGE_URL, files={"file": ("huge.jpg", oversized, "image/jpeg")}
-        )
+        response = client.post(IMAGE_URL, files={"file": ("huge.jpg", oversized, "image/jpeg")})
         assert response.status_code == 413
         assert response.json()["error"] == "FILE_TOO_LARGE"
 
@@ -349,61 +314,41 @@ class TestRejectedUploads:
         assert list(settings.upload_dir.iterdir()) == []
 
     def test_an_empty_file_is_refused(self, client: TestClient) -> None:
-        response = client.post(
-            IMAGE_URL, files={"file": ("empty.jpg", b"", "image/jpeg")}
-        )
+        response = client.post(IMAGE_URL, files={"file": ("empty.jpg", b"", "image/jpeg")})
         assert response.status_code in (400, 415)
 
-    def test_a_request_with_no_file_part_is_a_422(
-        self, client: TestClient
-    ) -> None:
+    def test_a_request_with_no_file_part_is_a_422(self, client: TestClient) -> None:
         response = client.post(IMAGE_URL)
         assert response.status_code == 422
 
-    def test_a_truncated_image_is_refused_with_400(
-        self, client: TestClient
-    ) -> None:
+    def test_a_truncated_image_is_refused_with_400(self, client: TestClient) -> None:
         """A valid JPEG header proves nothing about the rest of the file.
 
         The signature check passes and the decode fails, which is why the two
         are separate steps.
         """
         truncated = encode_jpeg()[:40]
-        response = client.post(
-            IMAGE_URL, files={"file": ("broken.jpg", truncated, "image/jpeg")}
-        )
+        response = client.post(IMAGE_URL, files={"file": ("broken.jpg", truncated, "image/jpeg")})
         assert response.status_code == 400
         assert response.json()["error"] == "VALIDATION_ERROR"
 
-    def test_a_video_sent_to_the_image_endpoint_is_refused(
-        self, client: TestClient
-    ) -> None:
+    def test_a_video_sent_to_the_image_endpoint_is_refused(self, client: TestClient) -> None:
         mp4 = b"\x00\x00\x00\x18ftypisom" + b"\x00" * 64
-        response = client.post(
-            IMAGE_URL, files={"file": ("clip.mp4", mp4, "video/mp4")}
-        )
+        response = client.post(IMAGE_URL, files={"file": ("clip.mp4", mp4, "video/mp4")})
         assert response.status_code == 415
 
 
 class TestErrorBodies:
     """Every failure uses one body shape and leaks nothing (NFR-S4)."""
 
-    def test_an_error_carries_a_code_a_message_and_a_request_id(
-        self, client: TestClient
-    ) -> None:
-        response = client.post(
-            IMAGE_URL, files={"file": ("x.jpg", PDF_BYTES, "image/jpeg")}
-        )
+    def test_an_error_carries_a_code_a_message_and_a_request_id(self, client: TestClient) -> None:
+        response = client.post(IMAGE_URL, files={"file": ("x.jpg", PDF_BYTES, "image/jpeg")})
         body = response.json()
         assert set(body) >= {"error", "message", "request_id"}
         assert body["request_id"]
 
-    def test_the_message_is_vietnamese_and_the_code_is_stable(
-        self, client: TestClient
-    ) -> None:
-        body = client.post(
-            IMAGE_URL, files={"file": ("x.jpg", PDF_BYTES, "image/jpeg")}
-        ).json()
+    def test_the_message_is_vietnamese_and_the_code_is_stable(self, client: TestClient) -> None:
+        body = client.post(IMAGE_URL, files={"file": ("x.jpg", PDF_BYTES, "image/jpeg")}).json()
         assert body["error"] == "UNSUPPORTED_MEDIA_TYPE"
         assert body["message"].strip()
 
@@ -412,9 +357,7 @@ class TestErrorBodies:
     ) -> None:
         """The technical half goes to the log under the same request identifier."""
         pipeline.raises = RuntimeError("secret internal detail at /srv/models/best.pt")
-        response = client.post(
-            IMAGE_URL, files={"file": ("x.jpg", encode_jpeg(), "image/jpeg")}
-        )
+        response = client.post(IMAGE_URL, files={"file": ("x.jpg", encode_jpeg(), "image/jpeg")})
 
         assert response.status_code == 500
         raw = response.text
@@ -423,12 +366,8 @@ class TestErrorBodies:
         assert "secret internal detail" not in raw
         assert "/srv/models" not in raw
 
-    def test_the_request_id_is_echoed_as_a_header(
-        self, client: TestClient
-    ) -> None:
-        response = client.post(
-            IMAGE_URL, files={"file": ("x.jpg", PDF_BYTES, "image/jpeg")}
-        )
+    def test_the_request_id_is_echoed_as_a_header(self, client: TestClient) -> None:
+        response = client.post(IMAGE_URL, files={"file": ("x.jpg", PDF_BYTES, "image/jpeg")})
         assert response.headers["X-Request-ID"] == response.json()["request_id"]
 
     def test_an_inbound_request_id_is_honoured(self, client: TestClient) -> None:
@@ -452,10 +391,7 @@ class TestErrorBodies:
         pipeline.raises = RuntimeError("boom")
         client.post(IMAGE_URL, files={"file": ("x.jpg", encode_jpeg(), "image/jpeg")})
 
-        assert (
-            db.execute(select(func.count()).select_from(DetectionHistory)).scalar_one()
-            == 0
-        )
+        assert db.execute(select(func.count()).select_from(DetectionHistory)).scalar_one() == 0
 
     @pytest.mark.xfail(
         reason=(
@@ -482,9 +418,7 @@ class TestErrorBodies:
         removed rather than left behind as a stale excuse.
         """
         pipeline.raises = RuntimeError("disk on fire")
-        response = client.post(
-            IMAGE_URL, files={"file": ("x.jpg", encode_jpeg(), "image/jpeg")}
-        )
+        response = client.post(IMAGE_URL, files={"file": ("x.jpg", encode_jpeg(), "image/jpeg")})
         assert response.status_code == 500
 
         job = db.execute(select(DetectionJob)).scalar_one()
@@ -502,9 +436,7 @@ class TestErrorBodies:
         differs only in that missing commit.
         """
         mp4 = b"\x00\x00\x00\x18ftypisom" + b"\x00" * 512
-        accepted = client.post(
-            "/api/detect/video", files={"file": ("clip.mp4", mp4, "video/mp4")}
-        )
+        accepted = client.post("/api/detect/video", files={"file": ("clip.mp4", mp4, "video/mp4")})
         assert accepted.status_code == 202
 
         job = db.execute(select(DetectionJob)).scalar_one()
@@ -515,9 +447,7 @@ class TestErrorBodies:
         assert job.error_message
         assert job.error_message not in accepted.text
 
-    def test_an_unknown_route_returns_the_same_error_shape(
-        self, client: TestClient
-    ) -> None:
+    def test_an_unknown_route_returns_the_same_error_shape(self, client: TestClient) -> None:
         """One body format for a client to parse, not two."""
         body = client.get("/api/does-not-exist").json()
         assert body["error"] == "NOT_FOUND"
@@ -558,9 +488,9 @@ class TestWebcamFrames:
         self, client: TestClient, db: Session
     ) -> None:
         ids = {
-            client.post(
-                FRAME_URL, files={"file": ("f.jpg", encode_jpeg(), "image/jpeg")}
-            ).json()["job_id"]
+            client.post(FRAME_URL, files={"file": ("f.jpg", encode_jpeg(), "image/jpeg")}).json()[
+                "job_id"
+            ]
             for _ in range(3)
         }
         assert len(ids) == 3
@@ -578,38 +508,28 @@ class TestWebcamFrames:
         assert response.status_code == 200
         assert response.json()["job_id"] != "never-existed"
 
-    def test_frames_are_not_stored_on_disk(
-        self, client: TestClient, settings: Settings
-    ) -> None:
+    def test_frames_are_not_stored_on_disk(self, client: TestClient, settings: Settings) -> None:
         """A session produces near-identical frames several times a second."""
         client.post(FRAME_URL, files={"file": ("f.jpg", encode_jpeg(), "image/jpeg")})
         assert list(settings.upload_dir.iterdir()) == []
 
     def test_the_response_carries_no_image_url(self, client: TestClient) -> None:
-        body = client.post(
-            FRAME_URL, files={"file": ("f.jpg", encode_jpeg(), "image/jpeg")}
-        ).json()
+        body = client.post(FRAME_URL, files={"file": ("f.jpg", encode_jpeg(), "image/jpeg")}).json()
         assert body["image_url"] is None
 
-    def test_the_plate_crop_is_still_stored(
-        self, client: TestClient, settings: Settings
-    ) -> None:
+    def test_the_plate_crop_is_still_stored(self, client: TestClient, settings: Settings) -> None:
         """It is what a user reviews afterwards."""
         client.post(FRAME_URL, files={"file": ("f.jpg", encode_jpeg(), "image/jpeg")})
         assert len(list(settings.plate_dir.iterdir())) == 1
 
-    def test_frames_are_held_to_the_same_magic_byte_rule(
-        self, client: TestClient
-    ) -> None:
+    def test_frames_are_held_to_the_same_magic_byte_rule(self, client: TestClient) -> None:
         response = client.post(
             FRAME_URL,
             files={"file": ("f.jpg", EXE_DISGUISED_AS_JPEG, "image/jpeg")},
         )
         assert response.status_code == 415
 
-    def test_the_frame_counter_advances(
-        self, client: TestClient, db: Session
-    ) -> None:
+    def test_the_frame_counter_advances(self, client: TestClient, db: Session) -> None:
         first = client.post(
             FRAME_URL, files={"file": ("f.jpg", encode_jpeg(), "image/jpeg")}
         ).json()
@@ -681,9 +601,7 @@ class TestJobStatusEndpoint:
 class TestResponseHeaders:
     """Cross-cutting middleware behaviour."""
 
-    def test_every_response_carries_a_request_id_and_a_duration(
-        self, client: TestClient
-    ) -> None:
+    def test_every_response_carries_a_request_id_and_a_duration(self, client: TestClient) -> None:
         response = upload(client, encode_jpeg())
         assert response.headers["X-Request-ID"]
         assert float(response.headers["X-Process-Time"]) >= 0.0

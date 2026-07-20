@@ -158,9 +158,7 @@ class StepResult:
         }
 
 
-def build_step_arguments(
-    step: str, args: argparse.Namespace, paths: DatasetPaths
-) -> list[str]:
+def build_step_arguments(step: str, args: argparse.Namespace, paths: DatasetPaths) -> list[str]:
     """Build the argument list for one step from the pipeline's own options.
 
     Keeping this in one place is what lets the pipeline stay a thin wrapper:
@@ -332,9 +330,7 @@ def run_step(
     result = StepResult(
         name=step, exit_code=exit_code, duration=duration, argv=list(argv), error=error
     )
-    LOGGER.info(
-        "STEP %s finished in %.1fs with exit code %d", step, duration, exit_code
-    )
+    LOGGER.info("STEP %s finished in %.1fs with exit code %d", step, duration, exit_code)
     return result
 
 

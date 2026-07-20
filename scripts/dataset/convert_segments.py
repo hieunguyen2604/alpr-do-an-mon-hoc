@@ -104,17 +104,13 @@ def parse_line_count_map(raw: str) -> dict[int, int]:
         if not chunk:
             continue
         if "=" not in chunk:
-            raise argparse.ArgumentTypeError(
-                f"expected 'class_id=line_count', got {chunk!r}"
-            )
+            raise argparse.ArgumentTypeError(f"expected 'class_id=line_count', got {chunk!r}")
         left, _, right = chunk.partition("=")
         try:
             class_id = int(left)
             line_count = int(right)
         except ValueError as exc:
-            raise argparse.ArgumentTypeError(
-                f"both sides of {chunk!r} must be integers"
-            ) from exc
+            raise argparse.ArgumentTypeError(f"both sides of {chunk!r} must be integers") from exc
         if line_count not in (1, 2):
             raise argparse.ArgumentTypeError(
                 f"line count must be 1 or 2, got {line_count} in {chunk!r}"
@@ -157,9 +153,7 @@ def polygon_to_box(
     min_x, max_x = max(0.0, raw_min_x), min(1.0, raw_max_x)
     min_y, max_y = max(0.0, raw_min_y), min(1.0, raw_max_y)
 
-    was_clipped = (
-        raw_min_x < 0.0 or raw_min_y < 0.0 or raw_max_x > 1.0 or raw_max_y > 1.0
-    )
+    was_clipped = raw_min_x < 0.0 or raw_min_y < 0.0 or raw_max_x > 1.0 or raw_max_y > 1.0
 
     return (
         BoxRecord(
@@ -257,9 +251,7 @@ def convert_label_file(
             continue
 
         try:
-            box, was_clipped = polygon_to_box(
-                coords, class_id=class_id, line_count=line_count
-            )
+            box, was_clipped = polygon_to_box(coords, class_id=class_id, line_count=line_count)
         except ValueError as exc:
             LOGGER.warning("%s:%d: %s, line skipped", source, line_number, exc)
             skipped += 1

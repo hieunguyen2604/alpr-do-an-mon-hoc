@@ -129,9 +129,7 @@ def hash_splits(dataset_dir: Path, *, workers: int = 8) -> HashedSplit:
     kept_paths: list[Path] = []
     kept_splits: list[str] = []
     with ThreadPoolExecutor(max_workers=workers) as pool:
-        for path, split, value in zip(
-            paths, splits, pool.map(compute_phash_and_size, paths)
-        ):
+        for path, split, value in zip(paths, splits, pool.map(compute_phash_and_size, paths)):
             if value is None:
                 continue
             hashes.append(value[0])
@@ -171,13 +169,9 @@ def cross_split_pairs(
     matrix = np.array(
         [list(int(value).to_bytes(8, "big")) for value in corpus.hashes], dtype=np.uint8
     )
-    split_codes = np.array(
-        [SPLIT_NAMES.index(name) for name in corpus.splits], dtype=np.int8
-    )
+    split_codes = np.array([SPLIT_NAMES.index(name) for name in corpus.splits], dtype=np.int8)
     popcount = (
-        np.unpackbits(np.arange(256, dtype=np.uint8)[:, None], axis=1)
-        .sum(axis=1)
-        .astype(np.uint8)
+        np.unpackbits(np.arange(256, dtype=np.uint8)[:, None], axis=1).sum(axis=1).astype(np.uint8)
     )
 
     results: list[tuple[int, int, int]] = []
@@ -196,9 +190,7 @@ def cross_split_pairs(
             results.append((int(left), int(right), int(distances[row, right])))
 
     results.sort()
-    LOGGER.info(
-        "Found %d cross-split pairs within distance %d", len(results), max_threshold
-    )
+    LOGGER.info("Found %d cross-split pairs within distance %d", len(results), max_threshold)
     return results
 
 
@@ -226,8 +218,7 @@ def tally(
     combos = [f"{a}-{b}" for a, b in combinations(SPLIT_NAMES, 2)]
 
     def combo_of(left: int, right: int) -> str:
-        pair = tuple(sorted((corpus.splits[left], corpus.splits[right]),
-                            key=SPLIT_NAMES.index))
+        pair = tuple(sorted((corpus.splits[left], corpus.splits[right]), key=SPLIT_NAMES.index))
         return f"{pair[0]}-{pair[1]}"
 
     rows: list[dict[str, Any]] = []
@@ -446,8 +437,7 @@ def main(argv: Sequence[str] | None = None) -> int:
             "dataset_dir": str(dataset_dir),
             "images_hashed": len(corpus),
             "images_per_split": {
-                name: sum(1 for item in corpus.splits if item == name)
-                for name in SPLIT_NAMES
+                name: sum(1 for item in corpus.splits if item == name) for name in SPLIT_NAMES
             },
             "grouped_at": args.grouped_at,
             "rows": rows,
@@ -465,8 +455,13 @@ def main(argv: Sequence[str] | None = None) -> int:
 
     LOGGER.info("=" * 78)
     LOGGER.info(
-        "%-10s %-28s %10s %10s %10s %6s", "threshold", "status", "train-val",
-        "train-test", "val-test", "min-d",
+        "%-10s %-28s %10s %10s %10s %6s",
+        "threshold",
+        "status",
+        "train-val",
+        "train-test",
+        "val-test",
+        "min-d",
     )
     for row in rows:
         LOGGER.info(

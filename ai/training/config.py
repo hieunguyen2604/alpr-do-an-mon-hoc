@@ -328,19 +328,14 @@ class TrainingConfig:
             )
         if self.optimizer not in SUPPORTED_OPTIMIZERS:
             raise ValueError(
-                f"optimizer must be one of {list(SUPPORTED_OPTIMIZERS)}, "
-                f"got {self.optimizer!r}"
+                f"optimizer must be one of {list(SUPPORTED_OPTIMIZERS)}, " f"got {self.optimizer!r}"
             )
         if self.imgsz <= 0 or self.imgsz % 32 != 0:
-            raise ValueError(
-                f"imgsz must be a positive multiple of 32, got {self.imgsz}"
-            )
+            raise ValueError(f"imgsz must be a positive multiple of 32, got {self.imgsz}")
         if self.epochs <= 0:
             raise ValueError(f"epochs must be positive, got {self.epochs}")
         if self.batch == 0:
-            raise ValueError(
-                "batch must be non-zero; use a positive size or -1 for AutoBatch"
-            )
+            raise ValueError("batch must be non-zero; use a positive size or -1 for AutoBatch")
         if self.patience < 0:
             raise ValueError(f"patience must not be negative, got {self.patience}")
         if self.lr0 <= 0.0:
@@ -348,9 +343,7 @@ class TrainingConfig:
         if self.workers < 0:
             raise ValueError(f"workers must not be negative, got {self.workers}")
         if self.close_mosaic < 0:
-            raise ValueError(
-                f"close_mosaic must not be negative, got {self.close_mosaic}"
-            )
+            raise ValueError(f"close_mosaic must not be negative, got {self.close_mosaic}")
         if self.close_mosaic > self.epochs:
             raise ValueError(
                 f"close_mosaic ({self.close_mosaic}) cannot exceed epochs "
@@ -361,9 +354,7 @@ class TrainingConfig:
         if not self.device:
             raise ValueError("device must be non-empty, e.g. 'auto', 'cpu' or '0'")
         if self.cache not in (True, False, "ram", "disk"):
-            raise ValueError(
-                f"cache must be True, False, 'ram' or 'disk', got {self.cache!r}"
-            )
+            raise ValueError(f"cache must be True, False, 'ram' or 'disk', got {self.cache!r}")
 
         for name in _ZERO_TO_ONE_FIELDS:
             value = float(getattr(self, name))
@@ -393,9 +384,11 @@ class TrainingConfig:
                 f"target deployment (got {self.flipud})"
             )
 
-        if self.model_variant == "yolo11n" and self.pretrained_weights.startswith(
-            "yolo11"
-        ) and not self.pretrained_weights.startswith("yolo11n"):
+        if (
+            self.model_variant == "yolo11n"
+            and self.pretrained_weights.startswith("yolo11")
+            and not self.pretrained_weights.startswith("yolo11n")
+        ):
             LOGGER.warning(
                 "model_variant=%s but pretrained_weights=%s; Ultralytics will "
                 "follow the checkpoint architecture, so the trained model may "
@@ -458,15 +451,12 @@ class TrainingConfig:
             ValueError: If it contains unknown keys, or if validation fails.
         """
         if not isinstance(values, dict):
-            raise TypeError(
-                f"Expected a mapping of config values, got {type(values).__name__}"
-            )
+            raise TypeError(f"Expected a mapping of config values, got {type(values).__name__}")
         known = set(cls.field_names())
         unknown = sorted(set(values) - known)
         if unknown:
             raise ValueError(
-                f"Unknown configuration key(s): {unknown}. "
-                f"Valid keys are: {sorted(known)}"
+                f"Unknown configuration key(s): {unknown}. " f"Valid keys are: {sorted(known)}"
             )
         return cls(**values)
 

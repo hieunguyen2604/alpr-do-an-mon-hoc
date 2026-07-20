@@ -191,9 +191,7 @@ class InferenceConfig:
         ValueError: If any value is outside its valid range.
     """
 
-    model_path: Path = field(
-        default_factory=lambda: PROJECT_ROOT / _DEFAULT_MODEL_RELATIVE_PATH
-    )
+    model_path: Path = field(default_factory=lambda: PROJECT_ROOT / _DEFAULT_MODEL_RELATIVE_PATH)
     device: str = "cpu"
     conf_threshold: float = 0.25
     iou_threshold: float = 0.45
@@ -216,17 +214,11 @@ class InferenceConfig:
             self.model_path = PROJECT_ROOT / self.model_path
 
         if not 0.0 <= self.conf_threshold <= 1.0:
-            raise ValueError(
-                f"conf_threshold must be within [0.0, 1.0], got {self.conf_threshold}"
-            )
+            raise ValueError(f"conf_threshold must be within [0.0, 1.0], got {self.conf_threshold}")
         if not 0.0 <= self.iou_threshold <= 1.0:
-            raise ValueError(
-                f"iou_threshold must be within [0.0, 1.0], got {self.iou_threshold}"
-            )
+            raise ValueError(f"iou_threshold must be within [0.0, 1.0], got {self.iou_threshold}")
         if self.imgsz <= 0 or self.imgsz % 32 != 0:
-            raise ValueError(
-                f"imgsz must be a positive multiple of 32, got {self.imgsz}"
-            )
+            raise ValueError(f"imgsz must be a positive multiple of 32, got {self.imgsz}")
         if self.two_line_aspect_ratio_threshold <= 0.0:
             raise ValueError(
                 "two_line_aspect_ratio_threshold must be positive, got "
@@ -276,9 +268,7 @@ class InferenceConfig:
         return cls(
             model_path=_read_path(prefix, "MODEL_PATH", defaults.model_path),
             device=_read_str(prefix, "DEVICE", defaults.device),
-            conf_threshold=_read_float(
-                prefix, "CONF_THRESHOLD", defaults.conf_threshold
-            ),
+            conf_threshold=_read_float(prefix, "CONF_THRESHOLD", defaults.conf_threshold),
             iou_threshold=_read_float(prefix, "IOU_THRESHOLD", defaults.iou_threshold),
             imgsz=_read_int(prefix, "IMGSZ", defaults.imgsz),
             ocr_lang=_read_str(prefix, "OCR_LANG", defaults.ocr_lang),

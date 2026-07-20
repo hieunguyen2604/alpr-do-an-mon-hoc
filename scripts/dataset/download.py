@@ -33,13 +33,12 @@ import hashlib
 import logging
 import os
 import re
-import shutil
 import sys
 import tarfile
 import zipfile
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Final, Iterable, Mapping, Sequence
+from typing import Any, Final, Mapping, Sequence
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
@@ -288,9 +287,7 @@ def _parse_entry(entry: Any, *, index: int, config_path: Path) -> DatasetSource:
 
     name = entry.get("name")
     if not isinstance(name, str) or not _NAME_PATTERN.match(name):
-        raise ConfigError(
-            f"{where}: 'name' must be a slug matching [a-z0-9_]+, got {name!r}"
-        )
+        raise ConfigError(f"{where}: 'name' must be a slug matching [a-z0-9_]+, got {name!r}")
 
     source_type = entry.get("source_type")
     if source_type not in VALID_SOURCE_TYPES:
@@ -1416,8 +1413,7 @@ def main(argv: Sequence[str] | None = None) -> int:
 
     if not sources:
         LOGGER.warning(
-            "No datasets selected. Every entry in %s is disabled; use --all or "
-            "--datasets NAME.",
+            "No datasets selected. Every entry in %s is disabled; use --all or " "--datasets NAME.",
             config_path,
         )
         return 0

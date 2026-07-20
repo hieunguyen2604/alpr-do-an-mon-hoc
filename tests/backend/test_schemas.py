@@ -144,9 +144,7 @@ class TestDetectionResultSchema:
         assert result.ocr_confidence == 0.10
 
     @pytest.mark.parametrize("value", [-0.01, 1.01, 2.0, -1.0])
-    def test_rejects_a_detection_confidence_outside_zero_to_one(
-        self, value: float
-    ) -> None:
+    def test_rejects_a_detection_confidence_outside_zero_to_one(self, value: float) -> None:
         with pytest.raises(PydanticValidationError):
             DetectionResultSchema(
                 detection_confidence=value,
@@ -154,9 +152,7 @@ class TestDetectionResultSchema:
             )
 
     @pytest.mark.parametrize("value", [-0.01, 1.01])
-    def test_rejects_an_ocr_confidence_outside_zero_to_one(
-        self, value: float
-    ) -> None:
+    def test_rejects_an_ocr_confidence_outside_zero_to_one(self, value: float) -> None:
         with pytest.raises(PydanticValidationError):
             DetectionResultSchema(
                 detection_confidence=0.5,
@@ -319,13 +315,9 @@ class TestHistoryListResponse:
             (101, 10, 11),
         ],
     )
-    def test_total_pages_rounds_up(
-        self, total: int, page_size: int, expected: int
-    ) -> None:
+    def test_total_pages_rounds_up(self, total: int, page_size: int, expected: int) -> None:
         """``total // page_size`` would silently drop the final partial page."""
-        response = HistoryListResponse.build(
-            items=[], total=total, page=1, page_size=page_size
-        )
+        response = HistoryListResponse.build(items=[], total=total, page=1, page_size=page_size)
         assert response.total_pages == expected
 
     def test_navigation_flags_on_the_first_page(self) -> None:
@@ -359,9 +351,7 @@ class TestHistoryListResponse:
         assert [item.id for item in response.items] == [1, 2]
 
     def test_the_navigation_flags_are_serialised(self) -> None:
-        dumped = HistoryListResponse.build(
-            items=[], total=100, page=2, page_size=20
-        ).model_dump()
+        dumped = HistoryListResponse.build(items=[], total=100, page=2, page_size=20).model_dump()
         assert dumped["has_next"] is True
         assert dumped["has_previous"] is True
 
@@ -518,9 +508,7 @@ class TestStatisticsResponse:
             StatisticsResponse(**payload)
 
     @pytest.mark.parametrize("value", [-0.1, 1.1])
-    def test_an_average_confidence_stays_within_zero_to_one(
-        self, value: float
-    ) -> None:
+    def test_an_average_confidence_stays_within_zero_to_one(self, value: float) -> None:
         with pytest.raises(PydanticValidationError):
             StatisticsResponse(
                 total_jobs=1,
@@ -541,9 +529,7 @@ class TestStatisticsResponse:
             by_input_type=[
                 InputTypeCountSchema(input_type="image", job_count=1, detection_count=3)
             ],
-            daily_counts=[
-                DailyCountSchema(date=_NOW.date(), job_count=1, detection_count=3)
-            ],
+            daily_counts=[DailyCountSchema(date=_NOW.date(), job_count=1, detection_count=3)],
         )
         assert stats.by_input_type[0].job_count == 1
         assert stats.by_input_type[0].detection_count == 3
@@ -551,9 +537,7 @@ class TestStatisticsResponse:
 
     def test_a_breakdown_entry_rejects_an_unknown_input_type(self) -> None:
         with pytest.raises(PydanticValidationError):
-            InputTypeCountSchema(
-                input_type="satellite", job_count=1, detection_count=1
-            )
+            InputTypeCountSchema(input_type="satellite", job_count=1, detection_count=1)
 
 
 class TestHealthResponse:

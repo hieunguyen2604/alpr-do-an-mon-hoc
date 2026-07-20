@@ -58,7 +58,6 @@ from backend.core.config import Settings
 from backend.main import create_app
 from backend.models.detection import Base
 
-
 # ---------------------------------------------------------------------------
 # Test doubles
 # ---------------------------------------------------------------------------

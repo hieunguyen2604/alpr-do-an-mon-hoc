@@ -119,9 +119,7 @@ class UtcDateTime(TypeDecorator[dt.datetime]):
     impl = DateTime(timezone=True)
     cache_ok = True
 
-    def process_bind_param(
-        self, value: dt.datetime | None, dialect: Dialect
-    ) -> dt.datetime | None:
+    def process_bind_param(self, value: dt.datetime | None, dialect: Dialect) -> dt.datetime | None:
         """Normalise a datetime to UTC before it is written.
 
         Args:
@@ -268,9 +266,7 @@ class DetectionJob(Base):
     total_frames: Mapped[int | None] = mapped_column(Integer)
     processed_frames: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
 
-    created_at: Mapped[dt.datetime] = mapped_column(
-        UtcDateTime, nullable=False, default=utcnow
-    )
+    created_at: Mapped[dt.datetime] = mapped_column(UtcDateTime, nullable=False, default=utcnow)
     completed_at: Mapped[dt.datetime | None] = mapped_column(UtcDateTime)
 
     detections: Mapped[list[DetectionHistory]] = relationship(
@@ -384,19 +380,26 @@ class DetectionHistory(Base):
     bbox_w: Mapped[int] = mapped_column(Integer, nullable=False)
     bbox_h: Mapped[int] = mapped_column(Integer, nullable=False)
 
-    is_valid_format: Mapped[bool] = mapped_column(
-        Boolean, nullable=False, default=False
-    )
+    is_valid_format: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
     plate_line_count: Mapped[int | None] = mapped_column(Integer)
+
+    # Vehicle-class attributes, added 2026-07-20. Both were already computed
+    # during recognition and then discarded before reaching this table, which
+    # meant an army plate was stored indistinguishable from an unreadable one:
+    # `is_valid_format = false` and nothing to say why. Read the two together --
+    # neither identifies a vehicle class alone. `plate_kind` comes from the
+    # character string and cannot see that a business vehicle's yellow plate
+    # carries the same layout as a private vehicle's white one; `plate_color`
+    # comes from the pixels and cannot tell a diplomatic plate from a private
+    # one, both being white.
+    plate_kind: Mapped[str | None] = mapped_column(String(_ENUM_LENGTH))
+    plate_color: Mapped[str | None] = mapped_column(String(_ENUM_LENGTH))
+    plate_color_confidence: Mapped[float | None] = mapped_column(Float)
 
     processing_time: Mapped[float] = mapped_column(Float, nullable=False, default=0.0)
 
-    detected_time: Mapped[dt.datetime] = mapped_column(
-        UtcDateTime, nullable=False, default=utcnow
-    )
-    created_at: Mapped[dt.datetime] = mapped_column(
-        UtcDateTime, nullable=False, default=utcnow
-    )
+    detected_time: Mapped[dt.datetime] = mapped_column(UtcDateTime, nullable=False, default=utcnow)
+    created_at: Mapped[dt.datetime] = mapped_column(UtcDateTime, nullable=False, default=utcnow)
 
     # Non-nullable on purpose. Every detection must belong to a job, because
     # usage statistics are defined as a count of distinct jobs; a row with no

@@ -74,8 +74,7 @@ ERROR_413: Final[dict[int, dict[str, Any]]] = {
     413: _error(
         "The upload exceeds the configured size limit.",
         "FILE_TOO_LARGE",
-        "Tệp tải lên có dung lượng 24.3 MB, vượt quá giới hạn 10 MB. "
-        "Vui lòng chọn tệp nhỏ hơn.",
+        "Tệp tải lên có dung lượng 24.3 MB, vượt quá giới hạn 10 MB. Vui lòng chọn tệp nhỏ hơn.",
     )
 }
 

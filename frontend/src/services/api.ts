@@ -21,11 +21,8 @@ import type {
   DetectionJob,
   DetectionResponse,
   DetectionHistory,
-  HealthStatus,
   HistoryListResponse,
   HistoryQuery,
-  Statistics,
-  StatisticsQuery,
 } from '@/types';
 
 // ---------------------------------------------------------------------------
@@ -324,46 +321,6 @@ export async function detectVideo(
 }
 
 /**
- * Detect plates in a single webcam frame, synchronously.
- *
- * The realtime view captures frames in the browser and posts them one at a
- * time (decision AD-03: plain HTTP, not WebSocket, because the ~300-400 ms
- * inference cost dominates the few milliseconds of HTTP overhead).
- *
- * @param frame - The captured frame, encoded as a JPEG or PNG blob.
- * @param jobId - Identifier of the ongoing session, from the response to the
- *   first frame. Omit it on the first call only.
- *
- *   **Pass this back on every later frame.** Without it the backend opens a new
- *   session per frame, and a thirty-second capture is recorded as hundreds of
- *   separate uploads — which does not fail visibly, it just makes `total_jobs`
- *   on the dashboard meaningless. An unknown id silently starts a new session
- *   rather than erroring, so a page reload does not break the capture.
- * @param signal - Optional abort signal. Pass one and abort it when a newer
- *   frame is ready, so a slow response cannot overwrite fresher results.
- * @returns Plates found in this frame, carrying the session's `job_id`.
- * @throws {ApiError} If the frame is rejected or processing fails.
- */
-export async function detectFrame(
-  frame: Blob,
-  jobId?: string | null,
-  signal?: AbortSignal,
-): Promise<DetectionResponse> {
-  const formData = new FormData();
-  formData.append('file', frame, 'frame.jpg');
-  if (jobId) {
-    formData.append('job_id', jobId);
-  }
-
-  const response = await client.post<DetectionResponse>(
-    `${API_PREFIX}/detect/frame`,
-    formData,
-    { headers: { 'Content-Type': 'multipart/form-data' }, signal },
-  );
-  return response.data;
-}
-
-/**
  * Fetch one page of detection history.
  *
  * Undefined query fields are dropped by axios, so callers can pass a partially
@@ -404,29 +361,6 @@ export async function getHistoryDetail(
 }
 
 /**
- * Fetch the dashboard aggregates.
- *
- * Note that `total_jobs` counts uploads while `total_detections` counts
- * individual plates; the headline "number of recognitions" figure is
- * `total_jobs`.
- *
- * @param query - Optional trend-window length.
- * @param signal - Optional abort signal.
- * @returns Aggregated statistics for the dashboard.
- * @throws {ApiError} If the request fails.
- */
-export async function getStatistics(
-  query: StatisticsQuery = {},
-  signal?: AbortSignal,
-): Promise<Statistics> {
-  const response = await client.get<Statistics>(`${API_PREFIX}/statistics`, {
-    params: query,
-    signal,
-  });
-  return response.data;
-}
-
-/**
  * Fetch the current state of an asynchronous job.
  *
  * Called on a timer by the video page until `status` reaches `completed` or
@@ -460,26 +394,6 @@ export async function deleteHistory(
   signal?: AbortSignal,
 ): Promise<void> {
   await client.delete(`${API_PREFIX}/history/${id}`, { signal });
-}
-
-/**
- * Check whether the service is ready to answer detection requests.
- *
- * Hits `/health` at the **root**, deliberately outside the `/api` prefix — the
- * backend mounts it there so that a health check does not move when the prefix
- * changes.
- *
- * A `degraded` status is a successful HTTP 200, not an error: the API is
- * answering but a dependency is unusable, most often the detector weights. The
- * caller decides how to present that, which is why it is not thrown.
- *
- * @param signal - Optional abort signal.
- * @returns The readiness report.
- * @throws {ApiError} If the server cannot be reached at all.
- */
-export async function getHealth(signal?: AbortSignal): Promise<HealthStatus> {
-  const response = await client.get<HealthStatus>('/health', { signal });
-  return response.data;
 }
 
 /**

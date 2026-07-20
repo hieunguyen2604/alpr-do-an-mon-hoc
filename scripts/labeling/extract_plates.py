@@ -217,9 +217,7 @@ def read_yolo_boxes(
         ValueError: If the image dimensions are not positive.
     """
     if image_width <= 0 or image_height <= 0:
-        raise ValueError(
-            f"Image size must be positive, got {image_width}x{image_height}"
-        )
+        raise ValueError(f"Image size must be positive, got {image_width}x{image_height}")
     if not label_path.is_file():
         LOGGER.debug("No label file for %s", label_path.stem)
         return []
@@ -232,9 +230,7 @@ def read_yolo_boxes(
         if not parts:
             continue
         if len(parts) < 5:
-            LOGGER.warning(
-                "Skipping malformed label line", extra={"file": str(label_path)}
-            )
+            LOGGER.warning("Skipping malformed label line", extra={"file": str(label_path)})
             LOGGER.debug("Line %d of %s has %d fields", line_number, label_path, len(parts))
             continue
 
@@ -269,9 +265,7 @@ def read_yolo_boxes(
         bottom = max(top + 1, min(bottom, image_height))
 
         if right - left < 2 or bottom - top < 2:
-            LOGGER.debug(
-                "Dropping degenerate box on line %d of %s", line_number, label_path
-            )
+            LOGGER.debug("Dropping degenerate box on line %d of %s", line_number, label_path)
             continue
         boxes.append((left, top, right - left, bottom - top))
 
@@ -298,9 +292,7 @@ def _iter_images(directory: Path) -> Iterator[Path]:
             yield path
 
 
-def _scale_for_reading(
-    crop: np.ndarray, *, target_height: int, max_width: int
-) -> np.ndarray:
+def _scale_for_reading(crop: np.ndarray, *, target_height: int, max_width: int) -> np.ndarray:
     """Resize a crop so a human can comfortably read it.
 
     Small crops are enlarged with a cubic filter, which keeps glyph edges
@@ -323,9 +315,7 @@ def _scale_for_reading(
     if crop.size == 0:
         raise ValueError("Cannot rescale an empty crop")
     if target_height <= 0 or max_width <= 0:
-        raise ValueError(
-            f"Bounds must be positive, got height={target_height}, width={max_width}"
-        )
+        raise ValueError(f"Bounds must be positive, got height={target_height}, width={max_width}")
 
     height, width = crop.shape[:2]
     scale = target_height / float(height)
@@ -404,9 +394,7 @@ def extract_split(
             continue
 
         image_height, image_width = image.shape[:2]
-        boxes = read_yolo_boxes(
-            labels_dir / f"{image_path.stem}.txt", image_width, image_height
-        )
+        boxes = read_yolo_boxes(labels_dir / f"{image_path.stem}.txt", image_width, image_height)
         if not boxes:
             images_without_boxes += 1
             continue
@@ -421,9 +409,7 @@ def extract_split(
 
             crop = image[top:bottom, left:right]
             if crop.size == 0:
-                LOGGER.warning(
-                    "Empty crop for %s box %d, skipping", image_path.name, box_index
-                )
+                LOGGER.warning("Empty crop for %s box %d, skipping", image_path.name, box_index)
                 continue
 
             crop_file = f"{image_path.stem}__box{box_index}.jpg"
@@ -445,9 +431,7 @@ def extract_split(
                         continue
                     written += 1
             else:
-                scaled = _scale_for_reading(
-                    crop, target_height=target_height, max_width=max_width
-                )
+                scaled = _scale_for_reading(crop, target_height=target_height, max_width=max_width)
                 crop_height, crop_width = scaled.shape[:2]
                 if not cv2.imwrite(str(destination), scaled):
                     LOGGER.error("Failed to write crop: %s", destination)
@@ -465,9 +449,7 @@ def extract_split(
                     bbox_w=box_w,
                     bbox_h=box_h,
                     aspect_ratio=aspect_ratio,
-                    estimated_lines=estimate_line_count(
-                        aspect_ratio, threshold=threshold
-                    ),
+                    estimated_lines=estimate_line_count(aspect_ratio, threshold=threshold),
                     crop_width=crop_width,
                     crop_height=crop_height,
                 )
@@ -543,10 +525,7 @@ def _build_parser() -> argparse.ArgumentParser:
         type=Path,
         default=None,
         metavar="DIR",
-        help=(
-            "Where crops are written "
-            "(default: <datasets>/annotations/plates_to_label)."
-        ),
+        help=("Where crops are written " "(default: <datasets>/annotations/plates_to_label)."),
     )
     parser.add_argument(
         "--manifest",
@@ -572,8 +551,7 @@ def _build_parser() -> argparse.ArgumentParser:
         type=float,
         default=DEFAULT_PADDING_RATIO,
         help=(
-            "Cosmetic margin around each box, as a fraction of its size "
-            "(default: %(default)s)."
+            "Cosmetic margin around each box, as a fraction of its size " "(default: %(default)s)."
         ),
     )
     parser.add_argument(
@@ -621,8 +599,8 @@ def main(argv: Sequence[str] | None = None) -> int:
     images_dir = datasets_dir / "processed" / "yolo" / "images" / args.split
     labels_dir = datasets_dir / "processed" / "yolo" / "labels" / args.split
     output_dir = (
-        args.output_dir or datasets_dir / "annotations" / "plates_to_label"
-    ).expanduser().resolve()
+        (args.output_dir or datasets_dir / "annotations" / "plates_to_label").expanduser().resolve()
+    )
     manifest_path = (args.manifest or output_dir / "manifest.csv").expanduser().resolve()
 
     try:

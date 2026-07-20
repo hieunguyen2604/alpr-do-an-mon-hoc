@@ -84,9 +84,7 @@ def verify_exported_model(exported: Path, imgsz: int) -> dict[str, Any]:
         import numpy as np
         from ultralytics import YOLO
     except ImportError as error:  # pragma: no cover - environment problem
-        raise RuntimeError(
-            "numpy and ultralytics are required to verify an export"
-        ) from error
+        raise RuntimeError("numpy and ultralytics are required to verify an export") from error
 
     report: dict[str, Any] = {
         "path": str(exported),
@@ -159,9 +157,7 @@ def export_model(
         RuntimeError: If Ultralytics is missing or the export itself fails.
     """
     if export_format not in SUPPORTED_FORMATS:
-        raise ValueError(
-            f"format must be one of {list(SUPPORTED_FORMATS)}, got {export_format!r}"
-        )
+        raise ValueError(f"format must be one of {list(SUPPORTED_FORMATS)}, got {export_format!r}")
     if imgsz <= 0 or imgsz % 32 != 0:
         raise ValueError(f"imgsz must be a positive multiple of 32, got {imgsz}")
     if not weights.is_file():
@@ -249,9 +245,7 @@ def export_model(
                 report["latency_ms"],
             )
         else:
-            LOGGER.error(
-                "  FAILED verification for %s: %s", export_format, report["error"]
-            )
+            LOGGER.error("  FAILED verification for %s: %s", export_format, report["error"])
     return result
 
 
@@ -399,9 +393,7 @@ def main(argv: list[str] | None = None) -> int:
         LOGGER.error("Failed format(s): %s", ", ".join(sorted(set(failures))))
         return 1
 
-    LOGGER.info(
-        "Next step: python -m ai.evaluation.benchmark_cpu --weights %s", weights
-    )
+    LOGGER.info("Next step: python -m ai.evaluation.benchmark_cpu --weights %s", weights)
     return 0
 
 

@@ -41,12 +41,11 @@ PROJECT_ROOT = Path(__file__).resolve().parents[2]
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
-from backend.core.config import Settings, get_settings  # noqa: E402
-
 # Importing the package -- not just Base -- is what registers every model class
 # on Base.metadata. A model that has not been imported is invisible to
 # autogenerate, which reads its absence as an instruction to DROP the table.
 import backend.models  # noqa: E402, F401
+from backend.core.config import Settings, get_settings  # noqa: E402
 from backend.models.detection import Base  # noqa: E402
 
 config = context.config

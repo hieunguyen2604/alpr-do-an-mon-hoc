@@ -137,9 +137,7 @@ _TAGS_METADATA = [
     },
     {
         "name": "History",
-        "description": (
-            "Browse, search, filter, export and delete stored detection records."
-        ),
+        "description": ("Browse, search, filter, export and delete stored detection records."),
     },
     {
         "name": "Statistics",
@@ -459,9 +457,7 @@ def register_exception_handlers(app: FastAPI) -> None:
         )
 
     @app.exception_handler(StarletteHTTPException)
-    async def handle_http_exception(
-        request: Request, exc: StarletteHTTPException
-    ) -> JSONResponse:
+    async def handle_http_exception(request: Request, exc: StarletteHTTPException) -> JSONResponse:
         """Report an HTTP error raised by the framework itself.
 
         Chiefly the 404 for an unknown path and the 405 for a wrong method.
@@ -476,9 +472,7 @@ def register_exception_handlers(app: FastAPI) -> None:
             The response in the API's standard error shape.
         """
         if exc.status_code == status.HTTP_404_NOT_FOUND:
-            error: APIError = NotFoundError(
-                f"No route matches {request.method} {request.url.path}"
-            )
+            error: APIError = NotFoundError(f"No route matches {request.method} {request.url.path}")
         else:
             error = APIError(
                 f"HTTP {exc.status_code} for {request.method} {request.url.path}: {exc.detail}",

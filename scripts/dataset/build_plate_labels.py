@@ -48,18 +48,14 @@ import logging
 import sys
 from collections import Counter
 from pathlib import Path
-from typing import Final, Iterator
+from typing import Final
 
 PROJECT_ROOT: Final[Path] = Path(__file__).resolve().parents[2]
 
-DEFAULT_SOURCE: Final[Path] = (
-    PROJECT_ROOT / "datasets" / "annotations" / "plate_text_labels.csv"
-)
+DEFAULT_SOURCE: Final[Path] = PROJECT_ROOT / "datasets" / "annotations" / "plate_text_labels.csv"
 """Phase 2b's full reconstruction audit trail, every row kept."""
 
-DEFAULT_OUTPUT: Final[Path] = (
-    PROJECT_ROOT / "datasets" / "annotations" / "plate_labels.csv"
-)
+DEFAULT_OUTPUT: Final[Path] = PROJECT_ROOT / "datasets" / "annotations" / "plate_labels.csv"
 """The evaluation label file :mod:`ai.evaluation.benchmark_ocr` reads by default."""
 
 OUTPUT_COLUMNS: Final[tuple[str, ...]] = (

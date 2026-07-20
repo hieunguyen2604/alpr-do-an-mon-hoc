@@ -87,6 +87,7 @@ LABEL_FIELDNAMES: Final[tuple[str, ...]] = (
 DEFAULT_PORT: Final[int] = 8765
 """Default loopback port. Chosen high enough to need no privileges."""
 
+
 class BadRequestError(Exception):
     """A request the browser got wrong, carrying a message meant for the user.
 
@@ -306,8 +307,7 @@ def load_manifest(manifest_path: Path) -> list[CropItem]:
     """
     if not manifest_path.is_file():
         raise FileNotFoundError(
-            f"Manifest not found: {manifest_path}. "
-            "Run scripts/labeling/extract_plates.py first."
+            f"Manifest not found: {manifest_path}. Run scripts/labeling/extract_plates.py first."
         )
 
     items: list[CropItem] = []
@@ -321,9 +321,7 @@ def load_manifest(manifest_path: Path) -> list[CropItem]:
                 aspect_ratio = float(row.get("aspect_ratio") or 0.0)
                 estimated_lines = int(row.get("estimated_lines") or 1)
             except ValueError:
-                LOGGER.warning(
-                    "Manifest row %d has unusable numbers; defaulting", line_number
-                )
+                LOGGER.warning("Manifest row %d has unusable numbers; defaulting", line_number)
                 aspect_ratio, estimated_lines = 0.0, 1
             items.append(
                 CropItem(
@@ -366,8 +364,7 @@ class _Validator:
         except Exception as exc:  # noqa: BLE001 - any import failure degrades the same way
             self.error = f"{type(exc).__name__}: {exc}"
             LOGGER.warning(
-                "Normalizer unavailable, labelling will run without the live "
-                "format check: %s",
+                "Normalizer unavailable, labelling will run without the live format check: %s",
                 self.error,
             )
 
@@ -412,9 +409,7 @@ class _Validator:
             "available": True,
             "valid": bool(outcome.is_valid_format),
             "normalized": outcome.text,
-            "display": self._normalizer.format_for_display(
-                outcome.text, line_count=line_count
-            ),
+            "display": self._normalizer.format_for_display(outcome.text, line_count=line_count),
             "kind": kind,
             "kind_label": _KIND_LABELS_VI.get(kind, kind),
             "is_ambiguous": bool(outcome.decision.is_ambiguous),
@@ -479,9 +474,7 @@ def build_handler(
 
             try:
                 if route in ("/", "/index.html"):
-                    self._send_bytes(
-                        _render_page().encode("utf-8"), "text/html; charset=utf-8"
-                    )
+                    self._send_bytes(_render_page().encode("utf-8"), "text/html; charset=utf-8")
                 elif route == "/api/items":
                     self._send_json(self._items_payload())
                 elif route == "/api/validate":
@@ -527,9 +520,7 @@ def build_handler(
                 self._send_json({"error": str(exc)}, status=400)
             except OSError as exc:
                 LOGGER.error("Cannot persist label: %s", exc)
-                self._send_json(
-                    {"error": f"Không ghi được tệp nhãn: {exc}"}, status=500
-                )
+                self._send_json({"error": f"Không ghi được tệp nhãn: {exc}"}, status=500)
 
         def _save_label(self, payload: dict[str, Any]) -> dict[str, Any]:
             """Validate an incoming answer, store it, and report the new totals.
@@ -556,9 +547,7 @@ def build_handler(
             is_skipped = bool(payload.get("is_skipped"))
             plate_text = str(payload.get("plate_text") or "").strip().upper()
             if not is_skipped and not plate_text:
-                raise BadRequestError(
-                    "Chuỗi biển số rỗng: hãy nhập nội dung hoặc bấm Bỏ qua"
-                )
+                raise BadRequestError("Chuỗi biển số rỗng: hãy nhập nội dung hoặc bấm Bỏ qua")
 
             line_count = payload.get("line_count", item.estimated_lines)
             try:
@@ -606,11 +595,7 @@ def build_handler(
                 payload_items.append(entry)
 
             first_unlabeled = next(
-                (
-                    index
-                    for index, item in enumerate(items)
-                    if item.crop_file not in store.records
-                ),
+                (index for index, item in enumerate(items) if item.crop_file not in store.records),
                 0,
             )
             return {
@@ -678,9 +663,7 @@ def build_handler(
             self.send_response(status)
             self.send_header("Content-Type", content_type)
             self.send_header("Content-Length", str(len(body)))
-            self.send_header(
-                "Cache-Control", "max-age=3600" if cache else "no-store"
-            )
+            self.send_header("Cache-Control", "max-age=3600" if cache else "no-store")
             self.end_headers()
             self.wfile.write(body)
 
@@ -725,9 +708,7 @@ def serve(
         OSError: If the port cannot be bound, typically because another copy of
             the tool is already running.
     """
-    handler = build_handler(
-        items=items, store=store, crops_dir=crops_dir, validator=validator
-    )
+    handler = build_handler(items=items, store=store, crops_dir=crops_dir, validator=validator)
     url = f"http://{host}:{port}/"
 
     with _ThreadingHTTPServer((host, port), handler) as server:
@@ -1204,12 +1185,12 @@ def main(argv: Sequence[str] | None = None) -> int:
 
     datasets_dir = (args.datasets_dir or PROJECT_ROOT / "datasets").expanduser().resolve()
     crops_dir = (
-        args.crops_dir or datasets_dir / "annotations" / "plates_to_label"
-    ).expanduser().resolve()
+        (args.crops_dir or datasets_dir / "annotations" / "plates_to_label").expanduser().resolve()
+    )
     manifest_path = (args.manifest or crops_dir / "manifest.csv").expanduser().resolve()
     labels_path = (
-        args.labels or datasets_dir / "annotations" / "plate_labels.csv"
-    ).expanduser().resolve()
+        (args.labels or datasets_dir / "annotations" / "plate_labels.csv").expanduser().resolve()
+    )
 
     try:
         items = load_manifest(manifest_path)
@@ -1224,9 +1205,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         LOGGER.error("Cannot read the existing label file: %s", exc)
         return 1
 
-    LOGGER.info(
-        "%d crops to label, %d already answered", len(items), len(store.records)
-    )
+    LOGGER.info("%d crops to label, %d already answered", len(items), len(store.records))
 
     try:
         serve(

@@ -238,11 +238,18 @@ def count_label_boxes(image_path: Path) -> int:
 def compute_phash_and_size(image_path: Path) -> tuple[int, int] | None:
     """Compute an image's perceptual hash and its pixel count in one open.
 
+    ``phash`` (DCT-based) is used rather than ``ahash`` or ``dhash`` because it
+    is the one that stays stable under the transformations that actually create
+    duplicates here: JPEG re-compression, resizing, and mild brightness shifts
+    from a dataset being re-exported by a different tool.
+
     Args:
         image_path: The image to read.
 
     Returns:
         ``(phash, pixels)``, or ``None`` if the file cannot be read.
+        Unreadable files are logged and skipped rather than raising -- one
+        corrupt JPEG must not stop a 37,000 image scan.
     """
     try:
         import imagehash
@@ -261,26 +268,6 @@ def compute_phash_and_size(image_path: Path) -> tuple[int, int] | None:
     for bit in hashed.hash.flatten():
         value = (value << 1) | int(bool(bit))
     return value, width * height
-
-
-def compute_phash(image_path: Path) -> int | None:
-    """Compute an image's perceptual hash.
-
-    ``phash`` (DCT-based) is used rather than ``ahash`` or ``dhash`` because it
-    is the one that stays stable under the transformations that actually create
-    duplicates here: JPEG re-compression, resizing, and mild brightness shifts
-    from a dataset being re-exported by a different tool.
-
-    Args:
-        image_path: The image to hash.
-
-    Returns:
-        The hash as a 64-bit integer, or ``None`` if the file cannot be read.
-        Unreadable files are logged and skipped rather than raising -- one
-        corrupt JPEG must not stop a 37,000 image scan.
-    """
-    result = compute_phash_and_size(image_path)
-    return None if result is None else result[0]
 
 
 def hash_directory(
@@ -507,12 +494,10 @@ def find_pairs_vectorised(
 
     # Big-endian byte view: bit order does not matter, only that it is consistent,
     # because Hamming distance is invariant under any fixed permutation of bits.
-    matrix = np.array(
-        [list(int(value).to_bytes(8, "big")) for value in hashes], dtype=np.uint8
+    matrix = np.array([list(int(value).to_bytes(8, "big")) for value in hashes], dtype=np.uint8)
+    popcount = (
+        np.unpackbits(np.arange(256, dtype=np.uint8)[:, None], axis=1).sum(axis=1).astype(np.uint8)
     )
-    popcount = np.unpackbits(
-        np.arange(256, dtype=np.uint8)[:, None], axis=1
-    ).sum(axis=1).astype(np.uint8)
 
     pairs: list[tuple[int, int, int]] = []
     for start in range(0, count, chunk):
@@ -528,9 +513,7 @@ def find_pairs_vectorised(
             pairs.append((int(left), int(right), int(distances[left - start, right])))
 
     pairs.sort()
-    LOGGER.info(
-        "Vectorised exact scan found %d pairs within distance %d", len(pairs), threshold
-    )
+    LOGGER.info("Vectorised exact scan found %d pairs within distance %d", len(pairs), threshold)
     return pairs
 
 
@@ -538,9 +521,7 @@ KEEP_STRATEGIES: Final[tuple[str, ...]] = ("priority", "quality")
 """Available keeper-selection strategies, see :func:`make_keeper_key`."""
 
 
-def make_keeper_key(
-    strategy: str, priority_rank: dict[str, int]
-) -> Any:
+def make_keeper_key(strategy: str, priority_rank: dict[str, int]) -> Any:
     """Build the sort key that decides which copy of a duplicate survives.
 
     Args:
@@ -1046,8 +1027,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         summary["deleted_images"] = apply_removals(groups)
     else:
         LOGGER.info(
-            "Report-only run. %d images would be removed; re-run with --apply to "
-            "delete them.",
+            "Report-only run. %d images would be removed; re-run with --apply to delete them.",
             summary["removable_images"],
         )
 

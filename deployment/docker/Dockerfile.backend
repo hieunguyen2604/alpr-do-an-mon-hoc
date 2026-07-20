@@ -166,7 +166,23 @@ ENV ALPR_MODEL_PATH=/app/models/best.pt \
     ALPR_STORAGE_ROOT=/app/storage \
     ALPR_LOG_LEVEL=info
 
-USER appuser
+# --- Entrypoint: fix bind-mount ownership, then drop privileges -------------
+# The container starts as root ONLY long enough to make the mounted directories
+# writable by UID 1000; `setpriv` then replaces the process image with the
+# server running as `appuser`, so no root process survives into runtime. See the
+# comments in entrypoint-backend.sh for why this is necessary on Docker Desktop.
+#
+# `USER appuser` is deliberately NOT set here: it would make the entrypoint
+# unable to correct ownership, which is the whole point. An operator who wants
+# to skip the fix-up can still pass `user:` in compose or `--user` on the CLI --
+# the entrypoint detects a non-root UID and execs straight through.
+COPY --chmod=0755 deployment/docker/entrypoint-backend.sh /usr/local/bin/entrypoint.sh
+# Inherited from the build args above so a `--build-arg APP_UID=$(id -u)` build
+# on Linux produces an image whose entrypoint drops to that same UID.
+ENV APP_USER=appuser \
+    APP_UID=${APP_UID} \
+    APP_GID=${APP_GID}
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 
 EXPOSE 8000
 

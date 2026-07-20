@@ -155,9 +155,7 @@ def make_detection(
 class TestBaseCrud:
     """The generic operations every repository inherits."""
 
-    def test_creates_and_reads_back(
-        self, session: Session, jobs: JobRepository
-    ) -> None:
+    def test_creates_and_reads_back(self, session: Session, jobs: JobRepository) -> None:
         job = jobs.create_job(input_type=InputType.IMAGE)
         assert job.id
         assert jobs.get_by_id(job.id) is job
@@ -171,14 +169,10 @@ class TestBaseCrud:
         with pytest.raises(ValidationError):
             jobs.create_job(input_type="satellite")
 
-    def test_get_by_id_returns_none_for_a_missing_row(
-        self, jobs: JobRepository
-    ) -> None:
+    def test_get_by_id_returns_none_for_a_missing_row(self, jobs: JobRepository) -> None:
         assert jobs.get_by_id("nope") is None
 
-    def test_get_or_raise_raises_for_a_missing_row(
-        self, jobs: JobRepository
-    ) -> None:
+    def test_get_or_raise_raises_for_a_missing_row(self, jobs: JobRepository) -> None:
         with pytest.raises(NotFoundError):
             jobs.get_or_raise("nope")
 
@@ -189,17 +183,13 @@ class TestBaseCrud:
         assert jobs.exists("other") is False
         assert jobs.count() == 1
 
-    def test_update_rejects_an_unknown_field(
-        self, session: Session, jobs: JobRepository
-    ) -> None:
+    def test_update_rejects_an_unknown_field(self, session: Session, jobs: JobRepository) -> None:
         """A typo would otherwise attach a stray attribute and change nothing."""
         job = make_job(session)
         with pytest.raises(ValidationError):
             jobs.update(job, statuss=JobStatus.FAILED.value)
 
-    def test_update_applies_a_known_field(
-        self, session: Session, jobs: JobRepository
-    ) -> None:
+    def test_update_applies_a_known_field(self, session: Session, jobs: JobRepository) -> None:
         job = make_job(session)
         jobs.update(job, status=JobStatus.FAILED.value)
         assert jobs.get_by_id(job.id).status == JobStatus.FAILED.value
@@ -221,14 +211,10 @@ class TestBaseCrud:
         removed = detections.bulk_delete([first.id, first.id, second.id])
         assert removed == 2
 
-    def test_bulk_delete_of_nothing_is_zero(
-        self, detections: DetectionRepository
-    ) -> None:
+    def test_bulk_delete_of_nothing_is_zero(self, detections: DetectionRepository) -> None:
         assert detections.bulk_delete([]) == 0
 
-    def test_to_id_list_extracts_primary_keys(
-        self, session: Session
-    ) -> None:
+    def test_to_id_list_extracts_primary_keys(self, session: Session) -> None:
         job = make_job(session)
         rows = [make_detection(session, job) for _ in range(3)]
         assert to_id_list(rows) == [row.id for row in rows]
@@ -364,9 +350,7 @@ class TestSorting:
 
     def test_sorts_by_time(self, spread: None, detections: DetectionRepository) -> None:
         rows, _ = detections.list_paginated(sort_by="detected_time", descending=False)
-        assert [row.detected_time for row in rows] == sorted(
-            row.detected_time for row in rows
-        )
+        assert [row.detected_time for row in rows] == sorted(row.detected_time for row in rows)
 
     def test_an_unknown_sort_key_is_a_clean_validation_error(
         self, spread: None, detections: DetectionRepository
@@ -391,20 +375,14 @@ class TestPlateSearch:
         for text in ("51F-12345", "29A1-234.56", "30G 99999", "51F-54321"):
             make_detection(session, job, plate_number=text)
 
-    def test_finds_a_plain_substring(
-        self, plates: None, detections: DetectionRepository
-    ) -> None:
-        rows, total = detections.list_paginated(
-            filters=HistoryFilter(plate_number="51F")
-        )
+    def test_finds_a_plain_substring(self, plates: None, detections: DetectionRepository) -> None:
+        rows, total = detections.list_paginated(filters=HistoryFilter(plate_number="51F"))
         assert total == 2
 
     def test_matching_is_case_insensitive(
         self, plates: None, detections: DetectionRepository
     ) -> None:
-        rows, total = detections.list_paginated(
-            filters=HistoryFilter(plate_number="51f")
-        )
+        rows, total = detections.list_paginated(filters=HistoryFilter(plate_number="51f"))
         assert total == 2
 
     def test_separators_are_ignored_on_both_sides(
@@ -415,17 +393,13 @@ class TestPlateSearch:
         Otherwise the search is a "the search is broken" bug report, since the
         stored form depends on whatever normalisation produced.
         """
-        _, total = detections.list_paginated(
-            filters=HistoryFilter(plate_number="51F12345")
-        )
+        _, total = detections.list_paginated(filters=HistoryFilter(plate_number="51F12345"))
         assert total == 1
 
     def test_a_dotted_query_finds_a_hyphenated_plate(
         self, plates: None, detections: DetectionRepository
     ) -> None:
-        _, total = detections.list_paginated(
-            filters=HistoryFilter(plate_number="51F.12345")
-        )
+        _, total = detections.list_paginated(filters=HistoryFilter(plate_number="51F.12345"))
         assert total == 1
 
     def test_a_percent_sign_is_escaped_not_treated_as_a_wildcard(
@@ -438,18 +412,14 @@ class TestPlateSearch:
     def test_an_underscore_is_escaped_too(
         self, plates: None, detections: DetectionRepository
     ) -> None:
-        _, total = detections.list_paginated(
-            filters=HistoryFilter(plate_number="51F_2345")
-        )
+        _, total = detections.list_paginated(filters=HistoryFilter(plate_number="51F_2345"))
         assert total == 0
 
     def test_a_query_of_only_separators_is_dropped_not_applied(
         self, plates: None, detections: DetectionRepository
     ) -> None:
         """Applying it as a match-all would be worse than not filtering."""
-        _, total = detections.list_paginated(
-            filters=HistoryFilter(plate_number="---")
-        )
+        _, total = detections.list_paginated(filters=HistoryFilter(plate_number="---"))
         assert total == 4
 
 
@@ -462,26 +432,41 @@ class TestFiltering:
         video_job = make_job(session, input_type=InputType.VIDEO.value)
 
         make_detection(
-            session, image_job, plate_number="51F-11111", confidence=0.95,
-            ocr_confidence=0.9, is_valid_format=True,
+            session,
+            image_job,
+            plate_number="51F-11111",
+            confidence=0.95,
+            ocr_confidence=0.9,
+            is_valid_format=True,
         )
         make_detection(
-            session, image_job, plate_number="ZZ-00000", confidence=0.60,
-            ocr_confidence=0.4, is_valid_format=False,
+            session,
+            image_job,
+            plate_number="ZZ-00000",
+            confidence=0.60,
+            ocr_confidence=0.4,
+            is_valid_format=False,
         )
         make_detection(
-            session, image_job, plate_number=None, raw_ocr_text=None,
-            confidence=0.55, ocr_confidence=None, is_valid_format=False,
+            session,
+            image_job,
+            plate_number=None,
+            raw_ocr_text=None,
+            confidence=0.55,
+            ocr_confidence=None,
+            is_valid_format=False,
         )
         make_detection(
-            session, video_job, plate_number="29A1-22222", confidence=0.80,
-            ocr_confidence=0.75, is_valid_format=True,
+            session,
+            video_job,
+            plate_number="29A1-22222",
+            confidence=0.80,
+            ocr_confidence=0.75,
+            is_valid_format=True,
             detected_time=_NOW + dt.timedelta(days=2),
         )
 
-    def test_filters_by_input_type(
-        self, mixed: None, detections: DetectionRepository
-    ) -> None:
+    def test_filters_by_input_type(self, mixed: None, detections: DetectionRepository) -> None:
         _, total = detections.list_paginated(
             filters=HistoryFilter(input_type=InputType.VIDEO.value)
         )
@@ -490,29 +475,19 @@ class TestFiltering:
     def test_filters_by_minimum_detection_confidence(
         self, mixed: None, detections: DetectionRepository
     ) -> None:
-        _, total = detections.list_paginated(
-            filters=HistoryFilter(min_confidence=0.75)
-        )
+        _, total = detections.list_paginated(filters=HistoryFilter(min_confidence=0.75))
         assert total == 2
 
     def test_filtering_by_ocr_confidence_excludes_unread_rows(
         self, mixed: None, detections: DetectionRepository
     ) -> None:
         """A row with no OCR value has nothing to compare, so it is excluded."""
-        _, total = detections.list_paginated(
-            filters=HistoryFilter(min_ocr_confidence=0.0)
-        )
+        _, total = detections.list_paginated(filters=HistoryFilter(min_ocr_confidence=0.0))
         assert total == 3
 
-    def test_filters_by_format_validity(
-        self, mixed: None, detections: DetectionRepository
-    ) -> None:
-        _, valid = detections.list_paginated(
-            filters=HistoryFilter(is_valid_format=True)
-        )
-        _, invalid = detections.list_paginated(
-            filters=HistoryFilter(is_valid_format=False)
-        )
+    def test_filters_by_format_validity(self, mixed: None, detections: DetectionRepository) -> None:
+        _, valid = detections.list_paginated(filters=HistoryFilter(is_valid_format=True))
+        _, invalid = detections.list_paginated(filters=HistoryFilter(is_valid_format=False))
         assert valid == 2
         assert invalid == 2
 
@@ -549,9 +524,7 @@ class TestFiltering:
         self, mixed: None, detections: DetectionRepository
     ) -> None:
         _, total = detections.list_paginated(
-            filters=HistoryFilter(
-                input_type=InputType.VIDEO.value, min_confidence=0.99
-            )
+            filters=HistoryFilter(input_type=InputType.VIDEO.value, min_confidence=0.99)
         )
         assert total == 0
 
@@ -711,20 +684,40 @@ class TestStatisticsFigures:
     def population(self, session: Session) -> None:
         job = make_job(session)
         make_detection(
-            session, job, plate_number="51F-12345", is_valid_format=True,
-            confidence=0.9, ocr_confidence=0.8, processing_time=0.4,
+            session,
+            job,
+            plate_number="51F-12345",
+            is_valid_format=True,
+            confidence=0.9,
+            ocr_confidence=0.8,
+            processing_time=0.4,
         )
         make_detection(
-            session, job, plate_number="51F-12345", is_valid_format=True,
-            confidence=0.7, ocr_confidence=0.6, processing_time=0.6,
+            session,
+            job,
+            plate_number="51F-12345",
+            is_valid_format=True,
+            confidence=0.7,
+            ocr_confidence=0.6,
+            processing_time=0.6,
         )
         make_detection(
-            session, job, plate_number="XX-99999", is_valid_format=False,
-            confidence=0.5, ocr_confidence=0.5, processing_time=0.5,
+            session,
+            job,
+            plate_number="XX-99999",
+            is_valid_format=False,
+            confidence=0.5,
+            ocr_confidence=0.5,
+            processing_time=0.5,
         )
         make_detection(
-            session, job, plate_number=None, raw_ocr_text=None,
-            is_valid_format=False, confidence=0.5, ocr_confidence=None,
+            session,
+            job,
+            plate_number=None,
+            raw_ocr_text=None,
+            is_valid_format=False,
+            confidence=0.5,
+            ocr_confidence=None,
             processing_time=0.5,
         )
 
@@ -739,11 +732,7 @@ class TestStatisticsFigures:
     ) -> None:
         """They must sum to the total, or a stacked chart shows a gap."""
         stats = detections.get_statistics()
-        total = (
-            stats.valid_format_count
-            + stats.invalid_format_count
-            + stats.unreadable_count
-        )
+        total = stats.valid_format_count + stats.invalid_format_count + stats.unreadable_count
         assert total == stats.total_detections
         assert stats.valid_format_count == 2
         assert stats.invalid_format_count == 1
@@ -762,9 +751,7 @@ class TestStatisticsFigures:
         stats = detections.get_statistics()
         assert stats.average_confidence == pytest.approx((0.9 + 0.7 + 0.5 + 0.5) / 4)
 
-    def test_averages_are_none_on_an_empty_database(
-        self, detections: DetectionRepository
-    ) -> None:
+    def test_averages_are_none_on_an_empty_database(self, detections: DetectionRepository) -> None:
         """``None`` distinguishes "no data yet" from "the average is 0.0"."""
         stats = detections.get_statistics()
         assert stats.total_detections == 0
@@ -783,27 +770,19 @@ class TestStatisticsFigures:
         for earlier, later in zip(dates, dates[1:]):
             assert (later - earlier).days == 1
 
-    def test_a_non_positive_trend_window_is_refused(
-        self, detections: DetectionRepository
-    ) -> None:
+    def test_a_non_positive_trend_window_is_refused(self, detections: DetectionRepository) -> None:
         with pytest.raises(ValidationError):
             detections.get_statistics(trend_days=0)
 
-    def test_the_trend_window_is_capped(
-        self, detections: DetectionRepository
-    ) -> None:
+    def test_the_trend_window_is_capped(self, detections: DetectionRepository) -> None:
         """An unbounded window would build thousands of mostly-zero entries."""
         stats = detections.get_statistics(trend_days=10_000)
         assert len(stats.daily_counts) <= 365
 
-    def test_statistics_reject_a_reversed_time_range(
-        self, detections: DetectionRepository
-    ) -> None:
+    def test_statistics_reject_a_reversed_time_range(self, detections: DetectionRepository) -> None:
         """The same validation as the history endpoint, deliberately shared."""
         with pytest.raises(ValidationError):
-            detections.get_statistics(
-                start_time=_NOW, end_time=_NOW - dt.timedelta(days=1)
-            )
+            detections.get_statistics(start_time=_NOW, end_time=_NOW - dt.timedelta(days=1))
 
 
 class TestListByJob:
@@ -822,18 +801,14 @@ class TestListByJob:
         assert len(rows) == 2
         assert {row.source_job_id for row in rows} == {wanted.id}
 
-    def test_an_unknown_job_yields_an_empty_list(
-        self, detections: DetectionRepository
-    ) -> None:
+    def test_an_unknown_job_yields_an_empty_list(self, detections: DetectionRepository) -> None:
         assert detections.list_by_job("nope") == []
 
 
 class TestJobStateTransitions:
     """The job lifecycle, as the polling client observes it."""
 
-    def test_marks_a_job_completed(
-        self, session: Session, jobs: JobRepository
-    ) -> None:
+    def test_marks_a_job_completed(self, session: Session, jobs: JobRepository) -> None:
         job = jobs.create_job(input_type=InputType.VIDEO)
         jobs.mark_completed(job.id)
         assert jobs.get_by_id(job.id).status == JobStatus.COMPLETED.value
@@ -883,26 +858,18 @@ class TestModelProperties:
         assert make_detection(session, job, plate_number="51F-1").has_text is True
         assert make_detection(session, job, plate_number=None).has_text is False
 
-    def test_was_corrected_compares_raw_against_normalised(
-        self, session: Session
-    ) -> None:
+    def test_was_corrected_compares_raw_against_normalised(self, session: Session) -> None:
         """The per-row form of the measurement ``raw_ocr_text`` exists for."""
         job = make_job(session)
-        changed = make_detection(
-            session, job, plate_number="51F-12345", raw_ocr_text="51FI2345"
-        )
-        unchanged = make_detection(
-            session, job, plate_number="51F-12345", raw_ocr_text="51F-12345"
-        )
+        changed = make_detection(session, job, plate_number="51F-12345", raw_ocr_text="51FI2345")
+        unchanged = make_detection(session, job, plate_number="51F-12345", raw_ocr_text="51F-12345")
         missing = make_detection(session, job, plate_number=None, raw_ocr_text=None)
 
         assert changed.was_corrected is True
         assert unchanged.was_corrected is False
         assert missing.was_corrected is False
 
-    def test_a_timestamp_survives_the_round_trip_as_aware_utc(
-        self, session: Session
-    ) -> None:
+    def test_a_timestamp_survives_the_round_trip_as_aware_utc(self, session: Session) -> None:
         """SQLite drops the offset; ``UtcDateTime`` puts it back.
 
         Without this the browser would read every timestamp as local time and
@@ -918,9 +885,7 @@ class TestModelProperties:
         assert reloaded.detected_time.tzinfo is not None
         assert reloaded.detected_time == _NOW
 
-    def test_a_naive_timestamp_written_in_is_read_back_as_utc(
-        self, session: Session
-    ) -> None:
+    def test_a_naive_timestamp_written_in_is_read_back_as_utc(self, session: Session) -> None:
         job = make_job(session)
         naive = dt.datetime(2026, 7, 19, 12, 0, 0)
         row = make_detection(session, job, detected_time=naive)

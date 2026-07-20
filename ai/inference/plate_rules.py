@@ -120,15 +120,87 @@ class PlateKind(StrEnum):
 
 PROVINCE_CODES: Final[frozenset[str]] = frozenset(
     {
-        "11", "12", "14", "15", "16", "17", "18", "19", "20",
-        "21", "22", "23", "24", "25", "26", "27", "28", "29", "30",
-        "31", "32", "33", "34", "35", "36", "37", "38", "39", "40",
-        "41", "43", "47", "48", "49", "50",
-        "51", "52", "53", "54", "55", "56", "57", "58", "59", "60",
-        "61", "62", "63", "64", "65", "66", "67", "68", "69", "70",
-        "71", "72", "73", "74", "75", "76", "77", "78", "79", "80",
-        "81", "82", "83", "84", "85", "86", "88", "89", "90",
-        "92", "93", "94", "95", "97", "98", "99",
+        "11",
+        "12",
+        "14",
+        "15",
+        "16",
+        "17",
+        "18",
+        "19",
+        "20",
+        "21",
+        "22",
+        "23",
+        "24",
+        "25",
+        "26",
+        "27",
+        "28",
+        "29",
+        "30",
+        "31",
+        "32",
+        "33",
+        "34",
+        "35",
+        "36",
+        "37",
+        "38",
+        "39",
+        "40",
+        "41",
+        "43",
+        "47",
+        "48",
+        "49",
+        "50",
+        "51",
+        "52",
+        "53",
+        "54",
+        "55",
+        "56",
+        "57",
+        "58",
+        "59",
+        "60",
+        "61",
+        "62",
+        "63",
+        "64",
+        "65",
+        "66",
+        "67",
+        "68",
+        "69",
+        "70",
+        "71",
+        "72",
+        "73",
+        "74",
+        "75",
+        "76",
+        "77",
+        "78",
+        "79",
+        "80",
+        "81",
+        "82",
+        "83",
+        "84",
+        "85",
+        "86",
+        "88",
+        "89",
+        "90",
+        "92",
+        "93",
+        "94",
+        "95",
+        "97",
+        "98",
+        "99",
     }
 )
 """The 81 province codes currently in use (Appendix of 51/2025/TT-BCA).
@@ -214,9 +286,7 @@ the standard itself, and several confusions collapse to a single candidate.
 
 _DIGITS: Final[str] = "0123456789"
 _L21_LETTERS: Final[str] = "".join(
-    letter
-    for letter in "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-    if letter not in EXCLUDED_LETTERS
+    letter for letter in "ABCDEFGHIJKLMNOPQRSTUVWXYZ" if letter not in EXCLUDED_LETTERS
 )
 
 OCR_SAFE_CHARSET: Final[str] = _DIGITS + _L21_LETTERS
@@ -236,7 +306,19 @@ architecturally unable to predict a character produces an invisible one.
 """
 
 SPECIAL_SERIAL_CODES: Final[tuple[str, ...]] = (
-    "LD", "DA", "RM", "MK", "HC", "KT", "MD", "CD", "TD", "LB", "CT", "R", "T",
+    "LD",
+    "DA",
+    "RM",
+    "MK",
+    "HC",
+    "KT",
+    "MD",
+    "CD",
+    "TD",
+    "LB",
+    "CT",
+    "R",
+    "T",
 )
 """Special serial codes (section 5.4), in the order the pattern alternates them.
 
@@ -257,9 +339,7 @@ _NUM: Final[str] = r"\d{4,5}"
 """The order-number group: 5 digits today, 4 on older plates still in use."""
 
 RE_CAR: Final[re.Pattern[str]] = re.compile(
-    rf"^(?P<province>{_PROVINCE})"
-    rf"(?P<serial>{L20})"
-    rf"(?P<number>{_NUM})$"
+    rf"^(?P<province>{_PROVINCE})" rf"(?P<serial>{L20})" rf"(?P<number>{_NUM})$"
 )
 """White/yellow car plate: province + 1 serial letter + 4-5 digits.
 
@@ -310,8 +390,7 @@ since ``N`` belongs to :data:`L20`.
 """
 
 RE_BLUE_MOTORCYCLE: Final[re.Pattern[str]] = re.compile(
-    rf"^(?P<province>{_PROVINCE})(?P<serial>{L11})"
-    rf"(?P<digit>[1-9])(?P<number>{_NUM})$"
+    rf"^(?P<province>{_PROVINCE})(?P<serial>{L11})" rf"(?P<digit>[1-9])(?P<number>{_NUM})$"
 )
 """State-agency motorcycle plate: 11-letter serial + digit ``1``-``9``."""
 
@@ -337,9 +416,7 @@ RE_DIPLOMATIC: Final[re.Pattern[str]] = re.compile(
 )
 """Diplomatic/foreign plate: province + 3-digit country code + code + number."""
 
-RE_MILITARY: Final[re.Pattern[str]] = re.compile(
-    r"^(?P<unit>[A-Z]{2})(?P<number>\d{4,6})$"
-)
+RE_MILITARY: Final[re.Pattern[str]] = re.compile(r"^(?P<unit>[A-Z]{2})(?P<number>\d{4,6})$")
 """Army plate, which starts with two letters instead of a province code.
 
 Present **to recognise and exclude**, not to validate: army plates are outside
@@ -451,10 +528,18 @@ in how the groups are interpreted.
 # ---------------------------------------------------------------------------
 
 TO_DIGIT: Final[dict[str, str]] = {
-    "O": "0", "Q": "0", "D": "0",
-    "I": "1", "J": "1", "L": "1",
-    "Z": "2", "A": "4", "S": "5",
-    "G": "6", "T": "7", "B": "8",
+    "O": "0",
+    "Q": "0",
+    "D": "0",
+    "I": "1",
+    "J": "1",
+    "L": "1",
+    "Z": "2",
+    "A": "4",
+    "S": "5",
+    "G": "6",
+    "T": "7",
+    "B": "8",
 }
 """Table A: letter -> digit, applied only at positions the mask marks ``D``.
 
@@ -469,8 +554,15 @@ TO_DIGIT: Final[dict[str, str]] = {
 """
 
 TO_LETTER: Final[dict[str, str]] = {
-    "0": "D", "1": "L", "2": "Z", "3": "B", "4": "A",
-    "5": "S", "6": "G", "7": "T", "8": "B",
+    "0": "D",
+    "1": "L",
+    "2": "Z",
+    "3": "B",
+    "4": "A",
+    "5": "S",
+    "6": "G",
+    "7": "T",
+    "8": "B",
 }
 """Table B: digit -> letter, applied only at positions the mask marks ``L``.
 
@@ -486,9 +578,7 @@ The same warning about provenance applies as for :data:`TO_DIGIT`.
 """
 
 _SEPARATOR_RE: Final[re.Pattern[str]] = re.compile(r"[^0-9A-Z]")
-_D_STROKE_TRANSLATION: Final[dict[int, str]] = str.maketrans(
-    {"Đ": "D", "đ": "D"}
-)
+_D_STROKE_TRANSLATION: Final[dict[int, str]] = str.maketrans({"Đ": "D", "đ": "D"})
 
 
 # ---------------------------------------------------------------------------

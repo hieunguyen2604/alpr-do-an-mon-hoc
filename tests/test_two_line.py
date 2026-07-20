@@ -111,23 +111,17 @@ class TestSplitTwoLine:
 
         overlap = upper.shape[0] + lower.shape[0] - height
         assert overlap > 0
-        expected_overlap = int(UPPER_HALF_END_RATIO * height) - int(
-            LOWER_HALF_START_RATIO * height
-        )
+        expected_overlap = int(UPPER_HALF_END_RATIO * height) - int(LOWER_HALF_START_RATIO * height)
         assert overlap == expected_overlap
 
     def test_overlapping_band_holds_identical_pixels(self) -> None:
         """The shared band is the same content in both halves."""
-        image = np.random.default_rng(0).integers(
-            0, 256, size=(120, 200, 3), dtype=np.uint8
-        )
+        image = np.random.default_rng(0).integers(0, 256, size=(120, 200, 3), dtype=np.uint8)
         upper, lower = split_two_line(image)
 
         band_start = int(LOWER_HALF_START_RATIO * 120)
         band_end = int(UPPER_HALF_END_RATIO * 120)
-        np.testing.assert_array_equal(
-            upper[band_start:band_end], lower[: band_end - band_start]
-        )
+        np.testing.assert_array_equal(upper[band_start:band_end], lower[: band_end - band_start])
 
     def test_halves_are_never_empty_for_tiny_crops(self) -> None:
         """Integer truncation cannot collapse a half to zero rows."""
@@ -156,9 +150,7 @@ class TestMergeTwoLine:
         merged = merge_two_line(upper, lower)
 
         target_height = max(50, 80, MIN_MERGE_HEIGHT)
-        expected_width = round(200 * target_height / 50) + round(
-            200 * target_height / 80
-        )
+        expected_width = round(200 * target_height / 50) + round(200 * target_height / 80)
 
         assert merged.shape[0] == target_height
         assert merged.shape[1] == expected_width
@@ -215,21 +207,15 @@ class TestPreprocessPlate:
 
     def test_does_not_modify_the_input(self) -> None:
         """Pre-processing works on a copy."""
-        image = np.random.default_rng(1).integers(
-            0, 256, size=(60, 200, 3), dtype=np.uint8
-        )
+        image = np.random.default_rng(1).integers(0, 256, size=(60, 200, 3), dtype=np.uint8)
         original = image.copy()
         preprocess_plate(image)
         np.testing.assert_array_equal(image, original)
 
     def test_every_step_can_be_disabled(self) -> None:
         """With all steps off the crop passes through unchanged."""
-        image = np.random.default_rng(2).integers(
-            0, 256, size=(60, 200, 3), dtype=np.uint8
-        )
-        result = preprocess_plate(
-            image, to_grayscale=False, apply_clahe=False, denoise=False
-        )
+        image = np.random.default_rng(2).integers(0, 256, size=(60, 200, 3), dtype=np.uint8)
+        result = preprocess_plate(image, to_grayscale=False, apply_clahe=False, denoise=False)
         np.testing.assert_array_equal(result, image)
 
     def test_clahe_changes_a_low_contrast_crop(self) -> None:

@@ -273,15 +273,11 @@ def augment_image(
     # reported; here the job is simply not to lose usable data because of them.
     usable = [box for box in boxes if not box.validate()]
     if len(usable) < len(boxes):
-        LOGGER.debug(
-            "Ignoring %d malformed box(es) during augmentation", len(boxes) - len(usable)
-        )
+        LOGGER.debug("Ignoring %d malformed box(es) during augmentation", len(boxes) - len(usable))
     if not usable:
         return None
 
-    payload_boxes = [
-        [box.x_center, box.y_center, box.width, box.height] for box in usable
-    ]
+    payload_boxes = [[box.x_center, box.y_center, box.width, box.height] for box in usable]
     class_labels = [box.class_id for box in usable]
 
     try:
@@ -383,9 +379,7 @@ def augment_split(
             try:
                 import numpy as np
 
-                np.random.seed(
-                    abs(hash(f"{seed}:{image_path.name}:{copy_index}")) % (2**32)
-                )
+                np.random.seed(abs(hash(f"{seed}:{image_path.name}:{copy_index}")) % (2**32))
             except ImportError:  # pragma: no cover
                 pass
 
@@ -622,9 +616,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     LOGGER.info("Source images    : %d", stats.source_images)
     LOGGER.info("Generated images : %d", stats.generated)
     if stats.dropped_empty:
-        LOGGER.warning(
-            "Dropped (all boxes transformed out of frame): %d", stats.dropped_empty
-        )
+        LOGGER.warning("Dropped (all boxes transformed out of frame): %d", stats.dropped_empty)
     if stats.skipped_no_boxes:
         LOGGER.info("Skipped, no boxes: %d", stats.skipped_no_boxes)
     if stats.skipped_unreadable:

@@ -517,9 +517,7 @@ class StorageService:
             UnsupportedMediaTypeError: If its true type is not accepted.
             ProcessingError: If the file could not be written.
         """
-        media_type = self.validate_upload(
-            data, kind=kind, original_filename=original_filename
-        )
+        media_type = self.validate_upload(data, kind=kind, original_filename=original_filename)
 
         extension = _MIME_EXTENSIONS.get(media_type, ".bin")
         filename = f"{uuid.uuid4().hex}{extension}"
