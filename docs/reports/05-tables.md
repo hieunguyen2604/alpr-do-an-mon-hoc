@@ -287,6 +287,8 @@ Epoch tốt nhất theo mAP@0.5:0.95 trên val: **20** (20 epoch đã chạy).
 | Độ trễ E2E p95 (ms) | **763,75** | 780,36 | — |
 
 > ⚠ Ba bien thay doi dong thoi (imgsz, bo du lieu + cach chia, so epoch) va chung tac dong NGUOC CHIEU nhau. Phat bieu duy nhat duoc phep la mo ta: 'cau hinh A cho X, cau hinh B cho Y'. Khong duoc quy ket nguyen nhan cho bat ky bien nao.
+>
+> Dòng độ trễ: cột baseline là client-side warm p95 qua HTTP trên máy rảnh (`07-benchmark-p1-resolved.json`); cột mô hình đang đánh giá là in-process (T5.7a). Con số cũ 5.857,19 ms từng ghi cho baseline đã bị **bác bỏ** (nhiễm tải cạnh tranh + sai checkpoint + lỗi crop).
 
 ## {{T5.9}} Đối chiếu chỉ tiêu NFR (phần đo được bằng script này)
 

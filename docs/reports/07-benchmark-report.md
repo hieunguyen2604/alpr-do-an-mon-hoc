@@ -209,6 +209,15 @@ kèm ghi chú *"sẽ hiệu chỉnh sau Phase 3–4"*. Dưới đây là lần h
 **Nguồn số đo:** `07-benchmark-system.json → latency_budget`, **40 mẫu**, trung
 bình **1,27 biển số/ảnh**, lấy trung vị của từng bước.
 
+> ⛔ **CÁC MỤC 4.1–4.4 LÀ SỐ ĐO CŨ ĐÃ BỊ BÁC BỎ — giữ làm tư liệu lịch sử,
+> KHÔNG trích dẫn.** Chúng đo trên checkpoint epoch 7, khi máy bận và hệ thống
+> còn lỗi crop khiến PaddleOCR đọc ảnh quá lớn (~1.322 ms/ảnh) — vì vậy con số
+> "OCR chiếm 93,3%" là tạo tác của lỗi đó. Phân rã **đúng** trên `models/best.pt`:
+> **OCR 64,3% (112,55 ms/biển) / phát hiện 34,2% (59,83 ms)**, và NFR-P1 **ĐẠT**
+> (p95 731,15 ms client-side / 780,36 ms in-process, mục tiêu 800 ms). Xem đính
+> chính ở **mục 4.5** và nguồn thẩm quyền
+> [`07-benchmark-p1-resolved.json`](07-benchmark-p1-resolved.json).
+
 ### 4.1. Bảng đối chiếu
 
 | Bước | **Ước lượng** (Phase 0) | **Đo thật** (trung vị) | Chênh lệch | % thời gian thật |
@@ -291,7 +300,7 @@ từng bước thay vì chỉ đo tổng.
 
 | Mục tiêu | Tổng cho phép | OCR được phép chiếm (giữ nguyên 95,14 ms cho các bước khác) | Mức tăng tốc OCR cần thiết |
 |---|---:|---:|---:|
-| Ngưỡng tối thiểu 1.500 ms (p95) | 1.500 ms | ~1.405 ms | **≥ 4,2×** (vì p95 hiện tại là 5.857 ms) |
+| Ngưỡng tối thiểu 1.500 ms (p95) | 1.500 ms | ~1.405 ms | **≥ 4,2×** (vì p95 đo được lúc đó là 5.857 ms — con số đã bị bác bỏ) |
 | Mục tiêu 800 ms (p95) | 800 ms | ~705 ms | **≥ 8,3×** |
 
 Trên máy rảnh (dùng p95 = 3.283 ms từ mục 3.3), mức cần thiết giảm còn **≥ 2,3×**
@@ -309,8 +318,12 @@ OCR chiếm 93,3%. **Con số đó đo một hệ thống đang có lỗi.**
 Dưới đây là đối chiếu **ba cột**: ước lượng Phase 0, đo lần đầu (mục 4.1), và đo
 lại trên cấu hình đang giao. Nguồn cột thứ ba:
 `05-benchmark-system-baseline-416-v1.json → latency_budget` (20 mẫu, 1,00
-biển/ảnh) và `07-benchmark-data-v2.json → pipeline_stage_breakdown` (**4.209**
-lần chạy — cỡ mẫu đáng tin nhất trong cả báo cáo).
+biển/ảnh — **tệp này là sản phẩm của lượt chạy khói và đã bị xoá cùng thư mục
+`05-smoke/`**; các con số của nó được giữ nguyên trong bảng dưới làm tư liệu) và
+`07-benchmark-data-v2.json → pipeline_stage_breakdown` (**4.209**
+lần chạy — cỡ mẫu đáng tin nhất trong cả báo cáo, tệp còn tồn tại). Phân rã
+**chính thức** trên `models/best.pt` là T5.7b
+(`05-benchmark-system-best.json`): OCR 64,3% / detect 34,2%.
 
 | Bước | **Ước lượng Phase 0** | **Đo lần 1** (epoch 7, có lỗi) | **Đo lần 2** (`baseline-416-v1`, đã sửa) | Ước lượng có đúng không? |
 |---|---:|---:|---:|---|
@@ -388,6 +401,10 @@ mà OpenVINO mới là thứ khai thác được AVX-512/AMX của kiến trúc 
 > bằng 0,9% tổng thời gian.**
 >
 > **Độ trễ E2E p95 sẽ đi từ 5.857 ms xuống ≈ 5.830 ms.** Vẫn trượt NFR-P1.
+> *(Tính trên số đo cũ đã bị bác bỏ — NFR-P1 nay **ĐẠT** với p95 731,15 ms trên
+> `best.pt`, máy rảnh; xem khối "ĐỌC TRƯỚC" §0. Bài học Amdahl trong đoạn này
+> vẫn đúng về phương pháp, nhưng với hệ số 34,2%/64,3% thật thì tối ưu detector
+> không còn "vô dụng" như kết luận dưới đây.)*
 
 Đây là minh hoạ sách giáo khoa của **luật Amdahl**, và cũng là lý do phần này
 đáng nằm trong quyển đồ án: **một tối ưu đúng về kỹ thuật vẫn có thể vô dụng nếu
@@ -897,7 +914,7 @@ mới~~ — **RÚT LẠI. KHÔNG sửa đặc tả.**
 | **`docs/reports/07-benchmark-data-v2.json`** | **NFR-P2 / P3 / R4 / R5**, so sánh backend E2E, phân rã theo bước trên **4.209** lần chạy — nguồn của mục 5bis.3–5bis.5 |
 | **`docs/reports/05-benchmark-system-best.json`** | **NFR-P1 chính thức** trên `models/best.pt`: p95 in-process 780,36 ms (T5.7a), phân rã bước T5.7b |
 | **`docs/reports/07-benchmark-p1-resolved.json`** | **Xác minh NFR-P1 client-side qua HTTP trên `best.pt`: p95 = 731,15 ms** — giải quyết mâu thuẫn 5.857 ↔ 780 ms |
-| `docs/reports/05-benchmark-system-baseline-416-v1.json` | NFR-P1 trên `baseline-416-v1.pt` (đối chứng), tập test v3 — chỉ để so sánh |
+| ~~`docs/reports/05-benchmark-system-baseline-416-v1.json`~~ | NFR-P1 trên `baseline-416-v1.pt` (đối chứng), tập test v3 — chỉ để so sánh. **Tệp đã bị xoá** cùng thư mục khói `05-smoke/`; số client-side đã xác minh của baseline (763,75 ms p95) nằm trong `07-benchmark-p1-resolved.json` |
 | `docs/reports/07-benchmark-data-v2.server.log` | Log uvicorn của đợt đo bổ sung (10,2 MB) |
 | `docs/reports/07-stress-load.json` | Chịu tải theo mức đồng thời và soak 300 s |
 | `docs/reports/07-stress-db.json` | 8 kịch bản truy vấn trên 10.000 bản ghi |
