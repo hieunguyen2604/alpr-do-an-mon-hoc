@@ -48,7 +48,39 @@ if [ "$(id -u)" = "0" ]; then
             || echo "entrypoint: could not chown ${dir}; continuing" >&2
     done
 
+    setpriv --reuid "${APP_UID}" --regid "${APP_GID}" --init-groups -- \
+        /usr/local/bin/entrypoint.sh migrate
+
     exec setpriv --reuid "${APP_UID}" --regid "${APP_GID}" --init-groups -- "$@"
+fi
+
+# ---------------------------------------------------------------------------
+# Schema migration
+# ---------------------------------------------------------------------------
+# Run as the unprivileged user, before the server starts.
+#
+# Why the container has to do this itself: the database lives in a named volume
+# that survives `docker compose down`, so an image carrying new columns meets an
+# old schema on every upgrade. That is not hypothetical -- adding plate_kind and
+# plate_color produced exactly this, and the symptom was not a clear error at
+# start-up but an `OperationalError: no such column` on the *first detection
+# request*, with a healthy container and a green /health in front of it.
+#
+# `stamp 0001_initial` covers a database created by SQLAlchemy's create_all()
+# rather than by Alembic. Such a database has every table but no version row, so
+# Alembic believes it is empty and tries to create `detection_job` again, which
+# fails with "table already exists". Stamping first is a no-op on a database
+# Alembic already manages, and repairs one it does not.
+if [ "${1:-}" = "migrate" ]; then
+    cd /app || exit 1
+    if [ -f data/alpr.db ] && ! python -m alembic -c backend/alembic.ini current 2>/dev/null | grep -q .; then
+        echo "entrypoint: existing database has no Alembic version, stamping baseline" >&2
+        python -m alembic -c backend/alembic.ini stamp 0001_initial || true
+    fi
+    # A failed migration must not leave a server running against a schema it
+    # cannot use: fail loudly here instead of at the first user request.
+    python -m alembic -c backend/alembic.ini upgrade head || exit 1
+    exit 0
 fi
 
 # Already unprivileged: nothing to fix up, nothing to drop.
