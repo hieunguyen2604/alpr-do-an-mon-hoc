@@ -132,8 +132,11 @@ export function HistoryTable({
       header: 'Biển số',
       accessor: (record) => (
         <div className="space-y-1">
+          {/* The formatted rendering, matching the image and video pages. The
+              same plate shown three different ways across three screens reads
+              as three different plates. */}
           <PlateChip
-            plateNumber={record.plate_number}
+            plateNumber={record.plate_display ?? record.plate_number}
             isValidFormat={record.is_valid_format}
             size="sm"
           />

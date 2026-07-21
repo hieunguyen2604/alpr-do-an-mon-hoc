@@ -24,6 +24,7 @@ import {
   formatProcessingTime,
 } from '@/lib/format';
 import { fileUrl } from '@/services/api';
+import { plateClassBadges } from '@/lib/plateClass';
 import type { BoundingBox, DetectionHistory } from '@/types';
 
 // ---------------------------------------------------------------------------
@@ -320,15 +321,23 @@ export function HistoryDetailModal({
       <div className="space-y-5">
         <div className="flex flex-wrap items-center gap-3">
           <PlateChip
-            plateNumber={record.plate_number}
+            plateNumber={record.plate_display ?? record.plate_number}
             isValidFormat={record.is_valid_format}
             size="lg"
           />
-          <Badge variant={record.is_valid_format ? 'success' : 'warning'}>
-            {record.is_valid_format
-              ? 'Đúng định dạng Việt Nam'
-              : 'Không khớp định dạng Việt Nam'}
-          </Badge>
+          {/* The same badges as everywhere else. This modal used to judge the
+              format on its own, so an army plate was labelled "does not match
+              the Vietnamese format" — a correct reading presented as a failure,
+              and in the one view that exists to inspect a result closely. */}
+          {plateClassBadges(
+            record.is_valid_format,
+            record.plate_kind,
+            record.plate_color,
+          ).map((badge) => (
+            <Badge key={badge.label} variant={badge.tone} title={badge.title}>
+              {badge.label}
+            </Badge>
+          ))}
           <Badge variant="info">
             {INPUT_TYPE_LABELS[record.input_type]}
           </Badge>
