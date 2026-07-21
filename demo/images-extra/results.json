@@ -1,0 +1,350 @@
+{
+  "canh-mot-bien-1.jpg": [
+    {
+      "plate": "52Z20513",
+      "display": "52Z2-0513",
+      "kind": "motorcycle_old",
+      "color": "white",
+      "valid": true,
+      "lines": 2
+    }
+  ],
+  "canh-mot-bien-2.png": [
+    {
+      "plate": "79A18768",
+      "display": "79A-187.68",
+      "kind": "car",
+      "color": "white",
+      "valid": true,
+      "lines": 1
+    }
+  ],
+  "canh-mot-bien-3.png": [
+    {
+      "plate": "51A8066",
+      "display": "51A-8066",
+      "kind": "car",
+      "color": "unknown",
+      "valid": true,
+      "lines": 2
+    }
+  ],
+  "canh-nhieu-bien-1.jpg": [
+    {
+      "plate": null,
+      "display": null,
+      "kind": "unknown",
+      "color": "white",
+      "valid": false,
+      "lines": 2
+    },
+    {
+      "plate": null,
+      "display": null,
+      "kind": "unknown",
+      "color": "white",
+      "valid": false,
+      "lines": 2
+    },
+    {
+      "plate": null,
+      "display": null,
+      "kind": "unknown",
+      "color": "white",
+      "valid": false,
+      "lines": 2
+    },
+    {
+      "plate": null,
+      "display": null,
+      "kind": "unknown",
+      "color": "white",
+      "valid": false,
+      "lines": 2
+    }
+  ],
+  "canh-nhieu-bien-2.png": [
+    {
+      "plate": "51H60969",
+      "display": "51H6-0969",
+      "kind": "motorcycle_old",
+      "color": "white",
+      "valid": true,
+      "lines": 2
+    },
+    {
+      "plate": "59X406909",
+      "display": "59X4-069.09",
+      "kind": "motorcycle_old",
+      "color": "white",
+      "valid": true,
+      "lines": 2
+    },
+    {
+      "plate": "51C92087",
+      "display": "51C9-2087",
+      "kind": "motorcycle_old",
+      "color": "yellow",
+      "valid": true,
+      "lines": 2
+    }
+  ],
+  "canh-nhieu-bien-3.png": [
+    {
+      "plate": "60F16272",
+      "display": "60F1-6272",
+      "kind": "motorcycle_old",
+      "color": "unknown",
+      "valid": true,
+      "lines": 2
+    },
+    {
+      "plate": "67H185418",
+      "display": "67H1-854.18",
+      "kind": "motorcycle_old",
+      "color": "white",
+      "valid": true,
+      "lines": 2
+    },
+    {
+      "plate": "51H14573",
+      "display": "51H1-4573",
+      "kind": "motorcycle_old",
+      "color": "white",
+      "valid": true,
+      "lines": 2
+    },
+    {
+      "plate": null,
+      "display": null,
+      "kind": "unknown",
+      "color": "red",
+      "valid": false,
+      "lines": 2
+    }
+  ],
+  "canh-nhieu-bien-4.png": [
+    {
+      "plate": "47L152201",
+      "display": "47L1-522.01",
+      "kind": "motorcycle_old",
+      "color": "white",
+      "valid": true,
+      "lines": 2
+    },
+    {
+      "plate": "51H16559",
+      "display": "51H-165.59",
+      "kind": "car",
+      "color": "white",
+      "valid": true,
+      "lines": 1
+    },
+    {
+      "plate": null,
+      "display": null,
+      "kind": "unknown",
+      "color": "white",
+      "valid": false,
+      "lines": 2
+    }
+  ],
+  "canh-nhieu-bien-5.png": [
+    {
+      "plate": "71635",
+      "display": "71635",
+      "kind": "unknown",
+      "color": "white",
+      "valid": false,
+      "lines": 2
+    },
+    {
+      "plate": "59L336832",
+      "display": "59L3-368.32",
+      "kind": "motorcycle_old",
+      "color": "white",
+      "valid": true,
+      "lines": 2
+    },
+    {
+      "plate": null,
+      "display": null,
+      "kind": "unknown",
+      "color": "white",
+      "valid": false,
+      "lines": 2
+    },
+    {
+      "plate": null,
+      "display": null,
+      "kind": "unknown",
+      "color": "white",
+      "valid": false,
+      "lines": 2
+    },
+    {
+      "plate": "HN",
+      "display": "HN",
+      "kind": "unknown",
+      "color": "white",
+      "valid": false,
+      "lines": 2
+    }
+  ],
+  "ngoai-giao-cd.jpg": [
+    {
+      "plate": "NC01",
+      "display": "NC01",
+      "kind": "unknown",
+      "color": "white",
+      "valid": false,
+      "lines": 2
+    }
+  ],
+  "ngoai-giao-commons-1.jpg": [
+    {
+      "plate": "41606NG10",
+      "display": "41-606-NG-10",
+      "kind": "diplomatic",
+      "color": "white",
+      "valid": true,
+      "lines": 1
+    }
+  ],
+  "ngoai-giao-ng-651-01.png": [],
+  "o-to-72A07604.jpg": [
+    {
+      "plate": "72A07604",
+      "display": "72A-076.04",
+      "kind": "car",
+      "color": "white",
+      "valid": true,
+      "lines": 1
+    }
+  ],
+  "quan-doi-commons.jpg": [],
+  "ro-mooc.jpg": [
+    {
+      "plate": "61R02309",
+      "display": "61R-023.09",
+      "kind": "special",
+      "color": "white",
+      "valid": true,
+      "lines": 2
+    }
+  ],
+  "vang-50F01690.jpg": [
+    {
+      "plate": "01690",
+      "display": "01690",
+      "kind": "unknown",
+      "color": "yellow",
+      "valid": false,
+      "lines": 2
+    },
+    {
+      "plate": null,
+      "display": null,
+      "kind": "unknown",
+      "color": "yellow",
+      "valid": false,
+      "lines": 2
+    }
+  ],
+  "vang-61C15282.jpg": [
+    {
+      "plate": "61C15282",
+      "display": "61C1-5282",
+      "kind": "motorcycle_old",
+      "color": "yellow",
+      "valid": true,
+      "lines": 2
+    },
+    {
+      "plate": "MI",
+      "display": "MI",
+      "kind": "unknown",
+      "color": "yellow",
+      "valid": false,
+      "lines": 2
+    }
+  ],
+  "vang-79E00392.jpg": [
+    {
+      "plate": "79B00392",
+      "display": "79B-003.92",
+      "kind": "car",
+      "color": "yellow",
+      "valid": true,
+      "lines": 2
+    }
+  ],
+  "xanh-80A04285.jpg": [
+    {
+      "plate": "80A04285",
+      "display": "80A-042.85",
+      "kind": "blue_car",
+      "color": "blue",
+      "valid": true,
+      "lines": 2
+    },
+    {
+      "plate": "ONA80A",
+      "display": "ONA80A",
+      "kind": "unknown",
+      "color": "blue",
+      "valid": false,
+      "lines": 2
+    }
+  ],
+  "xanh-85A00190.jpg": [
+    {
+      "plate": "85A00190",
+      "display": "85A-001.90",
+      "kind": "blue_car",
+      "color": "blue",
+      "valid": true,
+      "lines": 2
+    }
+  ],
+  "xanh-86A00519.jpg": [
+    {
+      "plate": "86A00519",
+      "display": "86A-005.19",
+      "kind": "blue_car",
+      "color": "blue",
+      "valid": true,
+      "lines": 2
+    }
+  ],
+  "xanh-nha-nuoc-commons.jpg": [
+    {
+      "plate": "50A00424",
+      "display": "50A-004.24",
+      "kind": "blue_car",
+      "color": "blue",
+      "valid": true,
+      "lines": 2
+    }
+  ],
+  "xe-buyt.jpg": [
+    {
+      "plate": "51B0986",
+      "display": "51B-0986",
+      "kind": "car",
+      "color": "white",
+      "valid": true,
+      "lines": 2
+    }
+  ],
+  "xe-tai.jpg": [
+    {
+      "plate": "67C10815",
+      "display": "67C1-0815",
+      "kind": "motorcycle_old",
+      "color": "white",
+      "valid": true,
+      "lines": 2
+    }
+  ]
+}
