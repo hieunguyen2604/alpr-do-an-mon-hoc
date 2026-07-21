@@ -98,6 +98,17 @@ export interface LiveDetectionEvent {
 export interface LiveDetectionState {
   /** Plates found in the most recent answered frame. */
   results: DetectionResult[];
+  /**
+   * The exact frame those plates were read from.
+   *
+   * Handed back so the panel can display *this* image rather than whatever the
+   * video has moved on to. Inference costs a measured 547 ms at the median and
+   * up to 1.7 s, so at 1x playback the picture on screen is roughly half a
+   * second ahead of the boxes -- far enough for a moving vehicle to leave its
+   * own box behind, which looks like a tracking failure and is really just two
+   * different moments drawn on top of each other.
+   */
+  frameImage: ImageBitmap | null;
   /** Width of the frame those boxes were measured against. */
   frameWidth: number;
   /** Height of the frame those boxes were measured against. */
@@ -135,6 +146,7 @@ export function useLiveVideoDetection({
   enabled,
 }: LiveDetectionOptions): LiveDetectionState {
   const [results, setResults] = useState<DetectionResult[]>([]);
+  const [frameImage, setFrameImage] = useState<ImageBitmap | null>(null);
   const [frameSize, setFrameSize] = useState({ width: 0, height: 0 });
   const [isBusy, setIsBusy] = useState(false);
   const [counters, setCounters] = useState({ sent: 0, skipped: 0 });
@@ -162,12 +174,19 @@ export function useLiveVideoDetection({
   }, []);
 
   /**
-   * Encode the video's current frame as a JPEG blob.
+   * Encode the video's current frame as a JPEG blob, and keep the pixels.
+   *
+   * The bitmap is taken from the same canvas contents that produced the blob,
+   * so the image the panel later displays is byte-for-byte the image the model
+   * was asked about — not a re-read of the video at some other instant.
    *
    * @param video - The source element.
-   * @returns The encoded frame, or `null` when no frame is available yet.
+   * @returns The encoded frame and its bitmap, or `null` when no frame is
+   *   available yet.
    */
-  const captureFrame = useCallback(async (video: HTMLVideoElement): Promise<Blob | null> => {
+  const captureFrame = useCallback(async (
+    video: HTMLVideoElement,
+  ): Promise<{ blob: Blob; bitmap: ImageBitmap } | null> => {
     // `readyState < 2` means no frame has been decoded, which happens right
     // after a seek. Capturing then yields a blank canvas, and a blank frame
     // returns zero plates — clearing the overlay for no reason.
@@ -193,9 +212,14 @@ export function useLiveVideoDetection({
     }
     context.drawImage(video, 0, 0, width, height);
 
-    return new Promise<Blob | null>((resolve) => {
-      canvas.toBlob((blob) => resolve(blob), 'image/jpeg', FRAME_QUALITY);
+    const blob = await new Promise<Blob | null>((resolve) => {
+      canvas.toBlob((encoded) => resolve(encoded), 'image/jpeg', FRAME_QUALITY);
     });
+    if (blob === null) {
+      return null;
+    }
+
+    return { blob, bitmap: await createImageBitmap(canvas) };
   }, []);
 
   useEffect(() => {
@@ -225,13 +249,14 @@ export function useLiveVideoDetection({
       void (async () => {
         const controller = new AbortController();
         abortRef.current = controller;
+        let captured: { blob: Blob; bitmap: ImageBitmap } | null = null;
         try {
-          const blob = await captureFrame(video);
-          if (blob === null) {
+          captured = await captureFrame(video);
+          if (captured === null) {
             return;
           }
 
-          const response = await detectFrame(blob, jobIdRef.current, controller.signal);
+          const response = await detectFrame(captured.blob, jobIdRef.current, controller.signal);
           if (!isMountedRef.current || controller.signal.aborted) {
             return;
           }
@@ -240,6 +265,16 @@ export function useLiveVideoDetection({
           // upload rather than one per frame.
           jobIdRef.current = response.job_id;
           setResults(response.results);
+          // Hand the pixels over and release the previous frame in the same
+          // step. An ImageBitmap holds decoded pixels outside the JS heap, so
+          // dropping the reference without closing it leaks until the GC
+          // happens to notice — over a long clip that is hundreds of frames.
+          const { bitmap } = captured;
+          setFrameImage((previous) => {
+            previous?.close();
+            return bitmap;
+          });
+          captured = null;
           setFrameSize({ width: response.image_width, height: response.image_height });
           setCounters((previous) => ({ ...previous, sent: previous.sent + 1 }));
           setError(null);
@@ -275,6 +310,10 @@ export function useLiveVideoDetection({
             setError(getErrorMessage(caught));
           }
         } finally {
+          // Still set means the frame never reached state -- an aborted request,
+          // an unmounted component or a failed call. Close it here or those
+          // pixels are never released.
+          captured?.bitmap.close();
           inFlightRef.current = false;
           if (isMountedRef.current) {
             setIsBusy(false);
@@ -301,12 +340,26 @@ export function useLiveVideoDetection({
   useEffect(() => {
     if (!enabled) {
       setResults([]);
+      setFrameImage((previous) => {
+        previous?.close();
+        return null;
+      });
       setError(null);
     }
   }, [enabled]);
 
+  // Release the last frame on unmount; navigating away mid-detection would
+  // otherwise strand one decoded bitmap per mounted panel.
+  useEffect(() => () => {
+    setFrameImage((previous) => {
+      previous?.close();
+      return null;
+    });
+  }, []);
+
   return {
     results,
+    frameImage,
     frameWidth: frameSize.width,
     frameHeight: frameSize.height,
     isBusy,

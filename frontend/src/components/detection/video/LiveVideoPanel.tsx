@@ -132,6 +132,7 @@ export function LiveVideoPanel({ file }: LiveVideoPanelProps): JSX.Element {
 
   const {
     results,
+    frameImage,
     frameWidth,
     frameHeight,
     isBusy,
@@ -141,6 +142,25 @@ export function LiveVideoPanel({ file }: LiveVideoPanelProps): JSX.Element {
     distinctPlates,
     error,
   } = useLiveVideoDetection({ videoRef, enabled });
+
+  // The button drives playback as well as detection. Separating them made the
+  // two easy to leave out of step -- detection running against a paused frame,
+  // or a video playing with nothing reading it -- and there is no use for
+  // either state. One control, one meaning: "analyse this video".
+  useEffect(() => {
+    const video = videoRef.current;
+    if (video === null) {
+      return;
+    }
+    if (enabled) {
+      // Started from a click, so the autoplay policy is satisfied; a rejection
+      // here means the file itself will not play and the empty overlay already
+      // says so.
+      void video.play().catch(() => {});
+    } else {
+      video.pause();
+    }
+  }, [enabled]);
 
   // Every createObjectURL holds the file in memory until revoked. Without the
   // cleanup, choosing five videos in a row keeps all five alive.
@@ -195,6 +215,17 @@ export function LiveVideoPanel({ file }: LiveVideoPanelProps): JSX.Element {
       const scaleX = pictureWidth / frameWidth;
       const scaleY = pictureHeight / frameHeight;
 
+      // Paint the analysed frame over the live one. This is what makes the
+      // picture and the boxes describe the same instant: the video element has
+      // moved on by roughly half a second while the model was thinking, and
+      // drawing boxes over *that* picture shows a vehicle next to its own box.
+      // The cost is a picture that updates about twice a second instead of
+      // smoothly -- an honest trade, because the smooth version was showing a
+      // correspondence that did not exist.
+      if (frameImage !== null) {
+        context.drawImage(frameImage, offsetX, offsetY, pictureWidth, pictureHeight);
+      }
+
       for (const result of results) {
         const colour = result.is_valid_format ? BOX_COLOURS.valid : BOX_COLOURS.invalid;
         const x = offsetX + result.bbox.x * scaleX;
@@ -223,15 +254,15 @@ export function LiveVideoPanel({ file }: LiveVideoPanelProps): JSX.Element {
     const observer = new ResizeObserver(draw);
     observer.observe(video);
     return () => observer.disconnect();
-  }, [results, frameWidth, frameHeight]);
+  }, [results, frameImage, frameWidth, frameHeight]);
 
   return (
     <Card
       title="Xem trực tiếp"
       description={
         enabled
-          ? 'Phát hoặc tua video — hệ thống nhận dạng theo khung hình đang hiển thị'
-          : 'Video đã sẵn sàng. Bấm “Chạy nhận dạng” để bắt đầu bắt biển số theo khung hình.'
+          ? 'Đang hiện đúng khung hình mà hệ thống vừa đọc, kèm biển số tìm được trên chính khung đó'
+          : 'Video đã sẵn sàng — tua để xem trước. Bấm “Chạy nhận dạng” để vừa phát vừa đọc biển số.'
       }
       actions={
         <Button
@@ -257,7 +288,11 @@ export function LiveVideoPanel({ file }: LiveVideoPanelProps): JSX.Element {
             <video
               ref={videoRef}
               src={objectUrl}
-              controls
+              // Native controls only when stopped. While running the canvas
+              // covers the picture, so a seek bar underneath it would be
+              // invisible but still clickable -- a control the user cannot see
+              // and cannot predict. Stopping hands the player back.
+              controls={!enabled}
               playsInline
               className="block max-h-[60vh] w-full"
             />
@@ -297,11 +332,15 @@ export function LiveVideoPanel({ file }: LiveVideoPanelProps): JSX.Element {
             results panel come from the complete pass, not from this. */}
         <p className="rounded-lg border border-border bg-surface-muted px-4 py-3 text-xs leading-relaxed text-content-muted">
           <span className="font-medium text-content">Về chế độ xem trực tiếp: </span>
-          mỗi lần chỉ xử lý một khung hình, khung nào đến trong lúc đang bận thì{' '}
-          <span className="font-medium text-content">bỏ qua</span> — nên khung nhận dạng
-          nhấp nháy và chỉ thấy một phần video. Đây là bản xem nhanh để quan sát,{' '}
-          <span className="font-medium text-content">không phải kết quả cuối</span>. Kết
-          quả đầy đủ đã gộp trùng nằm ở bảng bên dưới khi tác vụ nền chạy xong.
+          khi đang chạy, ô hình hiện{' '}
+          <span className="font-medium text-content">đúng khung đã được phân tích</span>{' '}
+          chứ không phải khung video đang trôi — nhờ vậy ảnh và khung nhận dạng luôn
+          thuộc cùng một khoảnh khắc. Đổi lại hình cập nhật khoảng hai lần mỗi giây,
+          vì mỗi khung tốn chừng nửa giây suy luận trên CPU. Khung nào đến trong lúc
+          đang bận thì <span className="font-medium text-content">bỏ qua</span>, nên
+          hệ thống chỉ nhìn được một phần video. Đây là bản xem nhanh để quan sát,{' '}
+          <span className="font-medium text-content">không phải kết quả cuối</span> —
+          kết quả đầy đủ đã gộp trùng nằm ở bảng bên dưới khi tác vụ nền chạy xong.
         </p>
 
         <LiveDetectionLog events={events} isRunning={enabled} />

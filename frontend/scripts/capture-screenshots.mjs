@@ -48,6 +48,17 @@ const SAMPLE_IMAGE = resolve(REPO_ROOT, 'demo/images/2dong-1.png');
 /** Short clip, so the live preview has boxes on screen before the capture. */
 const SAMPLE_VIDEO = resolve(REPO_ROOT, 'demo/demo-video.mp4');
 
+/**
+ * Where to start the clip, in seconds.
+ *
+ * Chosen so the frames that follow carry plates the system reads correctly --
+ * a car plate and a motorcycle plate, both two-line. The tail of this clip has
+ * a strongly tilted plate that the pipeline cannot read, because the rectify
+ * stage described in the decision log was never implemented; a figure taken
+ * there would document that gap rather than the feature.
+ */
+const SEEK_SECONDS = 2;
+
 const PAGES = [
   { path: '/', name: 'image-detection', label: 'Nhận dạng ảnh' },
   { path: '/video', name: 'video-detection', label: 'Nhận dạng video' },
@@ -145,9 +156,33 @@ async function startLivePreview(page) {
     return false;
   }
 
-  // Detection no longer starts on its own -- choosing a file shows the frame,
-  // and the user asks for inference explicitly. The capture has to make that
-  // same request, or the figure would show an idle player with an empty log.
+  // Seek before starting, not after: pressing the button begins playback, and a
+  // seek issued afterwards would fight it. Waiting for metadata first is what
+  // makes the seek stick -- setting `currentTime` against a blob URL that has
+  // not loaded yet is silently discarded, which left an earlier version of this
+  // script capturing a black player frozen at 0:00.
+  // SEEK_SECONDS has to be passed in: the callback is serialised and run inside
+  // the page, where this script's module scope does not exist.
+  await page.evaluate(async (seekTo) => {
+    const video = document.querySelector('video');
+    if (video === null) return;
+    video.muted = true;
+    if (video.readyState < 1) {
+      await new Promise((resolve) => {
+        video.addEventListener('loadedmetadata', resolve, { once: true });
+        setTimeout(resolve, 5000);
+      });
+    }
+    video.currentTime = seekTo;
+    await new Promise((resolve) => {
+      video.addEventListener('seeked', resolve, { once: true });
+      setTimeout(resolve, 5000);
+    });
+  }, SEEK_SECONDS);
+
+  // One button drives both playback and detection, so this is the only action
+  // needed. It is also a real user gesture, which is what satisfies the
+  // autoplay policy that a bare play() call cannot.
   try {
     await page.getByRole('button', { name: /Chạy nhận dạng/i }).click({ timeout: 10_000 });
   } catch {
@@ -155,45 +190,12 @@ async function startLivePreview(page) {
     return false;
   }
 
-  // Play a couple of seconds so the frame on screen contains a vehicle, then
-  // pause: a capture taken mid-motion shows a blurred plate and a stale box.
-  //
-  // Every step here is load-bearing, and the previous version had none of them.
-  // It set `currentTime` immediately, before the blob URL had produced any
-  // metadata, so the seek was discarded and the element sat at 0:00; and it
-  // called `play()` unmuted, which headless Chromium refuses without a user
-  // gesture. The preview then captured nothing at all -- the figure showed
-  // "Đã gửi 0 khung" over a black player, which is a screenshot of the feature
-  // not working.
-  await page.evaluate(async () => {
-    const video = document.querySelector('video');
-    if (video === null) return;
-
-    // Autoplay is only permitted for muted media without a user gesture.
-    video.muted = true;
-
-    if (video.readyState < 1) {
-      await new Promise((resolve) => {
-        video.addEventListener('loadedmetadata', resolve, { once: true });
-        setTimeout(resolve, 5000);
-      });
-    }
-
-    video.currentTime = 5;
-    await new Promise((resolve) => {
-      video.addEventListener('seeked', resolve, { once: true });
-      setTimeout(resolve, 5000);
-    });
-
-    await video.play().catch(() => {});
-  });
-
   // Long enough for several frames to complete a round trip: capture fires
-  // every 450 ms and inference costs roughly 400 ms, so this is about a dozen
-  // attempts and enough log lines to be worth showing.
+  // every 450 ms and inference takes roughly 550 ms at the median, so this is
+  // about a dozen attempts and enough log lines to be worth showing. No pause
+  // afterwards -- the canvas holds a complete analysed frame with its own
+  // boxes, so whatever instant the capture lands on is self-consistent.
   await page.waitForTimeout(9000);
-  await page.evaluate(() => document.querySelector('video')?.pause());
-  await page.waitForTimeout(1500);
 
   return true;
 }
