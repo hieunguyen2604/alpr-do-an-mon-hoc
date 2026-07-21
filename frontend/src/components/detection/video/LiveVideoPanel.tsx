@@ -176,13 +176,29 @@ export function LiveVideoPanel({ file }: LiveVideoPanelProps): JSX.Element {
       if (frameWidth === 0 || frameHeight === 0) {
         return;
       }
-      const scaleX = width / frameWidth;
-      const scaleY = height / frameHeight;
+
+      // A <video> letterboxes: it preserves the source aspect ratio and centres
+      // the picture inside the element, padding the remainder with black. The
+      // canvas covers the whole element, so scaling by the element's size
+      // stretches every box across the padding as well and slides it away from
+      // the plate — boxes drift left and can land entirely inside a black bar,
+      // which reads as a detector fault rather than a drawing one.
+      //
+      // Scale against the *picture* rectangle and offset by the padding.
+      const frameAspect = frameWidth / frameHeight;
+      const elementAspect = width / height;
+      const pictureWidth = elementAspect > frameAspect ? height * frameAspect : width;
+      const pictureHeight = elementAspect > frameAspect ? height : width / frameAspect;
+      const offsetX = (width - pictureWidth) / 2;
+      const offsetY = (height - pictureHeight) / 2;
+
+      const scaleX = pictureWidth / frameWidth;
+      const scaleY = pictureHeight / frameHeight;
 
       for (const result of results) {
         const colour = result.is_valid_format ? BOX_COLOURS.valid : BOX_COLOURS.invalid;
-        const x = result.bbox.x * scaleX;
-        const y = result.bbox.y * scaleY;
+        const x = offsetX + result.bbox.x * scaleX;
+        const y = offsetY + result.bbox.y * scaleY;
         const w = result.bbox.width * scaleX;
         const h = result.bbox.height * scaleY;
 
