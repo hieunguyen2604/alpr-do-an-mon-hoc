@@ -86,6 +86,9 @@ class FakePipeline:
         ]
         self.calls = 0
         self.raises: Exception | None = None
+        #: What the last call asked for, so a test can assert the flag reached
+        #: the pipeline rather than being swallowed by the route or service.
+        self.last_read_text: bool = True
 
     @property
     def name(self) -> str:
@@ -97,11 +100,15 @@ class FakePipeline:
         """Return ``True``; the fake is always able to answer."""
         return True
 
-    def process(self, image: np.ndarray) -> PipelineResult:
+    def process(self, image: np.ndarray, *, read_text: bool = True) -> PipelineResult:
         """Return the configured plates, positioned inside the given image.
 
         Args:
             image: The decoded source image; only its shape is used.
+            read_text: Whether to attach the recognised text. Honoured rather
+                than accepted-and-ignored: the detection-only path is exercised
+                through this fake, and a double that always returned text would
+                let a broken path pass.
 
         Returns:
             A result carrying one entry per configured plate.
@@ -110,6 +117,7 @@ class FakePipeline:
             Exception: Whatever ``raises`` was set to, for failure-path tests.
         """
         self.calls += 1
+        self.last_read_text = read_text
         if self.raises is not None:
             raise self.raises
 
@@ -130,7 +138,7 @@ class FakePipeline:
                     line_count=1,
                     is_valid_format=valid,
                 )
-                if text is not None
+                if text is not None and read_text
                 else None
             )
             crop = image[bbox.y : bbox.y2, bbox.x : bbox.x2]

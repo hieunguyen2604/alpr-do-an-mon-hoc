@@ -306,6 +306,22 @@ def detect_frame(
             examples=["3f2a1c7e-9b4d-4e21-a0f6-77c2d1e5b840"],
         ),
     ] = None,
+    read_text: Annotated[
+        bool,
+        Form(
+            description=(
+                "Whether to read the characters. Send `false` to locate the "
+                "plates without reading them, which is roughly twice as fast: "
+                "detection costs about 225 ms per frame against 274 ms for OCR "
+                "on a 960x540 frame holding three plates.\n\n"
+                "Intended for a live preview that tracks boxes between frames "
+                "and therefore only needs to read each plate once. Frames sent "
+                "this way are **not stored** — a box with no characters is not "
+                "a detection record, and a preview would otherwise write "
+                "several empty rows per second."
+            ),
+        ),
+    ] = True,
 ) -> DetectionResponse:
     """Handle one webcam frame.
 
@@ -315,6 +331,8 @@ def detect_frame(
         settings: Supplies the image size ceiling, which frames are held to.
         file: The captured frame.
         job_id: Identifier of the session this frame continues, if any.
+        read_text: Whether to run OCR. ``False`` returns boxes only and stores
+            nothing.
 
     Returns:
         The plates found in this frame, with the session's job identifier.
@@ -326,7 +344,7 @@ def detect_frame(
         ProcessingError: If the pipeline fails.
     """
     payload = _read_upload(file, limit_bytes=settings.max_image_size_bytes)
-    return detection.detect_frame(db, data=payload, job_id=job_id)
+    return detection.detect_frame(db, data=payload, job_id=job_id, read_text=read_text)
 
 
 @router.get(

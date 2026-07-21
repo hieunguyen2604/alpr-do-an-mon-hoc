@@ -33,12 +33,17 @@ import type { DetectionResult } from '@/types';
 /**
  * Milliseconds between capture attempts.
  *
- * Slightly above the measured inference cost. Firing much faster would only
- * increase the number of frames dropped by the single-slot rule without putting
- * a single extra frame through the model; firing slower would leave the overlay
- * visibly stale during fast motion.
+ * Tied to the cost of the **cheap** frame, not the expensive one. Three frames
+ * in four skip OCR and come back in roughly 225 ms, so a 450 ms timer — chosen
+ * when every frame cost 400-550 ms — left the model idle half the time and
+ * capped throughput at about 1.4 frames per second no matter how fast inference
+ * got. Lowering it was the second half of the optimisation: without it, making
+ * inference twice as fast bought almost nothing.
+ *
+ * Firing much faster than this would only grow the number of frames the
+ * single-slot rule drops, without putting one extra frame through the model.
  */
-const CAPTURE_INTERVAL_MS = 450;
+const CAPTURE_INTERVAL_MS = 250;
 
 /** JPEG quality for the captured frame. */
 const FRAME_QUALITY = 0.75;
@@ -46,10 +51,37 @@ const FRAME_QUALITY = 0.75;
 /**
  * Longest edge of the captured frame, in pixels.
  *
- * The detector runs at 640 px, so sending a 4K frame costs upload time and JPEG
- * encoding for detail the model immediately discards.
+ * Matched to the detector's own input size. Anything larger is encoded,
+ * uploaded and then thrown away by the model's first resize, so the extra
+ * pixels cost JPEG time and bandwidth and buy nothing.
  */
-const MAX_CAPTURE_EDGE = 960;
+const MAX_CAPTURE_EDGE = 640;
+
+/**
+ * Read the characters on one frame in every this many.
+ *
+ * OCR is 55% of the per-frame budget — 274 ms against 225 ms for detection on a
+ * 960x540 frame with three plates — and it re-reads the same vehicles in every
+ * frame, producing the same string each time. Characters do not change while a
+ * plate is in shot, so reading once and carrying the text forward onto the
+ * boxes found in between roughly doubles the frame rate.
+ *
+ * Not larger than this, though: a plate that enters the shot is invisible to
+ * the log until the next reading frame, so this value is also the worst-case
+ * delay before a new plate is named.
+ */
+const READ_TEXT_EVERY = 4;
+
+/**
+ * Overlap needed to treat a new box as the same plate as an earlier one.
+ *
+ * Deliberately forgiving. Between two frames 450 ms apart a moving vehicle
+ * shifts a long way, so demanding a tight overlap would fail to match exactly
+ * the plates that are moving — the ones worth tracking. A false match costs a
+ * briefly mislabelled box on the preview; a missed match costs the text
+ * disappearing and reappearing, which reads as a fault.
+ */
+const MATCH_MIN_IOU = 0.3;
 
 /**
  * Largest number of distinct plates kept in the log.
@@ -143,6 +175,85 @@ export interface LiveDetectionOptions {
   videoRef: React.RefObject<HTMLVideoElement>;
   /** Whether the preview should be running. */
   enabled: boolean;
+}
+
+/**
+ * Intersection over union of two boxes.
+ *
+ * @param a - First box.
+ * @param b - Second box.
+ * @returns Overlap in `[0, 1]`; `0` when they do not touch.
+ */
+function intersectionOverUnion(
+  a: DetectionResult['bbox'],
+  b: DetectionResult['bbox'],
+): number {
+  const left = Math.max(a.x, b.x);
+  const top = Math.max(a.y, b.y);
+  const right = Math.min(a.x + a.width, b.x + b.width);
+  const bottom = Math.min(a.y + a.height, b.y + b.height);
+
+  const overlap = Math.max(0, right - left) * Math.max(0, bottom - top);
+  if (overlap === 0) {
+    return 0;
+  }
+  const union = a.width * a.height + b.width * b.height - overlap;
+  return union > 0 ? overlap / union : 0;
+}
+
+/**
+ * Attach text from an earlier reading to boxes that were located but not read.
+ *
+ * This is what makes the cheap frames useful. A detection-only frame comes back
+ * with boxes and no characters; matching each box against the last frame that
+ * *was* read lets the overlay keep naming the plate while it moves, at
+ * detection cost only.
+ *
+ * Unmatched boxes are left as they are rather than guessed at — a new vehicle
+ * entering the shot is genuinely unnamed until the next reading frame, and
+ * borrowing a neighbour's number would be worse than showing none.
+ *
+ * @param located - Boxes from a detection-only frame.
+ * @param known - Results from the most recent frame that was read.
+ * @returns The located boxes, with text copied in where a match was found.
+ */
+function carryTextForward(
+  located: DetectionResult[],
+  known: DetectionResult[],
+): DetectionResult[] {
+  if (known.length === 0) {
+    return located;
+  }
+
+  return located.map((box) => {
+    let best: DetectionResult | null = null;
+    let bestScore = MATCH_MIN_IOU;
+
+    for (const candidate of known) {
+      if (candidate.plate_number === null) {
+        continue;
+      }
+      const score = intersectionOverUnion(box.bbox, candidate.bbox);
+      if (score > bestScore) {
+        best = candidate;
+        bestScore = score;
+      }
+    }
+
+    if (best === null) {
+      return box;
+    }
+    return {
+      ...box,
+      plate_number: best.plate_number,
+      plate_display: best.plate_display,
+      raw_ocr_text: best.raw_ocr_text,
+      ocr_confidence: best.ocr_confidence,
+      is_valid_format: best.is_valid_format,
+      plate_kind: best.plate_kind,
+      plate_color: best.plate_color,
+    };
+  });
 }
 
 /**
@@ -248,6 +359,13 @@ export function useLiveVideoDetection({
 
   const inFlightRef = useRef(false);
   const jobIdRef = useRef<string | null>(null);
+  const captureCountRef = useRef(0);
+  // The most recent frame that was actually read. Detection-only frames borrow
+  // their text from here, so it must hold the raw server results rather than
+  // enriched ones -- otherwise text would be copied from a copy, and a single
+  // mismatch would propagate through every later frame instead of expiring at
+  // the next reading.
+  const lastReadResultsRef = useRef<DetectionResult[]>([]);
   const abortRef = useRef<AbortController | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const isMountedRef = useRef(true);
@@ -343,6 +461,11 @@ export function useLiveVideoDetection({
       // frame it describes.
       const videoTime = video.currentTime;
 
+      // Read on one frame in every READ_TEXT_EVERY, starting with the first so
+      // the very first answer carries names rather than bare boxes.
+      const readText = captureCountRef.current % READ_TEXT_EVERY === 0;
+      captureCountRef.current += 1;
+
       void (async () => {
         const controller = new AbortController();
         abortRef.current = controller;
@@ -353,7 +476,12 @@ export function useLiveVideoDetection({
             return;
           }
 
-          const response = await detectFrame(captured.blob, jobIdRef.current, controller.signal);
+          const response = await detectFrame(
+            captured.blob,
+            jobIdRef.current,
+            controller.signal,
+            readText,
+          );
           if (!isMountedRef.current || controller.signal.aborted) {
             return;
           }
@@ -361,7 +489,15 @@ export function useLiveVideoDetection({
           // Carry the session id forward so the whole preview counts as one
           // upload rather than one per frame.
           jobIdRef.current = response.job_id;
-          setResults(response.results);
+
+          if (readText) {
+            lastReadResultsRef.current = response.results;
+          }
+          setResults(
+            readText
+              ? response.results
+              : carryTextForward(response.results, lastReadResultsRef.current),
+          );
           setFrameSize({ width: response.image_width, height: response.image_height });
           setCounters((previous) => ({ ...previous, sent: previous.sent + 1 }));
           setError(null);
@@ -378,7 +514,10 @@ export function useLiveVideoDetection({
           });
           captured = null;
 
-          if (response.results.length > 0) {
+          // Only genuine readings enter the log. A carried-forward box is the
+          // same reading shown again, and counting it would inflate `reads`
+          // into a count of frames rather than of times the plate was read.
+          if (readText && response.results.length > 0) {
             setPlates((previous) => {
               let next = previous;
               for (const result of response.results) {
@@ -427,6 +566,12 @@ export function useLiveVideoDetection({
         return null;
       });
       setError(null);
+      // Restart the read/skip cycle so the first frame after resuming is a
+      // reading one, and forget the carried text -- the user may have scrubbed
+      // to an entirely different part of the clip while stopped, where those
+      // boxes describe nothing.
+      captureCountRef.current = 0;
+      lastReadResultsRef.current = [];
     }
   }, [enabled]);
 

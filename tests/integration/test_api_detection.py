@@ -545,6 +545,116 @@ class TestWebcamFrames:
         assert job.processed_frames == 3
 
 
+class TestDetectionOnlyFrames:
+    """`read_text=false` locates plates without reading them.
+
+    The live video preview re-detects the same vehicles several times a second.
+    OCR is 55% of the per-frame cost and produces the same string every time, so
+    a client that tracks boxes between frames reads each plate once and asks for
+    detection alone in between.
+    """
+
+    def test_the_flag_reaches_the_pipeline(self, client: TestClient, pipeline) -> None:
+        """Routes have swallowed form fields before; assert it arrives."""
+        client.post(
+            FRAME_URL,
+            files={"file": ("f.jpg", encode_jpeg(), "image/jpeg")},
+            data={"read_text": "false"},
+        )
+        assert pipeline.last_read_text is False
+
+    def test_reading_is_on_by_default(self, client: TestClient, pipeline) -> None:
+        """Every stored result and published measurement uses the default."""
+        client.post(FRAME_URL, files={"file": ("f.jpg", encode_jpeg(), "image/jpeg")})
+        assert pipeline.last_read_text is True
+
+    def test_boxes_come_back_without_text(self, client: TestClient) -> None:
+        body = client.post(
+            FRAME_URL,
+            files={"file": ("f.jpg", encode_jpeg(), "image/jpeg")},
+            data={"read_text": "false"},
+        ).json()
+
+        assert body["plate_count"] == 1
+        entry = body["results"][0]
+        assert entry["plate_number"] is None
+        assert entry["raw_ocr_text"] is None
+        assert entry["ocr_confidence"] is None
+        assert entry["is_valid_format"] is False
+        # The box itself is the point of the call, so it must survive intact.
+        assert entry["detection_confidence"] > 0.0
+        assert entry["bbox"]["width"] > 0
+
+    def test_nothing_is_written_to_history(self, client: TestClient, db: Session) -> None:
+        """A box with no characters is not a detection record.
+
+        Without this the preview would write several empty rows per second and
+        every count derived from the history would be meaningless.
+        """
+        client.post(
+            FRAME_URL,
+            files={"file": ("f.jpg", encode_jpeg(), "image/jpeg")},
+            data={"read_text": "false"},
+        )
+        assert db.execute(select(func.count()).select_from(DetectionHistory)).scalar_one() == 0
+
+    def test_no_plate_crop_is_stored_either(
+        self, client: TestClient, settings: Settings
+    ) -> None:
+        client.post(
+            FRAME_URL,
+            files={"file": ("f.jpg", encode_jpeg(), "image/jpeg")},
+            data={"read_text": "false"},
+        )
+        assert list(settings.plate_dir.iterdir()) == []
+
+    def test_reading_frames_still_store(self, client: TestClient, db: Session) -> None:
+        """The cheap path must not disable the normal one."""
+        client.post(
+            FRAME_URL,
+            files={"file": ("f.jpg", encode_jpeg(), "image/jpeg")},
+            data={"read_text": "true"},
+        )
+        assert db.execute(select(func.count()).select_from(DetectionHistory)).scalar_one() == 1
+
+    def test_the_session_survives_a_mix_of_both(self, client: TestClient, db: Session) -> None:
+        """A preview alternates the two against one job."""
+        first = client.post(
+            FRAME_URL, files={"file": ("f.jpg", encode_jpeg(), "image/jpeg")}
+        ).json()
+
+        for read_text in ("false", "false", "true"):
+            follow_up = client.post(
+                FRAME_URL,
+                files={"file": ("f.jpg", encode_jpeg(), "image/jpeg")},
+                data={"job_id": first["job_id"], "read_text": read_text},
+            ).json()
+            assert follow_up["job_id"] == first["job_id"]
+
+        assert db.execute(select(func.count()).select_from(DetectionJob)).scalar_one() == 1
+        # Two reading frames stored one row each; the two detection-only frames
+        # stored nothing.
+        assert db.execute(select(func.count()).select_from(DetectionHistory)).scalar_one() == 2
+
+    def test_the_frame_counter_counts_both_kinds(
+        self, client: TestClient, db: Session
+    ) -> None:
+        """Progress that ignored the cheap frames would understate the session."""
+        first = client.post(
+            FRAME_URL, files={"file": ("f.jpg", encode_jpeg(), "image/jpeg")}
+        ).json()
+        for _ in range(2):
+            client.post(
+                FRAME_URL,
+                files={"file": ("f.jpg", encode_jpeg(), "image/jpeg")},
+                data={"job_id": first["job_id"], "read_text": "false"},
+            )
+
+        db.expire_all()
+        job = db.get(DetectionJob, first["job_id"])
+        assert job.processed_frames == 3
+
+
 class TestJobStatusEndpoint:
     """Polling a job."""
 

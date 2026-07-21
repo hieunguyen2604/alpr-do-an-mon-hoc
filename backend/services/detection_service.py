@@ -133,12 +133,14 @@ class PlatePipeline(Protocol):
         """
         ...
 
-    def process(self, image: ImageArray) -> PipelineResult:
+    def process(self, image: ImageArray, *, read_text: bool = True) -> PipelineResult:
         """Find and read every license plate in one image or video frame.
 
         Args:
             image: Source image as a BGR ``uint8`` array of shape
                 ``(height, width, 3)`` -- what ``cv2.imread`` returns.
+            read_text: Whether to read the characters. ``False`` asks for boxes
+                only, which the live preview uses on the frames between reads.
 
         Returns:
             A :class:`~ai.inference.types.PipelineResult`. An image containing
@@ -192,12 +194,17 @@ class StubPipeline:
         """Return ``False``: fabricated results are never a ready service."""
         return False
 
-    def process(self, image: ImageArray) -> PipelineResult:
+    def process(self, image: ImageArray, *, read_text: bool = True) -> PipelineResult:
         """Fabricate one detection positioned inside the given image.
 
         Args:
             image: Source image as a BGR ``uint8`` array. Only its shape and a
                 cheap hash of its contents are used.
+            read_text: Honoured rather than ignored: with ``False`` the fake
+                plate comes back without a string, the same shape the real
+                pipeline returns. A stub that answered differently from the
+                thing it stands in for would let the detection-only path pass
+                its tests and fail in production.
 
         Returns:
             A result carrying exactly one plate, with the source dimensions
@@ -235,12 +242,16 @@ class StubPipeline:
         # of `raw_ocr_text` is exercised rather than seeing two equal strings.
         raw_text = text.replace("-", "").replace("0", "O", 1)
 
-        recognition = PlateRecognition(
-            text=text,
-            raw_text=raw_text,
-            confidence=0.50 + (seed % 45) / 100.0,
-            line_count=1 if bbox.aspect_ratio >= 2.5 else 2,
-            is_valid_format=True,
+        recognition = (
+            PlateRecognition(
+                text=text,
+                raw_text=raw_text,
+                confidence=0.50 + (seed % 45) / 100.0,
+                line_count=1 if bbox.aspect_ratio >= 2.5 else 2,
+                is_valid_format=True,
+            )
+            if read_text
+            else None
         )
         detection = PlateDetection(bbox=bbox, confidence=0.60 + (seed % 35) / 100.0)
 
@@ -301,11 +312,12 @@ class UnavailablePipeline:
         """Return why the real pipeline could not be built."""
         return self._reason
 
-    def process(self, image: ImageArray) -> PipelineResult:
+    def process(self, image: ImageArray, *, read_text: bool = True) -> PipelineResult:
         """Refuse the request.
 
         Args:
             image: Ignored.
+            read_text: Ignored; there is no pipeline to ask.
 
         Returns:
             Never returns.
@@ -410,6 +422,40 @@ def _to_result_schema(row: DetectionHistory, storage: StorageService) -> Detecti
         plate_line_count=row.plate_line_count,
         processing_time=row.processing_time,
         plate_image_url=storage.to_url(row.plate_image_path),
+    )
+
+
+def _to_unstored_result_schema(result: DetectionResult) -> DetectionResultSchema:
+    """Map a pipeline result to the response model **without** storing it.
+
+    Used only by the detection-only frame path, where there is deliberately no
+    database row to map from. A box with no characters is not a detection
+    record: the live preview asks for several of these every second, and
+    writing them would bury the history under empty rows and inflate every
+    count derived from it.
+
+    Args:
+        result: One plate straight from the pipeline.
+
+    Returns:
+        The response model, carrying the box and its colour but no text.
+    """
+    box = result.detection.bbox
+    return DetectionResultSchema(
+        plate_number=None,
+        raw_ocr_text=None,
+        detection_confidence=result.detection.confidence,
+        ocr_confidence=None,
+        bbox=BoundingBoxSchema(x=box.x, y=box.y, width=box.width, height=box.height),
+        is_valid_format=False,
+        plate_kind=None,
+        plate_color=result.plate_color or None,
+        plate_color_confidence=result.plate_color_confidence,
+        plate_display=None,
+        video_time_seconds=None,
+        plate_line_count=None,
+        processing_time=result.processing_time,
+        plate_image_url=None,
     )
 
 
@@ -537,6 +583,7 @@ class DetectionService:
         *,
         data: bytes,
         job_id: str | None = None,
+        read_text: bool = True,
     ) -> DetectionResponse:
         """Detect plates in a single webcam frame.
 
@@ -556,10 +603,21 @@ class DetectionService:
             data: The raw frame bytes, normally a JPEG from the browser canvas.
             job_id: Identifier of an ongoing webcam session. A new session is
                 started when omitted or unknown.
+            read_text: Whether to read the characters. ``False`` returns boxes
+                and colours only, and **stores nothing**.
+
+                A live preview re-detects the same vehicles several times a
+                second, and OCR is 55% of the per-frame cost while producing
+                the same string every time. A client that tracks boxes between
+                frames can read each plate once and ask for detection alone in
+                between. Nothing is written for those frames because a box with
+                no characters is not a record worth keeping, and the session
+                would otherwise accumulate empty rows at several per second.
 
         Returns:
             The detection response for this frame, carrying the session's job
-            identifier so the caller can send it with the next frame.
+            identifier so the caller can send it with the next frame. With
+            ``read_text=False`` every entry has a ``null`` plate number.
 
         Raises:
             ValidationError: If the frame cannot be decoded, is empty, or
@@ -575,14 +633,23 @@ class DetectionService:
 
         try:
             image = self._decode_image(data)
-            result = self._run_pipeline(image, job_id=job.id)
-            rows = self._persist_results(
-                db,
-                job=job,
-                result=result,
-                input_type=InputType.WEBCAM,
-                image_path=None,
-            )
+            result = self._run_pipeline(image, job_id=job.id, read_text=read_text)
+
+            if read_text:
+                rows = self._persist_results(
+                    db,
+                    job=job,
+                    result=result,
+                    input_type=InputType.WEBCAM,
+                    image_path=None,
+                )
+                entries = [_to_result_schema(row, self._storage) for row in rows]
+            else:
+                entries = [_to_unstored_result_schema(item) for item in result.results]
+
+            # The frame counter still advances: the frame was processed, and a
+            # progress figure that ignored the cheap frames would understate how
+            # much of the session the system actually looked at.
             job.processed_frames += 1
             job.status = JobStatus.PROCESSING.value
             db.commit()
@@ -593,8 +660,8 @@ class DetectionService:
         return DetectionResponse(
             job_id=job.id,
             input_type=InputType.WEBCAM.value,
-            results=[_to_result_schema(row, self._storage) for row in rows],
-            plate_count=len(rows),
+            results=entries,
+            plate_count=len(entries),
             processing_time=result.total_time,
             image_url=None,
             image_width=result.image_width,
@@ -1034,7 +1101,9 @@ class DetectionService:
 
     # -- Pipeline and persistence -----------------------------------------
 
-    def _run_pipeline(self, image: ImageArray, *, job_id: str) -> PipelineResult:
+    def _run_pipeline(
+        self, image: ImageArray, *, job_id: str, read_text: bool = True
+    ) -> PipelineResult:
         """Invoke the pipeline and translate its exceptions to API errors.
 
         This is the NFR-M1 translation point. ``ALPRError`` carries an English
@@ -1055,7 +1124,7 @@ class DetectionService:
             ProcessingError: If the pipeline raised, for any reason.
         """
         try:
-            return self._pipeline.process(image)
+            return self._pipeline.process(image, read_text=read_text)
         except ALPRError as error:
             raise ProcessingError.from_pipeline_error(
                 error,

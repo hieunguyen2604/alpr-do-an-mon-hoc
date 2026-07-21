@@ -240,7 +240,7 @@ class ALPRPipeline:
     # ----------------------------------------------------------------- #
     # Main entry point
     # ----------------------------------------------------------------- #
-    def process(self, image: ImageArray) -> PipelineResult:
+    def process(self, image: ImageArray, *, read_text: bool = True) -> PipelineResult:
         """Find and read every license plate in one image or video frame.
 
         Stages, in order: detect the plates, crop each one, read it, then
@@ -251,6 +251,21 @@ class ALPRPipeline:
         Args:
             image: Source image as a BGR ``uint8`` array of shape
                 ``(height, width, 3)`` -- what ``cv2.imread`` returns.
+            read_text: Whether to read the characters. Setting it to ``False``
+                runs detection and colour only, returning boxes with no plate
+                string.
+
+                This exists for the live video preview, where the same vehicles
+                are re-read in every frame. Measured on a 960x540 frame holding
+                three plates: detection takes 225 ms and OCR 274 ms, so reading
+                is 55% of the budget -- and it is the part that repeats
+                needlessly, since a plate's characters do not change between
+                frames. A caller that tracks boxes across frames can read each
+                plate once and carry the text forward, spending only the
+                detection cost on the frames in between.
+
+                It is **not** an accuracy setting. Every stored result and every
+                published measurement uses the default.
 
         Returns:
             A :class:`~ai.inference.types.PipelineResult` with one
@@ -280,7 +295,7 @@ class ALPRPipeline:
 
         results: list[DetectionResult] = []
         for index, detection in enumerate(detections):
-            result, elapsed = self._process_one_plate(image, detection, index)
+            result, elapsed = self._process_one_plate(image, detection, index, read_text=read_text)
             for stage, seconds in elapsed.items():
                 stage_times[stage] += seconds
             results.append(result)
@@ -315,7 +330,12 @@ class ALPRPipeline:
     # Internals
     # ----------------------------------------------------------------- #
     def _process_one_plate(
-        self, image: ImageArray, detection: PlateDetection, index: int
+        self,
+        image: ImageArray,
+        detection: PlateDetection,
+        index: int,
+        *,
+        read_text: bool = True,
     ) -> tuple[DetectionResult, dict[str, float]]:
         """Crop, recognise and normalise a single detected plate.
 
@@ -324,6 +344,11 @@ class ALPRPipeline:
             detection: One box produced by the detector.
             index: Position of this plate in the detector's output, used only
                 in log records so a failure can be tied to a specific box.
+            read_text: Whether to run OCR. When ``False`` the crop and its
+                colour are still produced -- both are nearly free and the
+                colour is what the overlay uses -- but the result carries no
+                characters, exactly as it would for a plate the engine could
+                not read.
 
         Returns:
             A ``(result, elapsed)`` pair. ``elapsed`` maps the ``crop``, ``ocr``
@@ -347,7 +372,7 @@ class ALPRPipeline:
         color_name = color.color.value if color is not None else ""
 
         recognition: PlateRecognition | None = None
-        if plate_image is not None:
+        if plate_image is not None and read_text:
             ocr_started = time.perf_counter()
             recognition = self._recognize(plate_image, detection, index)
             elapsed["ocr"] = time.perf_counter() - ocr_started

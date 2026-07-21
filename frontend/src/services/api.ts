@@ -339,6 +339,14 @@ export async function detectVideo(
  *   so a page reload cannot break the preview.
  * @param signal - Abort signal. Abort it when a newer frame is ready, so a slow
  *   response cannot overwrite fresher boxes.
+ * @param readText - Whether the server should read the characters. Passing
+ *   `false` locates the plates without reading them, which is roughly twice as
+ *   fast: detection costs about 225 ms per frame against 274 ms for OCR on a
+ *   960×540 frame holding three plates.
+ *
+ *   Frames sent with `false` are **not stored**, and every plate comes back
+ *   with a `null` plate number. Only use it when the caller carries text
+ *   forward from an earlier reading of the same box.
  * @returns Plates found in this frame, carrying the session's `job_id`.
  * @throws {ApiError} If the frame is rejected or processing fails.
  */
@@ -346,11 +354,15 @@ export async function detectFrame(
   frame: Blob,
   jobId?: string | null,
   signal?: AbortSignal,
+  readText = true,
 ): Promise<DetectionResponse> {
   const formData = new FormData();
   formData.append('file', frame, 'frame.jpg');
   if (jobId) {
     formData.append('job_id', jobId);
+  }
+  if (!readText) {
+    formData.append('read_text', 'false');
   }
 
   const response = await client.post<DetectionResponse>(

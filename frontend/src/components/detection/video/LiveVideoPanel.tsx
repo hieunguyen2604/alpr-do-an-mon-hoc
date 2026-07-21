@@ -51,6 +51,20 @@ const BOX_COLOURS = {
   invalid: '#ea580c',
 } as const;
 
+/**
+ * Playback speed while detection is running.
+ *
+ * The analysed picture updates a few times a second, and that is bounded by
+ * inference cost, not by the player. Halving the playback speed does not make
+ * the system faster — it makes each analysed frame cover half as much motion,
+ * so the sequence reads as continuous instead of jumping. The clip takes twice
+ * as long to watch, which for a fourteen-second demo is a good trade.
+ *
+ * Reset to 1 when detection stops, so the player behaves normally for anyone
+ * scrubbing through the video by hand.
+ */
+const ANALYSIS_PLAYBACK_RATE = 0.5;
+
 /** Length of each focus-bracket arm, as a fraction of the shorter box side. */
 const BRACKET_RATIO = 0.28;
 
@@ -172,11 +186,13 @@ export function LiveVideoPanel({ file }: LiveVideoPanelProps): JSX.Element {
       return;
     }
     if (enabled) {
+      video.playbackRate = ANALYSIS_PLAYBACK_RATE;
       // Started from a click, so the autoplay policy is satisfied; a rejection
       // here means the file itself will not play and the empty overlay already
       // says so.
       void video.play().catch(() => {});
     } else {
+      video.playbackRate = 1;
       video.pause();
     }
   }, [enabled]);
