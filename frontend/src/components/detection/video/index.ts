@@ -10,3 +10,6 @@ export type { VideoResultPanelProps } from './VideoResultPanel';
 
 export { VideoUploadPanel } from './VideoUploadPanel';
 export type { VideoUploadPanelProps } from './VideoUploadPanel';
+
+export { LiveVideoPanel } from './LiveVideoPanel';
+export type { LiveVideoPanelProps } from './LiveVideoPanel';

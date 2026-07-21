@@ -321,6 +321,47 @@ export async function detectVideo(
 }
 
 /**
+ * Detect plates in a single frame, synchronously.
+ *
+ * Used by the live preview on the video page: frames are grabbed from the
+ * playing `<video>` in the browser and posted one at a time. Plain HTTP rather
+ * than a WebSocket (decision AD-03) — the ~400 ms of inference dwarfs the few
+ * milliseconds of HTTP overhead, so a persistent connection would buy nothing.
+ *
+ * @param frame - The captured frame, encoded as a JPEG blob.
+ * @param jobId - Identifier of the ongoing session, taken from the response to
+ *   the first frame. Omit it on the first call only.
+ *
+ *   **Pass it back on every later frame.** Without it the backend opens a new
+ *   session per frame, and a thirty-second preview is recorded as hundreds of
+ *   separate uploads. That does not fail visibly — it just makes the upload
+ *   count meaningless. An unknown id starts a new session rather than erroring,
+ *   so a page reload cannot break the preview.
+ * @param signal - Abort signal. Abort it when a newer frame is ready, so a slow
+ *   response cannot overwrite fresher boxes.
+ * @returns Plates found in this frame, carrying the session's `job_id`.
+ * @throws {ApiError} If the frame is rejected or processing fails.
+ */
+export async function detectFrame(
+  frame: Blob,
+  jobId?: string | null,
+  signal?: AbortSignal,
+): Promise<DetectionResponse> {
+  const formData = new FormData();
+  formData.append('file', frame, 'frame.jpg');
+  if (jobId) {
+    formData.append('job_id', jobId);
+  }
+
+  const response = await client.post<DetectionResponse>(
+    `${API_PREFIX}/detect/frame`,
+    formData,
+    { headers: { 'Content-Type': 'multipart/form-data' }, signal },
+  );
+  return response.data;
+}
+
+/**
  * Fetch one page of detection history.
  *
  * Undefined query fields are dropped by axios, so callers can pass a partially

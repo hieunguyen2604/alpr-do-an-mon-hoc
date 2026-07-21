@@ -19,6 +19,7 @@ import { FileVideo } from 'lucide-react';
 
 import {
   JobProgressPanel,
+  LiveVideoPanel,
   VideoResultPanel,
   VideoUploadPanel,
 } from '@/components/detection/video';
@@ -257,6 +258,12 @@ export default function VideoDetection(): JSX.Element {
       {/* Upload failures are reported here rather than inside the panel. With
           the submit button gone, this is now the *only* way to retry, so the
           action has to live where the error does. */}
+      {/* The live preview sits above the progress panel: while the background
+          job is running it is the only thing on screen that shows what the
+          system is actually seeing. A progress bar reports that work is
+          happening, not what it is finding. */}
+      {selectedFile !== null && uploadError === null && <LiveVideoPanel file={selectedFile} />}
+
       {uploadError && (
         <ErrorState
           title="Không tải được video lên"

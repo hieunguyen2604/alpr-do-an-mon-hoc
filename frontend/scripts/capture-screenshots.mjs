@@ -45,6 +45,9 @@ const VIEWPORT = { width: 1280, height: 800 };
 /** A two-line yellow plate: exercises the hardest path and every new badge. */
 const SAMPLE_IMAGE = resolve(REPO_ROOT, 'demo/images/2dong-1.png');
 
+/** Short clip, so the live preview has boxes on screen before the capture. */
+const SAMPLE_VIDEO = resolve(REPO_ROOT, 'demo/demo-video.mp4');
+
 const PAGES = [
   { path: '/', name: 'image-detection', label: 'Nhận dạng ảnh' },
   { path: '/video', name: 'video-detection', label: 'Nhận dạng video' },
@@ -117,6 +120,47 @@ async function runDetection(page) {
   return true;
 }
 
+/**
+ * Load a video and let the live preview settle on a frame with boxes drawn.
+ *
+ * Captures the page mid-detection on purpose. An empty upload box demonstrates
+ * the layout and nothing about the system; a frame with a plate boxed and
+ * labelled is what the chapter is about.
+ *
+ * @param {import('playwright').Page} page - A page already on the video route.
+ * @returns {Promise<boolean>} Whether the preview produced a box.
+ */
+async function startLivePreview(page) {
+  if (!existsSync(SAMPLE_VIDEO)) {
+    console.log(`  [warn] sample video missing: ${SAMPLE_VIDEO}`);
+    return false;
+  }
+
+  await page.locator('input[type="file"]').first().setInputFiles(SAMPLE_VIDEO);
+
+  // The preview needs one round trip through the model before it can draw
+  // anything: roughly 400 ms warm, more on the first request after a restart.
+  try {
+    await page.getByText(/Xem trực tiếp/i).first().waitFor({ timeout: 30_000 });
+  } catch {
+    console.log('  [warn] live preview panel did not appear');
+    return false;
+  }
+
+  // Play a couple of seconds so the frame on screen contains a vehicle, then
+  // pause: a capture taken mid-motion shows a blurred plate and a stale box.
+  await page.evaluate(async () => {
+    const video = document.querySelector('video');
+    if (video === null) return;
+    video.currentTime = 5;
+    await video.play().catch(() => {});
+  });
+  await page.waitForTimeout(6000);
+  await page.evaluate(() => document.querySelector('video')?.pause());
+  await page.waitForTimeout(1500);
+  return true;
+}
+
 async function main() {
   const urlArg = process.argv.indexOf('--url');
   const base = urlArg >= 0 ? process.argv[urlArg + 1] : 'http://localhost:5173';
@@ -141,6 +185,11 @@ async function main() {
 
       if (spec.path === '/') {
         const ok = await runDetection(page);
+        if (!ok) failures += 1;
+      }
+
+      if (spec.path === '/video') {
+        const ok = await startLivePreview(page);
         if (!ok) failures += 1;
       }
 
