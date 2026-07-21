@@ -261,8 +261,17 @@ export default function VideoDetection(): JSX.Element {
       {/* The live preview sits above the progress panel: while the background
           job is running it is the only thing on screen that shows what the
           system is actually seeing. A progress bar reports that work is
-          happening, not what it is finding. */}
-      {selectedFile !== null && uploadError === null && <LiveVideoPanel file={selectedFile} />}
+          happening, not what it is finding.
+
+          Keyed on the file so choosing a different video remounts the panel
+          with an empty log and no carried-over session. Without the key the
+          previous clip's readings would sit under the new one's frames. */}
+      {selectedFile !== null && uploadError === null && (
+        <LiveVideoPanel
+          key={`${selectedFile.name}-${selectedFile.size}-${selectedFile.lastModified}`}
+          file={selectedFile}
+        />
+      )}
 
       {uploadError && (
         <ErrorState
@@ -279,7 +288,7 @@ export default function VideoDetection(): JSX.Element {
           <EmptyState
             icon={<FileVideo className="h-6 w-6" aria-hidden="true" />}
             title="Chưa có tác vụ nào"
-            description="Chọn một video và bấm “Bắt đầu xử lý”. Video sẽ được đưa vào hàng đợi và xử lý ở chế độ nền — bạn có thể theo dõi tiến độ tại đây."
+            description="Chọn một video để bắt đầu. Video được đưa vào hàng đợi và xử lý ở chế độ nền ngay khi chọn — tiến độ hiện tại đây, còn khung hình xem ngay ở phần “Xem trực tiếp”."
           />
         </Card>
       ) : (

@@ -159,7 +159,7 @@ Exported so that evaluation harnesses and tests can assert against the same
 number the recogniser uses, instead of re-declaring it and drifting.
 """
 
-MIN_FRAGMENT_HEIGHT_RATIO: Final[float] = 0.35
+MIN_FRAGMENT_HEIGHT_RATIO: Final[float] = 0.50
 """Minimum height of a text fragment, relative to the tallest one, to be kept.
 
 Guards against a failure mode observed during Phase 4 bring-up: CLAHE
@@ -176,6 +176,31 @@ strip's height, so a fragment far shorter than the tallest one is an artefact
 rather than a plate character. Measuring against the tallest *fragment* instead
 of the image height keeps the rule insensitive to how tightly the crop was
 framed.
+
+Why 0.50 and not the original 0.35
+----------------------------------
+The halves are cut to **overlap on purpose**, and on a tightly framed crop the
+band they share carries the feet of the upper row down into the lower half. The
+detector then finds that sliver as a text region of its own, next to the genuine
+row. On ``demo/images/nhieu-bien-3.png`` a motorcycle plate reading
+``59-F2 / 277.93`` produced::
+
+    '5952'    height=21    <- feet of the upper row, bled through the overlap
+    '277.93'  height=51    <- the genuine lower row
+
+21/51 = 0.41, which cleared the old 0.35 threshold. The two were concatenated
+into ``277.935952``, and the nine characters that came out of normalisation
+happened to match a legal motorcycle layout -- so the plate was reported as
+**valid** while being wrong, and the two-line rescue never fired, because the
+rescue only retries reads that failed validation. A confidently wrong answer is
+strictly worse than a refusal here.
+
+Raised to 0.50 on measurement, not on the strength of that one image: over 400
+two-line plates from the labelled corpus, 0.50 against 0.35 gained 10 plates and
+lost **none** (54.5% to 57.0%, +2.5 points), with 34 strings changing in total.
+See ``docs/reports/15-fragment-height-ab.json``. The gain is larger than the
+single-plate anecdote suggests because the bleed-through is a systematic
+consequence of the overlap, not an accident of one crop.
 """
 
 
@@ -453,9 +478,27 @@ class PaddleOcrRecognizer(BaseRecognizer):
             self._engine = PaddleOCR(
                 device=device,
                 enable_mkldnn=self._enable_mkldnn,
-                # A plate crop is already deskewed by the detector and contains
-                # a single text region, so the document-level pre-processing
-                # stages are pure latency here.
+                # A plate crop contains a single text region, so the
+                # document-level pre-processing stages cost latency for little
+                # return here.
+                #
+                # This comment used to add "and is already deskewed by the
+                # detector", which is false: a YOLO box is axis-aligned and
+                # deskews nothing. A plate photographed from the kerb arrives
+                # tilted, and the tilt survives cropping. The consequence is
+                # measurable -- on frame 168 of ``demo/demo-video.mp4`` a
+                # legible ``77-H5 / 4374`` yields a 146x42 box, aspect ratio
+                # 3.48, so :func:`~ai.inference.two_line.estimate_line_count`
+                # calls a two-line plate one-line and OCR returns nothing.
+                # Forcing the two-line path does not rescue it either, because a
+                # horizontal cut crosses both rows diagonally.
+                #
+                # The project's own decision log describes the two-line pipeline
+                # as "rectify -> classify -> split -> hstack -> OCR". The
+                # rectify stage does not exist in this codebase. Turning these
+                # flags on is not the fix -- they unwarp documents, not plates --
+                # but the missing stage should not hide behind a false claim
+                # that something else already did the work.
                 use_doc_orientation_classify=False,
                 use_doc_unwarping=False,
                 use_textline_orientation=False,

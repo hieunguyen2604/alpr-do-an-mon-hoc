@@ -1,0 +1,24 @@
+{
+  "sample_size": 400,
+  "seed": 20260721,
+  "source": "/work/datasets/annotations/plate_text_labels_vn.csv",
+  "unreadable": 0,
+  "rescue_fired": 92,
+  "old_ladder": [
+    0.4166666666666667
+  ],
+  "new_ladder": [
+    0.4166666666666667,
+    0.55
+  ],
+  "old_exact": 230,
+  "new_exact": 230,
+  "old_accuracy": 0.575,
+  "new_accuracy": 0.575,
+  "delta_points": 0.0,
+  "gained": 0,
+  "lost": 0,
+  "elapsed_s": 99.0,
+  "gained_examples": [],
+  "lost_examples": []
+}

@@ -1,0 +1,78 @@
+{
+  "sample_size": 400,
+  "seed": 20260721,
+  "old_ratio": 0.35,
+  "new_ratio": 0.5,
+  "old_exact": 218,
+  "new_exact": 228,
+  "old_accuracy": 0.545,
+  "new_accuracy": 0.57,
+  "delta_points": 2.5,
+  "strings_differed": 34,
+  "gained": 10,
+  "lost": 0,
+  "elapsed_s": 165.4,
+  "gained_examples": [
+    {
+      "image": "/work/datasets/raw/roboflow_ocr_plate/valid/images/4xemay2266_jpg.rf.2f8c1de1b590ff79a469e192c3a6e934.jpg",
+      "truth": "59S228834",
+      "old": "595228834J9J2",
+      "new": "59S228834"
+    },
+    {
+      "image": "/work/datasets/raw/roboflow_ocr_plate/train/images/1xemay1913_jpg.rf.5c7f0a223fbeebfcfebcafc596b1358e.jpg",
+      "truth": "84K51618",
+      "old": "84K5161804AJ",
+      "new": "84K51618"
+    },
+    {
+      "image": "/work/datasets/raw/roboflow_ocr_plate/train/images/3xemay2251_jpg.rf.ce1750be84ed942593d7de3cdeda4b60.jpg",
+      "truth": "62V16814",
+      "old": "62V168146211",
+      "new": "62V16814"
+    },
+    {
+      "image": "/work/datasets/raw/roboflow_ocr_plate/train/images/2xemay2145_jpg.rf.912c5280cec91e63ae5852a8fc499922.jpg",
+      "truth": "59D206428",
+      "old": "590206428J502",
+      "new": "59D206428"
+    },
+    {
+      "image": "/work/datasets/raw/roboflow_ocr_plate/train/images/3CarLongPlate325_jpg.rf.f22f9519686a659422ba1fd81748cf70.jpg",
+      "truth": "60M8965",
+      "old": "60M8965BURT",
+      "new": "60M8965"
+    },
+    {
+      "image": "/work/datasets/raw/roboflow_ocr_plate/valid/images/1xemay2434_jpg.rf.4e6e113eb4e2b97fbe2b17aa829f854b.jpg",
+      "truth": "54V38314",
+      "old": "54V38314J41J",
+      "new": "54V38314"
+    },
+    {
+      "image": "/work/datasets/raw/roboflow_ocr_plate/train/images/4xemay2005_jpg.rf.2bb749fb49b869e2c409fe0e8cc489f9.jpg",
+      "truth": "59F147404",
+      "old": "59F147404598R1",
+      "new": "59F147404"
+    },
+    {
+      "image": "/work/datasets/raw/roboflow_ocr_plate/valid/images/5xemay2065_jpg.rf.57a92c23aee09fe2944cd52e1a740189.jpg",
+      "truth": "86B624682",
+      "old": "86B62468200DO",
+      "new": "86B624682"
+    },
+    {
+      "image": "/work/datasets/raw/roboflow_ocr_plate/train/images/2xemay2041_jpg.rf.b008843966fc02336e293d25600e818d.jpg",
+      "truth": "51Y67665",
+      "old": "51Y67665J116",
+      "new": "51Y67665"
+    },
+    {
+      "image": "/work/datasets/raw/roboflow_ocr_plate/valid/images/10xemay2157_jpg.rf.43670c49c22f7ca2133af64611bc8fa5.jpg",
+      "truth": "59N174864",
+      "old": "59N174864J9N1",
+      "new": "59N174864"
+    }
+  ],
+  "lost_examples": []
+}

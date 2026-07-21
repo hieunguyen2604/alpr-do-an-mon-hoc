@@ -138,8 +138,6 @@ async function startLivePreview(page) {
 
   await page.locator('input[type="file"]').first().setInputFiles(SAMPLE_VIDEO);
 
-  // The preview needs one round trip through the model before it can draw
-  // anything: roughly 400 ms warm, more on the first request after a restart.
   try {
     await page.getByText(/Xem trực tiếp/i).first().waitFor({ timeout: 30_000 });
   } catch {
@@ -147,18 +145,83 @@ async function startLivePreview(page) {
     return false;
   }
 
+  // Detection no longer starts on its own -- choosing a file shows the frame,
+  // and the user asks for inference explicitly. The capture has to make that
+  // same request, or the figure would show an idle player with an empty log.
+  try {
+    await page.getByRole('button', { name: /Chạy nhận dạng/i }).click({ timeout: 10_000 });
+  } catch {
+    console.log('  [warn] could not press the run button');
+    return false;
+  }
+
   // Play a couple of seconds so the frame on screen contains a vehicle, then
   // pause: a capture taken mid-motion shows a blurred plate and a stale box.
+  //
+  // Every step here is load-bearing, and the previous version had none of them.
+  // It set `currentTime` immediately, before the blob URL had produced any
+  // metadata, so the seek was discarded and the element sat at 0:00; and it
+  // called `play()` unmuted, which headless Chromium refuses without a user
+  // gesture. The preview then captured nothing at all -- the figure showed
+  // "Đã gửi 0 khung" over a black player, which is a screenshot of the feature
+  // not working.
   await page.evaluate(async () => {
     const video = document.querySelector('video');
     if (video === null) return;
+
+    // Autoplay is only permitted for muted media without a user gesture.
+    video.muted = true;
+
+    if (video.readyState < 1) {
+      await new Promise((resolve) => {
+        video.addEventListener('loadedmetadata', resolve, { once: true });
+        setTimeout(resolve, 5000);
+      });
+    }
+
     video.currentTime = 5;
+    await new Promise((resolve) => {
+      video.addEventListener('seeked', resolve, { once: true });
+      setTimeout(resolve, 5000);
+    });
+
     await video.play().catch(() => {});
   });
-  await page.waitForTimeout(6000);
+
+  // Long enough for several frames to complete a round trip: capture fires
+  // every 450 ms and inference costs roughly 400 ms, so this is about a dozen
+  // attempts and enough log lines to be worth showing.
+  await page.waitForTimeout(9000);
   await page.evaluate(() => document.querySelector('video')?.pause());
   await page.waitForTimeout(1500);
+
   return true;
+}
+
+/**
+ * Scroll the live preview to the top of the viewport.
+ *
+ * The upload card alone fills an 800 px viewport, so a capture taken at scroll
+ * position zero shows the dropzone and cuts off the boxed plate and the log --
+ * the two things this figure exists to show.
+ *
+ * Called *after* the general scroll-to-top reset rather than inside
+ * {@link startLivePreview}, because that reset would otherwise undo it. The
+ * ordering is the whole point: the first pass I wrote scrolled here and then
+ * had the reset put it straight back, producing a screenshot identical to the
+ * one before the change.
+ *
+ * @param {import('playwright').Page} page - A page on the video route.
+ */
+async function scrollToLivePreview(page) {
+  await page.evaluate(() => {
+    const heading = [...document.querySelectorAll('h2')].find((node) =>
+      node.textContent?.includes('Xem trực tiếp'),
+    );
+    const card = heading?.closest('div[class*="rounded"]') ?? heading;
+    card?.scrollIntoView({ block: 'start' });
+  });
+  await page.waitForTimeout(800);
 }
 
 async function main() {
@@ -200,6 +263,9 @@ async function main() {
       // putting it in a thesis.
       await page.evaluate(() => window.scrollTo(0, 0));
       await page.waitForTimeout(250);
+      if (spec.path === '/video') {
+        await scrollToLivePreview(page);
+      }
       const out = resolve(OUT_DIR, `${spec.name}.png`);
       await page.screenshot({ path: out });
       console.log(`    -> ${out}`);

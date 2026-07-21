@@ -50,7 +50,7 @@ from ai.inference.config import InferenceConfig
 from ai.inference.exceptions import ALPRError, InvalidImageError
 from ai.inference.interfaces import BaseDetector, BaseNormalizer, BaseRecognizer
 from ai.inference.plate_color import classify_plate_color
-from ai.inference.two_line import split_two_line
+from ai.inference.two_line import UPPER_HALF_END_RATIO, split_two_line
 from ai.inference.types import (
     BoundingBox,
     DetectionResult,
@@ -67,6 +67,7 @@ __all__ = [
     "should_rescue_two_line",
     "rescue_two_line_upper",
     "refine_kind_with_color",
+    "RESCUE_UPPER_END_RATIOS",
 ]
 
 _LOGGER = logging.getLogger(__name__)
@@ -626,6 +627,35 @@ def build_default_pipeline(config: InferenceConfig | None = None) -> ALPRPipelin
 # --------------------------------------------------------------------------- #
 # Two-line rescue -- shared by the pipeline and the evaluation harness
 # --------------------------------------------------------------------------- #
+RESCUE_UPPER_END_RATIOS: Final[tuple[float, ...]] = (UPPER_HALF_END_RATIO, 0.55)
+"""Upper-half cut ratios the rescue tries, in order, until one validates.
+
+The first entry is the ratio the main strip is built with, so the cheap case --
+the upper line sits where the geometry assumes -- is tried first and behaves
+exactly as before.
+
+The second exists because that assumption fails on tightly framed crops. The
+cut at 5/12 lands *inside* the glyphs of the upper row when the plate fills its
+bounding box, and an amputated row is not merely degraded: PP-OCR's text
+detector fires on it not at all. Measured on ``demo/images/nhieu-bien-3.png``,
+a 67x41 crop reading ``77-H5`` over ``4374``::
+
+    cut at 0.4167 -> ''        (nothing detected)
+    cut at 0.4500 -> ''
+    cut at 0.5000 -> ''
+    cut at 0.5500 -> '77-H5'   at 0.975 confidence
+
+The transition is a cliff, not a slope, which is why one extra ratio well clear
+of it recovers the case and a small nudge would not. 0.55 keeps a margin above
+the 0.50 that still failed, and stays below the point where the lower row would
+start intruding on a normally framed plate.
+
+Every ratio here costs one OCR call, and only on crops that already failed
+validation. Adding entries is therefore cheap in the common case and must still
+be justified by measurement -- see ``docs/reports/15-two-line-rescue-ladder.json``.
+"""
+
+
 def should_rescue_two_line(recognition: PlateRecognition) -> bool:
     """Decide whether a two-line read is worth a second, narrower attempt.
 
@@ -678,6 +708,17 @@ def rescue_two_line_upper(
     and re-normalises ``upper + strip``, keeping the attempt only if the combined
     string validates.
 
+    Why more than one cut is tried
+    ------------------------------
+    Re-cutting at the *same* ratio the strip used cannot help when the ratio is
+    itself what broke the read. On a tightly framed crop the 5/12 cut lands
+    inside the upper row of glyphs, and PP-OCR's detector then reports no text
+    region at all rather than a degraded one -- so the rescue received an empty
+    string and had nothing to prepend. :data:`RESCUE_UPPER_END_RATIOS` therefore
+    holds a short ladder of cuts, tried in order until one produces a string that
+    validates. The first entry reproduces the previous behaviour exactly, so a
+    plate the old rescue recovered is recovered by the same call as before.
+
     Measured on 900 two-line plates over two independent samples: +1.86 points on
     700 (60.14% to 62.00%, 13 rescued) and +0.5 on 200, with **zero** regressions
     in either. The extra call fires on about a fifth of two-line crops -- only
@@ -708,54 +749,74 @@ def rescue_two_line_upper(
         cost more than it can win.
     """
     extra: dict[str, object] = dict(context or {})
-    kind = ""
-    display_text = ""
 
-    try:
-        upper, _lower = split_two_line(plate_image)
-        upper_read = recognizer.recognize(upper)
-        combined = f"{upper_read.text}{recognition.raw_text}"
+    for ratio in RESCUE_UPPER_END_RATIOS:
+        kind = ""
+        display_text = ""
 
-        detailed = getattr(normalizer, "normalize_detailed", None)
-        if callable(detailed):
-            outcome = detailed(combined, line_count=2)
-            text, is_valid = outcome.text, outcome.is_valid_format
-            # The rescued string is a different plate number from the one the
-            # first attempt produced, so its family and rendering have to be
-            # recomputed here. Carrying the first attempt's values over would
-            # describe a string that no longer exists.
-            kind = refine_kind_with_color(outcome, color, 2)
-            display_text = _format_for_display(normalizer, text, 2)
-        else:
-            text, is_valid = normalizer.normalize(combined)
-    except Exception as error:  # noqa: BLE001 - a rescue must not become a failure
-        _LOGGER.warning(
-            "Upper-line rescue failed, keeping the first result",
-            extra={**extra, "error": f"{type(error).__name__}: {error}"},
+        try:
+            upper, _lower = split_two_line(plate_image, upper_end_ratio=ratio)
+            upper_read = recognizer.recognize(upper)
+
+            # Nothing read means this cut has nothing to contribute: the combined
+            # string would be the first attempt's text unchanged, which has
+            # already been rejected. Skipping saves the normalisation and, more
+            # importantly, keeps the log honest about which cut did the work.
+            if not upper_read.text:
+                continue
+
+            combined = f"{upper_read.text}{recognition.raw_text}"
+
+            detailed = getattr(normalizer, "normalize_detailed", None)
+            if callable(detailed):
+                outcome = detailed(combined, line_count=2)
+                text, is_valid = outcome.text, outcome.is_valid_format
+                # The rescued string is a different plate number from the one the
+                # first attempt produced, so its family and rendering have to be
+                # recomputed here. Carrying the first attempt's values over would
+                # describe a string that no longer exists.
+                kind = refine_kind_with_color(outcome, color, 2)
+                display_text = _format_for_display(normalizer, text, 2)
+            else:
+                text, is_valid = normalizer.normalize(combined)
+        except Exception as error:  # noqa: BLE001 - a rescue must not become a failure
+            # Try the next ratio rather than abandoning the rescue: a crop only
+            # a few pixels tall can make one cut degenerate while a later, more
+            # generous one is still a usable image.
+            _LOGGER.warning(
+                "Upper-line rescue attempt failed, trying the next cut",
+                extra={
+                    **extra,
+                    "upper_end_ratio": ratio,
+                    "error": f"{type(error).__name__}: {error}",
+                },
+            )
+            continue
+
+        if not is_valid:
+            continue
+
+        _LOGGER.info(
+            "Upper-line rescue recovered a two-line plate",
+            extra={
+                **extra,
+                "first_attempt": recognition.text,
+                "recovered": text,
+                "upper_fragment": upper_read.text,
+                "upper_end_ratio": ratio,
+            },
         )
-        return recognition
+        return PlateRecognition(
+            text=text,
+            raw_text=recognition.raw_text,
+            confidence=recognition.confidence,
+            line_count=2,
+            is_valid_format=True,
+            kind=kind,
+            display_text=display_text,
+        )
 
-    if not is_valid:
-        return recognition
-
-    _LOGGER.info(
-        "Upper-line rescue recovered a two-line plate",
-        extra={
-            **extra,
-            "first_attempt": recognition.text,
-            "recovered": text,
-            "upper_fragment": upper_read.text,
-        },
-    )
-    return PlateRecognition(
-        text=text,
-        raw_text=recognition.raw_text,
-        confidence=recognition.confidence,
-        line_count=2,
-        is_valid_format=True,
-        kind=kind,
-        display_text=display_text,
-    )
+    return recognition
 
 
 def _format_for_display(normalizer: BaseNormalizer, text: str, line_count: int) -> str:
