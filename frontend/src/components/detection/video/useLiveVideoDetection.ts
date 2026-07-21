@@ -1,34 +1,28 @@
 /**
- * Detect plates in a `<video>` element while it plays or is scrubbed.
+ * Detect plates in a `<video>` element while it plays.
  *
  * How it works
  * ------------
  * A timer grabs whatever frame is currently on screen, draws it to an offscreen
  * canvas, encodes it as JPEG and posts it to `POST /api/detect/frame`. The boxes
- * that come back are held in state until the next answer replaces them.
+ * that come back are held in state until the next answer replaces them, together
+ * with the frame they were measured against.
  *
  * The single-slot rule
  * --------------------
  * At most **one** request is ever in flight. When the timer fires while a
  * request is still running, that frame is dropped and never queued.
  *
- * Skipping is the correct behaviour here, not a fallback. Inference costs
- * roughly 400 ms on the CPU this runs on, and the timer fires far more often
- * than that. A queue would grow without bound, and every box it eventually drew
- * would describe a frame the video had long since passed — the display would
- * drift further behind reality the longer it ran. Dropping frames keeps the
- * boxes attached to a moment close to the one on screen, which is the only
- * property that makes a live overlay worth showing.
+ * Skipping is the correct behaviour here, not a fallback. Inference costs a
+ * measured 547 ms at the median on this machine, and the timer fires far more
+ * often than that. A queue would grow without bound, and every box it eventually
+ * drew would describe a frame the video had long since passed.
  *
  * What this is, and is not
  * ------------------------
  * A **preview**. It reads whatever frames it can keep up with, so it sees a
- * fraction of the video and does not merge a plate seen across several frames
- * into one record. The background job started from the same file is what
- * produces the complete, de-duplicated result; the two run side by side.
- *
- * Presenting this as the measurement would understate the system: it processes
- * fewer frames than the batch path by design.
+ * fraction of the video. The background job started from the same file is what
+ * produces the complete, authoritative result; the two run side by side.
  */
 
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -39,10 +33,10 @@ import type { DetectionResult } from '@/types';
 /**
  * Milliseconds between capture attempts.
  *
- * Slightly above the measured inference cost (~400 ms warm). Firing much faster
- * would only increase the number of frames dropped by the single-slot rule
- * without putting a single extra frame through the model; firing slower would
- * leave the overlay visibly stale during fast motion.
+ * Slightly above the measured inference cost. Firing much faster would only
+ * increase the number of frames dropped by the single-slot rule without putting
+ * a single extra frame through the model; firing slower would leave the overlay
+ * visibly stale during fast motion.
  */
 const CAPTURE_INTERVAL_MS = 450;
 
@@ -53,35 +47,53 @@ const FRAME_QUALITY = 0.75;
  * Longest edge of the captured frame, in pixels.
  *
  * The detector runs at 640 px, so sending a 4K frame costs upload time and JPEG
- * encoding for detail the model immediately discards. Capping here keeps each
- * request small enough that transfer stays negligible beside inference.
+ * encoding for detail the model immediately discards.
  */
 const MAX_CAPTURE_EDGE = 960;
 
 /**
- * Largest number of log entries kept in memory.
+ * Largest number of distinct plates kept in the log.
  *
- * The log exists to be read during a demonstration, and nobody scrolls past a
- * hundred lines of it. Keeping every entry of a ten-minute clip would grow
- * without bound and re-render a list thousands of rows long on every frame.
+ * Merging keeps this list far shorter than a per-sighting one, but a long clip
+ * on a busy street still finds new plates indefinitely, and nobody reads past a
+ * hundred rows during a demonstration.
  */
-const MAX_EVENTS = 100;
+const MAX_PLATES = 100;
 
-/** One plate seen in one frame, recorded for the log. */
-export interface LiveDetectionEvent {
-  /** Stable key for React; monotonic within a session. */
-  id: number;
-  /** Position in the video the frame was taken from, in seconds. */
-  videoTime: number;
+/**
+ * Bucket that collects every box whose text could not be read.
+ *
+ * Deliberately not a plate-shaped string: normalisation only ever emits
+ * `A-Z0-9`, so this cannot collide with a real reading.
+ */
+const UNREAD_KEY = '__unread__';
+
+/**
+ * One **distinct plate** seen during the session, not one sighting.
+ *
+ * A plate stays in view for several seconds, so a chronological list of every
+ * read repeats the same number over and over and buries anything new. Measured
+ * on the demo clip: 8 analysed frames produced 24 log lines, and after the video
+ * ended the same frozen frame kept being re-read. The background job merges its
+ * results across frames for exactly this reason; the log here does the same, so
+ * the two describe the world the same way.
+ */
+export interface LivePlateSummary {
+  /** Normalised plate string, `null` for a box whose text could not be read. */
+  plateNumber: string | null;
   /** The plate as it should be shown, already separator-formatted. */
   display: string | null;
-  /** Normalised plate string, `null` when nothing was read. */
-  plateNumber: string | null;
   /** Unmodified OCR output, so the correction step stays visible. */
   rawText: string | null;
-  /** Detector confidence for this box. */
+  /** How many frames this plate was read in. */
+  reads: number;
+  /** Position in the video where it was first seen, in seconds. */
+  firstSeen: number;
+  /** Position where it was last seen, in seconds. */
+  lastSeen: number;
+  /** Best detector confidence across the sightings. */
   detectionConfidence: number;
-  /** OCR confidence, `null` when no text was read. */
+  /** Best OCR confidence across the sightings, `null` if never read. */
   ocrConfidence: number | null;
   /** Whether the string matched a civil Vietnamese layout. */
   isValidFormat: boolean;
@@ -89,7 +101,7 @@ export interface LiveDetectionEvent {
   kind: DetectionResult['plate_kind'];
   /** Background colour read from the crop. */
   color: DetectionResult['plate_color'];
-  /** Box size in the captured frame, for judging how small the plate was. */
+  /** Box size at the best sighting, in captured-frame pixels. */
   boxWidth: number;
   boxHeight: number;
 }
@@ -104,7 +116,7 @@ export interface LiveDetectionState {
    * Handed back so the panel can display *this* image rather than whatever the
    * video has moved on to. Inference costs a measured 547 ms at the median and
    * up to 1.7 s, so at 1x playback the picture on screen is roughly half a
-   * second ahead of the boxes -- far enough for a moving vehicle to leave its
+   * second ahead of the boxes — far enough for a moving vehicle to leave its
    * own box behind, which looks like a tracking failure and is really just two
    * different moments drawn on top of each other.
    */
@@ -119,10 +131,8 @@ export interface LiveDetectionState {
   sent: number;
   /** Frames dropped because a request was already in flight. */
   skipped: number;
-  /** Every plate seen so far, newest first, capped at {@link MAX_EVENTS}. */
-  events: LiveDetectionEvent[];
-  /** Distinct plate strings seen, in first-seen order. */
-  distinctPlates: string[];
+  /** Distinct plates seen, merged across frames, most recently seen first. */
+  plates: LivePlateSummary[];
   /** Display-ready Vietnamese error from the last failure, or `null`. */
   error: string | null;
 }
@@ -136,10 +146,93 @@ export interface LiveDetectionOptions {
 }
 
 /**
+ * Fold one sighting into the merged list.
+ *
+ * Keeps the **best** reading rather than the latest. A plate is read many times
+ * as it crosses the frame, and those reads are not equally good — it is small
+ * and blurred at the edges of its pass and largest in the middle. Overwriting
+ * with the newest would leave every plate described by its worst sighting, the
+ * one taken as it leaves the shot.
+ *
+ * @param list - Current merged list.
+ * @param result - One plate from one frame.
+ * @param videoTime - Where in the clip the frame came from.
+ * @returns A new list; the input is not modified.
+ */
+export function mergePlateSighting(
+  list: LivePlateSummary[],
+  result: DetectionResult,
+  videoTime: number,
+): LivePlateSummary[] {
+  const key = result.plate_number ?? UNREAD_KEY;
+  const index = list.findIndex((entry) => (entry.plateNumber ?? UNREAD_KEY) === key);
+
+  if (index === -1) {
+    const entry: LivePlateSummary = {
+      plateNumber: result.plate_number,
+      display: result.plate_display ?? null,
+      rawText: result.raw_ocr_text,
+      reads: 1,
+      firstSeen: videoTime,
+      lastSeen: videoTime,
+      detectionConfidence: result.detection_confidence,
+      ocrConfidence: result.ocr_confidence,
+      isValidFormat: result.is_valid_format,
+      kind: result.plate_kind,
+      color: result.plate_color,
+      boxWidth: result.bbox.width,
+      boxHeight: result.bbox.height,
+    };
+    return [entry, ...list].slice(0, MAX_PLATES);
+  }
+
+  const current = list[index];
+  if (current === undefined) {
+    // Unreachable: findIndex returned a valid position. The check exists
+    // because indexed access is typed as possibly-undefined, and silently
+    // asserting it away is how a real out-of-range bug would slip through
+    // later.
+    return list;
+  }
+
+  const isBetter = result.detection_confidence > current.detectionConfidence;
+  const betterOcr =
+    result.ocr_confidence !== null &&
+    (current.ocrConfidence === null || result.ocr_confidence > current.ocrConfidence);
+
+  const merged: LivePlateSummary = {
+    ...current,
+    reads: current.reads + 1,
+    firstSeen: Math.min(current.firstSeen, videoTime),
+    lastSeen: Math.max(current.lastSeen, videoTime),
+    detectionConfidence: Math.max(current.detectionConfidence, result.detection_confidence),
+    ocrConfidence: betterOcr ? result.ocr_confidence : current.ocrConfidence,
+    // The descriptive fields travel together. Taking the family from one
+    // sighting and the colour from another would describe a plate that was
+    // never actually seen.
+    ...(isBetter
+      ? {
+          display: result.plate_display ?? null,
+          rawText: result.raw_ocr_text,
+          isValidFormat: result.is_valid_format,
+          kind: result.plate_kind,
+          color: result.plate_color,
+          boxWidth: result.bbox.width,
+          boxHeight: result.bbox.height,
+        }
+      : {}),
+  };
+
+  // Move it to the front, so the log reads as "what the system is looking at".
+  const rest = list.filter((_, position) => position !== index);
+  return [merged, ...rest];
+}
+
+/**
  * Run live plate detection against a video element.
  *
  * @param options - The video element and whether the preview is active.
- * @returns The latest boxes and the counters behind them.
+ * @returns The latest boxes, the frame they came from, and the merged log.
  */
 export function useLiveVideoDetection({
   videoRef,
@@ -150,17 +243,11 @@ export function useLiveVideoDetection({
   const [frameSize, setFrameSize] = useState({ width: 0, height: 0 });
   const [isBusy, setIsBusy] = useState(false);
   const [counters, setCounters] = useState({ sent: 0, skipped: 0 });
-  const [events, setEvents] = useState<LiveDetectionEvent[]>([]);
-  const [distinctPlates, setDistinctPlates] = useState<string[]>([]);
+  const [plates, setPlates] = useState<LivePlateSummary[]>([]);
   const [error, setError] = useState<string | null>(null);
 
   const inFlightRef = useRef(false);
   const jobIdRef = useRef<string | null>(null);
-  const eventIdRef = useRef(0);
-  // Distinct plates are tracked in a ref as well as in state because the log is
-  // capped: once old entries fall off, `events` can no longer answer "have we
-  // seen this plate before" and the count would start rising again.
-  const seenPlatesRef = useRef<Set<string>>(new Set());
   const abortRef = useRef<AbortController | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const isMountedRef = useRef(true);
@@ -184,43 +271,44 @@ export function useLiveVideoDetection({
    * @returns The encoded frame and its bitmap, or `null` when no frame is
    *   available yet.
    */
-  const captureFrame = useCallback(async (
-    video: HTMLVideoElement,
-  ): Promise<{ blob: Blob; bitmap: ImageBitmap } | null> => {
-    // `readyState < 2` means no frame has been decoded, which happens right
-    // after a seek. Capturing then yields a blank canvas, and a blank frame
-    // returns zero plates — clearing the overlay for no reason.
-    if (video.readyState < 2 || !video.videoWidth || !video.videoHeight) {
-      return null;
-    }
+  const captureFrame = useCallback(
+    async (video: HTMLVideoElement): Promise<{ blob: Blob; bitmap: ImageBitmap } | null> => {
+      // `readyState < 2` means no frame has been decoded, which happens right
+      // after a seek. Capturing then yields a blank canvas, and a blank frame
+      // returns zero plates — clearing the overlay for no reason.
+      if (video.readyState < 2 || !video.videoWidth || !video.videoHeight) {
+        return null;
+      }
 
-    const scale = Math.min(1, MAX_CAPTURE_EDGE / Math.max(video.videoWidth, video.videoHeight));
-    const width = Math.round(video.videoWidth * scale);
-    const height = Math.round(video.videoHeight * scale);
+      const scale = Math.min(1, MAX_CAPTURE_EDGE / Math.max(video.videoWidth, video.videoHeight));
+      const width = Math.round(video.videoWidth * scale);
+      const height = Math.round(video.videoHeight * scale);
 
-    let canvas = canvasRef.current;
-    if (canvas === null) {
-      canvas = document.createElement('canvas');
-      canvasRef.current = canvas;
-    }
-    canvas.width = width;
-    canvas.height = height;
+      let canvas = canvasRef.current;
+      if (canvas === null) {
+        canvas = document.createElement('canvas');
+        canvasRef.current = canvas;
+      }
+      canvas.width = width;
+      canvas.height = height;
 
-    const context = canvas.getContext('2d');
-    if (context === null) {
-      return null;
-    }
-    context.drawImage(video, 0, 0, width, height);
+      const context = canvas.getContext('2d');
+      if (context === null) {
+        return null;
+      }
+      context.drawImage(video, 0, 0, width, height);
 
-    const blob = await new Promise<Blob | null>((resolve) => {
-      canvas.toBlob((encoded) => resolve(encoded), 'image/jpeg', FRAME_QUALITY);
-    });
-    if (blob === null) {
-      return null;
-    }
+      const blob = await new Promise<Blob | null>((resolve) => {
+        canvas.toBlob((encoded) => resolve(encoded), 'image/jpeg', FRAME_QUALITY);
+      });
+      if (blob === null) {
+        return null;
+      }
 
-    return { blob, bitmap: await createImageBitmap(canvas) };
-  }, []);
+      return { blob, bitmap: await createImageBitmap(canvas) };
+    },
+    [],
+  );
 
   useEffect(() => {
     if (!enabled) {
@@ -230,6 +318,15 @@ export function useLiveVideoDetection({
     const timer = window.setInterval(() => {
       const video = videoRef.current;
       if (video === null) {
+        return;
+      }
+
+      // A still video is not a new moment. Without this the timer keeps
+      // re-reading one frozen frame: measured after the demo clip ended, seven
+      // further requests went out in six seconds, each returning the same
+      // plates and inflating both the counters and the log. Not counted as
+      // skipped either — nothing was there to miss.
+      if (video.paused || video.ended) {
         return;
       }
 
@@ -265,52 +362,37 @@ export function useLiveVideoDetection({
           // upload rather than one per frame.
           jobIdRef.current = response.job_id;
           setResults(response.results);
+          setFrameSize({ width: response.image_width, height: response.image_height });
+          setCounters((previous) => ({ ...previous, sent: previous.sent + 1 }));
+          setError(null);
+
           // Hand the pixels over and release the previous frame in the same
           // step. An ImageBitmap holds decoded pixels outside the JS heap, so
-          // dropping the reference without closing it leaks until the GC
-          // happens to notice — over a long clip that is hundreds of frames.
+          // dropping the reference without closing it leaks until the garbage
+          // collector happens to notice — over a long clip that is hundreds of
+          // frames.
           const { bitmap } = captured;
           setFrameImage((previous) => {
             previous?.close();
             return bitmap;
           });
           captured = null;
-          setFrameSize({ width: response.image_width, height: response.image_height });
-          setCounters((previous) => ({ ...previous, sent: previous.sent + 1 }));
-          setError(null);
 
           if (response.results.length > 0) {
-            const additions = response.results.map((result) => ({
-              id: (eventIdRef.current += 1),
-              videoTime,
-              display: result.plate_display ?? null,
-              plateNumber: result.plate_number,
-              rawText: result.raw_ocr_text,
-              detectionConfidence: result.detection_confidence,
-              ocrConfidence: result.ocr_confidence,
-              isValidFormat: result.is_valid_format,
-              kind: result.plate_kind,
-              color: result.plate_color,
-              boxWidth: result.bbox.width,
-              boxHeight: result.bbox.height,
-            }));
-            setEvents((previous) => [...additions, ...previous].slice(0, MAX_EVENTS));
-
-            const fresh = response.results
-              .map((result) => result.plate_number)
-              .filter((plate): plate is string => plate !== null && plate.length > 0)
-              .filter((plate) => !seenPlatesRef.current.has(plate));
-            if (fresh.length > 0) {
-              fresh.forEach((plate) => seenPlatesRef.current.add(plate));
-              setDistinctPlates((previous) => [...previous, ...fresh]);
-            }
+            setPlates((previous) => {
+              let next = previous;
+              for (const result of response.results) {
+                next = mergePlateSighting(next, result, videoTime);
+              }
+              return next;
+            });
           }
         } catch (caught) {
           if (isMountedRef.current && !controller.signal.aborted) {
             setError(getErrorMessage(caught));
           }
         } finally {
-          // Still set means the frame never reached state -- an aborted request,
+          // Still set means the frame never reached state — an aborted request,
           // an unmounted component or a failed call. Close it here or those
           // pixels are never released.
           captured?.bitmap.close();
@@ -335,8 +417,8 @@ export function useLiveVideoDetection({
   // moment; the log is the record of what was found, and wiping it the instant
   // someone pauses to read it would destroy the thing they stopped to look at.
   //
-  // A new file gets a clean slate through remounting -- the panel is keyed on
-  // the file -- so nothing here has to know which video is loaded.
+  // A new file gets a clean slate through remounting — the panel is keyed on
+  // the file — so nothing here has to know which video is loaded.
   useEffect(() => {
     if (!enabled) {
       setResults([]);
@@ -350,12 +432,15 @@ export function useLiveVideoDetection({
 
   // Release the last frame on unmount; navigating away mid-detection would
   // otherwise strand one decoded bitmap per mounted panel.
-  useEffect(() => () => {
-    setFrameImage((previous) => {
-      previous?.close();
-      return null;
-    });
-  }, []);
+  useEffect(
+    () => () => {
+      setFrameImage((previous) => {
+        previous?.close();
+        return null;
+      });
+    },
+    [],
+  );
 
   return {
     results,
@@ -365,8 +450,7 @@ export function useLiveVideoDetection({
     isBusy,
     sent: counters.sent,
     skipped: counters.skipped,
-    events,
-    distinctPlates,
+    plates,
     error,
   };
 }

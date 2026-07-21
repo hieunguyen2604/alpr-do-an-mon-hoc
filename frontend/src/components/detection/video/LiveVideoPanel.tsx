@@ -138,10 +138,29 @@ export function LiveVideoPanel({ file }: LiveVideoPanelProps): JSX.Element {
     isBusy,
     sent,
     skipped,
-    events,
-    distinctPlates,
+    plates,
     error,
   } = useLiveVideoDetection({ videoRef, enabled });
+
+  // Stop when the clip finishes. Otherwise the panel stays in its running
+  // state over a frozen last frame, with the seek bar hidden and no way to
+  // replay — and it goes on claiming to be analysing something.
+  //
+  // Keyed on `objectUrl`, not on nothing: the <video> element is only rendered
+  // once the object URL exists, so an effect with an empty dependency list runs
+  // while `videoRef.current` is still null and attaches the listener to
+  // nothing. That is exactly what happened first time round — capture stopped
+  // correctly but the button went on saying "Dừng nhận dạng" over a finished
+  // clip.
+  useEffect(() => {
+    const video = videoRef.current;
+    if (video === null) {
+      return;
+    }
+    const handleEnded = (): void => setEnabled(false);
+    video.addEventListener('ended', handleEnded);
+    return () => video.removeEventListener('ended', handleEnded);
+  }, [objectUrl]);
 
   // The button drives playback as well as detection. Separating them made the
   // two easy to leave out of step -- detection running against a paused frame,
@@ -256,6 +275,10 @@ export function LiveVideoPanel({ file }: LiveVideoPanelProps): JSX.Element {
     return () => observer.disconnect();
   }, [results, frameImage, frameWidth, frameHeight]);
 
+  // Unreadable boxes share one bucket in the log, and counting it among the
+  // plates would claim a plate was identified when it was only located.
+  const readablePlateCount = plates.filter((plate) => plate.plateNumber !== null).length;
+
   return (
     <Card
       title="Xem trực tiếp"
@@ -319,10 +342,10 @@ export function LiveVideoPanel({ file }: LiveVideoPanelProps): JSX.Element {
               )}
             </span>
           )}
-          {distinctPlates.length > 0 && (
+          {readablePlateCount > 0 && (
             <span>
-              · <span className="font-medium text-content">{distinctPlates.length}</span> biển
-              khác nhau đã thấy
+              · <span className="font-medium text-content">{readablePlateCount}</span> biển
+              khác nhau đã đọc được
             </span>
           )}
         </div>
@@ -343,7 +366,7 @@ export function LiveVideoPanel({ file }: LiveVideoPanelProps): JSX.Element {
           kết quả đầy đủ đã gộp trùng nằm ở bảng bên dưới khi tác vụ nền chạy xong.
         </p>
 
-        <LiveDetectionLog events={events} isRunning={enabled} />
+        <LiveDetectionLog plates={plates} isRunning={enabled} />
 
         {error !== null && (
           <p className="text-xs text-status-warning">
@@ -357,54 +380,66 @@ export function LiveVideoPanel({ file }: LiveVideoPanelProps): JSX.Element {
 
 /** Props of {@link LiveDetectionLog}. */
 interface LiveDetectionLogProps {
-  events: ReturnType<typeof useLiveVideoDetection>['events'];
+  plates: ReturnType<typeof useLiveVideoDetection>['plates'];
   isRunning: boolean;
 }
 
 /**
- * Chronological record of every plate the preview has read.
+ * One row per **plate**, not per sighting.
  *
- * Newest first, because during a demonstration the interesting line is the one
- * that just appeared, and a list that grows downwards pushes it off-screen.
+ * A vehicle stays in shot for several seconds and is read in every frame that
+ * catches it, so an unmerged list says the same number a dozen times and pushes
+ * anything new off the screen. Merging also matches how the background job
+ * reports: one row per plate, however many frames it appeared in.
  *
  * Each row carries the raw OCR string next to the corrected one whenever they
  * differ. That comparison is the only place the post-processing stage is
  * visible to a viewer, and it is a large part of what this project claims.
  *
- * @param props - The events and whether detection is currently running.
+ * @param props - The merged plates and whether detection is currently running.
  * @returns The log section.
  */
-function LiveDetectionLog({ events, isRunning }: LiveDetectionLogProps): JSX.Element {
+function LiveDetectionLog({ plates, isRunning }: LiveDetectionLogProps): JSX.Element {
   return (
     <section className="rounded-lg border border-border">
       <header className="flex items-center gap-2 border-b border-border px-4 py-2.5">
         <ScanLine className="h-4 w-4 text-content-muted" aria-hidden="true" />
         <h3 className="text-sm font-medium text-content">Nhật ký nhận dạng</h3>
-        {events.length > 0 && (
-          <span className="text-xs text-content-muted">{events.length} lượt đọc</span>
+        {plates.length > 0 && (
+          <span className="text-xs text-content-muted">
+            {plates.length} biển · đã gộp các lần đọc trùng
+          </span>
         )}
       </header>
 
-      {events.length === 0 ? (
+      {plates.length === 0 ? (
         <p className="px-4 py-6 text-center text-xs text-content-muted">
           {isRunning
             ? 'Đang chờ khung hình đầu tiên có biển số…'
-            : 'Chưa có gì. Bấm “Chạy nhận dạng” rồi phát video để bắt đầu ghi.'}
+            : 'Chưa có gì. Bấm “Chạy nhận dạng” để vừa phát video vừa ghi lại biển số.'}
         </p>
       ) : (
         <ul className="max-h-72 divide-y divide-border overflow-y-auto">
-          {events.map((event) => (
-            <li key={event.id} className="flex flex-wrap items-center gap-x-3 gap-y-1 px-4 py-2">
+          {plates.map((plate) => (
+            <li
+              key={plate.plateNumber ?? '__unread__'}
+              className="flex flex-wrap items-center gap-x-3 gap-y-1 px-4 py-2"
+            >
+              {/* A range when the plate was in shot across several moments, a
+                  single stamp when it was caught once. Printing "0:04 – 0:04"
+                  would imply a duration that was never observed. */}
               <span className="font-mono text-xs tabular-nums text-content-muted">
-                {formatVideoTime(event.videoTime)}
+                {plate.firstSeen === plate.lastSeen
+                  ? formatVideoTime(plate.firstSeen)
+                  : `${formatVideoTime(plate.firstSeen)}–${formatVideoTime(plate.lastSeen)}`}
               </span>
 
               <span className="plate-text text-sm">
-                {event.display ?? event.plateNumber ?? 'Không đọc được'}
+                {plate.display ?? plate.plateNumber ?? 'Không đọc được'}
               </span>
 
-              {event.plateNumber !== null &&
-                plateClassBadges(event.isValidFormat, event.kind, event.color)
+              {plate.plateNumber !== null &&
+                plateClassBadges(plate.isValidFormat, plate.kind, plate.color)
                   .slice(0, 2)
                   .map((badge) => (
                     <Badge key={badge.label} variant={badge.tone} title={badge.title}>
@@ -412,23 +447,30 @@ function LiveDetectionLog({ events, isRunning }: LiveDetectionLogProps): JSX.Ele
                     </Badge>
                   ))}
 
-              {event.rawText !== null && event.rawText !== event.plateNumber && (
+              <span
+                className="text-xs text-content-muted"
+                title="Số khung hình biển này được đọc thấy"
+              >
+                ×{plate.reads}
+              </span>
+
+              {plate.rawText !== null && plate.rawText !== plate.plateNumber && (
                 <span className="text-xs text-content-muted">
-                  OCR thô: <span className="font-mono">{event.rawText}</span>
+                  OCR thô: <span className="font-mono">{plate.rawText}</span>
                 </span>
               )}
 
               <span className="ml-auto flex items-center gap-3 text-xs tabular-nums text-content-muted">
-                <span title="Độ tin cậy phát hiện của YOLO">
-                  PH {formatConfidence(event.detectionConfidence)}
+                <span title="Độ tin cậy phát hiện cao nhất của YOLO">
+                  PH {formatConfidence(plate.detectionConfidence)}
                 </span>
-                {event.ocrConfidence !== null && (
-                  <span title="Độ tin cậy đọc chữ của OCR">
-                    OCR {formatConfidence(event.ocrConfidence)}
+                {plate.ocrConfidence !== null && (
+                  <span title="Độ tin cậy đọc chữ cao nhất của OCR">
+                    OCR {formatConfidence(plate.ocrConfidence)}
                   </span>
                 )}
-                <span title="Kích thước biển số trong khung hình đã gửi">
-                  {event.boxWidth}×{event.boxHeight} px
+                <span title="Kích thước biển số ở lần đọc tốt nhất">
+                  {plate.boxWidth}×{plate.boxHeight} px
                 </span>
               </span>
             </li>
