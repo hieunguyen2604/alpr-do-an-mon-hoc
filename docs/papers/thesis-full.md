@@ -6486,6 +6486,39 @@ Nói cách khác: **"chưa đo được" không đồng nghĩa với "không là
 
 Một ràng buộc kỹ thuật phát hiện trong quá trình khảo sát cần được ghi lại vì nó thu hẹp giá trị của nguồn bổ sung dồi dào nhất: bộ `nguyenluanai/license-plate-color` — nguồn duy nhất có sẵn 694 ảnh biển vàng — có **mọi ảnh bị kéo méo về khuôn 640×640** trước khi tải lên. Bộ này vì vậy **không dùng được để đánh giá OCR**, vì bước ước lượng số dòng của hệ thống dựa trên **tỷ lệ khung hình** và phép kéo phá huỷ đúng đại lượng đó. Màu nền thì không bị phép kéo làm thay đổi — nên bộ này trả lời được câu hỏi về màu và **chỉ** câu hỏi về màu, và nó đã được dùng đúng như vậy.
 
+### 6.3.9. Bước làm thẳng biển nghiêng (rectify) chưa được cài đặt
+
+Nhật ký quyết định của đồ án mô tả luồng xử lý biển hai dòng gồm bốn bước: **rectify → phân loại số dòng → tách đôi → ghép ngang**. Bước đầu tiên **chưa từng được cài đặt**. Nghiêm trọng hơn, một chú thích trong `ai/inference/recognizer.py` từng khẳng định *"ảnh cắt đã được bộ phát hiện làm thẳng"* — điều này **sai**: hộp bao của YOLO là hộp trục-thẳng, nó cắt ra một hình chữ nhật chứ không nắn hình. Chú thích sai đó đã được sửa lại đúng sự thật.
+
+Hệ quả đo được, trên khung hình thứ 168 của `demo/demo-video.mp4`:
+
+| Đại lượng | Giá trị |
+|---|---|
+| Biển thật (đọc bằng mắt) | `77-H5` / `4374`, hai dòng, **nghiêng rõ** |
+| Hộp bao trục-thẳng | 146 × 42 px, tỷ lệ **3,48** |
+| Ngưỡng phân loại một dòng / hai dòng | 2,50 |
+| Kết quả phân loại | **một dòng** (sai) |
+| Chuỗi OCR trả về | rỗng |
+
+Cơ chế xảy ra rõ ràng: một biển hai dòng bị chụp nghiêng có **hộp bao rộng bất thường**, vì hộp phải bao trọn hình chữ nhật đã xoay. Tỷ lệ vọt lên trên ngưỡng, hệ thống coi đó là biển một dòng nên không tách đôi, và OCR thất bại. Ép tách hai dòng cũng không cứu được, vì vết cắt ngang chém **chéo** qua cả hai hàng ký tự.
+
+Điều đáng chú ý là cùng một biển số ấy: khi chụp gần như chính diện (ảnh `demo/images/nhieu-bien-3.png`) hệ thống đọc **đúng** `77H5-4374`; khi nghiêng thì **không đọc nổi**. Cùng một chuỗi ký tự, cùng một mô hình — chỉ khác góc chụp. Đây là bằng chứng trực tiếp và sạch nhất cho khoảng trống này.
+
+Cảnh báo về vùng xám tỷ lệ khung hình đã được ghi sẵn trong tài liệu của `estimate_line_count` từ Phase 4, nhưng chỉ nêu chiều **giảm** (biển một dòng chụp nghiêng bị tụt xuống dưới ngưỡng). Chiều **tăng** — biển hai dòng nghiêng vọt lên trên ngưỡng — không được lường trước, và trong thực tế đường phố nó phổ biến hơn. Chuyển thành hướng phát triển ở mục 6.4.9.
+
+### 6.3.10. Xem trực tiếp và xử lý nền tranh chấp CPU với nhau
+
+Trang nhận dạng video chạy đồng thời hai việc trên cùng một CPU không GPU: bản **xem trực tiếp** gửi từng khung hình lên `POST /api/detect/frame`, và **tác vụ nền** xử lý toàn bộ video để cho ra kết quả chính thức. Đo trực tiếp trên backend, cùng một ảnh, chỉ khác điều kiện:
+
+| Điều kiện | Thời gian một khung (chế độ chỉ phát hiện) |
+|---|---|
+| Không có tác vụ nền chạy | **89–97 ms** |
+| Có tác vụ nền đang chạy | **230–462 ms** |
+
+Chậm đi **2,5–5 lần**, và quan hệ này hai chiều: các khung trực tiếp cũng làm tác vụ nền chậm lại. Vì chọn tệp là khởi động cả hai cùng lúc, **cả hai cùng tệ đi mà không bên nào được lợi**.
+
+Đây là hệ quả trực tiếp của quyết định môi trường ở Phase 0 — suy luận chạy trên CPU, không GPU — chứ không phải một lỗi lập trình: hai khối tính toán nặng chia nhau một tài nguyên hữu hạn. Cần ghi nhận vì nó làm **mọi số đo độ trễ của bản xem trực tiếp phụ thuộc vào việc lúc đó có tác vụ nền hay không**, nên một con số độ trễ đơn lẻ không có ý nghĩa nếu không kèm điều kiện đo. Hướng xử lý ở mục 6.4.10.
+
 ---
 
 ## 6.4. Hướng phát triển
@@ -6558,6 +6591,28 @@ Ba việc cụ thể, xếp theo mức khó tăng dần:
 3. **Biển chuyên dùng (LD, DA, RM, HC, KT, CD, T) — chưa tìm được nguồn nào.** Với nhóm này, con đường khả dĩ duy nhất là thu thập và gán nhãn tại chỗ, hoặc chấp nhận rằng chúng nằm ngoài phạm vi đánh giá và ghi rõ như vậy.
 
 Cần đặt hướng này đúng vị trí trong thang ưu tiên: nó **không** nâng độ chính xác của hệ thống lên một điểm nào. Giá trị của nó là **mở rộng phạm vi mà các kết luận của đồ án có hiệu lực** — chuyển câu phát biểu từ *"đo trên một tập gồm 97,7% biển trắng"* sang một câu có phân tầng theo loại biển. Với một công trình mà đóng góp chính là *đo được những thứ trước đây chỉ được mô tả định tính*, việc mở rộng phạm vi hiệu lực của phép đo là một hướng phát triển đúng bản chất của công trình chứ không phải một việc phụ.
+
+### 6.4.9. Cài đặt bước làm thẳng biển nghiêng — hướng có tỷ lệ lợi ích trên công sức cao nhất
+
+Hướng này chữa trực tiếp hạn chế 6.3.9, và điểm hấp dẫn của nó là **thiết kế đã có sẵn**: nhật ký quyết định đã mô tả bước rectify đứng đầu luồng xử lý biển hai dòng, việc còn lại là cài đặt đúng thứ đã thiết kế chứ không phải nghĩ ra cách tiếp cận mới.
+
+Đường đi cụ thể, xếp theo mức đầu tư tăng dần:
+
+1. **Ước lượng góc nghiêng bằng `cv2.minAreaRect` rồi xoay ngược.** Nhị phân hoá ảnh cắt, lấy hình chữ nhật nhỏ nhất bao lấy vùng sáng, đọc góc, rồi `warpAffine` xoay về ngang. Khoảng bốn mươi dòng mã, không cần huấn luyện, không cần dữ liệu mới.
+2. **Đo lại số dòng trên ảnh đã nắn thay vì trên hộp bao.** Chính tài liệu của `estimate_line_count` đã đề xuất điều này từ Phase 4 nhưng chưa thực hiện. Sau khi nắn, tỷ lệ khung hình mới phản ánh hình dạng thật của biển, nên ngưỡng 2,5 mới có ý nghĩa như thiết kế.
+3. **Nắn phối cảnh bốn điểm** cho trường hợp biển bị chụp chéo chứ không chỉ xoay phẳng. Đắt hơn và cần một bước tìm bốn góc biển đáng tin cậy.
+
+Cần nhấn mạnh **kỷ luật đo lường bắt buộc** cho hướng này, rút ra từ chính kinh nghiệm của đồ án: tập nhãn hiện có gồm **ảnh cắt sẵn của bộ dữ liệu**, phần lớn đã gần chính diện, nên nó **không chứa dạng lỗi này**. Một phép đo trên tập đó nhiều khả năng cho kết quả "không đổi" và sẽ bị hiểu nhầm thành "không có tác dụng". Muốn đo đúng thì phải dựng một tập đánh giá gồm **ảnh cắt do chính bộ phát hiện sinh ra từ ảnh chụp toàn cảnh**, tức đúng thứ hệ thống gặp khi chạy thật. Bài học này đã lặp lại hai lần trong đồ án và nên được ghi lại như một nguyên tắc: **tập đánh giá phải chứa dạng lỗi mà bản sửa nhắm tới, nếu không phép đo chỉ chứng minh được tính an toàn chứ không chứng minh được lợi ích.**
+
+### 6.4.10. Tách lịch chạy giữa xem trực tiếp và xử lý nền
+
+Hạn chế 6.3.10 cho thấy hai khối tính toán nặng đang giành một CPU và **cùng chậm đi**. Ba hướng xử lý, mỗi hướng có cái giá riêng:
+
+1. **Chạy tuần tự thay vì song song.** Hoãn tác vụ nền cho tới khi người dùng dừng xem trực tiếp. Cả hai đều nhanh hơn hẳn so với chạy chồng; cái giá là kết quả đầy đủ có muộn hơn. Đây là hướng đơn giản nhất và nhiều khả năng đúng nhất cho một máy đơn.
+2. **Giới hạn số luồng CPU của tác vụ nền**, chừa chỗ cho khung trực tiếp. Không đổi trải nghiệm người dùng, nhưng làm tác vụ nền chậm đi và cần đo để chọn mức chia.
+3. **Tách tiến trình suy luận ra khỏi tiến trình API**, rồi xếp hàng có mức ưu tiên. Đúng đắn nhất về kiến trúc và cũng nặng nhất; chỉ đáng làm nếu hệ thống được triển khai nhiều người dùng, và khi đó nó đi kèm với hướng 6.4.7.
+
+Cần ghi kèm một hệ quả về phương pháp: vì độ trễ của bản xem trực tiếp phụ thuộc mạnh vào việc lúc đó có tác vụ nền hay không, **mọi con số độ trễ công bố cho tính năng này bắt buộc phải kèm điều kiện đo**. Một con số trần trụi sẽ đúng hoặc sai gấp năm lần tuỳ hoàn cảnh, và đó là kiểu số liệu mà phần lớn công việc kiểm chứng của đồ án này được dựng lên để loại bỏ.
 
 ---
 
