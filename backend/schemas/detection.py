@@ -189,6 +189,17 @@ class DetectionResultSchema(BaseModel):
         ),
         examples=["29E-015.66"],
     )
+    video_time_seconds: float | None = Field(
+        default=None,
+        ge=0.0,
+        description=(
+            "Where in the source clip this plate was found, in seconds. `null` "
+            "for images and realtime frames, which have no timeline, and for "
+            "rows written before migration `0003`. A timestamp rather than a "
+            "frame index: an index means nothing without the clip's frame rate."
+        ),
+        examples=[12.4],
+    )
     plate_line_count: int | None = Field(
         default=None,
         ge=1,
@@ -281,7 +292,19 @@ class DetectionHistoryResponse(BaseModel):
     the request first (NFR-S2).
     """
 
-    model_config = ConfigDict(from_attributes=True)
+    model_config = ConfigDict(from_attributes=True, extra="forbid")
+    """``extra="forbid"`` is a guard, not a formality.
+
+    Pydantic's default is to *silently drop* a keyword it does not recognise. A
+    mapper that enumerates its fields -- as ``HistoryService._to_response`` does
+    -- therefore keeps working after someone adds a field to the schema and
+    passes it from the mapper before declaring it here: the value simply never
+    reaches the response, on this endpoint only, with nothing raised anywhere.
+    That is precisely how ``plate_display`` came back empty on the history
+    endpoint while working on the detection one. Forbidding extras turns that
+    class of drift into an error at the first request instead of a field the
+    interface quietly renders as a dash.
+    """
 
     id: int = Field(..., description="Unique identifier of the detection record.")
     plate_number: str | None = Field(
@@ -336,6 +359,27 @@ class DetectionHistoryResponse(BaseModel):
         ge=0.0,
         le=1.0,
         description="Fraction of sampled pixels supporting `plate_color`.",
+    )
+    plate_display: str | None = Field(
+        default=None,
+        description=(
+            "`plate_number` with the separators the physical plate carries, "
+            "e.g. `29E-015.66`. Derived at read time rather than stored, so it "
+            "is present on every row including those written before the field "
+            "existed. Display only -- search and matching use `plate_number`."
+        ),
+        examples=["29E-015.66"],
+    )
+    video_time_seconds: float | None = Field(
+        default=None,
+        ge=0.0,
+        description=(
+            "Where in the source clip this plate was found, in seconds. `null` "
+            "for images and realtime frames, which have no timeline, and for "
+            "rows written before migration `0003`. A timestamp rather than a "
+            "frame index: an index means nothing without the clip's frame rate."
+        ),
+        examples=[12.4],
     )
     plate_line_count: int | None = Field(
         default=None, description="Number of text lines on the plate: 1 or 2."

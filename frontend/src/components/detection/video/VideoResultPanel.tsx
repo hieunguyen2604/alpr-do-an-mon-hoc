@@ -10,6 +10,7 @@
 import { Download, Film, ScanLine } from 'lucide-react';
 
 import {
+  Badge,
   Button,
   Card,
   ConfidenceBar,
@@ -19,7 +20,8 @@ import {
   Skeleton,
 } from '@/components/ui';
 import { fileUrl } from '@/services/api';
-import { formatDateTime, formatNumber, formatProcessingTime } from '@/lib/format';
+import { formatDateTime, formatNumber, formatProcessingTime, formatVideoTime } from '@/lib/format';
+import { plateClassBadges } from '@/lib/plateClass';
 import type { DetectionHistory, DetectionJob } from '@/types';
 
 /** Props of {@link VideoResultPanel}. */
@@ -89,10 +91,29 @@ function PlateCard({ record }: { record: DetectionHistory }): JSX.Element {
 
       <div className="min-w-0 flex-1 space-y-2">
         <PlateChip
-          plateNumber={record.plate_number}
+          plateNumber={record.plate_display ?? record.plate_number}
           isValidFormat={record.is_valid_format}
           size="sm"
         />
+
+        {/* Same badges as the image page. A video result is the same kind of
+            evidence as a still one, and an army plate shown here without them
+            would carry the "wrong format" reading that the badges exist to
+            prevent. */}
+        {record.plate_number && (
+          <div className="flex flex-wrap gap-1.5">
+            {plateClassBadges(
+              record.is_valid_format,
+              record.plate_kind,
+              record.plate_color,
+            ).map((badge) => (
+              <Badge key={badge.label} variant={badge.tone} title={badge.title}>
+                {badge.label}
+              </Badge>
+            ))}
+          </div>
+        )}
+
         <ConfidenceBar
           value={record.confidence}
           label="Độ tin cậy phát hiện"
@@ -100,6 +121,18 @@ function PlateCard({ record }: { record: DetectionHistory }): JSX.Element {
           showValue
         />
         <p className="text-xs text-content-muted">
+          {/* Where in the clip, first: it is the field that makes a video result
+              checkable. Without it a list of plates cannot be traced back to
+              the moments that produced them. */}
+          {record.video_time_seconds !== null && (
+            <>
+              <span className="font-medium text-content">
+                {formatVideoTime(record.video_time_seconds)}
+              </span>
+              {' · '}
+            </>
+          )}
+          {record.plate_line_count !== null && `${record.plate_line_count} dòng · `}
           {formatDateTime(record.detected_time)} ·{' '}
           {formatProcessingTime(record.processing_time)}
         </p>

@@ -44,6 +44,7 @@ from backend.core.exceptions import NotFoundError, ValidationError
 from backend.core.logging import get_logger
 from backend.models.detection import DetectionHistory
 from backend.schemas.detection import DetectionHistoryResponse, HistoryListResponse
+from backend.services.detection_service import display_text
 from backend.services.storage_service import StorageService
 
 __all__ = [
@@ -218,6 +219,18 @@ class HistoryService:
             bbox_w=row.bbox_w,
             bbox_h=row.bbox_h,
             is_valid_format=row.is_valid_format,
+            # Vehicle-class fields. Listed explicitly, like every other field
+            # here, rather than relying on `from_attributes`: a mapper that
+            # enumerates its fields fails loudly when the schema gains one it
+            # does not know, whereas an implicit mapping would return the column
+            # for some endpoints and silently omit it for others -- which is
+            # exactly what happened when these three reached the detection
+            # response but not this one.
+            plate_kind=row.plate_kind,
+            plate_color=row.plate_color,
+            plate_color_confidence=row.plate_color_confidence,
+            plate_display=display_text(row.plate_number, row.plate_line_count),
+            video_time_seconds=row.video_time_seconds,
             plate_line_count=row.plate_line_count,
             processing_time=row.processing_time,
             detected_time=row.detected_time,

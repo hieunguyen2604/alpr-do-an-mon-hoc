@@ -349,11 +349,37 @@ class VietnamesePlateNormalizer(BaseNormalizer):
             and line_count == 1
             and {PlateKind.CAR, PlateKind.MOTORCYCLE_OLD} <= candidate_set
         ):
-            # A one-line plate cannot be a motorcycle plate (section 7.1).
+            # A one-line plate cannot be a motorcycle plate (section 7.1). This
+            # is a proof, so the ambiguity is genuinely gone.
             best = PlateKind.CAR
             is_ambiguous = any(
                 pair <= candidate_set - {PlateKind.MOTORCYCLE_OLD} for pair in _AMBIGUOUS_PAIRS
             )
+            resolved = True
+        elif (
+            is_ambiguous
+            and line_count == 2
+            and {PlateKind.CAR, PlateKind.MOTORCYCLE_OLD} <= candidate_set
+        ):
+            # Two lines is a *prior*, not a proof -- two-line car plates exist,
+            # and this project has one on file (`65A-004.50`, a State vehicle).
+            # So `is_ambiguous` deliberately stays set: the caller is still told
+            # the string could go either way.
+            #
+            # What changes is which way the tie falls. Leaving the default at
+            # ``candidates[0]`` meant CAR, purely because of the order the
+            # patterns happen to be declared in -- an arbitrary choice presented
+            # to the user as a formatted plate number. Measured against the
+            # labelled corpus, that arbitrary choice was wrong almost every time:
+            # of 696 ambiguous two-line plates, 452 carry the vehicle type in
+            # their source filename, and 450 of those are motorcycles. Two are
+            # cars.
+            #
+            # The visible cost of getting it wrong is not academic. The grouping
+            # differs -- ``51P5-4578`` against ``51P-515.78`` -- so the interface
+            # shows a plate number that does not match the one printed on the
+            # vehicle, and the badge says the wrong vehicle class.
+            best = PlateKind.MOTORCYCLE_OLD
             resolved = True
 
         return KindDecision(

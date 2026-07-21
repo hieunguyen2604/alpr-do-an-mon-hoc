@@ -256,6 +256,17 @@ export interface DetectionHistory {
   plate_color: PlateColor | null;
   /** Fraction of sampled pixels supporting `plate_color`. */
   plate_color_confidence: number | null;
+  /**
+   * `plate_number` with the separators the physical plate carries. Derived on
+   * read rather than stored, so it is present on every row including old ones.
+   */
+  plate_display: string | null;
+  /**
+   * Where in the source clip this plate was found, in seconds. `null` for
+   * images and realtime frames, which have no timeline, and for rows written
+   * before migration `0003`.
+   */
+  video_time_seconds: number | null;
   plate_line_count: PlateLineCount | null;
   /** Seconds. */
   processing_time: number;

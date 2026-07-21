@@ -205,8 +205,9 @@ Về vấn đề đa layout, đồ án chọn hướng **phân loại layout tư
 
 $$
 \mathrm{IoU}(B_p, B_{gt}) = \frac{|B_p \cap B_{gt}|}{|B_p \cup B_{gt}|}
-\tag{2.1}
 $$
+
+<div align="right">(2.1)</div>
 
 Giá trị IoU nằm trong đoạn $[0, 1]$; bằng 1 khi hai hộp trùng khít và bằng 0 khi hai hộp không giao nhau. Một dự đoán được coi là đúng (*true positive*) khi IoU vượt một ngưỡng cho trước, thông thường là 0,5. Ký hiệu $P_{75}$ xuất hiện trong một số công trình có nghĩa là precision đo tại ngưỡng IoU bằng 0,75 — chặt hơn đáng kể.
 
@@ -337,18 +338,21 @@ Luận cứ chọn YOLO11 cho đồ án được trình bày đầy đủ ở m�
 
 $$
 \mathrm{Precision} = \frac{TP}{TP + FP}
-\tag{2.2}
 $$
+
+<div align="right">(2.2)</div>
 
 $$
 \mathrm{Recall} = \frac{TP}{TP + FN}
-\tag{2.3}
 $$
+
+<div align="right">(2.3)</div>
 
 $$
 F_1 = \frac{2 \cdot \mathrm{Precision} \cdot \mathrm{Recall}}{\mathrm{Precision} + \mathrm{Recall}}
-\tag{2.4}
 $$
+
+<div align="right">(2.4)</div>
 
 Precision trả lời câu hỏi "trong những gì mô hình báo là biển số, bao nhiêu phần trăm thực sự là biển số"; recall trả lời "trong toàn bộ biển số có thật, mô hình tìm được bao nhiêu phần trăm". $F_1$ là trung bình điều hoà của hai đại lượng, dùng khi cần một con số tổng hợp duy nhất.
 
@@ -358,15 +362,17 @@ Với bài toán ALPR, **recall của khối detection quan trọng hơn precisi
 
 $$
 \mathrm{AP} = \int_0^1 p(r)\, \mathrm{d}r
-\tag{2.5}
 $$
+
+<div align="right">(2.5)</div>
 
 trong đó $p(r)$ là precision đạt được tại mức recall $r$. mAP là trung bình AP trên toàn bộ $N$ lớp:
 
 $$
 \mathrm{mAP} = \frac{1}{N}\sum_{i=1}^{N} \mathrm{AP}_i
-\tag{2.6}
 $$
+
+<div align="right">(2.6)</div>
 
 Với bài toán một lớp của đồ án, $N = 1$ nên mAP trùng với AP của lớp `license_plate`.
 
@@ -377,8 +383,9 @@ Với bài toán một lớp của đồ án, $N = 1$ nên mAP trùng với AP c
 
 $$
 \mathrm{mAP@0.5\!:\!0.95} = \frac{1}{10}\sum_{t \in \{0{,}50;\, 0{,}55;\, \ldots;\, 0{,}95\}} \mathrm{mAP@}t
-\tag{2.7}
 $$
+
+<div align="right">(2.7)</div>
 
 Chỉ số thứ hai chặt hơn hẳn vì nó đòi hỏi hộp dự đoán phải khớp chính xác chứ không chỉ chồng lấp. Từ định nghĩa, ta rút ra một hệ quả toán học không thể vi phạm:
 
@@ -452,15 +459,17 @@ EasyOCR dùng đúng kiến trúc này cho khối recognition: một backbone CN
 
 $$
 p(\mathbf{l} \mid \mathbf{x}) = \sum_{\boldsymbol{\pi} \in \mathcal{B}^{-1}(\mathbf{l})} \prod_{t=1}^{T} y^{t}_{\pi_t}
-\tag{2.8}
 $$
+
+<div align="right">(2.8)</div>
 
 trong đó $y^{t}_{k}$ là xác suất mô hình gán cho ký tự $k$ tại cột $t$. Hàm mất mát CTC là log hợp lý âm của đại lượng trên:
 
 $$
 \mathcal{L}_{\mathrm{CTC}} = -\log p(\mathbf{l} \mid \mathbf{x})
-\tag{2.9}
 $$
+
+<div align="right">(2.9)</div>
 
 Tổng ở công thức (2.8) có số hạng tăng theo hàm mũ, nhưng tính được hiệu quả bằng thuật toán quy hoạch động tiến–lùi (*forward–backward*).
 
@@ -550,8 +559,9 @@ Cũng cần ghi nhận rằng số liệu này đo trên **biển số Trung Qu�
 
 $$
 \mathrm{CER} = \frac{S + D + I}{N}
-\tag{2.10}
 $$
+
+<div align="right">(2.10)</div>
 
 trong đó $S$ là số phép thay thế (*substitutions*), $D$ là số phép xoá (*deletions*), $I$ là số phép chèn (*insertions*) cần thực hiện để biến chuỗi dự đoán thành chuỗi thực, và $N$ là tổng số ký tự của chuỗi thực. Độ chính xác mức ký tự tương ứng là $1 - \mathrm{CER}$.
 
@@ -563,8 +573,9 @@ Lưu ý rằng CER **có thể vượt 1** khi chuỗi dự đoán dài hơn chu
 
 $$
 \mathrm{Acc}_{\text{plate}} = \frac{\#\{\text{biển số có TOÀN BỘ chuỗi ký tự khớp chính xác}\}}{\#\{\text{tổng số biển số trong tập kiểm thử}\}}
-\tag{2.11}
 $$
+
+<div align="right">(2.11)</div>
 
 Một biển đọc sai đúng một ký tự vẫn bị tính là sai hoàn toàn. Đây là chỉ số phản ánh đúng giá trị sử dụng thực tế: một chuỗi biển số sai một ký tự thì vô dụng với hệ thống tra cứu, vì nó hoặc không khớp bản ghi nào, hoặc — tệ hơn — khớp nhầm sang phương tiện khác.
 

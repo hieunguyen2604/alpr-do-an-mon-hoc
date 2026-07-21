@@ -142,40 +142,16 @@ export default function VideoDetection(): JSX.Element {
   } = useJobPolling(jobId, { onSettled: handleSettled });
 
   /**
-   * Accept a newly chosen video.
+   * Upload one video and start following the job it creates.
    *
-   * Clears any previous run: leaving the last job's results on screen beside a
-   * new file would attribute them to the wrong video.
+   * Takes the file as an argument rather than reading `selectedFile` from
+   * state, so that it can be called from the same tick that sets it. A React
+   * state update is not visible to the callback that scheduled it, so a version
+   * reading state would upload nothing on the very call that matters.
    *
-   * @param file - The file that passed the dropzone's validation.
+   * @param file - The video to process.
    */
-  const handleFileSelect = useCallback((file: File): void => {
-    setSelectedFile(file);
-    setJobId(null);
-    setUploadError(null);
-    setUploadProgress(0);
-    setPlates([]);
-    setPlatesError(null);
-  }, []);
-
-  /** Clear the selection and everything derived from it. */
-  const handleClear = useCallback((): void => {
-    uploadAbortRef.current?.abort();
-    platesAbortRef.current?.abort();
-    setSelectedFile(null);
-    setJobId(null);
-    setUploadError(null);
-    setUploadProgress(0);
-    setPlates([]);
-    setPlatesError(null);
-  }, []);
-
-  /** Upload the selected video and start following the job it creates. */
-  const handleSubmit = useCallback(async (): Promise<void> => {
-    if (!selectedFile || isUploading) {
-      return;
-    }
-
+  const startJob = useCallback(async (file: File): Promise<void> => {
     uploadAbortRef.current?.abort();
     const controller = new AbortController();
     uploadAbortRef.current = controller;
@@ -187,11 +163,7 @@ export default function VideoDetection(): JSX.Element {
     setPlatesError(null);
 
     try {
-      const created = await detectVideo(
-        selectedFile,
-        setUploadProgress,
-        controller.signal,
-      );
+      const created = await detectVideo(file, setUploadProgress, controller.signal);
       if (!isMountedRef.current || controller.signal.aborted) {
         return;
       }
@@ -208,7 +180,53 @@ export default function VideoDetection(): JSX.Element {
         setIsUploading(false);
       }
     }
-  }, [selectedFile, isUploading]);
+  }, []);
+
+  /**
+   * Accept a newly chosen video.
+   *
+   * Clears any previous run: leaving the last job's results on screen beside a
+   * new file would attribute them to the wrong video.
+   *
+   * @param file - The file that passed the dropzone's validation.
+   */
+  const handleFileSelect = useCallback(
+    (file: File): void => {
+      setSelectedFile(file);
+      setJobId(null);
+      setUploadError(null);
+      setUploadProgress(0);
+      setPlates([]);
+      setPlatesError(null);
+
+      // Start immediately rather than waiting for a second click. Choosing a
+      // video is already an unambiguous request to process it -- there is
+      // nothing else the page can do with the file, and no option to set
+      // between the two steps. The confirmation button was a step that asked a
+      // question with only one answer.
+      void startJob(file);
+    },
+    [startJob],
+  );
+
+  /** Clear the selection and everything derived from it. */
+  const handleClear = useCallback((): void => {
+    uploadAbortRef.current?.abort();
+    platesAbortRef.current?.abort();
+    setSelectedFile(null);
+    setJobId(null);
+    setUploadError(null);
+    setUploadProgress(0);
+    setPlates([]);
+    setPlatesError(null);
+  }, []);
+
+  /** Retry the current file after a failed upload. */
+  const handleRetry = useCallback((): void => {
+    if (selectedFile && !isUploading) {
+      void startJob(selectedFile);
+    }
+  }, [selectedFile, isUploading, startJob]);
 
   /** Poll once immediately, from the progress panel's refresh button. */
   const handleRefresh = useCallback((): void => {
@@ -231,20 +249,19 @@ export default function VideoDetection(): JSX.Element {
         selectedFile={selectedFile}
         onFileSelect={handleFileSelect}
         onClear={handleClear}
-        onSubmit={() => void handleSubmit()}
         isUploading={isUploading}
         uploadProgress={uploadProgress}
         isJobRunning={isJobRunning}
       />
 
-      {/* Upload failures are reported here rather than inside the panel: the
-          file is still selected and still valid, so the retry is the submit
-          button the user already has. */}
+      {/* Upload failures are reported here rather than inside the panel. With
+          the submit button gone, this is now the *only* way to retry, so the
+          action has to live where the error does. */}
       {uploadError && (
         <ErrorState
           title="Không tải được video lên"
           message={uploadError}
-          onRetry={() => void handleSubmit()}
+          onRetry={handleRetry}
           retryLabel="Thử tải lên lại"
           isRetrying={isUploading}
         />

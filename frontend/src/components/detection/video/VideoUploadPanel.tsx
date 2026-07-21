@@ -4,11 +4,15 @@
  * Selection and validation only — this component never talks to the network.
  * The page owns the request so that the upload lifecycle and the job that
  * follows it stay in one place.
+ *
+ * There is no submit button. Choosing a video starts the job, because choosing
+ * one is already an unambiguous request to process it: nothing else the page
+ * can do with a file, and no setting to choose in between.
  */
 
-import { FileVideo, Upload } from 'lucide-react';
+import { FileVideo } from 'lucide-react';
 
-import { Button, Card, FileDropzone, ProgressBar } from '@/components/ui';
+import { Card, FileDropzone, ProgressBar } from '@/components/ui';
 import {
   ACCEPTED_VIDEO_LABEL,
   ACCEPTED_VIDEO_TYPES,
@@ -25,7 +29,6 @@ export interface VideoUploadPanelProps {
   /** Called when the user clears the selection. */
   onClear: () => void;
   /** Called when the user starts processing. */
-  onSubmit: () => void;
   /** Whether the multipart upload is in flight. */
   isUploading: boolean;
   /** Upload transfer progress from 0.0 to 1.0. */
@@ -49,7 +52,6 @@ export function VideoUploadPanel({
   selectedFile,
   onFileSelect,
   onClear,
-  onSubmit,
   isUploading,
   uploadProgress,
   isJobRunning,
@@ -89,24 +91,12 @@ export function VideoUploadPanel({
           <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-border bg-surface-muted px-4 py-3">
             <div className="min-w-0">
               <p className="text-sm font-medium text-content">
-                Sẵn sàng xử lý
+                {isUploading ? 'Đang tải video lên…' : 'Đang xử lý video'}
               </p>
               <p className="mt-0.5 text-xs text-content-muted">
-                {formatFileSize(selectedFile.size)} · sẽ được đưa vào hàng đợi
-                xử lý nền
+                {formatFileSize(selectedFile.size)} · bắt đầu ngay khi chọn tệp
               </p>
             </div>
-            <Button
-              type="button"
-              variant="primary"
-              onClick={onSubmit}
-              disabled={isLocked}
-              isLoading={isUploading}
-              loadingText="Đang tải lên…"
-              leftIcon={<Upload className="h-4 w-4" aria-hidden="true" />}
-            >
-              Bắt đầu xử lý
-            </Button>
           </div>
         )}
 

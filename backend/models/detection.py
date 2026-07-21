@@ -396,6 +396,12 @@ class DetectionHistory(Base):
     plate_color: Mapped[str | None] = mapped_column(String(_ENUM_LENGTH))
     plate_color_confidence: Mapped[float | None] = mapped_column(Float)
 
+    # Where in the source clip this plate was found, in seconds. NULL for images
+    # and realtime frames, which have no "when" to record. Stored as a timestamp
+    # rather than a frame index because an index means nothing without the clip's
+    # frame rate, and that is neither stored nor constant across sources.
+    video_time_seconds: Mapped[float | None] = mapped_column(Float)
+
     processing_time: Mapped[float] = mapped_column(Float, nullable=False, default=0.0)
 
     detected_time: Mapped[dt.datetime] = mapped_column(UtcDateTime, nullable=False, default=utcnow)

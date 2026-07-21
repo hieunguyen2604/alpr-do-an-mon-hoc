@@ -336,3 +336,26 @@ export function jobStatusColorClass(status: JobStatus): string {
       return 'bg-content-muted/10 text-content-muted';
   }
 }
+
+/**
+ * Render a position within a video as `m:ss`.
+ *
+ * Distinct from {@link formatProcessingTime}, which measures how long something
+ * took. This measures *where* in a clip a plate was found, so the reader can
+ * seek to it — the difference matters enough that reusing the duration
+ * formatter here would produce "74,2 s" where "1:14" is what a video player
+ * shows.
+ *
+ * @param seconds - Offset from the start of the clip, or `null`.
+ * @returns For example `formatVideoTime(74.2)` is `"1:14"`; {@link NO_VALUE}
+ *   when there is no value — a plate from an image has no position in a video,
+ *   and `0:00` would claim it came from the opening frame.
+ */
+export function formatVideoTime(seconds: number | null | undefined): string {
+  if (seconds === null || seconds === undefined || !Number.isFinite(seconds)) {
+    return NO_VALUE;
+  }
+  const total = Math.max(0, Math.floor(seconds));
+  const minutes = Math.floor(total / 60);
+  return `${minutes}:${String(total % 60).padStart(2, '0')}`;
+}

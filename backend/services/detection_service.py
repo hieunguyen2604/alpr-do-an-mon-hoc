@@ -72,6 +72,7 @@ __all__ = [
     "UnavailablePipeline",
     "DetectionService",
     "to_job_response",
+    "display_text",
 ]
 
 logger = get_logger(__name__)
@@ -356,7 +357,7 @@ def to_job_response(job: DetectionJob, storage: StorageService) -> DetectionJobR
     )
 
 
-def _display_text(plate_number: str | None, line_count: int | None) -> str | None:
+def display_text(plate_number: str | None, line_count: int | None) -> str | None:
     """Render a stored plate number with the separators the real plate carries.
 
     Derived on read rather than stored: the separators are a pure function of the
@@ -404,7 +405,8 @@ def _to_result_schema(row: DetectionHistory, storage: StorageService) -> Detecti
         plate_kind=row.plate_kind,
         plate_color=row.plate_color,
         plate_color_confidence=row.plate_color_confidence,
-        plate_display=_display_text(row.plate_number, row.plate_line_count),
+        plate_display=display_text(row.plate_number, row.plate_line_count),
+        video_time_seconds=row.video_time_seconds,
         plate_line_count=row.plate_line_count,
         processing_time=row.processing_time,
         plate_image_url=storage.to_url(row.plate_image_path),
@@ -740,6 +742,10 @@ class DetectionService:
         # against it collapse.
         frame_width = int(capture.get(cv2.CAP_PROP_FRAME_WIDTH) or 0)
         frame_height = int(capture.get(cv2.CAP_PROP_FRAME_HEIGHT) or 0)
+        # Needed to turn a frame index into a timestamp. Read here for the same
+        # reason as the dimensions above: it reports 0 once the capture is
+        # released, and a frame rate of 0 would put every plate at second zero.
+        fps = float(capture.get(cv2.CAP_PROP_FPS) or 0.0)
 
         try:
             while True:
@@ -763,6 +769,13 @@ class DetectionService:
             capture.release()
 
         merged = [entry for entry, _ in best_by_key.values()]
+        # Where each plate was found, in seconds. The frame index was already
+        # tracked and then discarded; keeping it lets the interface say *when* a
+        # plate passed and lets a reviewer seek to that moment in the source to
+        # check a doubtful reading. ``None`` when the container reports no frame
+        # rate -- an unknown timestamp is better left absent than reported as
+        # second zero.
+        video_times = [(index / fps if fps > 0 else None) for _, index in best_by_key.values()]
         pseudo = PipelineResult(
             results=merged,
             total_time=0.0,
@@ -775,6 +788,7 @@ class DetectionService:
             result=pseudo,
             input_type=InputType.VIDEO,
             image_path=job.source_path,
+            video_times=video_times,
         )
 
         job.processed_frames = processed
@@ -1093,6 +1107,7 @@ class DetectionService:
         result: PipelineResult,
         input_type: InputType,
         image_path: str | None,
+        video_times: list[float | None] | None = None,
     ) -> list[DetectionHistory]:
         """Write one history row per detected plate.
 
@@ -1151,6 +1166,13 @@ class DetectionService:
                 plate_kind=(recognition.kind or None) if recognition else None,
                 plate_color=entry.plate_color or None,
                 plate_color_confidence=entry.plate_color_confidence or None,
+                # Positional, matching this entry's index in ``result.results``.
+                # Absent for images and realtime frames, which have no timeline.
+                video_time_seconds=(
+                    video_times[index]
+                    if video_times is not None and index < len(video_times)
+                    else None
+                ),
                 processing_time=entry.processing_time,
                 detected_time=detected_at,
                 source_job_id=job.id,

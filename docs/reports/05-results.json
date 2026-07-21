@@ -663,35 +663,35 @@
   },
   "T5.6a": {
     "char_accuracy_truoc": 0.8704,
-    "char_accuracy_sau": 0.8734,
+    "char_accuracy_sau": 0.8848,
     "cer_truoc": 0.1296,
-    "cer_sau": 0.1266,
+    "cer_sau": 0.1152,
     "N_so_ky_tu_nhan_that": 23855,
     "S_thay_the": 1007,
     "D_bi_xoa": 1182,
     "I_chen_thua": 903,
-    "S_D_I_nguon": "dan ra tu confusion_matrix cua 05-ocr-accuracy.json: S = tong o ngoai duong cheo, D = tong deletions, I = tong insertions, N = tong ma tran cong D. Khong phai so uoc luong.",
+    "S_D_I_nguon": "dan ra tu confusion_matrix cua 16-ocr-accuracy-rescued.json: S = tong o ngoai duong cheo, D = tong deletions, I = tong insertions, N = tong ma tran cong D. Khong phai so uoc luong. Ma tran nay do tren chuoi THO truoc chuan hoa nen S/D/I khong doi so voi luot do truoc buoc cuu dong tren.",
     "S_D_I_ly_do": null,
     "so_ca_theo_loai_loi": {
-      "correct": 1836,
+      "correct": 1885,
       "empty_read": 11,
-      "substitution": 376,
-      "missing_chars": 217,
+      "substitution": 399,
+      "missing_chars": 134,
       "extra_chars": 95,
       "transposition": 0,
-      "mixed": 266
+      "mixed": 277
     },
     "so_mau": 2801,
     "ket_qua_nfr_a4": "❌ không đạt",
-    "tep_nguon": "D:\\DATN\\docs\\reports\\05-ocr-accuracy.json"
+    "tep_nguon": "D:\\DATN\\docs\\reports\\16-ocr-accuracy-rescued.json"
   },
   "T5.6b": {
     "a5_truoc_hau_xu_ly": 0.6098,
-    "a6_sau_hau_xu_ly": 0.6555,
-    "muc_cai_thien_diem_pt": 4.57,
-    "so_bien_duoc_sua_dung": 128,
+    "a6_sau_hau_xu_ly": 0.673,
+    "muc_cai_thien_diem_pt": 6.32,
+    "so_bien_duoc_sua_dung": 177,
     "so_bien_bi_lam_hong": 0,
-    "so_bien_sai_ca_truoc_lan_sau": 965,
+    "so_bien_sai_ca_truoc_lan_sau": 916,
     "so_mau": 2801,
     "ket_qua_nfr_a5": "❌ không đạt",
     "ket_qua_nfr_a6": "❌ không đạt",
@@ -699,12 +699,13 @@
     "phan_ra_theo_nhom_luat": {
       "trang_thai": "chua do",
       "ly_do": "Chua co co che bat/tat tung nhom luat trong ai/inference/plate_rules.py. Muc D.2 cua ch5-thuc-nghiem.md ghi day la hang muc can viet ma truoc khi dien duoc."
-    }
+    },
+    "tep_nguon": "D:\\DATN\\docs\\reports\\16-ocr-accuracy-rescued.json"
   },
   "T5.6c": {
     "mot_dong": {
       "so_mau": 567,
-      "char_accuracy": 0.99,
+      "char_accuracy": 0.9903,
       "a5": 0.9418,
       "a6": 0.9489,
       "gain_points": 0.71,
@@ -712,18 +713,19 @@
     },
     "hai_dong": {
       "so_mau": 2234,
-      "char_accuracy": 0.8462,
+      "char_accuracy": 0.8601,
       "a5": 0.5255,
-      "a6": 0.581,
-      "gain_points": 5.55,
-      "a7": 0.4816
+      "a6": 0.603,
+      "gain_points": 7.74,
+      "a7": 0.4902
     },
     "chenh_lech_diem_pt": {
-      "char_accuracy": 14.38,
+      "char_accuracy": 13.02,
       "a5": 41.63,
-      "a6": 36.79
+      "a6": 34.59
     },
-    "moc_tham_chieu": "Laroca va cong su (VISAPP 2022) bao cao 94,3% (bien mot dong) so voi 45,7% (bien hai dong), chenh 48,6 diem, do tren bo du lieu RodoSol-ALPR CUA BRAZIL. Day KHONG phai so lieu Viet Nam."
+    "moc_tham_chieu": "Laroca va cong su (VISAPP 2022) bao cao 94,3% (bien mot dong) so voi 45,7% (bien hai dong), chenh 48,6 diem, do tren bo du lieu RodoSol-ALPR CUA BRAZIL. Day KHONG phai so lieu Viet Nam.",
+    "tep_nguon": "D:\\DATN\\docs\\reports\\16-ocr-accuracy-rescued.json"
   },
   "T5.6d": {
     "top_cap_nham": [
@@ -1332,14 +1334,15 @@
     ]
   },
   "T5.6e": {
-    "a7_e2e": 0.5227,
-    "a7_voi_dieu_kien_da_phat_hien": 0.5937,
+    "a7_e2e": 0.5295,
+    "a7_voi_dieu_kien_da_phat_hien": 0.6014,
     "ty_le_bien_bi_bo_sot": 0.1196,
-    "ty_le_phat_hien_dung_nhung_doc_sai": 0.4063,
-    "chenh_lech_a6_tru_a7": 13.28,
+    "ty_le_phat_hien_dung_nhung_doc_sai": 0.3986,
+    "chenh_lech_a6_tru_a7": 14.35,
     "so_mau": 2801,
     "ket_qua_nfr_a7": "❌ không đạt",
-    "canh_bao_hieu_luc": "Con so nay do tren anh CROP bien so, khong phai anh hien truong, vi khong bo du lieu nao trong do an co dong thoi anh toan canh va chuoi bien so. Bo detect duoc huan luyen tren anh giao thong day du nen mot tam anh chi co bien so chiem gan het khung la NGOAI PHAN BO: phan lon that bai la do detect khong bat duoc box, khong phai do OCR doc sai (xem e2e.exact_given_detected va e2e.missed_by_detector). Mo hinh chinh thuc best.pt dat mAP@0.5 = 0,9829 tren tap test v3 (1.514 anh) — tuc bo phat hien hoat dong tot tren anh hien truong; that bai o phep do A7 den tu viec dua anh CROP vao bo phat hien, ngoai phan bo huan luyen cua no. De do NFR-A7 dung cach can gan nhan chuoi bien so cho mot phan bo test cua yolo_v2 -- viec nay CHUA lam."
+    "canh_bao_hieu_luc": "Con so nay do tren anh CROP bien so, khong phai anh hien truong, vi khong bo du lieu nao trong do an co dong thoi anh toan canh va chuoi bien so. Bo detect duoc huan luyen tren anh giao thong day du nen mot tam anh chi co bien so chiem gan het khung la NGOAI PHAN BO: phan lon that bai la do detect khong bat duoc box, khong phai do OCR doc sai (xem e2e.exact_given_detected va e2e.missed_by_detector). Mo hinh chinh thuc best.pt dat mAP@0.5 = 0,9829 tren tap test v3 (1.514 anh) — tuc bo phat hien hoat dong tot tren anh hien truong; that bai o phep do A7 den tu viec dua anh CROP vao bo phat hien, ngoai phan bo huan luyen cua no. De do NFR-A7 dung cach can gan nhan chuoi bien so cho mot phan bo test cua yolo_v2 -- viec nay CHUA lam.",
+    "tep_nguon": "D:\\DATN\\docs\\reports\\16-ocr-accuracy-rescued.json"
   },
   "T5.10": {
     "loai_loi": {
@@ -1360,24 +1363,24 @@
       },
       "E3": {
         "ten": "Nhầm ký tự",
-        "so_ca": 376,
-        "ty_le_trong_tong_ca_sai": 0.3896,
-        "ty_le_trong_toan_tap": 0.1342,
+        "so_ca": 399,
+        "ty_le_trong_tong_ca_sai": 0.4356,
+        "ty_le_trong_toan_tap": 0.1424,
         "mot_dong": 18,
-        "hai_dong": 358
+        "hai_dong": 381
       },
       "E4": {
         "ten": "Thiếu ký tự",
-        "so_ca": 217,
-        "ty_le_trong_tong_ca_sai": 0.2249,
-        "ty_le_trong_toan_tap": 0.0775,
+        "so_ca": 134,
+        "ty_le_trong_tong_ca_sai": 0.1463,
+        "ty_le_trong_toan_tap": 0.0478,
         "mot_dong": 1,
-        "hai_dong": 216
+        "hai_dong": 133
       },
       "E5": {
         "ten": "Thừa ký tự",
         "so_ca": 95,
-        "ty_le_trong_tong_ca_sai": 0.0984,
+        "ty_le_trong_tong_ca_sai": 0.1037,
         "ty_le_trong_toan_tap": 0.0339,
         "mot_dong": 5,
         "hai_dong": 90
@@ -1393,13 +1396,13 @@
     },
     "cac_loai_khac": {
       "empty_read": 11,
-      "mixed": 266,
+      "mixed": 277,
       "ghi_chu": "Hai loai nay co trong cai dat nhung khong co ma E tuong ung trong bang 5.10.1. Phai them dong cho chung hoac gop co giai thich — khong duoc bo im lang vi khi do tong se khong bang 100%."
     },
-    "tong_so_ca_sai": 965,
+    "tong_so_ca_sai": 916,
     "tong_so_ca_danh_gia": 2801,
-    "ty_le_loi": 0.3445,
-    "tep_nguon": "D:\\DATN\\docs\\reports\\05-ocr-errors\\error_analysis.json"
+    "ty_le_loi": 0.327,
+    "tep_nguon": "D:\\DATN\\docs\\reports\\16-ocr-accuracy-rescued.json (khoa by_line_count.*.error_classes)"
   },
   "T5.7e": {
     "so_yeu_cau_dong_thoi_on_dinh": 10,
@@ -1561,7 +1564,7 @@
       {
         "ma": "A4",
         "chi_tieu": "1 − CER (mức ký tự)",
-        "do_duoc": 0.8734,
+        "do_duoc": 0.8848,
         "nfr": "NFR-A4",
         "ket_qua": "❌ không đạt"
       },
@@ -1575,21 +1578,21 @@
       {
         "ma": "A6",
         "chi_tieu": "Chuỗi đầy đủ sau hậu xử lý",
-        "do_duoc": 0.6555,
+        "do_duoc": 0.673,
         "nfr": "NFR-A6",
         "ket_qua": "❌ không đạt"
       },
       {
         "ma": "A6−A5",
         "chi_tieu": "Đóng góp của khối hậu xử lý (điểm %)",
-        "do_duoc": 4.57,
+        "do_duoc": 6.32,
         "nfr": null,
         "ket_qua": "n/a"
       },
       {
         "ma": "A7",
         "chi_tieu": "Độ chính xác E2E toàn trình",
-        "do_duoc": 0.5227,
+        "do_duoc": 0.5295,
         "nfr": "NFR-A7",
         "ket_qua": "❌ không đạt"
       },
@@ -1673,6 +1676,32 @@
       "openvino": "2026.2.1",
       "numpy": "2.3.5"
     },
-    "thoi_gian_chay_giay": 3810.0
+    "thoi_gian_chay_giay": 3810.0,
+    "cap_nhat_ocr_2026_07_20": {
+      "ly_do": "Do lai toan bo chi so OCR sau khi noi buoc 'cuu dong tren' (rescue_two_line_upper) vao ai/evaluation/ocr_accuracy.py o CA hai duong do: nhanh crop (A4/A5/A6) va nhanh E2E (A7).",
+      "tep_ket_qua": "D:\\DATN\\docs\\reports\\16-ocr-accuracy-rescued.json",
+      "thoi_diem_do": "2026-07-20T11:33:43+00:00",
+      "khoa_da_cap_nhat": [
+        "T5.6a",
+        "T5.6b",
+        "T5.6c",
+        "T5.6e",
+        "T5.9 (A4/A5/A6/A6-A5/A7)",
+        "T5.10"
+      ],
+      "khoa_khong_doi": [
+        "T5.5a",
+        "T5.5b",
+        "T5.5c",
+        "T5.6d",
+        "T5.7a",
+        "T5.7b",
+        "T5.7e",
+        "T5.8"
+      ],
+      "so_anh_duoc_cuu": 89,
+      "so_anh_cuu_thanh_chuoi_dung_hoan_toan": 49,
+      "ghi_chu": "A5 khong doi (0,6098) vi buoc cuu chay SAU chuan hoa nen khong the anh huong con so TRUOC chuan hoa; bien mot dong khong doi vi cong kiem tra should_rescue_two_line chi mo cho line_count == 2. Ma tran nham lan (T5.6d) do tren chuoi tho nen cung khong doi."
+    }
   }
 }

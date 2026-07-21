@@ -507,13 +507,41 @@ def test_one_line_count_resolves_the_eight_character_ambiguity(
     assert decision.resolved_by_line_count is True
 
 
-def test_two_line_count_does_not_resolve_the_ambiguity(
+def test_two_lines_prefers_the_motorcycle_but_stays_ambiguous(
     normalizer: VietnamesePlateNormalizer,
 ) -> None:
-    """Short car plates are two-line too, so ``line_count=2`` settles nothing."""
+    """``line_count=2`` breaks the tie toward the motorcycle without claiming proof.
+
+    Two-line car plates exist -- this project has one on file (``65A-004.50``) --
+    so the flag stays set. What changed is which candidate wins the tie.
+
+    Previously the tie fell to ``candidates[0]``, which is ``CAR`` purely because
+    of the order the patterns are declared in. Measured against the labelled
+    corpus, that arbitrary choice was wrong almost every time: of 696 ambiguous
+    two-line plates, 452 carry the vehicle type in their source filename, and
+    **450 of those are motorcycles**.
+
+    The cost was visible in the interface, not just in a field: the grouping
+    differs (``51P5-4578`` versus ``51P-515.78``), so the plate number shown did
+    not match the one printed on the vehicle.
+    """
     decision = normalizer.detect_plate_kind("29B11234", line_count=2)
-    assert decision.is_ambiguous is True
-    assert decision.resolved_by_line_count is False
+    assert decision.kind is PlateKind.MOTORCYCLE_OLD
+    assert decision.resolved_by_line_count is True
+    assert decision.is_ambiguous is True, "two lines is a prior, not a proof"
+
+
+def test_two_line_preference_only_applies_to_the_car_motorcycle_tie(
+    normalizer: VietnamesePlateNormalizer,
+) -> None:
+    """A two-line plate whose string is unambiguous must be left alone.
+
+    ``65A-004.50`` is a real two-line State car plate. Its serial ``A0`` is not a
+    valid motorcycle serial, so the tie never arises -- and the preference must
+    not invent one.
+    """
+    decision = normalizer.detect_plate_kind("65A00450", line_count=2)
+    assert decision.kind is PlateKind.CAR
 
 
 def test_special_code_ambiguity_prefers_the_closed_list(
