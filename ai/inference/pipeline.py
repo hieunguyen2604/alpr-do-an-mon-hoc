@@ -50,7 +50,12 @@ from ai.inference.config import InferenceConfig
 from ai.inference.exceptions import ALPRError, InvalidImageError
 from ai.inference.interfaces import BaseDetector, BaseNormalizer, BaseRecognizer
 from ai.inference.plate_color import classify_plate_color
-from ai.inference.two_line import UPPER_HALF_END_RATIO, split_two_line
+from ai.inference.two_line import (
+    UPPER_HALF_END_RATIO,
+    rectify_plate,
+    split_two_line,
+    stretch_vertical,
+)
 from ai.inference.types import (
     BoundingBox,
     DetectionResult,
@@ -66,8 +71,13 @@ __all__ = [
     "build_default_pipeline",
     "should_rescue_two_line",
     "rescue_two_line_upper",
+    "should_retry_skewed",
+    "retry_skewed_variants",
     "refine_kind_with_color",
     "RESCUE_UPPER_END_RATIOS",
+    "RESCUE_MIN_UPPER_CONFIDENCE",
+    "RETRY_STRETCH_MAX_RATIO",
+    "RETRY_STRETCH_FACTOR",
 ]
 
 _LOGGER = logging.getLogger(__name__)
@@ -397,6 +407,25 @@ class ALPRPipeline:
                     )
                     elapsed["ocr"] += time.perf_counter() - retry_started
 
+                # Last resort, and gated on failure by design: the same
+                # geometry measured always-on LOST two good reads for zero
+                # recoveries, while behind this gate the baseline is untouched
+                # and every recovery is pure gain.
+                if self._config.rectify_enabled and should_retry_skewed(recognition):
+                    retry_started = time.perf_counter()
+                    recognition = retry_skewed_variants(
+                        self._recognizer,
+                        self._normalizer,
+                        plate_image,
+                        recognition,
+                        context={
+                            "plate_index": index,
+                            "bbox": detection.bbox.to_xyxy(),
+                        },
+                        color=color_name,
+                    )
+                    elapsed["ocr"] += time.perf_counter() - retry_started
+
         return (
             DetectionResult(
                 detection=detection,
@@ -681,6 +710,27 @@ be justified by measurement -- see ``docs/reports/15-two-line-rescue-ladder.json
 """
 
 
+RESCUE_MIN_UPPER_CONFIDENCE: Final[float] = 0.8
+"""Confidence floor for an upper-half fragment before it may be prepended.
+
+The rescue's accept criterion -- "the combined string validates" -- turned out
+to be too weak on sub-40-pixel crops: position repair is powerful enough to
+bend a misread fragment into a legal plate. Measured on the history rows a
+user flagged as wrong (21/07/2026): the fragment ``81`` read off a 34x26 px
+``59-X1`` crop at confidence **0.709** was repaired into the well-formed but
+nonexistent ``81B-9458``.
+
+The floor sits in the measured gap between the two populations. Wrong or
+truncated fragments on record: 0.436 (``USteo``), 0.709 (``81``), 0.740
+(``59.51``). Correct fragments on record: 0.862 (``59-S1`` -- the weakest of
+the 13 rescues in ``docs/reports/15-two-line-fallback-700.json``, re-verified
+against this gate), 0.953-0.998 (``77-H5``, ``29E``). 0.8 rejects every
+measured-wrong fragment with ~0.06 to spare and keeps every measured-right
+one with the same margin. A first draft at 0.9 was rejected by that same
+regression run: it cost the 0.862 rescue for no additional safety.
+"""
+
+
 def should_rescue_two_line(recognition: PlateRecognition) -> bool:
     """Decide whether a two-line read is worth a second, narrower attempt.
 
@@ -790,6 +840,22 @@ def rescue_two_line_upper(
             if not upper_read.text:
                 continue
 
+            # A hesitant fragment is worse than none: position repair can bend
+            # it into a legal string ('81' at 0.709 became '81B-9458'), and a
+            # wrong plate presented confidently costs more than an admitted
+            # failure. Correct fragments measure >= 0.95; see the constant.
+            if upper_read.confidence < RESCUE_MIN_UPPER_CONFIDENCE:
+                _LOGGER.info(
+                    "Upper fragment below confidence floor, not prepending",
+                    extra={
+                        **extra,
+                        "upper_fragment": upper_read.text,
+                        "upper_confidence": round(upper_read.confidence, 3),
+                        "upper_end_ratio": ratio,
+                    },
+                )
+                continue
+
             combined = f"{upper_read.text}{recognition.raw_text}"
 
             detailed = getattr(normalizer, "normalize_detailed", None)
@@ -840,6 +906,228 @@ def rescue_two_line_upper(
             kind=kind,
             display_text=display_text,
         )
+
+    return recognition
+
+
+RETRY_STRETCH_MAX_RATIO: Final[float] = 4.2
+"""Widest crop the vertical-stretch retry still treats as a possible two-line.
+
+A genuine one-line plate is 4.727 wide (110x520 mm); a two-line plate leaning
+away from the camera lands between the two-line threshold and roughly this
+value (the measured 6.3.9 case sits at 3.48). Above the bound the crop is
+almost certainly a real one-line plate whose read failed for other reasons,
+and stretching it would only spend OCR calls on a hypothesis the geometry
+already rules out.
+"""
+
+RETRY_STRETCH_FACTOR: Final[float] = 2.0
+"""Vertical multiplier for the foreshortening retry.
+
+Two is the neutral guess: it maps the ambiguous band ``[2.5, 4.2]`` onto
+``[1.25, 2.1]``, safely inside two-line territory, without assuming anything
+about the actual pitch angle. The stretch only routes the crop into the
+two-line path; precision beyond that buys nothing.
+"""
+
+
+_UNCLASSIFIED_KINDS: Final[tuple[str, ...]] = ("", "unknown")
+"""Kind values that mean the classifier found nothing at all.
+
+Everything else -- including ``military`` -- is a *successful* read. The
+distinction is what keeps the retry ladder away from the project's worst
+failure class (see :func:`should_retry_skewed`).
+"""
+
+
+def should_retry_skewed(recognition: PlateRecognition | None) -> bool:
+    """Return whether the skew-retry ladder should spend calls on this read.
+
+    A read qualifies only when it is BOTH invalid AND unclassified -- an empty
+    string or a fragment no pattern matched, which is what a skewed plate
+    produces.
+
+    ``invalid`` alone is NOT a failure signal, and treating it as one caused a
+    field regression on 21/07/2026: a military plate (``KV-69-38``) is *read
+    correctly* and *deliberately* reported invalid, because army plates are
+    recognised in order to be excluded from the civil system. The first ladder
+    gated on ``not is_valid_format`` alone, so it re-read that crop through a
+    stretched variant, OCR smeared ``KV`` into ``14D7``, and the recombined
+    string validated as motorcycle ``14D7-069.38`` -- reviving, through the
+    back door, exactly the confident-and-wrong military flip the normaliser's
+    own gate was built to prevent. A read the classifier could place in ANY
+    family is a finding to keep, never a failure to retry.
+
+    Args:
+        recognition: The already-normalised first attempt, or ``None`` when
+            the recogniser itself errored.
+
+    Returns:
+        ``True`` when a retry could still win something without being able to
+        overwrite a meaningful first read.
+    """
+    return (
+        recognition is not None
+        and not recognition.is_valid_format
+        and recognition.kind in _UNCLASSIFIED_KINDS
+    )
+
+
+def retry_skewed_variants(
+    recognizer: BaseRecognizer,
+    normalizer: BaseNormalizer,
+    plate_image: ImageArray,
+    recognition: PlateRecognition,
+    context: dict[str, object] | None = None,
+    color: str = "",
+) -> PlateRecognition:
+    """Re-read a failed crop through geometry-corrected variants.
+
+    Why a retry ladder and not a preprocessing step
+    -----------------------------------------------
+    Deskewing was first measured as an always-on step in front of every read,
+    and on the demo video's detector-produced crops it **lost**: 42 valid
+    reads fell to 40, because a mis-fitted rectangle on a small blurred crop
+    cuts characters off a plate that was reading fine. Moving the same
+    geometry behind a did-the-first-read-fail gate inverts the economics: the
+    baseline is untouched by construction, every recovery is pure gain, and a
+    variant that reads worse is discarded by the validation criterion.
+
+    Two variants, ordered cheapest-hypothesis first:
+
+    1. **In-plane deskew** (:func:`~ai.inference.two_line.rectify_plate`) --
+       the plate is rotated in the image (tilted camera, leaning bike).
+       Attempted only when the deskew actually changed the crop.
+    2. **Vertical stretch** (:func:`~ai.inference.two_line.stretch_vertical`)
+       -- the plate is level but pitched away from the camera, so
+       foreshortening squeezed a two-line plate's box over the one-line
+       threshold (thesis 6.3.9: the ``77-H5 / 4374`` crop at ratio 3.48 reads
+       empty). Attempted only when the failed crop's ratio sits in the
+       ambiguous band between the two-line threshold and
+       :data:`RETRY_STRETCH_MAX_RATIO`.
+
+    Each variant gets the full first-class treatment -- recognise, normalise,
+    and the upper-line rescue if its own read fails the same way a two-line
+    read usually fails. On the 6.3.9 crop that chain is exactly what wins:
+    the stretched crop reads ``4374`` (invalid alone), the rescue reads
+    ``77-H5`` off the upper half at 0.95 confidence, and the combination
+    validates as ``77H5-4374``.
+
+    Args:
+        recognizer: The OCR engine to spend the extra calls on.
+        normalizer: The stage whose verdict is the only accept criterion.
+        plate_image: The original crop whose first read failed.
+        recognition: The failed, already-normalised first attempt.
+        context: Optional fields merged into the log records.
+        color: Background colour of the crop, forwarded so a recovered string
+            is classified with the same evidence as a first-attempt one.
+
+    Returns:
+        The first variant recognition that validates, or the unchanged
+        ``recognition`` when none does. Any failure inside a variant moves on
+        to the next: a retry must never cost more than it can win.
+    """
+    extra: dict[str, object] = dict(context or {})
+
+    # Defence in depth against the military flip (see should_retry_skewed):
+    # a red background exists ONLY on army plates, so no read off a red crop
+    # may ever be upgraded to a valid civil string, whatever the characters
+    # say. The kind gate already blocks the case where the first read
+    # recognised the military layout; this blocks the case where it did not
+    # (blur, partial crop) but the colour still tells the truth.
+    if color == "red":
+        _LOGGER.info(
+            "Skew retry refused: red plate background",
+            extra={**extra, "first_attempt": recognition.text},
+        )
+        return recognition
+
+    variants: list[tuple[str, ImageArray]] = []
+    try:
+        rectified = rectify_plate(plate_image)
+        if rectified is not plate_image:
+            variants.append(("rectify", rectified))
+    except ALPRError as error:
+        _LOGGER.warning(
+            "Skew retry could not rectify the crop",
+            extra={**extra, "error": f"{type(error).__name__}: {error}"},
+        )
+
+    height, width = plate_image.shape[0], plate_image.shape[1]
+    aspect_ratio = width / height if height else 0.0
+    config = getattr(recognizer, "config", None)
+    two_line_threshold = getattr(config, "two_line_aspect_ratio_threshold", 2.5)
+    if two_line_threshold <= aspect_ratio <= RETRY_STRETCH_MAX_RATIO:
+        try:
+            variants.append(
+                ("stretch", stretch_vertical(plate_image, RETRY_STRETCH_FACTOR))
+            )
+        except ALPRError as error:
+            _LOGGER.warning(
+                "Skew retry could not stretch the crop",
+                extra={**extra, "error": f"{type(error).__name__}: {error}"},
+            )
+
+    for variant_name, variant_image in variants:
+        variant_extra = {**extra, "variant": variant_name}
+        try:
+            attempt = recognizer.recognize(variant_image)
+            if not attempt.text:
+                candidate = attempt
+            else:
+                detailed = getattr(normalizer, "normalize_detailed", None)
+                if callable(detailed):
+                    outcome = detailed(attempt.raw_text, line_count=attempt.line_count)
+                    candidate = PlateRecognition(
+                        text=outcome.text,
+                        raw_text=attempt.raw_text,
+                        confidence=attempt.confidence,
+                        line_count=attempt.line_count,
+                        is_valid_format=outcome.is_valid_format,
+                        kind=refine_kind_with_color(outcome, color, attempt.line_count),
+                        display_text=_format_for_display(
+                            normalizer, outcome.text, attempt.line_count
+                        ),
+                    )
+                else:
+                    text, is_valid = normalizer.normalize(attempt.raw_text)
+                    candidate = PlateRecognition(
+                        text=text,
+                        raw_text=attempt.raw_text,
+                        confidence=attempt.confidence,
+                        line_count=attempt.line_count,
+                        is_valid_format=is_valid,
+                    )
+
+            # A variant read can fail exactly the way a first read fails --
+            # lower line only. The rescue must run on the VARIANT image: its
+            # geometry, not the original's, is what the cut ratios apply to.
+            if not candidate.is_valid_format and should_rescue_two_line(candidate):
+                candidate = rescue_two_line_upper(
+                    recognizer,
+                    normalizer,
+                    variant_image,
+                    candidate,
+                    context=variant_extra,
+                    color=color,
+                )
+        except Exception as error:  # noqa: BLE001 - a retry must not become a failure
+            _LOGGER.warning(
+                "Skew retry variant failed, trying the next",
+                extra={**variant_extra, "error": f"{type(error).__name__}: {error}"},
+            )
+            continue
+
+        if candidate.is_valid_format:
+            _LOGGER.info(
+                "Skew retry recovered a plate",
+                extra={
+                    **variant_extra,
+                    "first_attempt": recognition.text,
+                    "recovered": candidate.text,
+                },
+            )
+            return candidate
 
     return recognition
 

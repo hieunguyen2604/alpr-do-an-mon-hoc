@@ -6486,7 +6486,7 @@ Nói cách khác: **"chưa đo được" không đồng nghĩa với "không là
 
 Một ràng buộc kỹ thuật phát hiện trong quá trình khảo sát cần được ghi lại vì nó thu hẹp giá trị của nguồn bổ sung dồi dào nhất: bộ `nguyenluanai/license-plate-color` — nguồn duy nhất có sẵn 694 ảnh biển vàng — có **mọi ảnh bị kéo méo về khuôn 640×640** trước khi tải lên. Bộ này vì vậy **không dùng được để đánh giá OCR**, vì bước ước lượng số dòng của hệ thống dựa trên **tỷ lệ khung hình** và phép kéo phá huỷ đúng đại lượng đó. Màu nền thì không bị phép kéo làm thay đổi — nên bộ này trả lời được câu hỏi về màu và **chỉ** câu hỏi về màu, và nó đã được dùng đúng như vậy.
 
-### 6.3.9. Bước làm thẳng biển nghiêng (rectify) chưa được cài đặt
+### 6.3.9. Bước làm thẳng biển nghiêng (rectify) chưa được cài đặt — ĐÃ XỬ LÝ 21/07/2026, xem cuối mục
 
 Nhật ký quyết định của đồ án mô tả luồng xử lý biển hai dòng gồm bốn bước: **rectify → phân loại số dòng → tách đôi → ghép ngang**. Bước đầu tiên **chưa từng được cài đặt**. Nghiêm trọng hơn, một chú thích trong `ai/inference/recognizer.py` từng khẳng định *"ảnh cắt đã được bộ phát hiện làm thẳng"* — điều này **sai**: hộp bao của YOLO là hộp trục-thẳng, nó cắt ra một hình chữ nhật chứ không nắn hình. Chú thích sai đó đã được sửa lại đúng sự thật.
 
@@ -6505,6 +6505,21 @@ Cơ chế xảy ra rõ ràng: một biển hai dòng bị chụp nghiêng có **
 Điều đáng chú ý là cùng một biển số ấy: khi chụp gần như chính diện (ảnh `demo/images/nhieu-bien-3.png`) hệ thống đọc **đúng** `77H5-4374`; khi nghiêng thì **không đọc nổi**. Cùng một chuỗi ký tự, cùng một mô hình — chỉ khác góc chụp. Đây là bằng chứng trực tiếp và sạch nhất cho khoảng trống này.
 
 Cảnh báo về vùng xám tỷ lệ khung hình đã được ghi sẵn trong tài liệu của `estimate_line_count` từ Phase 4, nhưng chỉ nêu chiều **giảm** (biển một dòng chụp nghiêng bị tụt xuống dưới ngưỡng). Chiều **tăng** — biển hai dòng nghiêng vọt lên trên ngưỡng — không được lường trước, và trong thực tế đường phố nó phổ biến hơn. Chuyển thành hướng phát triển ở mục 6.4.9.
+**Cập nhật 21/07/2026 — hạn chế này đã được xử lý.** Khi bắt tay cài đặt theo
+hướng 6.4.9, phép đo trên chính các ảnh cắt do detector sinh ra (36 khung của
+video demo) làm lộ thêm hai sự thật mà mô tả ban đầu chưa thấy hết: *(i)* bản
+rectify **luôn-bật** làm hại nhiều hơn lợi (42 → 40 lần đọc hợp lệ, vì hình
+chữ nhật fit sai trên crop nhỏ cắt mất ký tự của biển đang đọc tốt); *(ii)*
+chính biển `77-H5 / 4374` ở khung 168 **không xoay trong mặt phẳng** mà bị
+**ngửa ra sau** — foreshortening phối cảnh nén chiều dọc, thứ mà xoay phẳng
+về nguyên tắc không chữa được. Thiết kế cuối cùng vì thế là một **bậc thang
+thử-lại chỉ kích hoạt khi lần đọc đầu thất bại** (xoay phẳng, rồi giãn dọc ×2
+cho dải tỷ lệ mơ hồ 2,5–4,2, mỗi biến thể được hưởng trọn chuỗi đọc + cứu
+dòng trên; chỉ nhận khi chuỗi mới hợp lệ). Kết quả đo trên cùng 36 khung:
+**42 → 48 lần đọc hợp lệ, 0 thoái lui** (bất biến theo cấu trúc), và khung
+168 đọc đúng `77H5-4374` ở độ tin cậy 0,785. Chi tiết, số liệu thô và các
+giới hạn còn lại (nắn phối cảnh 4 điểm chưa cài; 3/6 lần đọc mới là đọc sai
+của biển quá mờ) tại `docs/reports/21-skew-retry.md`.
 
 ### 6.3.10. Xem trực tiếp và xử lý nền tranh chấp CPU với nhau
 
@@ -6592,7 +6607,7 @@ Ba việc cụ thể, xếp theo mức khó tăng dần:
 
 Cần đặt hướng này đúng vị trí trong thang ưu tiên: nó **không** nâng độ chính xác của hệ thống lên một điểm nào. Giá trị của nó là **mở rộng phạm vi mà các kết luận của đồ án có hiệu lực** — chuyển câu phát biểu từ *"đo trên một tập gồm 97,7% biển trắng"* sang một câu có phân tầng theo loại biển. Với một công trình mà đóng góp chính là *đo được những thứ trước đây chỉ được mô tả định tính*, việc mở rộng phạm vi hiệu lực của phép đo là một hướng phát triển đúng bản chất của công trình chứ không phải một việc phụ.
 
-### 6.4.9. Cài đặt bước làm thẳng biển nghiêng — hướng có tỷ lệ lợi ích trên công sức cao nhất
+### 6.4.9. Cài đặt bước làm thẳng biển nghiêng — ĐÃ THỰC HIỆN 21/07/2026
 
 Hướng này chữa trực tiếp hạn chế 6.3.9, và điểm hấp dẫn của nó là **thiết kế đã có sẵn**: nhật ký quyết định đã mô tả bước rectify đứng đầu luồng xử lý biển hai dòng, việc còn lại là cài đặt đúng thứ đã thiết kế chứ không phải nghĩ ra cách tiếp cận mới.
 
@@ -6603,6 +6618,36 @@ Hướng này chữa trực tiếp hạn chế 6.3.9, và điểm hấp dẫn c�
 3. **Nắn phối cảnh bốn điểm** cho trường hợp biển bị chụp chéo chứ không chỉ xoay phẳng. Đắt hơn và cần một bước tìm bốn góc biển đáng tin cậy.
 
 Cần nhấn mạnh **kỷ luật đo lường bắt buộc** cho hướng này, rút ra từ chính kinh nghiệm của đồ án: tập nhãn hiện có gồm **ảnh cắt sẵn của bộ dữ liệu**, phần lớn đã gần chính diện, nên nó **không chứa dạng lỗi này**. Một phép đo trên tập đó nhiều khả năng cho kết quả "không đổi" và sẽ bị hiểu nhầm thành "không có tác dụng". Muốn đo đúng thì phải dựng một tập đánh giá gồm **ảnh cắt do chính bộ phát hiện sinh ra từ ảnh chụp toàn cảnh**, tức đúng thứ hệ thống gặp khi chạy thật. Bài học này đã lặp lại hai lần trong đồ án và nên được ghi lại như một nguyên tắc: **tập đánh giá phải chứa dạng lỗi mà bản sửa nhắm tới, nếu không phép đo chỉ chứng minh được tính an toàn chứ không chứng minh được lợi ích.**
+**Kết quả thực hiện (21/07/2026).** Hướng này đã được cài đặt, và kỷ luật đo
+lường nêu trên phát huy tác dụng theo đúng nghĩa đen — nó **bác bỏ thiết kế
+đầu tiên**. Bậc 1+2 cài dưới dạng bước tiền xử lý luôn-bật vượt qua toàn bộ
+kiểm thử hình học tổng hợp, nhưng đo trên 36 khung ảnh cắt do detector sinh
+ra từ video demo thì **thua baseline 42 → 40**: trên crop nhỏ và mờ,
+`minAreaRect` thi thoảng fit sai và vết cắt lại lấy mất ký tự của một biển
+đang đọc tốt. Cùng phép đo cũng cho thấy ca khung 168 thực chất là
+**foreshortening phối cảnh** (biển ngửa ra sau, không xoay trong mặt phẳng),
+nằm ngoài tầm với của phép xoay phẳng.
+
+Thiết kế cuối cùng giữ nguyên hình học nhưng đổi **vị trí đứng trong luồng**:
+một *bậc thang thử-lại* chỉ chạy khi lần đọc đầu đã thất bại — biến thể xoay
+phẳng khi phép nắn thật sự thay đổi crop, biến thể **giãn dọc ×2** khi tỷ lệ
+hộp nằm trong dải mơ hồ 2,5–4,2 (giải quyết đúng ca foreshortening), mỗi biến
+thể được hưởng trọn chuỗi đọc + cứu dòng trên, và chỉ được nhận khi chuỗi mới
+validate. Baseline vì thế bất biến theo cấu trúc. Kết quả đo cuối trên cùng
+36 khung: **42 → 48 lần đọc hợp lệ, 0 thoái lui**; khung 168 đọc đúng
+`77H5-4374` (độ tin cậy 0,785) qua đúng chuỗi giãn dọc → đọc dòng dưới →
+cứu dòng trên tại vết cắt 0,55. Ba trong sáu lần đọc mới là đọc sai của các
+biển quá mờ ở xa — ghi nhận trung thực tại `docs/reports/21-skew-retry.md`
+cùng số liệu thô. Một sự cố thực địa ngay sau triển khai buộc bổ sung hai
+cổng chặn: bậc thang phiên bản đầu coi biển quân đội đọc đúng (cố ý mang cờ
+*invalid* theo nguyên tắc nhận-để-loại-trừ) là lần đọc hỏng, đọc lại và nhoè
+`KV-69-38` thành chuỗi dân sự "hợp lệ" `14D7-069.38` — đúng lớp lỗi tự
+tin-mà-sai từng phải sửa ở Phase 4. Bản cuối chỉ thử lại khi lần đọc đầu
+**không phân loại được**, và không bao giờ thử lại trên **nền đỏ**; cả hai
+cổng đều có kiểm thử ghim. Bài học: cờ *không hợp lệ* trong hệ thống này mang
+hai nghĩa (đọc thất bại ↔ nhận diện thành công một biển ngoài phạm vi dân sự),
+và mọi quyết định dựa trên nó phải phân biệt được hai nghĩa ấy. Việc còn lại của hướng này thu hẹp về bậc 3: nắn phối cảnh
+bốn điểm cho các góc chéo sâu mà giãn dọc thô không mô hình hoá được.
 
 ### 6.4.10. Tách lịch chạy giữa xem trực tiếp và xử lý nền
 

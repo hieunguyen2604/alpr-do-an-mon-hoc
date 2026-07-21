@@ -17,7 +17,13 @@ import pytest
 from ai.inference.config import InferenceConfig
 from ai.inference.exceptions import InvalidImageError, RecognitionError
 from ai.inference.interfaces import BaseDetector, BaseNormalizer, BaseRecognizer
-from ai.inference.pipeline import STAGE_NAMES, ALPRPipeline, refine_kind_with_color
+from ai.inference.pipeline import (
+    STAGE_NAMES,
+    ALPRPipeline,
+    refine_kind_with_color,
+    retry_skewed_variants,
+    should_retry_skewed,
+)
 from ai.inference.types import BoundingBox, ImageArray, PlateDetection, PlateRecognition
 
 
@@ -112,13 +118,14 @@ def build(
     detector: BaseDetector | None = None,
     recognizer: BaseRecognizer | None = None,
     normalizer: BaseNormalizer | None = None,
+    config: InferenceConfig | None = None,
 ) -> ALPRPipeline:
     """Assemble a pipeline from fakes, filling in defaults."""
     return ALPRPipeline(
         detector=detector or FakeDetector(),
         recognizer=recognizer or FakeRecognizer(),
         normalizer=normalizer or FakeNormalizer(),
-        config=InferenceConfig(model_path="models/best.pt"),
+        config=config or InferenceConfig(model_path="models/best.pt"),
     )
 
 
@@ -469,6 +476,33 @@ class TestTwoLineRescue:
         assert recognition is not None, "a failed rescue must never drop the detection"
         assert recognition.text == "01566"
 
+    def test_a_hesitant_upper_fragment_is_not_prepended(self) -> None:
+        """The 21/07/2026 '81B-9458' case: a low-confidence fragment must not
+        be bent into a legal plate by position repair. Correct fragments
+        measure >= 0.95; the floor is 0.9."""
+
+        class HesitantUpper(TwoLineRecognizer):
+            def recognize(self, plate_image: ImageArray) -> PlateRecognition:
+                result = super().recognize(plate_image)
+                if self.calls > 1:  # the upper-half retry reads
+                    return PlateRecognition(
+                        text=result.text, raw_text=result.raw_text,
+                        confidence=0.7, line_count=result.line_count,
+                        is_valid_format=False,
+                    )
+                return result
+
+        result = build(
+            detector=FakeDetector([make_detection(10, 10, 60, 40)]),
+            recognizer=HesitantUpper(),
+            normalizer=LengthNormalizer(),
+        ).process(make_image())
+
+        recognition = result.results[0].recognition
+        assert recognition is not None
+        assert recognition.text == "01566", "a 0.7-confidence fragment must be discarded"
+        assert recognition.is_valid_format is False
+
     def test_single_line_plates_are_never_retried(self) -> None:
         recognizer = FakeRecognizer(text="51F1")
         result = build(
@@ -520,6 +554,216 @@ class TestTwoLineRescue:
         assert recognition.text == "29E01566"
         assert recognition.kind == "car", "the rescued string must be reclassified"
         assert recognition.display_text == "29E-015.66"
+
+
+# --------------------------------------------------------------------- #
+# Skew retry ladder: re-reading a failed crop through corrected variants
+# --------------------------------------------------------------------- #
+def make_flat_image(width: int = 400, height: int = 200) -> ImageArray:
+    """A uniform image, so ``rectify_plate`` is a guaranteed no-op.
+
+    The retry tests must control exactly which variant fires. On a uniform
+    crop the dominant blob is the whole crop at angle zero, so the deskew
+    variant is skipped and only geometry chosen by the test (the crop's
+    aspect ratio) decides whether the stretch variant runs.
+    """
+    return np.full((height, width, 3), 128, dtype=np.uint8)
+
+
+class ForeshortenedRecognizer(BaseRecognizer):
+    """Reproduces the measured 6.3.9 case (frame 168 of the demo video).
+
+    The raw crop (call 1, ratio over the two-line threshold) reads empty. The
+    vertically stretched variant (call 2) reads the lower line only. The
+    rescue's upper-half calls (3+) read the upper line. Only the full chain
+    retry -> variant read -> upper rescue assembles the whole plate.
+    """
+
+    def __init__(self, lower_text: str = "4374", upper_text: str = "77H5") -> None:
+        self._lower_text = lower_text
+        self._upper_text = upper_text
+        self.calls = 0
+        self.warmup_calls = 0
+
+    @property
+    def name(self) -> str:
+        return "foreshortened-recognizer"
+
+    def recognize(self, plate_image: ImageArray) -> PlateRecognition:
+        self.calls += 1
+        if self.calls == 1:
+            return PlateRecognition(
+                text="", raw_text="", confidence=0.0, line_count=1, is_valid_format=False
+            )
+        if self.calls == 2:
+            return PlateRecognition(
+                text=self._lower_text,
+                raw_text=self._lower_text,
+                confidence=0.9,
+                line_count=2,
+                is_valid_format=False,
+            )
+        return PlateRecognition(
+            text=self._upper_text,
+            raw_text=self._upper_text,
+            confidence=0.95,
+            line_count=1,
+            is_valid_format=False,
+        )
+
+    def warmup(self) -> None:
+        self.warmup_calls += 1
+
+
+class TestShouldRetrySkewed:
+    def test_a_missing_recognition_is_not_retried(self) -> None:
+        assert should_retry_skewed(None) is False
+
+    def test_a_valid_read_is_not_retried(self) -> None:
+        valid = PlateRecognition(
+            text="51G31691", raw_text="51G-316.91", confidence=0.9,
+            line_count=1, is_valid_format=True,
+        )
+        assert should_retry_skewed(valid) is False
+
+    def test_an_empty_read_is_retried(self) -> None:
+        empty = PlateRecognition(
+            text="", raw_text="", confidence=0.0, line_count=1, is_valid_format=False
+        )
+        assert should_retry_skewed(empty) is True
+
+    def test_a_recognised_military_plate_is_never_retried(self) -> None:
+        """The 21/07/2026 field regression, pinned.
+
+        A military plate is read correctly and deliberately reported invalid
+        (recognise-to-exclude). The first ladder treated that as a failed read,
+        re-read the crop through a stretched variant, and OCR smeared
+        ``KV-69-38`` into ``14D7-069.38`` -- a valid-looking civilian
+        motorcycle. Any read the classifier placed in a family is a finding,
+        not a failure.
+        """
+        military = PlateRecognition(
+            text="KV6938", raw_text="KV-69-38", confidence=0.89,
+            line_count=1, is_valid_format=False, kind="military",
+        )
+        assert should_retry_skewed(military) is False
+
+
+class TestSkewRetryLadder:
+    def test_recovers_a_foreshortened_two_line_plate(self) -> None:
+        """The full 6.3.9 chain: empty read, stretch, lower line, upper rescue."""
+        recognizer = ForeshortenedRecognizer()
+        # 140x40 crop: ratio 3.5, inside the stretch band [2.5, 4.2].
+        detector = FakeDetector([make_detection(10, 10, 140, 40)])
+
+        result = build(
+            detector=detector, recognizer=recognizer, normalizer=LengthNormalizer()
+        ).process(make_flat_image())
+
+        recognition = result.results[0].recognition
+        assert recognition is not None
+        assert recognition.text == "77H54374"
+        assert recognition.is_valid_format is True
+        assert recognizer.calls == 3, "raw read + stretched read + one rescue call"
+
+    def test_the_ladder_is_off_when_rectify_is_disabled(self) -> None:
+        recognizer = ForeshortenedRecognizer()
+        detector = FakeDetector([make_detection(10, 10, 140, 40)])
+
+        result = build(
+            detector=detector,
+            recognizer=recognizer,
+            normalizer=LengthNormalizer(),
+            config=InferenceConfig(model_path="models/best.pt", rectify_enabled=False),
+        ).process(make_flat_image())
+
+        recognition = result.results[0].recognition
+        assert recognition is not None
+        assert recognition.text == ""
+        assert recognizer.calls == 1, "the ablation switch must silence every retry"
+
+    def test_a_wide_one_line_crop_is_not_stretched(self) -> None:
+        """Ratio 5.0 is beyond RETRY_STRETCH_MAX_RATIO: a real one-line plate
+        whose read failed for other reasons must not cost stretch calls."""
+        recognizer = ForeshortenedRecognizer()
+        detector = FakeDetector([make_detection(10, 10, 200, 40)])
+
+        result = build(
+            detector=detector, recognizer=recognizer, normalizer=LengthNormalizer()
+        ).process(make_flat_image())
+
+        assert recognizer.calls == 1
+        recognition = result.results[0].recognition
+        assert recognition is not None
+        assert recognition.text == ""
+
+    def test_a_retry_that_still_fails_keeps_the_first_result(self) -> None:
+        """The accept criterion is validation; junk from a variant is discarded."""
+        recognizer = ForeshortenedRecognizer(lower_text="999", upper_text="")
+        detector = FakeDetector([make_detection(10, 10, 140, 40)])
+
+        result = build(
+            detector=detector, recognizer=recognizer, normalizer=LengthNormalizer()
+        ).process(make_flat_image())
+
+        recognition = result.results[0].recognition
+        assert recognition is not None
+        assert recognition.text == "", "an invalid variant read must never replace the original"
+        assert recognition.is_valid_format is False
+
+    def test_a_red_plate_is_never_retried(self) -> None:
+        """Defence in depth for the military flip: red backgrounds exist only
+        on army plates, so even an unclassified failed read off a red crop
+        must not be re-read into a 'valid' civil string."""
+        recognizer = ForeshortenedRecognizer()
+        failed = PlateRecognition(
+            text="", raw_text="", confidence=0.0, line_count=1, is_valid_format=False
+        )
+
+        outcome = retry_skewed_variants(
+            recognizer,
+            LengthNormalizer(),
+            make_flat_image(140, 40),
+            failed,
+            color="red",
+        )
+
+        assert outcome is failed, "the original read must come back untouched"
+        assert recognizer.calls == 0, "not a single OCR call may be spent on a red crop"
+
+    def test_a_military_first_read_stops_the_ladder_in_the_pipeline(self) -> None:
+        """End-to-end pin of the KV-69-38 regression through process()."""
+
+        class MilitaryNormalizer(LengthNormalizer):
+            def normalize_detailed(self, raw_text: str, line_count: int | None = None) -> object:
+                class _Kind:
+                    value = "military"
+
+                class _Decision:
+                    kind = _Kind()
+
+                class _Outcome:
+                    text = "KV6938"
+                    is_valid_format = False
+                    decision = _Decision()
+
+                return _Outcome()
+
+        recognizer = ForeshortenedRecognizer()
+        # Ratio 3.5: squarely inside the stretch band, so only the kind gate
+        # can be what stops the retry.
+        detector = FakeDetector([make_detection(10, 10, 140, 40)])
+
+        result = build(
+            detector=detector, recognizer=recognizer, normalizer=MilitaryNormalizer()
+        ).process(make_flat_image())
+
+        recognition = result.results[0].recognition
+        assert recognition is not None
+        assert recognition.text == "KV6938"
+        assert recognition.kind == "military"
+        assert recognition.is_valid_format is False
+        assert recognizer.calls == 1, "a recognised military read must never be re-read"
 
 
 # --------------------------------------------------------------------- #

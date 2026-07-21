@@ -186,6 +186,13 @@ class InferenceConfig:
             crop is treated as a two-line plate. Vietnamese single-line plates
             are much wider than tall; two-line plates are nearly square. A crop
             with a ratio under this value is split into two lines before OCR.
+        rectify_enabled: Whether the skew-recovery retry ladder
+            (:func:`~ai.inference.pipeline.retry_skewed_variants`) may re-read
+            a crop whose first read failed validation, through a deskewed
+            and/or vertically-stretched variant. On by default: the ladder
+            runs only after a failure and keeps a result only when it
+            validates, so it can recover reads but never lose one. The switch
+            exists so Phase 7 can ablate it and attribute its contribution.
 
     Raises:
         ValueError: If any value is outside its valid range.
@@ -199,6 +206,7 @@ class InferenceConfig:
     ocr_lang: str = "en"
     ocr_use_gpu: bool = False
     two_line_aspect_ratio_threshold: float = 2.5
+    rectify_enabled: bool = True
 
     def __post_init__(self) -> None:
         """Normalise the model path and validate every field.
@@ -248,6 +256,7 @@ class InferenceConfig:
         ``ALPR_OCR_LANG``                   :attr:`ocr_lang`
         ``ALPR_OCR_USE_GPU``                :attr:`ocr_use_gpu`
         ``ALPR_TWO_LINE_ASPECT_RATIO``      :attr:`two_line_aspect_ratio_threshold`
+        ``ALPR_RECTIFY_ENABLED``            :attr:`rectify_enabled`
         =================================== ==============================
 
         A relative ``ALPR_MODEL_PATH`` is resolved against the project root,
@@ -278,4 +287,5 @@ class InferenceConfig:
                 "TWO_LINE_ASPECT_RATIO",
                 defaults.two_line_aspect_ratio_threshold,
             ),
+            rectify_enabled=_read_bool(prefix, "RECTIFY_ENABLED", defaults.rectify_enabled),
         )

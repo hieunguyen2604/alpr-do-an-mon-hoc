@@ -7,6 +7,7 @@ OCR engine, no model weights and no network.
 
 from __future__ import annotations
 
+import cv2
 import numpy as np
 import pytest
 
@@ -18,7 +19,9 @@ from ai.inference.two_line import (
     estimate_line_count,
     merge_two_line,
     preprocess_plate,
+    rectify_plate,
     split_two_line,
+    stretch_vertical,
 )
 from ai.inference.types import BoundingBox
 
@@ -251,3 +254,111 @@ class TestPreprocessPlate:
         """An unusable crop is reported, not processed."""
         with pytest.raises(InvalidImageError):
             preprocess_plate(np.zeros((0, 10, 3), dtype=np.uint8))
+
+
+def _synthetic_plate(width: int, height: int) -> np.ndarray:
+    """Draw a bright plate with two dark text rows on a plain background."""
+    plate = np.full((height, width, 3), 235, dtype=np.uint8)
+    cv2.rectangle(plate, (0, 0), (width - 1, height - 1), (40, 40, 40), 3)
+    cv2.putText(
+        plate, "59-X1", (18, int(height * 0.42)),
+        cv2.FONT_HERSHEY_SIMPLEX, height / 130.0, (20, 20, 20), 4,
+    )
+    cv2.putText(
+        plate, "39458", (14, int(height * 0.86)),
+        cv2.FONT_HERSHEY_SIMPLEX, height / 130.0, (20, 20, 20), 4,
+    )
+    return plate
+
+
+def _skewed_crop(plate: np.ndarray, angle_degrees: float) -> np.ndarray:
+    """Rotate a plate and cut its axis-aligned bounding box, like YOLO does."""
+    height, width = plate.shape[:2]
+    diagonal = int(np.hypot(height, width)) + 20
+    background = np.full((diagonal, diagonal, 3), 90, dtype=np.uint8)
+    y0, x0 = (diagonal - height) // 2, (diagonal - width) // 2
+    background[y0 : y0 + height, x0 : x0 + width] = plate
+    matrix = cv2.getRotationMatrix2D((diagonal / 2, diagonal / 2), angle_degrees, 1.0)
+    rotated = cv2.warpAffine(background, matrix, (diagonal, diagonal), borderValue=(90, 90, 90))
+    gray = cv2.cvtColor(rotated, cv2.COLOR_BGR2GRAY)
+    ys, xs = np.where(gray > 150)
+    return rotated[ys.min() : ys.max() + 1, xs.min() : xs.max() + 1]
+
+
+class TestRectifyPlate:
+    """Deskewing, the step the two-line design always began with (6.4.9)."""
+
+    @pytest.mark.parametrize("angle", [-25.0, -12.0, 12.0, 25.0])
+    def test_recovers_the_true_aspect_ratio_of_a_skewed_motorcycle_plate(
+        self, angle: float
+    ) -> None:
+        """Both skew directions come back near the 190x140 physical ratio."""
+        crop = _skewed_crop(_synthetic_plate(190, 140), angle)
+        rectified = rectify_plate(crop)
+        ratio = rectified.shape[1] / rectified.shape[0]
+        assert 1.15 <= ratio <= 1.55
+
+    @pytest.mark.parametrize("angle", [-20.0, 20.0])
+    def test_fixes_the_line_count_of_a_skewed_one_line_plate(self, angle: float) -> None:
+        """The measured 6.3.9 failure inverted: a skewed 110x520 car plate's
+        bounding box drops under the two-line threshold; after rectify the
+        ratio is the plate's own again and the classification is right."""
+        crop = _skewed_crop(_synthetic_plate(520, 110), angle)
+        assert estimate_line_count(crop) == 2  # the pre-rectify misclassification
+        rectified = rectify_plate(crop)
+        assert estimate_line_count(rectified) == 1
+
+    def test_frontal_crop_is_returned_unchanged(self) -> None:
+        """Below the minimum angle the crop must stay bit-identical -- this is
+        what keeps the pre-rectify pipeline reproducible on frontal data."""
+        plate = _synthetic_plate(190, 140)
+        assert rectify_plate(plate) is plate
+
+    def test_featureless_crop_is_returned_unchanged(self) -> None:
+        """No dominant blob means no trustworthy estimate, so no correction."""
+        noise = np.random.default_rng(7).integers(0, 256, size=(80, 110, 3), dtype=np.uint8)
+        result = rectify_plate(noise)
+        assert result.shape == noise.shape
+
+    def test_grayscale_input_is_accepted(self) -> None:
+        """The helper mirrors the module's grayscale-or-BGR contract."""
+        crop = cv2.cvtColor(_skewed_crop(_synthetic_plate(190, 140), 15.0), cv2.COLOR_BGR2GRAY)
+        rectified = rectify_plate(crop)
+        assert rectified.ndim == 2
+        assert 1.15 <= rectified.shape[1] / rectified.shape[0] <= 1.55
+
+    def test_rejects_invalid_bounds(self) -> None:
+        """Misordered or non-positive angle bounds fail loudly."""
+        plate = _synthetic_plate(190, 140)
+        with pytest.raises(ValueError, match="positive"):
+            rectify_plate(plate, min_angle_degrees=0.0)
+        with pytest.raises(ValueError, match="below"):
+            rectify_plate(plate, min_angle_degrees=40.0, max_angle_degrees=10.0)
+
+    def test_rejects_an_invalid_image(self) -> None:
+        """An unusable crop is reported, not processed."""
+        with pytest.raises(InvalidImageError):
+            rectify_plate(np.zeros((0, 10, 3), dtype=np.uint8))
+
+
+class TestStretchVertical:
+    """The foreshortening counter-move used by the skew retry ladder."""
+
+    def test_doubles_the_height_and_keeps_the_width(self) -> None:
+        stretched = stretch_vertical(_image(40, 140), factor=2.0)
+        assert stretched.shape[0] == 80
+        assert stretched.shape[1] == 140
+
+    def test_moves_an_ambiguous_ratio_into_two_line_territory(self) -> None:
+        """The whole point: ratio 3.5 is 'one line', stretched it splits."""
+        crop = _image(40, 140)
+        assert estimate_line_count(crop) == 1
+        assert estimate_line_count(stretch_vertical(crop)) == 2
+
+    def test_rejects_a_non_stretching_factor(self) -> None:
+        with pytest.raises(ValueError, match="greater than 1"):
+            stretch_vertical(_image(40, 140), factor=1.0)
+
+    def test_rejects_an_invalid_image(self) -> None:
+        with pytest.raises(InvalidImageError):
+            stretch_vertical(np.zeros((0, 10, 3), dtype=np.uint8))

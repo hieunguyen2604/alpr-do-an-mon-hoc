@@ -30,6 +30,7 @@ sees exactly the kind of input its architecture was designed for, and the full
 
 Typical use::
 
+    crop = rectify_plate(crop)
     if estimate_line_count(crop) == 2:
         upper, lower = split_two_line(crop)
         crop = merge_two_line(upper, lower)
@@ -55,7 +56,12 @@ __all__ = [
     "UPPER_HALF_END_RATIO",
     "LOWER_HALF_START_RATIO",
     "MIN_MERGE_HEIGHT",
+    "MIN_RECTIFY_ANGLE_DEGREES",
+    "MAX_RECTIFY_ANGLE_DEGREES",
+    "MIN_RECTIFY_AREA_FRACTION",
     "estimate_line_count",
+    "rectify_plate",
+    "stretch_vertical",
     "split_two_line",
     "merge_two_line",
     "preprocess_plate",
@@ -87,6 +93,36 @@ MIN_MERGE_HEIGHT: Final[int] = 48
 Matches the fixed input height of the PP-OCR recognition module: producing a
 strip shorter than this would force the engine to upscale a degraded image,
 which loses detail that was still present in the source crop.
+"""
+
+MIN_RECTIFY_ANGLE_DEGREES: Final[float] = 1.5
+"""Estimated skew below which :func:`rectify_plate` leaves the crop untouched.
+
+Nearly every crop in the labelled corpus is close to frontal; resampling those
+through ``warpAffine`` would trade a fraction of stroke sharpness for a
+correction nobody needs. The threshold keeps the frontal path bit-identical to
+the pre-rectify pipeline, which is also what makes the before/after measurement
+attributable: any change comes from crops that were actually skewed.
+"""
+
+MAX_RECTIFY_ANGLE_DEGREES: Final[float] = 35.0
+"""Estimated skew above which the estimate itself is distrusted.
+
+A street-mounted plate photographed from a vehicle-height camera is tilted by
+tens of degrees at most. An estimate beyond this bound almost always means the
+binarisation latched onto something that is not the plate -- a bumper edge, a
+shadow -- and "correcting" by that angle would destroy a readable crop. The
+safe failure is to return the crop unchanged.
+"""
+
+MIN_RECTIFY_AREA_FRACTION: Final[float] = 0.25
+"""Smallest fraction of the crop the candidate plate blob must cover.
+
+The detector's box hugs the plate, so the true plate region dominates its own
+crop. A largest-blob smaller than a quarter of the crop is evidence that
+thresholding fragmented the plate instead of isolating it, and any rectangle
+fitted to such a fragment risks cropping characters away. Below the bound the
+crop is returned unchanged.
 """
 
 _CLAHE_DEFAULT_CLIP_LIMIT: Final[float] = 2.0
@@ -189,6 +225,194 @@ def estimate_line_count(
         },
     )
     return line_count
+
+
+def rectify_plate(
+    image: ImageArray,
+    min_angle_degrees: float = MIN_RECTIFY_ANGLE_DEGREES,
+    max_angle_degrees: float = MAX_RECTIFY_ANGLE_DEGREES,
+) -> ImageArray:
+    """Deskew a plate crop by rotating its dominant blob level and re-cropping.
+
+    This is the *rectify* step that the two-line design always began with
+    (decision log: rectify -> classify -> split -> hstack) but that remained
+    unimplemented through Phase 4 -- YOLO's axis-aligned box crops a rectangle,
+    it does not straighten anything. The measured cost of the gap (thesis
+    section 6.3.9): a skewed two-line plate widens its own bounding box, the
+    aspect ratio jumps over the one-line/two-line threshold, the crop is never
+    split, and OCR returns an empty string -- while the very same plate reads
+    perfectly when photographed head-on.
+
+    Method, cheapest tier of section 6.4.9: binarise (Otsu, both polarities),
+    take the largest connected blob, fit ``cv2.minAreaRect``, rotate the crop
+    about the rectangle's centre so its long side lies horizontal, then cut the
+    now-level rectangle out with a small margin. Returning the *tight* cut
+    rather than the rotated canvas matters: the cut's aspect ratio is the
+    plate's true shape, which is exactly what :func:`estimate_line_count`
+    needs to classify reliably (its own documentation asked for this from
+    Phase 4).
+
+    Every unreliable estimate degrades to "return the crop unchanged": skew
+    below ``min_angle_degrees`` (nothing to fix -- keeps frontal crops
+    bit-identical), skew above ``max_angle_degrees`` (the estimate is almost
+    certainly wrong), or a dominant blob covering less than
+    :data:`MIN_RECTIFY_AREA_FRACTION` of the crop (thresholding fragmented the
+    plate). A rectify that can only help or do nothing is safe to leave
+    always-on.
+
+    Args:
+        image: The plate crop, grayscale or BGR. Not modified.
+        min_angle_degrees: Skew magnitude below which no correction is applied.
+        max_angle_degrees: Skew magnitude above which the estimate is rejected.
+
+    Returns:
+        The deskewed, tightly re-cropped plate as an array with the input's
+        channel layout -- or ``image`` itself when no trustworthy correction
+        was found.
+
+    Raises:
+        InvalidImageError: If ``image`` is not a usable image.
+        ValueError: If the angle bounds are not positive or are ordered wrong.
+    """
+    _validate_image(image, "image")
+    if min_angle_degrees <= 0.0 or max_angle_degrees <= 0.0:
+        raise ValueError(
+            "angle bounds must be positive, got "
+            f"min={min_angle_degrees}, max={max_angle_degrees}"
+        )
+    if min_angle_degrees >= max_angle_degrees:
+        raise ValueError(
+            "min_angle_degrees must be below max_angle_degrees, got "
+            f"min={min_angle_degrees}, max={max_angle_degrees}"
+        )
+
+    height, width = image.shape[0], image.shape[1]
+    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY) if image.ndim == 3 else image
+    blurred = cv2.GaussianBlur(gray, (5, 5), 0)
+    _, binary = cv2.threshold(blurred, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+
+    # A white plate is the bright blob, a blue plate the dark one. Trying both
+    # polarities and keeping the larger dominant blob covers either without
+    # guessing the plate colour here.
+    best_rect: tuple[tuple[float, float], tuple[float, float], float] | None = None
+    best_area = 0.0
+    for candidate in (binary, cv2.bitwise_not(binary)):
+        contours, _ = cv2.findContours(candidate, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        if not contours:
+            continue
+        largest = max(contours, key=cv2.contourArea)
+        area = cv2.contourArea(largest)
+        if area > best_area:
+            best_area = area
+            best_rect = cv2.minAreaRect(largest)
+
+    if best_rect is None or best_area < MIN_RECTIFY_AREA_FRACTION * height * width:
+        _LOGGER.debug(
+            "Rectify skipped: no dominant plate blob",
+            extra={"blob_area": best_area, "crop_area": height * width},
+        )
+        return image
+
+    (center_x, center_y), (rect_side_a, rect_side_b), _raw_angle = best_rect
+    rect_width = max(rect_side_a, rect_side_b)
+    rect_height = min(rect_side_a, rect_side_b)
+    # ``minAreaRect``'s angle convention changed across OpenCV releases
+    # ([-90, 0) before 4.5, (0, 90] after), so the reported angle is not
+    # interpreted at all. The tilt is measured directly instead: take the
+    # longest edge of the fitted box and read its direction, folded into
+    # (-90, 90]. That value is version-independent by construction.
+    box = cv2.boxPoints(best_rect)
+    edges = box - np.roll(box, 1, axis=0)
+    longest_edge = edges[int(np.argmax(np.hypot(edges[:, 0], edges[:, 1])))]
+    angle = float(np.degrees(np.arctan2(longest_edge[1], longest_edge[0])))
+    if angle > 90.0:
+        angle -= 180.0
+    elif angle <= -90.0:
+        angle += 180.0
+
+    if abs(angle) < min_angle_degrees or abs(angle) > max_angle_degrees:
+        _LOGGER.debug(
+            "Rectify skipped: angle outside actionable range",
+            extra={"angle": round(angle, 2)},
+        )
+        return image
+
+    # Rotate the whole crop about the rectangle centre on an expanded canvas
+    # (so no corner is clipped), then cut the now-level rectangle back out.
+    # Border replication beats black fill: the OCR engine treats a smeared
+    # continuation of the scene as background, whereas hard black corners
+    # produce phantom edges.
+    matrix = cv2.getRotationMatrix2D((center_x, center_y), angle, 1.0)
+    cos = abs(matrix[0, 0])
+    sin = abs(matrix[0, 1])
+    canvas_width = int(height * sin + width * cos) + 2
+    canvas_height = int(height * cos + width * sin) + 2
+    matrix[0, 2] += canvas_width / 2.0 - center_x
+    matrix[1, 2] += canvas_height / 2.0 - center_y
+    rotated = cv2.warpAffine(
+        image,
+        matrix,
+        (canvas_width, canvas_height),
+        flags=cv2.INTER_CUBIC,
+        borderMode=cv2.BORDER_REPLICATE,
+    )
+
+    # Small margin around the fitted rectangle: minAreaRect hugs the blob, and
+    # binarisation routinely eats one or two boundary pixels off the plate
+    # frame. Losing a character's edge costs far more than a sliver of scene.
+    cut_width = min(canvas_width, int(rect_width * 1.04) + 2)
+    cut_height = min(canvas_height, int(rect_height * 1.08) + 2)
+    rectified: ImageArray = cv2.getRectSubPix(
+        rotated,
+        (cut_width, cut_height),
+        (canvas_width / 2.0, canvas_height / 2.0),
+    )
+
+    _LOGGER.debug(
+        "Rectified skewed plate crop",
+        extra={
+            "angle": round(angle, 2),
+            "input_shape": (height, width),
+            "output_shape": tuple(rectified.shape[:2]),
+        },
+    )
+    return rectified
+
+
+def stretch_vertical(image: ImageArray, factor: float = 2.0) -> ImageArray:
+    """Stretch a crop vertically, undoing pitch foreshortening.
+
+    A plate photographed from above or head-on-but-leaning (a parked
+    motorcycle's rear plate is the everyday case) is compressed **vertically**
+    by perspective while staying level: no in-plane rotation exists for
+    :func:`rectify_plate` to correct, yet the squeezed aspect ratio walks the
+    crop over the one-line threshold and the two-line split never runs.
+    Stretching the crop back down the aspect-ratio scale re-enters the
+    two-line path.
+
+    The interpolated rows add no real information -- the value of the stretch
+    is *routing* (which processing path the crop takes), not detail. That is
+    why this belongs in a failure-retry ladder and not in the main path.
+
+    Args:
+        image: The plate crop, grayscale or BGR. Not modified.
+        factor: Vertical multiplier. Must be greater than 1.
+
+    Returns:
+        The stretched crop.
+
+    Raises:
+        InvalidImageError: If ``image`` is not a usable image.
+        ValueError: If ``factor`` is not greater than 1.
+    """
+    _validate_image(image, "image")
+    if factor <= 1.0:
+        raise ValueError(f"factor must be greater than 1, got {factor}")
+    height, width = image.shape[0], image.shape[1]
+    stretched: ImageArray = cv2.resize(
+        image, (width, int(height * factor)), interpolation=cv2.INTER_CUBIC
+    )
+    return stretched
 
 
 def split_two_line(

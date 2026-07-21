@@ -80,6 +80,10 @@ services:
       ALPR_OCR_LANG: ${ALPR_OCR_LANG:-en}
       ALPR_OCR_USE_GPU: ${ALPR_OCR_USE_GPU:-false}
       ALPR_TWO_LINE_ASPECT_RATIO: ${ALPR_TWO_LINE_ASPECT_RATIO:-2.5}
+      # Deskew skewed plate crops before line-count estimation and OCR.
+      # Off is only useful for ablation measurements; the step is a no-op on
+      # frontal crops.
+      ALPR_RECTIFY_ENABLED: ${ALPR_RECTIFY_ENABLED:-true}
 
       # --- Application (consumed by backend/core config, Phase 5) -----------
       # Four slashes in a sqlite URL means an ABSOLUTE path: `sqlite:///` plus

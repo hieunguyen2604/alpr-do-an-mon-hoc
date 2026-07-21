@@ -292,6 +292,16 @@ class PaddleOcrRecognizer(BaseRecognizer):
         3. Enhance contrast and denoise, unless disabled.
         4. Run OCR and concatenate the recognised fragments left to right.
 
+        Deskewing is deliberately **not** part of this method. It was measured
+        as an always-on first step here and it *lost* ground: on the demo
+        video's detector-produced crops it converted two good reads into junk
+        for zero recoveries, because a mis-fitted rectangle on a small blurred
+        crop cuts characters away. Skew recovery therefore lives in the
+        pipeline's failure-retry ladder
+        (:func:`~ai.inference.pipeline.retry_skewed_variants`), where it runs
+        only on reads that have already failed and keeps its result only when
+        the re-read validates -- an attempt that can win but never lose.
+
         The returned :attr:`~ai.inference.types.PlateRecognition.text` is
         **not** normalised -- it is the raw engine output with whitespace
         removed and letters upper-cased. Character correction, separator
