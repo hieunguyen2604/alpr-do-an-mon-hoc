@@ -188,7 +188,11 @@ def detect_image(
         "Frames are sampled rather than processed exhaustively, and repeated "
         "sightings of the same plate are merged into a single history record "
         "before anything is written — one plate seen in forty frames was still "
-        "one plate."
+        "one plate. Unreadable fragments (a box OCR got no complete string "
+        "from) are dropped rather than stored, and two readings that differ "
+        "by a single character within a two-second window are folded into "
+        "the better-evidenced spelling, so one vehicle does not fan out into "
+        "several near-identical rows."
     ),
     responses={
         202: {

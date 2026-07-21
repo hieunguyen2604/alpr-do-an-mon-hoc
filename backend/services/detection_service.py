@@ -46,6 +46,7 @@ from sqlalchemy.orm import Session
 
 from ai.inference.exceptions import ALPRError
 from ai.inference.normalizer import VietnamesePlateNormalizer
+from ai.inference.plate_rules import PlateKind
 from ai.inference.types import (
     BoundingBox,
     DetectionResult,
@@ -93,6 +94,64 @@ would leave the progress bar frozen at zero for the whole job, which is exactly
 what the endpoint exists to prevent. Ten is the compromise: at the configured
 frame stride it refreshes several times a second of video.
 """
+
+_MIN_UNCLASSIFIED_TEXT_LEN: Final[int] = 7
+"""Shortest OCR string worth persisting from a video when nothing matched it.
+
+Every legal civil layout is at least 7 characters (2 province + 1 serial +
+4 order digits), so an *unclassified* string shorter than this cannot be a
+complete plate -- it is a fragment read off a blurred frame. The guard applies
+only when the classifier found no family at all: a recognised-but-invalid kind
+such as ``military`` passes at any length, because "recognise and exclude" is
+a finding the operator must see, not noise.
+
+Measured motivation: the 14-second demo video produced 27 history rows of
+which 12 were fragments like ``S``, ``BEK`` and ``187`` -- rows nobody can act
+on, polluting the history page one upload at a time.
+"""
+
+_VARIANT_MERGE_WINDOW_SECONDS: Final[float] = 2.0
+"""How close in time two readings must be to count as variants of one plate.
+
+One physical plate read across consecutive sampled frames sometimes yields
+strings differing in a single character (``51P51578`` next to ``51P54578``).
+Merging on string distance alone would be unsafe -- two real consecutive
+registrations can also differ by one digit -- so the merge additionally
+requires the sightings to be near-simultaneous, when one vehicle occupying
+both readings is by far the likelier explanation.
+"""
+
+
+def _within_one_edit(a: str, b: str) -> bool:
+    """Return whether two strings differ by at most one edit operation.
+
+    One edit means one substitution, one insertion or one deletion -- exactly
+    the damage a single misread or dropped character does to a plate string.
+    Written out instead of importing a Levenshtein dependency because the
+    bounded case needs only one linear scan.
+
+    Args:
+        a: First string.
+        b: Second string.
+
+    Returns:
+        ``True`` when the edit distance is 0 or 1.
+    """
+    if abs(len(a) - len(b)) > 1:
+        return False
+    if len(a) > len(b):
+        a, b = b, a
+    # Walk both strings to the first mismatch, then check whether skipping one
+    # character (same length: in both; different length: in the longer only)
+    # makes the remainders equal.
+    i = 0
+    while i < len(a) and a[i] == b[i]:
+        i += 1
+    if i == len(a):
+        return True  # `a` is a prefix of `b`, at most one trailing char apart.
+    if len(a) == len(b):
+        return a[i + 1 :] == b[i + 1 :]
+    return a[i:] == b[i + 1 :]
 
 
 # ---------------------------------------------------------------------------
@@ -799,7 +858,7 @@ class DetectionService:
         db.commit()
 
         stride = max(1, self._settings.frame_stride)
-        best_by_key: dict[str, tuple[DetectionResult, int]] = {}
+        best_by_key: dict[str, tuple[DetectionResult, int, int]] = {}
         frame_index = 0
         processed = 0
 
@@ -835,14 +894,19 @@ class DetectionService:
         finally:
             capture.release()
 
-        merged = [entry for entry, _ in best_by_key.values()]
+        # An unknown frame rate disables the variant merge (a window of "0
+        # frames apart" can never hold), which fails safe: no merge is better
+        # than a merge whose time window was guessed.
+        max_frame_gap = int(_VARIANT_MERGE_WINDOW_SECONDS * fps) if fps > 0 else 0
+        sightings = self._collapse_variants(best_by_key, max_frame_gap=max_frame_gap)
+        merged = [entry for entry, _ in sightings]
         # Where each plate was found, in seconds. The frame index was already
         # tracked and then discarded; keeping it lets the interface say *when* a
         # plate passed and lets a reviewer seek to that moment in the source to
         # check a doubtful reading. ``None`` when the container reports no frame
         # rate -- an unknown timestamp is better left absent than reported as
         # second zero.
-        video_times = [(index / fps if fps > 0 else None) for _, index in best_by_key.values()]
+        video_times = [(index / fps if fps > 0 else None) for _, index in sightings]
         pseudo = PipelineResult(
             results=merged,
             total_time=0.0,
@@ -880,46 +944,117 @@ class DetectionService:
 
     @staticmethod
     def _merge_frame_results(
-        best_by_key: dict[str, tuple[DetectionResult, int]],
+        best_by_key: dict[str, tuple[DetectionResult, int, int]],
         result: PipelineResult,
         frame_index: int,
     ) -> None:
         """Fold one frame's detections into the running de-duplicated set.
 
+        Two classes of sighting are dropped here rather than persisted:
+
+        * **Textless boxes.** A detector hit that OCR read nothing from tells a
+          video reviewer nothing they can act on, and because a moving vehicle
+          crosses the frame, keying such boxes by position manufactured a fresh
+          "unreadable" history row every few dozen pixels of travel.
+        * **Unclassified fragments** shorter than
+          :data:`_MIN_UNCLASSIFIED_TEXT_LEN` -- partial reads off blurred
+          frames (``S``, ``BEK``, ``187``). Strings the classifier *did* place
+          in a family are kept whatever their length or validity: a military
+          plate is a finding, not noise.
+
         Args:
-            best_by_key: Accumulator mapping a de-duplication key to the best
-                detection seen so far and the frame it came from. Mutated.
+            best_by_key: Accumulator mapping a plate string to the best
+                sighting so far: ``(entry, frame_index, times_seen)``. Mutated.
             result: The current frame's pipeline output.
-            frame_index: Index of the current frame, kept for the log only.
+            frame_index: Index of the current frame, kept so the persisted row
+                can carry a timestamp.
         """
         for entry in result.results:
-            if entry.has_text and entry.recognition is not None:
-                key = entry.recognition.text
-                score = entry.recognition.confidence
-            else:
-                # No text to key on. Quantising the box centre to a coarse grid
-                # makes a plate that stays put across frames collapse to one
-                # row, while a genuinely different plate elsewhere in the frame
-                # still gets its own.
-                bbox = entry.detection.bbox
-                key = (
-                    f"unread@{(bbox.x + bbox.width // 2) // 32},{(bbox.y + bbox.height // 2) // 32}"
-                )
-                score = entry.detection.confidence
+            if not entry.has_text or entry.recognition is None:
+                continue
+            recognition = entry.recognition
+            is_unclassified = recognition.kind in ("", PlateKind.UNKNOWN.value)
+            if (
+                is_unclassified
+                and not recognition.is_valid_format
+                and len(recognition.text) < _MIN_UNCLASSIFIED_TEXT_LEN
+            ):
+                continue
+
+            key = recognition.text
+            score = recognition.confidence
 
             existing = best_by_key.get(key)
             if existing is None:
-                best_by_key[key] = (entry, frame_index)
+                best_by_key[key] = (entry, frame_index, 1)
                 continue
 
-            previous = existing[0]
+            previous, previous_frame, seen = existing
             previous_score = (
                 previous.recognition.confidence
                 if previous.recognition is not None
                 else previous.detection.confidence
             )
             if score > previous_score:
-                best_by_key[key] = (entry, frame_index)
+                best_by_key[key] = (entry, frame_index, seen + 1)
+            else:
+                best_by_key[key] = (previous, previous_frame, seen + 1)
+
+    @staticmethod
+    def _collapse_variants(
+        best_by_key: dict[str, tuple[DetectionResult, int, int]],
+        max_frame_gap: int,
+    ) -> list[tuple[DetectionResult, int]]:
+        """Merge single-character OCR variants of one physical plate.
+
+        The per-string accumulator cannot see that ``51P51578`` and
+        ``51P54578`` were the same motorcycle read twice, so it hands over one
+        row per spelling. This pass absorbs a reading into another when the
+        two strings differ by **at most one edit** and were seen **within**
+        ``max_frame_gap`` frames of each other -- both conditions together,
+        because either alone also matches two genuinely different plates.
+
+        Which spelling survives is decided by evidence, not arrival order:
+        readings are ranked valid-format first, then by how many frames voted
+        for them, then by OCR confidence. Confidence alone is a poor judge at
+        one-character granularity -- in the demo video the *wrong* spelling
+        held the higher score (0.919 against 0.913) while the correct one had
+        the majority of frames.
+
+        Args:
+            best_by_key: The accumulator built by :meth:`_merge_frame_results`.
+            max_frame_gap: Largest frame-index distance at which two readings
+                may still be considered simultaneous. Non-positive disables
+                merging (an unknown frame rate must not cause false merges).
+
+        Returns:
+            The surviving sightings as ``(entry, frame_index)`` pairs, in
+            ranking order.
+        """
+
+        def rank(item: tuple[DetectionResult, int, int]) -> tuple[int, int, float]:
+            entry, _, seen = item
+            recognition = entry.recognition
+            valid = 1 if recognition is not None and recognition.is_valid_format else 0
+            confidence = recognition.confidence if recognition is not None else 0.0
+            return (valid, seen, confidence)
+
+        ranked = sorted(best_by_key.values(), key=rank, reverse=True)
+        winners: list[tuple[DetectionResult, int]] = []
+        winner_texts: list[tuple[str, int]] = []
+
+        for entry, frame_index, _seen in ranked:
+            text = entry.recognition.text if entry.recognition is not None else ""
+            absorbed = max_frame_gap > 0 and any(
+                abs(frame_index - winner_frame) <= max_frame_gap
+                and _within_one_edit(text, winner_text)
+                for winner_text, winner_frame in winner_texts
+            )
+            if absorbed:
+                continue
+            winners.append((entry, frame_index))
+            winner_texts.append((text, frame_index))
+        return winners
 
     @staticmethod
     def _progress(frame_index: int, total_frames: int) -> float:

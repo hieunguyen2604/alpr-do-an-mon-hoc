@@ -69,11 +69,12 @@
     "plates": [
       {
         "plate": "51P54578",
-        "display": "51P-545.78",
-        "kind": "car",
+        "display": "51P5-4578",
+        "kind": "motorcycle_old",
         "color": "white",
         "valid": true,
-        "lines": 2
+        "lines": 2,
+        "note": "Biển in '51-P5 / 4578' — xe máy seri P5, số 4 chữ số. Bản cũ ghi nhầm là ô tô 51P-545.78."
       }
     ]
   },
@@ -135,10 +136,11 @@
       {
         "plate": "65A00450",
         "display": "65A-004.50",
-        "kind": "car",
+        "kind": "blue_car",
         "color": "blue",
         "valid": true,
-        "lines": 2
+        "lines": 2,
+        "note": "kind đổi car → blue_car theo taxonomy có màu (thêm sau bản expected đầu)."
       }
     ]
   },
@@ -146,12 +148,13 @@
     "file": "bien-xanh-nha-nuoc.jpg",
     "plates": [
       {
-        "plate": "1987",
-        "display": "1987",
-        "kind": "unknown",
+        "plate": "51A1987",
+        "display": "51A-1987",
+        "kind": "blue_car",
         "color": "blue",
-        "valid": false,
-        "lines": 2
+        "valid": true,
+        "lines": 2,
+        "note": "Biển in '51A / 1987' (số 4 chữ số). Bản cũ chỉ ghi được dòng dưới '1987'."
       }
     ]
   },
@@ -164,11 +167,12 @@
     "plates": [
       {
         "plate": "56P23135",
-        "display": "56P-231.35",
-        "kind": "car",
+        "display": "56P2-3135",
+        "kind": "motorcycle_old",
         "color": "white",
         "valid": true,
-        "lines": 2
+        "lines": 2,
+        "note": "Biển in '56-P2 / 3135' — xe máy seri P2. Bản cũ ghi nhầm là ô tô 56P-231.35."
       },
       {
         "plate": "51G09964",
@@ -184,7 +188,8 @@
         "kind": "unknown",
         "color": "white",
         "valid": false,
-        "lines": 2
+        "lines": 2,
+        "note": "Biển xe máy mé trái bị che khuất một phần, người cũng không đọc được."
       }
     ]
   },
@@ -192,36 +197,40 @@
     "file": "nhieu-bien-2.png",
     "plates": [
       {
-        "plate": "59YR20430",
-        "display": "59YR-204.30",
+        "plate": "59XB20430",
+        "display": "59XB-204.30",
         "kind": "motorcycle_new",
         "color": "white",
         "valid": true,
-        "lines": 2
+        "lines": 2,
+        "note": "Biển in '59-XB / 204.30'. Hệ thống hiện đọc 59YR (nhầm X→Y, B→R) — hạn chế OCR biển 2 dòng đã ghi ở Chương 6."
       },
       {
-        "plate": "39458858X0",
-        "display": "39458858X0",
-        "kind": "unknown",
-        "color": "white",
-        "valid": false,
-        "lines": 2
-      },
-      {
-        "plate": "73G341873",
-        "display": "73G3-418.73",
+        "plate": "59X139458",
+        "display": "59X1-394.58",
         "kind": "motorcycle_old",
         "color": "white",
         "valid": true,
-        "lines": 2
+        "lines": 2,
+        "note": "Biển in '59-X1 / 394.58'. Từ 21/07 (sàn tin cậy rescue + bậc thang thử-lại) hệ thống đọc ĐÚNG 59X1-394.58."
       },
       {
-        "plate": "BA104",
-        "display": "BA-104",
-        "kind": "military",
+        "plate": "76B141873",
+        "display": "76B1-418.73",
+        "kind": "motorcycle_old",
         "color": "white",
-        "valid": false,
-        "lines": 2
+        "valid": true,
+        "lines": 2,
+        "note": "Biển in '76-B1 / 418.73'. Từng đọc nhầm 73G3-418.73; từ 21/07 hệ thống đọc ĐÚNG 76B1-418.73."
+      },
+      {
+        "plate": "51K14116",
+        "display": "51K-141.16",
+        "kind": "car",
+        "color": "white",
+        "valid": true,
+        "lines": 1,
+        "note": "Biển trước ô tô Hyundai đỏ '51K-141.16', crop chỉ 25×16 px. Hệ thống đọc thẳng ra BA-104 — được gắn cờ quân đội/không hợp lệ trên UI (trung thực), không bịa thành biển dân sự."
       }
     ]
   },
@@ -229,20 +238,22 @@
     "file": "nhieu-bien-3.png",
     "plates": [
       {
-        "plate": "4374",
-        "display": "4374",
-        "kind": "unknown",
-        "color": "white",
-        "valid": false,
-        "lines": 2
-      },
-      {
-        "plate": "27T935952",
-        "display": "27T9-359.52",
+        "plate": "77H54374",
+        "display": "77H5-4374",
         "kind": "motorcycle_old",
         "color": "white",
         "valid": true,
-        "lines": 2
+        "lines": 2,
+        "note": "Biển in '77-H5 / 4374'. Ca này được Chương 6 dẫn làm bằng chứng đọc đúng khi chụp chính diện."
+      },
+      {
+        "plate": "59F227793",
+        "display": "59F2-277.93",
+        "kind": "motorcycle_old",
+        "color": "white",
+        "valid": true,
+        "lines": 2,
+        "note": "Biển in '59-F2 / 277.93'. Hệ thống hiện chỉ đọc được dòng dưới '27793'."
       },
       {
         "plate": "",
@@ -250,7 +261,8 @@
         "kind": "unknown",
         "color": "white",
         "valid": false,
-        "lines": 2
+        "lines": 2,
+        "note": "Biển xe máy giữa khung quá mờ, người cũng không đọc chắc được."
       }
     ]
   }
