@@ -562,7 +562,9 @@ class ALPRPipeline:
                 # method used to -- is what made an army plate reach the user
                 # labelled "wrong format" with nothing to explain why.
                 kind = refine_kind_with_color(outcome, plate_color, recognition.line_count)
-                display_text = _format_for_display(self._normalizer, text, recognition.line_count)
+                display_text = _format_for_display(
+                    self._normalizer, text, recognition.line_count, kind=kind
+                )
             else:
                 text, is_valid = self._normalizer.normalize(raw_source)
         except Exception as error:  # noqa: BLE001 - never lose a plate to a rule bug
@@ -867,7 +869,7 @@ def rescue_two_line_upper(
                 # recomputed here. Carrying the first attempt's values over would
                 # describe a string that no longer exists.
                 kind = refine_kind_with_color(outcome, color, 2)
-                display_text = _format_for_display(normalizer, text, 2)
+                display_text = _format_for_display(normalizer, text, 2, kind=kind)
             else:
                 text, is_valid = normalizer.normalize(combined)
         except Exception as error:  # noqa: BLE001 - a rescue must not become a failure
@@ -1078,15 +1080,16 @@ def retry_skewed_variants(
                 detailed = getattr(normalizer, "normalize_detailed", None)
                 if callable(detailed):
                     outcome = detailed(attempt.raw_text, line_count=attempt.line_count)
+                    variant_kind = refine_kind_with_color(outcome, color, attempt.line_count)
                     candidate = PlateRecognition(
                         text=outcome.text,
                         raw_text=attempt.raw_text,
                         confidence=attempt.confidence,
                         line_count=attempt.line_count,
                         is_valid_format=outcome.is_valid_format,
-                        kind=refine_kind_with_color(outcome, color, attempt.line_count),
+                        kind=variant_kind,
                         display_text=_format_for_display(
-                            normalizer, outcome.text, attempt.line_count
+                            normalizer, outcome.text, attempt.line_count, kind=variant_kind
                         ),
                     )
                 else:
@@ -1132,7 +1135,9 @@ def retry_skewed_variants(
     return recognition
 
 
-def _format_for_display(normalizer: BaseNormalizer, text: str, line_count: int) -> str:
+def _format_for_display(
+    normalizer: BaseNormalizer, text: str, line_count: int, kind: str = ""
+) -> str:
     """Render a plate string with the separators the physical plate carries.
 
     Args:
@@ -1141,6 +1146,9 @@ def _format_for_display(normalizer: BaseNormalizer, text: str, line_count: int) 
         text: The bare normalised string, e.g. ``"29E01566"``.
         line_count: Lines on the plate, forwarded to disambiguate layouts that
             share a character pattern.
+        kind: The family already established for this plate, forwarded so the
+            digit grouping follows the SAME decision as the family badge (see
+            ``docs/reports/23-display-format-rules.md``). Empty when unknown.
 
     Returns:
         The formatted string, e.g. ``"29E-015.66"``. Falls back to ``text``
@@ -1151,7 +1159,12 @@ def _format_for_display(normalizer: BaseNormalizer, text: str, line_count: int) 
     if not callable(formatter):
         return text
     try:
-        return formatter(text, line_count=line_count) or text
+        try:
+            return formatter(text, line_count=line_count, kind=kind or None) or text
+        except TypeError:
+            # An alternative normalizer predating the `kind` parameter: the
+            # capability is probed, not required, so degrade to the old call.
+            return formatter(text, line_count=line_count) or text
     except Exception:  # noqa: BLE001 - presentation must not break recognition
         _LOGGER.debug("format_for_display failed for %r, showing the bare string", text)
         return text

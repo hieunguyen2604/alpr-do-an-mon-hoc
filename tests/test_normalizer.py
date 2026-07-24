@@ -531,6 +531,64 @@ def test_two_lines_prefers_the_motorcycle_but_stays_ambiguous(
     assert decision.is_ambiguous is True, "two lines is a prior, not a proof"
 
 
+def test_printed_dot_in_raw_text_proves_the_car_reading(
+    normalizer: VietnamesePlateNormalizer,
+) -> None:
+    """A ``DDD.DD`` group in the raw string beats the two-line motorcycle prior.
+
+    QCVN 08:2024/BCA prints a five-digit order number with a dot (``609.69``)
+    and a four-digit one without. Only the car reading of an ambiguous
+    8-character string has a five-digit number, so the printed dot is proof,
+    not preference. This is the field case of 24/07/2026: ``51H / 609.69`` on
+    an SUV tailgate was labelled a motorcycle and rendered ``51H6-0969``.
+    """
+    decision = normalizer.detect_plate_kind(
+        "51H60969", line_count=2, raw_text="51H 609.69"
+    )
+    assert decision.kind is PlateKind.CAR
+    assert decision.is_ambiguous is False, "a printed dot is proof, not a prior"
+
+    # Without the dot the measured motorcycle prior stands untouched.
+    plain = normalizer.detect_plate_kind("51P54578", line_count=2, raw_text="51-P5 4578")
+    assert plain.kind is PlateKind.MOTORCYCLE_OLD
+
+
+def test_dot_evidence_flows_through_normalize_detailed(
+    normalizer: VietnamesePlateNormalizer,
+) -> None:
+    """The end-to-end path: raw string in, car verdict and car grouping out."""
+    outcome = normalizer.normalize_detailed("51C 920.87", line_count=2)
+    assert outcome.text == "51C92087"
+    assert outcome.decision.kind is PlateKind.CAR
+    assert (
+        normalizer.format_for_display(outcome.text, kind=outcome.decision.kind)
+        == "51C-920.87"
+    )
+
+
+def test_format_for_display_follows_the_established_kind(
+    normalizer: VietnamesePlateNormalizer,
+) -> None:
+    """The digit grouping must tell the same story as the family badge.
+
+    ``51H60969`` groups as ``51H-609.69`` for a car and ``51H6-0969`` for an
+    old motorcycle; whichever family the caller established wins. A kind that
+    does not fit the string (colour-derived, stale) falls back to deriving.
+    """
+    assert normalizer.format_for_display("51H60969", kind=PlateKind.CAR) == "51H-609.69"
+    assert (
+        normalizer.format_for_display("51H60969", kind=PlateKind.MOTORCYCLE_OLD)
+        == "51H6-0969"
+    )
+    # String value works too -- the pipeline carries kinds as strings.
+    assert normalizer.format_for_display("51H60969", kind="car") == "51H-609.69"
+    # A kind the string cannot carry is ignored, not obeyed.
+    assert (
+        normalizer.format_for_display("51H60969", line_count=1, kind="diplomatic")
+        == "51H-609.69"
+    )
+
+
 def test_two_line_preference_only_applies_to_the_car_motorcycle_tie(
     normalizer: VietnamesePlateNormalizer,
 ) -> None:

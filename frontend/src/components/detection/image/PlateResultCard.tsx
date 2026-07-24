@@ -12,7 +12,7 @@
  * would leave the user staring at a picture with a box on it and no explanation.
  */
 
-import { Download, ImageOff, Wand2 } from 'lucide-react';
+import { Download, ImageOff } from 'lucide-react';
 
 import { Badge, Button, ConfidenceBar } from '@/components/ui';
 import { cn } from '@/lib/cn';
@@ -39,29 +39,6 @@ export interface PlateResultCardProps {
 }
 
 /**
- * Whether post-processing actually changed the OCR output.
- *
- * Compared with whitespace and case normalised away, because a difference of
- * only spacing is a formatting detail rather than a correction, and presenting
- * it as one would overstate what the post-processing step achieved.
- *
- * @param raw - Unmodified OCR output.
- * @param corrected - Normalised plate string.
- * @returns `true` when the two differ meaningfully.
- */
-function wasCorrected(
-  raw: string | null,
-  corrected: string | null,
-): raw is string {
-  if (!raw) {
-    return false;
-  }
-  const normalize = (value: string): string =>
-    value.replace(/[\s-]+/g, '').toUpperCase();
-  return normalize(raw) !== normalize(corrected ?? '');
-}
-
-/**
  * Render one plate result.
  *
  * @param props - The plate, its position and the download handler.
@@ -76,7 +53,6 @@ export function PlateResultCard({
   onDownloadCrop,
   isDownloadingCrop = false,
 }: PlateResultCardProps): JSX.Element {
-  const showRawComparison = wasCorrected(result.raw_ocr_text, result.plate_number);
   const hasPlateText = Boolean(result.plate_number);
 
   return (
@@ -188,33 +164,12 @@ export function PlateResultCard({
       </div>
 
       {/*
-        Shown only when post-processing changed something. Putting the raw string
-        next to the corrected one is the clearest demonstration that the
-        correction step does real work — with the two identical there is nothing
-        to show, and the notice would be noise on every card.
+        The raw-vs-corrected banner that used to sit here was removed on
+        24/07/2026 (user request): the raw OCR string remains available in the
+        API response and the history detail, but on the result card it was
+        noise once a plate read correctly. What post-processing contributes is
+        demonstrated by measurement in the thesis, not by the UI.
       */}
-      {showRawComparison && (
-        <div
-          className={cn(
-            'mt-3 flex flex-wrap items-center gap-x-2 gap-y-1 rounded-md',
-            'border border-primary/20 bg-primary/5 px-3 py-2 text-xs',
-          )}
-        >
-          <Wand2
-            className="h-3.5 w-3.5 shrink-0 text-primary"
-            aria-hidden="true"
-          />
-          <span className="text-content-muted">Hậu xử lý đã sửa:</span>
-          <span className="plate-text text-content-muted line-through">
-            {result.raw_ocr_text}
-          </span>
-          <span aria-hidden="true" className="text-content-muted">
-            →
-          </span>
-          <span className="plate-text text-content">{result.plate_number}</span>
-        </div>
-      )}
-
       {onDownloadCrop && plateImageUrl && (
         <div className="mt-3 flex justify-end">
           <Button

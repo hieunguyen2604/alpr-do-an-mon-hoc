@@ -428,18 +428,27 @@ def to_job_response(job: DetectionJob, storage: StorageService) -> DetectionJobR
     )
 
 
-def display_text(plate_number: str | None, line_count: int | None) -> str | None:
+def display_text(
+    plate_number: str | None, line_count: int | None, kind: str | None = None
+) -> str | None:
     """Render a stored plate number with the separators the real plate carries.
 
-    Derived on read rather than stored: the separators are a pure function of the
-    plate string, so persisting them would be a second copy of the same fact --
-    one that could drift, and one that historical rows written before this
-    feature would be missing anyway.
+    Derived on read rather than stored: the separators are a pure function of
+    the plate string AND its established family, so persisting them would be a
+    second copy of the same fact -- one that could drift, and one that
+    historical rows written before this feature would be missing anyway.
 
     Args:
         plate_number: The bare stored string, e.g. ``"29E01566"``.
-        line_count: Lines on the plate, forwarded to disambiguate layouts that
-            share a character pattern.
+        line_count: Lines on the plate, used to disambiguate layouts when no
+            ``kind`` is available.
+        kind: The stored plate family (``row.plate_kind``). Forwarding it is
+            what keeps the response's grouping consistent with its own
+            ``plate_kind`` field: the pipeline may have classified
+            ``51H60969`` as a car from the printed-dot evidence, and
+            re-deriving here without that evidence used to regroup it as the
+            motorcycle ``51H6-0969`` while the badge said car (field bug,
+            24/07/2026; rules in ``docs/reports/23-display-format-rules.md``).
 
     Returns:
         The formatted string, e.g. ``"29E-015.66"``; ``None`` when there is no
@@ -450,7 +459,9 @@ def display_text(plate_number: str | None, line_count: int | None) -> str | None
     if not plate_number:
         return None
     try:
-        return _NORMALIZER.format_for_display(plate_number, line_count=line_count)
+        return _NORMALIZER.format_for_display(
+            plate_number, line_count=line_count, kind=kind or None
+        )
     except Exception:  # noqa: BLE001 - presentation must never break a response
         logger.debug("format_for_display failed for %r", plate_number)
         return plate_number
@@ -476,7 +487,7 @@ def _to_result_schema(row: DetectionHistory, storage: StorageService) -> Detecti
         plate_kind=row.plate_kind,
         plate_color=row.plate_color,
         plate_color_confidence=row.plate_color_confidence,
-        plate_display=display_text(row.plate_number, row.plate_line_count),
+        plate_display=display_text(row.plate_number, row.plate_line_count, row.plate_kind),
         video_time_seconds=row.video_time_seconds,
         plate_line_count=row.plate_line_count,
         processing_time=row.processing_time,
