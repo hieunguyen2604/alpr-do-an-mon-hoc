@@ -153,6 +153,29 @@ def _read_path(prefix: str, key: str, default: Path) -> Path:
     return candidate
 
 
+def _read_optional_path(prefix: str, key: str) -> Path | None:
+    """Read a path that has no default: unset or empty simply means ``None``.
+
+    Unlike :func:`_read_path` there is no fallback value to return, because
+    the setting is a pure opt-in (a fine-tuned model directory). Resolution
+    of a relative value against :data:`PROJECT_ROOT` matches ``__post_init__``.
+
+    Args:
+        prefix: Environment-variable prefix.
+        key: Variable name without the prefix.
+
+    Returns:
+        An absolute path, or ``None`` when the variable is unset or empty.
+    """
+    raw = os.environ.get(f"{prefix}{key}", "").strip()
+    if not raw:
+        return None
+    candidate = Path(raw).expanduser()
+    if not candidate.is_absolute():
+        candidate = PROJECT_ROOT / candidate
+    return candidate
+
+
 @dataclass(slots=True)
 class InferenceConfig:
     """Runtime settings for the detection and recognition stages.
@@ -182,6 +205,12 @@ class InferenceConfig:
             correct and faster than a multilingual one.
         ocr_use_gpu: Whether the OCR engine may use a GPU. Defaults to
             ``False`` for the same reason as :attr:`device`.
+        ocr_rec_model_dir: Directory holding a FINE-TUNED recognition
+            inference model (exported by the Colab notebook in
+            ``ai/training``). ``None`` — the default — uses the stock
+            ``en_PP-OCRv5_mobile_rec`` weights. When set, the directory must
+            exist: a mistyped path failing at start-up beats a container that
+            silently recognises with the wrong model.
         two_line_aspect_ratio_threshold: Width/height ratio below which a plate
             crop is treated as a two-line plate. Vietnamese single-line plates
             are much wider than tall; two-line plates are nearly square. A crop
@@ -211,6 +240,7 @@ class InferenceConfig:
     imgsz: int = 640
     ocr_lang: str = "en"
     ocr_use_gpu: bool = False
+    ocr_rec_model_dir: Path | None = None
     two_line_aspect_ratio_threshold: float = 2.5
     rectify_enabled: bool = True
     sr_retry_enabled: bool = True
@@ -244,6 +274,16 @@ class InferenceConfig:
         if not self.ocr_lang:
             raise ValueError("ocr_lang must be a non-empty string, e.g. 'en'")
 
+        if self.ocr_rec_model_dir is not None:
+            self.ocr_rec_model_dir = Path(self.ocr_rec_model_dir).expanduser()
+            if not self.ocr_rec_model_dir.is_absolute():
+                self.ocr_rec_model_dir = PROJECT_ROOT / self.ocr_rec_model_dir
+            if not self.ocr_rec_model_dir.is_dir():
+                raise ValueError(
+                    "ocr_rec_model_dir does not exist or is not a directory: "
+                    f"{self.ocr_rec_model_dir}"
+                )
+
     @classmethod
     def from_env(cls, prefix: str = DEFAULT_ENV_PREFIX) -> InferenceConfig:
         """Build a configuration from environment variables.
@@ -262,6 +302,7 @@ class InferenceConfig:
         ``ALPR_IMGSZ``                      :attr:`imgsz`
         ``ALPR_OCR_LANG``                   :attr:`ocr_lang`
         ``ALPR_OCR_USE_GPU``                :attr:`ocr_use_gpu`
+        ``ALPR_OCR_REC_MODEL_DIR``          :attr:`ocr_rec_model_dir`
         ``ALPR_TWO_LINE_ASPECT_RATIO``      :attr:`two_line_aspect_ratio_threshold`
         ``ALPR_RECTIFY_ENABLED``            :attr:`rectify_enabled`
         ``ALPR_SR_RETRY_ENABLED``           :attr:`sr_retry_enabled`
@@ -290,6 +331,7 @@ class InferenceConfig:
             imgsz=_read_int(prefix, "IMGSZ", defaults.imgsz),
             ocr_lang=_read_str(prefix, "OCR_LANG", defaults.ocr_lang),
             ocr_use_gpu=_read_bool(prefix, "OCR_USE_GPU", defaults.ocr_use_gpu),
+            ocr_rec_model_dir=_read_optional_path(prefix, "OCR_REC_MODEL_DIR"),
             two_line_aspect_ratio_threshold=_read_float(
                 prefix,
                 "TWO_LINE_ASPECT_RATIO",

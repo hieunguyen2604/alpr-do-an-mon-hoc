@@ -270,6 +270,35 @@ class TestFieldValidation:
             InferenceConfig(ocr_lang="")
 
 
+class TestFineTunedRecModelDir:
+    """The opt-in path to a fine-tuned recognition model (ai/training)."""
+
+    def test_defaults_to_none(self) -> None:
+        assert InferenceConfig().ocr_rec_model_dir is None
+
+    def test_an_existing_directory_is_accepted_and_normalised(self, tmp_path: Path) -> None:
+        config = InferenceConfig(ocr_rec_model_dir=tmp_path)
+        assert config.ocr_rec_model_dir == tmp_path
+
+    def test_a_missing_directory_fails_at_startup(self, tmp_path: Path) -> None:
+        """A mistyped path must fail loudly, not silently use stock weights."""
+        with pytest.raises(ValueError, match="ocr_rec_model_dir"):
+            InferenceConfig(ocr_rec_model_dir=tmp_path / "khong-ton-tai")
+
+    def test_read_from_the_environment(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        monkeypatch.setenv("ALPRTEST_OCR_REC_MODEL_DIR", str(tmp_path))
+        config = InferenceConfig.from_env(prefix="ALPRTEST_")
+        assert config.ocr_rec_model_dir == tmp_path
+
+    def test_unset_environment_means_stock_weights(
+        self, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        monkeypatch.delenv("ALPRTEST_OCR_REC_MODEL_DIR", raising=False)
+        assert InferenceConfig.from_env(prefix="ALPRTEST_").ocr_rec_model_dir is None
+
+
 class TestConfigurationIsInjectable:
     """The dataclass is what makes the pipeline testable without the environment."""
 

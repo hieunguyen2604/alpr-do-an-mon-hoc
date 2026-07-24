@@ -470,6 +470,15 @@ class PaddleOcrRecognizer(BaseRecognizer):
                 "text_recognition_model_name": recognition_model,
             }
             selection = f"det={TEXT_DETECTION_MODEL}, rec={recognition_model}"
+            if self._config.ocr_rec_model_dir is not None:
+                # A fine-tuned recognition model (ai/training). The model NAME
+                # stays pinned so PaddleOCR resolves the right architecture and
+                # pre/post-processing; the DIR overrides where the weights and
+                # the exported dictionary come from.
+                model_kwargs["text_recognition_model_dir"] = str(
+                    self._config.ocr_rec_model_dir
+                )
+                selection += f", rec_dir={self._config.ocr_rec_model_dir}"
         else:
             LOGGER_MSG = (
                 "No pinned mobile model pair for lang=%r; falling back to "

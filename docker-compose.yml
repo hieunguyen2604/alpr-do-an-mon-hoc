@@ -87,6 +87,10 @@ services:
       # Super-resolution retry for small failed crops (FSRCNN, models/sr/).
       # Independent switch so its contribution can be ablated on its own.
       ALPR_SR_RETRY_ENABLED: ${ALPR_SR_RETRY_ENABLED:-true}
+      # Optional fine-tuned recognition model (ai/training/README-rec-finetune.md).
+      # Point at a directory INSIDE the container, e.g. /app/models/rec_finetuned
+      # (the ./models bind mount). Empty = stock en_PP-OCRv5_mobile_rec.
+      ALPR_OCR_REC_MODEL_DIR: ${ALPR_OCR_REC_MODEL_DIR:-}
 
       # --- Application (consumed by backend/core config, Phase 5) -----------
       # Four slashes in a sqlite URL means an ABSOLUTE path: `sqlite:///` plus
