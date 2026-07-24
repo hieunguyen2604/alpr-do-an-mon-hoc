@@ -1,6 +1,6 @@
 # Hướng dẫn biên soạn quyển đồ án tốt nghiệp
 
-**Đề tài:** Xây dựng hệ thống nhận dạng biển số xe Việt Nam ứng dụng Trí tuệ nhân tạo
+**Đề tài:** Xây dựng hệ thống nhận diện biển số xe bằng trí tuệ nhân tạo
 
 | Mục | Nội dung |
 |---|---|

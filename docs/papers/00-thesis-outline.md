@@ -1,6 +1,6 @@
 # Đề cương chi tiết quyển đồ án tốt nghiệp
 
-**Đề tài:** Xây dựng hệ thống nhận dạng biển số xe Việt Nam ứng dụng Trí tuệ nhân tạo
+**Đề tài:** Xây dựng hệ thống nhận diện biển số xe bằng trí tuệ nhân tạo
 *(Developing an AI-based Vietnamese License Plate Recognition System)*
 
 | Mục | Nội dung |

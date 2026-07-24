@@ -1,7 +1,12 @@
 # Phần đầu quyển đồ án (Front Matter)
 
-**Đề tài:** Xây dựng hệ thống nhận dạng biển số xe Việt Nam ứng dụng Trí tuệ nhân tạo
-*(Developing an AI-based Vietnamese License Plate Recognition System)*
+**Đề tài:** Xây dựng hệ thống nhận diện biển số xe bằng trí tuệ nhân tạo
+*(Developing an AI-based vehicle license plate recognition system)*
+
+> Tên đề tài lấy **nguyên văn theo Đề cương chi tiết đã đăng ký** (GVHD:
+> ThS. Cáp Phạm Đình Thăng; thời gian thực hiện 16/07/2026 – 24/09/2026).
+> Bản nháp trước dùng "Xây dựng hệ thống nhận dạng biển số xe Việt Nam ứng
+> dụng Trí tuệ nhân tạo" — đã thay ở mọi vị trí để bìa khớp hồ sơ đăng ký.
 
 | Mục | Nội dung |
 |---|---|
@@ -20,15 +25,13 @@
 
 <div align="center">
 
-**BỘ GIÁO DỤC VÀ ĐÀO TẠO**
+**ĐẠI HỌC QUỐC GIA TP. HỒ CHÍ MINH**
 
-**«TÊN TRƯỜNG ĐẠI HỌC»**
-
-**«TÊN KHOA / VIỆN»**
+**TRƯỜNG ĐẠI HỌC CÔNG NGHỆ THÔNG TIN**
 
 <br/>
 
-*«Logo trường»*
+*(chèn logo Trường Đại học Công nghệ Thông tin khi kết xuất bản in)*
 
 <br/><br/>
 
@@ -38,26 +41,25 @@
 
 ### Đề tài:
 
-# XÂY DỰNG HỆ THỐNG NHẬN DẠNG BIỂN SỐ XE VIỆT NAM ỨNG DỤNG TRÍ TUỆ NHÂN TẠO
+# XÂY DỰNG HỆ THỐNG NHẬN DIỆN BIỂN SỐ XE BẰNG TRÍ TUỆ NHÂN TẠO
 
-*Developing an AI-based Vietnamese License Plate Recognition System*
+*Developing an AI-based vehicle license plate recognition system*
 
 <br/><br/>
 
 | | |
 |---:|:---|
-| **Ngành:** | «Tên ngành — SV bổ sung» |
+| **Ngành:** | Trí tuệ nhân tạo |
 | **Chuyên ngành:** | Trí tuệ nhân tạo |
-| **Mã ngành:** | «Mã ngành — SV bổ sung» |
 | **Sinh viên thực hiện:** | **Phạm Công Thành** — MSSV **25410013** |
 | | **Nguyễn Minh Hiếu** — MSSV **25410007** |
 | **Lớp:** | AI503.F3.LT.TTNT |
-| **Khoá:** | «Khoá — SV bổ sung» |
+| **Khoá:** | 2025 |
 | **Giảng viên hướng dẫn:** | ThS. Cáp Phạm Đình Thăng |
 
 <br/><br/>
 
-**«Địa danh — SV bổ sung», tháng 7 năm 2026**
+**TP. Hồ Chí Minh, tháng 9 năm 2026**
 
 </div>
 
@@ -89,7 +91,7 @@
 
 </div>
 
-Chúng tôi xin cam đoan đồ án tốt nghiệp với đề tài **"Xây dựng hệ thống nhận dạng biển số xe Việt Nam ứng dụng Trí tuệ nhân tạo"** là công trình nghiên cứu của nhóm chúng tôi, được thực hiện dưới sự hướng dẫn khoa học của **ThS. Cáp Phạm Đình Thăng**.
+Chúng tôi xin cam đoan đồ án tốt nghiệp với đề tài **"Xây dựng hệ thống nhận diện biển số xe bằng trí tuệ nhân tạo"** là công trình nghiên cứu của nhóm chúng tôi, được thực hiện dưới sự hướng dẫn khoa học của **ThS. Cáp Phạm Đình Thăng**.
 
 Các nội dung nghiên cứu, kết quả thực nghiệm và số liệu trình bày trong đồ án là trung thực và do chính chúng tôi thực hiện. Các thư viện, mô hình và bộ dữ liệu mã nguồn mở được sử dụng lại đều được nêu rõ nguồn gốc, phiên bản và điều kiện giấy phép tại các chương tương ứng.
 
@@ -99,7 +101,7 @@ Chúng tôi xin cam đoan không sao chép nguyên văn hoặc sử dụng kết
 
 <div align="right">
 
-*«Địa danh — SV bổ sung», ngày «DD» tháng 7 năm 2026*
+*TP. Hồ Chí Minh, ngày 24 tháng 9 năm 2026*
 
 **Sinh viên thực hiện**
 
@@ -125,7 +127,7 @@ Chúng tôi xin cam đoan không sao chép nguyên văn hoặc sử dụng kết
 
 Trước hết, chúng tôi xin bày tỏ lòng biết ơn sâu sắc tới **ThS. Cáp Phạm Đình Thăng** — người đã trực tiếp hướng dẫn chúng tôi trong suốt quá trình thực hiện đồ án. Thầy không chỉ định hướng về mặt chuyên môn mà còn chỉ ra cho chúng tôi những yêu cầu nghiêm ngặt về tính trung thực trong nghiên cứu khoa học: mọi số liệu công bố đều phải kiểm chứng được, mọi trích dẫn đều phải truy về nguồn gốc, và những gì chưa đo được thì không được suy đoán.
 
-Chúng tôi xin chân thành cảm ơn quý thầy cô «Khoa / Viện — SV bổ sung», «Trường Đại học — SV bổ sung» đã truyền đạt cho chúng tôi nền tảng kiến thức trong suốt những năm học vừa qua — đó là cơ sở để chúng tôi tiếp cận và giải quyết bài toán của đồ án này.
+Chúng tôi xin chân thành cảm ơn quý thầy cô Trường Đại học Công nghệ Thông tin — Đại học Quốc gia TP. Hồ Chí Minh đã truyền đạt cho chúng tôi nền tảng kiến thức trong suốt những năm học vừa qua — đó là cơ sở để chúng tôi tiếp cận và giải quyết bài toán của đồ án này.
 
 Chúng tôi cũng xin gửi lời cảm ơn tới cộng đồng mã nguồn mở, các nhóm nghiên cứu đã công bố công trình, mã nguồn và bộ dữ liệu về nhận dạng biển số xe. Đồ án này được xây dựng trên nền tảng những đóng góp đó.
 
@@ -137,7 +139,7 @@ Chúng tôi xin chân thành cảm ơn!
 
 <div align="right">
 
-*«Địa danh — SV bổ sung», ngày «DD» tháng 7 năm 2026*
+*TP. Hồ Chí Minh, ngày 24 tháng 9 năm 2026*
 
 **Nhóm sinh viên thực hiện**
 
