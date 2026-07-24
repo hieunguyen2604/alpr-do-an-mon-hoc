@@ -683,10 +683,12 @@ class TestSkewRetryLadder:
         assert recognizer.calls == 1, "the ablation switch must silence every retry"
 
     def test_a_wide_one_line_crop_is_not_stretched(self) -> None:
-        """Ratio 5.0 is beyond RETRY_STRETCH_MAX_RATIO: a real one-line plate
-        whose read failed for other reasons must not cost stretch calls."""
+        """Ratio 6.0 is beyond RETRY_STRETCH_MAX_RATIO: a real one-line plate
+        whose read failed for other reasons must not cost stretch calls.
+        240 px wide also keeps the crop beyond RETRY_SR_MAX_SIDE, so the SR
+        variants stay out of this test's scope."""
         recognizer = ForeshortenedRecognizer()
-        detector = FakeDetector([make_detection(10, 10, 200, 40)])
+        detector = FakeDetector([make_detection(10, 10, 240, 40)])
 
         result = build(
             detector=detector, recognizer=recognizer, normalizer=LengthNormalizer()
@@ -710,6 +712,132 @@ class TestSkewRetryLadder:
         assert recognition is not None
         assert recognition.text == "", "an invalid variant read must never replace the original"
         assert recognition.is_valid_format is False
+
+    def test_small_failed_crops_get_super_resolution_variants(
+        self, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """A small unreadable crop earns one extra read per available SR scale.
+
+        SR itself is faked: what this test pins is the LADDER's contract --
+        eligibility by crop size, one variant per scale, and the usual
+        accept-only-when-valid criterion downstream.
+        """
+        import ai.inference.pipeline as pipeline_module
+
+        upscale_calls: list[int] = []
+
+        def fake_upscale(image: ImageArray, scale: int) -> ImageArray:
+            upscale_calls.append(scale)
+            return np.repeat(np.repeat(image, scale, axis=0), scale, axis=1)
+
+        monkeypatch.setattr(pipeline_module, "superres_upscale", fake_upscale)
+
+        recognizer = ForeshortenedRecognizer()
+        failed = PlateRecognition(
+            text="", raw_text="", confidence=0.0, line_count=1, is_valid_format=False
+        )
+        # 140x40: flat crop, ratio 3.5 -> stretch fires too; SR comes after.
+        retry_skewed_variants(
+            recognizer, LengthNormalizer(), make_flat_image(140, 40), failed
+        )
+        assert upscale_calls == [3, 4], "one SR variant per shipped scale"
+
+    def test_large_crops_are_not_super_resolved(
+        self, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """Beyond RETRY_SR_MAX_SIDE the failure is not a resolution problem."""
+        import ai.inference.pipeline as pipeline_module
+
+        upscale_calls: list[int] = []
+        monkeypatch.setattr(
+            pipeline_module,
+            "superres_upscale",
+            lambda image, scale: upscale_calls.append(scale),
+        )
+
+        failed = PlateRecognition(
+            text="", raw_text="", confidence=0.0, line_count=1, is_valid_format=False
+        )
+        retry_skewed_variants(
+            ForeshortenedRecognizer(), LengthNormalizer(), make_flat_image(640, 480), failed
+        )
+        assert upscale_calls == [], "a 640px crop must never cost SR time"
+
+    def test_unavailable_sr_degrades_to_no_variant(
+        self, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """When cv2.dnn_superres is broken, upscale returns None and the
+        ladder silently runs without SR -- never raises, never blocks."""
+        import ai.inference.pipeline as pipeline_module
+
+        monkeypatch.setattr(pipeline_module, "superres_upscale", lambda image, scale: None)
+
+        recognizer = ForeshortenedRecognizer()
+        failed = PlateRecognition(
+            text="", raw_text="", confidence=0.0, line_count=1, is_valid_format=False
+        )
+        outcome = retry_skewed_variants(
+            recognizer, LengthNormalizer(), make_flat_image(100, 60), failed
+        )
+        assert outcome is failed
+        assert recognizer.calls == 0, "no variants at all -> no OCR spent"
+
+    def test_hybrid_rescue_joins_variant_upper_with_original_lower(
+        self, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """The measured 59-F2/277.93 shape: the original read holds the lower
+        line, an SR variant holds the upper line, each alone fails. The ladder
+        must be able to combine them -- same accept criterion, same floor."""
+        import ai.inference.pipeline as pipeline_module
+
+        monkeypatch.setattr(
+            pipeline_module,
+            "superres_upscale",
+            lambda image, scale: np.repeat(np.repeat(image, scale, axis=0), scale, axis=1),
+        )
+
+        class SplitHalvesRecognizer(BaseRecognizer):
+            """Original strip reads the bottom; only the variant's upper half
+            reads the top; the variant's own strip reads junk."""
+
+            def __init__(self) -> None:
+                self.calls = 0
+
+            @property
+            def name(self) -> str:
+                return "split-halves-recognizer"
+
+            def recognize(self, plate_image: ImageArray) -> PlateRecognition:
+                self.calls += 1
+                height, width = plate_image.shape[:2]
+                if width == 100:  # the original 100x72 crop
+                    text, line_count = "27793", 2
+                elif height >= 200:  # a full SR-variant strip
+                    text, line_count = "M93", 2
+                else:  # an upper-half cut of an SR variant
+                    text, line_count = "59F2", 1
+                return PlateRecognition(
+                    text=text, raw_text=text, confidence=0.95,
+                    line_count=line_count, is_valid_format=False,
+                )
+
+            def warmup(self) -> None:  # pragma: no cover - interface only
+                pass
+
+        recognizer = SplitHalvesRecognizer()
+        failed = PlateRecognition(
+            text="27793", raw_text="27793", confidence=0.9,
+            line_count=2, is_valid_format=False,
+        )
+        outcome = retry_skewed_variants(
+            recognizer,
+            LengthNormalizer(minimum_length=9),
+            make_flat_image(100, 72),
+            failed,
+        )
+
+        assert outcome.text == "59F227793"
+        assert outcome.is_valid_format is True
 
     def test_a_red_plate_is_never_retried(self) -> None:
         """Defence in depth for the military flip: red backgrounds exist only

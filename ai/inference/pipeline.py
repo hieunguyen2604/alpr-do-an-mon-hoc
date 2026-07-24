@@ -50,6 +50,7 @@ from ai.inference.config import InferenceConfig
 from ai.inference.exceptions import ALPRError, InvalidImageError
 from ai.inference.interfaces import BaseDetector, BaseNormalizer, BaseRecognizer
 from ai.inference.plate_color import classify_plate_color
+from ai.inference.superres import SR_SCALES, superres_upscale
 from ai.inference.two_line import (
     UPPER_HALF_END_RATIO,
     rectify_plate,
@@ -78,6 +79,7 @@ __all__ = [
     "RESCUE_MIN_UPPER_CONFIDENCE",
     "RETRY_STRETCH_MAX_RATIO",
     "RETRY_STRETCH_FACTOR",
+    "RETRY_SR_MAX_SIDE",
 ]
 
 _LOGGER = logging.getLogger(__name__)
@@ -932,6 +934,15 @@ about the actual pitch angle. The stretch only routes the crop into the
 two-line path; precision beyond that buys nothing.
 """
 
+RETRY_SR_MAX_SIDE: Final[int] = 200
+"""Largest crop side, in pixels, still eligible for the super-resolution retry.
+
+Small crops fail for lack of detail, which SR can partially restore -- the
+measured recoveries were 32x23 px and 171x120 px. The large failing crops
+(600 px and up) fail for a *different* reason and SR would only spend time on
+them; both measured cases sit comfortably under this bound.
+"""
+
 
 _UNCLASSIFIED_KINDS: Final[tuple[str, ...]] = ("", "unknown")
 """Kind values that mean the classifier found nothing at all.
@@ -995,7 +1006,7 @@ def retry_skewed_variants(
     baseline is untouched by construction, every recovery is pure gain, and a
     variant that reads worse is discarded by the validation criterion.
 
-    Two variants, ordered cheapest-hypothesis first:
+    Variants, ordered cheapest-hypothesis first:
 
     1. **In-plane deskew** (:func:`~ai.inference.two_line.rectify_plate`) --
        the plate is rotated in the image (tilted camera, leaning bike).
@@ -1007,6 +1018,12 @@ def retry_skewed_variants(
        empty). Attempted only when the failed crop's ratio sits in the
        ambiguous band between the two-line threshold and
        :data:`RETRY_STRETCH_MAX_RATIO`.
+    3. **Super-resolution** (:mod:`ai.inference.superres`, FSRCNN x3 then
+       x4) -- the plate is simply too small for the recogniser (the dominant
+       remaining failure class, measured 24/07/2026). Attempted only for
+       crops within :data:`RETRY_SR_MAX_SIDE` and only where
+       ``cv2.dnn_superres`` actually works; gated by its own config switch
+       (``sr_retry_enabled``) so the contribution can be ablated separately.
 
     Each variant gets the full first-class treatment -- recognise, normalise,
     and the upper-line rescue if its own read fails the same way a two-line
@@ -1070,6 +1087,20 @@ def retry_skewed_variants(
                 extra={**extra, "error": f"{type(error).__name__}: {error}"},
             )
 
+    # Super-resolution variants, small crops only: lack of pixels is the
+    # failure mode SR addresses (measured recoveries at 32x23 and 171x120 px),
+    # while the geometry variants above address shape. Tried after them
+    # because they are the more expensive hypothesis, and skipped wholesale
+    # when the environment has no usable cv2.dnn_superres.
+    if (
+        getattr(config, "sr_retry_enabled", True)
+        and max(height, width) <= RETRY_SR_MAX_SIDE
+    ):
+        for scale in SR_SCALES:
+            upscaled = superres_upscale(plate_image, scale)
+            if upscaled is not None:
+                variants.append((f"sr_x{scale}", upscaled))
+
     for variant_name, variant_image in variants:
         variant_extra = {**extra, "variant": variant_name}
         try:
@@ -1114,6 +1145,33 @@ def retry_skewed_variants(
                     context=variant_extra,
                     color=color,
                 )
+
+            # Hybrid rescue: upper line off the VARIANT image, lower line from
+            # the ORIGINAL read. The two best halves of one physical plate can
+            # land in different attempts -- measured on the 32x23 px
+            # ``59-F2 / 277.93`` crop, where the original strip read the
+            # bottom (``27793``), the SR x4 variant read the top (``59 F2`` at
+            # 0.849) and each alone failed validation. Same accept criterion
+            # and the same fragment-confidence floor gate the combination.
+            if not candidate.is_valid_format and recognition.raw_text:
+                hybrid_base = PlateRecognition(
+                    text=recognition.text,
+                    raw_text=recognition.raw_text,
+                    confidence=recognition.confidence,
+                    line_count=recognition.line_count,
+                    is_valid_format=False,
+                )
+                if should_rescue_two_line(hybrid_base):
+                    rescued = rescue_two_line_upper(
+                        recognizer,
+                        normalizer,
+                        variant_image,
+                        hybrid_base,
+                        context={**variant_extra, "hybrid_lower": "original"},
+                        color=color,
+                    )
+                    if rescued.is_valid_format:
+                        candidate = rescued
         except Exception as error:  # noqa: BLE001 - a retry must not become a failure
             _LOGGER.warning(
                 "Skew retry variant failed, trying the next",

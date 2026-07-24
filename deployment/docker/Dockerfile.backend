@@ -78,6 +78,26 @@ RUN pip install -r /build/requirements.txt
 COPY backend/requirements-inference.txt /build/requirements-inference.txt
 RUN pip install -r /build/requirements-inference.txt
 
+# --- One owner for the cv2 namespace ----------------------------------------
+# ultralytics and paddleocr each drag in their own OpenCV wheel, and whichever
+# installs LAST silently owns the `cv2` package directory -- the documented
+# three-way clobbering hazard (deployment/README.md) that once left
+# `cv2.dnn_superres` present but EMPTY. The fix is to end the fight
+# deterministically: uninstall every variant, then install exactly one wheel
+# that is a superset of the rest. `dnn_superres` from contrib powers the
+# small-crop super-resolution retry (ai/inference/superres.py).
+#
+# It must be `opencv-contrib-python` -- NOT the headless variant -- because
+# paddlex validates its dependencies BY PIP PACKAGE NAME
+# (`opencv-contrib-python==4.10.0.84` for the ocr extra) and refuses to build
+# its pipeline when that exact name is absent, however importable `cv2` is.
+# Verified the hard way: the headless wheel produced a container whose OCR
+# failed on every plate. The GUI shared objects it drags in (libgl1,
+# libglib2.0-0) are already installed in the runtime stage.
+RUN pip uninstall -y opencv-python opencv-python-headless \
+        opencv-contrib-python opencv-contrib-python-headless || true \
+    && pip install "opencv-contrib-python==4.10.0.84"
+
 # ---------------------------------------------------------------------------
 # Stage 2 -- runtime: no compilers, no build caches, non-root
 # ---------------------------------------------------------------------------
