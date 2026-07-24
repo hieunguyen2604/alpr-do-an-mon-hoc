@@ -99,28 +99,61 @@ export default function ImageDetection(): JSX.Element {
     setPreviewUrl(next);
   }, []);
 
+  /** Upload one image and show what was found in it.
+   *
+   * Takes the file as an argument instead of reading `selectedFile` from
+   * state: detection starts in the same tick the file is chosen, before React
+   * has re-rendered, and reading state here would race that update.
+   */
+  const runDetection = useCallback(async (file: File): Promise<void> => {
+    const controller = new AbortController();
+    abortRef.current?.abort();
+    abortRef.current = controller;
+
+    setIsDetecting(true);
+    setError(null);
+    setDownloadError(null);
+    setResponse(null);
+    setActiveIndex(null);
+    setUploadProgress(0);
+
+    try {
+      const result = await detectImage(file, setUploadProgress, controller.signal);
+      setResponse(result);
+    } catch (caught) {
+      // A cancellation is the user's own doing — clearing the form or picking a
+      // different file — so it must not be reported back to them as a failure.
+      if (isApiError(caught) && caught.code === 'CANCELLED') {
+        return;
+      }
+      setError(isApiError(caught) ? caught : UNEXPECTED_ERROR);
+    } finally {
+      if (abortRef.current === controller) {
+        abortRef.current = null;
+        setIsDetecting(false);
+      }
+    }
+  }, []);
+
   /**
-   * Accept a file that already passed the dropzone's validation.
+   * Accept a file that already passed the dropzone's validation, and start
+   * recognising it immediately — dropping or choosing an image IS the ask;
+   * a separate "Nhận dạng" button was one click that carried no decision.
    *
    * @param file - The chosen image.
    */
   const handleFileSelect = useCallback(
     (file: File): void => {
-      abortRef.current?.abort();
-      abortRef.current = null;
-
       setSelectedFile(file);
       replacePreview(file);
       // Results belong to the previous file; keeping them beside a new image
       // would show boxes that do not match what is on screen.
       setResponse(null);
-      setError(null);
       setDownloadError(null);
       setActiveIndex(null);
-      setUploadProgress(0);
-      setIsDetecting(false);
+      void runDetection(file);
     },
-    [replacePreview],
+    [replacePreview, runDetection],
   );
 
   /** Return the page to its initial state. */
@@ -137,45 +170,6 @@ export default function ImageDetection(): JSX.Element {
     setUploadProgress(0);
     setIsDetecting(false);
   }, [replacePreview]);
-
-  /** Upload the selected image and show what was found in it. */
-  const handleDetect = useCallback(async (): Promise<void> => {
-    if (!selectedFile) {
-      return;
-    }
-
-    const controller = new AbortController();
-    abortRef.current?.abort();
-    abortRef.current = controller;
-
-    setIsDetecting(true);
-    setError(null);
-    setDownloadError(null);
-    setResponse(null);
-    setActiveIndex(null);
-    setUploadProgress(0);
-
-    try {
-      const result = await detectImage(
-        selectedFile,
-        setUploadProgress,
-        controller.signal,
-      );
-      setResponse(result);
-    } catch (caught) {
-      // A cancellation is the user's own doing — clearing the form or picking a
-      // different file — so it must not be reported back to them as a failure.
-      if (isApiError(caught) && caught.code === 'CANCELLED') {
-        return;
-      }
-      setError(isApiError(caught) ? caught : UNEXPECTED_ERROR);
-    } finally {
-      if (abortRef.current === controller) {
-        abortRef.current = null;
-        setIsDetecting(false);
-      }
-    }
-  }, [selectedFile]);
 
   /**
    * Report a failed download in Vietnamese.
@@ -282,7 +276,6 @@ export default function ImageDetection(): JSX.Element {
               previewUrl={response ? null : previewUrl}
               onFileSelect={handleFileSelect}
               onClear={handleClear}
-              onDetect={() => void handleDetect()}
               isDetecting={isDetecting}
               uploadProgress={uploadProgress}
             />
@@ -348,7 +341,9 @@ export default function ImageDetection(): JSX.Element {
                 title="Không nhận dạng được ảnh"
                 message={error.message}
                 requestId={error.request_id}
-                onRetry={selectedFile ? () => void handleDetect() : undefined}
+                onRetry={
+                  selectedFile ? () => void runDetection(selectedFile) : undefined
+                }
                 retryLabel="Thử lại"
               />
             ) : !response ? (
@@ -356,7 +351,7 @@ export default function ImageDetection(): JSX.Element {
               <EmptyState
                 icon={<ImageIcon className="h-6 w-6" />}
                 title="Chưa có kết quả"
-                description="Chọn một ảnh ở khung bên trái rồi bấm “Nhận dạng” để xem các biển số phát hiện được."
+                description="Kéo thả hoặc chọn một ảnh ở khung bên trái — hệ thống nhận dạng ngay khi ảnh được chọn."
               />
             ) : !hasResults ? (
               // -- empty: the image was processed but held no plate ---------

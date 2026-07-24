@@ -285,13 +285,13 @@ Nếu gộp làm một, một tấm ảnh chụp cả bãi xe 20 chiếc sẽ b�
 - **Kéo và thả**: kéo tệp ảnh từ thư mục vào vùng viền đứt nét rồi thả ra.
 - **Bấm chọn**: bấm vào vùng đó, cửa sổ chọn tệp của máy sẽ mở ra.
 
-*Màn hình sẽ thấy:* ảnh vừa chọn hiện ra ngay trong khung bên trái để bạn xem trước. Tên tệp và dung lượng hiện bên dưới. Nút **"Nhận dạng"** chuyển sang trạng thái bấm được. Bên cạnh có nút **"Xoá ảnh"** nếu bạn chọn nhầm.
+*Màn hình sẽ thấy:* ảnh vừa chọn hiện ra ngay trong khung bên trái để xem trước, kèm tên tệp và dung lượng — và **quá trình nhận dạng bắt đầu ngay lập tức**, không cần bấm gì thêm (thay đổi từ 24/07/2026: nút "Nhận dạng" đã được bỏ vì chọn ảnh chính là yêu cầu nhận dạng). Bên cạnh có nút **"Xoá ảnh"** nếu bạn chọn nhầm — bấm nó cũng huỷ luôn lượt xử lý đang chạy.
 
 > **Nếu tệp bị từ chối ngay lập tức**, nguyên nhân gần như chắc chắn là sai định dạng (không phải JPG/PNG/WebP/BMP) hoặc quá 10 MB. Thông báo lỗi sẽ nói rõ.
 
-**Bước 3 — Bấm "Nhận dạng".**
+**Bước 3 — Chờ xử lý (tự động).**
 
-*Màn hình sẽ thấy:* nút chuyển sang trạng thái đang xử lý. Với ảnh lớn, một thanh tiến trình tải lên xuất hiện trước, sau đó là giai đoạn chờ máy chủ xử lý.
+*Màn hình sẽ thấy:* với ảnh lớn, một thanh tiến trình tải lên xuất hiện trước, sau đó là giai đoạn chờ máy chủ xử lý.
 
 > ⚠️ **Về thời gian chờ.** Trong đo đạc thực tế trên mô hình chính thức `models/best.pt` (máy rảnh), thời gian từ lúc bấm tới lúc có kết quả **đạt mục tiêu thiết kế**: p95 đo được **731 mili-giây** (khoảng 0,7 giây), dưới mục tiêu 800 mili-giây (nguồn: `docs/reports/07-benchmark-report.md`). Con số cũ 5.857 mili-giây đã bị **bác bỏ** (đo khi máy bị tải cạnh tranh, sai mô hình và có lỗi cắt ảnh). **Chờ chưa tới một giây cho một tấm ảnh là bình thường; nếu chậm hơn nhiều thì thường do máy đang bận việc khác.**
 

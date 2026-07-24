@@ -133,7 +133,7 @@ graph TD
 * **Tải về** — nút xuất ảnh có vẽ sẵn bounding box (vẽ bằng canvas ở phía trình duyệt),
   và nút tải riêng từng ảnh biển số đã cắt (FR-4.7).
 
-**Luồng thao tác (3 thao tác click, NFR-U1):** chọn ảnh → bấm **Nhận dạng** → xem kết quả.
+**Luồng thao tác (NFR-U1):** chọn ảnh → *(nhận dạng tự chạy ngay)* → xem kết quả — **một thao tác duy nhất**. Nút "Nhận dạng" riêng đã được bỏ ngày 24/07/2026: chọn ảnh chính là yêu cầu nhận dạng, cú bấm thêm không mang quyết định nào (đồng bộ với trang video, vốn đã tự phát khi chọn tệp).
 
 **Bốn trạng thái:**
 
@@ -270,11 +270,10 @@ sequenceDiagram
     alt Tệp không hợp lệ
         UI-->>U: Thông báo tiếng Việt ngay tại khung kéo thả<br/>(không tốn một lần tải lên)
     else Tệp hợp lệ
-        UI-->>U: Hiện ảnh xem trước + bật nút "Nhận dạng"
+        UI-->>U: Hiện ảnh xem trước
     end
 
-    U->>UI: Bấm "Nhận dạng"
-    UI->>UI: Xoá kết quả cũ, đặt trạng thái loading
+    UI->>UI: Tự động bắt đầu nhận dạng<br/>(xoá kết quả cũ, đặt trạng thái loading)
     UI->>API: detectImage(file, onProgress, signal)
     API->>BE: POST /api/detect/image (multipart)<br/>header X-Request-ID
 
@@ -564,7 +563,7 @@ thay vì nối vào một endpoint tự bịa. Gọi một endpoint không tồn
 
 | Mã | Yêu cầu | Cách đáp ứng | Kết luận |
 |---|---|---|---|
-| **NFR-U1** | Người dùng mới hoàn thành lượt nhận dạng ảnh đầu tiên **≤ 3 click**, không cần đọc tài liệu | Trang chủ nay chính là *Nhận dạng ảnh* (từ 2026-07-20), nên chỉ còn: (1) bấm khung kéo–thả và chọn tệp → (2) bấm *Nhận dạng* — **2 thao tác**. Trạng thái rỗng của trang Lịch sử cũng có lối đi thẳng sang trang chủ. Mọi khung rỗng đều ghi sẵn việc cần làm tiếp | ✅ Đạt |
+| **NFR-U1** | Người dùng mới hoàn thành lượt nhận dạng ảnh đầu tiên **≤ 3 click**, không cần đọc tài liệu | Trang chủ nay chính là *Nhận dạng ảnh* (từ 2026-07-20), và từ 24/07/2026 nhận dạng **tự chạy ngay khi chọn ảnh** — chỉ còn **1 thao tác duy nhất**: bấm khung kéo–thả và chọn tệp (hoặc kéo thả). Trạng thái rỗng của trang Lịch sử cũng có lối đi thẳng sang trang chủ. Mọi khung rỗng đều ghi sẵn việc cần làm tiếp | ✅ Đạt |
 | **NFR-U2** | 100% thao tác > 500 ms có phản hồi trực quan | Tải ảnh/video: thanh tiến độ **theo byte thật**. Suy luận: spinner + câu giải thích lý do chậm. Tác vụ video: phần trăm + số khung/tổng khung, cập nhật định kỳ. Tải danh sách: skeleton lần đầu, làm mờ bảng cũ ở lần sau. Nút *Làm mới* / *Tải lại*: biểu tượng xoay + nhãn *Đang tải…*. Xoá bản ghi: nút chuyển trạng thái đang xử lý. Tải tệp về: nút hiện *Đang xuất…* | ✅ Đạt |
 | **NFR-U3** | Lỗi tiếng Việt, nêu nguyên nhân và cách khắc phục, không lộ mã lỗi kỹ thuật | Toàn bộ lỗi đi qua một bộ chuẩn hoá duy nhất. Lỗi camera có panel riêng gồm *nguyên nhân* + *cách sửa cụ thể theo đúng nguyên nhân*. Lỗi bộ lọc rỗng đi kèm nút *Xoá bộ lọc*. Không hiện stack trace, không hiện mã HTTP; thay vào đó là `request_id` để đối chiếu log | ✅ Đạt |
 | **NFR-U4** | Dùng được từ 1366×768 trở lên, không vỡ layout | Sidebar cố định từ breakpoint `lg` (1024px) trở lên, dưới ngưỡng đó chuyển thành ngăn kéo có nút đóng. Trang ảnh dùng lưới 2 cột co giãn `minmax(0, …)` nên nội dung dài không đẩy vỡ khung. Bảng lịch sử và bảng kết quả video cuộn ngang trong khung riêng. Ảnh chụp màn hình trong tài liệu này chụp ở **1440×900**. *(Lưới thẻ chỉ số 2 cột / 4 cột từng được nêu ở đây đã đi cùng trang Tổng quan 2026-07-20.)* | ✅ Đạt (kiểm tra bằng ảnh chụp thực tế ở 1440×900; **chưa** đo thủ công ở đúng 1366×768) |

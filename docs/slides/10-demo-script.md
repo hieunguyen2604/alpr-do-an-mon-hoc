@@ -208,7 +208,7 @@ Nói câu này **trước**, chủ động. Để hội đồng tự phát hiệ
 
 ### Bước 1 — Nhận dạng ảnh biển 1 dòng · 60 giây
 
-| Thao tác | Mở `localhost:5173` — ứng dụng vào thẳng trang **Nhận dạng ảnh** (trang chủ) → kéo thả `demo/01-bien-1-dong.jpg` → bấm **Nhận dạng** |
+| Thao tác | Mở `localhost:5173` — ứng dụng vào thẳng trang **Nhận dạng ảnh** (trang chủ) → kéo thả `demo/01-bien-1-dong.jpg` — nhận dạng tự chạy ngay khi ảnh vào |
 |---|---|
 | **Lời thoại (lúc chờ)** | "Mở ứng dụng là vào thẳng màn hình nhận dạng ảnh — nghiệp vụ chính đặt ngay trang chủ, không có màn hình trung gian. Ảnh đang được tải lên — thanh tiến độ này đo theo **byte thật**, không phải hoạt ảnh giả. Sau khi tải xong, giao diện chuyển sang trạng thái chờ và nói rõ rằng mô hình chạy trên CPU nên có thể mất vài giây. Đây là chủ ý thiết kế: nói trước lý do chậm để người dùng không nghi ngờ hệ thống treo." |
 | **Lời thoại (khi có kết quả)** | "Kết quả gồm ảnh có vẽ khung bao và thẻ chi tiết. Xin lưu ý **hai độ tin cậy được tách riêng**: một của bước phát hiện YOLO, một của bước đọc ký tự OCR. Gộp trung bình hai số này thì khi chất lượng kém sẽ không biết bước nào đang kém — mà đó chính là phân tích cần cho chương Đánh giá." |

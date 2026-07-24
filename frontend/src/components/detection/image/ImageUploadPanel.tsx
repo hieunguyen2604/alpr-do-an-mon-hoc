@@ -7,9 +7,14 @@
  * bytes rather than by the `Content-Type` the browser guessed (NFR-S1) and
  * enforces the same 10 MB ceiling, so a crafted request is rejected there
  * whatever passes here.
+ *
+ * There is deliberately no "Nhận dạng" button: dropping or choosing an image
+ * IS the ask, so the page starts recognising immediately (mirroring the video
+ * page, which plays on selection). The extra click carried no decision — it
+ * only stood between the user and the result.
  */
 
-import { ScanLine, Trash2, Upload } from 'lucide-react';
+import { Trash2, Upload } from 'lucide-react';
 
 import { Button, FileDropzone, ProgressBar } from '@/components/ui';
 import {
@@ -29,8 +34,6 @@ export interface ImageUploadPanelProps {
   onFileSelect: (file: File) => void;
   /** Called when the user clears the selection. */
   onClear: () => void;
-  /** Called when the user asks to run detection. */
-  onDetect: () => void;
   /** Whether a detection request is in flight. */
   isDetecting: boolean;
   /**
@@ -55,7 +58,6 @@ export function ImageUploadPanel({
   previewUrl,
   onFileSelect,
   onClear,
-  onDetect,
   isDetecting,
   uploadProgress,
 }: ImageUploadPanelProps): JSX.Element {
@@ -115,16 +117,6 @@ export function ImageUploadPanel({
       )}
 
       <div className="flex flex-wrap items-center gap-2">
-        <Button
-          onClick={onDetect}
-          disabled={!selectedFile}
-          isLoading={isDetecting}
-          loadingText="Đang xử lý…"
-          leftIcon={<ScanLine className="h-4 w-4" />}
-        >
-          Nhận dạng
-        </Button>
-
         {selectedFile && !isDetecting && (
           <Button
             variant="secondary"
@@ -138,7 +130,7 @@ export function ImageUploadPanel({
         {!selectedFile && (
           <span className="inline-flex items-center gap-1.5 text-xs text-content-muted">
             <Upload className="h-3.5 w-3.5" aria-hidden="true" />
-            Chọn một ảnh để bắt đầu
+            Chọn ảnh là nhận dạng chạy ngay — không cần bấm gì thêm
           </span>
         )}
       </div>
