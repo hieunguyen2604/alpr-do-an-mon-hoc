@@ -104,3 +104,4 @@ datasets/annotations/verify_samples/**
 # Giữ export của model chính thức: models/best.onnx.
 models/checkpoints/exported/**
 tools/
+training-work/
