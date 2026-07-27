@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>Poster A0 — Nhận diện biển số xe bằng trí tuệ nhân tạo</title>
+<style>
+  /* Kết xuất: node scripts/build_poster.mjs  ->  docs/poster/poster.pdf + poster.png
+     Đặc tả nguồn: docs/poster/10-poster-layout.md (khổ, thang cỡ chữ T0–T7, bảng màu).
+     Mọi kích thước dùng mm để bản in 300 DPI khớp đúng khổ A0 dọc. */
+  @page { size: 841mm 1189mm; margin: 0; }
+
+  :root {
+    --ink:      #0F172A;   /* chữ chính */
+    --blue:     #2563EB;   /* nhấn 1 — chủ đạo */
+    --amber:    #D97706;   /* nhấn 2 — tầng AI, khớp sơ đồ kiến trúc */
+    --red:      #DC2626;   /* nhấn 3 — CHỈ dùng cho biển 2 dòng và hạn chế */
+    --green:    #059669;
+    --surface:  #F1F5F9;
+    --border:   #CBD5E1;
+    /* Thang cỡ chữ: 1pt = 0.3528mm. Ghi bằng mm để không phụ thuộc DPI. */
+    --t0: 31.8mm;  /* 90pt — tên đề tài (tối thiểu đặc tả) */
+    --t1: 55.6mm;  /* 158pt — con số hook */
+    --t2: 17.0mm;  /* 48pt  — tiêu đề khối (tối thiểu) */
+    --t3: 11.3mm;  /* 32pt  — tiêu đề phụ (tối thiểu) */
+    --t4: 9.9mm;   /* 28pt  — chữ thân (tối thiểu) */
+    --t5: 8.5mm;   /* 24pt  — chữ trong bảng (tối thiểu) */
+    --t6: 7.8mm;   /* 22pt  — nhãn hình (tối thiểu) */
+    --t7: 7.1mm;   /* 20pt  — nguồn trích dẫn */
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    width: 841mm; height: 1189mm;
+    padding: 40mm;                    /* lề an toàn (đặc tả 50mm; hạ 40mm để nội dung vừa một trang) */
+    background: #fff; color: var(--ink);
+    font-family: 'Segoe UI', 'Be Vietnam Pro', Inter, Arial, sans-serif;
+    font-size: var(--t4); line-height: 1.4;
+    font-variant-numeric: tabular-nums;
+    display: flex; flex-direction: column; gap: 7mm;
+  }
+
+  /* ---- KHỐI 0 — tiêu đề ------------------------------------------------ */
+  .title-bar {
+    background: var(--blue); color: #fff;
+    padding: 7mm 11mm; border-radius: 4mm;
+    display: flex; align-items: center; gap: 12mm;
+  }
+  .crest {
+    width: 52mm; height: 52mm; flex: none; border-radius: 50%;
+    background: rgba(255,255,255,.16); border: 1.5mm solid rgba(255,255,255,.55);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16mm; font-weight: 800; letter-spacing: .5mm;
+  }
+  .title-bar .school { font-size: var(--t3); opacity: .92; }
+  .title-bar h1 {
+    font-size: var(--t0); line-height: 1.06; font-weight: 800;
+    margin: 3mm 0 4mm; letter-spacing: -.4mm;
+  }
+  .title-bar .people { font-size: var(--t3); opacity: .96; }
+  .title-bar .date   { font-size: var(--t7); opacity: .8; margin-top: 2mm; }
+
+  /* ---- KHỐI H — dải hook ----------------------------------------------- */
+  .hook {
+    border: 1mm solid var(--border); border-radius: 4mm;
+    padding: 6mm 11mm; display: flex; align-items: center; gap: 12mm;
+  }
+  .hook-bars { display: flex; align-items: flex-end; gap: 18mm; flex: none; }
+  .bar-group { text-align: center; }
+  .bar-num { font-size: var(--t1); font-weight: 800; line-height: .95; }
+  .bar {
+    width: 38mm; margin: 3mm auto 0; border-radius: 2mm 2mm 0 0;
+  }
+  .bar.one { height: 42mm; background: var(--blue); }
+  .bar.two { height: 20mm; background: var(--red); }
+  .bar-label { font-size: var(--t3); margin-top: 3mm; font-weight: 600; }
+  .hook-text { flex: 1; }
+  .hook-text .gap { font-size: var(--t2); font-weight: 800; color: var(--red); }
+  .hook-text p { font-size: var(--t4); margin-top: 3mm; }
+  .hook-text .src { font-size: var(--t7); color: #475569; margin-top: 4mm; }
+
+  /* ---- Lưới 3 cột ------------------------------------------------------- */
+  .cols { flex: 1; display: grid; grid-template-columns: 186mm 292mm 259mm;
+          gap: 14mm; min-height: 0; }
+  .col { display: flex; flex-direction: column; gap: 6mm; }
+
+  .block { border: .8mm solid var(--border); border-radius: 4mm; padding: 5mm 6mm; }
+  .block > h2 {
+    font-size: var(--t2); font-weight: 800; color: var(--blue);
+    letter-spacing: .3mm; margin-bottom: 3mm;
+  }
+  .block.alert > h2 { color: var(--red); }
+  .block.win   > h2 { color: var(--green); }
+  ul { list-style: none; }
+  li { margin-bottom: 2.2mm; padding-left: 6mm; position: relative; }
+  li::before { content: '▪'; position: absolute; left: 0; color: var(--blue); }
+  li.bad::before  { content: '✕'; color: var(--red); }
+  li.warn::before { content: '!'; color: var(--amber); font-weight: 800; }
+  li.ok::before   { content: '✓'; color: var(--green); }
+  strong { font-weight: 700; }
+  .red { color: var(--red); } .amber { color: var(--amber); } .green { color: var(--green); }
+
+  table { width: 100%; border-collapse: collapse; font-size: var(--t5); margin-top: 2mm; }
+  th, td { border: .5mm solid var(--border); padding: 2mm 2.5mm; text-align: center; }
+  th { background: var(--surface); font-weight: 700; }
+  td.l, th.l { text-align: left; }
+  tr.total td { font-weight: 800; background: #EFF6FF; }
+  tr.target td { font-size: var(--t6); color: #475569; font-style: italic; }
+
+  /* ---- Sơ đồ ------------------------------------------------------------ */
+  .flow { display: flex; flex-direction: column; gap: 2mm; margin-top: 2mm; }
+  .node {
+    border-radius: 3mm; padding: 3mm 4mm; font-size: var(--t4);
+    font-weight: 600; text-align: center; border: .8mm solid transparent;
+  }
+  .node.client { background: #EFF6FF; border-color: var(--blue); }
+  .node.ai     { background: #FFFBEB; border-color: var(--amber); }
+  .node.store  { background: var(--surface); border-color: var(--border); }
+  .arrow { text-align: center; font-size: var(--t3); color: #64748B; line-height: .8; }
+
+  figure { margin-top: 3mm; }
+  figure img {
+    width: 100%; border: .5mm solid var(--border); border-radius: 2mm; display: block;
+    /* Ảnh chụp giao diện rất cao so với bề ngang; cắt phần dưới thay vì để nó
+       đẩy cả cột vượt khổ A0. object-position: top giữ lại phần đầu trang,
+       nơi có kết quả nhận dạng — thứ người xem poster cần thấy. */
+    max-height: 132mm; object-fit: cover; object-position: top;
+  }
+  .shots img { max-height: 62mm; }
+  figcaption { font-size: var(--t6); color: #475569; margin-top: 2mm; }
+  .shots { display: grid; grid-template-columns: 1fr 1fr; gap: 3mm; margin-top: 3mm; }
+
+  .plate-row { display: flex; gap: 4mm; margin-top: 3mm; align-items: center; }
+  .plate-row img { height: 28mm; border: .5mm solid var(--border); border-radius: 1.5mm; }
+  .ratio { font-size: var(--t6); font-weight: 700; }
+
+  .kpi { display: flex; gap: 4mm; margin-top: 3mm; }
+  .kpi div {
+    flex: 1; background: var(--surface); border-radius: 3mm; padding: 3mm; text-align: center;
+  }
+  .kpi b { display: block; font-size: var(--t2); line-height: 1.1; }
+  .kpi span { font-size: var(--t6); color: #475569; }
+
+  footer {
+    border-top: 1mm solid var(--blue); padding-top: 3.5mm;
+    font-size: var(--t7); color: #475569;
+    display: flex; justify-content: space-between; align-items: baseline;
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══ KHỐI 0 — TIÊU ĐỀ ═══ -->
+<div class="title-bar">
+  <div class="crest">UIT</div>
+  <div>
+    <div class="school">ĐẠI HỌC QUỐC GIA TP. HỒ CHÍ MINH · TRƯỜNG ĐẠI HỌC CÔNG NGHỆ THÔNG TIN</div>
+    <h1>XÂY DỰNG HỆ THỐNG NHẬN DIỆN BIỂN SỐ XE BẰNG TRÍ TUỆ NHÂN TẠO</h1>
+    <div class="people">
+      Sinh viên: <strong>Phạm Công Thành</strong> — 25410013 · <strong>Nguyễn Minh Hiếu</strong> — 25410007
+      · Lớp AI503.F3.LT.TTNT &nbsp;|&nbsp; GVHD: <strong>ThS. Cáp Phạm Đình Thăng</strong>
+    </div>
+    <div class="date">Đồ án tốt nghiệp đại học · Tháng 9 năm 2026</div>
+  </div>
+</div>
+
+<!-- ═══ KHỐI H — DẢI HOOK ═══ -->
+<div class="hook">
+  <div class="hook-bars">
+    <div class="bar-group">
+      <div class="bar-num" style="color:var(--blue)">94,3%</div>
+      <div class="bar one"></div>
+      <div class="bar-label">Ô tô — biển 1 dòng</div>
+    </div>
+    <div class="bar-group">
+      <div class="bar-num red">45,7%</div>
+      <div class="bar two"></div>
+      <div class="bar-label red">Xe máy — biển 2 dòng</div>
+    </div>
+  </div>
+  <div class="hook-text">
+    <div class="gap">→ CHÊNH LỆCH 48,6 ĐIỂM PHẦN TRĂM ←</div>
+    <p>Cùng một hệ thống ALPR. Cùng một phép đo. Ở Việt Nam,
+       <strong>xe máy chiếm 85–90% lưu lượng đường bộ</strong> — hệ thống nhập khẩu
+       hỏng đúng chỗ Việt Nam cần nhất.</p>
+    <div class="src">Nguồn: Laroca và cộng sự, VISAPP 2022 — OpenALPR trên RodoSol-ALPR (Brazil),
+       tập cân bằng 4.000 + 4.000 ảnh. Dẫn làm <em>analogue</em> về độ khó của biển hai dòng,
+       <strong>không phải số liệu Việt Nam</strong>.</div>
+  </div>
+</div>
+
+<div class="cols">
+
+  <!-- ═══ CỘT TRÁI ═══ -->
+  <div class="col">
+    <div class="block">
+      <h2>ĐẶT VẤN ĐỀ</h2>
+      <ul>
+        <li>~77 triệu xe máy · <strong>85–90%</strong> lưu lượng đường bộ Việt Nam</li>
+        <li>Bố cục biển tách bạch theo <strong>tỷ lệ khung hình</strong></li>
+        <li>Tập ký tự sê-ri <strong>phụ thuộc VỊ TRÍ</strong> — không bộ quy tắc nước ngoài nào có</li>
+        <li>Mã tỉnh là tập hữu hạn có lỗ hổng: 89 giá trị, <strong>81 mã dùng thật</strong></li>
+      </ul>
+      <div class="plate-row">
+        <img src="../../demo/images/1dong-1.png" alt="Biển ô tô một dòng">
+        <div><div class="ratio">4,727</div><div style="font-size:var(--t6)">ô tô dài</div></div>
+      </div>
+      <div class="plate-row">
+        <img src="../../demo/images/2dong-1.png" alt="Biển xe máy hai dòng">
+        <div><div class="ratio red">1,357</div><div style="font-size:var(--t6)">xe máy</div></div>
+      </div>
+    </div>
+
+    <div class="block">
+      <h2>MỤC TIÊU</h2>
+      <ul>
+        <li>Hệ thống ALPR <strong>đầy đủ</strong>: AI · API · giao diện · CSDL · Docker,
+            xử lý <strong>cả biển 1 dòng và 2 dòng</strong>, ảnh và video</li>
+        <li>Suy luận <strong>hoàn toàn trên CPU</strong> — không đòi phần cứng đặc biệt</li>
+        <li>Chỉ tiêu: mAP50 ≥ 0,90 · độ trễ p95 ≤ 800 ms</li>
+      </ul>
+    </div>
+
+    <div class="block">
+      <h2>PHƯƠNG PHÁP</h2>
+      <ul>
+        <li>Hai giai đoạn: <strong>phát hiện</strong> (YOLO11n) → <strong>nhận dạng</strong> (PP-OCRv5)</li>
+        <li>Hậu xử lý <strong>ràng buộc theo vị trí ký tự</strong> — đóng góp chính</li>
+        <li>Căn cứ pháp lý: TT 79/2024/TT-BCA · QCVN 08:2024/BCA</li>
+        <li>Huấn luyện trên GPU đám mây, triển khai suy luận CPU</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ═══ CỘT GIỮA ═══ -->
+  <div class="col">
+    <div class="block">
+      <h2>KIẾN TRÚC HỆ THỐNG</h2>
+      <div class="flow">
+        <div class="node client">Giao diện Web — React + TypeScript</div>
+        <div class="arrow">↕ HTTP</div>
+        <div class="node client">Backend API — FastAPI</div>
+        <div class="arrow">↓</div>
+        <div class="node ai">YOLO11n — phát hiện vùng biển số</div>
+        <div class="arrow">↓</div>
+        <div class="node ai">PP-OCRv5 mobile — nhận dạng ký tự</div>
+        <div class="arrow">↓</div>
+        <div class="node ai">Chuẩn hoá &amp; kiểm tra quy cách biển số Việt Nam</div>
+        <div class="arrow">↓</div>
+        <div class="node store">SQLite &nbsp;·&nbsp; Kho ảnh</div>
+      </div>
+      <ul style="margin-top:4mm">
+        <li>Tầng AI <strong>tách hoàn toàn</strong> khỏi tầng API — thay engine không sửa API</li>
+        <li>Đóng gói Docker, chạy một lệnh</li>
+      </ul>
+    </div>
+
+    <div class="block">
+      <h2>XỬ LÝ BIỂN 2 DÒNG <span class="red">★</span></h2>
+      <ul>
+        <li><strong>Split-then-hstack:</strong> cắt đôi có chồng lấn → ghép ngang → OCR <em>một lần</em></li>
+        <li>Lý do: CRNN/CTC giả định căn chỉnh <strong>một dòng</strong>; PP-OCR ép cao 48 px
+            ⇒ mỗi dòng chỉ còn ~24 px, nét dính vào nhau</li>
+        <li>Đọc từng nửa rồi ghép chuỗi chỉ đạt <strong>3,5%</strong> so với <strong>64,5%</strong> của strip
+            (mẫu 200 biển) — vùng chồng lấn bị đọc hai lần</li>
+      </ul>
+      <div class="block" style="margin-top:5mm; background:var(--surface); border:none">
+        <div style="font-size:var(--t3); font-weight:700; margin-bottom:3mm">Bậc thang cứu chữa khi đọc hỏng</div>
+        <ul>
+          <li class="ok">Cứu dòng trên: đọc lại nửa trên, ghép — <strong>kèm sàn tin cậy 0,8</strong></li>
+          <li class="ok">Nắn hình: xoay phẳng · giãn dọc chống méo phối cảnh</li>
+          <li class="ok">Siêu phân giải (FSRCNN) cho ảnh cắt nhỏ dưới 200 px</li>
+          <li class="warn">Chỉ chạy <em>sau khi</em> lần đọc đầu thất bại, chỉ nhận khi chuỗi mới hợp lệ
+              ⇒ <strong>không thể làm hỏng</strong> kết quả đang đúng</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ CỘT PHẢI ═══ -->
+  <div class="col">
+    <div class="block win">
+      <h2>KẾT QUẢ</h2>
+      <table>
+        <tr><th class="l">Tập TEST v3</th><th>P</th><th>R</th><th>mAP50</th><th>mAP50-95</th></tr>
+        <tr><td class="l">Biển 1 dòng (286)</td><td>0,986</td><td>0,990</td><td>0,988</td><td>0,753</td></tr>
+        <tr><td class="l">Biển 2 dòng (1.325)</td><td>0,973</td><td>0,969</td><td>0,968</td><td>0,765</td></tr>
+        <tr class="total"><td class="l">TẤT CẢ (1.611)</td><td>0,984</td><td>0,971</td><td>0,983</td><td>0,783</td></tr>
+        <tr class="target"><td class="l">Ngưỡng chỉ tiêu</td><td>≥0,92</td><td>≥0,90</td><td>≥0,90</td><td>≥0,65</td></tr>
+      </table>
+      <ul style="margin-top:4mm">
+        <li class="ok">Phát hiện <strong>đạt cả 4 chỉ tiêu</strong>; chênh giữa hai bố cục chỉ <strong>2,09 điểm</strong>
+            ⇒ điểm yếu nằm ở tầng OCR, không phải phát hiện</li>
+      </ul>
+      <div class="kpi">
+        <div><b class="green">731 ms</b><span>độ trễ p95 trên CPU<br>(mục tiêu ≤ 800 ms)</span></div>
+        <div><b>4.578</b><span>ảnh · 5.200 khung biển<br>chia 70/20/10 phân tầng</span></div>
+      </div>
+      <div style="font-size:var(--t6); color:#475569; margin-top:3mm">
+        Phần cứng đo: Intel Core i5-14600K, 14 nhân / 20 luồng, <strong>không có GPU CUDA</strong>.
+      </div>
+    </div>
+
+    <div class="block">
+      <h2>GIAO DIỆN</h2>
+      <figure>
+        <img src="../screenshots/image-detection.png" alt="Trang nhận dạng ảnh">
+        <figcaption>Nhận dạng ảnh — chọn ảnh là chạy ngay, khung bao và kết quả hiện cùng lúc</figcaption>
+      </figure>
+      <ul style="margin-top:3mm">
+        <li><strong>3 trang:</strong> Nhận dạng ảnh · Video (bất đồng bộ) · Lịch sử</li>
+        <li>Mọi vùng dữ liệu xử lý đủ 4 trạng thái: chờ / rỗng / lỗi / thành công</li>
+      </ul>
+    </div>
+
+    <div class="block alert">
+      <h2>HẠN CHẾ</h2>
+      <ul>
+        <li class="bad"><strong>OCR biển 2 dòng chưa đạt</strong> — chính xác ký tự 0,873;
+            toàn bộ khoảng cách nằm ở biển xe máy (0,846 so với 0,990 của biển 1 dòng)</li>
+        <li class="warn">Chỉ số đầu-cuối 0,5227 đo trên ảnh cắt sẵn — là <em>cận dưới bi quan</em></li>
+        <li class="warn">Chưa có tập kiểm tra <strong>xuyên bộ dữ liệu</strong> ⇒ mAP lạc quan hơn thực tế</li>
+        <li class="warn">Một yêu cầu mức <em>Must</em> (trang Tổng quan) đã đưa ra khỏi phạm vi để thu gọn demo;
+            API thống kê vẫn phục vụ và vẫn có kiểm thử</li>
+      </ul>
+    </div>
+
+    <div class="block win">
+      <h2>KẾT LUẬN</h2>
+      <ul>
+        <li class="ok">Hệ thống <strong>hoàn chỉnh, chạy thật</strong>: 998 kiểm thử tự động đạt, đóng gói Docker</li>
+        <li class="ok">Đóng góp: bộ luật hậu xử lý <strong>ràng buộc theo vị trí</strong> theo quy chuẩn Việt Nam</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div>Mã nguồn, dữ liệu và toàn bộ báo cáo đo đạc: kho mã của đồ án ·
+       Mô hình phát hiện YOLO11n huấn luyện trên GPU đám mây, suy luận CPU</div>
+  <div>Tháng 9 năm 2026</div>
+</footer>
+
+</body>
+</html>
