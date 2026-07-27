@@ -90,18 +90,13 @@ async function runDetection(page) {
     return false;
   }
 
+  // Choosing the file IS the request: the image page starts recognising the
+  // moment a file is selected (24/07/2026 — the separate "Nhận dạng" button
+  // was removed because that click carried no decision). There is therefore
+  // nothing to press here; the wait below is what proves the run happened.
   const input = page.locator('input[type="file"]').first();
   await input.setInputFiles(SAMPLE_IMAGE);
   await page.waitForTimeout(500);
-
-  // The button label is the user-facing Vietnamese string, so this also fails
-  // loudly if the interface is ever relabelled.
-  const button = page.getByRole('button', { name: /Nhận dạng/i }).first();
-  if (!(await button.isVisible().catch(() => false))) {
-    console.log('  [warn] recognise button not found');
-    return false;
-  }
-  await button.click();
 
   // Wait for the *absence* of the progress message, not the presence of the
   // results heading. The heading is the panel's static title and is on screen
