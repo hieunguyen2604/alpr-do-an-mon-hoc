@@ -51,7 +51,7 @@ markdown, cùng với installation guide chưa tách riêng.
 | 14 | User manual | **done** | `docs/manuals/user-manual.md`, có `docs/screenshots/` (**3 ảnh**: `image-detection`, `video-detection`, `history` — `webcam.png` xoá cùng trang Webcam và `dashboard.png` xoá cùng trang Tổng quan, cả hai ngày 2026-07-20) | **Phải chụp lại** trước khi nộp: ảnh còn sidebar 5 mục cũ, và trang Nhận dạng ảnh đã bỏ nút *Nhận dạng* (24/07 — chọn ảnh là nhận dạng chạy ngay). |
 | 15 | Technical manual | **done** | `docs/manuals/technical-manual.md` (1389 dòng) | — |
 | 16 | Deployment guide | **done** | `docs/reports/08-deployment-guide.md` (449 dòng) + `deployment/README.md` (10 mục: kiến trúc, build, env, backup, troubleshooting) | — |
-| 17 | Installation guide | **partial** | Nội dung cài đặt có thật nhưng **nằm rải trong** `README.md` mục 8 "Hướng dẫn cài đặt", `docs/manuals/user-manual.md` (dòng 140–168), `deployment/README.md` mục 3 | **KHÔNG có tài liệu cài đặt độc lập** tách riêng khỏi deployment guide; DoD liệt kê đây là 2 hạng mục riêng. |
+| 17 | Installation guide | **done** | `docs/manuals/installation-guide.md` (27/07/2026) — tài liệu độc lập: yêu cầu hệ thống, hai đường cài (Docker / chạy trực tiếp), kiểm chứng 60 giây, bảng sự cố thường gặp, gỡ cài đặt | — |
 | 18 | Thesis | **done** (còn PDF) | `docs/papers/`: ch1 (433), ch2 (1146), ch3 (1322), ch4 (1327), ch5 (1135), ch6 (264) — **6/6 chương có nội dung thật**; `01-front-matter.md` (388), `00-thesis-outline.md` | Front-matter **đã điền đủ** theo đề cương đăng ký (ĐHQG-HCM / Trường ĐH Công nghệ Thông tin, 2 SV, GVHD, 27/07); `thesis-full.md` + **`thesis-full.docx` đã ghép**. Còn lại: xuất PDF bản in và các biểu mẫu do khoa cấp (phiếu giao nhiệm vụ, nhận xét GVHD/phản biện). |
 | 19 | Presentation slides | **done** | `docs/slides/slides.pptx` (đã kết xuất bằng `scripts/build_thesis.py`), `10-slides-outline.md` (920 dòng, kèm speaker notes), `docs/slides/README.md` | Nên rà lại một lượt bố cục sau khi kết xuất, và cập nhật số liệu nếu chạy lại đánh giá OCR. |
 | 20 | Poster | **partial** | `docs/poster/10-poster-layout.md` (489 dòng) | Còn là **đặc tả layout markdown**, **chưa kết xuất thành poster** ảnh/PDF in được. |
@@ -65,12 +65,13 @@ markdown, cùng với installation guide chưa tách riêng.
 
 | Trạng thái | Số lượng | Hạng mục |
 |---|---:|---|
-| **done** | **19** | Source code, AI model (sắc thái), Dataset (cảnh báo), Training scripts, Backend, Frontend, Database, Docker, Unit tests, Integration tests, API doc, User manual, Technical manual, Deployment guide, **Thesis**, **Presentation slides**, Demo script, Defense Q&A, README |
-| **partial** | **4** | Evaluation reports, Performance report, Installation guide, Poster |
+| **done** | **20** | Source code, AI model (sắc thái), Dataset (cảnh báo), Training scripts, Backend, Frontend, Database, Docker, Unit tests, Integration tests, API doc, User manual, Technical manual, Deployment guide, **Installation guide**, **Thesis**, **Presentation slides**, Demo script, Defense Q&A, README |
+| **partial** | **3** | Evaluation reports, Performance report, Poster |
 | **missing** | **0** | — |
 
-Không có hạng mục nào **missing**. So với bản 20/07: Thesis và Presentation slides chuyển `partial` → `done`
-(front-matter đã điền đủ, `thesis-full.docx` và `slides.pptx` đã kết xuất), nên số `partial` giảm 6 → **4**.
+Không có hạng mục nào **missing**. So với bản 20/07: Thesis, Presentation slides và Installation guide chuyển
+`partial` → `done` (front-matter đã điền đủ, `thesis-full.docx` và `slides.pptx` đã kết xuất, tài liệu cài đặt
+độc lập đã viết), nên số `partial` giảm 6 → **3**.
 Theo câu cuối của DoD ("If any item is missing, the project is NOT complete"), dự án vẫn **CHƯA hoàn tất**.
 
 ---
@@ -81,13 +82,11 @@ Theo câu cuối của DoD ("If any item is missing, the project is NOT complete
 
 1. **Kết xuất poster** từ `10-poster-layout.md` (489 dòng đặc tả đã đủ nội dung) thành ảnh/PDF in được.
    *(hạng mục 20)* — **việc kết xuất cuối cùng còn lại.**
-2. **Tài liệu cài đặt độc lập** — hoặc tạo một `installation-guide` riêng, hoặc ghi rõ trong DoD/README rằng
-   installation được gộp trong deployment guide (nếu hội đồng chấp nhận gộp). *(hạng mục 17)*
-3. **Chụp lại ảnh giao diện** cho user manual theo bản 24/07 (không còn nút *Nhận dạng*). *(hạng mục 14)*
-4. **Xuất PDF bản in của thesis** từ `thesis-full.docx`, kèm các biểu mẫu do khoa cấp. *(hạng mục 18)*
+2. **Chụp lại ảnh giao diện** cho user manual theo bản 24/07 (không còn nút *Nhận dạng*). *(hạng mục 14)*
+3. **Xuất PDF bản in của thesis** từ `thesis-full.docx`, kèm các biểu mẫu do khoa cấp. *(hạng mục 18)*
 
 > ✅ Đã xong so với bản 20/07: điền front-matter theo đề cương đăng ký, ghép `thesis-full.docx`,
-> kết xuất `slides.pptx`.
+> kết xuất `slides.pptx`, viết `installation-guide.md` độc lập.
 
 ---
 

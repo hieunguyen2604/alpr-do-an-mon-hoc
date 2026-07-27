@@ -233,6 +233,10 @@ DATN/
 
 ## 8. Hướng dẫn cài đặt
 
+> 📖 **Hướng dẫn đầy đủ từng bước:** [docs/manuals/installation-guide.md](docs/manuals/installation-guide.md)
+> — yêu cầu hệ thống, hai đường cài, cách kiểm chứng sau khi cài, bảng sự cố thường gặp. Phần dưới đây
+> chỉ là bản rút gọn cho người đã quen dự án.
+
 ### Chạy trực tiếp (đang dùng để phát triển)
 
 ```bash
