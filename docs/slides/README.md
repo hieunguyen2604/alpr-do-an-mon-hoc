@@ -13,9 +13,46 @@ Thư mục này chứa **khung nội dung**, không chứa file slide đã dựn
 | [`10-slides-outline.md`](10-slides-outline.md) | Khung 21 slide + speaker notes + ngân sách thời gian 15 phút | ✅ Xong |
 | [`10-defense-qa.md`](10-defense-qa.md) | 40+ câu hỏi phản biện, câu trả lời, cảnh báo trả lời sai | ✅ Xong |
 | [`../poster/10-poster-layout.md`](../poster/10-poster-layout.md) | Bố cục poster A0 dọc — 12 khối, bảng font size, bảng màu | ✅ Xong |
-| `10-slides.md` hoặc `.pptx` | **File slide thật** | ⬜ Chưa dựng |
+| `slides.pptx` | **File slide thật** — sinh tự động, đã mang giao diện UIT | ✅ Dựng được |
+| `template-uit.pptx` | Template giao diện dùng cho `--reference-doc` của Pandoc | ✅ Xong |
+| `source-template.pptx` | Bản PowerPoint gốc dùng để dẫn xuất template trên | ✅ Xong |
 | [`10-demo-script.md`](10-demo-script.md) | Kịch bản demo trực tiếp | ✅ Xong |
-| `../poster/poster-A0.pdf` | **File poster thật** | ⬜ Chưa dựng |
+| [`../poster/poster.pdf`](../poster/poster.pdf) | Poster A0, render từ HTML | ✅ Xong |
+
+---
+
+## 1b. Giao diện slide — template UIT
+
+`slides.pptx` do `scripts/build_thesis.py` sinh ra từ `10-slides-outline.md`.
+Toàn bộ **hình thức** — màu, phông, hoạ tiết nền, huy hiệu UIT, dải chân
+trang — đến từ `template-uit.pptx`, truyền cho Pandoc qua `--reference-doc`.
+Pandoc chỉ đóng góp phần chữ.
+
+```bash
+# Sinh lại slide (đã bao gồm template)
+backend/.venv/Scripts/python.exe scripts/build_thesis.py
+```
+
+**Muốn đổi sang template khác**: thay `source-template.pptx` bằng file
+PowerPoint mới rồi chạy
+
+```bash
+backend/.venv/Scripts/python.exe scripts/make_slide_template.py
+```
+
+Script sẽ bỏ toàn bộ slide của file gốc, đổi tên bảy layout sang tên tiếng
+Anh mà Pandoc tra cứu, và chuyển placeholder sang đúng kiểu Pandoc ghi vào.
+Nếu template mới thiếu layout hoặc thiếu placeholder, script **báo cảnh báo
+kèm tên cụ thể** thay vì im lặng cho ra slide trống — đọc kỹ phần đầu
+`scripts/make_slide_template.py` trước khi sửa ánh xạ.
+
+> **Vì sao phải có bước dẫn xuất, không dùng thẳng file gốc.** Pandoc tra layout
+> **theo tên tiếng Anh** (`Title Slide`, `Title and Content`, `Section Header`,
+> `Two Content`, `Comparison`, `Content with Caption`, `Blank`) và bỏ qua layout
+> nào không tìm thấy. Template gốc xuất từ Google Slides nên tên layout tiếng
+> Việt và **mọi khung chữ đều là placeholder kiểu `body`** — không có `ctrTitle`
+> thì Pandoc không có chỗ đặt tiêu đề, slide bìa sẽ trống trơn trong khi file
+> vẫn mở bình thường trong PowerPoint.
 
 ---
 

@@ -82,6 +82,7 @@ SECTION_SEPARATOR: str = "\n\n\newpage\n\n"
 # Source outline and target for the slide deck.
 SLIDES_OUTLINE_FILENAME: str = "10-slides-outline.md"
 SLIDES_OUTPUT_FILENAME: str = "slides.pptx"
+SLIDES_TEMPLATE_FILENAME: str = "template-uit.pptx"
 
 # Pandoc arguments shared by every export path.
 PANDOC_FROM: str = "gfm"
@@ -252,6 +253,17 @@ def export_docx(pandoc: Path, markdown_path: Path, docx_path: Path) -> None:
 def export_pptx(pandoc: Path, outline_path: Path, pptx_path: Path) -> None:
     """Export the slide outline to a PPTX deck.
 
+    The deck's appearance comes entirely from ``template-uit.pptx``: Pandoc
+    contributes the text and takes theme, fonts, background art and the UIT
+    crest from the reference doc's master and layouts. See
+    :mod:`scripts.make_slide_template` for how that file is derived, and why
+    its layouts have to carry English names.
+
+    The reference doc is optional on purpose. A missing template produces a
+    plain-looking but complete deck rather than a failed build, which matters
+    because the slides are a deliverable in their own right -- losing the
+    styling is an inconvenience, losing the deck is not.
+
     Args:
         pandoc: Path to the Pandoc executable.
         outline_path: The slide outline Markdown source.
@@ -261,16 +273,25 @@ def export_pptx(pandoc: Path, outline_path: Path, pptx_path: Path) -> None:
         print(f"[skip] slide outline not found: {outline_path}", file=sys.stderr)
         return
     pptx_path.parent.mkdir(parents=True, exist_ok=True)
-    run_pandoc(
-        pandoc,
-        [
-            str(outline_path),
-            "--from",
-            PANDOC_FROM,
-            "-o",
-            str(pptx_path),
-        ],
-    )
+
+    arguments = [
+        str(outline_path),
+        "--from",
+        PANDOC_FROM,
+        "-o",
+        str(pptx_path),
+    ]
+    template = SLIDES_DIR / SLIDES_TEMPLATE_FILENAME
+    if template.is_file():
+        arguments += ["--reference-doc", str(template)]
+    else:
+        print(
+            f"[warn] khong thay {template.name} — deck se dung giao dien mac dinh "
+            "cua Pandoc. Chay scripts/make_slide_template.py de dung lai.",
+            file=sys.stderr,
+        )
+
+    run_pandoc(pandoc, arguments)
 
 
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
