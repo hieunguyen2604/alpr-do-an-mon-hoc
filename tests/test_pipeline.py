@@ -504,11 +504,25 @@ class TestTwoLineRescue:
         assert recognition.is_valid_format is False
 
     def test_single_line_plates_are_never_retried(self) -> None:
+        """The two-line rescue must not fire on a one-line plate.
+
+        Both failure-retry ladders are switched off here on purpose. They are
+        separate mechanisms that also spend OCR calls, so leaving them on made
+        this test count *their* calls too — and its pass/fail then depended on
+        whether the machine happened to have `cv2.dnn_superres` installed,
+        which is exactly the kind of hidden environment coupling a unit test
+        must not have.
+        """
         recognizer = FakeRecognizer(text="51F1")
         result = build(
             detector=FakeDetector([make_detection(10, 10, 60, 40)]),
             recognizer=recognizer,
             normalizer=LengthNormalizer(),
+            config=InferenceConfig(
+                model_path="models/best.pt",
+                rectify_enabled=False,
+                sr_retry_enabled=False,
+            ),
         ).process(make_image())
 
         assert recognizer.calls == 1, "the rescue is scoped to two-line plates only"

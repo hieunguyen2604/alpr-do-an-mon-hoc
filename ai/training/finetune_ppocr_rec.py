@@ -51,16 +51,22 @@ def run_cmd(args, cwd=None):
 
 
 def find_python_310_plus() -> str:
-    """Tìm Python >= 3.10 trên hệ thống (vì dự án sử dụng dataclass(slots=True))."""
+    """Tìm Python >= 3.10 trên hệ thống (vì dự án sử dụng dataclass(slots=True)).
+
+    Chỉ dò theo TÊN lệnh, để ``shutil.which`` tra PATH — không ghi cứng đường
+    dẫn tuyệt đối kiểu ``/opt/homebrew/bin/python3.12``: đường dẫn ấy chỉ đúng
+    trên một máy, và quy ước NFR-M4 của dự án cấm literal như vậy trong ``ai/``
+    (có test kiểm tra). Máy nào để Python ngoài PATH thì chỉ định thẳng qua
+    biến môi trường ``ALPR_TRAIN_PYTHON``.
+    """
+    override = os.environ.get("ALPR_TRAIN_PYTHON", "").strip()
     candidates = [
-        "/usr/local/bin/python3.12",
-        "/usr/local/bin/python3.11",
-        "/usr/local/bin/python3.13",
-        "/opt/homebrew/bin/python3.12",
-        "/opt/homebrew/bin/python3.11",
+        *( [override] if override else [] ),
         "python3.12",
         "python3.11",
+        "python3.13",
         "python3.10",
+        "python3",
     ]
     for cand in candidates:
         p = shutil.which(cand) or (cand if os.path.exists(cand) else None)

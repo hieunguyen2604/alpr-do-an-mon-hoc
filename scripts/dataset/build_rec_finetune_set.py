@@ -115,16 +115,20 @@ def resolve_image_path(raw_path: str) -> Path:
     return ROOT / p
 
 
-def find_fallback_image(plate_text: str) -> Path | None:
-    """Tìm ảnh biển số thay thế trong codebase (docs/reports/...) nếu datasets/raw/ không có."""
-    if not plate_text:
-        return None
-    reports_dir = ROOT / "docs" / "reports"
-    if reports_dir.exists():
-        for f in reports_dir.rglob("*.jpg"):
-            if plate_text in f.name:
-                return f
-    return None
+# CẢNH BÁO — KHÔNG khôi phục cơ chế "ảnh thay thế".
+#
+# Một bản trước của tệp này, khi không tìm thấy ảnh gốc, đi tìm một ảnh khác
+# trong ``docs/reports/`` có tên chứa chuỗi biển số rồi dùng tạm. Ý định thì
+# tốt, nhưng hệ quả là **gán nhãn của biển này cho ảnh của biển khác**.
+#
+# Điều đó đã thực sự xảy ra: ``datasets/raw/**`` nằm trong ``.gitignore`` nên
+# máy nào clone kho mã về cũng KHÔNG có ảnh gốc; bản chạy trên máy đó tạo ra
+# một tập huấn luyện sai nhãn, và model fine-tune học từ nó đọc ra chuỗi rác
+# (đo 28/07/2026: 0/7 ảnh demo đọc đúng, so với 7/7 của model gốc).
+#
+# Thiếu dữ liệu phải **dừng lại và nói rõ**, không được im lặng thay bằng thứ
+# gần đúng: một tập dữ liệu sai nhãn tốn hàng giờ GPU rồi mới lộ ra ở tận
+# bước đo cuối cùng.
 
 
 def main() -> None:
@@ -136,25 +140,21 @@ def main() -> None:
 
     manifests: dict[str, list[str]] = {"train": [], "valid": []}
     skipped = 0
+    missing = 0   # ảnh nguồn không đọc được — theo dõi riêng để chặn ở cuối
 
     with LABELS.open(encoding="utf-8") as handle:
         rows = [r for r in csv.DictReader(handle) if r["split"] in ("train", "valid")]
-
-    # Thu thập trước danh sách ảnh fallback trong codebase
-    codebase_images = list((ROOT / "docs" / "reports").rglob("*.jpg")) if (ROOT / "docs" / "reports").exists() else []
 
     for index, row in enumerate(rows):
         text = row["plate_text"].strip().upper()
         img_path = resolve_image_path(row["image_path"])
         crop = cv2.imread(str(img_path))
-        
-        # Fallback lấy ảnh trực tiếp trong codebase nếu không tìm thấy trong datasets/raw/
-        if crop is None and text:
-            fb = find_fallback_image(text)
-            if fb:
-                crop = cv2.imread(str(fb))
 
-        if crop is None or not text or any(ch not in CHARSET_36 for ch in text):
+        if crop is None:
+            missing += 1
+            skipped += 1
+            continue
+        if not text or any(ch not in CHARSET_36 for ch in text):
             skipped += 1
             continue
 
@@ -183,8 +183,18 @@ def main() -> None:
 
     print(f"train samples : {len(manifests['train'])} (goc + 2 augment/goc)")
     print(f"val samples   : {len(manifests['valid'])} (sach, khong augment)")
-    print(f"skipped rows  : {skipped}")
+    print(f"skipped rows  : {skipped}  (trong do thieu anh nguon: {missing})")
     print(f"output        : {OUT}")
+
+    # Chặn ở đây thay vì để một tập dữ liệu teo tóp lặng lẽ đi tiếp: mất vài
+    # giờ GPU rồi mới phát hiện thì đắt hơn nhiều so với dừng ngay bây giờ.
+    if missing > len(rows) * 0.05:
+        raise SystemExit(
+            f"\nDUNG: thieu {missing}/{len(rows)} anh nguon.\n"
+            "datasets/raw/** nam trong .gitignore nen KHONG co san sau khi clone.\n"
+            f"Phai co bo anh goc trong {ROOT / 'datasets' / 'raw'} truoc khi sinh "
+            "tap fine-tune — xem docs/reports/02-dataset-report.md de biet cach tai lai."
+        )
 
 
 if __name__ == "__main__":

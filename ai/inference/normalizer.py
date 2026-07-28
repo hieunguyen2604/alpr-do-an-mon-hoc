@@ -376,6 +376,14 @@ class VietnamesePlateNormalizer(BaseNormalizer):
 
         candidate_set = set(candidates)
         is_ambiguous = any(pair <= candidate_set for pair in _AMBIGUOUS_PAIRS)
+        # Mặc định phải đặt TRƯỚC mọi nhánh: phần lớn chuỗi (quân đội, ngoại
+        # giao, biển một dòng thường) không rơi vào nhánh phân xử nào cả, và
+        # nếu để hai biến này chỉ được gán bên trong nhánh thì chúng chưa tồn
+        # tại lúc dựng KindDecision -- UnboundLocalError, tức mọi biển không
+        # mơ hồ đều hỏng.
+        best = candidates[0]
+        resolved = False
+
         car_or_old_moto = {PlateKind.CAR, PlateKind.MOTORCYCLE_OLD} <= candidate_set
         printed_dot = bool(raw_text and _FIVE_DIGIT_DOT_GROUP_RE.search(raw_text))
         car_truck_van_serial = bool(re.match(r"^\d{2}[CDHF]\d{5}$", text))
