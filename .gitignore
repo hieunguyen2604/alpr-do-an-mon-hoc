@@ -110,3 +110,9 @@ training-work/
 # lần chạy, nên theo dõi bản trong kho mã chỉ tạo ra 2,2 MB nhiễu diff mà không
 # ai trích dẫn. Bộ số công bố nằm ở 05-results.json và 05-tables.md.
 docs/reports/05-ocr-accuracy-adapted.json
+
+# Bộ chuyển giao cho máy GPU — do scripts/make_gpu_transfer_kit.py dựng lại.
+# 105 MB toàn bản chép của dữ liệu và trọng số đã có trong kho; theo dõi nó là
+# lưu cùng một thứ hai lần.
+/transfer-gpu-finetune/
+/transfer-gpu-finetune.zip
