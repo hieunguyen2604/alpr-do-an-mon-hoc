@@ -20,10 +20,14 @@ HAI QUY ƯỚC BẮT BUỘC KHI SỬA FILE NÀY
 1. `#` = slide phân đoạn · `##` = một slide nội dung. Cấp này được ghim bằng
    `--slide-level=2` trong `scripts/build_thesis.py`, không suy ra từ nội dung.
 
-2. **Bảng phải là khối CUỐI CÙNG của slide.** Pandoc cắt sang slide mới ở mọi
-   thứ đứng sau một bảng, nên một dòng ghi chú đặt dưới bảng sẽ lặng lẽ sinh
-   thêm một slide mồ côi mang tiêu đề là chính dòng ghi chú đó. Mọi câu dẫn và
-   mọi kết luận phải nằm TRÊN bảng.
+2. **Bảng hoặc hình phải là khối CUỐI CÙNG của slide, và chỉ được có MỘT.**
+   Pandoc cắt sang slide mới ở mọi thứ đứng sau một bảng hoặc một hình, và một
+   slide chỉ có một ô nội dung — đặt cả bảng lẫn hình thì cái thứ hai rơi sang
+   slide mới. Mọi câu dẫn và mọi kết luận phải nằm TRÊN khối đó.
+
+3. Hình sinh bằng `scripts/make_slide_figures.py`, dựng từ chính mã suy luận
+   và ảnh demo của dự án — để một tấm hình không thể mô tả thứ hệ thống không
+   làm. Biểu đồ đo đạc thì lấy thẳng từ `docs/reports/figures/`.
 
 Mọi con số lấy từ lượt đo 28/07/2026 (`docs/reports/05-results.json`).
 -->
@@ -38,10 +42,7 @@ Cùng hệ thống, cùng phép đo: **chênh 48,6 điểm**, chỉ khác bố c
 
 *Số liệu Brazil, không phải Việt Nam*
 
-| Loại xe | Bố cục | Đọc đúng |
-|---|---|---:|
-| Ô tô | 1 dòng | **94,3%** |
-| Xe máy | **2 dòng** | **45,7%** |
+![](figures/fig-gap.png)
 
 ## Mục tiêu
 
@@ -69,13 +70,10 @@ Cùng hệ thống, cùng phép đo: **chênh 48,6 điểm**, chỉ khác bố c
 
 Bố cục tách bạch theo **tỉ lệ khung hình** *(QCVN 08:2024/BCA)*
 
-Khoảng **(2,000 ; 4,727)** bỏ trống ⇒ phân loại số dòng bằng hình học
+Tỉ lệ **đo thật** lệch khỏi chuẩn nhưng vẫn đúng phía ngưỡng — nên ngưỡng
+đặt ở **2,5**, giữa vùng trống
 
-| Loại biển | Tỉ lệ | Số dòng |
-|---|:--:|:--:|
-| Ô tô biển dài | **4,727** | 1 |
-| Ô tô biển ngắn | **2,000** | 2 |
-| Xe mô tô | **1,357** | 2 |
+![](figures/fig-layouts.png)
 
 ## Căn cứ pháp lý: một phát hiện
 
@@ -166,15 +164,10 @@ Không thấy biển ⇒ trả rỗng, **HTTP 200** — không phải lỗi
 
 ## Xử lý biển 2 dòng
 
-**Nguyên nhân gốc là kiến trúc, không phải chất lượng mô hình**
+Nguyên nhân gốc là **kiến trúc**: CRNN/CTC giả định căn chỉnh **trên một dòng**
+— giả định nằm trong **hàm mất mát**, thêm dữ liệu không sửa được
 
-- CRNN/CTC giả định căn chỉnh **trên một dòng** — nằm trong **hàm mất mát**
-- PaddleOCR ép cao 48 px ⇒ **mỗi dòng chỉ còn ~24 px**
-
-**Giải pháp — split-then-hstack**
-
-- Nắn hình → tách hai nửa chồng lấn → ghép ngang → OCR **một lần**
-- Đọc từng nửa: **3,5%** · ghép ngang: **64,5%**
+![](figures/fig-two-line.png)
 
 ## Bộ luật hậu xử lý theo vị trí
 
@@ -197,6 +190,12 @@ Toàn bộ khoảng cách nằm ở **biển 2 dòng**: 0,6996 so với **0,9541
 | A5 — chuỗi trước hậu xử lý | 0,6373 | 0,80 | ❌ |
 | A6 — chuỗi sau hậu xử lý | **0,7512** | 0,85 | ❌ |
 | A7 — đầu-cuối | 0,5552 | 0,82 | ❌ |
+
+## Khoảng cách nằm trọn ở biển 2 dòng
+
+Cùng một hệ thống, cùng một phép đo — tách theo bố cục biển
+
+![](../reports/figures/04-ocr-accuracy-by-line-count.png)
 
 ## Đóng góp của hậu xử lý — đo được bằng số
 
@@ -228,11 +227,7 @@ Chỉ chạy **sau khi đọc hỏng**, chỉ nhận chuỗi **hợp lệ**
 
 Mọi vùng dữ liệu xử lý đủ **4 trạng thái**: chờ · rỗng · lỗi · thành công
 
-| Trang | Chức năng |
-|---|---|
-| Nhận dạng ảnh *(chủ)* | Chọn ảnh là chạy ngay, khung bao + kết quả hiện cùng lúc |
-| Nhận dạng video | Bất đồng bộ — trả `job_id`, hỏi tiến độ, xuất video gắn nhãn |
-| Lịch sử | Lọc, sắp xếp, phân trang — **trạng thái nằm trên URL** |
+![](../screenshots/image-detection.png)
 
 ## Demo trực tiếp
 
@@ -263,6 +258,12 @@ Vượt mục tiêu p95 là **đánh đổi có chủ ý**: tắt bậc thang th
 | Độ trễ p50 | **406 ms** | — |
 | Độ trễ p95 | **1.143 ms** | sàn 1.500 ms · mục tiêu 800 ms |
 | Yêu cầu đồng thời | **10** | ≥ 5 |
+
+## Phân bố độ trễ — đuôi mới là chỗ tốn
+
+Phần lớn ảnh xong dưới nửa giây; đuôi phải là những ảnh phải thử lại nhiều lượt
+
+![](../reports/figures/07-latency-distribution.png)
 
 # Kết luận
 

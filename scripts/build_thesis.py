@@ -291,6 +291,13 @@ def export_pptx(pandoc: Path, outline_path: Path, pptx_path: Path) -> None:
         # a section heading silently re-cuts the whole deck. Level 2 fixes the
         # contract: `#` is a section divider, `##` is one slide.
         "--slide-level=2",
+        # Image paths resolve against the working directory, not against the
+        # Markdown file, so `figures/fig-gap.png` fails whenever the build runs
+        # from anywhere but docs/slides. Adding the file's own directory lets
+        # the source keep paths that are relative to itself -- which is also
+        # what makes the images render when the file is read on GitHub.
+        "--resource-path",
+        str(outline_path.parent),
         "-o",
         str(pptx_path),
     ]
