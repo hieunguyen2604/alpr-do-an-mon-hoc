@@ -105,3 +105,8 @@ datasets/annotations/verify_samples/**
 models/checkpoints/exported/**
 tools/
 training-work/
+
+# Sản phẩm sinh tự động của scripts/fill_chapter5.py — nó tạo lại tệp này mỗi
+# lần chạy, nên theo dõi bản trong kho mã chỉ tạo ra 2,2 MB nhiễu diff mà không
+# ai trích dẫn. Bộ số công bố nằm ở 05-results.json và 05-tables.md.
+docs/reports/05-ocr-accuracy-adapted.json
