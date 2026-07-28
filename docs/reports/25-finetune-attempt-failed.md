@@ -51,10 +51,21 @@ Không có bước nào trong chuỗi này báo lỗi. Đó mới là vấn đ�
 
 ## 4. Model hỏng có ảnh hưởng hệ thống không
 
-**Không.** `ALPR_OCR_REC_MODEL_DIR` mặc định rỗng ở cả `docker-compose.yml`,
-`backend/core/config.py` và `.env`, nên hệ thống vẫn dùng model gốc. Thư mục
-`models/rec_finetuned/` hiện chỉ là hiện vật của lần thử này — **không được
-bật** cho tới khi có một lần train đạt chỉ tiêu.
+**Không, và giờ nó đã bị gỡ khỏi kho mã.**
+
+`ALPR_OCR_REC_MODEL_DIR` mặc định rỗng ở cả `docker-compose.yml`,
+`backend/core/config.py` và `.env`, nên hệ thống chưa từng nạp model hỏng —
+nó luôn chạy model gốc.
+
+Ngày 28/07/2026, `models/rec_finetuned/` (4 tệp, 7,5 MB) được **xoá khỏi kho
+mã**. Giữ lại một model đọc ra chuỗi rác chỉ tạo rủi ro: ai đó bật cờ lên vì
+tưởng đã có model tốt. Đường dẫn `models/rec_finetuned/` vẫn là **đích xuất**
+của lần train sau — script, notebook và README đều trỏ tới đó, nên chỉ cần
+train đạt là thư mục xuất hiện trở lại đúng chỗ.
+
+Vẫn giữ `models/pretrained/en_PP-OCRv5_mobile_rec_pretrained.pdparams`
+(70 MB): đó là **trọng số gốc của PaddleOCR**, không phải sản phẩm của lần
+train hỏng, và là nguyên liệu đầu vào cho mọi lần fine-tune về sau.
 
 ## 5. Bài học
 
