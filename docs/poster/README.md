@@ -28,9 +28,9 @@ một ô ảnh trống rất dễ lọt qua mắt.
 
 ## Việc còn lại trước khi in
 
-1. **Chụp lại ảnh giao diện** (`cd frontend && npm run screenshots`) — ảnh hiện
-   tại chụp trước 24/07/2026, khi trang ảnh còn nút *Nhận dạng*. Chụp xong chạy
-   lại `build_poster.mjs`.
-2. **Thay chữ `UIT` trong huy hiệu bằng logo trường thật** (sửa `.crest` trong
+1. **Thay chữ `UIT` trong huy hiệu bằng logo trường thật** (sửa `.crest` trong
    `poster.html`).
-3. In thử **A4 thu nhỏ** và soi ở khoảng cách tương đương 1,5 m trước khi in A0.
+2. In thử **A4 thu nhỏ** và soi ở khoảng cách tương đương 1,5 m trước khi in A0.
+
+> ✅ Ảnh giao diện đã chụp lại ngày 28/07/2026 trên bản UI hiện hành (ba trang,
+> không còn nút *Nhận dạng*) và poster đã render lại theo ảnh mới.

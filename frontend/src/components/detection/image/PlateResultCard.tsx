@@ -133,20 +133,33 @@ export function PlateResultCard({
             )}
           </div>
 
-          <dl className="mt-3 grid grid-cols-1 gap-x-6 gap-y-3 sm:grid-cols-3">
-            <div>
+          {/*
+            Hai cột, không phải ba. Thẻ này sống trong cột kết quả — chỉ một
+            nửa bề ngang trang — nhưng breakpoint của Tailwind đo theo khung
+            nhìn, nên `sm:grid-cols-3` bật ba cột từ rất sớm và mỗi ô chỉ còn
+            khoảng 150 px. Thanh độ tin cậy có bề rộng tối thiểu và nhãn phần
+            trăm không co, nên phần thừa tràn sang ô bên cạnh: ảnh chụp giao
+            diện 28/07 cho thấy "95,3%" đè lên "412 ms".
+
+            `min-w-0` là nửa còn lại của bản sửa: ô lưới mặc định lấy
+            `min-width: auto`, tức KHÔNG hẹp lại được dưới bề rộng nội dung —
+            thiếu nó thì dù chia bao nhiêu cột, nội dung vẫn tràn thay vì
+            xuống dòng.
+          */}
+          <dl className="mt-3 grid grid-cols-1 gap-x-5 gap-y-3 sm:grid-cols-2">
+            <div className="min-w-0">
               <dt className="text-xs text-content-muted">Độ tin cậy phát hiện</dt>
               <dd className="mt-1">
                 <ConfidenceBar value={result.detection_confidence} size="sm" />
               </dd>
             </div>
-            <div>
+            <div className="min-w-0">
               <dt className="text-xs text-content-muted">Độ tin cậy OCR</dt>
               <dd className="mt-1">
                 <ConfidenceBar value={result.ocr_confidence} size="sm" />
               </dd>
             </div>
-            <div>
+            <div className="min-w-0">
               <dt className="text-xs text-content-muted">Thời gian xử lý</dt>
               <dd className="mt-1 text-sm font-medium tabular-nums text-content">
                 {formatProcessingTime(result.processing_time)}
