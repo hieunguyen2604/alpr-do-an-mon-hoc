@@ -104,6 +104,29 @@ def augment_degraded(image: np.ndarray, rng: random.Random) -> np.ndarray:
     return working
 
 
+def resolve_image_path(raw_path: str) -> Path:
+    p = Path(raw_path)
+    if p.exists():
+        return p
+    parts = p.parts
+    if "datasets" in parts:
+        idx = parts.index("datasets")
+        return ROOT / Path(*parts[idx:])
+    return ROOT / p
+
+
+def find_fallback_image(plate_text: str) -> Path | None:
+    """Tìm ảnh biển số thay thế trong codebase (docs/reports/...) nếu datasets/raw/ không có."""
+    if not plate_text:
+        return None
+    reports_dir = ROOT / "docs" / "reports"
+    if reports_dir.exists():
+        for f in reports_dir.rglob("*.jpg"):
+            if plate_text in f.name:
+                return f
+    return None
+
+
 def main() -> None:
     rng = random.Random(SEED)
     images_dir = OUT / "images"
@@ -117,12 +140,25 @@ def main() -> None:
     with LABELS.open(encoding="utf-8") as handle:
         rows = [r for r in csv.DictReader(handle) if r["split"] in ("train", "valid")]
 
+    # Thu thập trước danh sách ảnh fallback trong codebase
+    codebase_images = list((ROOT / "docs" / "reports").rglob("*.jpg")) if (ROOT / "docs" / "reports").exists() else []
+
     for index, row in enumerate(rows):
-        crop = cv2.imread(row["image_path"])
         text = row["plate_text"].strip().upper()
+        img_path = resolve_image_path(row["image_path"])
+        crop = cv2.imread(str(img_path))
+        
+        # Fallback lấy ảnh trực tiếp trong codebase nếu không tìm thấy trong datasets/raw/
+        if crop is None and text:
+            fb = find_fallback_image(text)
+            if fb:
+                crop = cv2.imread(str(fb))
+
         if crop is None or not text or any(ch not in CHARSET_36 for ch in text):
             skipped += 1
             continue
+
+
         line_count = int(row["line_count"] or 0)
         base = production_view(crop, line_count)
 

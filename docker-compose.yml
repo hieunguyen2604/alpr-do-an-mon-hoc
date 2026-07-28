@@ -60,8 +60,7 @@ services:
     # anyone has created a .env. Every value below also carries an inline
     # default, so the stack is runnable straight from a fresh clone.
     env_file:
-      - path: .env
-        required: false
+      - .env
 
     environment:
       # --- Inference (consumed by ai.inference.InferenceConfig.from_env) ----
@@ -121,9 +120,9 @@ services:
       # Should not exceed the CPU limit under `deploy` below: more OpenMP
       # threads than available cores causes oversubscription, which usually
       # makes inference slower, not faster.
-      OMP_NUM_THREADS: ${OMP_NUM_THREADS:-4}
-      MKL_NUM_THREADS: ${MKL_NUM_THREADS:-4}
-      OPENBLAS_NUM_THREADS: ${OPENBLAS_NUM_THREADS:-4}
+      OMP_NUM_THREADS: ${OMP_NUM_THREADS:-1}
+      MKL_NUM_THREADS: ${MKL_NUM_THREADS:-1}
+      OPENBLAS_NUM_THREADS: ${OPENBLAS_NUM_THREADS:-1}
 
     volumes:
       # SQLite lives in a NAMED VOLUME on purpose. Its locking relies on POSIX

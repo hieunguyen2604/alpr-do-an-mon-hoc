@@ -16,7 +16,8 @@ import { Download, ImageOff } from 'lucide-react';
 
 import { Badge, Button, ConfidenceBar } from '@/components/ui';
 import { cn } from '@/lib/cn';
-import { NO_VALUE, formatProcessingTime } from '@/lib/format';
+import { formatProcessingTime } from '@/lib/format';
+
 import { plateClassBadges } from '@/lib/plateClass';
 import type { DetectionResult } from '@/types';
 
@@ -132,7 +133,7 @@ export function PlateResultCard({
             )}
           </div>
 
-          <dl className="mt-3 grid grid-cols-1 gap-x-6 gap-y-3 sm:grid-cols-2">
+          <dl className="mt-3 grid grid-cols-1 gap-x-6 gap-y-3 sm:grid-cols-3">
             <div>
               <dt className="text-xs text-content-muted">Độ tin cậy phát hiện</dt>
               <dd className="mt-1">
@@ -146,20 +147,13 @@ export function PlateResultCard({
               </dd>
             </div>
             <div>
-              <dt className="text-xs text-content-muted">Số dòng của biển</dt>
-              <dd className="mt-1 text-sm font-medium text-content">
-                {result.plate_line_count !== null
-                  ? `${result.plate_line_count} dòng`
-                  : NO_VALUE}
-              </dd>
-            </div>
-            <div>
               <dt className="text-xs text-content-muted">Thời gian xử lý</dt>
               <dd className="mt-1 text-sm font-medium tabular-nums text-content">
                 {formatProcessingTime(result.processing_time)}
               </dd>
             </div>
           </dl>
+
         </div>
       </div>
 

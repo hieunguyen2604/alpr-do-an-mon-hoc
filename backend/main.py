@@ -230,7 +230,9 @@ def build_pipeline(settings: Settings) -> PlatePipeline:
             conf_threshold=settings.conf_threshold,
             iou_threshold=settings.iou_threshold,
             imgsz=settings.imgsz,
+            ocr_rec_model_dir=settings.ocr_rec_model_dir,
         )
+
 
         # Explicit assembly rather than ``build_default_pipeline``: swapping the
         # OCR engine is then a one-line change here, visible at the composition

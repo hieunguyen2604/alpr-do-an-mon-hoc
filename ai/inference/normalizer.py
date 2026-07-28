@@ -376,23 +376,23 @@ class VietnamesePlateNormalizer(BaseNormalizer):
 
         candidate_set = set(candidates)
         is_ambiguous = any(pair <= candidate_set for pair in _AMBIGUOUS_PAIRS)
-        best = candidates[0]
-        resolved = False
-
         car_or_old_moto = {PlateKind.CAR, PlateKind.MOTORCYCLE_OLD} <= candidate_set
         printed_dot = bool(raw_text and _FIVE_DIGIT_DOT_GROUP_RE.search(raw_text))
+        car_truck_van_serial = bool(re.match(r"^\d{2}[CDHF]\d{5}$", text))
 
-        if is_ambiguous and car_or_old_moto and (line_count == 1 or printed_dot):
+        if is_ambiguous and car_or_old_moto and (line_count == 1 or printed_dot or car_truck_van_serial):
             # Two independent proofs collapse to the same verdict: a one-line
-            # plate cannot be a motorcycle plate (section 7.1), and a printed
-            # DDD.DD group means a five-digit number, which only the car
-            # reading has. Either way the ambiguity is genuinely gone.
+            # plate cannot be a motorcycle plate (section 7.1), a printed
+            # DDD.DD group means a five-digit number, or a C/D/H/F series with
+            # 5 trailing digits which is a commercial car/truck/van plate.
             best = PlateKind.CAR
+
             is_ambiguous = any(
                 pair <= candidate_set - {PlateKind.MOTORCYCLE_OLD} for pair in _AMBIGUOUS_PAIRS
             )
             resolved = True
         elif is_ambiguous and line_count == 2 and car_or_old_moto:
+
             # Two lines is a *prior*, not a proof -- two-line car plates exist,
             # and this project has one on file (`65A-004.50`, a State vehicle).
             # So `is_ambiguous` deliberately stays set: the caller is still told

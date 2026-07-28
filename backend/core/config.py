@@ -253,6 +253,11 @@ class Settings(BaseSettings):
             "the frontend without model weights."
         ),
     )
+    ocr_rec_model_dir: Path | None = Field(
+        default=None,
+        description="Path to optional fine-tuned recognition model directory.",
+    )
+
 
     # -- Observability ----------------------------------------------------
     log_level: str = Field(

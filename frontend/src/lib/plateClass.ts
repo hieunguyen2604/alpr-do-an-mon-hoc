@@ -144,27 +144,24 @@ export function plateClassBadges(
   // it, so the wording changes to state the actual relationship.
   const outsideCivilRegistry = kind === 'military' || kind === 'diplomatic';
 
-  if (isValidFormat) {
-    badges.push({
-      label: 'Đúng định dạng biển số',
-      tone: 'success',
-      title: 'Chuỗi khớp một định dạng biển số dân sự Việt Nam',
-    });
-  } else if (outsideCivilRegistry) {
-    badges.push({
-      label: 'Ngoài hệ đăng ký dân sự',
-      tone: 'neutral',
-      title:
-        'Biển này không thuộc hệ thống đăng ký dân sự nên không đối chiếu ' +
-        'được với các định dạng dân sự — đây không phải lỗi đọc.',
-    });
-  } else {
-    badges.push({
-      label: 'Sai định dạng biển số',
-      tone: 'warning',
-      title: 'Chuỗi đọc được không khớp định dạng biển số Việt Nam nào',
-    });
+  if (!isValidFormat) {
+    if (outsideCivilRegistry) {
+      badges.push({
+        label: 'Ngoài hệ đăng ký dân sự',
+        tone: 'neutral',
+        title:
+          'Biển này không thuộc hệ thống đăng ký dân sự nên không đối chiếu ' +
+          'được với các định dạng dân sự — đây không phải lỗi đọc.',
+      });
+    } else {
+      badges.push({
+        label: 'Sai định dạng biển số',
+        tone: 'warning',
+        title: 'Chuỗi đọc được không khớp định dạng biển số Việt Nam nào',
+      });
+    }
   }
+
 
   return badges;
 }

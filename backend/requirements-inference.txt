@@ -39,8 +39,9 @@ ultralytics==8.4.101
 # `enable_mkldnn=False`. That flag is a workaround for a PIR-to-oneDNN attribute
 # conversion crash in paddlepaddle 3.3.x on the PP-OCRv5 detection graph. It is
 # not Windows-specific, so it must stay set here too.
-paddlepaddle==3.3.1
+paddlepaddle>=3.0.0,<=3.2.2
 paddleocr==3.7.0
+
 # paddleocr's inference backend. Pinned explicitly because the runner code the
 # mkldnn workaround steers around lives here, not in paddleocr.
 paddlex==3.7.2
