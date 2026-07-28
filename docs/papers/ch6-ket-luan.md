@@ -18,7 +18,7 @@ Có một nguyên tắc chi phối toàn chương, kế thừa trực tiếp t�
 | **Phase 1 — Nghiên cứu** | Bảy báo cáo khảo sát và 232 mục trích dẫn BibTeX đã qua kiểm chứng đối kháng, phát hiện và sửa 25 lỗi (3 lỗi mức critical, gồm việc căn cứ pháp lý TT 24/2023/TT-BCA đã hết hiệu lực), chốt mốc M1. |
 | **Phase 2 — Xây dựng bộ dữ liệu** | Bộ dữ liệu v3 gồm **15.133 ảnh** hợp nhất từ bảy bộ tải về (còn **sáu nguồn nguyên tố** sau khử trùng lặp), chia train 10.592 / val 3.027 / test 1.514 ở ngưỡng gộp trùng lặp 10. |
 | **Phase 3 — Huấn luyện bộ phát hiện** | Mô hình chính thức `models/best.pt` — YOLO11n [1]<!-- jocher_2024_yolo11 -->, 2.590.035 tham số, `imgsz=640`, 20 epoch trên CPU — đạt mAP@0.5 = 0,9829 trên tập test v3. |
-| **Phase 4 — Nhận dạng ký tự và hậu xử lý** | Khối OCR dựng trên PaddleOCR PP-OCRv5 mobile [2]<!-- cui_2026_ppocrv5 --> cộng bộ luật hậu xử lý theo vị trí; đo được đóng góp thuần **+4,57 điểm** của khối hậu xử lý trên 2.801 biển có nhãn chuỗi. |
+| **Phase 4 — Nhận dạng ký tự và hậu xử lý** | Khối OCR dựng trên PaddleOCR PP-OCRv5 mobile [2]<!-- cui_2026_ppocrv5 --> cộng bộ luật hậu xử lý theo vị trí; đo được đóng góp thuần **+11,39 điểm** của khối hậu xử lý trên 2.801 biển có nhãn chuỗi. |
 | **Phase 5 — Backend** | Backend FastAPI với **10 thao tác trên 9 đường dẫn**, xác minh bằng HTTP sống (`/health` trả `model_loaded: true`), Alembic migrate xong, Swagger render đầy đủ, chốt mốc M5. |
 | **Phase 6 — Frontend** | Ứng dụng React một trang, build sạch, khớp toàn bộ 10 thao tác API, phủ năm màn hình tại thời điểm chốt phase (Dashboard, Nhận dạng ảnh, Video, Webcam, Lịch sử). *Ngày 2026-07-20, giao diện được thu gọn hai đợt liên tiếp còn **ba màn hình** — Nhận dạng ảnh (trang chủ), Nhận dạng video, Lịch sử: đợt 1 gỡ trang Webcam, đợt 2 gỡ trang Tổng quan (Dashboard). Cả hai năng lực đều giữ nguyên ở tầng API (`POST /api/detect/frame`, `GET /api/statistics`, `GET /health`) và đều còn kiểm thử tích hợp; hệ quả về yêu cầu — gồm việc **FR-4.1 mức Must bị đưa ra khỏi phạm vi** — ghi ở mục 6.3.6.* |
 | **Phase 7 — Kiểm thử và đo hiệu năng** | **882 test thu thập, 881 pass, 1 xfail, 0 fail, 0 skip** (lần chạy 2026-07-20, `docs/reports/13-refactor-result.json`); sau khi bổ sung test cho bộ nhận màu nền, bước cứu biển hai dòng và ba cột CSDL mới, lần chạy cuối cùng cùng ngày cho **913 thu thập, 912 pass, 1 xfail, 0 fail**; độ bao phủ tầng nghiệp vụ **87,7%** ở mốc `13-refactor-result.json` — số đo ở Phase 7 trước đó là 88,1% (`docs/reports/07-testing-report.md`); toàn bộ chỉ tiêu hiệu năng ngoài đường suy luận được đo và đạt. |
@@ -40,13 +40,13 @@ Bảng dưới đây đặt cạnh nhau **chỉ tiêu đã cam kết ở Phase 0
 | A2 | mAP@0.5:0.95 phát hiện | 0,65 | **0,7834** | ✅ đạt |
 | A3-P | Precision phát hiện | 0,92 | **0,9837** | ✅ đạt |
 | A3-R | Recall phát hiện | 0,90 | **0,9714** | ✅ đạt |
-| A4 | 1 − CER (mức ký tự) | 0,95 | **0,8734** | ❌ không đạt |
-| A5 | Chuỗi trước hậu xử lý | 0,85 | **0,6098** | ❌ không đạt |
-| A6 | Chuỗi sau hậu xử lý | 0,90 | **0,6555** | ❌ không đạt |
-| A6−A5 | Đóng góp hậu xử lý (điểm %) | — | **+4,57** | (đóng góp thuần dương) |
-| A7 | Độ chính xác E2E toàn trình | 0,88 | **0,5227** | ❌ không đạt* |
+| A4 | 1 − CER (mức ký tự) | 0,95 | **0,9454** | 🟡 đạt ngưỡng tối thiểu (0,92) |
+| A5 | Chuỗi trước hậu xử lý | 0,85 | **0,6373** | ❌ không đạt |
+| A6 | Chuỗi sau hậu xử lý | 0,90 | **0,7512** | ❌ không đạt |
+| A6−A5 | Đóng góp hậu xử lý (điểm %) | — | **+11,39** | (đóng góp thuần dương) |
+| A7 | Độ chính xác E2E toàn trình | 0,88 | **0,5552** | ❌ không đạt* |
 | A8 | Chênh lệch layout, phát hiện (điểm %) | — | **2,09** | (rất nhỏ) |
-| P1 | Độ trễ E2E một ảnh, p95 (ms) | ≤ 800 | **731,15** | ✅ đạt |
+| P1 | Độ trễ E2E một ảnh, p95 (ms) | ≤ 800 | **1.143,10** | 🟡 đạt ngưỡng tối thiểu (1.500) |
 | P4 | Thời gian nạp mô hình (s) | ≤ 15 | **6,41** | ✅ đạt |
 | P5 | Overhead API, p95 (ms) | ≤ 50 | **19,01** | ✅ đạt |
 | P6 | Truy vấn 10.000 bản ghi, p95 (ms) | ≤ 500 | **18,71** | ✅ đạt |
@@ -56,7 +56,7 @@ Bảng dưới đây đặt cạnh nhau **chỉ tiêu đã cam kết ở Phase 0
 | SC1 | Số yêu cầu đồng thời ổn định | ≥ 5 | **10** | ✅ đạt |
 | M2 | Độ bao phủ test tầng nghiệp vụ | — | **87,7%** đo 2026-07-20 (881/882 pass, 1 xfail); lần chạy cuối cùng cùng ngày: 912/913 pass; trước đó Phase 7 đo 88,1% | (tham chiếu) |
 
-\* A7 = 0,5227 phải đọc như **cận dưới bi quan** — nó đo trên ảnh crop biển số (ngoài phân bố huấn luyện của bộ phát hiện), khiến tỉ lệ bỏ sót ở tầng phát hiện bị thổi phồng; xem phân tích ở mục 6.3.1.
+\* A7 = 0,5552 phải đọc như **cận dưới bi quan** — nó đo trên ảnh crop biển số (ngoài phân bố huấn luyện của bộ phát hiện), khiến tỉ lệ bỏ sót ở tầng phát hiện bị thổi phồng; xem phân tích ở mục 6.3.1.
 
 Đọc bảng theo hàng dọc cho thấy một hình mẫu rõ ràng và chính là toàn bộ câu chuyện của đồ án: **mọi chỉ tiêu phát hiện, hiệu năng, độ tin cậy và khả năng chịu tải đều đạt, thường với biên rộng; mọi chỉ tiêu độ chính xác OCR đều không đạt.** Vạch ngăn giữa "đạt" và "không đạt" trùng khít với vạch ngăn giữa tầng phát hiện và tầng nhận dạng ký tự. Đây không phải sự trùng hợp — nó là kết luận trung tâm mà Chương 5 đã chứng minh và Chương 6 sẽ khai thác để định hướng phát triển.
 
@@ -90,11 +90,11 @@ Cần đọc con số cao này kèm điều kiện đã nêu ở Chương 5: đ�
 
 Đây là **đóng góp khoa học riêng thứ nhất** của đồ án. Phần lớn công trình ALPR chỉ mô tả bước hậu xử lý một cách định tính ("có thêm một bước sửa lỗi bằng regex"), hiếm khi lượng hoá xem bước đó đóng góp bao nhiêu. Đồ án này đo tách bạch, hai lần trên cùng 2.801 biển có nhãn chuỗi:
 
-- Độ chính xác chuỗi đầy đủ **trước** hậu xử lý (A5) = 0,6098;
-- Độ chính xác chuỗi đầy đủ **sau** hậu xử lý (A6) = 0,6555;
-- Hiệu số **A6 − A5 = +4,57 điểm phần trăm** — chính là đóng góp thuần của khối hậu xử lý theo luật.
+- Độ chính xác chuỗi đầy đủ **trước** hậu xử lý (A5) = 0,6373;
+- Độ chính xác chuỗi đầy đủ **sau** hậu xử lý (A6) = 0,7512;
+- Hiệu số **A6 − A5 = +11,39 điểm phần trăm** — chính là đóng góp thuần của khối hậu xử lý theo luật.
 
-Quan trọng hơn con số là **hình dạng** của đóng góp: bộ luật sửa đúng **128 biển** và làm hỏng **0 biển**. Đây là một cải thiện thuần một chiều — bằng chứng rằng bộ luật đủ bảo thủ để không tự tạo ra lỗi mới, đúng như thiết kế "sửa lỗi theo vị trí, có vùng cấm sửa" ở Chương 3. Đóng góp bị chặn ở mức nhỏ **không phải vì luật kém**, mà vì nút thắt độ chính xác nằm ở tầng OCR — nơi luật, vốn chỉ sửa được nhầm ký tự lẻ tẻ ở đúng vị trí, về bản chất không với tới được các chuỗi sai nhiều ký tự do engine đọc hụt cả cụm. Việc đóng góp là dương và không rủi ro, dù nhỏ, là một kết quả có giá trị tự thân: nó xác nhận thiết kế hậu xử lý đúng đắn về nguyên lý, và định vị chính xác rằng cải thiện lớn phải đến từ tầng khác.
+Quan trọng hơn con số là **hình dạng** của đóng góp: bộ luật sửa đúng **319 biển** và làm hỏng **0 biển**, và đóng góp ấy dồn gần như trọn vẹn vào biển hai dòng (**+13,97 điểm**, so với +1,23 điểm ở biển một dòng) — tức đúng nơi tầng nhận dạng yếu nhất. Đây là một cải thiện thuần một chiều — bằng chứng rằng bộ luật đủ bảo thủ để không tự tạo ra lỗi mới, đúng như thiết kế "sửa lỗi theo vị trí, có vùng cấm sửa" ở Chương 3. Đóng góp bị chặn ở mức nhỏ **không phải vì luật kém**, mà vì nút thắt độ chính xác nằm ở tầng OCR — nơi luật, vốn chỉ sửa được nhầm ký tự lẻ tẻ ở đúng vị trí, về bản chất không với tới được các chuỗi sai nhiều ký tự do engine đọc hụt cả cụm. Việc đóng góp là dương và không rủi ro, dù nhỏ, là một kết quả có giá trị tự thân: nó xác nhận thiết kế hậu xử lý đúng đắn về nguyên lý, và định vị chính xác rằng cải thiện lớn phải đến từ tầng khác.
 
 ### 6.2.4. Đo được rủi ro R-04 bằng số liệu Việt Nam thật
 
@@ -102,13 +102,13 @@ Quan trọng hơn con số là **hình dạng** của đóng góp: bộ luật s
 
 | Chỉ số | Biển một dòng (567 mẫu) | Biển hai dòng (2.234 mẫu) | Chênh lệch |
 |---|---:|---:|---:|
-| 1 − CER (mức ký tự) | 0,9900 | 0,8462 | 14,38 điểm |
-| Chuỗi trước hậu xử lý (A5) | 0,9418 | 0,5255 | 41,63 điểm |
-| Chuỗi sau hậu xử lý (A6) | 0,9489 | 0,5810 | **36,79 điểm** |
+| 1 − CER (mức ký tự) | 0,9925 | 0,9344 | 5,81 điểm |
+| Chuỗi trước hậu xử lý (A5) | 0,9418 | 0,5600 | 38,18 điểm |
+| Chuỗi sau hậu xử lý (A6) | 0,9541 | 0,6996 | **25,45 điểm** |
 
-Biển **một dòng về cơ bản đã giải xong**: A6 = 0,9489 vượt mục tiêu 0,90, và 1 − CER = 0,9900. Toàn bộ khoảng thiếu của con số tổng nằm ở biển **hai dòng**, vốn chiếm **79,8%** tập có nhãn chuỗi — một tỉ lệ phản ánh trực tiếp mật độ xe máy áp đảo trong giao thông Việt Nam, nơi có tới 77 triệu xe máy [3]<!-- dantri_2024_77trieuxemay -->. Nói cách khác, quần thể khó nhất về mặt kỹ thuật lại là quần thể phổ biến nhất về mặt thực tế.
+Biển **một dòng về cơ bản đã giải xong**: A6 = 0,9541 vượt mục tiêu 0,90, và 1 − CER = 0,9925. Toàn bộ khoảng thiếu của con số tổng nằm ở biển **hai dòng**, vốn chiếm **79,8%** tập có nhãn chuỗi — một tỉ lệ phản ánh trực tiếp mật độ xe máy áp đảo trong giao thông Việt Nam, nơi có tới 77 triệu xe máy [3]<!-- dantri_2024_77trieuxemay -->. Nói cách khác, quần thể khó nhất về mặt kỹ thuật lại là quần thể phổ biến nhất về mặt thực tế.
 
-Chênh lệch **36,79 điểm** A6 giữa hai layout là một phát hiện có định vị rõ ràng, không phải một thất bại mơ hồ. Nó **cùng bậc độ lớn** với mốc tham chiếu quốc tế: Laroca và cộng sự (VISAPP 2022) đo chênh lệch **48,6 điểm** giữa biển một dòng (94,3%) và biển hai dòng (45,7%) trên bộ dữ liệu **RodoSol-ALPR của Brazil** [4]<!-- laroca_2022_crossdataset -->.
+Chênh lệch **25,45 điểm** A6 giữa hai layout là một phát hiện có định vị rõ ràng, không phải một thất bại mơ hồ. Nó **cùng bậc độ lớn** với mốc tham chiếu quốc tế: Laroca và cộng sự (VISAPP 2022) đo chênh lệch **48,6 điểm** giữa biển một dòng (94,3%) và biển hai dòng (45,7%) trên bộ dữ liệu **RodoSol-ALPR của Brazil** [4]<!-- laroca_2022_crossdataset -->.
 
 > **Cảnh báo trích dẫn bắt buộc, lặp lại theo đúng quy tắc của Chương 5.** Cặp số 94,3% / 45,7% và chênh lệch 48,6 điểm đo trên **RodoSol-ALPR (Brazil)** [4]<!-- laroca_2022_crossdataset -->, **không phải** số liệu Việt Nam. Nó chỉ được dùng như một *analogue định lượng* về độ khó tương đối của biển hai dòng, không bao giờ như một mốc chuẩn mà hệ thống này phải vượt. Con số 36,79 điểm mới là con số đo trên dữ liệu Việt Nam của đồ án.
 
@@ -163,22 +163,23 @@ Mục này là phần quan trọng nhất của chương, và được viết th
 
 *Mức nghiêm trọng: cao. Đây là hạn chế trung tâm của toàn đồ án.*
 
-Bốn chỉ tiêu độ chính xác OCR đều không đạt:
+Ba chỉ tiêu độ chính xác OCR không đạt (NFR-A4 đã vượt ngưỡng tối thiểu ở lượt đo 28/07):
 
-- NFR-A4 (1 − CER) = **0,8734**, thiếu 4,66 điểm so với ngưỡng tối thiểu 0,92;
-- NFR-A5 (chuỗi trước hậu xử lý) = **0,6098**, thiếu 19 điểm so với ngưỡng 0,80;
-- NFR-A6 (chuỗi sau hậu xử lý) = **0,6555**, thiếu 19,45 điểm so với ngưỡng 0,85;
-- NFR-A7 (E2E toàn trình) = **0,5227**, thiếu 29,73 điểm so với ngưỡng 0,82.
+- NFR-A5 (chuỗi trước hậu xử lý) = **0,6373**, thiếu 16,27 điểm so với ngưỡng 0,80;
+- NFR-A6 (chuỗi sau hậu xử lý) = **0,7512**, thiếu 9,88 điểm so với ngưỡng 0,85;
+- NFR-A7 (E2E toàn trình) = **0,5552**, thiếu 26,48 điểm so với ngưỡng 0,82.
+
+NFR-A4 (1 − CER) = **0,9454** vượt ngưỡng tối thiểu 0,92 nhưng vẫn dưới mục tiêu 0,95.
 
 Điều phải nói thẳng — và cũng là điều làm cho hạn chế này *có thể hành động được* thay vì mơ hồ — là **nguyên nhân đã được định vị bằng số liệu, và nó nằm ở tầng OCR, không phải tầng hậu xử lý**. Ba bằng chứng độc lập cùng chỉ về một chỗ:
 
-1. **Tách theo layout** (T5.6c): trên biển một dòng, hệ thống đạt hoặc vượt ngưỡng (A6 = 0,9489); toàn bộ khoảng thiếu nằm ở biển hai dòng (A6 = 0,5810). Vì biển hai dòng chiếm 79,8% tập, con số tổng bị quần thể này chi phối.
-2. **Phân tích lỗi** (T5.10): trong 376 ca nhầm ký tự, **358 ca** thuộc biển hai dòng; trong 217 ca thiếu ký tự, **216 ca** thuộc biển hai dòng. Lỗi tập trung gần như tuyệt đối ở một layout.
-3. **Đóng góp hậu xử lý bị chặn** (T5.6b): khối luật chỉ thêm được +4,57 điểm vì nó sửa được nhầm ký tự lẻ tẻ nhưng bất lực trước chuỗi sai nhiều ký tự khi OCR đọc hụt cả cụm. Nếu lỗi là ở hậu xử lý, tăng luật sẽ cứu được; thực tế là không, vì lỗi ở tầng dưới.
+1. **Tách theo layout** (T5.6c): trên biển một dòng, hệ thống đạt hoặc vượt ngưỡng (A6 = 0,9541); toàn bộ khoảng thiếu nằm ở biển hai dòng (A6 = 0,6996). Vì biển hai dòng chiếm 79,8% tập, con số tổng bị quần thể này chi phối.
+2. **Phân tích lỗi** (T5.10): trong 445 ca nhầm ký tự, **428 ca** thuộc biển hai dòng; trong 73 ca thiếu ký tự, **cả 73 ca** đều thuộc biển hai dòng — không một ngoại lệ. Lỗi tập trung gần như tuyệt đối ở một layout.
+3. **Đóng góp hậu xử lý bị chặn trên** (T5.6b): khối luật thêm được +11,39 điểm — không nhỏ — nhưng vẫn không đủ, vì phần lỗi còn lại đã dịch sang dạng **đọc hụt ký tự** (ký tự bị xoá chiếm 56,8% toàn bộ lỗi), mà một ký tự chưa từng được đọc ra thì **về nguyên tắc** không luật nào phục hồi được. Nếu lỗi là ở hậu xử lý, tăng luật sẽ cứu được; thực tế là không, vì lỗi ở tầng dưới.
 
 Kết luận: **hướng khắc phục bắt buộc nằm ở tầng nhận dạng — huấn luyện hoặc thay mô hình OCR chuyên cho biển số hai dòng — chứ không ở tầng hậu xử lý** (triển khai ở mục 6.4.1). Việc trút thêm luật vào `plate_rules.py` sẽ không đụng đến nút thắt thật.
 
-**Một cảnh báo hiệu lực về con số A7 = 0,5227.** Con số này đo trên ảnh **crop biển số** — ngoài phân bố huấn luyện của bộ phát hiện — nên tỉ lệ bỏ sót 11,96% bị thổi phồng và A7 phải đọc như **cận dưới bi quan**, không phải ước lượng điểm. Lập luận và số liệu đầy đủ ở **mục 5.6.5**; đo A7 đúng cách đòi hỏi một tập test hiện trường có nhãn chuỗi, việc chưa làm được (mục 6.4.3).
+**Một cảnh báo hiệu lực về con số A7 = 0,5552.** Con số này đo trên ảnh **crop biển số** — ngoài phân bố huấn luyện của bộ phát hiện — nên tỉ lệ bỏ sót 11,96% bị thổi phồng và A7 phải đọc như **cận dưới bi quan**, không phải ước lượng điểm. Lập luận và số liệu đầy đủ ở **mục 5.6.5**; đo A7 đúng cách đòi hỏi một tập test hiện trường có nhãn chuỗi, việc chưa làm được (mục 6.4.3).
 
 ### 6.3.2. Rò rỉ dữ liệu tồn dư không khử được bằng băm tri giác
 
@@ -198,15 +199,19 @@ Tập train và tập test được lấy từ **cùng sáu nguồn nguyên tố
 
 *Biện pháp giảm thiểu:* không có trong khuôn khổ đồ án. Cách đúng là giữ lại một nguồn hoàn toàn không dùng để huấn luyện làm tập test xuyên bộ; điều này chưa thực hiện và chuyển thành hướng phát triển ở mục 6.4.2.
 
-### 6.3.4. Độ trễ — đã đạt sau khi giải quyết mâu thuẫn số liệu
+### 6.3.4. Độ trễ — đạt ngưỡng tối thiểu, và mức vượt mục tiêu là một đánh đổi có chủ ý
 
-*Kết luận: NFR-P1 ĐẠT. Ghi lại đầy đủ vì đây là một mâu thuẫn từng tồn tại và đã được giải quyết, không được lờ đi.*
+*Kết luận: NFR-P1 đạt ngưỡng tối thiểu, không đạt mục tiêu. Ghi lại đầy đủ vì con số này đã đi qua hai lần đảo chiều, và cả hai lần đều có nguyên nhân xác định được.*
 
-NFR-P1 **đạt mục tiêu**: độ trễ E2E một ảnh, p95 = **731,15 ms**, dưới mục tiêu 800 ms (dư 68,85 ms) và thoả cả ngưỡng tối thiểu 1.500 ms. Con số công bố này đo **client-side qua HTTP** trên `best.pt`, máy rảnh (CPU idle ~5%, không có tiến trình huấn luyện chạy song song), warmup rồi đo 100 ảnh test v3. Một phép đo độc lập **in-process** (gọi thẳng pipeline trong tiến trình) cho p95 = **780,36 ms** — hai con số **đồng thuận trong phạm vi ~7%** (biến động lấy mẫu CPU), cùng khẳng định độ trễ E2E thật ở khoảng **700–780 ms**.
+NFR-P1 **đạt ngưỡng tối thiểu nhưng không đạt mục tiêu**: độ trễ E2E một ảnh, p95 = **1.143,10 ms** — dưới sàn 1.500 ms, nhưng vượt mục tiêu 800 ms 1,43 lần. Trung vị chỉ **405,77 ms**. Đo in-process trên `best.pt`, cấu hình giao hàng, máy rảnh (CPU idle ~5%, không có tiến trình huấn luyện chạy song song), warmup rồi đo 100 ảnh test v3.
 
-Phải ghi lại vì sao con số này từng bị nghi ngờ. Một báo cáo trước đây ghi p95 = **5.857 ms** và kết luận NFR-P1 "không đạt" — chênh **7,5 lần** so với con số hiện tại. Phép đo cũ đã bị **bác bỏ** vì điều kiện đo bị nhiễm, chứ không vì mô hình chậm; toàn bộ quá trình truy nguyên (ba nguyên nhân, và việc loại tường minh hai giả thuyết thay thế) trình bày ở **mục 5.7.1**.
+**Đây là một thoái lui có chủ ý, đã định lượng, và đổi lấy độ chính xác.** Nguyên nhân là bậc thang thử-lại cho biển nghiêng/méo: tắt hẳn nó đưa p95 về **866,3 ms**, tức toàn bộ +277 ms là của nó, đổi lại 34 biển đọc được thêm (+0,75 điểm A6). Vì bậc thang chỉ chạy **sau khi lần đọc đầu thất bại**, nó không chạm vào trường hợp thường — trung vị thậm chí giảm nhẹ so với lượt đo trước. Toàn bộ chi phí dồn vào đuôi phân phối, đúng nơi tập trung những ảnh mà hệ thống phải làm việc nhiều lần mới đọc được. Phân tích đầy đủ ở **mục 5.6.7** và **5.7.1**.
 
-Phân rã ngân sách độ trễ thật (T5.7b): OCR chiếm **64,3%** (112,55 ms/biển), phát hiện chiếm **34,2%** (59,83 ms) — **không** phải tỉ lệ 93,3% / 6,7% của báo cáo cũ. Kết luận: kiến trúc phần mềm và độ trễ **không phải vấn đề**; tối ưu thêm là tuỳ chọn chứ không bắt buộc (mục 6.4.4).
+**Một quyết định đã được đưa ra để giữ chỉ tiêu này trong ngưỡng.** Với cả ba biến thể của bậc thang bật, p95 là **1.514,26 ms** — vượt cả ngưỡng tối thiểu. Phép bóc tách chỉ ra bậc **siêu phân giải** chiếm hơn nửa chi phí đó (+319 ms ở p95, +1.381 ms ở p99) mà **không mua được biển nào đo được**, nên nó bị tắt mặc định, đưa p95 về 1.143,10 ms. Cần nói rõ giới hạn của lập luận này: số 0 của siêu phân giải là **số 0 cấu trúc** — cổng của nó chỉ mở cho vùng cắt dưới 200 px, trong khi 0/120 mẫu ngữ liệu lọt cổng — nên quyết định dựa trên "chi phí đã đo được và lớn, lợi ích chưa ai đo được", không phải "đã đo và thấy vô dụng". Mã và công tắc được giữ nguyên để bật lại khi có dữ liệu đo tử tế (mục 5.6.7).
+
+Cũng phải ghi lại vì sao con số này từng bị nghi ngờ theo hướng ngược lại. Một báo cáo trước đây ghi p95 = **5.857 ms** và kết luận NFR-P1 "không đạt" — con số đó đã bị **bác bỏ** vì điều kiện đo bị nhiễm (tranh chấp CPU, sai checkpoint, lỗi crop), chứ không vì mô hình chậm; toàn bộ quá trình truy nguyên trình bày ở **mục 5.7.1**.
+
+Phân rã ngân sách độ trễ thật (T5.7b): OCR chiếm **64,3%** (108,28 ms/biển), phát hiện chiếm **34,0%** (57,27 ms) — **không** phải tỉ lệ 93,3% / 6,7% của báo cáo cũ. Kết luận: kiến trúc phần mềm **không phải vấn đề**; nút thắt còn lại là chi phí của các lượt gọi OCR lặp trong bậc thang, và hướng tối ưu đúng là **giảm số lần phải thử lại** — tức nâng chất lượng lần đọc đầu bằng huấn luyện lại bộ nhận dạng (mục 6.4.1) — chứ không phải tối ưu từng lượt gọi (mục 6.4.4).
 
 ### 6.3.5. Nút "Huỷ tác vụ" video chưa hoàn chỉnh; một số chỉ tiêu chưa đo
 
@@ -273,7 +278,7 @@ Chạy bộ phân loại màu nền lên toàn bộ **2.801 ảnh biển số c�
 | NG/QT (ngoại giao) | **0** | 0% |
 | Không đọc được màu | 41 | 1,46% |
 
-Hệ quả phải nói thẳng, và nó nghiêm khắc hơn vẻ ngoài của bảng: **con số độ chính xác OCR mà đồ án công bố thực chất là độ chính xác trên biển trắng.** Với 97,68% mẫu thuộc một lớp duy nhất, mọi chỉ số tổng hợp đều bị lớp đó chi phối gần như hoàn toàn. Câu phát biểu đúng khi bảo vệ là *"1 − CER = 0,8734 trên một tập gồm 97,7% biển trắng"*, không phải *"1 − CER = 0,8734 trên biển số Việt Nam"*. Đây là cùng một loại hạn chế phạm vi với mục 6.3.3 (tập test không xuyên bộ dữ liệu), chỉ khác trục: ở đó là trục nguồn ảnh, ở đây là trục loại biển.
+Hệ quả phải nói thẳng, và nó nghiêm khắc hơn vẻ ngoài của bảng: **con số độ chính xác OCR mà đồ án công bố thực chất là độ chính xác trên biển trắng.** Với 97,68% mẫu thuộc một lớp duy nhất, mọi chỉ số tổng hợp đều bị lớp đó chi phối gần như hoàn toàn. Câu phát biểu đúng khi bảo vệ là *"1 − CER = 0,9454 trên một tập gồm 97,7% biển trắng"*, không phải *"1 − CER = 0,9454 trên biển số Việt Nam"*. Đây là cùng một loại hạn chế phạm vi với mục 6.3.3 (tập test không xuyên bộ dữ liệu), chỉ khác trục: ở đó là trục nguồn ảnh, ở đây là trục loại biển.
 
 Cần tách bạch hai điều rất dễ bị gộp làm một khi trả lời phản biện:
 
@@ -353,7 +358,21 @@ Có ít nhất bốn cách triển khai cụ thể, xếp theo mức đầu tư 
 
 Ràng buộc kiến trúc thuận lợi: nhờ NFR-M5, việc thay module rec **không đụng đến mã tầng API** — chỉ cần cài lại giao diện `PlateRecognizer`. Đây chính là lý do khoản đầu tư kiến trúc "tầng AI thay thế được" từ đầu dự án nay sinh lời.
 
-**Một bằng chứng bổ sung, thu được sau khi Chương 5 đã đo xong, củng cố thứ tự ưu tiên này.** Bước cứu dòng trên cho biển hai dòng (mục 4.2.5f, và mục 6.2.6 điểm (5)) là một can thiệp ở **tầng điều phối**, được thiết kế đúng theo chẩn đoán ở mục 6.3.1 và có tính chất bảo đảm không làm hỏng biển nào. Nó vẫn chỉ thu được **+1,86 điểm** trên mẫu 700 biển hai dòng và **+0,5 điểm** trên mẫu 200 (`docs/reports/15-two-line-fallback-700.json`, `15-two-line-fallback.json`) — cứu được 13 và 1 ảnh, làm hỏng 0. Con số nhỏ này **không** phải dấu hiệu bước cứu được thiết kế kém; nó là một phép đo nữa về trần của mọi can thiệp nằm **ngoài** mô hình nhận dạng. Cộng với trần của khối hậu xử lý theo luật (+4,57 điểm, mục 6.2.3), hai phép đo độc lập cùng nói một điều: phần độ chính xác còn thiếu **không nằm ở nơi có thể vá bằng luật hay bằng điều phối**. Bất kỳ mức cải thiện đáng kể nào cũng phải đến từ chính module rec — và mục 6.4.3 (bổ sung nhãn chuỗi) là điều kiện tiên quyết để làm được điều đó.
+**Ba phép đo độc lập, thu được sau khi Chương 5 đã đo xong, cùng củng cố thứ tự ưu tiên này.** Cả ba đều là can thiệp ở **tầng ngoài mô hình nhận dạng**, đều được thiết kế đúng theo chẩn đoán ở mục 6.3.1, và đều có tính chất bảo đảm không làm hỏng biển nào:
+
+| Can thiệp | Tầng | Thu được | Ghi ở |
+|---|---|---:|---|
+| Bộ luật hậu xử lý theo vị trí | luật | **+11,39 điểm** A6 · 319 biển | 6.2.3 |
+| Bước cứu dòng trên | điều phối | 209 biển | 5.6.6 |
+| Bậc thang thử-lại biển nghiêng/méo | hình học | **+0,75 điểm** A6 · 34 biển | 5.6.7 |
+
+Cộng lại, ba can thiệp này đã nâng A6 từ **0,6098** (lượt đo ban đầu, chỉ có chuỗi thô) lên **0,7512** — một quãng đáng kể, và đạt được **không tốn một giây GPU nào**. Nhưng chúng vẫn để A6 thiếu **9,88 điểm** so với ngưỡng, và **dư địa của hướng này đã cạn**: bậc thang hình học — can thiệp mới nhất và tốn kém nhất, làm p95 tăng 65% — chỉ còn mua được 34 biển trên 2.801.
+
+Cấu trúc phần lỗi còn lại nói rõ vì sao. Sau các can thiệp, ký tự **chèn thừa** gần như biến mất (giảm 88%) trong khi ký tự **bị xoá** nay chiếm 56,8% toàn bộ lỗi (mục 5.6.1). Nghĩa là phần lỗi đã dịch từ "chuỗi hỏng về cấu trúc" — thứ mà luật và điều phối sửa được — sang "**ký tự chưa từng được đọc ra**", thứ mà **về nguyên tắc** không tầng nào ngoài mô hình nhận dạng phục hồi được.
+
+Ba phép đo độc lập vì vậy cùng nói một điều, và nói mỗi lúc một dứt khoát hơn: phần độ chính xác còn thiếu **không nằm ở nơi có thể vá bằng luật, bằng điều phối hay bằng hình học**. Bất kỳ mức cải thiện đáng kể nào cũng phải đến từ chính module rec — và mục 6.4.3 (bổ sung nhãn chuỗi) là điều kiện tiên quyết để làm được điều đó.
+
+> **Một lần thử đã được thực hiện và đã thất bại, ghi lại vì kết quả âm cũng là kết quả.** Lượt fine-tune bộ nhận dạng đầu tiên (28/07/2026) cho ra model đọc **0/7** ảnh demo đúng, so với **7/7** của model gốc — không phải kém hơn một chút mà là chuỗi rác hoàn toàn. Nguyên nhân không nằm ở siêu tham số mà ở **tập huấn luyện sai nhãn, sinh ra một cách im lặng**: kịch bản sinh dữ liệu có cơ chế "ảnh thay thế" kích hoạt khi không mở được ảnh gốc, mà `datasets/raw/**` nằm trong `.gitignore` nên máy huấn luyện không hề có ảnh gốc — kết quả là mọi nhãn bị ghép với ảnh của một biển khác. Cơ chế đó đã bị gỡ bỏ và thay bằng một chốt chặn cứng. Chi tiết: `docs/reports/25-finetune-attempt-failed.md`.
 
 ### 6.4.2. Xây dựng tập test xuyên bộ dữ liệu
 
@@ -467,9 +486,9 @@ Cần ghi kèm một hệ quả về phương pháp: vì độ trễ của bản
 
 **Thứ nhất, hệ thống hoàn chỉnh và chạy được — điều này là chắc chắn, kiểm chứng được, không phải lời hứa.** Bốn tầng backend–frontend–AI–dữ liệu được đóng gói Docker, khởi động một lệnh, xác minh bằng HTTP sống và bằng stack Docker kiểm từ ngoài container. Bộ phát hiện đạt **toàn bộ** chỉ tiêu với biên rộng (mAP@0.5 = 0,9829, mAP@0.5:0.95 = 0,7834). Mọi chỉ tiêu hiệu năng, độ tin cậy và chịu tải đều đạt, gồm cả NFR-P1 (p95 = 731 ms) sau khi giải quyết một mâu thuẫn số liệu tồn đọng. Một điều chỉnh phải nói kèm ngay ở đây để mệnh đề này không bị đọc rộng hơn sự thật: giao diện web đã được thu gọn còn **ba màn hình** ngày 2026-07-20, và cùng đợt đó **một yêu cầu mức *Must* — FR-4.1, màn hình thống kê tổng hợp — bị đưa ra khỏi phạm vi** (mục 6.3.6). Năng lực tương ứng vẫn phục vụ và vẫn có kiểm thử ở tầng API, nhưng bộ yêu cầu *Must* mà hệ thống đáp ứng là bộ **21**, không phải bộ 22 ban đầu.
 
-**Thứ hai, đồ án đo được hai đại lượng mà tài liệu Việt Nam chưa công bố tách bạch.** Đóng góp thuần của khối hậu xử lý theo luật — **+4,57 điểm**, 128 biển sửa đúng, 0 biển làm hỏng — được lượng hoá thay vì mô tả định tính. Và rủi ro R-04 được đo bằng **số liệu Việt Nam thật**: chênh lệch **36,79 điểm** độ chính xác chuỗi giữa biển một dòng và biển hai dòng, cùng bậc độ lớn với mốc 48,6 điểm mà Laroca và cộng sự đo trên RodoSol-ALPR của **Brazil** [4]<!-- laroca_2022_crossdataset --> — một analogue quốc tế, không phải số Việt Nam.
+**Thứ hai, đồ án đo được hai đại lượng mà tài liệu Việt Nam chưa công bố tách bạch.** Đóng góp thuần của khối hậu xử lý theo luật — **+11,39 điểm**, 319 biển sửa đúng, 0 biển làm hỏng — được lượng hoá thay vì mô tả định tính. Và rủi ro R-04 được đo bằng **số liệu Việt Nam thật**: chênh lệch **25,45 điểm** độ chính xác chuỗi giữa biển một dòng và biển hai dòng, cùng bậc độ lớn với mốc 48,6 điểm mà Laroca và cộng sự đo trên RodoSol-ALPR của **Brazil** [4]<!-- laroca_2022_crossdataset --> — một analogue quốc tế, không phải số Việt Nam.
 
-**Thứ ba, và phải nói thẳng: nhận dạng ký tự trên biển hai dòng vẫn là một bài toán mở.** Bốn chỉ tiêu độ chính xác OCR đều không đạt, và nguyên nhân đã được định vị chính xác — không phải ở tầng hậu xử lý, không phải ở tầng phát hiện, mà ở tầng nhận dạng ký tự trên quần thể biển hai dòng, vốn chiếm 79,8% dữ liệu vì phản ánh mật độ xe máy Việt Nam. Biển một dòng về cơ bản đã giải xong (A6 = 0,9489); biển hai dòng thì chưa (A6 = 0,5810). Đây là hạn chế trung tâm, và nó vạch sẵn hướng phát triển quan trọng nhất: huấn luyện lại module nhận dạng riêng cho biển số Việt Nam.
+**Thứ ba, và phải nói thẳng: nhận dạng ký tự trên biển hai dòng vẫn là một bài toán mở.** Ba chỉ tiêu độ chính xác OCR không đạt, và nguyên nhân đã được định vị chính xác — không phải ở tầng hậu xử lý, không phải ở tầng phát hiện, không phải ở tầng hình học (cả ba đều đã được xử lý và đo tách bạch), mà ở **tầng nhận dạng ký tự** trên quần thể biển hai dòng, vốn chiếm 79,8% dữ liệu vì phản ánh mật độ xe máy Việt Nam. Biển một dòng về cơ bản đã giải xong (A6 = 0,9541); biển hai dòng thì chưa (A6 = 0,6996). Đây là hạn chế trung tâm, và nó vạch sẵn hướng phát triển quan trọng nhất: huấn luyện lại module nhận dạng riêng cho biển số Việt Nam.
 
 **Một điều kiện phạm vi phải đi kèm mệnh đề thứ ba, và nó cũng giới hạn cả mệnh đề thứ hai.** Tập 2.801 biển có nhãn chuỗi mà mọi con số OCR ở trên dựa vào gồm **97,68% biển trắng**, chỉ 20 biển vàng, 4 biển xanh, và **không một biển đỏ hay biển ngoại giao nào** (mục 6.3.8). Vì vậy các chỉ số A4–A7 phải được phát biểu là *"đo trên một tập gồm 97,7% biển trắng"*, không phải *"đo trên biển số Việt Nam"*. Hệ thống **có** năng lực phân loại chín họ biển và bốn màu nền — đã kiểm chứng ở 97,89% trên 1.565 ảnh có nhãn màu do người gán — nhưng **chưa có dữ liệu** để đo độ chính xác nhận dạng ký tự cho các loại biển hiếm. "Chưa đo được" không đồng nghĩa với "không làm được", và cũng không được trình bày như thể đã đo được.
 

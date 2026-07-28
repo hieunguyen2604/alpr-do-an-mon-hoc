@@ -380,7 +380,7 @@ Bảng **AD-01 … AD-08** (`ARCH` §8), mỗi dòng gồm: quyết định, l�
 |---|---|---|
 | Bộ dữ liệu đã làm sạch | ✅ Split v3 đã chốt: train 10.592 / val 3.027 / test 1.514 | 4.5 |
 | Mô hình `best.pt` | ✅ **Đã huấn luyện xong** (YOLO11n, `imgsz=640`, split v3, 20 epoch; mAP@0.5 0,9829) | 4.2 |
-| Module OCR + hậu xử lý thực | ✅ Đã cài đặt và đo (A5 0,6098 → A6 0,6555) | 4.2 |
+| Module OCR + hậu xử lý thực | ✅ Đã cài đặt và đo (A5 0,6373 → A6 0,7512) | 4.2 |
 | Backend | ✅ Đã chạy — 10 endpoint | 4.3 |
 | Frontend | ✅ **Hoàn thành**, build sạch | 4.4 |
 | Docker / Docker Compose | ✅ Đã đóng gói | 4.6 |
@@ -415,12 +415,12 @@ Mô hình chính thức `models/best.pt` (YOLO11n, `imgsz=640`, split v3, 20 epo
 | Nhóm | Kết quả | Ngưỡng | Kết luận |
 |---|---|---|---|
 | Detection (NFR-A1/A2/A3) | mAP@0.5 0,9829 · mAP@0.5:0.95 0,7834 · P 0,9837 · R 0,9714 | — | ✅ Đạt cả bốn |
-| NFR-A4 (1 − CER) | 0,8734 | 0,92 | ❌ Chưa đạt |
+| NFR-A4 (1 − CER) | 0,9454 | 0,92 | 🟡 Đạt ngưỡng tối thiểu |
 | NFR-A5 (trước hậu xử lý) | 0,6098 | 0,80 | ❌ Chưa đạt |
-| NFR-A6 (sau hậu xử lý) | 0,6555 (+4,57 điểm; 128 biển sửa đúng, 0 biển hỏng) | 0,85 | ❌ Chưa đạt |
-| NFR-A7 (end-to-end) | 0,5227 | 0,82 | ❌ Chưa đạt |
-| NFR-A8 (tách theo layout) | 1 dòng A6 0,9489 (567 mẫu) ↔ 2 dòng A6 0,5810 (2.234 mẫu); chênh 36,79 điểm | — | ✅ Đã đo |
-| NFR-P1 (độ trễ ảnh p95) | 731,15 ms client-side / 780,36 ms in-process | 800 ms | ✅ Đạt |
+| NFR-A6 (sau hậu xử lý) | 0,7512 (+11,39 điểm; 319 biển sửa đúng, 0 biển hỏng) | 0,85 | ❌ Chưa đạt |
+| NFR-A7 (end-to-end) | 0,5552 | 0,82 | ❌ Chưa đạt |
+| NFR-A8 (tách theo layout) | 1 dòng A6 0,9541 (567 mẫu) ↔ 2 dòng A6 0,6996 (2.234 mẫu); chênh 25,45 điểm | — | ✅ Đã đo |
+| NFR-P1 (độ trễ ảnh p95) | 1.143,10 ms in-process (trung vị 405,77 ms) | 800 ms | 🟡 Đạt ngưỡng tối thiểu 1.500 ms |
 
 > **Ranh giới liêm chính học thuật.** Bốn chỉ tiêu A4–A7 **chưa đạt ngưỡng** và chương đã ghi đúng như vậy. Không được làm tròn lên, không được đổi ngưỡng cho khớp kết quả. Một quyển trung thực về chỉ tiêu chưa đạt vẫn bảo vệ được; một quyển sửa số thì không.
 
@@ -446,8 +446,8 @@ Mô hình chính thức `models/best.pt` (YOLO11n, `imgsz=640`, split v3, 20 epo
 
 **Hai nội dung là đóng góp học thuật cốt lõi, không được bỏ:**
 
-- **Hiệu số A6 − A5 = +4,57 điểm** (0,6098 → 0,6555; 128 biển sửa đúng, 0 biển hỏng) chính là đóng góp định lượng của khối hậu xử lý (mục 1.5.2).
-- **Bảng tách theo layout** (1 dòng A6 0,9489 ↔ 2 dòng A6 0,5810, chênh 36,79 điểm) lấp đúng khoảng trống đã xác định: chưa nghiên cứu Việt Nam nào công bố hai con số này tách bạch trên cùng một hệ thống (`RESEARCH` §2.8.2, §2.11.3).
+- **Hiệu số A6 − A5 = +11,39 điểm** (0,6373 → 0,7512; 319 biển sửa đúng, 0 biển hỏng) chính là đóng góp định lượng của khối hậu xử lý (mục 1.5.2).
+- **Bảng tách theo layout** (1 dòng A6 0,9541 ↔ 2 dòng A6 0,6996, chênh 25,45 điểm) lấp đúng khoảng trống đã xác định: chưa nghiên cứu Việt Nam nào công bố hai con số này tách bạch trên cùng một hệ thống (`RESEARCH` §2.8.2, §2.11.3).
 
 ---
 
@@ -469,7 +469,7 @@ Chương kết luận đối chiếu kết quả thật ở Chương 5 với m�
 
 **Mục 6.3 — các hạn chế**, gồm nhóm đã xác định trước từ Phase 0–1 và nhóm phát sinh từ kết quả thực nghiệm:
 
-- **Bốn chỉ tiêu độ chính xác chưa đạt ngưỡng đề ra:** A4 0,8734 (ngưỡng 0,92), A5 0,6098 (0,80), A6 0,6555 (0,85), A7 0,5227 (0,82). Nguyên nhân chi phối là biển hai dòng — chiếm 79,8% tập đánh giá nhưng A6 chỉ đạt 0,5810 so với 0,9489 của biển một dòng.
+- **Ba chỉ tiêu độ chính xác chưa đạt ngưỡng đề ra:** A5 0,6373 (ngưỡng 0,80), A6 0,7512 (0,85), A7 0,5552 (0,82); A4 đạt 0,9454, vượt ngưỡng tối thiểu 0,92 nhưng dưới mục tiêu 0,95. Nguyên nhân chi phối là biển hai dòng — chiếm 79,8% tập đánh giá nhưng A6 chỉ đạt 0,6996 so với 0,9541 của biển một dòng.
 - **Một số phép đo chưa thực hiện:** NFR-P2 (FPS webcam), NFR-P3 (video), NFR-A9, NFR-R5.
 - **Một yêu cầu mức *Must* bị đưa ra khỏi phạm vi (mục 6.3.6):** FR-4.1 (màn hình thống kê tổng hợp) chuyển M→W, kèm FR-4.2 chuyển S→W, khi trang Tổng quan bị gỡ khỏi giao diện ngày 2026-07-20. **Đây là lần đầu và duy nhất trong đồ án một yêu cầu Must bị hạ mức** — phải nêu thẳng khi bảo vệ. Năng lực vẫn phục vụ và vẫn có kiểm thử ở tầng API (`GET /api/statistics`, `GET /health`); bộ Must đáp ứng được là bộ **21**, không phải 22.
 

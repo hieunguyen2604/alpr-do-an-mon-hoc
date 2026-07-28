@@ -1507,7 +1507,7 @@ Hệ thống chạy `models/best.pt` (YOLO11n, `imgsz=640`, split v3, 20 epoch),
 Cả bốn chỉ tiêu detection **đều đạt**, đo trên split v3 đã khử trùng lặp ở ngưỡng phash 10 — nên không còn bị rò rỉ tên-tệp thổi phồng như baseline. Mô hình `baseline-416-v1.pt` (`imgsz=416`, split v1, mAP@0.5 0,9933) giữ làm **mô hình đối chứng**, không báo cáo là "đạt" vì sai độ phân giải và có rò rỉ (619 cặp d≤10). Chi tiết và so sánh ở **Chương 5**.
 
 **(5) NFR-P1 đạt.**
-Độ trễ đầu-cuối p95 đo trên `models/best.pt`, máy rảnh: **731,15 ms** (client-side qua HTTP) / **780,36 ms** (in-process), dưới mục tiêu 800 ms. Phân rã theo giai đoạn (mục 4.2.7): **OCR ~64,3% (112,55 ms/biển), detect ~34,2% (59,83 ms)**.
+Độ trễ đầu-cuối p95 đo trên `models/best.pt`, máy rảnh, cấu hình giao hàng: **1.143,10 ms** (in-process) — dưới ngưỡng tối thiểu 1.500 ms nhưng vượt mục tiêu 800 ms. Trung vị chỉ **405,77 ms**: chênh lệch giữa hai phân vị là do bậc thang thử-lại, vốn chỉ chạy khi lần đọc đầu thất bại (Chương 5, mục 5.6.7 và 5.7.1). Phân rã theo giai đoạn (mục 4.2.7): **OCR ~64,3% (108,28 ms/biển), detect ~34,0% (57,27 ms)**.
 
 Con số cũ **5.857,19 ms** (từng ghi trong bản nháp) **đã bị bác bỏ**: nó đo khi một tiến trình huấn luyện chiếm ~793% CPU song song, trên checkpoint epoch 7 (không phải `best.pt`), và trên một hệ thống có lỗi crop khiến PaddleOCR đọc trên ảnh crop quá lớn (~1322 ms/ảnh) — đẩy tỷ trọng OCR lên "93,3%" giả tạo. Đo lại trên máy rảnh với mô hình đúng, oneDNN đã tắt (`enable_mkldnn=false`, cold-start p95 chỉ 176 ms), p95 về 731 ms. Phân tích đầy đủ ở **Chương 5**.
 

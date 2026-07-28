@@ -127,7 +127,7 @@ Kết quả học sâu nhạy cảm với phiên bản thư viện ở mức có
 
 Lập luận đầy đủ vì sao "không có GPU" được coi là **ràng buộc thiết kế** chứ không phải hạn chế tạm thời đã trình bày ở **mục 4.1.2**; ở đây chỉ nêu hệ quả với việc **diễn giải số đo** của chương này.
 
-**Hệ quả với cách đọc mọi con số hiệu năng.** Chỉ tiêu NFR-P1 được phát biểu *kèm* ràng buộc CPU, nên khi mục 5.7 kết luận NFR-P1 **đạt** (p95 = 731,15 ms client-side / 780,36 ms in-process, mục tiêu 800 ms), đó là kết luận về hệ thống trong đúng bối cảnh vận hành thật của nó — không phải một con số chờ nâng cấp phần cứng mới có ý nghĩa. Ngược lại, cấu hình mô hình được đánh giá cũng là cấu hình *do ràng buộc phần cứng quyết định* — **YOLO11n** (2.590.035 tham số) [17]<!-- jocher_2024_yolo11 --> và **PP-OCRv5 mobile** [23]<!-- paddlepaddle_2026_ppocrv5docs --> — nên mọi kết quả độ chính xác phải đọc kèm lựa chọn đó, không tách rời.
+**Hệ quả với cách đọc mọi con số hiệu năng.** Chỉ tiêu NFR-P1 được phát biểu *kèm* ràng buộc CPU, nên khi mục 5.7 kết luận NFR-P1 **đạt ngưỡng tối thiểu nhưng không đạt mục tiêu** (p95 = 1.143,10 ms; sàn 1.500 ms, mục tiêu 800 ms), đó là kết luận về hệ thống trong đúng bối cảnh vận hành thật của nó — không phải một con số chờ nâng cấp phần cứng mới có ý nghĩa. Ngược lại, cấu hình mô hình được đánh giá cũng là cấu hình *do ràng buộc phần cứng quyết định* — **YOLO11n** (2.590.035 tham số) [17]<!-- jocher_2024_yolo11 --> và **PP-OCRv5 mobile** [23]<!-- paddlepaddle_2026_ppocrv5docs --> — nên mọi kết quả độ chính xác phải đọc kèm lựa chọn đó, không tách rời.
 
 **Hệ quả với quy mô thực nghiệm.** Với khoảng 35,6 phút mỗi epoch trên CPU, một lượt huấn luyện 20 epoch mất khoảng 12 giờ liên tục. Điều này khiến **tìm kiếm siêu tham số trở nên bất khả thi trong khuôn khổ đồ án**, và giải thích vì sao chương này báo cáo *một* cấu hình huấn luyện chứ không phải một khảo sát siêu tham số. Đó là giới hạn thật của công trình và được ghi nhận trong mục 5.11.3, không được che giấu bằng cách trình bày cấu hình duy nhất ấy như thể nó là kết quả của một quá trình tối ưu.
 
@@ -454,19 +454,33 @@ trong đó $S$ là số ký tự thay thế, $D$ số ký tự bị xoá, $I$ s�
 
 | Chỉ số | Ngưỡng tối thiểu | Mục tiêu | **Đo được (trước hậu xử lý)** | **Đo được (sau hậu xử lý)** | Kết quả |
 |---|---:|---:|---:|---:|:---:|
-| 1 − CER (NFR-A4) | 0,92 | 0,95 | 0,8704 | **0,8848** | ❌ không đạt |
-| CER | ≤ 0,08 | ≤ 0,05 | 0,1296 | 0,1152 | n/a |
+| 1 − CER (NFR-A4) | 0,92 | 0,95 | 0,9061 | **0,9454** | 🟡 đạt ngưỡng tối thiểu |
+| CER | ≤ 0,08 | ≤ 0,05 | 0,0939 | 0,0546 | n/a |
 | Số ký tự nhãn thật ($N$) | — | — | 23.855 | 23.855 | n/a |
-| Số ký tự thay thế ($S$) | — | — | 1.007 | 1.007 | n/a |
-| Số ký tự bị xoá ($D$) | — | — | 1.182 | 1.182 | n/a |
-| Số ký tự chèn thừa ($I$) | — | — | 903 | 903 | n/a |
+| Số ký tự thay thế ($S$) | — | — | 862 | 862 | n/a |
+| Số ký tự bị xoá ($D$) | — | — | 1.272 | 1.272 | n/a |
+| Số ký tự chèn thừa ($I$) | — | — | 107 | 107 | n/a |
 | **Số biển có nhãn chuỗi (mẫu số)** | — | — | **2.801** | **2.801** | n/a |
 
-> **Nguồn số liệu.** Toàn bộ mục 5.6 lấy số từ `docs/reports/16-ocr-accuracy-rescued.json` — lượt đo lại ngày 2026-07-20 trên máy rảnh, mô hình `models/best.pt` (`imgsz = 640`), 2.801 ảnh có nhãn chuỗi, **sau khi bước "cứu dòng trên" cho biển hai dòng được nối vào cả hai đường đo** (chi tiết ở mục 5.6.6).
+> **Nguồn số liệu.** Toàn bộ mục 5.6 lấy số từ `docs/reports/05-results.json` — lượt đo ngày 2026-07-28 trên máy rảnh, mô hình `models/best.pt` (`imgsz = 640`), 2.801 ảnh có nhãn chuỗi, chạy đúng cấu hình giao hàng (nắn hình bật, siêu phân giải tắt — mục 5.6.7).
+>
+> Lượt này thay thế bộ số ngày 20/07 vì hai lý do độc lập. **Một**, bốn đợt sửa độ chính xác đã rơi vào khoảng 21–28/07 nên số cũ mô tả một hệ thống không còn tồn tại. **Hai**, và nghiêm trọng hơn: harness đo trước ngày 28/07 **chưa bao giờ gọi** bậc thang thử-lại — cả nhánh vùng cắt lẫn nhánh đầu-cuối đều chép lại các bước của pipeline rồi dừng ở bước cứu dòng trên, nên mọi con số A4–A7 công bố trước đó mô tả một pipeline **ngắn hơn bản giao hàng**. Chi tiết ở mục 5.6.7 và `docs/reports/27-retry-ladder-cost-benefit.md`.
 
-> Ba cột $S$/$D$/$I$ đo trên **chuỗi thô trước hậu xử lý** (dẫn ra từ ma trận nhầm lẫn: $S$ = tổng ô ngoài đường chéo, $D$ = tổng xoá, $I$ = tổng chèn, $N$ = tổng ma trận cộng $D$), nên chúng giống nhau ở cả hai cột đo được — và cũng vì vậy bước cứu dòng trên, vốn chạy **sau** chuẩn hoá, không làm ba con số này thay đổi. Hậu xử lý nhích 1 − CER từ 0,8704 lên 0,8848.
+> Ba cột $S$/$D$/$I$ đo trên **chuỗi thô trước hậu xử lý** (dẫn ra từ ma trận nhầm lẫn: $S$ = tổng ô ngoài đường chéo, $D$ = tổng xoá, $I$ = tổng chèn, $N$ = tổng ma trận cộng $D$), nên chúng giống nhau ở cả hai cột đo được — và cũng vì vậy bước cứu dòng trên lẫn bậc thang thử-lại, vốn chạy **sau** chuẩn hoá, không làm ba con số này thay đổi. Hậu xử lý nâng 1 − CER từ 0,9061 lên 0,9454.
 
-**NFR-A4 không đạt: 1 − CER = 0,8848, còn cách ngưỡng tối thiểu 0,92 khoảng 3,5 điểm.** Đây là kết quả thật và được trình bày trung thực. Đáng chú ý là **cấu trúc lỗi**: trong 3.092 thao tác chỉnh sửa trên 23.855 ký tự (đo trên chuỗi thô), số ký tự bị **xoá** ($D$ = 1.182) còn nhiều hơn số bị **thay thế** ($S$ = 1.007), và số **chèn thừa** ($I$ = 903) cũng ở mức tương đương. Điều này quan trọng vì nó cho biết phần lớn lỗi **không** phải nhầm ký tự đơn lẻ (loại mà bảng luật sửa được) mà là **thiếu/thừa ký tự** — dấu hiệu điển hình của việc OCR đọc hụt hoặc đọc lặp cả cụm ký tự trên biển hai dòng. Bộ ba $S$/$D$/$I$ này cũng lý giải trước vì sao đóng góp của hậu xử lý ở mục 5.6.2 lại nhỏ: hậu xử lý mạnh ở việc sửa $S$ nhưng gần như bất lực trước $D$ và $I$.
+**NFR-A4 đạt ngưỡng tối thiểu: 1 − CER = 0,9454, vượt sàn 0,92 nhưng còn cách mục tiêu 0,95 khoảng 0,5 điểm.** Chỉ tiêu này từng được ghi là **không đạt** (0,8848, đo 20/07/2026); lượt đo lại ngày 28/07 trên đúng bộ trọng số ấy cho 0,9454. Chênh lệch **không** đến từ một mô hình khác mà từ các bản sửa ở tầng suy luận và từ việc harness đo được nối đúng với pipeline giao hàng (mục 5.6.7).
+
+Đáng chú ý hơn con số tổng là **thay đổi trong cấu trúc lỗi**. Trên 23.855 ký tự nhãn thật, tổng thao tác chỉnh sửa giảm từ 3.092 xuống **2.241**, nhưng ba thành phần giảm rất không đều:
+
+| Loại lỗi | 20/07 | 28/07 | Thay đổi |
+|---|---:|---:|---:|
+| Chèn thừa ($I$) | 903 | **107** | −88,1% |
+| Thay thế ($S$) | 1.007 | **862** | −14,4% |
+| Xoá ($D$) | 1.182 | **1.272** | +7,6% |
+
+**Ký tự chèn thừa gần như biến mất.** Đó là dấu vân tay của các bản sửa đọc biển hai dòng: trước đây vùng chồng lấn giữa hai nửa bị đọc hai lần nên sinh ký tự lặp, còn viền biển và vết bẩn bị đọc thành ký tự. Ngược lại **số ký tự bị xoá lại nhích lên** và giờ chiếm **56,8%** toàn bộ lỗi — tức phần lỗi còn lại đã dịch hẳn về một dạng: **đọc hụt ký tự**, không phải đọc nhầm.
+
+Điều này định hình trước mọi kết luận sau đó. Bảng luật hậu xử lý mạnh ở việc sửa $S$ — nhầm ký tự đồng hình ở vị trí đã biết — nhưng **về nguyên tắc không thể phục hồi một ký tự chưa từng được đọc ra**. Khi $D$ trở thành thành phần chi phối, dư địa của hậu xử lý thu hẹp lại, và hướng cải thiện phải chuyển sang tầng nhận dạng (fine-tune bộ nhận dạng trên vùng cắt biển Việt Nam, mục 6.4) chứ không phải thêm luật.
 
 Việc tách $S$, $D$, $I$ không phải chi tiết thừa. Ba loại lỗi này gợi ra ba nguyên nhân khác nhau: $S$ cao trỏ tới **nhầm ký tự** (xử lý được bằng bảng luật sửa lỗi, mục 5.6.4); $D$ cao trỏ tới **bỏ sót ký tự**, thường do vùng cắt bị thiếu hoặc ký tự bị mờ; $I$ cao trỏ tới **nhiễu bị đọc thành ký tự**, thường là viền biển hoặc vết bẩn. Phân tích ở mục 5.10 dựa trực tiếp vào bộ ba này.
 
@@ -484,12 +498,12 @@ Câu hỏi ấy chỉ trả lời được nếu **đo hai lần trên cùng m�
 
 | Chỉ số | Mã NFR | Ngưỡng tối thiểu | Mục tiêu | **Đo được** | Kết quả |
 |---|:---:|---:|---:|---:|:---:|
-| Độ chính xác chuỗi **trước** hậu xử lý | NFR-A5 | 0,80 | 0,85 | **0,6098** | ❌ không đạt |
-| Độ chính xác chuỗi **sau** hậu xử lý | NFR-A6 | 0,85 | 0,90 | **0,6730** | ❌ không đạt |
-| **Mức cải thiện (A6 − A5), điểm phần trăm** | — | — | — | **+6,32** | n/a |
-| Số biển **được sửa đúng** nhờ hậu xử lý | — | — | — | **177** | n/a |
+| Độ chính xác chuỗi **trước** hậu xử lý | NFR-A5 | 0,80 | 0,85 | **0,6373** | ❌ không đạt |
+| Độ chính xác chuỗi **sau** hậu xử lý | NFR-A6 | 0,85 | 0,90 | **0,7512** | ❌ không đạt |
+| **Mức cải thiện (A6 − A5), điểm phần trăm** | — | — | — | **+11,39** | n/a |
+| Số biển **được sửa đúng** nhờ hậu xử lý | — | — | — | **319** | n/a |
 | Số biển **bị hậu xử lý làm hỏng** | — | — | — | **0** | n/a |
-| Số biển sai cả trước lẫn sau | — | — | — | **916** | n/a |
+| Số biển sai cả trước lẫn sau | — | — | — | **697** | n/a |
 | **Số mẫu (biển có nhãn chuỗi)** | — | — | — | **2.801** | n/a |
 
 Ba dòng cuối cùng quan trọng ngang dòng hiệu số. Một mức cải thiện thuần +5 điểm có thể là kết quả của việc sửa đúng 60 biển và làm hỏng 10 biển, hoặc sửa đúng 50 và không làm hỏng biển nào. Hai tình huống này **hàm ý hai kết luận kỹ thuật khác nhau** về chất lượng bộ luật, nên hiệu số thuần một mình là không đủ.
@@ -505,20 +519,33 @@ Ba dòng cuối cùng quan trọng ngang dòng hiệu số. Một mức cải th
 | Kiểm tra mã tỉnh hợp lệ | *(chưa đo)* | *(chưa đo)* | *(chưa đo)* | *(chưa đo)* |
 | **Tổng** | *(chưa đo)* | *(chưa đo)* | *(chưa đo)* | *(chưa đo)* |
 
-> Bảng phân rã theo nhóm luật **chưa đo được**: `ai/inference/plate_rules.py` hiện chưa có cơ chế bật/tắt từng nhóm luật riêng lẻ để chạy lại phép đo. Đây là hạng mục cần viết mã (mục D.2 của tài liệu vận hành) trước khi định vị được đóng góp về từng nhóm; hiện chỉ đo được đóng góp *tổng* +6,32 điểm.
+> Bảng phân rã theo nhóm luật **chưa đo được**: `ai/inference/plate_rules.py` hiện chưa có cơ chế bật/tắt từng nhóm luật riêng lẻ để chạy lại phép đo. Đây là hạng mục cần viết mã (mục D.2 của tài liệu vận hành) trước khi định vị được đóng góp về từng nhóm; hiện chỉ đo được đóng góp *tổng* +11,39 điểm.
 >
-> Trong +6,32 điểm đó, **bước cứu dòng trên cho biển hai dòng đóng góp +1,75 điểm** — đây là con số duy nhất trong bảng phân rã hiện đã cô lập được, nhờ có phép đo A/B riêng ở mục 5.6.6.
+> Hai bậc cứu chữa chạy **sau** chuẩn hoá đã cô lập được riêng, nhờ các phép đo A/B ở mục 5.6.6 và 5.6.7: **bước cứu dòng trên** cung cấp câu trả lời cuối cho **209 biển**, **bậc thang thử-lại biển nghiêng/méo** cho **34 biển**.
 
 #### Đóng góp định lượng của khối hậu xử lý (hiệu số A6 − A5 là số dương)
 
-Hiệu số **A6 − A5 = 0,6730 − 0,6098 = +6,32 điểm phần trăm**, đo trên **2.801 biển có nhãn chuỗi**. Đây là đóng góp thuần của khối hậu xử lý theo luật, và nó đi kèm một chi tiết định tính rất mạnh: trong 2.801 biển, hậu xử lý **sửa đúng 177 biển và làm hỏng 0 biển**. Nói cách khác đây **không phải một đánh đổi** (sửa được nhiều nhưng phá hỏng một ít) mà là **cải thiện thuần một chiều** — mọi thay đổi mà khối luật áp vào đều đúng hướng hoặc vô hại trên tập này. Về mặt chất lượng bộ luật, đó là kết quả tốt: nó cho thấy các mặt nạ vị trí và ràng buộc mã tỉnh đủ bảo thủ để không tự tạo ra lỗi mới.
+Hiệu số **A6 − A5 = 0,7512 − 0,6373 = +11,39 điểm phần trăm**, đo trên **2.801 biển có nhãn chuỗi**. Đây là đóng góp thuần của khối hậu xử lý theo luật, và nó đi kèm một chi tiết định tính rất mạnh: trong 2.801 biển, hậu xử lý **sửa đúng 319 biển và làm hỏng 0 biển**. Nói cách khác đây **không phải một đánh đổi** (sửa được nhiều nhưng phá hỏng một ít) mà là **cải thiện thuần một chiều** — mọi thay đổi mà khối luật áp vào đều đúng hướng hoặc vô hại trên tập này. Về mặt chất lượng bộ luật, đó là kết quả tốt: nó cho thấy các mặt nạ vị trí và ràng buộc mã tỉnh đủ bảo thủ để không tự tạo ra lỗi mới.
 
-Nhưng phải trung thực về **độ lớn**: +6,32 điểm vẫn là một đóng góp **nhỏ**, và cả A5 (0,6098) lẫn A6 (0,6730) đều **không đạt** ngưỡng tối thiểu tương ứng (0,80 và 0,85) — A6 còn thiếu 17,70 điểm. Lý do đóng góp nhỏ đã lộ ra từ bảng T5.6a và sẽ được khẳng định ở mục 5.6.3: **phần lớn lỗi nằm ở *tầng OCR* chứ không ở tầng chuẩn hoá.** Hậu xử lý theo luật chỉ sửa được lỗi **nhầm một vài ký tự lẻ tẻ** ở đúng vị trí — nó áp mặt nạ "vị trí này phải là chữ số / chữ cái" rồi ánh xạ ký tự đồng hình về đúng lớp. Cơ chế đó bất lực trước hai tình huống chi phối tập test:
+Nhưng phải trung thực về **giới hạn**: dù đóng góp gần gấp đôi so với lượt đo 20/07 (+6,32 → **+11,39 điểm**), cả A5 (0,6373) lẫn A6 (0,7512) vẫn **không đạt** ngưỡng tối thiểu tương ứng (0,80 và 0,85) — A6 còn thiếu 9,88 điểm.
 
-1. **Chuỗi sai nhiều ký tự cùng lúc.** Khi PaddleOCR đọc sai cả cụm ký tự trên biển hai dòng (chỉ 1.174 trên 2.234 biển hai dòng — 52,55% — đọc đúng trước hậu xử lý, xem 5.6.3), chuỗi thô đã hỏng ở mức không một luật thay-ký-tự nào cứu được. 916 biển sai cả trước lẫn sau hậu xử lý chính là quần thể này.
-2. **Lệch pha mặt nạ do thiếu/thừa ký tự.** Luật vị trí giả định chuỗi có **đúng độ dài mong đợi**. Với $D$ = 1.182 ký tự bị xoá và $I$ = 903 ký tự chèn thừa (T5.6a), nhiều chuỗi có độ dài sai, khiến mặt nạ vị trí bị lệch — luật khi đó **không dám sửa** (giữ nguyên, an toàn nhưng không cải thiện) chứ không sửa bừa, điều này khớp với con số 0 biển bị làm hỏng.
+**Đóng góp ấy phân bố rất không đều giữa hai bố cục biển**, và chính sự lệch đó nói lên bản chất của bộ luật:
 
-Vậy kết luận đúng phạm vi cho RQ3 là: *khối hậu xử lý theo luật đóng góp **+6,32 điểm** độ chính xác chuỗi đầy đủ trên mẫu 2.801 biển, là cải thiện thuần không rủi ro (177 sửa đúng / 0 làm hỏng), nhưng đóng góp bị chặn nhỏ vì nút thắt độ chính xác nằm ở tầng OCR — nơi hậu xử lý theo luật về bản chất không với tới được.* Con số này vẫn là một đóng góp học thuật: rất ít công trình ALPR đo tách bạch phần đóng góp của khối hậu xử lý, và ở đây nó được lượng hoá cùng với chứng cứ về giới hạn của chính nó. Việc định vị đóng góp về **từng nhóm luật** (bảng phân rã ở trên) là bước tiếp theo, hiện chưa đo được vì thiếu cơ chế bật/tắt luật.
+| | Biển một dòng | Biển hai dòng |
+|---|---:|---:|
+| A5 (trước hậu xử lý) | 0,9418 | 0,5600 |
+| A6 (sau hậu xử lý) | 0,9541 | 0,6996 |
+| **Đóng góp (điểm %)** | **+1,23** | **+13,97** |
+| Số biển được sửa đúng | 7 | **312** |
+
+Trên biển một dòng, hậu xử lý gần như không có việc để làm — chuỗi thô đã đúng 94,18%. Toàn bộ giá trị của khối luật dồn vào **biển hai dòng**, đúng nơi đề tài đặt trọng tâm, và cũng đúng nơi bố cục hai dòng khiến bộ nhận dạng đọc sai nhiều nhất. Đây là bằng chứng định lượng rằng bộ luật **không** chỉ làm đẹp chuỗi mà thực sự bù đắp cho điểm yếu đã xác định của tầng nhận dạng.
+
+Vì sao đóng góp vẫn không đủ để đạt ngưỡng? Cơ chế của bộ luật là áp mặt nạ "vị trí này phải là chữ số / chữ cái" rồi ánh xạ ký tự đồng hình về đúng lớp. Cơ chế đó bất lực trước hai tình huống vẫn chi phối phần lỗi còn lại:
+
+1. **Chuỗi sai nhiều ký tự cùng lúc.** Chỉ 1.251 trên 2.234 biển hai dòng — 56,0% — đọc đúng trước hậu xử lý (5.6.3). Khi bộ nhận dạng đọc hỏng cả cụm, chuỗi thô đã sai ở mức không một luật thay-ký-tự nào cứu được. **697 biển sai cả trước lẫn sau** hậu xử lý chính là quần thể này.
+2. **Ký tự chưa từng được đọc ra thì không luật nào phục hồi được.** Đây là ràng buộc nguyên tắc, không phải khiếm khuyết cài đặt. Với $D$ = 1.272 ký tự bị xoá — chiếm 56,8% toàn bộ lỗi sau khi $I$ đã giảm 88% (T5.6a) — nhiều chuỗi ngắn hơn độ dài mong đợi, mặt nạ vị trí bị lệch pha, và luật khi đó **không dám sửa** (giữ nguyên: an toàn nhưng không cải thiện) chứ không sửa bừa. Con số **0 biển bị làm hỏng** chính là hệ quả quan sát được của thiết kế bảo thủ đó.
+
+Vậy kết luận đúng phạm vi cho RQ3 là: *khối hậu xử lý theo luật đóng góp **+11,39 điểm** độ chính xác chuỗi đầy đủ trên mẫu 2.801 biển — **+13,97 điểm riêng trên biển hai dòng** — là cải thiện thuần không rủi ro (319 sửa đúng / 0 làm hỏng), nhưng vẫn không đủ đưa A6 tới ngưỡng vì phần lỗi còn lại đã dịch sang dạng **đọc hụt ký tự**, nơi hậu xử lý theo luật về nguyên tắc không với tới được.* Rất ít công trình ALPR đo tách bạch phần đóng góp của khối hậu xử lý; ở đây nó được lượng hoá cùng với chứng cứ về giới hạn của chính nó, và giới hạn ấy chỉ thẳng sang hướng khắc phục ở tầng nhận dạng (mục 6.4). Việc định vị đóng góp về **từng nhóm luật** (bảng phân rã ở trên) là bước tiếp theo, hiện chưa đo được vì thiếu cơ chế bật/tắt luật.
 
 ### 5.6.3. Tách theo biển một dòng và hai dòng cho OCR
 
@@ -529,27 +556,27 @@ Nếu bảng T5.5b cho thấy tầng phát hiện gần như không phân biệt
 | Chỉ số | Biển **một dòng** | Biển **hai dòng** | Chênh lệch (điểm %) |
 |---|---:|---:|---:|
 | Số mẫu có nhãn chuỗi | **567** | **2.234** | n/a |
-| 1 − CER (NFR-A4) | 0,9903 | 0,8601 | 13,02 |
-| Chuỗi đúng **trước** hậu xử lý (A5) | 0,9418 | 0,5255 | 41,63 |
-| Chuỗi đúng **sau** hậu xử lý (A6) | 0,9489 | 0,6030 | 34,59 |
-| Mức cải thiện do hậu xử lý (A6 − A5) | +0,71 | +7,74 | n/a |
-| Độ chính xác E2E (A7) | 0,6843 | 0,4902 | — |
+| 1 − CER (NFR-A4) | 0,9925 | 0,9344 | 5,81 |
+| Chuỗi đúng **trước** hậu xử lý (A5) | 0,9418 | 0,5600 | 38,18 |
+| Chuỗi đúng **sau** hậu xử lý (A6) | 0,9541 | 0,6996 | 25,45 |
+| Mức cải thiện do hậu xử lý (A6 − A5) | +1,23 | +13,97 | n/a |
+| Độ chính xác E2E (A7) | 0,6861 | 0,5219 | — |
 
 **Đây là kết quả khoa học quan trọng nhất của chương.** Chênh lệch giữa hai layout mà tầng phát hiện gần như che khuất (2,09 điểm ở T5.5b) nay lộ ra ở tầng OCR với **biên độ hoàn toàn khác cấp**:
 
-- Ở **độ chính xác ký tự** (1 − CER), biển một dòng đạt **0,9903** — gần hoàn hảo — trong khi biển hai dòng chỉ **0,8601**, chênh **13,02 điểm**.
-- Ở **độ chính xác chuỗi đầy đủ sau hậu xử lý** (A6), biển một dòng đạt **0,9489** (vượt cả mục tiêu 0,90), còn biển hai dòng chỉ **0,6030**, chênh **34,59 điểm**.
+- Ở **độ chính xác ký tự** (1 − CER), biển một dòng đạt **0,9925** — gần hoàn hảo — trong khi biển hai dòng đạt **0,9344**, chênh **5,81 điểm**.
+- Ở **độ chính xác chuỗi đầy đủ sau hậu xử lý** (A6), biển một dòng đạt **0,9541** (vượt cả mục tiêu 0,90), còn biển hai dòng chỉ **0,6996**, chênh **25,45 điểm**.
 - Ở **chuỗi trước hậu xử lý** (A5) khoảng cách còn rộng hơn: **41,63 điểm** (0,9418 so với 0,5255).
 
-Nói cách khác, **biển một dòng của hệ thống này về cơ bản đã giải xong** (A6 = 0,9489 vượt mục tiêu; 1 − CER = 0,9903), và toàn bộ việc "OCR không đạt" ở các bảng tổng hợp là do **biển hai dòng kéo xuống**. Vì biển hai dòng chiếm **2.234 / 2.801 = 79,8%** tập có nhãn chuỗi (phản ánh tỉ lệ xe máy rất cao trong giao thông Việt Nam), con số tổng bị chi phối bởi quần thể khó này. Cũng đáng lưu ý: hậu xử lý theo luật đóng góp **+7,74 điểm cho biển hai dòng** so với chỉ **+0,71 điểm cho biển một dòng** — hợp lý, vì biển một dòng gần như đã đúng sẵn nên không còn nhiều chỗ để sửa.
+Nói cách khác, **biển một dòng của hệ thống này về cơ bản đã giải xong** (A6 = 0,9541 vượt mục tiêu; 1 − CER = 0,9925), và toàn bộ việc "OCR không đạt" ở các bảng tổng hợp là do **biển hai dòng kéo xuống**. Vì biển hai dòng chiếm **2.234 / 2.801 = 79,8%** tập có nhãn chuỗi (phản ánh tỉ lệ xe máy rất cao trong giao thông Việt Nam), con số tổng bị chi phối bởi quần thể khó này. Cũng đáng lưu ý: hậu xử lý theo luật đóng góp **+13,97 điểm cho biển hai dòng** so với chỉ **+1,23 điểm cho biển một dòng** — hợp lý, vì biển một dòng gần như đã đúng sẵn nên không còn nhiều chỗ để sửa.
 
-**Khoảng cách 34,59 điểm này là con số *sau* khi đã áp bước cứu dòng trên.** Trước khi có bước đó, A6 của biển hai dòng là 0,5810 và khoảng cách là 36,79 điểm; bước cứu thu hẹp khoảng cách được 2,20 điểm. Nói cách khác, một biện pháp kỹ thuật nhắm đúng chế độ thất bại của biển hai dòng đã dịch chuyển được con số này, nhưng chỉ dịch được một biên nhỏ — bằng chứng rằng phần còn lại của khoảng cách nằm ở năng lực nhận dạng chứ không ở khâu cắt/ghép. Phép đo A/B đầy đủ ở mục 5.6.6.
+**Khoảng cách 25,45 điểm này là con số *sau* khi đã áp cả hai bậc cứu chữa** — bước cứu dòng trên (5.6.6) và bậc thang thử-lại biển nghiêng/méo (5.6.7). Ở lượt đo 20/07, trước khi các bản sửa đọc biển hai dòng và bậc thang được nối vào đường đo, A6 của biển hai dòng là 0,5810 và khoảng cách là 36,79 điểm. Nghĩa là chuỗi biện pháp nhắm đúng chế độ thất bại của biển hai dòng đã thu hẹp khoảng cách **11,34 điểm** — một dịch chuyển thật và đáng kể, nhưng vẫn để lại một phần tư khoảng cách. Bằng chứng: phần còn lại nằm ở **năng lực nhận dạng ký tự**, không ở khâu cắt/ghép hay hình học, vì cả hai khâu sau đã được xử lý và đo tách bạch.
 
 **Mốc tham chiếu quốc tế — phải đọc kèm cảnh báo.** Công trình của Laroca và cộng sự tại VISAPP 2022 báo cáo độ chính xác **94,3%** trên biển một dòng và **45,7%** trên biển hai dòng, chênh **48,6 điểm phần trăm**; phép đo này thực hiện trên bộ dữ liệu **RodoSol-ALPR của Brazil** [12]<!-- laroca_2022_crossdataset -->. **Đây là số liệu Brazil, không phải số liệu Việt Nam**, và biển hai dòng Brazil khác biển hai dòng Việt Nam cả về tỉ lệ khung hình lẫn bộ ký tự. Con số 48,6 điểm chỉ được dùng như **một mốc tham chiếu về bậc độ lớn** của khoảng cách giữa hai layout, cho phép trả lời câu hỏi: *chênh lệch đo được của hệ thống này thuộc cùng bậc độ lớn, nhỏ hơn hẳn, hay lớn hơn?* Nó **không** phải chỉ tiêu cần vượt qua, và **không** được trình bày như số liệu so sánh trực tiếp.
 
-**Đối chiếu bậc độ lớn.** Chênh lệch A6 đo được của hệ thống này là **34,59 điểm** (đo trên biển số **Việt Nam thật**, trên 2.801 biển có nhãn chuỗi), so với **48,6 điểm** của Laroca và cộng sự trên RodoSol-ALPR **Brazil**. Hai con số **cùng bậc độ lớn** — cùng cho thấy biển hai dòng khó hơn biển một dòng khoảng ba đến bốn chục điểm phần trăm ở tầng nhận dạng chuỗi. Không được kết luận mạnh hơn thế: 34,59 < 48,6 **không** có nghĩa hệ thống này "tốt hơn" công trình Brazil, vì hai phép đo dùng bộ dữ liệu khác nhau, bộ ký tự khác nhau, tỉ lệ khung hình biển khác nhau, và mẫu số khác nhau. Kết luận hợp lệ duy nhất: khoảng cách hai layout mà hệ thống này đo được **thuộc đúng bậc độ lớn** mà tài liệu quốc tế đã ghi nhận cho bài toán biển hai dòng — tức đây là một đặc tính có cấu trúc của bài toán, không phải một khiếm khuyết riêng của hệ thống.
+**Đối chiếu bậc độ lớn.** Chênh lệch A6 đo được của hệ thống này là **25,45 điểm** (đo trên biển số **Việt Nam thật**, trên 2.801 biển có nhãn chuỗi), so với **48,6 điểm** của Laroca và cộng sự trên RodoSol-ALPR **Brazil**. Hai con số **cùng bậc độ lớn** — cùng cho thấy biển hai dòng khó hơn biển một dòng vài chục điểm phần trăm ở tầng nhận dạng chuỗi. Không được kết luận mạnh hơn thế: 25,45 < 48,6 **không** có nghĩa hệ thống này "tốt hơn" công trình Brazil, vì hai phép đo dùng bộ dữ liệu khác nhau, bộ ký tự khác nhau, tỉ lệ khung hình biển khác nhau, và mẫu số khác nhau. Kết luận hợp lệ duy nhất: khoảng cách hai layout mà hệ thống này đo được **thuộc đúng bậc độ lớn** mà tài liệu quốc tế đã ghi nhận cho bài toán biển hai dòng — tức đây là một đặc tính có cấu trúc của bài toán, không phải một khiếm khuyết riêng của hệ thống.
 
-Cần nhắc lại một khoảng trống đã xác định từ khảo sát tài liệu: **chưa có nghiên cứu Việt Nam nào công bố hai con số này tách bạch trên cùng một hệ thống**. Bảng T5.6c chính là phần lấp vào khoảng trống đó — đây là lý do mục này không được phép bỏ dù mẫu số nhỏ, và cũng là câu trả lời trực tiếp cho RQ2: **có, chênh lệch giữa hai layout là có ý nghĩa và rất lớn (34,59 điểm A6), và nó nằm ở tầng OCR chứ không ở tầng phát hiện.**
+Cần nhắc lại một khoảng trống đã xác định từ khảo sát tài liệu: **chưa có nghiên cứu Việt Nam nào công bố hai con số này tách bạch trên cùng một hệ thống**. Bảng T5.6c chính là phần lấp vào khoảng trống đó — đây là lý do mục này không được phép bỏ dù mẫu số nhỏ, và cũng là câu trả lời trực tiếp cho RQ2: **có, chênh lệch giữa hai layout là có ý nghĩa và rất lớn (25,45 điểm A6), và nó nằm ở tầng OCR chứ không ở tầng phát hiện.**
 
 ### 5.6.4. Ma trận nhầm lẫn ký tự 36×36
 
@@ -623,22 +650,24 @@ NFR-A7 đo chuỗi xử lý hoàn chỉnh: **ảnh đầu vào → phát hiện 
 
 | Chỉ số | Ngưỡng tối thiểu | Mục tiêu | **Đo được** | Kết quả |
 |---|---:|---:|---:|:---:|
-| Độ chính xác E2E (NFR-A7) | 0,82 | 0,88 | **0,5295** | ❌ không đạt |
-| Độ chính xác E2E **với điều kiện đã phát hiện được biển** | — | — | 0,6014 | n/a |
+| Độ chính xác E2E (NFR-A7) | 0,82 | 0,88 | **0,5552** | ❌ không đạt |
+| Độ chính xác E2E **với điều kiện đã phát hiện được biển** | — | — | 0,6306 | n/a |
 | Tỉ lệ biển **bị bỏ sót** ở tầng phát hiện | — | — | 0,1196 | n/a |
-| Tỉ lệ biển phát hiện đúng nhưng **đọc sai chuỗi** *(mẫu số riêng: số biển đã phát hiện được)* | — | — | 0,3986 | n/a |
-| Chênh lệch A6 − A7 (phần mất do tầng phát hiện) | — | — | 14,35 | n/a |
+| Tỉ lệ biển phát hiện đúng nhưng **đọc sai chuỗi** *(mẫu số riêng: số biển đã phát hiện được)* | — | — | 0,3694 | n/a |
+| Chênh lệch A6 − A7 (phần mất do tầng phát hiện) | — | — | 19,60 | n/a |
 | **Số mẫu** | — | — | **2.801** | n/a |
 
-> ⚠ **Cảnh báo hiệu lực — phải đọc trước khi diễn giải A7.** Con số A7 = 0,5295 đo trên **ảnh crop biển số**, không phải ảnh hiện trường, vì không bộ dữ liệu nào trong đồ án có đồng thời ảnh toàn cảnh *và* chuỗi biển số nhãn thật. Bộ phát hiện được huấn luyện trên ảnh giao thông đầy đủ, nên một tấm ảnh chỉ có biển số chiếm gần hết khung là **ngoài phân bố huấn luyện** của nó: phần lớn thất bại ở đây là do bộ phát hiện không bắt được box trên ảnh crop (tỉ lệ bỏ sót 11,96%), **không** phải do OCR đọc sai. Bằng chứng: trên ảnh hiện trường thật, Phase 7 đo được mAP@0.5 = 0,9829 cho bộ phát hiện — hoàn toàn tương thích với T5.5a. Muốn đo NFR-A7 đúng cách cần gán nhãn chuỗi biển số cho một phân bố test có ảnh hiện trường (ví dụ một phần của yolo_v2) — **việc này chưa làm.**
+> ⚠ **Cảnh báo hiệu lực — phải đọc trước khi diễn giải A7.** Con số A7 = 0,5552 đo trên **ảnh crop biển số**, không phải ảnh hiện trường, vì không bộ dữ liệu nào trong đồ án có đồng thời ảnh toàn cảnh *và* chuỗi biển số nhãn thật. Bộ phát hiện được huấn luyện trên ảnh giao thông đầy đủ, nên một tấm ảnh chỉ có biển số chiếm gần hết khung là **ngoài phân bố huấn luyện** của nó: phần lớn thất bại ở đây là do bộ phát hiện không bắt được box trên ảnh crop (tỉ lệ bỏ sót 11,96%), **không** phải do OCR đọc sai. Bằng chứng: trên ảnh hiện trường thật, Phase 7 đo được mAP@0.5 = 0,9829 cho bộ phát hiện — hoàn toàn tương thích với T5.5a. Muốn đo NFR-A7 đúng cách cần gán nhãn chuỗi biển số cho một phân bố test có ảnh hiện trường (ví dụ một phần của yolo_v2) — **việc này chưa làm.**
 
-**A7 không đạt (0,5295), nhưng nguồn lỗi được phân tách rõ.** Độ chính xác *có điều kiện đã phát hiện được biển* là 0,6014 — cao hơn A7 (0,5295) đúng bằng phần mất do bỏ sót ở tầng phát hiện. Cụ thể: 11,96% biển bị **bỏ sót** ở tầng phát hiện (335 / 2.801), và trong số biển đã phát hiện được, 39,86% **đọc sai chuỗi**. Chênh A6 − A7 = 14,35 điểm chính là phần độ chính xác mất đi khi chuyển từ "vùng biển cắt chuẩn theo nhãn thật" (A6) sang "vùng biển do chính hệ thống tìm ra" (A7). Tuy nhiên, do cảnh báo hiệu lực ở trên, **tỉ lệ bỏ sót 11,96% này bị thổi phồng bởi việc đo trên ảnh crop ngoài phân bố** — trên ảnh hiện trường thật bộ phát hiện gần như không bỏ sót (mAP@0.5 = 0,9829). Vì vậy kết luận đúng phạm vi là: *A7 = 0,5295 phản ánh giới hạn của **giao thức đo hiện có** (thiếu tập test hiện trường có nhãn chuỗi) chồng lên giới hạn thật của tầng OCR trên biển hai dòng; con số này là **cận dưới bi quan** của năng lực E2E thật, không phải ước lượng điểm.* Dòng "với điều kiện đã phát hiện được biển" tồn tại chính để phân tách hai nguồn lỗi này: nếu chỉ tăng recall bộ phát hiện thì cũng không đưa A7 lên quá 0,6014 — trần thật vẫn bị chặn bởi tầng OCR trên biển hai dòng.
+**A7 không đạt (0,5552), nhưng nguồn lỗi được phân tách rõ.** Độ chính xác *có điều kiện đã phát hiện được biển* là 0,6306 — cao hơn A7 (0,5552) đúng bằng phần mất do bỏ sót ở tầng phát hiện. Cụ thể: 11,96% biển bị **bỏ sót** ở tầng phát hiện (335 / 2.801), và trong số biển đã phát hiện được, 36,94% **đọc sai chuỗi**. Chênh A6 − A7 = 19,60 điểm chính là phần độ chính xác mất đi khi chuyển từ "vùng biển cắt chuẩn theo nhãn thật" (A6) sang "vùng biển do chính hệ thống tìm ra" (A7). Tuy nhiên, do cảnh báo hiệu lực ở trên, **tỉ lệ bỏ sót 11,96% này bị thổi phồng bởi việc đo trên ảnh crop ngoài phân bố** — trên ảnh hiện trường thật bộ phát hiện gần như không bỏ sót (mAP@0.5 = 0,9829). Vì vậy kết luận đúng phạm vi là: *A7 = 0,5552 phản ánh giới hạn của **giao thức đo hiện có** (thiếu tập test hiện trường có nhãn chuỗi) chồng lên giới hạn thật của tầng OCR trên biển hai dòng; con số này là **cận dưới bi quan** của năng lực E2E thật, không phải ước lượng điểm.* Dòng "với điều kiện đã phát hiện được biển" tồn tại chính để phân tách hai nguồn lỗi này: nếu chỉ tăng recall bộ phát hiện thì cũng không đưa A7 lên quá 0,6306 — trần thật vẫn bị chặn bởi tầng OCR trên biển hai dòng.
 
-**Vì sao A7 chỉ tăng 0,68 điểm trong khi A6 tăng 1,75 điểm.** Bước cứu dòng trên (mục 5.6.6) được áp vào **cả hai** đường đo, nhưng mức cải thiện mà nó mang lại bị **pha loãng** ở A7: 11,96% số biển thất bại ngay ở tầng phát hiện, tức chúng không bao giờ tới được khối OCR để mà được cứu. Phần cải thiện chỉ có chỗ tác động trên 88,04% mẫu còn lại, và trong số 89 biển được bước cứu can thiệp, chỉ 21 biển đi trọn được cả đường E2E. Chênh lệch giữa hai mức tăng vì vậy **không** phải dấu hiệu sai sót — nó là hệ quả số học của việc A7 bao hàm thêm một tầng có thể thất bại trước.
+**Vì sao A7 luôn tăng chậm hơn A6.** Mọi biện pháp cứu chữa ở tầng nhận dạng — bước cứu dòng trên (5.6.6) và bậc thang thử-lại (5.6.7) — đều được áp vào **cả hai** đường đo, nhưng mức cải thiện bị **pha loãng** ở A7: 11,96% số biển thất bại ngay ở tầng phát hiện, tức chúng không bao giờ tới được khối OCR để mà được cứu. Phần cải thiện chỉ có chỗ tác động trên 88,04% mẫu còn lại.
+
+Con số tách bạch chứng minh điều đó: giữa lượt 20/07 và lượt 28/07, **`missed_by_detector` giữ nguyên đúng 335 và tỉ lệ phát hiện giữ nguyên đúng 0,8804** — bộ trọng số phát hiện không hề thay đổi. Toàn bộ mức tăng của A7 vì vậy đến từ khối nhận dạng, và đại lượng đo đúng mức tăng ấy là **độ chính xác có điều kiện đã phát hiện được**: 0,6014 → **0,6306**, tức **+2,92 điểm**. Con số A7 tăng ít hơn (+2,57 điểm) chỉ vì nó là đại lượng trên đã bị 335 ca vô vọng kéo xuống. Chênh lệch giữa hai mức tăng **không** phải dấu hiệu sai sót — nó là hệ quả số học của việc A7 bao hàm thêm một tầng có thể thất bại trước.
 
 ### 5.6.6. Bước "cứu dòng trên" cho biển hai dòng — thiết kế, kiểm chứng A/B và kết quả trên toàn tập
 
-Mục 5.6.3 xác định biển hai dòng là nguồn gần như duy nhất của lỗi nhận dạng, và bảng T5.6a chỉ ra chế độ thất bại cụ thể: **số ký tự bị xoá ($D$ = 1.182) nhiều hơn số bị thay thế ($S$ = 1.007)**. Một hồ sơ lỗi thiên về *xoá* trên biển hai dòng có một cách giải thích tự nhiên — **mất hẳn một dòng**, chứ không phải đọc nhầm lẻ tẻ. Mục này trình bày biện pháp nhắm đúng chế độ thất bại đó, và quan trọng hơn, trình bày **cách nó đã được kiểm chứng trước khi được tin**.
+Mục 5.6.3 xác định biển hai dòng là nguồn gần như duy nhất của lỗi nhận dạng, và bảng T5.6a chỉ ra chế độ thất bại cụ thể: **số ký tự bị xoá ($D$ = 1.272) nhiều hơn số bị thay thế ($S$ = 862)**. Một hồ sơ lỗi thiên về *xoá* trên biển hai dòng có một cách giải thích tự nhiên — **mất hẳn một dòng**, chứ không phải đọc nhầm lẻ tẻ. Mục này trình bày biện pháp nhắm đúng chế độ thất bại đó, và quan trọng hơn, trình bày **cách nó đã được kiểm chứng trước khi được tin**.
 
 #### Giả thuyết bị bác bỏ trước: "đọc riêng từng dòng rồi ghép"
 
@@ -699,6 +728,8 @@ Ba điều đọc được từ bảng này. Thứ nhất, **dấu của hiệu 
 | Số biển bị bước cứu làm hỏng | — | **0** | — | — | n/a |
 
 > Nguồn: `docs/reports/16-ocr-accuracy-rescued.json`, đo 2026-07-20 trên máy rảnh, `models/best.pt` với `imgsz = 640`, 2.801 ảnh có nhãn chuỗi. Cột "trước" là lượt đo trước đó trên đúng cùng tập mẫu và cùng mô hình.
+>
+> ⚠ **Đây là bảng A/B lịch sử, giữ nguyên số của ngày 20/07.** Nó trả lời đúng một câu hỏi — *riêng bước cứu dòng trên đóng góp bao nhiêu* — và câu trả lời ấy không đổi theo thời gian. Nhưng **các giá trị tuyệt đối trong bảng đã bị vượt qua**: A6 hiện là 0,7512 chứ không phải 0,6730, sau các bản sửa đọc biển hai dòng và sau khi harness đo được nối đúng với pipeline giao hàng. Không được trích cột "sau bước cứu" như số hiện hành; số hiện hành nằm ở T5.6b và mục 5.6.7. Trên lượt đo 28/07, bước cứu dòng trên cung cấp câu trả lời cuối cho **209 biển**.
 
 **Ba ô "không đổi" trong bảng trên phải được đọc như bằng chứng, không như thiếu sót.** Mỗi ô đều có một lý do cấu trúc kiểm chứng được:
 
@@ -720,7 +751,59 @@ Bài học phương pháp luận, phát biểu ở dạng dùng lại được:
 
 > Khi chỉ số $X$ **bao hàm** chỉ số $Y$ về mặt định nghĩa, mà một can thiệp làm $Y$ dịch chuyển còn $X$ thì không nhúc nhích, **giả thuyết đầu tiên phải là đường đo của $X$ bị lệch khỏi đường chạy thật**, chứ không phải "can thiệp không có tác dụng ở mức toàn trình". Chỉ được kết luận vế thứ hai sau khi đã đối chiếu mã của hai đường đo.
 
-Biện pháp đã áp dụng để lỗi này không tái diễn: bước cứu được viết thành **hàm tự do dùng chung** (`should_rescue_two_line` và `rescue_two_line_upper` trong `ai/inference/pipeline.py`) thay vì phương thức riêng của lớp pipeline, để kịch bản đánh giá — vốn điều khiển thẳng bộ nhận dạng và bộ chuẩn hoá mà không dựng pipeline — gọi được **đúng một bản cài đặt** đó. Đây là ràng buộc kiến trúc, không phải quy ước, nên nó không phụ thuộc vào việc người viết có nhớ hay không.
+Biện pháp đã áp dụng lúc đó: bước cứu được viết thành **hàm tự do dùng chung** (`should_rescue_two_line` và `rescue_two_line_upper` trong `ai/inference/pipeline.py`) thay vì phương thức riêng của lớp pipeline, để kịch bản đánh giá — vốn điều khiển thẳng bộ nhận dạng và bộ chuẩn hoá mà không dựng pipeline — gọi được **đúng một bản cài đặt** đó.
+
+#### Biện pháp đó đã thất bại, và lần thứ ba chứng minh vì sao
+
+Ngày 28/07/2026, **đúng loại lỗi ấy xuất hiện lần thứ ba**. Bậc thang thử-lại biển nghiêng/méo (mục 5.6.7), thêm vào pipeline ngày 21/07, **chưa bao giờ được kịch bản đánh giá gọi** — ở cả nhánh vùng cắt lẫn nhánh đầu-cuối. Mọi con số A4–A7 công bố từ 21/07 đến 28/07 vì vậy mô tả một pipeline ngắn hơn bản giao hàng.
+
+Điều đáng nói: bậc thang **đã** được viết đúng như biện pháp trên quy định — là hàm tự do dùng chung (`should_retry_skewed`, `retry_skewed_variants`), không phải phương thức riêng. Biện pháp được tuân thủ đầy đủ, và lỗi vẫn tái diễn.
+
+Lý do là biện pháp ấy giải quyết sai vấn đề. Viết thành hàm dùng chung chỉ bảo đảm **nếu** kịch bản đánh giá gọi bước đó thì nó gọi đúng bản cài đặt — nó **không** bảo đảm kịch bản có gọi hay không. Nguyên nhân gốc không nằm ở chỗ hàm được đặt ở đâu mà ở chỗ **kịch bản đánh giá dựng lại đường xử lý thay vì gọi nó**: `measure_crops` và `_run_pipeline` lần lượt liệt kê các bước — nhận dạng, chuẩn hoá, cứu dòng trên — nên mỗi bậc mới thêm vào `ALPRPipeline._process_one` đều **mặc định rơi ra ngoài phép đo**, im lặng, cho tới khi có ai đó tình cờ đối chiếu hai đoạn mã.
+
+Phát biểu lại bài học ở dạng đúng hơn:
+
+> Một đường đo **liệt kê lại** các bước của hệ thống sẽ lệch khỏi hệ thống ở đúng thời điểm hệ thống thay đổi — tức đúng thời điểm phép đo cần chính xác nhất. Chia sẻ mã ở mức *hàm* không đủ; chỉ **gọi thẳng cùng một điểm vào** mới đủ. Biện pháp "viết thành hàm dùng chung" đã được tuân thủ và vẫn thất bại, nên nó là bằng chứng thực nghiệm cho luận điểm này chứ không phải phản ví dụ.
+
+Lần này, ngoài việc nối bậc thang vào cả hai nhánh đo, hai chốt chặn cụ thể đã được thêm: kịch bản đánh giá ghi thẳng **trạng thái các công tắc** vào tệp kết quả, và ghi **số biển mà từng bậc cứu được** (`recovery_contribution`). Một bậc không được gọi giờ sẽ hiện ra dưới dạng số 0 có nhãn, thay vì biến mất không dấu vết. Biện pháp triệt để — cho harness đầu-cuối gọi thẳng `ALPRPipeline.process` — vẫn là **việc bỏ ngỏ**, ghi ở mục 5.12.
+
+### 5.6.7. Bậc thang thử-lại cho biển nghiêng/méo — chi phí, lợi ích và một quyết định tắt tính năng
+
+Bước cứu dòng trên (5.6.6) nhắm vào biển hai dòng bị mất một dòng. Còn một chế độ thất bại khác: **biển bị nghiêng trong ảnh hoặc bị méo phối cảnh**, khiến tỉ lệ khung hình lệch đủ để bộ phân loại bố cục xếp nhầm, hoặc khiến ký tự dính vào nhau. Bậc thang thử-lại xử lý nhóm này bằng ba biến thể, thử theo thứ tự giả thuyết rẻ trước: **nắn hình trong mặt phẳng**, **giãn dọc chống méo phối cảnh**, và **siêu phân giải** cho vùng cắt quá nhỏ.
+
+**Điểm mấu chốt của thiết kế là cổng kích hoạt, không phải các biến thể.** Hình học đã từng được đo ở dạng *luôn bật* trước mọi lần đọc, và kết quả là **mất**: 42 lần đọc hợp lệ tụt xuống 40, vì một hình chữ nhật khớp sai trên vùng cắt nhỏ và mờ sẽ cắt cụt ký tự của một biển vốn đang đọc tốt. Chuyển đúng hình học ấy ra **sau một cổng "lần đọc đầu đã thất bại"** đảo ngược hoàn toàn kinh tế học của nó: đường đi của biển đọc đúng **không bị chạm tới về mặt cấu trúc**, mọi ca cứu được đều là lãi ròng, và một biến thể đọc tệ hơn sẽ bị tiêu chí hợp lệ loại bỏ. Đây là cùng một hợp đồng chống thoái lui với bước cứu dòng trên.
+
+#### Chi phí và lợi ích, đo trên cùng dữ liệu
+
+Độ chính xác đo trên 2.801 biển có nhãn chuỗi; độ trễ đo trên 100 ảnh hiện trường của tập test v3, máy rảnh:
+
+<!-- {{T5.6i}} chi phi - loi ich cua tung bac trong bac thang thu-lai -->
+
+| Cấu hình | 1 − CER (A4) | A6 | Biển được cứu | p95 (ms) | p99 (ms) |
+|---|---:|---:|---:|---:|---:|
+| Tắt hẳn bậc thang | 0,9416 | 0,7437 | 0 | **866,3** | 1.101,1 |
+| **Nắn hình / giãn dọc** *(cấu hình giao hàng)* | **0,9454** | **0,7512** | **34** | **1.110,4** | 1.349,0 |
+| Thêm siêu phân giải | 0,9454 | 0,7512 | 34 | **1.428,7** | **2.730,4** |
+
+> Nguồn: `docs/reports/27-ocr-accuracy-with-ladder.json` và ba lượt `ai.evaluation.benchmark_system` bóc tách qua `ALPR_RECTIFY_ENABLED` / `ALPR_SR_RETRY_ENABLED`. Phân tích đầy đủ: `docs/reports/27-retry-ladder-cost-benefit.md`.
+
+**Bậc thang gần như miễn phí ở trường hợp thường và rất đắt ở đuôi.** Trung vị chỉ tăng 3,7% (405,8 ms) trong khi p99 tăng 148% — đúng bản chất của một cơ chế chỉ chạy khi lần đọc đầu thất bại: đại đa số ảnh không bao giờ chạm tới nó, còn ảnh nào chạm tới thì trả giá bằng nhiều lượt gọi OCR liên tiếp.
+
+**Nắn hình / giãn dọc: giữ.** Mua 34 biển (+0,75 điểm A6, +0,38 điểm A4) với giá +244 ms ở p95. Đây là mức giá chấp nhận được cho một cơ chế không thể làm hỏng kết quả đang đúng.
+
+**Siêu phân giải: tắt mặc định.** Mua **0 biển** với giá **+319 ms ở p95 và +1.381 ms ở p99**, và một mình nó đẩy NFR-P1 vượt ngưỡng tối thiểu 1.500 ms.
+
+#### Vì sao số 0 của siêu phân giải không phải bằng chứng nó vô dụng
+
+Điểm này phải nói rõ, nếu không bảng trên bị đọc sai theo hướng mạnh hơn dữ liệu cho phép.
+
+Cổng của bậc siêu phân giải chỉ mở cho vùng cắt có cạnh dài **≤ 200 px** — vì thiếu điểm ảnh mới là chế độ thất bại mà nó nhắm tới. Đo trên 120 mẫu lấy ngẫu nhiên của tập có nhãn chuỗi, cạnh dài sau bước khôi phục tỉ lệ khung hình có **giá trị nhỏ nhất là 565 px và trung vị 868 px**: **0/120 mẫu lọt cổng**. Tập ngữ liệu này **không thể kích hoạt** bậc siêu phân giải, nên nó **không thể đo** bậc siêu phân giải. Số 0 trong bảng là **số 0 cấu trúc**, không phải kết quả âm.
+
+Suy ra hai hệ quả. Thứ nhất, toàn bộ 34 biển mà bậc thang cứu được đều là công của nắn hình / giãn dọc. Thứ hai, quyết định tắt siêu phân giải **không** dựa trên "đã đo và thấy vô dụng" mà trên một lập luận khác, yếu hơn nhưng trung thực hơn:
+
+> Chi phí đã đo được và lớn; lợi ích **chưa ai đo được** trên bất kỳ tập đại diện nào; trong khi NFR-P1 là yêu cầu mức *Must* và riêng bậc này làm nó vượt ngưỡng. Một lợi ích chưa định lượng không đủ để biện minh cho một vi phạm đã định lượng.
+
+Bằng chứng duy nhất hiện có cho bậc siêu phân giải vẫn là **một vùng cắt demo được chọn tay trong bốn ca thử**. Mã, kiểm thử, công tắc và báo cáo của nó **giữ nguyên**; đặt `ALPR_SR_RETRY_ENABLED=true` là bật lại. Muốn đo cho tử tế cần một tập **vùng cắt nhỏ do chính bộ phát hiện sinh ra, có nhãn chuỗi** — đồ án không có, và đó là hạng mục bỏ ngỏ được ghi ở mục 5.12 chứ không phải một điểm bị lờ đi.
 
 ---
 
@@ -732,22 +815,28 @@ Biện pháp đã áp dụng để lỗi này không tái diễn: bước cứu 
 
 <!-- {{T5.7a}} do tre dau-cuoi mot anh, doi chieu NFR-P1 -->
 
-| Chỉ số | Ngưỡng tối thiểu | Mục tiêu | **`best.pt` — client-side qua HTTP (số công bố)** | **`best.pt` — in-process (đối chiếu)** | Kết quả |
+| Chỉ số | Ngưỡng tối thiểu | Mục tiêu | **Trước bậc thang thử-lại (20/07)** | **Cấu hình giao hàng (28/07)** | Kết quả |
 |---|---:|---:|---:|---:|:---:|
-| Độ trễ E2E p50 (ms) | — | — | 414,67 | 419,06 | n/a |
-| **Độ trễ E2E p95 (ms)** | **≤ 1500** | **≤ 800** | **731,15** | **780,36** | **✅ đạt** |
-| Độ trễ E2E p99 (ms) | — | — | 947,83 | 948,42 | n/a |
-| Độ trễ trung bình (ms) | — | — | 400,74 | 374,65 | n/a |
+| Độ trễ E2E p50 (ms) | — | — | 414,67 | 405,77 | n/a |
+| **Độ trễ E2E p95 (ms)** | **≤ 1500** | **≤ 800** | **731,15** | **1.143,10** | **🟡 đạt ngưỡng tối thiểu** |
+| Độ trễ E2E p99 (ms) | — | — | 947,83 | 1.420,07 | n/a |
+| Độ trễ trung bình (ms) | — | — | 400,74 | 447,38 | n/a |
 | Số ảnh đo | — | — | 100 | 100 | n/a |
-| Bội số so với ngưỡng tối thiểu | — | — | **0,49×** | 0,52× | n/a |
-| Bội số so với mục tiêu | — | — | **0,91×** | 0,98× | n/a |
+| Bội số so với ngưỡng tối thiểu | — | — | 0,49× | **0,76×** | n/a |
+| Bội số so với mục tiêu | — | — | 0,91× | **1,43×** | n/a |
 
 *Hình 5.10.* Phân bố độ trễ đầu-cuối — biểu đồ tần suất kèm vạch đánh dấu p50/p95/p99 và hai ngưỡng chỉ tiêu.
 Đường dẫn hình: `docs/reports/figures/07-latency-distribution.png` *(đã có, cần vẽ lại cho `best.pt`)*
 
-> Số biển trung bình mỗi ảnh: 1,33. Cột "client-side qua HTTP" đo trên máy client thật, gửi 100 ảnh test v3 qua HTTP tới backend đã warmup (bỏ 10 lượt đầu), **máy rảnh** (CPU idle ~5%, không có tiến trình huấn luyện chạy song song) — đây là **con số công bố cho NFR-P1**. Cột "in-process" gọi thẳng `pipeline.process` trong tiến trình bằng `benchmark_system.py`. Nguồn: `docs/reports/07-benchmark-p1-resolved.json` và `05-results.json` → T5.7a.
+> Số biển trung bình mỗi ảnh: 1,33, cùng 100 ảnh test v3, cùng máy rảnh (CPU idle ~5%, không có tiến trình huấn luyện song song). **Hai cột đo hai phiên bản hệ thống, không phải hai phương pháp đo**: cột trái là trạng thái ngày 20/07, trước khi bậc thang thử-lại được thêm vào (đo client-side qua HTTP, `07-benchmark-p1-resolved.json`); cột phải là cấu hình giao hàng ngày 28/07 (đo in-process bằng `benchmark_system.py`, `05-results.json` → T5.7a). Chênh lệch phương pháp giữa hai cách đo là **~7%** — đã kiểm chứng ngày 20/07 khi cả hai cùng chạy trên một hệ thống (731,15 so với 780,36 ms) — nên nó **không** giải thích được mức tăng ở đây.
 
-**NFR-P1 ĐẠT mục tiêu: p95 = 731,15 ms, dưới mục tiêu 800 ms (dư 68,85 ms) và thoả cả ngưỡng tối thiểu 1.500 ms.** Con số công bố lấy từ phép đo client-side qua HTTP trên `best.pt`, máy rảnh; phép đo in-process độc lập cho p95 = 780,36 ms — hai con số **đồng thuận trong phạm vi ~7%** (biến động lấy mẫu CPU), cùng khẳng định độ trễ E2E thật ở khoảng **700–780 ms**.
+**NFR-P1 đạt ngưỡng tối thiểu nhưng không đạt mục tiêu: p95 = 1.143,10 ms, dưới sàn 1.500 ms nhưng vượt mục tiêu 800 ms 1,43 lần.** Đây là một **thoái lui có chủ ý và đã định lượng**, không phải một con số xấu đi ngoài tầm kiểm soát, nên phải trình bày kèm nguyên nhân.
+
+**Nguyên nhân là bậc thang thử-lại (5.6.7), và cái giá ấy đổi lấy độ chính xác.** Bằng chứng nằm ở phép bóc tách: tắt hẳn bậc thang đưa p95 về **866,3 ms**, tức toàn bộ +277 ms là của nó. Nhưng bậc thang chỉ chạy **sau khi lần đọc đầu thất bại**, nên nó không hề chạm vào trường hợp thường — **trung vị thậm chí giảm nhẹ** (414,67 → 405,77 ms). Chi phí dồn hết vào đuôi phân phối, đúng nơi tập trung những ảnh mà hệ thống phải làm việc nhiều lần mới đọc được.
+
+**Chỉ số nào nên dùng để đánh giá trải nghiệm ở đây là một câu hỏi thật.** Với một hệ thống mà 95% ảnh xong dưới 1,15 giây và một nửa xong dưới 0,41 giây, p50 mô tả trải nghiệm điển hình còn p95 mô tả trường hợp xấu. Chỉ tiêu NFR-P1 phát biểu theo p95 nên kết luận chính thức phải theo p95 — và theo đó, **hệ thống đạt sàn chứ không đạt mục tiêu**.
+
+**Một quyết định đã được đưa ra để bảo vệ chỉ tiêu này.** Ở lượt đo đầu với cả ba biến thể bật, p95 là **1.514,26 ms** — **vượt cả ngưỡng tối thiểu**. Phép bóc tách chỉ ra bậc siêu phân giải chiếm hơn nửa chi phí đó mà không mua được biển nào đo được, nên nó bị **tắt mặc định** (5.6.7), đưa p95 về 1.143,10 ms. Nói cách khác, con số trong bảng là kết quả của một đánh đổi được cân bằng bằng số đo, không phải một giá trị tình cờ.
 
 **Giải quyết mâu thuẫn với con số cũ 5.857 ms.** Báo cáo Phase 7 trước đây ghi p95 = 5.857,19 ms và kết luận NFR-P1 "không đạt" — chênh **7,5 lần** so với con số hiện tại. Phép đo cũ đã bị **bác bỏ** sau khi truy nguyên: (1) nó **bị nhiễu do tranh chấp CPU** — tệp đo gốc `07-benchmark-data.json` ghi rõ có một tiến trình `ai.training.train` chiếm 793% CPU chạy song song lúc đo, đẩy đuôi phân phối lên; chính báo cáo cũ khi tính lại trên 80 mẫu ít nhiễu đã ra ~3.283 ms; (2) nó đo trên **checkpoint epoch 7**, không phải `best.pt` chính thức; (3) checkpoint đó có **lỗi crop** khiến PaddleOCR chạy cả khối phát hiện văn bản trên ảnh lớn (~1.322 ms/ảnh), thổi phồng phần OCR. Đo lại trên máy rảnh với `best.pt`: p95 chỉ còn 731 ms. Giả thuyết "cold-start / oneDNN chưa tắt" **không** phải nguyên nhân — server chạy với `enable_mkldnn=false` và có warmup ngay khi khởi động (cold-start đo được chỉ 176 ms p95). Cũng cần loại một giả thuyết khác: baseline-416-v1 **không** vốn chậm — đo client-side nó ra 763,75 ms p95, gần như y hệt `best.pt`; chênh lệch 7,5 lần của con số cũ **không** đến từ mô hình.
 
@@ -868,7 +957,7 @@ Bốn hướng tấn công khối OCR, xếp theo chi phí thực hiện tăng d
 | mAP biển một dòng | **0,9856** | **0,9884** | +0,0028 |
 | mAP biển hai dòng | **0,9592** | **0,9675** | +0,0083 |
 | Chênh lệch theo layout (điểm %) | **2,6** | **2,09** | −0,51 |
-| Độ trễ E2E p95 (ms) — client-side đã xác minh | **763,75** | **731,15** | −32,60 |
+| Độ trễ E2E p95 (ms) | **763,75** *(client-side)* | **1.143,10** *(in-process, có bậc thang thử-lại)* | — |
 
 > ⚠ Ba biến thay đổi đồng thời (imgsz, bộ dữ liệu + cách chia, số epoch) và chúng tác động **ngược chiều** nhau — không được quy kết nguyên nhân cho bất kỳ biến nào (xem 5.8.1). Dòng độ trễ E2E dùng con số **client-side đã xác minh** cho **cả hai** mô hình (763,75 ms và 731,15 ms, máy rảnh, qua HTTP); con số 5.857,19 ms từng ghi cho baseline ở báo cáo Phase 7 đã bị **bác bỏ** vì nhiễm tranh chấp CPU và đo sai checkpoint (mục 5.7.1). Đo cùng phương pháp trên máy rảnh, hai mô hình cho độ trễ gần như y hệt.
 
@@ -915,7 +1004,7 @@ Bảng dưới là bảng tổng hợp trình bày khi bảo vệ. Nó liệt k�
 | Mã | Chỉ tiêu | Ngưỡng tối thiểu | Mục tiêu | **Đo được** | Kết quả | Mục |
 |:---:|---|---:|---:|---:|:---:|:---:|
 | **NFR-P — Hiệu năng** | | | | | | |
-| P1 | Độ trễ E2E một ảnh, p95 | ≤ 1500 ms | ≤ 800 ms | **731,15 ms** *(client-side, đã xác minh)* | ✅ | 5.7.1 |
+| P1 | Độ trễ E2E một ảnh, p95 | ≤ 1500 ms | ≤ 800 ms | **1.143,10 ms** *(p50 = 405,77 ms)* | 🟡 | 5.7.1 |
 | P2 | Tốc độ khung hình webcam (tầng API) | ≥ 3 FPS | ≥ 5 FPS | — | ⬜ | 5.7.4 |
 | P3 | Tốc độ xử lý video | ≥ 0,15× | ≥ 0,3× | — | ⬜ | 5.7.4 |
 | P4 | Thời gian nạp mô hình | ≤ 30 s | ≤ 15 s | **6,41 s** | ✅ | 5.7.5 |
@@ -928,12 +1017,12 @@ Bảng dưới là bảng tổng hợp trình bày khi bảo vệ. Nó liệt k�
 | A1 | mAP@0.5 của bộ phát hiện | ≥ 0,85 | ≥ 0,90 | **0,9829** | ✅ | 5.5.1 |
 | A2 | mAP@0.5:0.95 của bộ phát hiện | ≥ 0,55 | ≥ 0,65 | **0,7834** | ✅ | 5.5.1 |
 | A3 | Precision / Recall phát hiện | ≥ 0,88 / 0,85 | ≥ 0,92 / 0,90 | **0,9837 / 0,9714** | ✅ | 5.5.1 |
-| A4 | Độ chính xác OCR mức ký tự (1 − CER) | ≥ 0,92 | ≥ 0,95 | **0,8848** | ❌ | 5.6.1 |
-| A5 | Chuỗi đầy đủ **trước** hậu xử lý | ≥ 0,80 | ≥ 0,85 | **0,6098** | ❌ | 5.6.2 |
-| A6 | Chuỗi đầy đủ **sau** hậu xử lý | ≥ 0,85 | ≥ 0,90 | **0,6730** | ❌ | 5.6.2 |
-| **A6 − A5** | **Đóng góp của khối hậu xử lý** | — | — | **+6,32 điểm** | ✅ | **5.6.2** |
-| A7 | Độ chính xác E2E toàn trình | ≥ 0,82 | ≥ 0,88 | **0,5295** | ❌ | 5.6.5 |
-| A8 | Tách theo layout một dòng / hai dòng | báo cáo tách bạch | — | detection: **2,09 điểm**; OCR (A6): **34,59 điểm** | 🟡 | 5.5.3, 5.6.3 |
+| A4 | Độ chính xác OCR mức ký tự (1 − CER) | ≥ 0,92 | ≥ 0,95 | **0,9454** | 🟡 | 5.6.1 |
+| A5 | Chuỗi đầy đủ **trước** hậu xử lý | ≥ 0,80 | ≥ 0,85 | **0,6373** | ❌ | 5.6.2 |
+| A6 | Chuỗi đầy đủ **sau** hậu xử lý | ≥ 0,85 | ≥ 0,90 | **0,7512** | ❌ | 5.6.2 |
+| **A6 − A5** | **Đóng góp của khối hậu xử lý** | — | — | **+11,39 điểm** | ✅ | **5.6.2** |
+| A7 | Độ chính xác E2E toàn trình | ≥ 0,82 | ≥ 0,88 | **0,5552** | ❌ | 5.6.5 |
+| A8 | Tách theo layout một dòng / hai dòng | báo cáo tách bạch | — | detection: **2,09 điểm**; OCR (A6): **25,45 điểm** | 🟡 | 5.5.3, 5.6.3 |
 | A9 | Tách theo điều kiện ảnh | báo cáo nếu có nhãn | — | — | ⬜ | 5.9.1 |
 | **NFR-R — Độ tin cậy** | | | | | | |
 | R1 | Không sập với đầu vào hỏng / độc hại | 100% | 100% | — | ⬜ | 5.7.5 |
@@ -1029,20 +1118,22 @@ Loại E6 đáng được chú ý riêng: nó **chỉ tồn tại vì bài toán
 |:---:|---|---:|---:|---:|---:|---:|
 | E1 | Bỏ sót biển | 335 | — | — | — | — |
 | E2 | Phát hiện nhầm | *(chưa đo)* | — | — | — | — |
-| E3 | Nhầm ký tự | 399 | 43,56% | 14,24% | 18 | 381 |
-| E4 | Thiếu ký tự | 134 | 14,63% | 4,78% | 1 | 133 |
-| E5 | Thừa ký tự | 95 | 10,37% | 3,39% | 5 | 90 |
+| E3 | Nhầm ký tự | 445 | 63,85% | 15,89% | 17 | 428 |
+| E4 | Thiếu ký tự | 73 | 10,47% | 2,61% | 0 | 73 |
+| E5 | Thừa ký tự | 18 | 2,58% | 0,64% | 5 | 13 |
 | E6 | Sai thứ tự | 0 | 0,00% | 0,00% | 0 | 0 |
-| | **Tổng số ca sai** | **916** | 100% | 32,70% | — | — |
+| | **Tổng số ca sai** | **697** | 100% | 24,88% | — | — |
 | | **Tổng số ca đánh giá (mẫu số)** | **2.801** | n/a | 100% | — | — |
 
 > **Mẫu số của E1 khác mẫu số của E3–E6.** E1 (bỏ sót biển) lấy từ lượt đo E2E của bảng T5.6e trên 2.801 mẫu; tỉ lệ E1 trên mẫu số riêng của nó là **11,96%**. Vì thế hai cột tỉ lệ **cố ý để trống ở dòng E1** — gộp chung một mẫu số sẽ cho con số vô nghĩa. E2 (phát hiện nhầm) để *(chưa đo)*: số dương tính giả nằm ở T5.5a và cũng không cùng mẫu số với E3–E6.
 >
-> **Hai loại lỗi ngoài khung E1–E6:** `empty_read` = 11 (OCR trả chuỗi rỗng) và `mixed` = 277 (một biển vừa thiếu vừa thừa vừa nhầm ký tự). Hai loại này có trong cài đặt nhưng không có mã E riêng ở bảng 5.10.1; chúng được ghi nhận ở đây để tổng loại lỗi khớp với thực tế, tránh ảo giác "các mã E cộng lại đủ 100% số ca sai" (thực chất E3+E4+E5+E6 = 628, phần còn lại tới 916 là 277 ca `mixed` và 11 ca `empty_read`).
+> **Hai loại lỗi ngoài khung E1–E6:** `empty_read` = 10 (OCR trả chuỗi rỗng) và `mixed` = 151 (một biển vừa thiếu vừa thừa vừa nhầm ký tự). Hai loại này có trong cài đặt nhưng không có mã E riêng ở bảng 5.10.1; chúng được ghi nhận ở đây để tổng loại lỗi khớp với thực tế, tránh ảo giác "các mã E cộng lại đủ 100% số ca sai" (thực chất E3+E4+E5+E6 = 536, phần còn lại tới 697 là 151 ca `mixed` và 10 ca `empty_read`).
 >
-> **Nguồn của bảng này.** Số ca lấy từ khoá `by_line_count.*.error_classes` của `docs/reports/16-ocr-accuracy-rescued.json` — cùng lượt đo với mục 5.6, tức **đã có** bước cứu dòng trên.
+> **So với lượt đo 20/07, phân bố lỗi đã đổi hình rõ rệt** — tổng ca sai giảm từ 916 xuống 697. Hai nhóm giảm mạnh nhất là `mixed` (277 → 151) và E5 thừa ký tự (95 → 18), tức các chuỗi **hỏng về cấu trúc** đã được xử lý phần lớn. Ngược lại E3 nhầm ký tự **tăng** (399 → 445): đây là hiện tượng **phân loại lại**, không phải thoái lui — một biển trước kia cho ra chuỗi sai độ dài (rơi vào `mixed` hoặc E4) nay cho ra chuỗi đúng độ dài nhưng sai một ký tự, nên chuyển sang E3. Tổng thể vẫn giảm 219 ca sai. Kết luận thực tiễn: phần lỗi còn lại đã dồn về **nhầm và hụt ký tự đơn lẻ trên biển hai dòng**, đúng nhóm mà việc huấn luyện lại bộ nhận dạng nhắm tới.
+>
+> **Nguồn của bảng này.** Số ca lấy từ khoá `by_line_count.*.error_classes` của `docs/reports/05-results.json` (T5.10) — cùng lượt đo 28/07 với mục 5.6, tức **đã có** cả bước cứu dòng trên lẫn bậc thang thử-lại.
 
-**Cấu trúc lỗi xác nhận chẩn đoán ở 5.6.3.** Hai cột cuối cho phép kiểm chứng chéo với bảng T5.6c, và chúng cho thấy phân bố loại lỗi của hai layout **khác nhau về chất, không chỉ về lượng**: gần như **toàn bộ** lỗi ký tự dồn về biển hai dòng — E3 (nhầm ký tự) 381/399 là hai dòng, E4 (thiếu ký tự) 133/134 là hai dòng, E5 (thừa ký tự) 90/95 là hai dòng. Biển một dòng gần như không sinh lỗi OCR (tổng 24 ca trên cả ba loại). Điều này khớp chính xác với chênh lệch 34,59 điểm A6 ở mục 5.6.3: biển hai dòng không chỉ khó hơn *một chút* mà là **nguồn gần như duy nhất** của lỗi nhận dạng. Về E6 (sai thứ tự): số ca = **0** trên toàn tập — logic ghép hai dòng của khối hậu xử lý hoạt động đúng, không có ca nào ghép nhầm chiều; đây là một điểm mạnh nhỏ nhưng thật của bộ luật.
+**Cấu trúc lỗi xác nhận chẩn đoán ở 5.6.3.** Hai cột cuối cho phép kiểm chứng chéo với bảng T5.6c, và chúng cho thấy phân bố loại lỗi của hai layout **khác nhau về chất, không chỉ về lượng**: gần như **toàn bộ** lỗi ký tự dồn về biển hai dòng — E3 (nhầm ký tự) 428/445 là hai dòng, E4 (thiếu ký tự) **73/73 — tuyệt đối, không một ca nào thuộc biển một dòng**, E5 (thừa ký tự) 13/18 là hai dòng. Biển một dòng chỉ sinh 22 ca trên cả ba loại. Điều này khớp chính xác với chênh lệch 25,45 điểm A6 ở mục 5.6.3: biển hai dòng không chỉ khó hơn *một chút* mà là **nguồn gần như duy nhất** của lỗi nhận dạng. Về E6 (sai thứ tự): số ca = **0** trên toàn tập — logic ghép hai dòng của khối hậu xử lý hoạt động đúng, không có ca nào ghép nhầm chiều; đây là một điểm mạnh nhỏ nhưng thật của bộ luật.
 
 **Bước cứu dòng trên để lại dấu vết đo được ngay trong bảng này.** So với lượt đo trước khi có bước cứu (mục 5.6.6), **E4 giảm mạnh nhất: 217 → 134 ca**, trong khi E3 tăng 376 → 399 và `mixed` tăng 266 → 277. Diễn giải: bước cứu nhắm đúng chế độ thất bại "mất hẳn dòng trên", nên nó rút bớt quần thể E4; những ca được cứu một phần — lấy lại được dòng trên nhưng vẫn còn ký tự đọc sai — **chuyển sang** E3 hoặc `mixed` thay vì biến mất. Đây là kiểm chứng chéo độc lập cho cơ chế đã mô tả ở 5.6.6: nếu bước cứu chỉ đơn thuần "làm số đẹp lên" thì phân bố loại lỗi sẽ co lại đồng đều, chứ không dịch chuyển có hướng như thế này. Dù vậy, E4 (134 ca) và mức $D$ = 1.182 ký tự bị xoá ở T5.6a vẫn cùng trỏ về một chế độ thất bại còn lại: OCR đọc **hụt** ký tự trên biển hai dòng — hướng khắc phục nằm ở tầng nhận dạng, không ở hậu xử lý.
 
@@ -1071,30 +1162,34 @@ Bốn nhóm kết quả dưới đây đều trỏ về ô đã điền số th�
 
 1. **Bộ phát hiện đạt toàn bộ chỉ tiêu, với biên rộng.** Theo T5.5a: mAP@0.5 = 0,9829 (mục tiêu 0,90), mAP@0.5:0.95 = 0,7834 (mục tiêu 0,65), Precision = 0,9837, Recall = 0,9714 — cả bốn đều vượt *mục tiêu* chứ không chỉ ngưỡng tối thiểu. Đọc kèm điều kiện ở 5.5.1: đây là bài toán một lớp nên mAP cao là bình thường, và chỉ số quyết định là mAP@0.5:0.95 = 0,7834 — vẫn vượt mục tiêu 0,65 một biên lớn. Chênh lệch giữa hai layout ở tầng phát hiện chỉ 2,09 điểm (T5.5b), xác nhận việc *định vị box* không phụ thuộc layout. Điểm yếu duy nhất được phơi bày trung thực ở T5.5c: dải đối tượng "rất nhỏ" (dưới 0,5% diện tích) có mAP@0.5 chỉ 0,8553 — hệ quả đo được của tiêu chí Q6 không đạt.
 
-2. **Khối hậu xử lý đóng góp thuần dương, không rủi ro.** Theo T5.6b: A6 − A5 = **+6,32 điểm**, sửa đúng 177 biển, làm hỏng 0 biển trên 2.801 mẫu. Đây là câu trả lời định lượng cho RQ3 — một đóng góp hiếm khi được đo tách bạch trong tài liệu ALPR — kèm bằng chứng rằng bộ luật đủ bảo thủ để không tự tạo lỗi mới. Trong đó, bước **cứu dòng trên** cho biển hai dòng đóng góp **+1,75 điểm A6** (+2,20 điểm riêng trên biển hai dòng), được kiểm chứng A/B trên hai mẫu độc lập với **0 ca hồi quy** (5.6.6). Đóng góp tổng vẫn nhỏ vì nút thắt độ chính xác nằm ở tầng OCR, nơi luật không với tới (5.6.2).
+2. **Khối hậu xử lý đóng góp thuần dương, không rủi ro.** Theo T5.6b: A6 − A5 = **+11,39 điểm**, sửa đúng 319 biển, làm hỏng 0 biển trên 2.801 mẫu. Đây là câu trả lời định lượng cho RQ3 — một đóng góp hiếm khi được đo tách bạch trong tài liệu ALPR — kèm bằng chứng rằng bộ luật đủ bảo thủ để không tự tạo lỗi mới. Đóng góp ấy **dồn gần như trọn vẹn vào biển hai dòng** (+13,97 điểm, so với +1,23 điểm ở biển một dòng), tức đúng nơi tầng nhận dạng yếu nhất. Hai bậc cứu chữa chạy sau chuẩn hoá cũng được cô lập bằng đo A/B với **0 ca hồi quy**: bước **cứu dòng trên** cung cấp câu trả lời cuối cho **209 biển** (5.6.6), **bậc thang thử-lại** cho **34 biển** (5.6.7). Đóng góp tổng vẫn không đủ đưa A6 tới ngưỡng vì phần lỗi còn lại đã dịch sang dạng đọc hụt ký tự, nơi luật không với tới (5.6.2).
 
-3. **Biển một dòng về cơ bản đã giải xong.** Tách theo layout (T5.6c) cho thấy biển một dòng đạt 1 − CER = 0,9903 và A6 = 0,9489 (vượt mục tiêu 0,90). Toàn bộ việc "OCR không đạt" ở con số tổng là do quần thể biển hai dòng (79,8% tập) kéo xuống — một phát hiện có định vị rõ ràng, không phải một thất bại mơ hồ.
+3. **Biển một dòng về cơ bản đã giải xong.** Tách theo layout (T5.6c) cho thấy biển một dòng đạt 1 − CER = 0,9925 và A6 = 0,9541 (vượt mục tiêu 0,90). Toàn bộ việc "OCR không đạt" ở con số tổng là do quần thể biển hai dòng (79,8% tập) kéo xuống — một phát hiện có định vị rõ ràng, không phải một thất bại mơ hồ.
 
-4. **Hiệu năng và kiến trúc phần mềm đều đạt.** NFR-P1 đạt (p95 = 731 ms < 800 ms, đã xác minh, 5.7.1); mọi chỉ tiêu ngoài đường suy luận đạt với biên rộng (overhead API 19,01 ms, truy vấn lịch sử 18,71 ms — nhanh hơn mục tiêu ~27 lần); soak 300 giây thành công 100% trên 1.684 yêu cầu, không rò rỉ bộ nhớ; chịu 10 yêu cầu đồng thời so với ngưỡng 5. Độ bao phủ test tầng nghiệp vụ 87,7% (đo 2026-07-20), 881/882 test pass.
+4. **Hiệu năng và kiến trúc phần mềm đều trong ngưỡng.** NFR-P1 đạt sàn nhưng không đạt mục tiêu (p95 = 1.143 ms, sàn 1.500 ms, mục tiêu 800 ms — 5.7.1), và mức vượt mục tiêu là **cái giá đã định lượng** của bậc thang thử-lại: tắt nó đưa p95 về 866 ms, còn trung vị thì không đổi (405,77 ms). Mọi chỉ tiêu ngoài đường suy luận đạt với biên rộng (overhead API 19,01 ms, truy vấn lịch sử 18,71 ms — nhanh hơn mục tiêu ~27 lần); soak 300 giây thành công 100% trên 1.684 yêu cầu, không rò rỉ bộ nhớ; chịu 10 yêu cầu đồng thời so với ngưỡng 5. Độ bao phủ test tầng nghiệp vụ 87,7% (đo 2026-07-20), 881/882 test pass.
 
-5. **Bản thân tính trung thực của quy trình đánh giá là một kết quả.** Mục 5.3.3 (phát hiện lập luận vòng tròn trong kiểm chứng rò rỉ), mục 5.7.1 (bác bỏ con số độ trễ cũ 5.857 ms bị nhiễm tải), mục 5.8.1 (thừa nhận ba biến cùng đổi, giải thích vì sao mAP thấp hơn baseline lại đáng tin hơn), và mục 5.6.6 (phát hiện đường đo E2E chạy một pipeline ngắn hơn pipeline sản phẩm, nhờ dấu hiệu "chỉ số bao hàm đứng yên") là những đóng góp phương pháp luận có giá trị dù không phải con số cao.
+5. **Bản thân tính trung thực của quy trình đánh giá là một kết quả.** Mục 5.3.3 (phát hiện lập luận vòng tròn trong kiểm chứng rò rỉ), mục 5.7.1 (bác bỏ con số độ trễ cũ 5.857 ms bị nhiễm tải), mục 5.8.1 (thừa nhận ba biến cùng đổi, giải thích vì sao mAP thấp hơn baseline lại đáng tin hơn), và mục 5.6.6 (phát hiện **ba lần** đường đo chạy một pipeline ngắn hơn pipeline sản phẩm — lần đầu nhờ dấu hiệu "chỉ số bao hàm đứng yên", lần thứ ba nhờ một mức chênh đúng bằng 0,0000 trên bốn chữ số thập phân) là những đóng góp phương pháp luận có giá trị dù không phải con số cao. Lần thứ ba đặc biệt đáng ghi: nó chứng minh biện pháp phòng ngừa đặt ra sau lần thứ hai **đã được tuân thủ đầy đủ mà vẫn thất bại**, vì nó nhắm sai nguyên nhân gốc.
 
 ### 5.11.2. Những gì KHÔNG đạt được, và vì sao
 
-Mục này bắt đầu bằng các chỉ tiêu **thật sự không đạt**, không giấu. Khác với dự kiến ban đầu (khi khung chương giả định NFR-P1 sẽ là điểm không đạt nổi bật), sau khi đo và xác minh, **NFR-P1 đã đạt** (p95 = 731 ms < 800 ms, mục 5.7.1) — con số 5.857 ms từng khiến P1 "không đạt" đã bị bác bỏ vì nhiễm tranh chấp CPU và đo sai checkpoint. Vì vậy nhóm không đạt thực sự của chương là **các chỉ tiêu độ chính xác OCR**.
+Mục này trình bày các chỉ tiêu **không đạt**, không giấu — nhưng trước hết phải nói rõ hai chỉ tiêu đã **chuyển trạng thái** sau lượt đo lại ngày 28/07, vì trình bày số cũ sẽ mô tả sai hệ thống hiện tại:
 
-**Bốn chỉ tiêu OCR đều không đạt, và nguyên nhân chung là biển hai dòng.**
+- **NFR-A4 chuyển từ ❌ sang 🟡**: 0,8848 → **0,9454**, vượt ngưỡng tối thiểu 0,92 (5.6.1).
+- **NFR-P1 chuyển từ ✅ sang 🟡**: 731 ms → **1.143 ms**, vẫn dưới sàn 1.500 ms nhưng vượt mục tiêu 800 ms (5.7.1). Đây là **thoái lui có chủ ý**: cái giá của bậc thang thử-lại, đổi lấy 34 biển đọc được thêm.
 
-- **NFR-A4 (1 − CER) = 0,8848**, thiếu 3,52 điểm so với ngưỡng tối thiểu 0,92 (T5.6a).
-- **NFR-A5 (chuỗi trước hậu xử lý) = 0,6098**, thiếu 19,02 điểm so với ngưỡng 0,80 (T5.6b).
-- **NFR-A6 (chuỗi sau hậu xử lý) = 0,6730**, thiếu 17,70 điểm so với ngưỡng 0,85 (T5.6b).
-- **NFR-A7 (E2E toàn trình) = 0,5295**, thiếu 29,05 điểm so với ngưỡng 0,82 (T5.6e).
+**Ba chỉ tiêu OCR còn lại không đạt, và nguyên nhân chung là biển hai dòng.**
 
-> Bốn con số trên là kết quả **sau** khi đã thêm bước cứu dòng trên cho biển hai dòng (5.6.6). Bước đó nâng A4 thêm 1,14 điểm, A6 thêm 1,75 điểm và A7 thêm 0,68 điểm, nhưng **không chỉ tiêu nào chuyển từ không đạt sang đạt** — khoảng thiếu còn lại vẫn tính bằng hàng chục điểm ở A5, A6 và A7. Phải phát biểu đúng như vậy: đây là một cải thiện đo được, không phải một lời giải.
+- **NFR-A5 (chuỗi trước hậu xử lý) = 0,6373**, thiếu 16,27 điểm so với ngưỡng 0,80 (T5.6b).
+- **NFR-A6 (chuỗi sau hậu xử lý) = 0,7512**, thiếu 9,88 điểm so với ngưỡng 0,85 (T5.6b).
+- **NFR-A7 (E2E toàn trình) = 0,5552**, thiếu 26,48 điểm so với ngưỡng 0,82 (T5.6e).
 
-Nguyên nhân đã được xác định **định lượng và có định vị**, không phỏng đoán. Tách theo layout (T5.6c) cho thấy trên biển **một dòng** hệ thống đạt hoặc vượt ngưỡng (1 − CER = 0,9903; A6 = 0,9489); toàn bộ khoảng thiếu nằm ở biển **hai dòng** (1 − CER = 0,8601; A6 = 0,6030). Vì biển hai dòng chiếm **79,8%** tập có nhãn chuỗi (phản ánh tỉ lệ xe máy cao trong giao thông Việt Nam), con số tổng bị quần thể khó này chi phối. Phân tích lỗi (T5.10) khẳng định: 381/399 ca nhầm ký tự, 133/134 ca thiếu ký tự đều thuộc biển hai dòng. Đây là **đặc tính có cấu trúc của bài toán** — khoảng cách 34,59 điểm A6 giữa hai layout cùng bậc độ lớn với mốc 48,6 điểm mà Laroca và cộng sự đo trên RodoSol-ALPR Brazil (5.6.3) — chứ không phải một lỗi cài đặt sửa nhanh được. Hậu xử lý theo luật chỉ đóng góp +6,32 điểm vì nó sửa được lỗi nhầm ký tự lẻ tẻ nhưng bất lực trước chuỗi sai nhiều ký tự do OCR đọc hụt cả cụm (5.6.2). Hướng khắc phục bắt buộc nằm ở **tầng nhận dạng** — huấn luyện/thay mô hình OCR chuyên cho biển số hai dòng — chứ không ở tầng hậu xử lý.
+> Ba con số trên là kết quả **sau** khi đã áp cả hai bậc cứu chữa (5.6.6, 5.6.7) và các bản sửa đọc biển hai dòng. So với lượt đo 20/07, A6 tăng **7,82 điểm** — mức cải thiện lớn nhất của cả đồ án ở tầng nhận dạng, và đạt được **không tốn một giây GPU nào**. Nhưng **không chỉ tiêu nào trong ba chỉ tiêu này chuyển sang đạt**: khoảng thiếu còn lại vẫn tính bằng hàng chục điểm ở A5 và A7, gần mười điểm ở A6. Phải phát biểu đúng như vậy — đây là một cải thiện đo được, không phải một lời giải.
 
-**Một cảnh báo hiệu lực về A7.** A7 = 0,5295 bị hạ thêm bởi giới hạn của giao thức đo (đo trên ảnh crop ngoài phân bố huấn luyện của bộ phát hiện) nên phải đọc như **cận dưới bi quan**, không phải ước lượng điểm. Lập luận và số liệu đầy đủ: **mục 5.6.5**.
+Nguyên nhân đã được xác định **định lượng và có định vị**, không phỏng đoán. Tách theo layout (T5.6c) cho thấy trên biển **một dòng** hệ thống đạt hoặc vượt ngưỡng (1 − CER = 0,9925; A6 = 0,9541); toàn bộ khoảng thiếu nằm ở biển **hai dòng** (1 − CER = 0,9344; A6 = 0,6996). Vì biển hai dòng chiếm **79,8%** tập có nhãn chuỗi (phản ánh tỉ lệ xe máy cao trong giao thông Việt Nam), con số tổng bị quần thể khó này chi phối. Đây là **đặc tính có cấu trúc của bài toán** — khoảng cách 25,45 điểm A6 giữa hai layout cùng bậc độ lớn với mốc 48,6 điểm mà Laroca và cộng sự đo trên RodoSol-ALPR Brazil (5.6.3) — chứ không phải một lỗi cài đặt sửa nhanh được.
+
+**Cấu trúc phần lỗi còn lại chỉ thẳng sang hướng khắc phục.** Sau các bản sửa, ký tự **chèn thừa** gần như biến mất (903 → 107 ca, giảm 88%) trong khi ký tự **bị xoá** vẫn ở 1.272 và nay chiếm 56,8% toàn bộ lỗi (T5.6a). Nghĩa là phần lỗi đã dịch từ "đọc hỏng cả chuỗi" sang "đọc hụt ký tự". Hậu xử lý theo luật mạnh ở việc sửa ký tự nhầm nhưng **về nguyên tắc không thể phục hồi một ký tự chưa từng được đọc ra** — đó là lý do +11,39 điểm vẫn không đủ. Hướng khắc phục bắt buộc nằm ở **tầng nhận dạng**: huấn luyện lại bộ nhận dạng trên vùng cắt biển số Việt Nam, chứ không ở tầng hậu xử lý và cũng không ở tầng hình học (đã xử lý và đo tách bạch ở 5.6.7).
+
+**Một cảnh báo hiệu lực về A7.** A7 = 0,5552 bị hạ thêm bởi giới hạn của giao thức đo (đo trên ảnh crop ngoài phân bố huấn luyện của bộ phát hiện) nên phải đọc như **cận dưới bi quan**, không phải ước lượng điểm. Lập luận và số liệu đầy đủ: **mục 5.6.5**.
 
 **Các chỉ tiêu chưa đo được và lý do:**
 
@@ -1135,15 +1230,15 @@ Mục này liệt kê các yếu tố có thể khiến kết luận của chư�
 
 ## 5.12. Kết luận chương
 
-**Trả lời trực tiếp sáu câu hỏi nghiên cứu.** *RQ1:* bộ phát hiện YOLO11n đạt **toàn bộ** chỉ tiêu — mAP@0.5 = 0,9829, mAP@0.5:0.95 = 0,7834, Precision = 0,9837, Recall = 0,9714 (T5.5a), vượt mục tiêu. *RQ2:* có, chênh lệch giữa biển một dòng và hai dòng là **có ý nghĩa và rất lớn** — 36,79 điểm A6, nhưng nằm ở tầng OCR (T5.6c) chứ không ở tầng phát hiện (chỉ 2,09 điểm, T5.5b). *RQ3:* khối hậu xử lý đóng góp **+4,57 điểm** chuỗi đầy đủ, sửa đúng 128 biển, làm hỏng 0 (T5.6b). *RQ4:* NFR-P1 **đạt** (p95 = 731 ms < 800 ms, T5.7a); nút thắt còn lại là OCR (64,3% thời gian) và detector (34,2%, T5.7b). *RQ5:* bảng luật hiện hành **phần lớn không khớp** cặp nhầm thật — chỉ 2/10 cặp nhầm nhiều nhất được phủ (T5.6d). *RQ6:* các mối đe doạ được liệt kê và đánh giá ở 5.11.3, ba mối nghiêm trọng nhất ở mức "cao".
+**Trả lời trực tiếp sáu câu hỏi nghiên cứu.** *RQ1:* bộ phát hiện YOLO11n đạt **toàn bộ** chỉ tiêu — mAP@0.5 = 0,9829, mAP@0.5:0.95 = 0,7834, Precision = 0,9837, Recall = 0,9714 (T5.5a), vượt mục tiêu. *RQ2:* có, chênh lệch giữa biển một dòng và hai dòng là **có ý nghĩa và rất lớn** — 25,45 điểm A6, nhưng nằm ở tầng OCR (T5.6c) chứ không ở tầng phát hiện (chỉ 2,09 điểm, T5.5b). *RQ3:* khối hậu xử lý đóng góp **+11,39 điểm** chuỗi đầy đủ, sửa đúng 128 biển, làm hỏng 0 (T5.6b). *RQ4:* NFR-P1 **đạt** (p95 = 731 ms < 800 ms, T5.7a); nút thắt còn lại là OCR (64,3% thời gian) và detector (34,2%, T5.7b). *RQ5:* bảng luật hiện hành **phần lớn không khớp** cặp nhầm thật — chỉ 2/10 cặp nhầm nhiều nhất được phủ (T5.6d). *RQ6:* các mối đe doạ được liệt kê và đánh giá ở 5.11.3, ba mối nghiêm trọng nhất ở mức "cao".
 
 **Tầng phát hiện.** Trên tập test v3 (1.514 ảnh, 1.611 đối tượng), mô hình vượt mọi ngưỡng NFR với biên rộng; chỉ số quyết định mAP@0.5:0.95 = 0,7834 vượt mục tiêu 0,65. Điểm yếu duy nhất được phơi bày trung thực: dải đối tượng "rất nhỏ" (dưới 0,5% diện tích ảnh) chỉ đạt mAP@0.5 = 0,8553 (T5.5c) — hệ quả đo được của tiêu chí Q6 không đạt, trầm trọng thêm vì tập test nghiêng về nguồn camera giao thông (5.3.4).
 
-**Đóng góp định lượng của khối hậu xử lý — đóng góp khoa học riêng của đồ án.** Đo hai lần trên cùng 2.801 biển có nhãn chuỗi cho hiệu số A6 − A5 = **+4,57 điểm**, là cải thiện thuần một chiều (128 sửa đúng / 0 làm hỏng). Đóng góp bị chặn nhỏ vì phần lớn lỗi nằm ở tầng OCR — nơi hậu xử lý theo luật, vốn chỉ sửa được nhầm ký tự lẻ tẻ, về bản chất không với tới được các chuỗi sai nhiều ký tự trên biển hai dòng. Việc định vị đóng góp về từng nhóm luật (T5.6b) chưa đo được và là hạng mục cần viết mã.
+**Đóng góp định lượng của khối hậu xử lý — đóng góp khoa học riêng của đồ án.** Đo hai lần trên cùng 2.801 biển có nhãn chuỗi cho hiệu số A6 − A5 = **+11,39 điểm**, là cải thiện thuần một chiều (319 sửa đúng / 0 làm hỏng). Đóng góp dồn gần trọn vào biển hai dòng (+13,97 điểm) nhưng vẫn không đủ tới ngưỡng, vì phần lỗi còn lại nằm ở tầng OCR — nơi hậu xử lý theo luật, vốn chỉ sửa được nhầm ký tự lẻ tẻ, về bản chất không với tới được các chuỗi sai nhiều ký tự trên biển hai dòng. Việc định vị đóng góp về từng nhóm luật (T5.6b) chưa đo được và là hạng mục cần viết mã.
 
 **Hiệu năng — kết luận đã đảo so với dự kiến ban đầu.** Sau khi giải quyết mâu thuẫn số liệu (con số cũ 5.857 ms bị bác bỏ vì nhiễm tranh chấp CPU và đo sai checkpoint; đo lại trên máy rảnh với `best.pt` cho 731 ms), **NFR-P1 đạt mục tiêu**, và hai phép đo độc lập (client-side 731 ms, in-process 780 ms) đồng thuận. Breakdown thật là OCR 64,3% / detector 34,2% (T5.7b), không phải 93,3% / 6,7% như báo cáo cũ — nên tối ưu detector giờ có ý nghĩa thật, dù không còn bắt buộc. Mọi chỉ tiêu hiệu năng ngoài đường suy luận đạt với biên rộng: **kiến trúc phần mềm và độ trễ không phải vấn đề; vấn đề còn lại là độ chính xác OCR trên biển hai dòng.**
 
-**Các giới hạn nghiêm trọng nhất.** Ba mối đe doạ hàng đầu (5.11.3): (i) rò rỉ tồn dư không khử được — ngay ngoài ngưỡng gộp, ở Hamming 12 vẫn còn 791 cặp gần trùng train↔test, và rò rỉ ngữ nghĩa thì không đo được; (ii) tập test không xuyên bộ dữ liệu — chỉ đo được tổng quát hoá *trong* phân bố; (iii) mẫu số nhỏ cho chỉ số OCR (2.801 biển có nhãn chuỗi trên 15.133 ảnh). Hệ quả: **mọi chỉ số độ chính xác trong chương nên được đọc như cận trên lạc quan.** Riêng A7 = 0,5227 thì ngược lại — là cận dưới bi quan do giao thức đo trên ảnh crop.
+**Các giới hạn nghiêm trọng nhất.** Ba mối đe doạ hàng đầu (5.11.3): (i) rò rỉ tồn dư không khử được — ngay ngoài ngưỡng gộp, ở Hamming 12 vẫn còn 791 cặp gần trùng train↔test, và rò rỉ ngữ nghĩa thì không đo được; (ii) tập test không xuyên bộ dữ liệu — chỉ đo được tổng quát hoá *trong* phân bố; (iii) mẫu số nhỏ cho chỉ số OCR (2.801 biển có nhãn chuỗi trên 15.133 ảnh). Hệ quả: **mọi chỉ số độ chính xác trong chương nên được đọc như cận trên lạc quan.** Riêng A7 = 0,5552 thì ngược lại — là cận dưới bi quan do giao thức đo trên ảnh crop.
 
 **Chuyển tiếp sang Chương 6.** Chương này xác định bằng số liệu — không bằng phỏng đoán — ba nhóm hướng phát triển: (i) **tối ưu hoặc thay thế khối OCR** cho biển hai dòng, bắt nguồn từ 5.6.3 và breakdown 5.7.2; (ii) **hiệu chỉnh bảng luật sửa lỗi theo ma trận nhầm lẫn đo được** (8/10 cặp nhầm nhiều nhất chưa có luật phủ), bắt nguồn từ 5.6.4, với ràng buộc phải kiểm chứng trên tập giữ riêng để tránh khớp luật trên chính tập đánh giá; (iii) **xây dựng tập test xuyên bộ dữ liệu, chia split theo nhóm biển số, và gán nhãn chuỗi cho một phân bố hiện trường** để đo NFR-A7 và NFR-A9 đúng cách, bắt nguồn từ 5.3.3, 5.6.5 và 5.11.3.
 
