@@ -34,6 +34,34 @@ chạy tuần tự: cài paddle-gpu → mount Drive → tải pretrained
 export inference model → zip về Drive. Các URL/тên config có cell kiểm tra
 riêng để dễ chẩn đoán khi upstream đổi.
 
+## 2b. Huấn luyện trên máy Mac Apple Silicon (không có GPU nào khác)
+
+```bash
+python3 ai/training/finetune_ppocr_rec_mac.py --smoke   # thử dây chuyền, vài phút
+caffeinate -i python3 ai/training/finetune_ppocr_rec_mac.py
+```
+
+Chỉ dùng khi **không có Colab GPU** — trên Mac huấn luyện chạy **CPU thuần**,
+khoảng **1,5–2,5 giờ mỗi epoch**, tức mặc định 12 epoch mất cỡ một ngày đêm.
+
+Ba điều chỉ Apple Silicon mới cần, và cả ba đều làm hỏng lượt chạy chứ không
+chỉ làm chậm — nên script này tách riêng khỏi `finetune_ppocr_rec.py`:
+
+| Vấn đề | Xử lý |
+|---|---|
+| `libomp` của Homebrew và `libiomp5` của paddle cùng nạp ⇒ tiến trình chết giữa chừng | Đặt `KMP_DUPLICATE_LIB_OK` **trước** khi paddle được nạp |
+| Nhân hiệu năng lẫn nhân tiết kiệm điện ⇒ mỗi rào đồng bộ phải chờ nhóm chậm | Hỏi `sysctl hw.perflevel0.logicalcpu`, ghim `OMP_NUM_THREADS` theo số nhân hiệu năng |
+| `DataLoader` nhiều tiến trình dùng `fork` ⇒ treo im lặng trên macOS | `num_workers=0` ở cả train lẫn eval |
+
+> **Không có Metal.** Kiểm trực tiếp trên paddle 3.3.1: gói không có
+> `is_compiled_with_mps`, backend chỉ gồm CUDA / ROCm / XPU / IPU. Không tồn
+> tại đường chạy GPU nào trên Mac. Bù lại, `paddlepaddle==3.3.1` **có** wheel
+> `macosx_11_0_arm64` cho cp310–cp313 (kiểm trên PyPI), nên Mac cài đúng bản
+> mà Windows và Docker đang dùng — gói tên `paddlepaddle`, không phải `-gpu`.
+
+Luôn chạy `--smoke` trước. Nó chứng minh cả dây chuyền thông trong vài phút,
+thay vì để máy chạy qua đêm rồi sáng ra phát hiện hỏng ở vòng lặp đầu tiên.
+
 ## 3. Tích hợp và đo lại (local)
 
 Giải nén về `models/rec_finetuned/` rồi bật bằng **một biến môi trường** —
