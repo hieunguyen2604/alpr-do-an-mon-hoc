@@ -80,7 +80,15 @@ CHAPTER_FILENAMES: tuple[str, ...] = (
 SECTION_SEPARATOR: str = "\n\n\newpage\n\n"
 
 # Source outline and target for the slide deck.
-SLIDES_OUTLINE_FILENAME: str = "10-slides-outline.md"
+SLIDES_SOURCE_FILENAME: str = "10-slides.md"
+"""The deck that gets projected: 21 short slides, bullets only.
+
+Deliberately *not* ``10-slides-outline.md``. That file is the presentation
+plan -- speaker notes, per-slide timing budget, a table explaining how to read
+itself -- and exporting it produced a 51-slide deck in which the audience read
+prose off the wall instead of listening. The two files answer different
+questions and only one of them belongs on a projector.
+"""
 SLIDES_OUTPUT_FILENAME: str = "slides.pptx"
 SLIDES_TEMPLATE_FILENAME: str = "template-uit.pptx"
 
@@ -278,6 +286,11 @@ def export_pptx(pandoc: Path, outline_path: Path, pptx_path: Path) -> None:
         str(outline_path),
         "--from",
         PANDOC_FROM,
+        # Pinned rather than inferred. Pandoc's automatic slide level depends on
+        # where the first content happens to sit, so adding one paragraph under
+        # a section heading silently re-cuts the whole deck. Level 2 fixes the
+        # contract: `#` is a section divider, `##` is one slide.
+        "--slide-level=2",
         "-o",
         str(pptx_path),
     ]
@@ -374,7 +387,7 @@ def main(argv: list[str] | None = None) -> int:
     print(f"[ok] wrote DOCX -> {docx_path}")
 
     pptx_path = SLIDES_DIR / SLIDES_OUTPUT_FILENAME
-    export_pptx(pandoc, SLIDES_DIR / SLIDES_OUTLINE_FILENAME, pptx_path)
+    export_pptx(pandoc, SLIDES_DIR / SLIDES_SOURCE_FILENAME, pptx_path)
     if pptx_path.is_file():
         print(f"[ok] wrote PPTX -> {pptx_path}")
 

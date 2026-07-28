@@ -1,12 +1,3 @@
----
-title: "Xây dựng hệ thống nhận dạng biển số xe bằng Trí tuệ nhân tạo"
-subtitle: "Đồ án tốt nghiệp đại học · Trường Đại học Công nghệ Thông tin, ĐHQG-HCM"
-author:
-  - "Phạm Công Thành — 25410013 · Nguyễn Minh Hiếu — 25410007"
-  - "GVHD: ThS. Cáp Phạm Đình Thăng"
-date: "Tháng 9 năm 2026"
----
-
 # Khung slide bảo vệ đồ án tốt nghiệp
 
 **Đề tài:** Xây dựng hệ thống nhận dạng biển số xe Việt Nam ứng dụng Trí tuệ nhân tạo

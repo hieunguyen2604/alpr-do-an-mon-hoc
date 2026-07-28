@@ -10,7 +10,8 @@ Thư mục này chứa **khung nội dung**, không chứa file slide đã dựn
 
 | File | Nội dung | Trạng thái |
 |---|---|:--:|
-| [`10-slides-outline.md`](10-slides-outline.md) | Khung 21 slide + speaker notes + ngân sách thời gian 15 phút | ✅ Xong |
+| [`10-slides.md`](10-slides.md) | **Nguồn của bộ slide chiếu** — 29 slide, chỉ gạch đầu dòng | ✅ Xong |
+| [`10-slides-outline.md`](10-slides-outline.md) | Kịch bản trình bày: speaker notes + ngân sách thời gian 15 phút | ✅ Xong |
 | [`10-defense-qa.md`](10-defense-qa.md) | 40+ câu hỏi phản biện, câu trả lời, cảnh báo trả lời sai | ✅ Xong |
 | [`../poster/10-poster-layout.md`](../poster/10-poster-layout.md) | Bố cục poster A0 dọc — 12 khối, bảng font size, bảng màu | ✅ Xong |
 | `slides.pptx` | **File slide thật** — sinh tự động, đã mang giao diện UIT | ✅ Dựng được |
@@ -21,9 +22,49 @@ Thư mục này chứa **khung nội dung**, không chứa file slide đã dựn
 
 ---
 
-## 1b. Giao diện slide — template UIT
+## 1b. Hai file, hai việc — đừng nhầm
 
-`slides.pptx` do `scripts/build_thesis.py` sinh ra từ `10-slides-outline.md`.
+| File | Dùng để | Ai đọc |
+|---|---|---|
+| `10-slides.md` | **Chiếu lên màn hình** — 29 slide, mỗi slide vài gạch đầu dòng | Hội đồng nhìn |
+| `10-slides-outline.md` | Kịch bản: lời nói, số liệu chi tiết, ngân sách thời gian | Người trình bày đọc trước |
+
+Chỉ `10-slides.md` được xuất ra `slides.pptx`. Trước 28/07/2026 build lấy từ
+file outline và cho ra **51 slide** dày đặc bảng biểu và speaker notes — hội
+đồng sẽ đọc slide thay vì nghe người nói. Hai file trả lời hai câu hỏi khác
+nhau; chỉ một trong hai thuộc về máy chiếu.
+
+### Hai quy ước khi sửa `10-slides.md`
+
+1. `#` = slide phân đoạn · `##` = một slide. Cấp này **ghim cứng** bằng
+   `--slide-level=2`, không suy ra từ nội dung.
+2. **Bảng phải là khối cuối cùng của slide.** Pandoc cắt sang slide mới ở mọi
+   thứ đứng sau bảng, nên một dòng ghi chú đặt dưới bảng sẽ lặng lẽ sinh thêm
+   một slide mồ côi lấy chính dòng đó làm tiêu đề.
+
+### Kiểm tra chữ có tràn khỏi slide không
+
+Chữ tràn **không** báo lỗi — PowerPoint vẫn mở bình thường, chỉ mất phần dưới
+khi chiếu. Đếm ký tự không đủ tin vì chữ đậm và từ dài xuống dòng khác nhau,
+nên đo thẳng chiều cao đã render:
+
+```powershell
+$pp = New-Object -ComObject PowerPoint.Application
+$pres = $pp.Presentations.Open("D:\DATN\docs\slides\slides.pptx", $true, $false, $false)
+$H = $pres.PageSetup.SlideHeight
+foreach ($s in $pres.Slides) { foreach ($sh in $s.Shapes) {
+  if ($sh.HasTextFrame -eq -1 -and $sh.TextFrame2.HasText -eq -1) {
+    $b = $sh.Top + $sh.TextFrame2.TextRange.BoundHeight
+    if ($b -gt $H) { "slide $($s.SlideIndex): tran $([int]($b - $H)) pt" } } } }
+$pres.Close(); $pp.Quit()
+```
+
+Phải ra **rỗng**. Chạy lại sau mỗi lần sửa nội dung slide.
+
+---
+
+## 1c. Giao diện slide — template UIT
+
 Toàn bộ **hình thức** — màu, phông, hoạ tiết nền, huy hiệu UIT, dải chân
 trang — đến từ `template-uit.pptx`, truyền cho Pandoc qua `--reference-doc`.
 Pandoc chỉ đóng góp phần chữ.
