@@ -91,6 +91,9 @@ Khoảng **(2,000 ; 4,727)** bỏ trống ⇒ phân loại số dòng bằng hì
 
 ## Kiến trúc 5 tầng
 
+Tầng AI là **Python thuần** — cấm import FastAPI hoặc Pydantic. Nó không có
+mũi tên nào đi lên, nên thay engine OCR **không đụng một dòng mã API**
+
 | Tầng | Công nghệ |
 |---|---|
 | L1 — Trình bày | React + TypeScript + Tailwind · 3 trang |
@@ -99,18 +102,18 @@ Khoảng **(2,000 ; 4,727)** bỏ trống ⇒ phân loại số dòng bằng hì
 | **L4 — AI** | **Python thuần** — YOLO11 + PaddleOCR + Normalizer |
 | L5 — Dữ liệu | SQLite + SQLAlchemy + Alembic |
 
-## Tách tầng AI khỏi tầng API
+## Cơ sở dữ liệu — một cột làm nên đóng góp
 
-**Ràng buộc:** `ai/inference/` cấm import FastAPI hoặc Pydantic
+Bảng `detection_history` lưu **cả hai** chuỗi trên **cùng một bản ghi**
 
-- Khối AI **không có mũi tên nào đi lên** — không biết gì về HTTP, CSDL hay ai gọi nó
-- Kiểm thử độc lập, không cần dựng server
-- Cùng một pipeline dùng cho huấn luyện, đánh giá và phục vụ
-- Thay engine OCR **không đụng một dòng mã API**
+| Cột | Nội dung |
+|---|---|
+| `raw_ocr_text` | Chuỗi **thô** do PaddleOCR trả về |
+| `plate_number` | Chuỗi **sau** bộ luật hậu xử lý |
+| `is_valid_format` | Hợp quy cách Việt Nam hay không |
 
-```bash
-grep -r "fastapi\|pydantic" ai/inference/   # phải ra rỗng
-```
+⇒ Không có cột `raw_ocr_text` thì **không đo được** đóng góp của hậu xử lý.
+Đây là quyết định thiết kế từ Phase 0, không phải cột gỡ lỗi thừa
 
 ## Pipeline AI
 
@@ -184,6 +187,17 @@ Sửa theo **VỊ TRÍ**, không sửa toàn cục — cùng ký tự `O`/`0` nh
 | Số đăng ký | Chữ số | ép về chữ số |
 | **Vùng cấm sửa** | Cả chữ và số đều hợp lệ | **không đụng vào** |
 
+## Kết quả OCR — nói thẳng phần chưa đạt
+
+Toàn bộ khoảng cách nằm ở **biển 2 dòng**: 0,6996 so với **0,9541** của biển 1 dòng
+
+| Chỉ tiêu | Đo được | Ngưỡng | |
+|---|---:|---:|:--:|
+| A4 — chính xác ký tự | **0,9454** | 0,92 | 🟡 |
+| A5 — chuỗi trước hậu xử lý | 0,6373 | 0,80 | ❌ |
+| A6 — chuỗi sau hậu xử lý | **0,7512** | 0,85 | ❌ |
+| A7 — đầu-cuối | 0,5552 | 0,82 | ❌ |
+
 ## Đóng góp của hậu xử lý — đo được bằng số
 
 CSDL lưu **cả hai** chuỗi trên cùng một bản ghi ⇒ đo được hiệu số
@@ -220,6 +234,24 @@ Mọi vùng dữ liệu xử lý đủ **4 trạng thái**: chờ · rỗng · l
 | Nhận dạng video | Bất đồng bộ — trả `job_id`, hỏi tiến độ, xuất video gắn nhãn |
 | Lịch sử | Lọc, sắp xếp, phân trang — **trạng thái nằm trên URL** |
 
+## Demo trực tiếp
+
+Ba tình huống, chạy trên máy thật — **không phải video quay sẵn**
+
+| Bước | Cho thấy điều gì |
+|---|---|
+| Ảnh ô tô — biển 1 dòng | Đường đi cơ bản, đọc đúng, dưới 1 giây |
+| Ảnh xe máy — biển 2 dòng | Chính chỗ khó nhất, split-then-hstack chạy thật |
+| Video + Lịch sử | Xử lý bất đồng bộ, tra cứu lại kết quả |
+
+## Kiểm thử và triển khai
+
+- **999 kiểm thử tự động** đạt · bao phủ tầng nghiệp vụ **87,7%**
+- Kiểm thử **đơn vị · tích hợp · độ chính xác AI · hiệu năng · chịu tải**
+- Tầng AI có bộ test **chạy không cần dựng server**
+- `docker compose up` — **một lệnh**, đã dựng và xác minh chạy được
+- Soak 300 giây: **1.684 yêu cầu, không rò rỉ bộ nhớ**
+
 ## Hiệu năng trên CPU
 
 **i5-14600K · 20 luồng · KHÔNG có GPU CUDA**
@@ -233,6 +265,18 @@ Vượt mục tiêu p95 là **đánh đổi có chủ ý**: tắt bậc thang th
 | Yêu cầu đồng thời | **10** | ≥ 5 |
 
 # Kết luận
+
+## Đối chiếu chỉ tiêu — bảng chốt hạ
+
+✅ đạt mục tiêu · 🟡 đạt ngưỡng tối thiểu · ❌ chưa đạt
+
+| Nhóm | Chỉ tiêu | Kết quả |
+|---|---|:--:|
+| Phát hiện | mAP@0.5 **0,9829** · mAP@0.5:0.95 **0,7834** · P **0,9837** · R **0,9714** | ✅ |
+| Đọc ký tự | A4 **0,9454** | 🟡 |
+| Đọc chuỗi | A5 **0,6373** · A6 **0,7512** · A7 **0,5552** | ❌ |
+| Hiệu năng | p95 **1.143 ms** *(sàn 1.500)* · nạp mô hình **6,4 s** · truy vấn **18,7 ms** | 🟡 |
+| Phần mềm | 999 test · bao phủ 87,7% · `docker compose up` | ✅ |
 
 ## Hạn chế — nói thẳng
 
@@ -255,6 +299,18 @@ Cả ba **ngoài** mô hình nhận dạng: A6 **0,6098 → 0,7512**
 | Cứu dòng trên | 209 biển |
 | Nắn hình chống méo | 34 biển |
 
+## Hướng phát triển
+
+**Ngắn hạn** — gỡ đúng nút thắt đã định vị
+
+1. **Fine-tune bộ nhận dạng** trên vùng cắt biển Việt Nam
+2. **Gán nhãn chuỗi cho ảnh hiện trường** ⇒ đo được A7 đúng cách
+
+**Trung hạn**
+
+3. Tập test **xuyên bộ dữ liệu** — đo tổng quát hoá ngoài phân bố
+4. Xuất ONNX / OpenVINO để hạ độ trễ đuôi
+
 ## Kết luận
 
 **Đã làm được**
@@ -271,6 +327,12 @@ Cả ba **ngoài** mô hình nhận dạng: A6 **0,6098 → 0,7512**
 
 ## Cảm ơn
 
-**Em xin cảm ơn thầy cô đã lắng nghe**
+**Em xin cảm ơn thầy cô đã lắng nghe. Em xin sẵn sàng nhận câu hỏi.**
 
-**Em xin sẵn sàng nhận câu hỏi từ hội đồng**
+| Tra nhanh | |
+|---|---|
+| Dữ liệu | 15.133 ảnh · 15.977 khung · 6 nguồn |
+| Mô hình | YOLO11n · imgsz 640 · 20 epoch |
+| Phát hiện | mAP50 **0,983** · mAP50-95 **0,783** |
+| Đọc chuỗi | A4 **0,9454** · A6 **0,7512** · A7 **0,5552** |
+| Độ trễ p95 | **1.143 ms** trên CPU *(p50 406 ms)* |

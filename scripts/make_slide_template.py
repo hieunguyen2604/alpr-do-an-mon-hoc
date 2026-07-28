@@ -238,6 +238,24 @@ def strip_slide_ids(xml: str) -> str:
     return re.sub(r"<p:sldIdLst>.*?</p:sldIdLst>", "<p:sldIdLst/>", xml, flags=re.S)
 
 
+_JUSTIFY_RE = re.compile(r'\balgn="just"')
+
+
+def unjustify(xml: str) -> str:
+    """Turn justified paragraphs into left-aligned ones.
+
+    The donor template justifies 42 paragraph styles. That is defensible in a
+    wide text frame and wrong everywhere else in this deck: the narrow left
+    column of "Content with Caption" ends up with rivers of white space between
+    words, and a monospaced diagram is destroyed outright -- the tree drawing on
+    the pipeline slide had its box-drawing characters stretched apart until the
+    branches no longer lined up under anything.
+
+    Left alignment costs nothing visually and removes both problems.
+    """
+    return _JUSTIFY_RE.sub('algn="l"', xml)
+
+
 _SLIDE_REL_RE = re.compile(
     r'<Relationship\b[^>]*Target="(?:\.\./)?(?:notes)?[sS]lides?/[^"]*"[^>]*/>'
 )
@@ -286,7 +304,9 @@ def build(source: Path, output: Path) -> int:
                     xml, pandoc_name = rewrite_layout(data.decode("utf-8"))
                     if pandoc_name:
                         renamed.append(pandoc_name)
-                    data = xml.encode("utf-8")
+                    data = unjustify(xml).encode("utf-8")
+                elif name.startswith("ppt/slideMasters/") and name.endswith(".xml"):
+                    data = unjustify(data.decode("utf-8")).encode("utf-8")
                 elif name == "ppt/presentation.xml":
                     data = strip_slide_ids(data.decode("utf-8")).encode("utf-8")
                 elif name == "ppt/_rels/presentation.xml.rels":
