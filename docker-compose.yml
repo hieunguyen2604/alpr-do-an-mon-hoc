@@ -84,8 +84,11 @@ services:
       # frontal crops.
       ALPR_RECTIFY_ENABLED: ${ALPR_RECTIFY_ENABLED:-true}
       # Super-resolution retry for small failed crops (FSRCNN, models/sr/).
-      # Independent switch so its contribution can be ablated on its own.
-      ALPR_SR_RETRY_ENABLED: ${ALPR_SR_RETRY_ENABLED:-true}
+      # OFF by default since 28/07/2026: measured at +319 ms on p95 latency and
+      # +1381 ms on p99 for zero measurable accuracy gain, which alone pushed
+      # NFR-P1 past its 1500 ms floor. Set to true to restore it.
+      # See docs/reports/27-retry-ladder-cost-benefit.md.
+      ALPR_SR_RETRY_ENABLED: ${ALPR_SR_RETRY_ENABLED:-false}
       # Optional fine-tuned recognition model (ai/training/README-rec-finetune.md).
       # Point at a directory INSIDE the container, e.g. /app/models/rec_finetuned
       # (the ./models bind mount). Empty = stock en_PP-OCRv5_mobile_rec.

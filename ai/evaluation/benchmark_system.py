@@ -45,7 +45,7 @@ import statistics
 import sys
 import time
 from collections.abc import Sequence
-from dataclasses import asdict, dataclass, field
+from dataclasses import asdict, dataclass, field, replace
 from pathlib import Path
 from typing import Any
 
@@ -216,7 +216,21 @@ def measure_model_load(model_path: Path, device: str) -> tuple[Any, float]:
     from ai.inference.config import InferenceConfig
     from ai.inference.pipeline import build_default_pipeline
 
-    config = InferenceConfig(model_path=model_path, device=device)
+    # Read the environment first, then override only what this benchmark owns.
+    #
+    # Building InferenceConfig() directly -- which this did until 28/07/2026 --
+    # silently pinned every other field to its default, so ALPR_RECTIFY_ENABLED
+    # and ALPR_SR_RETRY_ENABLED had no effect here. Those two switches exist
+    # precisely so Phase 7 can ablate the retry ladder and attribute its cost,
+    # and Phase 7's tool is this module: the knob was unreachable from the one
+    # place designed to turn it. An ablation run that way produces three sets of
+    # numbers differing only by measurement noise, which reads as "the ladder
+    # costs nothing" rather than as "the experiment never ran".
+    config = replace(
+        InferenceConfig.from_env(),
+        model_path=model_path,
+        device=device,
+    )
     started = time.perf_counter()
     pipeline = build_default_pipeline(config)
     elapsed = time.perf_counter() - started
@@ -624,6 +638,13 @@ def main(argv: list[str] | None = None) -> int:
         "images_root": str(images_root),
         "image_count": len(images),
         "device": args.device,
+        # Self-describing numbers: without this, a latency table gives no way to
+        # tell an ablation run from a full-system run, and the two are only ever
+        # comparable when the reader knows which is which.
+        "retry_ladder": {
+            "rectify_enabled": getattr(pipeline.config, "rectify_enabled", None),
+            "sr_retry_enabled": getattr(pipeline.config, "sr_retry_enabled", None),
+        },
         "nfr_p1_e2e_latency": e2e,
         "mean_plates_per_image": (
             round(statistics.fmean(plate_counts), 2) if plate_counts else 0.0

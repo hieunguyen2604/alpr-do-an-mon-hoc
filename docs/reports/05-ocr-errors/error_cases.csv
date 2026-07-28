@@ -2,16 +2,13 @@ error_class,line_count,ground_truth,prediction,substitutions,deleted,inserted,er
 missing_chars,2,54T15417,54T1517,,4,,5,0.9660,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/10xemay112_jpg.rf.6240b354b5a3ddea601dfcbc5dde6dac.jpg
 mixed,2,59Y173221,59L73281,1>L 2>8,Y,,2 3 7,0.9395,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/10xemay1270_jpg.rf.4c36473cfd20340ef19552575bd1c46a.jpg
 substitution,2,51Z74533,51T74533,Z>T,,,2,0.9932,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/10xemay1586_jpg.rf.32c2dc3c9f0ae69bb0365dac3e824737.jpg
-mixed,2,55F114927,85F11492765R1,5>8,,65R1,0,0.8440,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/10xemay2052_jpg.rf.f1c4c0db8ad753e055795ecce5679947.jpg
+substitution,2,55F114927,85F114927,5>8,,,0,0.9412,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/10xemay2052_jpg.rf.f1c4c0db8ad753e055795ecce5679947.jpg
 mixed,2,59T159973,C0T59973,5>C 9>0,1,,0 1 3,0.8536,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/10xemay2215_jpg.rf.79ea46422270a9632db3313acf9d9d68.jpg
 mixed,2,54K48147,81A73474,4>8 K>1 4>A 8>7 1>3,5,4,0 1 2 3 4 5,0.8527,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/10xemay2271_jpg.rf.9c4e914958e8ef4ea0c094bc56766dda.jpg
-missing_chars,2,78N25203,5203,,78N2,,0 1 2 3,0.8107,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/10xemay799_jpg.rf.f9a4e651f104a5ffe28d32163abd18cb.jpg
-missing_chars,2,71B197914,97914,,71B1,,0 1 2 3,0.9704,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/11xemay1003_jpg.rf.6c69c8ba4ff71d91c4782d5cdb3818ad.jpg
 substitution,2,60B801015,60B801075,1>7,,,7,0.9937,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/11xemay137_jpg.rf.59c2f0ec930d0d54278b54e25b8bc0e8.jpg
 mixed,2,59H167791,H1G7791,6>G,59,,0 1 4,0.9854,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/11xemay679_jpg.rf.0b48382bd4fd97b294352383afb2edef.jpg
 substitution,2,76G111649,78G111649,6>8,,,1,0.9464,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/11xemay702_jpg.rf.40159824988d4072e70b9f857d925f15.jpg
-missing_chars,2,77L137372,37372,,77L1,,0 1 2 3,0.9981,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/12xemay115_jpg.rf.c0987875dfa4c0f3b25ef39ad13b2f0e.jpg
-missing_chars,2,59E149285,49285,,59E1,,0 1 2 3,0.9970,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/12xemay1605_jpg.rf.dadebf1e58294edf8563ad8016e4d5da.jpg
+substitution,2,59E149285,59E749285,1>7,,,3,0.9970,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/12xemay1605_jpg.rf.dadebf1e58294edf8563ad8016e4d5da.jpg
 mixed,2,37M107918,37L07918,1>L,M,,2 3,0.9261,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/12xemay25_jpg.rf.8e15dee8d406d3b1ed634748074dcf0b.jpg
 substitution,2,59M116054,59M176054,1>7,,,4,0.9569,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/12xemay408_jpg.rf.9a7a4ed31bc9acc9f824bee4d97b4d46.jpg
 substitution,2,59Y164831,59Y104831,6>0,,,4,0.9504,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/12xemay488_jpg.rf.fb2360d3673fa3e1ca3a6ff3d220b23c.jpg
@@ -19,16 +16,13 @@ mixed,2,52Z8327,52T81327,Z>T,,1,2,0.9687,D:/DATN/datasets/raw/roboflow_ocr_plate
 substitution,2,54F44078,51F14078,4>1 4>1,,,1 3,0.9121,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/13xemay1263_jpg.rf.0d5aa80ad53aa943f2c107fbddb65ad9.jpg
 substitution,2,54T16084,54T16U84,0>U,,,5,0.8983,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/13xemay405_jpg.rf.9f1c32df100ff9dbf43758e50a72def3.jpg
 substitution,2,60B193113,60D193113,B>D,,,2,0.9283,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/13xemay732_jpg.rf.70e6552441ddc04eb61c5a500d94860a.jpg
-substitution,2,59M146204,46Z0415H7,5>4 9>6 M>Z 1>0 6>1 2>5 0>H 4>7,,,0 1 2 3 5 6 7 8,0.8361,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/1xemay1035_jpg.rf.b292bc7930de216f08663a7bf8b53a3c.jpg
 substitution,2,67B169660,67R169660,B>R,,,2,0.9576,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/1xemay1037_jpg.rf.71b9fd14561e8eaba00ea603f522bd2d.jpg
 missing_chars,2,59S221969,21969,,59S2,,0 1 2 3,0.9980,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/1xemay1045_jpg.rf.9b464a6eb3a8706fc09d435bd70be2b8.jpg
-missing_chars,2,59V244588,44588,,59V2,,0 1 2 3,0.9992,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/1xemay1088_jpg.rf.1c9436f94cdc15623dee77cb04dff628.jpg
+substitution,2,59V244588,59VZ44588,2>Z,,,3,0.9992,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/1xemay1088_jpg.rf.1c9436f94cdc15623dee77cb04dff628.jpg
 substitution,2,54N46324,51N16324,4>1 4>1,,,1 3,0.9365,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/1xemay1092_jpg.rf.68c8c20a19d54fc2334b8205af9b188e.jpg
 substitution,2,16F26303,16S26303,F>S,,,2,0.9557,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/1xemay1095_jpg.rf.a146a8df02843eb944f3fdc25ace8dac.jpg
 missing_chars,2,54L18811,8811,,54L1,,0 1 2 3,0.9992,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/1xemay1125_jpg.rf.bb7245ca28998e0d3d909a5c611241ce.jpg
 substitution,2,54K34770,51K34770,4>1,,,1,0.9734,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/1xemay1236_jpg.rf.b9eeccba16195b35e55b149657d8e8ab.jpg
-missing_chars,2,59U172979,72979,,59U1,,0 1 2 3,0.9998,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/1xemay1249_jpg.rf.a40a2f5e3460a2aed59887e291757800.jpg
-extra_chars,2,59M160886,59M160886JJHT,,,JJHT,,0.8661,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/1xemay1276_jpg.rf.3c5ec12ec291403dfdfe44e409bd18f8.jpg
 substitution,2,54F39952,54S29952,F>S 3>2,,,2 3,0.8336,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/1xemay1280_jpg.rf.c6fcb401b941199a9ef04f00b124b8c8.jpg
 substitution,2,59M197580,59H197580,M>H,,,2,0.9608,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/1xemay1364_jpg.rf.86d80ed072b849316b209a3061c4e5b0.jpg
 substitution,2,47K29950,17K29950,4>1,,,0,0.9893,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/1xemay1453_jpg.rf.a439b4390da82bf4881978021b220a66.jpg
@@ -39,189 +33,121 @@ substitution,2,59L160778,50L160778,9>0,,,1,0.8992,D:/DATN/datasets/raw/roboflow_
 mixed,2,59U184900,5011184900,9>1 U>1,,0,1 2,0.9438,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/1xemay1690_jpg.rf.9a50b842fee9f255532bbbc4bdaf5ed3.jpg
 substitution,2,64K104343,61K104343,4>1,,,1,0.9436,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/1xemay1709_jpg.rf.64cee76e811a31f32e18a23e627d4029.jpg
 substitution,2,54S92073,54S02073,9>0,,,3,0.8794,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/1xemay1715_jpg.rf.7efdc8a21b990ac01d85bd9636c152ea.jpg
-missing_chars,2,77L137372,37372,,77L1,,0 1 2 3,0.9993,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/1xemay1759_jpg.rf.e3e5949c81c7a9ff93269bb448ecd3f7.jpg
 mixed,2,59K140650,59A0650,4>A,K1,,2 3 4,0.9970,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/1xemay1787_jpg.rf.b189e4ada6a46c5a732128beb4d6a292.jpg
-extra_chars,2,59C165331,59C165331JSCT,,,JSCT,,0.8920,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/1xemay1818_jpg.rf.95ba55cc563ca4bef243a1373a3df0fa.jpg
-mixed,2,75K30899,08991M1,,75K3,1M1,0 1 2 3,0.7205,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/1xemay1835_jpg.rf.38ba55e29e9d04e0114902ea5f2befe4.jpg
-missing_chars,2,60FP1469,1469,,60FP,,0 1 2 3,0.9984,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/1xemay1865_jpg.rf.19bb3d311ec5c182c96dab47910a8bb2.jpg
-mixed,2,84K51618,8K5161804AJ,,4,04AJ,1,0.8254,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/1xemay1913_jpg.rf.5c7f0a223fbeebfcfebcafc596b1358e.jpg
 mixed,2,59E103640,COWC036L0J90EL9,5>C 9>O E>W 1>C 4>9,,L0JEL9,0 1 2 3 7,0.6500,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/1xemay1921_jpg.rf.ca4e751c346d58a31d887efd285c72ef.jpg
-mixed,2,54L39902,54139902J4L3,L>1,,J4L3,2,0.8888,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/1xemay1965_jpg.rf.ef5ee0d0e88c65d6c3009a2aa050eefc.jpg
-mixed,2,59T164831,5071D4831J1,9>0 T>7 6>D,,1J,1 2 4,0.7924,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/1xemay2172_jpg.rf.8c3153dacaca207cc0c3e96e396bcb70.jpg
-mixed,2,51S25013,50L31EE,S>0 2>L 5>3 0>1 1>E 3>E,1,,1 2 3 4 5 6 7,0.7049,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/1xemay2195_jpg.rf.b123bc5eaabf981d4c3bac5cacf84cfb.jpg
-mixed,2,54H15326,53267,,54H1,7,0 1 2 3,0.7520,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/1xemay2216_jpg.rf.35e4df3af337c7b0846349902b57cbe1.jpg
-mixed,2,59S135252,35Z521551,9>Z S>5 1>2 3>1 2>1,2,3,1 2 3 4 6 8,0.8336,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/1xemay2223_jpg.rf.3f0ced80ceeb4b07c5fcd42964134431.jpg
-missing_chars,2,59N176654,76654,,59N1,,0 1 2 3,0.9962,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/1xemay2237_jpg.rf.055b346744169e8d118d8382d93c80f5.jpg
+substitution,2,59T164831,50T104831,9>0 6>0,,,1 4,0.8462,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/1xemay2172_jpg.rf.8c3153dacaca207cc0c3e96e396bcb70.jpg
+mixed,2,51S25013,15Z5013,S>5 2>Z,5,,0 2 3,0.9978,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/1xemay2195_jpg.rf.b123bc5eaabf981d4c3bac5cacf84cfb.jpg
 substitution,2,53K107625,02G251931,5>0 3>2 K>G 1>2 0>5 7>1 6>9 2>3 5>1,,,0 1 2 3 4 5 6 7 8,0.7646,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/1xemay2258_jpg.rf.5c4815f2e503a0788fa466ad60e727e8.jpg
-mixed,2,59P115042,15D4210F7,9>D P>4 1>2 4>F 2>7,5,1,1 2 3 5 7 8,0.7592,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/1xemay2268_jpg.rf.fa125ee2d1ec16813986ec93181fae77.jpg
-missing_chars,2,51U83423,3423,,51U8,,0 1 2 3,0.9855,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/1xemay2316_jpg.rf.95a2250ec04c84ed5d28278ef9850318.jpg
-mixed,2,71S55600,5600JJ,,71S5,JJ,0 1 2 3,0.7880,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/1xemay2335_jpg.rf.cfc3adb6e5d06ffc9aa1a71b7705f0ff.jpg
+substitution,2,59P115042,59F115042,P>F,,,2,0.9887,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/1xemay2268_jpg.rf.fa125ee2d1ec16813986ec93181fae77.jpg
+substitution,2,51U83423,51D83423,U>D,,,2,0.9855,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/1xemay2316_jpg.rf.95a2250ec04c84ed5d28278ef9850318.jpg
 missing_chars,2,64D113241,64D13241,,1,,3,0.8799,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/1xemay233_jpg.rf.bc9c976c8d17888a260308c15ea28e1d.jpg
-extra_chars,2,79C122177,79C122177T3L1,,,T3L1,,0.8497,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/1xemay2343_jpg.rf.57b491fb2a3302164d0cd52c400de341.jpg
-substitution,2,54S22148,71A8543X,5>7 4>1 S>A 2>8 2>5 1>4 4>3 8>X,,,0 1 2 3 4 5 6 7,0.6793,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/1xemay2344_jpg.rf.4c37308ea89291a23509d93164749d3b.jpg
 substitution,2,59E153127,59F153127,E>F,,,2,0.9505,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/1xemay2359_jpg.rf.196aa7358990faf6d8b66ec2813a042f.jpg
-extra_chars,2,59T105297,59T105297J511,,,J511,,0.8664,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/1xemay2365_jpg.rf.7d92cc923559af9c07df1eed5f229f49.jpg
 mixed,2,59U170392,5911170392,U>1,,1,2,0.9605,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/1xemay2373_jpg.rf.51b7f460e8142ba5e9b153a024d7705f.jpg
 mixed,2,54P72138,5PT2138,7>T,4,,1 3,0.9303,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/1xemay2375_jpg.rf.f5a6eea2a92f6359e3061b95096ad237.jpg
-mixed,2,36F42678,36EL2678GOR4,F>E 4>L,,GOR4,2 3,0.7771,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/1xemay2449_jpg.rf.02c90270070cc817db0d039d2a16d9b2.jpg
+substitution,2,36F42678,36EL2678,F>E 4>L,,,2 3,0.8949,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/1xemay2449_jpg.rf.02c90270070cc817db0d039d2a16d9b2.jpg
 missing_chars,2,72E101515,01515,,72E1,,0 1 2 3,0.9968,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/1xemay319_jpg.rf.9e30a9004c0792859a8e05dcf332fe79.jpg
-extra_chars,2,59S227831,59S227831J9J2,,,J9J2,,0.9023,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/1xemay328_jpg.rf.3ed3e304f6cfd70ee4f6aa730b875da5.jpg
 substitution,2,34K23664,31K23664,4>1,,,1,0.8771,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/1xemay415_jpg.rf.4e16dffa154e877d1c2fa5c17de3846d.jpg
-missing_chars,2,59C113183,13183,,59C1,,0 1 2 3,0.9904,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/1xemay482_jpg.rf.915176c43e59f14bf3354f54d1103ecf.jpg
-extra_chars,2,81B126810,81B126810O1B1,,,O1B1,,0.7973,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/1xemay542_jpg.rf.c1c01a4d312231ed4ac10ca25e75af38.jpg
 mixed,2,59K102625,50D2625,1>0 0>D,9K,,1 2 3 4,0.9813,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/1xemay565_jpg.rf.a8bc94316667ce2c91c0863a8e9a2a01.jpg
 substitution,2,59E156347,59F156347,E>F,,,2,0.9646,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/1xemay573_jpg.rf.0652ba70eb7fbb1956999613b41c2ccc.jpg
 mixed,2,51U83423,51L183423,U>1,,L,2,0.9835,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/1xemay617_jpg.rf.6b3910d91df985f923a919cf86a62855.jpg
 missing_chars,2,59D143820,59D43820,,1,,3,0.9366,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/1xemay619_jpg.rf.b4912ddc2474841d3f5a5fbee38e7adb.jpg
 substitution,2,59E129565,59F129565,E>F,,,2,0.9924,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/1xemay645_jpg.rf.f5e4a001f310360159d9908c45fdd765.jpg
 substitution,2,54Z73400,54T73400,Z>T,,,2,0.9895,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/1xemay667_jpg.rf.4e4eff0a1304f39f514677bbcac55f1d.jpg
-missing_chars,2,54L42443,2443,,54L4,,0 1 2 3,0.9786,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/1xemay729_jpg.rf.92695147345f3236a4ebe636daf8ce66.jpg
 substitution,2,60Z77813,60T77813,Z>T,,,2,0.9976,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/1xemay763_jpg.rf.d3f5dd6abdad62660808e7935c5527c9.jpg
-mixed,2,59F131316,595131316JYR1,F>5,,JYR1,2,0.8553,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/1xemay776_jpg.rf.75b8e01ab37d607d9c628e13a0b9b200.jpg
+substitution,2,59F131316,59S131316,F>S,,,2,0.9422,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/1xemay776_jpg.rf.75b8e01ab37d607d9c628e13a0b9b200.jpg
 substitution,2,54Y99149,51Y99149,4>1,,,1,0.9236,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/1xemay779_jpg.rf.7a87e6ed4f4866a855e4b96aff6d5812.jpg
-missing_chars,2,54P76117,617,,54P71,,0 1 2 3 5,0.9787,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/1xemay785_jpg.rf.e355c49c5f4bd57ac6dad036c5e8e548.jpg
-extra_chars,2,59Y191982,59Y191982JJTT,,,JJTT,,0.9096,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/1xemay791_jpg.rf.aa4cb2f97be4eb38e11d871d42cfc278.jpg
+mixed,2,54P76117,54L7617,P>L,1,,2 5,0.9787,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/1xemay785_jpg.rf.e355c49c5f4bd57ac6dad036c5e8e548.jpg
 substitution,2,95E117763,95F117763,E>F,,,2,0.9769,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/1xemay807_jpg.rf.5d1f7b1c82ca6d9178d7f90a24a3f99e.jpg
 missing_chars,2,52T56177,52T5177,,6,,4,0.8049,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/1xemay879_jpg.rf.29e4a521d1e367069186ac499ab83278.jpg
 mixed,2,59U178039,5911178039,U>1,,1,2,0.9799,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/1xemay915_jpg.rf.96bbcf5921e6dc0d2681049c7096d1ee.jpg
-missing_chars,2,47D118716,18716,,47D1,,0 1 2 3,0.9998,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay1100_jpg.rf.e1fe51b20ee096b874ee014cf5a4c87d.jpg
-missing_chars,2,85D121869,21869,,85D1,,0 1 2 3,0.9988,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay124_jpg.rf.294571f5f4adf552ac0f0a8f86500c48.jpg
 substitution,2,59V155321,59V155320,1>0,,,8,0.9534,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay1266_jpg.rf.c53ddce47831457581b6183cf5cfbd3b.jpg
 substitution,2,70K105963,70X105963,K>X,,,2,0.9721,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay1271_jpg.rf.2691234730b348df7fc3f7728fd07056.jpg
 substitution,2,54L53913,54L59913,3>9,,,4,0.9828,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay1290_jpg.rf.a1aeddcff0997dab794d3c6738d1e732.jpg
 substitution,2,59V256589,59V246589,5>4,,,4,0.9549,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay1342_jpg.rf.598d1046e1c2e158a6f316f329ebf4f6.jpg
 mixed,2,47C105644,4CL05644,1>L,7,,1 3,0.8311,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay1416_jpg.rf.4150a3e724d194513ddae45f34c9eabc.jpg
 substitution,2,59L211547,59L211347,5>3,,,6,0.9798,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay1432_jpg.rf.a1869b764877cf715b61289b95649457.jpg
-missing_chars,2,59P133202,33202,,59P1,,0 1 2 3,0.9463,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay148_jpg.rf.f0aa2cd2fde16859dce6212f6ec22eed.jpg
 substitution,2,59S131886,59S131386,8>3,,,6,0.9747,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay149_jpg.rf.6924a8358c1047ad508fb51961806a55.jpg
 missing_chars,2,59C232477,59C23277,,4,,6,0.9260,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay1585_jpg.rf.cdc8ba42abac5681f752e963dd71e695.jpg
-missing_chars,2,54S92073,2073,,54S9,,0 1 2 3,0.9798,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay1717_jpg.rf.0be97fd033d0c5b04c59249ef02499bb.jpg
-extra_chars,2,59S236623,59S236623JJJL,,,JJJL,,0.9063,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay1761_jpg.rf.472a1fa31caa2f722b4c50c9c0126ea2.jpg
 missing_chars,2,59C221098,59C21098,,2,,3,0.9860,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay1764_jpg.rf.1e86c3f161dfaa93e0d3275a2f077e04.jpg
-missing_chars,2,71S35011,5011,,71S3,,0 1 2 3,0.9996,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay1770_jpg.rf.3bba668acf589b3bf4b31e5b61bf404e.jpg
-mixed,2,59E164239,59F164239JSC1,E>F,,JSC1,2,0.8989,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay1789_jpg.rf.85341c3f396d53b5c052f480c31bb39c.jpg
-extra_chars,2,59F149271,59F149271JST,,,JST,,0.8712,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay1792_jpg.rf.c9883a9e6036617384ad6b3ffbf09310.jpg
+substitution,2,59E164239,59F164239,E>F,,,2,0.9551,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay1789_jpg.rf.85341c3f396d53b5c052f480c31bb39c.jpg
 substitution,2,59C139780,59C1397PC,8>P 0>C,,,7 8,0.8311,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay1794_jpg.rf.57fb2b2eca6180ebee3e5718b4fb8222.jpg
-missing_chars,2,59P133202,33202,,59P1,,0 1 2 3,0.9992,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay1832_jpg.rf.c455872d787dd321996f2d48dd4062d2.jpg
-substitution,2,71B158070,58D707161,7>5 1>8 B>D 1>7 5>0 8>7 0>1 7>6 0>1,,,0 1 2 3 4 5 6 7 8,0.9059,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay1836_jpg.rf.a9064f3719118b91cf435bf158e1af53.jpg
 substitution,2,59U135226,59L135226,U>L,,,2,0.9401,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay183_jpg.rf.b127d711e64a19ba8deb3f1ed75d35fe.jpg
-missing_chars,2,59P133202,33202,,59P1,,0 1 2 3,0.9995,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay1859_jpg.rf.9c298ad7a3abda13fb51e3c115d33a1f.jpg
-mixed,2,59C149744,49T4459,5>4 1>T 7>4 4>5 4>9,C9,,0 2 3 5 6 7 8,0.9493,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay1866_jpg.rf.ba293de492f2ef7615e9b2f9b5163714.jpg
 substitution,2,50B628032,60R628032,5>6 B>R,,,0 2,0.9091,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay1872_jpg.rf.d2496e5d45389ceb29dab79e234bb315.jpg
-missing_chars,2,59E112903,12903,,59E1,,0 1 2 3,0.9998,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay1877_jpg.rf.539f693b829ac44d2f40baf3f8f7da97.jpg
+substitution,2,59E112903,59F112903,E>F,,,2,0.9998,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay1877_jpg.rf.539f693b829ac44d2f40baf3f8f7da97.jpg
 mixed,2,59X160210,50602105911,1>0,9X,5911,1 2 3,0.8290,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay1888_jpg.rf.492161a4b2df8bd2f78cbd30b29f6054.jpg
 substitution,2,59L229477,54L229477,9>4,,,1,0.9666,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay1903_jpg.rf.01ec6139de3afef909e3c91f67d9d3fd.jpg
 missing_chars,2,72F120741,20741,,72F1,,0 1 2 3,0.9979,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay1906_jpg.rf.bacb342a35818b08c665fe19713cc219.jpg
 substitution,2,59X281467,59Y781467,X>Y 2>7,,,2 3,0.9370,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay1912_jpg.rf.eb35ff2e54e11607f9800956ae8ae7ee.jpg
 substitution,2,54S89169,51S89169,4>1,,,1,0.8740,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay1915_jpg.rf.f4992d4617e6f423aeffb5231f907c24.jpg
 mixed,2,37H107918,37L07918,1>L,H,,2 3,0.9671,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay1918_jpg.rf.a009b33ebfc24a0bc55b2f2bdfbe6d41.jpg
-mixed,2,59C224729,5924729J97L2,,C2,9J7L2,2 3,0.8769,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay1924_jpg.rf.4749346bc6730ae73753bf07562b08dc.jpg
+mixed,2,59C224729,59Z4729,2>Z,C2,,2 3 4,0.9616,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay1924_jpg.rf.4749346bc6730ae73753bf07562b08dc.jpg
 mixed,2,59M121704,59Z1704,2>Z,M1,,2 3 4,0.9888,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay1933_jpg.rf.866b998f8c4528c451d4dff55ad0dfe1.jpg
-mixed,2,59U179751,79T515901,5>7 U>5 7>5 5>0,7,T,0 2 4 6 7,0.9466,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay1941_jpg.rf.6684f63fd8b12592b9d838d6c9e00fc7.jpg
-missing_chars,2,59Y160811,60811,,59Y1,,0 1 2 3,0.9852,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay1945_jpg.rf.364d582a5a34b68c1a72be6f40311c84.jpg
-missing_chars,2,70SA0367,700367,,SA,,2 3,0.8861,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay1946_jpg.rf.2c20bc85c09db52c25ed7879971a6c77.jpg
-mixed,2,50Y38211,82L1541,0>8 Y>2 3>L 8>1 2>5 1>4,5,,0 1 2 3 4 5 6,0.9327,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay1949_jpg.rf.37431d168beea82f8748975dd55bc0a9.jpg
-mixed,2,59P187149,590187149J9P1,P>0,,9JP1,2,0.8720,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay1950_jpg.rf.4fc3f21efb9d88c17ef5f70b2115e47e.jpg
-mixed,2,59P189739,C001897395YR1,5>C 9>0 P>0,,5YR1,0 1 2,0.7934,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay1969_jpg.rf.c7fef9e5c3dc849913d9455ab8d0f977.jpg
-mixed,2,59Y160811,60B1190,8>B,59Y1,90,0 1 2 3 6,0.8394,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay1980_jpg.rf.4e516bfed134772c7ecbf6e80e551f66.jpg
-mixed,2,59E113417,50C13417JSE,E>0 1>C,9,JSE,1 2 3,0.8764,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay1985_jpg.rf.a7a25338c8fa78c4ab4994782c2d2ce9.jpg
-missing_chars,2,59P155811,55811,,59P1,,0 1 2 3,0.9269,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay1997_jpg.rf.2ed8bc1a39fb198d728f9d87afe88614.jpg
+substitution,2,59Y160811,59L160811,Y>L,,,2,0.9852,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay1945_jpg.rf.364d582a5a34b68c1a72be6f40311c84.jpg
+substitution,2,50Y38211,54Y38211,0>4,,,1,0.9981,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay1949_jpg.rf.37431d168beea82f8748975dd55bc0a9.jpg
+substitution,2,59P187149,59D187149,P>D,,,2,0.9231,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay1950_jpg.rf.4fc3f21efb9d88c17ef5f70b2115e47e.jpg
+substitution,2,59P189739,C0D189739,5>C 9>0 P>D,,,0 1 2,0.8240,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay1969_jpg.rf.c7fef9e5c3dc849913d9455ab8d0f977.jpg
+mixed,2,59Y160811,50G0811,1>0 6>G,9Y,,1 2 3 4,0.9979,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay1980_jpg.rf.4e516bfed134772c7ecbf6e80e551f66.jpg
+mixed,2,59E113417,50C13417,E>0 1>C,9,,1 2 3,0.8918,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay1985_jpg.rf.a7a25338c8fa78c4ab4994782c2d2ce9.jpg
 mixed,2,54P11482,5PL1782,1>L 4>7,4,,1 3 5,0.9541,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay2009_jpg.rf.358f742ba49794746c901f7b2dd598fb.jpg
 mixed,2,59F131469,55L31469,F>5 1>L,9,,1 2 3,0.9031,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay2013_jpg.rf.8ac5fe047bd39871d4c4c95e480cdca4.jpg
-extra_chars,2,59M136452,59M136452JSH1,,,JSH1,,0.8243,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay2026_jpg.rf.d9a89f7881e466955fcdddc2f96d1b3e.jpg
-mixed,2,51T42133,51112133JTIL,T>1 4>1,,JTIL,2 3,0.7508,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay2034_jpg.rf.b4e131ace303fbc12ae90673827204a4.jpg
-missing_chars,2,51Y67665,7665,,51Y6,,0 1 2 3,0.9992,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay2041_jpg.rf.b008843966fc02336e293d25600e818d.jpg
-substitution,2,59M121704,21T0419H1,5>2 9>1 M>T 1>0 2>4 7>9 0>H 4>1,,,0 1 2 3 4 6 7 8,0.8393,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay2049_jpg.rf.241d1ce88572f5e0309ffc7890c815e9.jpg
+substitution,2,51T42133,51L12133,T>L 4>1,,,2 3,0.8543,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay2034_jpg.rf.b4e131ace303fbc12ae90673827204a4.jpg
 substitution,2,59X256462,59Y256462,X>Y,,,2,0.9499,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay2057_jpg.rf.3a7f3c4ba9de6f5dd61f8cf575d53f3f.jpg
-mixed,2,59U145476,5911145476JSFUT,U>1,,1JSFUT,2,0.8896,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay2061_jpg.rf.ad412e1676b65d2c4011d6cbfa67ffd9.jpg
-extra_chars,2,59T156987,59T156987591,,,591,,0.9294,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay2063_jpg.rf.3a14ddf1c1234df1bb520e7e90512339.jpg
-missing_chars,2,70EA00557,00557,,70EA,,0 1 2 3,0.9639,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay2064_jpg.rf.6f12662f570dab6b5d83e6ab6e4fca93.jpg
+mixed,2,59U145476,5911145476,U>1,,1,2,0.9596,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay2061_jpg.rf.ad412e1676b65d2c4011d6cbfa67ffd9.jpg
 substitution,2,54X95114,54Y95114,X>Y,,,2,0.9856,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay2068_jpg.rf.72b400e4bc40bda0dda81e5ae04e1fca.jpg
 mixed,2,59U145781,10A5781,U>1 1>0 4>A,59,,0 1 2 3 4,0.8940,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay2075_jpg.rf.886235e20fb72975d15462cfc1b7acb3.jpg
-missing_chars,2,59T101439,01439,,59T1,,0 1 2 3,0.9969,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay2079_jpg.rf.d095f34684174d33ef7a41219d74e19a.jpg
-mixed,2,54T16084,6UB4151,4>6 T>U 1>B 6>4 0>1 8>5 4>1,5,,0 1 2 3 4 5 6 7,0.6802,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay2081_jpg.rf.7bd34c672a2fb3fb54c31c21265cde60.jpg
-mixed,2,59L231395,591231395J312,L>1,,J312,2,0.8617,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay2083_jpg.rf.b5475e20f3f5ff84414f2cb3a9d45391.jpg
+mixed,2,54T16084,6U84,0>U,54T1,,0 1 2 3 5,0.8587,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay2081_jpg.rf.7bd34c672a2fb3fb54c31c21265cde60.jpg
 substitution,2,59E168785,59F168785,E>F,,,2,0.9618,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay2086_jpg.rf.c4bb8c77cdd1910eb7ffa9284716f6b8.jpg
-mixed,2,59M156378,50156378JHI,M>0,9,JHI,1 2,0.7722,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay2108_jpg.rf.4f96905c732e4a43047f6468525211ed.jpg
-extra_chars,2,59P189267,59P189267JSPPI,,,JSPPI,,0.8386,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay2114_jpg.rf.0317cc1aacad8f3b2742f4b822ea19ed.jpg
+mixed,2,59M156378,50L56378,M>0 1>L,9,,1 2 3,0.9067,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay2108_jpg.rf.4f96905c732e4a43047f6468525211ed.jpg
 substitution,2,59P224979,59P724379,2>7 9>3,,,3 6,0.9601,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay2130_jpg.rf.e040c5a492055ff439c825ff585d756b.jpg
-mixed,2,59L194176,59194176JSLI,,L,JSLI,2,0.9018,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay2137_jpg.rf.7c36163db29a7b62677bea8961661931.jpg
-extra_chars,2,59D206428,59D206428J502,,,J502,,0.9349,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay2145_jpg.rf.912c5280cec91e63ae5852a8fc499922.jpg
-extra_chars,2,49M71975,49M71975SM0,,,SM0,,0.6935,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay2146_jpg.rf.ea4e9d207a5e9d72f85d845f3dd6b77c.jpg
-extra_chars,2,59N174939,59N174939SHI,,,SHI,,0.8192,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay2147_jpg.rf.404d8bf1cc1157770bb88e88ab33e8bd.jpg
+missing_chars,2,59L194176,59L94176,,1,,3,0.9430,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay2137_jpg.rf.7c36163db29a7b62677bea8961661931.jpg
 substitution,2,59X145128,59X115128,4>1,,,4,0.9196,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay2149_jpg.rf.173df8f3bd7b1512d8a86fd48277fa60.jpg
 substitution,2,59E134192,59F134192,E>F,,,2,0.9372,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay2164_jpg.rf.149bdfb633a0790e0b75d425487d360b.jpg
 mixed,2,59C113183,13L831971,9>1 C>3 1>L 1>8 8>7 3>1,5,9,0 1 2 3 4 7 8,0.7785,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay2166_jpg.rf.486b06b2bd2285b689dd85e932f949f9.jpg
-mixed,2,49B120807,49R120807901,B>R,,901,2,0.8407,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay2170_jpg.rf.c755843db868a7d2c65a06cc67c24578.jpg
-missing_chars,2,72X18179,8179,,72X1,,0 1 2 3,0.9997,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay2180_jpg.rf.8caa6ab4ed2b854769c1b66bab150d7c.jpg
-extra_chars,2,60B562583,60B56258300D5,,,00D5,,0.8390,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay2183_jpg.rf.4a884f8e19241b2c507a0a3141fb1352.jpg
-missing_chars,2,59P112875,12875,,59P1,,0 1 2 3,0.9997,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay2213_jpg.rf.15f36dd54f62ecdd8d078cea9a15c7a4.jpg
-extra_chars,2,59M160077,59M160077591,,,591,,0.9086,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay2219_jpg.rf.0be8c67483721315a5aba578e0ea740c.jpg
-missing_chars,2,59E112903,12903,,59E1,,0 1 2 3,0.9995,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay221_jpg.rf.d7da6757e5658057ec30d870f31bd511.jpg
-substitution,2,50N107428,07A2810N7,5>0 0>7 N>A 1>2 0>8 7>1 4>0 2>N 8>7,,,0 1 2 3 4 5 6 7 8,0.8888,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay2220_jpg.rf.dd4f4bb5171d2da73b8178ff22c2d21c.jpg
+substitution,2,49B120807,49R120807,B>R,,,2,0.9281,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay2170_jpg.rf.c755843db868a7d2c65a06cc67c24578.jpg
+substitution,2,72X18179,72Y18179,X>Y,,,2,0.9997,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay2180_jpg.rf.8caa6ab4ed2b854769c1b66bab150d7c.jpg
+substitution,2,50N107428,50M107428,N>M,,,2,0.9994,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay2220_jpg.rf.dd4f4bb5171d2da73b8178ff22c2d21c.jpg
 mixed,2,55P62004,55P6200L35P6,4>6,,L35P,7,0.7648,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay2221_jpg.rf.482ad2ed19dd4ace0960ab817dfa0bc3.jpg
 substitution,2,64K47483,64KL7483,4>L,,,3,0.9008,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay2225_jpg.rf.f036d6862d9095534200902764bd3581.jpg
 substitution,2,51V44579,51VL4579,4>L,,,3,0.9593,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay2226_jpg.rf.7cda906f08c10d63a51e53ae0726beeb.jpg
 mixed,2,54P72138,51BP72138,4>B,,1,1,0.7447,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay2228_jpg.rf.ba0fa31c78badfcafc91b36482f93c03.jpg
 substitution,2,60X94808,60Y94808,X>Y,,,2,0.8583,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay2231_jpg.rf.66754fef1fe7a761522cc11ddc22c69e.jpg
-extra_chars,2,59T156150,59T156150J917,,,J917,,0.8952,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay2238_jpg.rf.328dd2a391c1e4567f00299449de7142.jpg
-mixed,2,59E156347,5956347JJE1,,E1,JJE1,2 3,0.8210,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay2267_jpg.rf.c1acecc2d75ea50cfef1becadee2fc8c.jpg
-extra_chars,2,59C153993,59C153993JSC,,,JSC,,0.8786,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay2272_jpg.rf.c7ea150e9722a276ef766b6e57dd17ee.jpg
+mixed,2,59E156347,59S6347,5>S,E1,,2 3 4,0.9706,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay2267_jpg.rf.c1acecc2d75ea50cfef1becadee2fc8c.jpg
 substitution,2,59S244712,59S244717,2>7,,,8,0.9202,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay2279_jpg.rf.7909b7650114e9cc7ae26ef5ac9cf086.jpg
-extra_chars,2,59T188808,59T188808J91,,,J91,,0.9471,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay2284_jpg.rf.293a3a4d7972733446c404bf3b59eaff.jpg
-missing_chars,2,47B142642,42642,,47B1,,0 1 2 3,0.9967,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay2297_jpg.rf.eeb6436ba66290c87eab61b741dbe692.jpg
-mixed,2,59C161891,U61891JSCI,1>U,59C,JSCI,0 1 2 3,0.7819,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay2302_jpg.rf.9d2bb0cda3ac5a30ed25591525c8232e.jpg
 mixed,2,59U139997,59L39997,1>L,U,,2 3,0.9340,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay2310_jpg.rf.b85de86654255fd17bba2eeb51b157e9.jpg
 substitution,2,59NZ43756,59N743756,Z>7,,,3,0.9915,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay2312_jpg.rf.18ae5937755b34034201b59657c7687a.jpg
 substitution,2,54S85489,51S85489,4>1,,,1,0.8877,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay2321_jpg.rf.6047a48b62f5dae8c9bef46de071f64a.jpg
 mixed,2,59B122119,E59R122119,B>R,,E,2,0.8944,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay2330_jpg.rf.98dab76c9673c50e2898175f37293f58.jpg
-mixed,2,59E129565,29565JYET1,5>2 E>6 1>5 2>J 9>Y 5>E 6>T 5>1,,5,0 2 3 4 5 6 7 8,0.8348,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay2347_jpg.rf.69bee68124975d42e152dc31e22a3a71.jpg
-mixed,2,59E117936,59F117936J9E1,E>F,,J9E1,2,0.8812,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay2354_jpg.rf.5fc2619b4e1e79f5070ede8c6582a6d2.jpg
+substitution,2,59E117936,59F117936,E>F,,,2,0.9204,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay2354_jpg.rf.5fc2619b4e1e79f5070ede8c6582a6d2.jpg
 substitution,2,59V208347,59V208341,7>1,,,8,0.9360,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay2358_jpg.rf.d652d982ae9310c0bcb4f164ce2b26be.jpg
-mixed,2,63B963040,6390630406389,B>9 9>0,,6389,2 3,0.8132,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay2366_jpg.rf.a9fc6ff7d92058b90a8e043692e30fc4.jpg
+substitution,2,63B963040,639063040,B>9 9>0,,,2 3,0.8521,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay2366_jpg.rf.a9fc6ff7d92058b90a8e043692e30fc4.jpg
 substitution,2,59S174613,59S174513,6>5,,,6,0.9582,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay236_jpg.rf.09299c10a91f3597a5b7cfc06523c4c2.jpg
-mixed,2,59H119374,19B7410,3>B,59H1,10,0 1 2 3 6,0.8678,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay2376_jpg.rf.39b5fb4279fcf005b19e6de9d83f0191.jpg
 missing_chars,2,59L145900,59L45900,,1,,3,0.9899,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay2387_jpg.rf.44fc6cee3fbef164e33bff219a0178b3.jpg
-mixed,2,81H12204,02Z040N,1>0 H>2 1>Z 2>0 2>4 4>N,8,,0 1 2 3 4 5 7,0.7866,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay2390_jpg.rf.98d213ae59d917e32dc163f8989a3f6c.jpg
-missing_chars,2,55X17546,7546,,55X1,,0 1 2 3,0.9981,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay2391_jpg.rf.603e39268c18e811bb6c10f99811c55a.jpg
-substitution,2,59E142530,42S3059E7,5>4 9>2 E>S 1>3 4>0 2>5 5>9 3>E 0>7,,,0 1 2 3 4 5 6 7 8,0.9275,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay2400_jpg.rf.f98b58e46011b7f0053459b45710c155.jpg
 substitution,2,54F72138,51P72138,4>1 F>P,,,1 2,0.8224,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay2401_jpg.rf.5d6c908870463616b585a3330c928126.jpg
-substitution,2,59X137438,37A381911,5>3 9>7 X>A 1>3 3>8 7>1 4>9 3>1 8>1,,,0 1 2 3 4 5 6 7 8,0.8232,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay2403_jpg.rf.f88d3bb47af3e3071693ac12b21a2aa5.jpg
 empty_read,2,62H27327,,,62H27327,,0 1 2 3 4 5 6 7,0.0000,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay2407_jpg.rf.fc9749d4f861e1d94367e106d39baa29.jpg
-mixed,2,54P83069,51003069PH,4>1 P>0 8>0,,PH,1 2 3,0.8130,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay2420_jpg.rf.01d021ae4af542e92be27f1cd8090271.jpg
-extra_chars,2,16M90826,16M90826NOIS,,,NOIS,,0.8257,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay2426_jpg.rf.e32ff8a32f8c62976953e30783809187.jpg
-missing_chars,2,59C165331,65331,,59C1,,0 1 2 3,0.9989,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay2429_jpg.rf.4d8f2ccc614f1a72f1803f3b89f63190.jpg
-extra_chars,2,59P218900,59P218900J9PZ,,,J9PZ,,0.9360,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay2432_jpg.rf.0f0e5a6611b4e7a4030377d06705a5a9.jpg
-mixed,2,54L42443,2443LL,5>2 4>3 4>L 3>L,L2,,0 2 4 5 6 7,0.6962,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay2443_jpg.rf.da3ff0ebce5d903e4edcf1e296d60cda.jpg
+substitution,2,54P83069,51D03069,4>1 P>D 8>0,,,1 2 3,0.8553,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay2420_jpg.rf.01d021ae4af542e92be27f1cd8090271.jpg
 substitution,2,54K16483,51K16483,4>1,,,1,0.8183,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay2444_jpg.rf.031e31ba4d0e9bede6be53e64caf3e73.jpg
-missing_chars,2,59P152934,52934,,59P1,,0 1 2 3,0.9997,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay2464_jpg.rf.d478a5d4fd041710a9e853714b47d58f.jpg
-extra_chars,2,59V216023,59V2160235917,,,5917,,0.9253,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay2477_jpg.rf.42525c639c3fd2a91ba30c8cfa8bd044.jpg
-mixed,2,63B957926,63R9579260509,B>R,,0509,2,0.8592,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay2479_jpg.rf.8e81a6ea755a3eb60d4bb0c6e74693b5.jpg
+substitution,2,63B957926,63R957926,B>R,,,2,0.9673,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay2479_jpg.rf.8e81a6ea755a3eb60d4bb0c6e74693b5.jpg
 missing_chars,2,51L73998,3998,,51L7,,0 1 2 3,0.9989,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay2487_jpg.rf.1ae0d7e9dd21305d28013e6c185aadde.jpg
-extra_chars,2,59C15610,59C153610JYTL,,,3JYTL,,0.8464,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay2489_jpg.rf.b99a00a1c7a5ecce27628f7171185ca5.jpg
+extra_chars,2,59C15610,59C153610,,,3,,0.9081,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay2489_jpg.rf.b99a00a1c7a5ecce27628f7171185ca5.jpg
 mixed,2,59C105899,59D05899,1>D,C,,2 3,0.9691,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay273_jpg.rf.78387d94076c65d0d7b2282fee048942.jpg
 mixed,2,59U179751,5901179751,U>1,,0,2,0.9135,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay279_jpg.rf.946d9b3f75a05ec893bb2f9e5bd46033.jpg
 mixed,2,72K59221,77K5921,2>7,2,,1 5,0.9077,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay303_jpg.rf.56972d65b7806b4a1bd227cddd562519.jpg
 substitution,2,51T42133,51T12133,4>1,,,3,0.9221,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay363_jpg.rf.8db9b74d7d8de16986093db83245d4e6.jpg
-missing_chars,2,60P71246,1246,,60P7,,0 1 2 3,0.9933,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay385_jpg.rf.d628ae3205c5de2fe9ace8345711c915.jpg
 substitution,2,72L86035,77L86035,2>7,,,1,0.9599,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay386_jpg.rf.5a1b157004a64f90b36d75c25a738465.jpg
 substitution,2,70EA00557,70S000557,E>S A>0,,,2 3,0.8709,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay390_jpg.rf.e940db91abb25c7d6f084cdb156f2c25.jpg
 substitution,2,79Z118589,79T118589,Z>T,,,2,0.9961,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay412_jpg.rf.5bb36621f0bf15a48dfbbc73a79fc8ce.jpg
 substitution,2,59E165903,59F165903,E>F,,,2,0.9851,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay518_jpg.rf.623a9ea2096673c0033a81e7a918373e.jpg
-missing_chars,2,72K125476,25476,,72K1,,0 1 2 3,0.9994,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay519_jpg.rf.a3f57b18c1b23e101d119f47ea6da72f.jpg
-mixed,2,59N176654,76G5411,6>G,59N1,11,0 1 2 3 6,0.9864,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay546_jpg.rf.39531ac87e94f1f1bcd446e1acbcfb39.jpg
 substitution,2,59U165072,59L165072,U>L,,,2,0.9408,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay562_jpg.rf.b6d64adbd6786d91faa8305ae4efb48a.jpg
 mixed,2,59U170392,5911170392,U>1,,1,2,0.9553,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay66_jpg.rf.a0d7ad6d4a49894e916e570cb646f9c6.jpg
 substitution,2,79Z104811,79T104811,Z>T,,,2,0.9876,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay674_jpg.rf.004779f67076e7b76af52ce02f1cd1be.jpg
 mixed,2,59M108275,59L08275,1>L,M,,2 3,0.9102,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay675_jpg.rf.08641ef5429a309216ae1415f2e893c4.jpg
 substitution,2,59X267178,59Y767178,X>Y 2>7,,,2 3,0.8542,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay809_jpg.rf.72739a44a7a798c5756200ae88adf1d7.jpg
 substitution,2,60B149139,60R149139,B>R,,,2,0.9582,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/2xemay971_jpg.rf.e8ccd4a70ef8a06d3e6aeee2df78ecd7.jpg
-extra_chars,2,60M8965,60M8965B0R1,,,B0R1,,0.9195,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/3CarLongPlate325_jpg.rf.f22f9519686a659422ba1fd81748cf70.jpg
 substitution,1,50LD04411,50L004411,D>0,,,3,0.9305,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/3CarLongPlate331_jpg.rf.c2ea3a82210c74405bdb97df1f15a68f.jpg
 substitution,1,93LD00103,93L000103,D>0,,,3,0.9642,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/3CarLongPlate393_jpg.rf.32b8500e533ec9d44f4dbcac0b0d0291.jpg
 mixed,1,51G47281,15LG47281,1>L,,1,1,0.9679,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/3CarLongPlate604_jpg.rf.09bd4ff8079d66258e1dad9b4808fa9b.jpg
 substitution,1,30V3993,20V3993,3>2,,,0,0.8780,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/3CarLongPlate670_jpg.rf.1a5912db63a8da83e438afbf5071345b.jpg
-mixed,1,51G51936,16S1936,G>6 5>S,5,,0 2 3,0.9007,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/3CarLongPlate747_jpg.rf.a487b45d456d2f945dcbaaa486caf910.jpg
+mixed,1,51G51936,IG51936,1>I,5,,0 1,0.9007,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/3CarLongPlate747_jpg.rf.a487b45d456d2f945dcbaaa486caf910.jpg
 extra_chars,1,51F1555,51F15585,,,8,,0.9819,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/3CarLongPlate874_jpg.rf.df0c498e94052f4d4f44ade5e658a471.jpg
 substitution,2,51H49707,51HL9707,4>L,,,3,0.8378,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/3xemay1028_jpg.rf.dae34ae53367a0eed081659d61854139.jpg
 substitution,2,59E162847,59F162847,E>F,,,2,0.9746,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/3xemay1079_jpg.rf.a7d61c2dabc3c5c44dff676da6ce6469.jpg
@@ -233,183 +159,123 @@ substitution,2,60B422155,50B422155,6>5,,,0,0.8984,D:/DATN/datasets/raw/roboflow_
 substitution,2,59M197489,59A197489,M>A,,,2,0.9416,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/3xemay1227_jpg.rf.ef2f38a301aeee8e72932c6b76cc5342.jpg
 substitution,2,53V48609,53VL8609,4>L,,,3,0.9539,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/3xemay1264_jpg.rf.3b9e0ae2094df16bf62745d0a8e68386.jpg
 substitution,2,59E170762,59F170762,E>F,,,2,0.9374,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/3xemay1265_jpg.rf.bae165eb5d4b6c1162ffc038f6136416.jpg
-missing_chars,2,78N25203,5203,,78N2,,0 1 2 3,0.9968,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/3xemay1269_jpg.rf.425a5a05899044b2206fc4fb340a81e3.jpg
 mixed,2,48F1856,18F31856,4>1,,3,0,0.8741,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/3xemay128_jpg.rf.a36307306b2c625dfb53d13167d93a06.jpg
 substitution,2,47L109977,47L109917,7>1,,,7,0.9080,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/3xemay1310_jpg.rf.e389b5f7d1714f6f646d9d00a63fa361.jpg
 substitution,2,59M148700,59M743700,1>7 8>3,,,3 5,0.8893,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/3xemay1327_jpg.rf.739d8768eb936f7adade8b537fa42083.jpg
 mixed,2,59T127957,59Z7957,2>Z,T1,,2 3 4,0.9894,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/3xemay1339_jpg.rf.4a0361e91cdff3173a6ff5eca87ff1e5.jpg
 substitution,2,59X149553,59X149573,5>7,,,7,0.9960,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/3xemay1349_jpg.rf.e60b7777961a261eb61a055427c66ba5.jpg
 substitution,2,59X291011,59Y291011,X>Y,,,2,0.9517,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/3xemay1376_jpg.rf.f6dd980c53b69027c4f0d7c735b6f14a.jpg
-extra_chars,2,59Y154776,59Y154776JJT,,,JJT,,0.8386,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/3xemay1385_jpg.rf.4cabc90643227a540b2a90549e65a785.jpg
 substitution,2,47M76992,47A76992,M>A,,,2,0.8408,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/3xemay1484_jpg.rf.e23a0c91805723aa829d6c76a880a6c5.jpg
 mixed,2,59M187668,59L87668,1>L,M,,2 3,0.9378,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/3xemay1525_jpg.rf.7a221e416837ff11c7c94cc17a061ee4.jpg
 substitution,2,68K49407,60L49407,8>0 K>L,,,1 2,0.9156,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/3xemay1570_jpg.rf.47d89a5e5303d9d673e3fd4e802b7c28.jpg
-mixed,2,59M197372,59N197372JSHT,M>N,,JSHT,2,0.7692,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/3xemay1597_jpg.rf.5388abcfb4ed8d9512fb7b002471a753.jpg
-mixed,2,77F128472,775128472R,F>5,,R,2,0.8526,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/3xemay1604_jpg.rf.17aaf67fc222bbab77c39dc594f4c7df.jpg
+substitution,2,59M197372,59N197372,M>N,,,2,0.8959,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/3xemay1597_jpg.rf.5388abcfb4ed8d9512fb7b002471a753.jpg
+substitution,2,77F128472,77S128472,F>S,,,2,0.9940,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/3xemay1604_jpg.rf.17aaf67fc222bbab77c39dc594f4c7df.jpg
 missing_chars,2,59H141296,59H41296,,1,,3,0.9166,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/3xemay1607_jpg.rf.40f1abcc32f61610e369457130ac2715.jpg
 mixed,2,59T186782,59T18082,7>0,6,,5 6,0.8939,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/3xemay1662_jpg.rf.e184a55b0305b6a7f6be436912c43e59.jpg
 substitution,2,54P46793,51P16793,4>1 4>1,,,1 3,0.9497,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/3xemay1669_jpg.rf.54da1942e7003210f43aad2f15d94de6.jpg
-missing_chars,2,54T14995,4995,,54T1,,0 1 2 3,0.9992,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/3xemay1670_jpg.rf.9d00865c0610897e6387fa3630e8ccf0.jpg
 missing_chars,2,59C131162,59C13162,,1,,5,0.8718,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/3xemay1673_jpg.rf.3982416e102e2283b765f9c42af7166d.jpg
 substitution,2,54Z31084,54T31084,Z>T,,,2,0.9306,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/3xemay1676_jpg.rf.7334918941545816c5aec0d14c9cf360.jpg
-missing_chars,2,54L48348,8348,,54L4,,0 1 2 3,0.9997,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/3xemay1677_jpg.rf.76d063850759c39ac23f23e2139942eb.jpg
 substitution,2,59Z202768,59T202768,Z>T,,,2,0.9207,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/3xemay1704_jpg.rf.b10feee89874848466fcc6f5abd03298.jpg
-missing_chars,2,54T11850,1850,,54T1,,0 1 2 3,0.9999,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/3xemay1725_jpg.rf.2f938297aac994314ba10b7c9ab7f479.jpg
-missing_chars,2,59C156086,56086,,59C1,,0 1 2 3,0.9985,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/3xemay1730_jpg.rf.0d3dcc09185b6804184e359090a775ac.jpg
 missing_chars,2,55P85535,55P8535,,5,,4,0.9145,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/3xemay1733_jpg.rf.1dfb62af0afcdf9f5ddd748e9537a846.jpg
 mixed,2,52L26661,52Z6661,2>Z,L,,2 3,0.9671,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/3xemay1749_jpg.rf.7f597b58b77ba8ba3dea1cc43b41f0cb.jpg
 substitution,2,60B813705,60R813705,B>R,,,2,0.9897,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/3xemay1771_jpg.rf.137ef08ddae1f6f1f80435d6e1b18b81.jpg
-mixed,2,59P133202,33Z0211R,2>Z,59P1,11R,0 1 2 3 6,0.8491,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/3xemay1795_jpg.rf.43851b67a1f2d11c42b7cf6c5ef069a3.jpg
 mixed,2,47D117237,70L17237,D>0 1>L,4,,0 2 3,0.9033,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/3xemay1805_jpg.rf.56f088d4cf2b7448ccbd6c0aba90c696.jpg
-mixed,2,47K108279,08Z797K1,2>Z,47K1,7K1,0 1 2 3 6,0.7999,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/3xemay1815_jpg.rf.3cd7605d02c21589b3d24053a4b7e20e.jpg
+substitution,2,47K108279,17K108279,4>1,,,0,0.8997,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/3xemay1815_jpg.rf.3cd7605d02c21589b3d24053a4b7e20e.jpg
 substitution,2,52Z79752,57T79752,2>7 Z>T,,,1 2,0.9381,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/3xemay1842_jpg.rf.af487c88816b80279144a4875ac707fe.jpg
-extra_chars,2,59B131149,59B1311495901,,,9501,,0.8983,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/3xemay1858_jpg.rf.774efb442ac305dc73d72fe5ebbc4b09.jpg
-missing_chars,2,93P106312,06312,,93P1,,0 1 2 3,0.9235,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/3xemay1925_jpg.rf.8a901634264577c22dc3cabd29d56903.jpg
-missing_chars,2,54V14819,4819,,54V1,,0 1 2 3,0.9162,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/3xemay1928_jpg.rf.d2a31d1ddf89ad3ec662e182787d4b68.jpg
+substitution,2,54V14819,54A14819,V>A,,,2,0.9162,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/3xemay1928_jpg.rf.d2a31d1ddf89ad3ec662e182787d4b68.jpg
 substitution,2,59V200884,59V2C0884,0>C,,,4,0.9246,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/3xemay192_jpg.rf.a3e7ab3339b6fb818d9b5cf34fa9a1ff.jpg
-mixed,2,59C105899,05B991961,C>9 8>9 9>6 9>1,05,0B,2 4 5 6 7 8,0.8829,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/3xemay1934_jpg.rf.452fbbb29b31a3d80be8b301a2a8dac1.jpg
-extra_chars,2,55P56876,55P56876J5P5,,,J5P5,,0.7867,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/3xemay1937_jpg.rf.572abc95d9500ac1a6aee4d938d9ff22.jpg
-mixed,2,29C120902,79C12090229,2>7,,29,0,0.8868,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/3xemay1956_jpg.rf.bc8c97efb4c6519310730b8f82bc3bc7.jpg
+substitution,2,59C105899,59C705899,1>7,,,3,0.9993,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/3xemay1934_jpg.rf.452fbbb29b31a3d80be8b301a2a8dac1.jpg
+substitution,2,29C120902,79C120902,2>7,,,0,0.9459,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/3xemay1956_jpg.rf.bc8c97efb4c6519310730b8f82bc3bc7.jpg
 substitution,2,59L223714,59L223711,4>1,,,8,0.9554,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/3xemay1990_jpg.rf.027c5e1c883011da1c3c2577629ff9e1.jpg
-extra_chars,2,85F100417,85F100417OJR,,,OJR,,0.8115,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/3xemay2085_jpg.rf.d78864e0c1cd23193217fa36bce81188.jpg
 substitution,2,83B66954,83966954,B>9,,,2,0.8620,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/3xemay2132_jpg.rf.111309f8e57f3ed08fabf9084921da54.jpg
 substitution,2,59X278848,78B485912,5>7 9>8 X>B 2>4 7>8 8>5 8>9 4>1 8>2,,,0 1 2 3 4 5 6 7 8,0.9946,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/3xemay2154_jpg.rf.d9d6a4c67f310ca814a21270c8374b1c.jpg
-mixed,2,59L136261,591136261JSELT,L>1,,JSELT,2,0.8841,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/3xemay2214_jpg.rf.238a60b613d3701d86be656d6c10ef60.jpg
 substitution,2,59U157674,54L157674,9>4 U>L,,,1 2,0.8907,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/3xemay2242_jpg.rf.679f1ba298904c7918f3fef56c061756.jpg
-missing_chars,2,77C139373,39373,,77C1,,0 1 2 3,0.9852,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/3xemay2247_jpg.rf.6dc51525754eba27396466affe399d97.jpg
-extra_chars,2,62V16814,62V168140211,,,0211,,0.8569,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/3xemay2251_jpg.rf.ce1750be84ed942593d7de3cdeda4b60.jpg
 substitution,2,59F164516,50E164516,9>0 F>E,,,1 2,0.8782,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/3xemay2254_jpg.rf.f37ff6456097c1c4188b122f5ae59221.jpg
-mixed,2,51L34827,51134827JTLJ,L>1,,JTLJ,2,0.8724,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/3xemay2263_jpg.rf.104669ed45fc0d118a2fc5eaefb13ca4.jpg
 mixed,2,67E105420,05A20001,6>0 7>5 E>A 1>2 4>0 2>0 0>1,5,,0 1 2 3 5 6 7 8,0.7457,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/3xemay2286_jpg.rf.97178f85203f57e9be439f143c2f5bff.jpg
 substitution,2,71B289897,71B289937,8>9 9>3,,,6 7,0.9471,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/3xemay2314_jpg.rf.dd4bd542e77ef924e9931b5e26bd50fe.jpg
-substitution,2,59T166153,66L535P17,5>6 9>6 T>L 1>5 6>3 6>5 1>P 5>1 3>7,,,0 1 2 3 4 5 6 7 8,0.8017,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/3xemay2328_jpg.rf.a11c0f2a78cbcaeb7c9e9f571b16d092.jpg
-missing_chars,2,77H62229,2229,,77H6,,0 1 2 3,0.9996,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/3xemay2383_jpg.rf.b014367da4c8cbc5e32ecfbc1bef7331.jpg
-mixed,2,59E170535,59F170535J97T1,E>F,,J97T1,2,0.8961,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/3xemay2394_jpg.rf.0a80ae4dbda85ef3c8d3332251bef134.jpg
-missing_chars,2,54S16312,6312,,54S1,,0 1 2 3,0.9117,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/3xemay2462_jpg.rf.0f47b12231e42d07d43968757dcb497a.jpg
-extra_chars,2,59F170424,59F170424J99R1,,,J99R1,,0.8762,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/3xemay2476_jpg.rf.5e3033b36ae4beea507b4a1bf93fa8a8.jpg
-extra_chars,2,67B181846,67B18184607D1,,,07D1,,0.8771,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/3xemay2482_jpg.rf.01054d239aaceca827bb67db6388f1e2.jpg
-missing_chars,2,54X45969,5969,,54X4,,0 1 2 3,0.9994,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/3xemay2485_jpg.rf.36c9c5ba65ab2340840364c12e0b467b.jpg
+substitution,2,59T166153,59T766153,1>7,,,3,0.9997,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/3xemay2328_jpg.rf.a11c0f2a78cbcaeb7c9e9f571b16d092.jpg
+substitution,2,59E170535,59F170535,E>F,,,2,0.9751,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/3xemay2394_jpg.rf.0a80ae4dbda85ef3c8d3332251bef134.jpg
+substitution,2,54S16312,51S16312,4>1,,,1,0.9117,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/3xemay2462_jpg.rf.0f47b12231e42d07d43968757dcb497a.jpg
 missing_chars,2,54V14819,4819,,54V1,,0 1 2 3,0.9986,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/3xemay268_jpg.rf.b6ddeac5d4f857e522a39ef1930fc777.jpg
-missing_chars,2,53V97976,7976,,53V9,,0 1 2 3,0.9994,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/3xemay281_jpg.rf.ee3e2eb6277cb8de82257db20f7683d9.jpg
 substitution,2,86B608797,60B608797,8>6 6>0,,,0 1,0.8704,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/3xemay292_jpg.rf.179816c872535c6381509876a6eb0d7d.jpg
 substitution,2,59E113417,59F113417,E>F,,,2,0.9587,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/3xemay31_jpg.rf.7bd1105f06c46d420a1276a4d7c85126.jpg
 substitution,2,59H272061,59N272061,H>N,,,2,0.9573,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/3xemay348_jpg.rf.1309a35eef3a0a114b258bd58c223183.jpg
-mixed,2,60B628032,FO8628032OU00,6>F 0>O B>8,,OU00,0 1 2,0.7731,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/3xemay351_jpg.rf.c36356f3536d53b3b746f1313b5913d8.jpg
-missing_chars,2,78H117550,17550,,78H1,,0 1 2 3,0.9996,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/3xemay439_jpg.rf.22853f6ac3d14c68cbb788196ae2f07f.jpg
+substitution,2,60B628032,F0B628032,6>F,,,0,0.8452,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/3xemay351_jpg.rf.c36356f3536d53b3b746f1313b5913d8.jpg
+substitution,2,78H117550,70H117550,8>0,,,1,0.9996,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/3xemay439_jpg.rf.22853f6ac3d14c68cbb788196ae2f07f.jpg
 mixed,2,59U177792,5011177792,9>1 U>1,,0,1 2,0.9860,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/3xemay483_jpg.rf.77a4657168f90319d92e4a517b9a2b8d.jpg
 substitution,2,54X41983,54XL1983,4>L,,,3,0.9232,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/3xemay545_jpg.rf.9aa99794b14429499e63bfb59ff6703f.jpg
 substitution,2,59T102309,59T132309,0>3,,,4,0.9865,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/3xemay558_jpg.rf.bb50d2cd4d8d8b8d474922b26b260d3b.jpg
-extra_chars,2,79N179117,79N17911773HT,,,73HT,,0.8266,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/3xemay570_jpg.rf.08eb7a3b760246f8d2963c9f12e9fef4.jpg
 substitution,2,51Z30606,51T30606,Z>T,,,2,0.9800,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/3xemay591_jpg.rf.0f6b4049c9ea9ba9924c5cde6e9d92f3.jpg
 substitution,2,59C161891,59D161891,C>D,,,2,0.9643,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/3xemay604_jpg.rf.f00cca07d6c1a72b2fec68a9ece2ddc9.jpg
 substitution,2,59F109596,59E109596,F>E,,,2,0.9319,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/3xemay636_jpg.rf.195be865f817c86a85ca6d43288780e3.jpg
 substitution,2,64D121888,64NO21888,D>N 1>O,,,2 3,0.8383,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/3xemay646_jpg.rf.cac29cb1a0370b896df447fd5e3bc5e6.jpg
 substitution,2,84K34900,81K34900,4>1,,,1,0.9383,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/3xemay65_jpg.rf.2dab875d6a65e7109476723b7fdc3654.jpg
-missing_chars,2,71H15518,5518,,71H1,,0 1 2 3,0.9957,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/3xemay665_jpg.rf.3d5f66640efa75a0a1a56a54b18612d9.jpg
 substitution,2,67M23789,67H23789,M>H,,,2,0.9625,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/3xemay708_jpg.rf.8044c6405099cbb630407261f363ded9.jpg
-missing_chars,2,77L100895,00895,,77L1,,0 1 2 3,0.9988,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/3xemay725_jpg.rf.28ca3fea98473c37c6bdba456889b77a.jpg
-missing_chars,2,59P152934,52934,,59P1,,0 1 2 3,0.9999,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/3xemay75_jpg.rf.26270ec615791e8019fc4b6e9ce56461.jpg
 missing_chars,2,59F132246,32246,,59F1,,0 1 2 3,0.9955,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/3xemay814_jpg.rf.eacdd1ed826d38c5bf3f0cd53f8727ec.jpg
 mixed,2,54S25505,51S2505,4>1,5,,1 4,0.8993,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/3xemay929_jpg.rf.ce2062258c1163cd5a3df5887e00abcd.jpg
 substitution,2,59Z126553,59T126553,Z>T,,,2,0.9511,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/3xemay942_jpg.rf.3cc3b1ea29184d252d070bdb006ab7ac.jpg
-substitution,2,59L231318,31B181912,5>3 9>1 L>B 2>1 3>8 3>9 8>2,,,0 1 2 3 4 6 8,0.9342,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/3xemay945_jpg.rf.6d925992f7ff9c85ec5558886e4172d3.jpg
 substitution,2,54F45279,54FL5279,4>L,,,3,0.9282,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/3xemay986_jpg.rf.a3eb1f8b533954627463efb124b11f57.jpg
 extra_chars,2,59C15610,59C150610,,,0,,0.9460,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/3xemay98_jpg.rf.5058fb542a6062a821afaa9aff8b137e.jpg
 substitution,2,52Z67766,52T67766,Z>T,,,2,0.8220,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/3xemay995_jpg.rf.d9ffe6971f986e24b9c7d3ff0235200f.jpg
 substitution,2,59F175758,59S175758,F>S,,,2,0.9676,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/4CarLongPlate912_jpg.rf.f5245392c00b9bf0600271e295f93136.jpg
-missing_chars,2,47N69618,9618,,47N6,,0 1 2 3,0.9996,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/4xemay1954_jpg.rf.8b54b6435cb8a30018f4fe41a3e00dda.jpg
-substitution,2,80B608797,80RN08797,B>R 6>N,,,2 3,0.7573,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/4xemay1955_jpg.rf.8aab401c85f2bf828fc97e641b5371de.jpg
+substitution,2,80B608797,80G608797,B>G,,,2,0.7573,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/4xemay1955_jpg.rf.8aab401c85f2bf828fc97e641b5371de.jpg
 substitution,2,59E164141,59F164141,E>F,,,2,0.9734,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/4xemay1958_jpg.rf.c473a47b87c8921e8f19d188a86d2f9f.jpg
 mixed,2,59X203954,59Y20351,X>Y 4>1,9,,2 6 8,0.8008,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/4xemay1961_jpg.rf.266e4c7b362e164b5a244ba39e79ed9c.jpg
-missing_chars,2,59H170791,70791,,59H1,,0 1 2 3,0.9592,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/4xemay1967_jpg.rf.a3cd5848aeff4f3206ffc30b6c3eadec.jpg
-mixed,2,62L122766,671122767O2L1,2>7 L>1 6>1,,7O2L,1 2 8,0.8101,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/4xemay1972_jpg.rf.e4d67c2a072c27d546bbd4f43c803d22.jpg
+mixed,2,59H170791,59L70791,1>L,H,,2 3,0.9592,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/4xemay1967_jpg.rf.a3cd5848aeff4f3206ffc30b6c3eadec.jpg
+substitution,2,62L122766,67L122767,2>7 6>7,,,1 8,0.8627,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/4xemay1972_jpg.rf.e4d67c2a072c27d546bbd4f43c803d22.jpg
 substitution,2,59P231316,50P231316,9>0,,,1,0.9541,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/4xemay1991_jpg.rf.1801aba23151718995f6d4bf23aca692.jpg
-missing_chars,2,59E125297,25297,,59E1,,0 1 2 3,0.9996,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/4xemay1992_jpg.rf.b461e1b5a4fea0037dc0d9063c700217.jpg
-mixed,2,71C236423,36423JISCE,7>3 1>6 C>4 6>I 4>S 2>C 3>E,,J,0 1 2 5 6 7 8,0.8028,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/4xemay1999_jpg.rf.83e29e75fc1d49213e2b2eb76b65e4b6.jpg
-missing_chars,2,77C139373,39373,,77C1,,0 1 2 3,0.8918,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/4xemay2001_jpg.rf.4f054776fe7aeb1c8e3c53760846cf2f.jpg
-mixed,2,93P117409,017409,1>0,93P,,0 1 2 3,0.9492,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/4xemay2002_jpg.rf.6902e1308621526ec4d5f412bef42182.jpg
-mixed,2,59F147404,50F147404598R1,9>0,,598R1,1,0.8808,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/4xemay2005_jpg.rf.2bb749fb49b869e2c409fe0e8cc489f9.jpg
+substitution,2,59F147404,50F147404,9>0,,,1,0.9119,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/4xemay2005_jpg.rf.2bb749fb49b869e2c409fe0e8cc489f9.jpg
 extra_chars,2,54S1459,54S14959,,,9,,0.9840,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/4xemay2032_jpg.rf.34cca0a905076ea135b48ba9c4c5c549.jpg
 substitution,2,60D628032,60C628032,D>C,,,2,0.7969,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/4xemay2036_jpg.rf.0a88a4e769fcac692afc8f026abdb662.jpg
 substitution,2,59E108058,59F108058,E>F,,,2,0.9748,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/4xemay2037_jpg.rf.7727d814264611a55ea45ac6aa93e619.jpg
 substitution,2,79N160529,70W160529,9>0 N>W,,,1 2,0.9490,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/4xemay2055_jpg.rf.db765d4caeea7e4f14e02dd44d3295d6.jpg
-extra_chars,2,60C123774,60C123774OUL1,,,OUL1,,0.8806,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/4xemay2056_jpg.rf.c849fdd2a33742142737dc55ccc85713.jpg
-missing_chars,2,72L86035,6035,,72L8,,0 1 2 3,0.9975,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/4xemay2059_jpg.rf.c89d3ebf080705f489766996c78a2c63.jpg
+substitution,2,72L86035,77L86035,2>7,,,1,0.9975,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/4xemay2059_jpg.rf.c89d3ebf080705f489766996c78a2c63.jpg
 substitution,2,56N100018,59N100018,6>9,,,1,0.9715,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/4xemay2067_jpg.rf.982efed0e87b12c623b5ae8c30d4ce75.jpg
 substitution,2,79Z118589,79T118589,Z>T,,,2,0.9928,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/4xemay2089_jpg.rf.0266d4de29431a62b195492337b0c37a.jpg
-missing_chars,2,59N125521,25521,,59N1,,0 1 2 3,0.9996,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/4xemay2100_jpg.rf.489c98fe7515dea66ebbae1d479287c8.jpg
 substitution,2,71B217757,719717757,B>9 2>7,,,2 3,0.9319,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/4xemay2101_jpg.rf.7e01ac21ea20d39d581a47d3c28a8a5c.jpg
-extra_chars,2,59C139916,59C139916J9CI,,,J9CI,,0.8867,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/4xemay2102_jpg.rf.75aa7e2d68442f5a430817d0b1972b4a.jpg
-extra_chars,2,59C230513,59C230513J9L2,,,J9L2,,0.9298,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/4xemay2105_jpg.rf.0de9f589ccb6ec46724ca5044d1ea2a9.jpg
-extra_chars,2,59V200285,59V2002855917,,,5917,,0.9131,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/4xemay2107_jpg.rf.d18591177b6f91c98d13ee189a658f96.jpg
 mixed,2,59H121704,59L21704,1>L,H,,2 3,0.9596,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/4xemay2111_jpg.rf.f9db525b00e9c2431ec94cd7fd8a592c.jpg
-missing_chars,2,54X26487,6487,,54X2,,0 1 2 3,0.9979,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/4xemay2115_jpg.rf.bb08e3ef527d839be5ee73bc65e0082e.jpg
-mixed,2,59C100507,5OR0050759L1,C>O 1>R,9,59L1,1 2 3,0.8157,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/4xemay2118_jpg.rf.eb1357c7275c329678ddc2af9377d429.jpg
+mixed,2,59C100507,50R00507,C>0 1>R,9,,1 2 3,0.8343,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/4xemay2118_jpg.rf.eb1357c7275c329678ddc2af9377d429.jpg
 substitution,2,59G187671,59C187671,G>C,,,2,0.9886,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/4xemay2122_jpg.rf.88ab7b90e25fefd522ad78d1ced3f027.jpg
-missing_chars,2,59X149369,49369,,59X1,,0 1 2 3,0.9917,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/4xemay2134_jpg.rf.a26189e7c5c56b6193a8c52d04454bba.jpg
 mixed,2,59X295479,59E,9>E,9X2547,,1 2 3 5 6 7 8,0.7721,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/4xemay2136_jpg.rf.a821fa431eeb613712e4309c0c7c58d4.jpg
-mixed,2,59V200884,59V2JU884JJT2,0>J 0>U,,JJT2,4 5,0.8667,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/4xemay2139_jpg.rf.854ebc4eecdba7239c599ef795529c62.jpg
-mixed,2,54L24264,42G41112,L>2 2>G 2>1 6>1 4>2,5,1,0 2 3 5 6 7,0.8620,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/4xemay2151_jpg.rf.ac3764ea1624ece0189cf27483846174.jpg
-mixed,2,66S109018,66C90180031,S>0 0>8 9>0 1>3 8>1,,C9,2 4 5 7 8,0.8753,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/4xemay2161_jpg.rf.9db931bf1692c7927ee56acfb6bb620f.jpg
-mixed,2,59B133968,599133968J961,B>9,,J961,2,0.9234,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/4xemay2163_jpg.rf.345e7679a2ecfc397ddf151d236b7334.jpg
-missing_chars,2,62V16814,626814,,V1,,2 3,0.9329,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/4xemay2171_jpg.rf.85c23975b09f63510f45fe450a57f2c8.jpg
+substitution,2,59V200884,59V21U884,0>1 0>U,,,4 5,0.9559,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/4xemay2139_jpg.rf.854ebc4eecdba7239c599ef795529c62.jpg
+mixed,2,66S109018,66C9018,0>C,S1,,2 3 4,0.9637,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/4xemay2161_jpg.rf.9db931bf1692c7927ee56acfb6bb620f.jpg
 substitution,2,49K107320,49T107320,K>T,,,2,0.9438,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/4xemay2174_jpg.rf.ea7c7643ee59745cc2ca5fa75b146d15.jpg
-mixed,2,69U120415,69101204156901,U>0,,16901,2,0.9014,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/4xemay2182_jpg.rf.8f8e17e1d6f24cb558097ef5c48d352f.jpg
-missing_chars,2,59N125521,25521,,59N1,,0 1 2 3,0.9977,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/4xemay2188_jpg.rf.a0d16c972b2409ea646f1e716c0a7ee9.jpg
-mixed,2,60B206370,6097063700082,B>9 2>7,,0082,2 3,0.9097,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/4xemay2200_jpg.rf.5282b2fa6708d50e3b2e2e134506b251.jpg
-substitution,2,37K46713,67L337K4,3>6 K>L 4>3 6>3 1>K 3>4,,,0 2 3 4 6 7,0.8278,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/4xemay2205_jpg.rf.0901fefec31df50526badbd98b6c3529.jpg
+mixed,2,69U120415,6910120415,U>0,,1,2,0.9142,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/4xemay2182_jpg.rf.8f8e17e1d6f24cb558097ef5c48d352f.jpg
+substitution,2,60B206370,60A706370,B>A 2>7,,,2 3,0.9231,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/4xemay2200_jpg.rf.5282b2fa6708d50e3b2e2e134506b251.jpg
 mixed,2,59H103519,59M03519,1>M,H,,2 3,0.9214,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/4xemay2207_jpg.rf.f3d2634748ff93a3e11dc060b0d9bab1.jpg
-missing_chars,2,52S37078,7078,,52S3,,0 1 2 3,0.9990,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/4xemay2209_jpg.rf.e2b860071fb19856623b6a63139b0695.jpg
 substitution,2,59E134192,50S134192,9>0 E>S,,,1 2,0.9041,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/4xemay2210_jpg.rf.b00ce37174aff922db304ccc9093cea3.jpg
-mixed,2,59S273546,5O735465952,2>O,9S,5952,1 2 3,0.8381,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/4xemay2211_jpg.rf.2ab4205cdfbc7ec4d9087d88fff8c28b.jpg
-extra_chars,2,59V189158,59V189158J911,,,J911,,0.9050,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/4xemay2217_jpg.rf.241ec22d45c22ed55ad14197da1e8be9.jpg
-missing_chars,2,59D143391,43391,,59D1,,0 1 2 3,0.9991,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/4xemay2224_jpg.rf.d0f0ba30e5fd9897d952e94c15299b9e.jpg
+mixed,2,59S273546,50T3546,2>0 7>T,9S,,1 2 3 4,0.8623,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/4xemay2211_jpg.rf.2ab4205cdfbc7ec4d9087d88fff8c28b.jpg
 substitution,2,59N147102,59M147102,N>M,,,2,0.9284,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/4xemay2234_jpg.rf.7d9adb3f41ee2c261a0afa3336df89f9.jpg
 substitution,2,54Z87524,54T87524,Z>T,,,2,0.9071,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/4xemay2240_jpg.rf.8994a2b1a55e5f85a363771e4f45bb00.jpg
-missing_chars,2,54L42110,2110,,54L4,,0 1 2 3,0.9930,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/4xemay2241_jpg.rf.b1487c9b5e686cef7a58bf0a848cd570.jpg
-mixed,2,69D105661,6901056616901,D>0,,6190,2,0.9036,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/4xemay2246_jpg.rf.37839a93651e231fec6c76231d9df196.jpg
 substitution,2,59T102309,59T132309,0>3,,,4,0.9440,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/4xemay2250_jpg.rf.dcc01684227999899a159e9a5f72a5be.jpg
 substitution,2,59U165072,59L165072,U>L,,,2,0.9600,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/4xemay2255_jpg.rf.1b4ac1d719d053cfc98783cd8e7d30ce.jpg
 substitution,2,59E119803,59S119803,E>S,,,2,0.9522,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/4xemay2256_jpg.rf.71c7779f1057da494da44d26dcb37811.jpg
 substitution,2,79N179117,79L179117,N>L,,,2,0.8946,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/4xemay2264_jpg.rf.b705b22d9b3e96b229e294d3ddc0d758.jpg
 substitution,2,59K154227,59K164227,5>6,,,4,0.9491,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/4xemay2269_jpg.rf.8cad797f3ef9b9f386b2bb9e28f5b279.jpg
 mixed,2,59S195382,5095382,1>0,9S,,1 2 3,0.9321,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/4xemay2278_jpg.rf.49a2528244e78066aafeecce2ae0390e.jpg
-extra_chars,2,59F109031,59F109031JYFI,,,JYFI,,0.8790,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/4xemay2283_jpg.rf.60328516d5aa78de18024ac7b523feae.jpg
-substitution,2,59H140639,40G3919H1,5>4 9>0 H>G 1>3 4>9 0>1 6>9 3>H 9>1,,,0 1 2 3 4 5 6 7 8,0.7934,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/4xemay2288_jpg.rf.b97a57447318a7e85da5442b16d12bc1.jpg
+missing_chars,2,59H140639,40639,,59H1,,0 1 2 3,0.9963,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/4xemay2288_jpg.rf.b97a57447318a7e85da5442b16d12bc1.jpg
 substitution,2,59C104054,59D104054,C>D,,,2,0.9768,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/4xemay2306_jpg.rf.08faaca6e87e6a44b79018603a2bc6ec.jpg
-extra_chars,2,59T105297,59T105297J911,,,J911,,0.8913,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/4xemay2311_jpg.rf.a148352ec6013415ca0bdbc37e1c4a2a.jpg
-mixed,2,59N176049,5O76049J9K1,1>O,9N,9JK1,1 2 3,0.7454,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/4xemay2315_jpg.rf.797357b87c9f597a66c0038e9c021438.jpg
-mixed,2,59U139619,5911139619J9701,U>1,,19J701,2,0.9101,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/4xemay2318_jpg.rf.660790ba6a5f715ab200258f0015a33e.jpg
+mixed,2,59N176049,50T6049,1>0 7>T,9N,,1 2 3 4,0.8415,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/4xemay2315_jpg.rf.797357b87c9f597a66c0038e9c021438.jpg
+mixed,2,59U139619,5911139619,U>1,,1,2,0.9505,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/4xemay2318_jpg.rf.660790ba6a5f715ab200258f0015a33e.jpg
 substitution,2,54N56409,51N56409,4>1,,,1,0.8975,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/4xemay2322_jpg.rf.1c093c7b3e6fb9c96a53ef54d3605115.jpg
 mixed,2,61H59381,61S9381,5>S,H,,2 3,0.9267,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/4xemay2326_jpg.rf.b9319f8e06bdd14cd3b6aa82e8a45be8.jpg
 substitution,2,59H152850,59A152850,H>A,,,2,0.9796,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/4xemay2327_jpg.rf.9b94769f1ff32519c7fc62c43f7a1afe.jpg
 missing_chars,2,54S24522,54S2522,,4,,4,0.9011,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/4xemay2329_jpg.rf.a09da60dfe47d5ca5f29f56c095aaa48.jpg
 substitution,2,59F109596,59S109596,F>S,,,2,0.9387,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/4xemay2337_jpg.rf.f496d9fa82b3dbae42b608c54971a3c0.jpg
-mixed,2,59F118814,18B1411R,9>1 F>8 1>B 8>4 8>1 4>R,5,,0 1 2 3 5 6 8,0.8402,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/4xemay2338_jpg.rf.ce00900ec8210093d7fb1b8307c6150d.jpg
 missing_chars,2,64U121888,21888,,64U1,,0 1 2 3,0.9989,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/4xemay2348_jpg.rf.abfc86350ac36f6f97429b5df47d68bf.jpg
-extra_chars,2,62K117929,62K117929OEKI,,,OEKI,,0.7681,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/4xemay2353_jpg.rf.24e2c4df2642cf2f5ffc0cf181fc11e8.jpg
-mixed,2,59K167891,061891J9C1,5>0 9>6 K>1 1>8 6>9 7>1 8>J,,C,0 1 2 3 4 5 6,0.8222,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/4xemay2357_jpg.rf.f6d81eff9df2a1a57589271c415d263d.jpg
-substitution,2,67H103655,03G5501N1,6>0 7>3 H>G 1>5 0>5 3>0 6>1 5>N 5>1,,,0 1 2 3 4 5 6 7 8,0.8118,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/4xemay2361_jpg.rf.f439d977520418d7372278a1db3c33f1.jpg
+substitution,2,59K167891,59C161891,K>C 7>1,,,2 5,0.9997,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/4xemay2357_jpg.rf.f6d81eff9df2a1a57589271c415d263d.jpg
 mixed,2,69U13670,69L113670,U>1,,L,2,0.9646,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/4xemay2363_jpg.rf.8860effc1f948427b71b99b03ebf2dc5.jpg
 substitution,2,57Z73400,51T73400,7>1 Z>T,,,1 2,0.8391,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/4xemay2371_jpg.rf.6ddb89e5546ea67e72f3f781402b9543.jpg
 substitution,2,59H177791,59A167791,H>A 7>6,,,2 4,0.9490,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/4xemay2385_jpg.rf.4b3be6bbfa29eed2b91db766ed9dfc89.jpg
-mixed,2,59L116392,591116392JSLI,L>1,,JSLI,2,0.9462,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/4xemay2396_jpg.rf.5f1cbd8732e4ef4150a170d311cccd9f.jpg
 substitution,2,59X296553,59Y296553,X>Y,,,2,0.8985,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/4xemay2402_jpg.rf.98fb70d25549daf21e0a71c806810ed8.jpg
-substitution,2,59M107790,07T9019HE,5>0 9>7 M>T 1>9 7>1 7>9 9>H 0>E,,,0 1 2 3 5 6 7 8,0.7582,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/4xemay2410_jpg.rf.ba3d1b068fb245e796a4c68030ec908c.jpg
+mixed,2,59M107790,50D7790,1>0 0>D,9M,,1 2 3 4,0.9973,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/4xemay2410_jpg.rf.ba3d1b068fb245e796a4c68030ec908c.jpg
 substitution,2,59S181834,50ST81834,9>0 1>T,,,1 3,0.8032,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/4xemay2413_jpg.rf.d9ac6e40f491bd7bd8fb9cd36c8d13f9.jpg
-extra_chars,2,52P20878,52P20878JP,,,JP,,0.7704,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/4xemay2415_jpg.rf.3fc1879e510e4b5d08fff0547a8744da.jpg
-mixed,2,66L36400,6613640000L3,L>1,,00L3,2,0.7912,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/4xemay2416_jpg.rf.e25e2add477569980aff174f2f03e020.jpg
-missing_chars,2,67M23789,23789,,67M,,0 1 2,0.8248,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/4xemay2419_jpg.rf.111a750cfafa4996c87c0791fd54bb9f.jpg
-extra_chars,2,59S228834,59S228834JSJZ,,,JSJZ,,0.8829,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/4xemay2427_jpg.rf.c9b8b18398398954dd98dd24a69ed02b.jpg
+substitution,2,67M23789,67A23789,M>A,,,2,0.9997,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/4xemay2419_jpg.rf.111a750cfafa4996c87c0791fd54bb9f.jpg
 substitution,2,60D193113,60R193113,D>R,,,2,0.9082,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/4xemay2446_jpg.rf.eea302269dcfdc0e502a2919d1822bca.jpg
-extra_chars,2,59B138559,59B13855959761,,,59761,,0.8292,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/4xemay2448_jpg.rf.1388a08da7cb77be2757ac4f794e8195.jpg
 mixed,2,59F147404,50S47404,F>0 1>S,9,,1 2 3,0.9297,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/4xemay2453_jpg.rf.48051063b1fb9de7a1b0f8289539702b.jpg
 substitution,2,71B111345,71A111345,B>A,,,2,0.9187,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/4xemay2457_jpg.rf.8ae237b908b93a8c2d98d1b0a86c62ee.jpg
-mixed,2,59P234276,599734276JSF2,P>9 2>7,,JSF2,2 3,0.7448,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/4xemay2458_jpg.rf.4b866dcd64f3b3df65298f81ac465c23.jpg
-extra_chars,2,59H104425,59H104425J5H1,,,5JH1,,0.8092,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/4xemay2460_jpg.rf.7bebbb0a8823a63724c6b126155d61bf.jpg
-mixed,2,59F170424,70A2419P,4>A,59F1,19P,0 1 2 3 6,0.8264,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/4xemay2465_jpg.rf.962f87d746450d34113b1a26fa7eff4b.jpg
-mixed,2,86B341492,86R3414920083,B>R,,0083,2,0.9269,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/4xemay2472_jpg.rf.dd579335e5ccab866be63f1bde52dba5.jpg
-mixed,2,59L154063,54D6319,0>D,59L1,19,0 1 2 3 6,0.8462,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/4xemay2483_jpg.rf.3055037a8ecd33f1b2b6396e588452f8.jpg
+substitution,2,59P234276,599734276,P>9 2>7,,,2 3,0.9340,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/4xemay2458_jpg.rf.4b866dcd64f3b3df65298f81ac465c23.jpg
+missing_chars,2,59F170424,59F70424,,1,,3,0.9992,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/4xemay2465_jpg.rf.962f87d746450d34113b1a26fa7eff4b.jpg
 substitution,1,51F06998,51F06948,9>4,,,6,0.9977,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/5CarLongPlate197_jpg.rf.890348d221df720cde12d7f7ce7d821c.jpg
 substitution,1,51G47340,61G47340,5>6,,,0,0.9922,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/5CarLongPlate220_jpg.rf.50da11bf068f5cc8cb73cec2efa40d8c.jpg
 substitution,1,51F04225,51F04275,2>7,,,6,0.9996,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/5CarLongPlate491_jpg.rf.ca03edc0d9b1eafaff2f9bdb7ec59397.jpg
@@ -418,8 +284,7 @@ substitution,1,11F07973,51F07973,1>5,,,0,0.9996,D:/DATN/datasets/raw/roboflow_oc
 extra_chars,1,51G2181,51G25181,,,5,,0.9995,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/5CarLongPlate766_jpg.rf.76bb9a06d00ae5d66423366104f71f3b.jpg
 extra_chars,1,51F1555,51F15585,,,8,,0.9709,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/5CarLongPlate879_jpg.rf.8aaca189d66154f1a6a6c2c6ff36a901.jpg
 substitution,1,11G51008,51G51008,1>5,,,0,0.9862,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/5CarLongPlate939_jpg.rf.6638e99fd408baf915a9d078d4904421.jpg
-substitution,2,78H102133,02L3370N1,7>0 8>2 H>L 1>3 0>3 2>7 1>0 3>N 3>1,,,0 1 2 3 4 5 6 7 8,0.8033,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/5xemay1022_jpg.rf.fa43f175aa2386dd0d0ec836c344a51d.jpg
-missing_chars,2,77F79919,9919,,77F7,,0 1 2 3,0.8885,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/5xemay1040_jpg.rf.ada90a0a4bab84e383eb9861de6d2fcd.jpg
+mixed,2,77F79919,17TF79919,7>T,,1,1,0.8885,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/5xemay1040_jpg.rf.ada90a0a4bab84e383eb9861de6d2fcd.jpg
 substitution,2,59M154192,59A154192,M>A,,,2,0.9074,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/5xemay1107_jpg.rf.86d3e8859ebc6a8a0ea60d61a24d42b3.jpg
 empty_read,2,59V122709,,,59V122709,,0 1 2 3 4 5 6 7 8,0.0000,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/5xemay1187_jpg.rf.9e54cf0b351d60e3c6860f27e0671fca.jpg
 substitution,2,59E118310,59F118310,E>F,,,2,0.9722,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/5xemay1210_jpg.rf.7638ce5388737be3c857d181ac72ed1c.jpg
@@ -432,29 +297,19 @@ substitution,2,59H152576,59M152576,H>M,,,2,0.9382,D:/DATN/datasets/raw/roboflow_
 mixed,2,59U139619,5911139619,U>1,,1,2,0.9625,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/5xemay15_jpg.rf.6e4606481a03a8bda6b0661da88ac2a7.jpg
 missing_chars,2,47M74206,4206,,47M7,,0 1 2 3,0.9969,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/5xemay163_jpg.rf.b76cbc60fd3faf8652464a4241057dc3.jpg
 substitution,2,79M22094,79N22094,M>N,,,2,0.9964,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/5xemay1646_jpg.rf.69b6bc5d2f56b65f66fad9096be1d0c4.jpg
-missing_chars,2,30N45882,5882,,30N4,,0 1 2 3,0.9996,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/5xemay1745_jpg.rf.6a55092790b2a85e04d560cd6ade877d.jpg
-extra_chars,2,59F138151,59F138151JSRI,,,JSRI,,0.8734,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/5xemay1747_jpg.rf.06e3a6a8db3b2a70649660e0ef24d681.jpg
-mixed,2,61D100626,6101006260101,D>0,,0101,2,0.8770,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/5xemay1767_jpg.rf.eff2074d564a410d393aecffdb0dbc8e.jpg
-missing_chars,2,59H119374,19374,,59H1,,0 1 2 3,0.9975,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/5xemay1793_jpg.rf.9f252e28c332893f4d596dd2833dbb86.jpg
-mixed,2,59Y144665,59Y1L46655911,4>L,,5911,4,0.9485,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/5xemay1827_jpg.rf.b65fa033c2f360f138e067fc4e86b3f2.jpg
+mixed,2,59H119374,59L9374,1>L,H1,,2 3 4,0.9975,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/5xemay1793_jpg.rf.9f252e28c332893f4d596dd2833dbb86.jpg
+substitution,2,59Y144665,59Y114665,4>1,,,4,0.9784,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/5xemay1827_jpg.rf.b65fa033c2f360f138e067fc4e86b3f2.jpg
 mixed,2,59U166141,5911166141,U>1,,1,2,0.9849,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/5xemay182_jpg.rf.2935856fad920da192bb6fd5071c6b39.jpg
-missing_chars,2,72F120741,20741,,72F1,,0 1 2 3,0.9926,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/5xemay1843_jpg.rf.e855c4fd98c380e9d07e2de7338106f5.jpg
-missing_chars,2,52U44702,4702,,52U4,,0 1 2 3,0.9950,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/5xemay1940_jpg.rf.8dfe7382e0c1542fe489a67e3f104a60.jpg
 substitution,2,59M190977,59L190977,M>L,,,2,0.9128,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/5xemay1951_jpg.rf.388930a4dbdf48403abbfa04d8c4987f.jpg
-mixed,2,60B33534,80A734534ODJ,6>8 B>7 3>4,,AODJ,0 2 4,0.6753,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/5xemay1957_jpg.rf.be6b8e4fdf3dd4c81a8280d1510ec298.jpg
+mixed,2,60B33534,80A734534,6>8 B>7 3>4,,A,0 2 4,0.7837,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/5xemay1957_jpg.rf.be6b8e4fdf3dd4c81a8280d1510ec298.jpg
 substitution,2,67F111317,67S111317,F>S,,,2,0.8849,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/5xemay1971_jpg.rf.bcee839738a652f33601088475beea93.jpg
-mixed,2,59M103519,59M703519JSHI,1>7,,JSHI,3,0.8471,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/5xemay1977_jpg.rf.9dad6c551e4de4d1905a7021af703cbc.jpg
-mixed,2,59S220617,CORS20617J9J2,5>C 9>O S>R 2>S,,J9J2,0 1 2 3,0.8258,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/5xemay1993_jpg.rf.22e38053a4ff396634cf6893a88be2ee.jpg
-missing_chars,2,51L74255,4255,,51L7,,0 1 2 3,0.9851,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/5xemay2008_jpg.rf.940575270f51d83306a4b28a155c7b2f.jpg
-mixed,2,38Z10084,0084JO,,38Z1,JO,0 1 2 3,0.8927,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/5xemay2023_jpg.rf.fde5cae9ecdace9ce78732a739695d6c.jpg
-substitution,2,59C142818,42B181511,5>4 9>2 C>B 4>8 2>1 8>5 8>1,,,0 1 2 4 5 6 8,0.7888,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/5xemay2106_jpg.rf.224d5f044a491baddd7f6398868e0edc.jpg
-mixed,2,59X277399,59Y277399J912,X>Y,,9J12,2,0.8918,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/5xemay2120_jpg.rf.7c5a267ebe3489b2276b5e8bc9b8ec9d.jpg
-mixed,2,49K107370,07320,7>2,49K1,,0 1 2 3 7,0.9955,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/5xemay2168_jpg.rf.300e79bc434ca230865068a0fbca9553.jpg
-missing_chars,2,52T76433,6433,,52T7,,0 1 2 3,0.9971,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/5xemay2177_jpg.rf.37b3c5626aacbf434816ad9d0d2d4627.jpg
-extra_chars,2,59T118362,59T118362JJTT,,,JJTT,,0.8570,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/5xemay2309_jpg.rf.9e2160683e336f342bef5bfacc4aca21.jpg
-missing_chars,2,54T12473,2473,,54T1,,0 1 2 3,0.9969,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/5xemay2317_jpg.rf.3ae5982314506459845fc5fc1dfb96ad.jpg
+substitution,2,59M103519,59M703519,1>7,,,3,0.9269,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/5xemay1977_jpg.rf.9dad6c551e4de4d1905a7021af703cbc.jpg
+substitution,2,59S220617,C0RS20617,5>C 9>0 S>R 2>S,,,0 1 2 3,0.8193,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/5xemay1993_jpg.rf.22e38053a4ff396634cf6893a88be2ee.jpg
+substitution,2,59X277399,59Y277399,X>Y,,,2,0.9499,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/5xemay2120_jpg.rf.7c5a267ebe3489b2276b5e8bc9b8ec9d.jpg
+substitution,2,49K107370,49K107320,7>2,,,7,0.9955,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/5xemay2168_jpg.rf.300e79bc434ca230865068a0fbca9553.jpg
+mixed,2,52T76433,52L6433,7>L,T,,2 3,0.9971,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/5xemay2177_jpg.rf.37b3c5626aacbf434816ad9d0d2d4627.jpg
 substitution,2,59L223714,59L223711,4>1,,,8,0.9193,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/5xemay232_jpg.rf.f2f047438cea21d82223c874d625e53d.jpg
-mixed,2,66L135224,66135224OOLI,,L,OOLI,2,0.8386,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/5xemay2355_jpg.rf.3160a3605f960f4ab1891745197672cd.jpg
+missing_chars,2,66L135224,66L35224,,1,,3,0.9462,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/5xemay2355_jpg.rf.3160a3605f960f4ab1891745197672cd.jpg
 mixed,2,59C168612,59R68612,1>R,C,,2 3,0.9498,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/5xemay2384_jpg.rf.40d01011f479256c90d5c7ef87b1d859.jpg
 substitution,2,59Z127275,59T127275,Z>T,,,2,0.9759,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/5xemay242_jpg.rf.40eaf49713d7413b6501eea895426467.jpg
 mixed,2,59C139780,59C1390U,8>0 0>U,7,,6 7 8,0.9354,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/5xemay274_jpg.rf.1bf277d689f7f3737e6b7598f68b75e3.jpg
@@ -474,7 +329,6 @@ mixed,2,59H135460,59H25460,3>2,1,,3 4,0.9921,D:/DATN/datasets/raw/roboflow_ocr_p
 mixed,2,53Y35614,53V3561,Y>V,4,,2 7,0.9593,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/5xemay868_jpg.rf.d08797f7a7116aef562d537e8a33f7b4.jpg
 substitution,2,59P186084,50P186084,9>0,,,1,0.9901,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/5xemay889_jpg.rf.ca3db0aa813dfaa5b0bee558dd329218.jpg
 mixed,2,67M120886,67Z0886,2>Z,M1,,2 3 4,0.9885,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/5xemay961_jpg.rf.576f98fbc02ba99423f27b3405585702.jpg
-extra_chars,2,59P178999,59P178999JYRT,,,JYRT,,0.8829,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/5xemay982_jpg.rf.31cef24ba9d3db23312c01a2775bd744.jpg
 substitution,1,51F06532,61F06532,5>6,,,0,0.9858,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/6CarLongPlate114_jpg.rf.6457c2c3d131ecc2d7b093df9979ea6b.jpg
 substitution,1,61A22959,51A22959,6>5,,,0,0.9041,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/6CarLongPlate867_jpg.rf.46c4500083f57851b96bf598b30711e8.jpg
 substitution,2,59H153561,59M153561,H>M,,,2,0.9785,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/6xemay114_jpg.rf.dafa6d8998a1bbaa9205844cf1c31899.jpg
@@ -486,55 +340,38 @@ substitution,2,59V215800,59V715800,2>7,,,3,0.9250,D:/DATN/datasets/raw/roboflow_
 substitution,2,59C25920,59C25925,0>5,,,7,0.9518,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/6xemay286_jpg.rf.53ae0713c9eb170424da6f3804bb7258.jpg
 missing_chars,2,59T153668,59T53668,,1,,3,0.9921,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/6xemay349_jpg.rf.552dc90251458c7d71f6c15a9b459784.jpg
 substitution,2,79N160529,70N160529,9>0,,,1,0.9651,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/6xemay382_jpg.rf.b4b71d4892bf49080555217a4c088a74.jpg
-missing_chars,2,59N125521,25521,,59N1,,0 1 2 3,0.9986,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/6xemay422_jpg.rf.9a37bc63be9d17fc2d9ec7a08028c5ba.jpg
-missing_chars,2,59T128966,28966,,59T1,,0 1 2 3,0.9996,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/6xemay425_jpg.rf.fae34fc69712da21dc3fdcdc54515201.jpg
+mixed,2,59N125521,59Z5521,2>Z,N1,,2 3 4,0.9986,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/6xemay422_jpg.rf.9a37bc63be9d17fc2d9ec7a08028c5ba.jpg
 substitution,2,59P224979,59P224379,9>3,,,6,0.9867,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/6xemay449_jpg.rf.e3bb470baf153fd652ec6f7750fe9880.jpg
 missing_chars,2,81B126810,81B26810,,1,,3,0.9465,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/6xemay44_jpg.rf.1f6fdaed2861e56848c95801a3c44efc.jpg
 extra_chars,2,59X235479,59X2353479,,,3,,0.8510,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/6xemay455_jpg.rf.fd2aaa20e52bfa170c83f3b2103de265.jpg
 substitution,2,59V200884,59V21U884,0>1 0>U,,,4 5,0.9097,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/6xemay458_jpg.rf.c631b4a623476eb62bdc5d545549fe8f.jpg
 substitution,2,59D200428,59D206428,0>6,,,5,0.9958,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/6xemay463_jpg.rf.e7cc226a9f41dc369c98aa15e2507956.jpg
 substitution,2,49H71975,49M71975,H>M,,,2,0.9912,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/6xemay464_jpg.rf.d07d507ceedb14616ad31e52731c6c98.jpg
-missing_chars,2,70G113509,13509,,70G1,,0 1 2 3,0.9997,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/6xemay493_jpg.rf.58000d41f10cfc68a1eabfee068209cf.jpg
 substitution,2,59H160077,59M160077,H>M,,,2,0.9730,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/6xemay529_jpg.rf.8aa8d4eb04501d0282548df1d569c07c.jpg
 substitution,2,60X94808,60Y94808,X>Y,,,2,0.9521,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/6xemay540_jpg.rf.0b59cd2fbd9b8cbad3d004190f83a9d6.jpg
 mixed,2,54Z87524,54T8752,Z>T,4,,2 7,0.8780,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/6xemay54_jpg.rf.1d6a375f336911d949ae34674d9a8746.jpg
 substitution,2,59E119283,59F119283,E>F,,,2,0.9924,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/6xemay559_jpg.rf.51ce2c7154972ca3c9defde6f14a12af.jpg
 substitution,2,54K48147,51K48147,4>1,,,1,0.9600,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/6xemay577_jpg.rf.963358ff15ccf031f9c9692e71e60161.jpg
-missing_chars,2,77D112938,12938,,77D1,,0 1 2 3,0.9951,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/6xemay609_jpg.rf.2346b2cb26b17e1092d664f15c63dc7c.jpg
 substitution,2,59U139997,59D139997,U>D,,,2,0.9620,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/6xemay611_jpg.rf.d1f1f3f8d6eb0c56405ec291f29740c9.jpg
 substitution,2,71B289837,71B289937,8>9,,,6,0.9689,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/6xemay615_jpg.rf.88443713606c32d7c8933836016025f7.jpg
 extra_chars,2,79C122177,79C1B22177,,,B,,0.9593,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/6xemay641_jpg.rf.05663ca6b3a751d2c08467f5f7c6ed14.jpg
 substitution,2,53Z11759,53T11759,Z>T,,,2,0.9762,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/6xemay680_jpg.rf.678861da7a9243e534640dee0f8373d6.jpg
 substitution,2,60B157122,60R157122,B>R,,,2,0.9617,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/6xemay84_jpg.rf.e5ebd49fbe6500cfa5d2b6037931f5ab.jpg
-missing_chars,2,51L73998,3998,,51L7,,0 1 2 3,0.9988,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/6xemay96_jpg.rf.31793144f46a02022589d1f214cca2d1.jpg
-extra_chars,2,59B133872,59B133872JYBT,,,JYBT,,0.9225,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/7xemay1573_jpg.rf.0d0fa77faeaef8d7ea09d30b5155c380.jpg
-missing_chars,2,63Y10200,0200,,63Y1,,0 1 2 3,0.9981,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/7xemay1744_jpg.rf.451dba3c20e7a28224965ba80ec5106e.jpg
-extra_chars,2,59S131386,59S131386J951,,,J951,,0.9376,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/7xemay1760_jpg.rf.99f7f11f77df3e8ff4082bf0cd5eebf2.jpg
+mixed,2,51L73998,51T3998,7>T,L,,2 3,0.9988,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/6xemay96_jpg.rf.31793144f46a02022589d1f214cca2d1.jpg
 mixed,2,59U139619,5911139619,U>1,,1,2,0.9910,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/7xemay1807_jpg.rf.ce487656d2934dff697c7dca6a36f2c7.jpg
-substitution,2,51Z30606,06D6172R,5>0 1>6 Z>D 3>6 0>1 6>7 0>2 6>R,,,0 1 2 3 4 5 6 7,0.7528,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/7xemay1848_jpg.rf.cb0a38fe6f6f8de0262c192b3150efe2.jpg
-mixed,2,47B142872,781428724781,B>8,4,4781,0 2,0.8833,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/7xemay1850_jpg.rf.176220d58dcd52eb892d5a9f58ca9ece.jpg
-extra_chars,2,60Y73914,60Y7391400,,,00,,0.9012,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/7xemay1922_jpg.rf.ef883161add45345d62604d499bce19c.jpg
-missing_chars,2,59V107473,07473,,59V1,,0 1 2 3,0.9980,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/7xemay2040_jpg.rf.d11c12054034f4a21991db7ce4ffb733.jpg
-mixed,2,55P44641,55PL4641JJR,4>L,,JJR,3,0.9266,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/7xemay2042_jpg.rf.d8aedb73a0e3cb003cf9d407b1342641.jpg
-mixed,2,59K165072,65D72151,9>D K>7 1>2 6>1 2>1,07,6,1 2 3 4 6 7 8,0.8630,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/7xemay2045_jpg.rf.2de059bdd17725bca8cdbfe89dae5cef.jpg
-mixed,2,51H48354,HL8354,4>L,51,,0 1 3,0.8115,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/7xemay2097_jpg.rf.12e1c7181f0612147df59c0ec08fdee2.jpg
-missing_chars,2,72F135507,35507,,72F1,,0 1 2 3,0.9979,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/7xemay2227_jpg.rf.01357e813be67c566180df9c6764cf07.jpg
+substitution,2,51Z30606,51T30606,Z>T,,,2,0.9990,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/7xemay1848_jpg.rf.cb0a38fe6f6f8de0262c192b3150efe2.jpg
+mixed,2,47B142872,78L42872,B>8 1>L,4,,0 2 3,0.8944,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/7xemay1850_jpg.rf.176220d58dcd52eb892d5a9f58ca9ece.jpg
+substitution,2,55P44641,55PL4641,4>L,,,3,0.9764,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/7xemay2042_jpg.rf.d8aedb73a0e3cb003cf9d407b1342641.jpg
 substitution,2,92D142705,97D142705,2>7,,,1,0.9678,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/7xemay2265_jpg.rf.dbe65534e2309df2d41f6461eb59e4ed.jpg
-missing_chars,2,59F158405,58405,,59F1,,0 1 2 3,0.9969,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/7xemay2291_jpg.rf.33f0bcc6851e3ec76e79d0c3442f5271.jpg
-missing_chars,2,94H41831,1831,,94H4,,0 1 2 3,0.9997,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/7xemay2484_jpg.rf.feb55da3613db7e8c3a90df09212c49d.jpg
 substitution,2,63Y10200,63V10200,Y>V,,,2,0.9484,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/8xemay101_jpg.rf.79b9d96e22e910590466103834c26d6b.jpg
 substitution,2,59B119220,59B119240,2>4,,,7,0.9941,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/8xemay1193_jpg.rf.e01364e064fbc99e34b2ec04504f39e5.jpg
 missing_chars,2,54X72899,2899,,54X7,,0 1 2 3,0.9995,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/8xemay1199_jpg.rf.38173dfdbe757c97937090c681446542.jpg
 substitution,2,59E163978,59F163978,E>F,,,2,0.9727,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/8xemay1656_jpg.rf.d42ae96748c9a9c0c825a5375eafde72.jpg
-mixed,2,55S114883,59S114883J9S7,5>9,,J9S7,1,0.8925,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/8xemay1891_jpg.rf.f473cfec361b8ba5c15716dc19acabcb.jpg
-missing_chars,2,72C136087,36087,,72C1,,0 1 2 3,0.9985,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/8xemay189_jpg.rf.f9f11253b71a0f812b2c9e48482b0b5d.jpg
+substitution,2,55S114883,59S114883,5>9,,,1,0.9671,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/8xemay1891_jpg.rf.f473cfec361b8ba5c15716dc19acabcb.jpg
 missing_chars,2,66L135224,66L35224,,1,,3,0.9533,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/8xemay1964_jpg.rf.c873ed22dfaef8968c43056145961799.jpg
 mixed,2,59L178582,54G78582,L>4 1>G,9,,1 2 3,0.9302,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/8xemay1978_jpg.rf.bd25a95dc467f39d8cae5d9196cfebb9.jpg
-extra_chars,2,59S227831,59S227831J9,,,J9,,0.9183,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/8xemay1995_jpg.rf.9b18e20e85b2c9466c7009e10a4cac2d.jpg
-missing_chars,2,54H15326,5326,,54H1,,0 1 2 3,0.9989,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/8xemay2245_jpg.rf.508a9c90a1b721cc82727cf0aaf3969e.jpg
 mixed,2,79U24621,79L121621,U>1 4>1,,L,2 4,0.9593,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/8xemay2293_jpg.rf.7231b0633615deef9c6e635404450e8d.jpg
 substitution,2,52F41035,52FL1035,4>L,,,3,0.9517,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/8xemay2411_jpg.rf.a63afe8cfff97b7455aaacb9b8e2a61d.jpg
-extra_chars,2,60B337846,60B337846OUB3,,,OUB3,,0.8605,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/8xemay2439_jpg.rf.9e014be02f68e9ae94920cfd2715286b.jpg
 mixed,2,59U151771,59II151771,U>I,,I,2,0.9203,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/8xemay2456_jpg.rf.5aa1e2ce0ac8c031032f4698b6ad593b.jpg
 missing_chars,2,51L41138,51L1138,,4,,3,0.9696,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/8xemay2466_jpg.rf.4fd7866042de1efca80f992208f3d971.jpg
 substitution,2,52U44702,F2I14702,5>F U>I 4>1,,,0 2 3,0.8208,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/8xemay27_jpg.rf.b7b245a14a0cda83c90acfc88280200e.jpg
@@ -552,24 +389,17 @@ substitution,2,49E139941,49F139941,E>F,,,2,0.9660,D:/DATN/datasets/raw/roboflow_
 substitution,2,79Z110184,79T110184,Z>T,,,2,0.9616,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/9xemay1278_jpg.rf.adf3d43c19cf7928324cc1dcd9792ff6.jpg
 substitution,2,59E150988,59F150988,E>F,,,2,0.9664,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/9xemay1577_jpg.rf.b1ab2bbbd5993d83fe9efba5851c49e6.jpg
 mixed,2,59U159897,5911159897,U>1,,1,2,0.9559,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/9xemay1743_jpg.rf.04bd8bd8ca32b703e1e5168f1fa841cf.jpg
-mixed,2,47B142872,4781428724DI,B>8,,4DI,2,0.7874,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/9xemay1813_jpg.rf.5a4e7165469d66ee67953e14ba28e16a.jpg
 substitution,2,55E121500,59F121500,5>9 E>F,,,1 2,0.9841,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/9xemay1_jpg.rf.823a5b1c82a84604b59933c742f7eb88.jpg
-missing_chars,2,59N176654,76654,,59N1,,0 1 2 3,0.9989,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/9xemay2260_jpg.rf.f632bb0336d016badca0ea78acc68d45.jpg
 substitution,2,63B138776,63B138786,7>8,,,7,0.9631,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/9xemay285_jpg.rf.70bbbf264c6476f00ae6c171d2741bc0.jpg
 extra_chars,2,59C13631,59C1C3631,,,C,,0.9639,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/9xemay653_jpg.rf.417db06c8ad852e8ebf7e37f242f9cc2.jpg
 substitution,2,52F37458,52E37458,F>E,,,2,0.8066,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/9xemay759_jpg.rf.3e9e3dc3b0226b379c3dad7d92a9173a.jpg
 substitution,2,59E172361,59E172301,6>0,,,7,0.9425,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/9xemay845_jpg.rf.61f05aef9dc46c324ecd4c9281ee31e4.jpg
 substitution,2,54X45569,54X45969,5>9,,,5,0.9656,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/9xemay94_jpg.rf.df6372e5e9dc3a61b15087b73f0840c3.jpg
 mixed,2,30E27010,13DE27010,0>D,,1,1,0.8733,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata103_jpg.rf.618c7277fe14a8c4abc54687eac930c9.jpg
-missing_chars,2,29V55087,5087,,29V5,,0 1 2 3,0.9462,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata105_jpg.rf.5a15d1fbbb434d71d1126bb8dfdbc7d4.jpg
-extra_chars,2,29V530399,29V5303992SH,,,2SH,,0.8594,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata107_jpg.rf.a6a20b64785f23938cf8da8d60a080ed.jpg
-mixed,2,29X567147,29Y56714729J,X>Y,,29J,2,0.9477,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata108_jpg.rf.905ba32a180870eb8bfe153315f13ed2.jpg
+substitution,2,29X567147,29Y567147,X>Y,,,2,0.9544,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata108_jpg.rf.905ba32a180870eb8bfe153315f13ed2.jpg
 substitution,2,29Z166880,29T166880,Z>T,,,2,0.9855,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata109_jpg.rf.5ab4c5f5eef54530ad1c7f6e5c823525.jpg
 mixed,2,29D42271,29N422719U,D>N,,9U,2,0.8003,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata10_jpg.rf.1b576f77bb1e1bf09c637ae3adf4d7bc.jpg
 substitution,2,94F95348,38F05348,9>3 4>8 9>0,,,0 1 3,0.8090,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata110_jpg.rf.6d6f9acc4ea0cc09b3cc9f649278ec78.jpg
-mixed,2,70L144444,70114444470L1,L>1,,70L1,2,0.9337,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata122_jpg.rf.8deca48914f943c126cc68a11244d9f2.jpg
-mixed,2,75A18283,754182837JA,A>4,,7JA,2,0.9449,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata124_jpg.rf.609fb93624488858d65ad3a71350346c.jpg
-substitution,2,75H142599,42S9973E1,7>4 5>2 H>S 1>9 4>9 2>7 5>3 9>E 9>1,,,0 1 2 3 4 5 6 7 8,0.7476,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata125_jpg.rf.23187e969b8d5d1675954134644c9aa3.jpg
 substitution,2,75H136121,36L2175M1,7>3 5>6 H>L 1>2 3>1 6>7 1>5 2>M,,,0 1 2 3 4 5 6 7,0.8870,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata127_jpg.rf.c2395b11f8dcb18488df7e6485a339a3.jpg
 substitution,2,30N30866,30H30866,N>H,,,2,0.9421,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata130_jpg.rf.011558a691fc9885d7ab762a31f496c5.jpg
 substitution,2,29E119298,29F119298,E>F,,,2,0.9512,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata133_jpg.rf.8eb127fe7333a315bccb341c3a4e0fba.jpg
@@ -583,21 +413,17 @@ substitution,2,30X98300,30Y98300,X>Y,,,2,0.9457,D:/DATN/datasets/raw/roboflow_oc
 substitution,1,34A14270,34A14279,0>9,,,7,0.9667,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata15_jpg.rf.da4ca3268129813f073dd544fda836d8.jpg
 substitution,2,29Y508888,79Y508888,2>7,,,0,0.9473,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata171_jpg.rf.4bcdc9ce037b1d10228fec871088c751.jpg
 mixed,2,28M7007,78D700713,2>7 M>D,,13,0 2,0.8684,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata173_jpg.rf.d7da4b77747158bc502fae005382999d.jpg
-mixed,2,29F25491,5497,1>7,29F2,,0 1 2 3 7,0.9771,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata185_jpg.rf.d354da42a8cd875d1a46b51859d5592f.jpg
+substitution,2,29F25491,79FL5497,2>7 2>L 1>7,,,0 3 7,0.9771,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata185_jpg.rf.d354da42a8cd875d1a46b51859d5592f.jpg
 substitution,2,59X299899,59Y299899,X>Y,,,2,0.9600,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata201_jpg.rf.29bd830bed1b1682af65d8b6083a8025.jpg
-mixed,2,18F140249,18E140249LOER1,F>E,,LOER1,2,0.8213,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata20_jpg.rf.98cccaad66311006a2704c8bee6a59f4.jpg
+substitution,2,18F140249,18E140249,F>E,,,2,0.9546,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata20_jpg.rf.98cccaad66311006a2704c8bee6a59f4.jpg
 substitution,2,29B156850,29R156850,B>R,,,2,0.9605,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata210_jpg.rf.967a38b9c92223032d600ff185370994.jpg
-extra_chars,2,30X39988,30X39988SUAJ,,,SUAJ,,0.8428,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata211_jpg.rf.a0aea2435d84d202dafa43ea2f50cb89.jpg
 mixed,2,49M122262,29Z2262,4>2 2>Z,M1,,0 2 3 4,0.9464,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata212_jpg.rf.4f123d631f23d2dc529ba84f9879b2c3.jpg
 substitution,2,14X104444,14X104441,4>1,,,8,0.8888,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata214_jpg.rf.db2a314b7a7d85ad98b1fe10de5749cd.jpg
-mixed,2,30K75555,30175,K>1,555,,2 4 5 6,0.7856,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata233_jpg.rf.c5cc93bc5af87bac4135e1adfeb66f7c.jpg
-substitution,2,43X25678,13X25678,4>1,,,0,0.9203,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata234_jpg.rf.bc74ee029cc6df87bb8c69f93eb11c96.jpg
+mixed,2,30K75555,30L730175,K>L 5>0 5>1 5>7,,3,2 4 5 6,0.7856,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata233_jpg.rf.c5cc93bc5af87bac4135e1adfeb66f7c.jpg
 missing_chars,2,77M101234,101234,,77M,,0 1 2,0.9587,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata236_jpg.rf.231bd258a888f7c62fdb70b14a4dbcee.jpg
-mixed,2,38X108888,08988,8>9,38X1,,0 1 2 3 6,0.9920,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata239_jpg.rf.1241a8b2aa471258c29bed7833a6d97b.jpg
+substitution,2,38X108888,38X108988,8>9,,,6,0.9920,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata239_jpg.rf.1241a8b2aa471258c29bed7833a6d97b.jpg
 substitution,2,29D157196,29L057196,D>L 1>0,,,2 3,0.8529,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata246_jpg.rf.1e3a1bfc6502dc64c16b1c0e18418204.jpg
 substitution,2,29X716718,29X716118,7>1,,,6,0.9604,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata261_jpg.rf.fd93b116a87b8683f78ab407df43739e.jpg
-extra_chars,2,29Y568818,29Y568818291J,,,291J,,0.9005,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata263_jpg.rf.e33e4213b83ecd29899e0d02dd387bba.jpg
-empty_read,1,30F27661,,,30F27661,,0 1 2 3 4 5 6 7,0.0000,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata26_jpg.rf.05b8d893467a6e76807344cb784dd73b.jpg
 mixed,2,29E166009,29E56009,6>5,1,,3 4,0.9596,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata278_jpg.rf.9f1be9043ddd50e7a33075c4ae727332.jpg
 substitution,2,29E114461,29F114461,E>F,,,2,0.9643,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata279_jpg.rf.e4db11bf9529b3ed43426c46d4ea2964.jpg
 substitution,2,29E153856,29F153856,E>F,,,2,0.9655,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata281_jpg.rf.3012c502455c2ad8de6b6ae3444e8fa5.jpg
@@ -610,34 +436,27 @@ substitution,2,29Z186202,79E186202,2>7 Z>E,,,0 2,0.9311,D:/DATN/datasets/raw/rob
 substitution,2,29E241350,29F241350,E>F,,,2,0.9487,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata306_jpg.rf.8616f8d560989a35ba4ce2270038070f.jpg
 substitution,2,29E164461,29F164461,E>F,,,2,0.9651,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata307_jpg.rf.dcadc24047df38cba15aea1910835a08.jpg
 substitution,2,29E167403,29F167403,E>F,,,2,0.9479,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata310_jpg.rf.4faa112e0ed3eef22985256a6d5a4c96.jpg
-missing_chars,2,99H61527,1527,,99H6,,0 1 2 3,0.9999,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata318_jpg.rf.fe911546a117a7049c8aeacc3e05a4b8.jpg
+substitution,2,99H61527,99HB1527,6>B,,,3,0.9999,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata318_jpg.rf.fe911546a117a7049c8aeacc3e05a4b8.jpg
 mixed,2,29X510191,20Y10191,X>0 5>Y,9,,1 2 3,0.9104,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata31_jpg.rf.cfb611492dc280fb5993c9c23a7ba650.jpg
 substitution,2,84E129980,84F129980,E>F,,,2,0.9739,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata322_jpg.rf.0035ebda83261e91076eda13f6c3c1dc.jpg
 missing_chars,2,29T16480,29T6480,,1,,3,0.9244,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata337_jpg.rf.9290e7dea2bbb01932ac7fd740f9fd57.jpg
 substitution,2,79N88888,79H88888,N>H,,,2,0.9720,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata339_jpg.rf.d03b748c13ecf920748bea54d2f2b3ec.jpg
-mixed,2,68D107909,14D7909,6>1 8>4,10,,0 1 3 4,0.7787,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata340_jpg.rf.39e7d773ac122142703710c361bfb15a.jpg
 mixed,2,29U56764,29L156764,U>1,,L,2,0.9271,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata348_jpg.rf.340b03fa959b520c9ec0a0dfb337c764.jpg
-extra_chars,2,30F51010,30F51010SUR,,,SUR,,0.9031,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata34_jpg.rf.aaa5baf0b89edb358cde4d1ea48d893b.jpg
-mixed,2,43N14308,3VL4308,N>V 1>L,4,,0 2 3,0.8762,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata351_jpg.rf.d208d5a799aa7aa435a8ef88b5809952.jpg
 missing_chars,2,19X17409,19X1409,,7,,4,0.9151,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata353_jpg.rf.3ff267205fabbb2148b19871fb66a0ab.jpg
 substitution,2,29K36789,29K36679,7>6 8>7,,,5 6,0.9621,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata368_jpg.rf.3bcc70b5e47fee1135ad1ac45750e12c.jpg
 substitution,2,30F51010,30E51010,F>E,,,2,0.9301,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata36_jpg.rf.85210605341c239ab119f4ef883a765e.jpg
-mixed,2,67L65555,6716555507L0,L>1,,07L0,2,0.8599,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata373_jpg.rf.31adfead75a8218d0929841a4c48ba58.jpg
 mixed,2,67T32222,67L2222,3>L,T,,2 3,0.8725,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata375_jpg.rf.e08289bfb6e34def4df000a8f3a9302c.jpg
-extra_chars,2,29E145678,29E1456782ST1,,,2ST1,,0.8385,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata385_jpg.rf.80ccb204603812858b01a8253b122cfe.jpg
 substitution,2,89E132181,89F132181,E>F,,,2,0.9679,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata386_jpg.rf.71c40a9d231a9a8303fc7f74dc71f060.jpg
 substitution,2,59E140209,59F140209,E>F,,,2,0.9874,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata387_jpg.rf.0ca264d123e01397f88f34b274602e9c.jpg
 substitution,2,49E122222,49F122222,E>F,,,2,0.9452,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata388_jpg.rf.aa280712fc1b132ef9ea930c85ce0df8.jpg
 substitution,2,30E95623,30F95623,E>F,,,2,0.9852,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata393_jpg.rf.8aa7d1f60a1de1d755d3ccf047b72764.jpg
 mixed,2,30F51010,20S1010,3>2 5>S,F,,0 2 3,0.9521,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata39_jpg.rf.23c3fda2e00f29562b305b3dc8b9247e.jpg
 substitution,2,29E115934,29F115934,E>F,,,2,0.9687,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata400_jpg.rf.b064ae5498fcb694394c838df7cb5e0b.jpg
-extra_chars,2,29K118280,29K118280LJ,,,LJ,,0.8958,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata413_jpg.rf.6858d008556c189e20aff857f094217a.jpg
 missing_chars,2,29K114488,29K14488,,1,,3,0.9804,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata419_jpg.rf.f8cf0301d73e0b8ad6d44188e9c0f5dc.jpg
 substitution,2,30K43008,30KL3008,4>L,,,3,0.9263,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata425_jpg.rf.db4b53925dac07ad9af5b8e17729a4f5.jpg
-missing_chars,2,29ML82833,82833,,29ML,,0 1 2 3,0.9989,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata430_jpg.rf.6c16f7cc0df552036373451e96c0cc8b.jpg
+substitution,2,29ML82833,29MD82833,L>D,,,3,0.9989,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata430_jpg.rf.6c16f7cc0df552036373451e96c0cc8b.jpg
 mixed,2,36MD35520,36B5520,3>B,MD,,2 3 4,0.9580,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata431_jpg.rf.ed1b38019c5a80e0db3a93791e808ea2.jpg
 mixed,2,29M38322,27,2>7,29M383,,0 1 2 3 4 5 7,0.9328,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata432_jpg.rf.5b9c4e54a9ccfc5c4e690bcbe42f46f8.jpg
-missing_chars,2,29L10702,0702,,29L1,,0 1 2 3,0.9939,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata44_jpg.rf.d74c6cc48f190eaed38b3683c8b34f07.jpg
 mixed,2,29U1376,29L12376,U>L,,2,2,0.8938,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata460_jpg.rf.a01d7eea3ed492daa00abf31126797a9.jpg
 substitution,2,59E737583,59F131583,E>F 7>1 7>1,,,2 3 5,0.9864,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata462_jpg.rf.2d68c034fd7ef205ddb2725ae66ffed9.jpg
 substitution,2,59E134055,59F134055,E>F,,,2,0.9440,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata463_jpg.rf.cb8a6678a6359c5de29d6a0ae684f33f.jpg
@@ -646,140 +465,93 @@ substitution,2,34AA11950,34A411950,A>4,,,3,0.9252,D:/DATN/datasets/raw/roboflow_
 missing_chars,2,29Y79108,9108,,29Y7,,0 1 2 3,0.9992,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata477_jpg.rf.2bce1caeaff7ff98c665382eea2060d3.jpg
 missing_chars,2,15N118520,518520,,1N1,,0 2 3,0.9584,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata483_jpg.rf.642c6e09d9e02c36a8a2899cc2fc205b.jpg
 substitution,2,29U427914,29L127914,U>L 4>1,,,2 3,0.9081,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata486_jpg.rf.327c707f9572764197e693890128adf3.jpg
-missing_chars,2,14B165772,65772,,14B1,,0 1 2 3,0.9849,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata489_jpg.rf.bb81bac5e852497eff92d3c21d5278b5.jpg
+substitution,2,14B165772,11B165772,4>1,,,1,0.9849,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata489_jpg.rf.bb81bac5e852497eff92d3c21d5278b5.jpg
 substitution,2,14B165772,11ER65772,4>1 B>E 1>R,,,1 2 3,0.9778,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata490_jpg.rf.a78c1cc8df9cc72af9423386e42bd57c.jpg
-missing_chars,2,34B221312,21312,,34B2,,0 1 2 3,0.9924,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata492_jpg.rf.d3208c8e270b022f7d2837ca19406944.jpg
+mixed,2,34B221312,38Z1312,2>8 2>Z,4B,,1 2 3 4,0.9924,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata492_jpg.rf.d3208c8e270b022f7d2837ca19406944.jpg
 substitution,2,14X139154,11X139154,4>1,,,1,0.9784,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata496_jpg.rf.c8bda7d0f1ccd7f27588991a889ac996.jpg
 substitution,2,14X139154,11X139154,4>1,,,1,0.9595,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata497_jpg.rf.751627f1ed858f0df3145c87590a12c1.jpg
-missing_chars,2,17B300911,00911,,17B3,,0 1 2 3,0.9994,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata499_jpg.rf.522ee79573e8b58a3950a3c829055087.jpg
 mixed,2,34B318014,38B18014,4>8,3,,1 3,0.9248,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata500_jpg.rf.37d1c93c05cfe2c905bdd504ff038df6.jpg
-missing_chars,2,30G28600,28600,,30G,,0 1 2,0.9558,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata521_jpg.rf.26bc4c6ba7557736db23c3de4f13c351.jpg
-missing_chars,2,29A78725,78725,,29A,,0 1 2,0.9994,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata524_jpg.rf.9bb0cc5e7cc5802bf64e66e98e3bfa0f.jpg
-mixed,2,29A18526,29118526Z3A,A>1,,Z3A,2,0.8170,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata531_jpg.rf.659a6d442195189e183cba091a8dac25.jpg
-substitution,2,30M2538,25B830R,3>2 0>5 M>B 2>8 5>3 3>0 8>R,,,0 1 2 3 4 5 6,0.8733,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata536_jpg.rf.b6cdd1afd1b8ecce7b2958ca0bba745f.jpg
-mixed,2,99D121591,21S9135,5>S,99D1,35,0 1 2 3 6,0.9290,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata537_jpg.rf.44c75354fff93ad3c5ce98d9780727e0.jpg
-mixed,2,29B150776,91507762981,,2B,2981,0 2,0.9260,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata541_jpg.rf.e30af9bf048de6451b54cbb8fa32dae4.jpg
+substitution,2,29A18526,29L18526,A>L,,,2,0.8706,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata531_jpg.rf.659a6d442195189e183cba091a8dac25.jpg
+missing_chars,2,30M2538,2538,,30M,,0 1 2,0.9996,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata536_jpg.rf.b6cdd1afd1b8ecce7b2958ca0bba745f.jpg
+mixed,2,29B150776,91S0776,5>S,2B,,0 2 4,0.9109,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata541_jpg.rf.e30af9bf048de6451b54cbb8fa32dae4.jpg
 mixed,2,29Y83003,20YO3003918,9>0 8>O,,918,1 3,0.8433,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata543_jpg.rf.8f054435fc01996a4e66437f0a28f269.jpg
 mixed,2,30A23745,03D423745,0>D A>4,,0,1 2,0.9010,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata54_jpg.rf.6eb5d80e7e240735bc6adfa9cc45c044.jpg
-substitution,2,30G33545,33S453U0,0>3 G>S 3>4 3>5 5>3 4>U 5>0,,,1 2 3 4 5 6 7,0.8707,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata550_jpg.rf.f435c11a2a617f2a01ff529a28c81e08.jpg
 substitution,2,15N114371,15K114371,N>K,,,2,0.9468,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata551_jpg.rf.5ec7fac9aa6322d40bc032ec01a5dcf6.jpg
 missing_chars,2,30F56605,56605,,30F,,0 1 2,0.9971,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata556_jpg.rf.3fa14b49c566bcab709547729c106844.jpg
 mixed,2,30E22070,30S822070,E>8,,S,2,0.8742,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata557_jpg.rf.5e2f7a811e68ba5b94033659b2cfe1bd.jpg
 mixed,2,27AA07647,27A07617,4>1,A,,2 7,0.8184,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata558_jpg.rf.bb9adec7338854e1a027fecb838cae00.jpg
-missing_chars,2,30E22070,22070,,30E,,0 1 2,0.9968,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata559_jpg.rf.32016cbe95dfe633237a403ad3af1fe8.jpg
-mixed,2,30E22070,22D701UC,0>D,30E,1UC,0 1 2 5,0.8857,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata561_jpg.rf.70dedb3aa3a096e7116f544d942c5ff2.jpg
-extra_chars,2,35B302772,35B3027725303,,,5303,,0.8802,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata567_jpg.rf.4b99d68675e775630671034c0611ea67.jpg
-missing_chars,2,30E78917,78917,,30E,,0 1 2,0.9987,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata568_jpg.rf.5057e246c52d7813478d0c6c3aa446c1.jpg
+substitution,2,30E78917,30F78917,E>F,,,2,0.9987,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata568_jpg.rf.5057e246c52d7813478d0c6c3aa446c1.jpg
 substitution,2,30A3745,37L51U4,0>7 A>L 3>5 7>1 4>U 5>4,,,1 2 3 4 5 6,0.8458,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata56_jpg.rf.07664358b6676fcf43b8f21811ec83c4.jpg
 missing_chars,2,29D50557,50557,,29D,,0 1 2,0.9988,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata571_jpg.rf.30fd015c765906ed9cf24c7e2d010ba4.jpg
-missing_chars,2,29K151905,51905,,29K1,,0 1 2 3,0.9996,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata572_jpg.rf.8f0717c5f13ef8e73531c908cecbf5d3.jpg
-mixed,2,30E22010,22070,1>7,30E,,0 1 2 6,0.9996,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata573_jpg.rf.47f65696522e2350cabd9b0ae27eb90a.jpg
+substitution,2,30E22010,30E22070,1>7,,,6,0.9996,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata573_jpg.rf.47f65696522e2350cabd9b0ae27eb90a.jpg
 missing_chars,2,99A26295,26295,,99A,,0 1 2,0.9970,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata575_jpg.rf.f8087865af4ecabef02d76624dd54f5f.jpg
-mixed,2,30E22070,30F22070SUE,E>F,,SUE,2,0.9142,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata576_jpg.rf.1b0b05ace746c6cbca639790dfc8af67.jpg
+substitution,2,30E22070,30F22070,E>F,,,2,0.9725,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata576_jpg.rf.1b0b05ace746c6cbca639790dfc8af67.jpg
 substitution,2,30P91519,15L930P9,3>1 0>5 P>L 1>3 5>0 1>P,,,0 1 2 4 5 6,0.9339,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata581_jpg.rf.a545a3d6bce4a434b17b55001cd604f5.jpg
 substitution,2,30E22070,30F22070,E>F,,,2,0.9843,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata584_jpg.rf.80d7f609c1c9dd38ca5db21c2ea33214.jpg
-mixed,2,30E22070,30F22070JUE,E>F,,JUE,2,0.9447,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata587_jpg.rf.b3cd62042eb98185a95c795604d19147.jpg
-missing_chars,2,30E22070,22070,,30E,,0 1 2,0.9899,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata588_jpg.rf.343f5999d74467dca3f723e0956b0045.jpg
-mixed,2,29X506398,29Y50639829AJ,X>Y,,29AJ,2,0.8750,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata589_jpg.rf.b1061594a6aacdde71d8f289fc58636c.jpg
-missing_chars,2,29K15831,5831,,29K1,,0 1 2 3,0.9987,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata591_jpg.rf.d39dc58704963973e631e166b33f8505.jpg
-extra_chars,2,30H03940,30H03940JUN,,,JUN,,0.8974,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata594_jpg.rf.7c83ab3bc17c614943514fbc522216c0.jpg
-missing_chars,2,30H03940,03940,,30H,,0 1 2,0.9927,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata597_jpg.rf.babec222ff696897cbff46ce7aaa4fd2.jpg
+substitution,2,30E22070,30F22070,E>F,,,2,0.9644,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata587_jpg.rf.b3cd62042eb98185a95c795604d19147.jpg
+substitution,2,29X506398,29Y506398,X>Y,,,2,0.9396,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata589_jpg.rf.b1061594a6aacdde71d8f289fc58636c.jpg
 extra_chars,2,29A94170,29A894170,,,8,,0.9097,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata59_jpg.rf.402b33595cffc94d1789f55af29f4f51.jpg
-mixed,2,30F51010,51D105UP,0>5 F>1 5>D 1>U 0>P,3,5,0 1 2 3 6 7,0.8997,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata603_jpg.rf.1b96809b158de8afea6c3f4be726891a.jpg
-mixed,2,30Z33006,30733006JUL3,Z>7,,JUL3,2,0.8344,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata607_jpg.rf.d66ef2865227d73a03c396f8af3945e2.jpg
+substitution,2,30Z33006,30T33006,Z>T,,,2,0.9869,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata607_jpg.rf.d66ef2865227d73a03c396f8af3945e2.jpg
 substitution,2,59X377777,77T7759X3,5>7 9>7 X>T 3>7 7>5 7>9 7>X 7>3,,,0 1 2 3 5 6 7 8,0.9984,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata609_jpg.rf.0a4fe97a506f959665843032854dcb74.jpg
-mixed,2,59E176789,KHONGVAONUOCKHONGVANGMICA7678959E1,5>M 9>I E>C 1>A,,KHONGVAONUOCKHONGVANG95E1,0 1 2 3,0.9699,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata622_jpg.rf.3dd7c97e00daeab0c989a01bae1c4cf0.jpg
+substitution,2,59E176789,76T8959E1,5>7 9>6 E>T 1>8 7>9 6>5 7>9 8>E 9>1,,,0 1 2 3 4 5 6 7 8,0.9969,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata622_jpg.rf.3dd7c97e00daeab0c989a01bae1c4cf0.jpg
 mixed,2,29U182833,29MP182833,U>P,,M,2,0.9118,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata624_jpg.rf.9b0a158c339e268201037d74e102ba03.jpg
 mixed,2,36MB35520,36M8435520,B>4,,8,3,0.8834,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata625_jpg.rf.2ea640fa328dd413992a814c02eadee1.jpg
-missing_chars,2,17MD72758,2758,,17MD7,,0 1 2 3 4,0.9762,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata626_jpg.rf.015889ac1e98b5bb6888ec8511ad8d6e.jpg
 substitution,2,89E156890,89F156890,E>F,,,2,0.9795,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata62_jpg.rf.a4198e5e2b42a6bf9a4a47f622197a25.jpg
 mixed,2,37B131088,31D88M03,7>1 B>D 1>8 3>8 1>M 8>3,8,,1 2 3 4 5 7 8,0.8181,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata639_jpg.rf.5bb928845d7b1d36672f548ddcaae835.jpg
 substitution,2,50B34178,50R34178,B>R,,,2,0.9301,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata63_jpg.rf.fc9501af671ce644de7d3431eb58faab.jpg
 extra_chars,2,38MD1057,38MD1050M7,,,0M,,0.8439,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata642_jpg.rf.80d074eba9f02b6011ba4ccbc4103e28.jpg
-missing_chars,2,29Y544922,44922,,29Y5,,0 1 2 3,0.9995,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata67_jpg.rf.adb8006951c39fa19f2f8ecffe438831.jpg
-mixed,2,33P30600,0601,0>1,33P3,,0 1 2 3 7,0.9808,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata69_jpg.rf.057242f72408a9e52e9e80d1db5b8c09.jpg
+substitution,2,33P30600,33P30601,0>1,,,7,0.9808,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata69_jpg.rf.057242f72408a9e52e9e80d1db5b8c09.jpg
 substitution,2,33P92063,33P02063,9>0,,,3,0.8755,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata6_jpg.rf.56d3971623110f0541bf01965685aad7.jpg
-missing_chars,2,29AA48165,48165,,29AA,,0 1 2 3,0.9918,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata75_jpg.rf.5f2dc169976e9490ab7195b8420e6da1.jpg
 mixed,2,36M48447,36L8447,4>L,M,,2 3,0.8334,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata76_jpg.rf.f60ed6b3ef6e57e9f1f0109d4c02e475.jpg
-extra_chars,2,30G82074,30G82074JUG,,,JUG,,0.9381,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata78_jpg.rf.21f7a0e76565ba5f46bbcc10d490435c.jpg
 substitution,1,30E82693,30E82163,6>1 9>6,,,5 6,0.9578,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata80_jpg.rf.9cb4111894e169ffcde139705c92a657.jpg
-mixed,2,89L123568,8912356889L1,,L,89L1,2,0.8728,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata81_jpg.rf.d39b979275d6b5e0b5702cabe11b2145.jpg
-mixed,2,29L551884,29155188429LJ,L>1,,29LJ,2,0.9593,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata82_jpg.rf.58694900236ddcfa6d2ddbdf3fa9f59e.jpg
+missing_chars,2,89L123568,89L23568,,1,,3,0.9650,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata81_jpg.rf.d39b979275d6b5e0b5702cabe11b2145.jpg
 substitution,1,29A96594,29L85594,A>L 9>8 6>5,,,2 3 4,0.8629,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata83_jpg.rf.e47458953c6066b05629ac900abac0ef.jpg
-mixed,2,29C73804,201738042ESC,9>0 C>1,,2ESC,1 2,0.7617,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata85_jpg.rf.4dc3c9b3442d090d2ed974a348852ba7.jpg
+substitution,2,29C73804,20L73804,9>0 C>L,,,1 2,0.8610,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata85_jpg.rf.4dc3c9b3442d090d2ed974a348852ba7.jpg
 substitution,2,30G82341,30G82347,1>7,,,7,0.9720,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata95_jpg.rf.34c803a6c2d2aab6c14967f10ac9b633.jpg
-mixed,2,29A12655,12G5554,6>5,29A,G4,0 1 2 5,0.9713,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata99_jpg.rf.b4696ad58845fc2df5842b384b530c71.jpg
 missing_chars,2,37M25708,37M5708,,2,,3,0.9047,D:/DATN/datasets/raw/roboflow_ocr_plate/train/images/ndata9_jpg.rf.7382713b9cf0c44c61fd7b00ec7a6946.jpg
-extra_chars,2,59N174864,59N1748645917,,,5917,,0.8904,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/10xemay2157_jpg.rf.43670c49c22f7ca2133af64611bc8fa5.jpg
-extra_chars,2,70B155132,70B155132D,,,D,,0.9363,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/10xemay2192_jpg.rf.c7a8e564c4f7c73d9b4ee104bf004428.jpg
-missing_chars,2,51U74598,4598,,51U7,,0 1 2 3,0.9996,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/11xemay1498_jpg.rf.8caa512c5d140f7109e004dff3db35b4.jpg
 substitution,2,59X132817,59Y132817,X>Y,,,2,0.9127,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/12xemay1133_jpg.rf.7456269c88cc424686900c685be7ee5a.jpg
 substitution,2,72C152693,72D152693,C>D,,,2,0.9477,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/12xemay1302_jpg.rf.c059a15c07f77d2437b27d17b33e4e37.jpg
-extra_chars,2,59S216555,59S2165551,,,1,,0.9522,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/12xemay95_jpg.rf.ec2f20bf2c28d1f68f3159a9d4c4d2d0.jpg
 mixed,2,59H140639,59A0639,4>A,H1,,2 3 4,0.9978,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/13xemay592_jpg.rf.0866d785265c1a896ec6466edae144a5.jpg
 mixed,2,54U39055,54L139055,U>1,,L,2,0.9141,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/1xemay1043_jpg.rf.c99f6315965aa88be8c5f9068d855ad7.jpg
 substitution,2,59X124340,59Y124340,X>Y,,,2,0.9626,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/1xemay1358_jpg.rf.ba4113753537f5cd63e2f777f471da91.jpg
 mixed,2,64C104262,61C04262,4>1,1,,1 3,0.9212,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/1xemay1404_jpg.rf.adc279b19459b08a7368395d4d89f6c8.jpg
-missing_chars,2,59D165455,65455,,59D1,,0 1 2 3,0.9997,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/1xemay1421_jpg.rf.7763231e06473b015b6531e09944b769.jpg
 substitution,2,33M73521,73M73521,3>7,,,0,0.8550,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/1xemay1423_jpg.rf.4420a703908e0ebbd8f0ec369139f601.jpg
 substitution,2,59D100444,59D10C444,0>C,,,5,0.8922,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/1xemay1545_jpg.rf.4e4c9257b7af556aeb3f85f28b333442.jpg
-missing_chars,2,86B319858,19858,,86B3,,0 1 2 3,0.9954,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/1xemay1768_jpg.rf.0f2a64c19aafbbeeeae9821a993105f2.jpg
-mixed,2,59U125418,5911125418,U>1,,1,2,0.9866,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/1xemay1809_jpg.rf.427ac08ac593ce2e2d91d41c99c4ce85.jpg
-extra_chars,2,59P229729,59P229729JJRZ,,,JJRZ,,0.8672,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/1xemay1861_jpg.rf.dc26a3bab8e775c105e968336e266253.jpg
+substitution,2,59U125418,59L125418,U>L,,,2,0.9866,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/1xemay1809_jpg.rf.427ac08ac593ce2e2d91d41c99c4ce85.jpg
 substitution,2,60X46482,60Y46482,X>Y,,,2,0.9366,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/1xemay1907_jpg.rf.635e39d00b107bbcc7c2261fa77d7e1f.jpg
-missing_chars,2,53Y97976,7,,53Y9796,,0 1 2 3 4 5 7,0.9413,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/1xemay1943_jpg.rf.0fc958cb6741ea4ff336e25f4060ec23.jpg
-mixed,2,59F123865,595123865J9FT,F>5,,J9FT,2,0.8659,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/1xemay2070_jpg.rf.8016082209496b33229c58857ae578a1.jpg
+substitution,2,53Y97976,53V97976,Y>V,,,2,0.9413,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/1xemay1943_jpg.rf.0fc958cb6741ea4ff336e25f4060ec23.jpg
+substitution,2,59F123865,59S123865,F>S,,,2,0.9454,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/1xemay2070_jpg.rf.8016082209496b33229c58857ae578a1.jpg
 substitution,2,78E124113,78F124113,E>F,,,2,0.9796,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/1xemay2285_jpg.rf.3815bca7d8d4f6f26099f391adc7737a.jpg
 substitution,2,51X91894,51Y91894,X>Y,,,2,0.9416,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/1xemay2378_jpg.rf.70515accadac82392cb1d5727f5ad62a.jpg
-mixed,2,49B131215,4091312154961,9>0 B>9,,4961,1 2,0.8529,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/1xemay2395_jpg.rf.c933a1a772c2658b5ad0c0e47b81d248.jpg
-missing_chars,2,54V38314,8314,,54V3,,0 1 2 3,0.9990,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/1xemay2434_jpg.rf.4e6e113eb4e2b97fbe2b17aa829f854b.jpg
-substitution,2,59E153127,53L2755E1,9>3 E>L 1>2 5>7 3>5 1>5 2>E 7>1,,,1 2 3 4 5 6 7 8,0.9009,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/1xemay2447_jpg.rf.6845dd6eaea8932f4a3f30eb0d74b61e.jpg
+substitution,2,49B131215,409131215,9>0 B>9,,,1 2,0.8657,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/1xemay2395_jpg.rf.c933a1a772c2658b5ad0c0e47b81d248.jpg
 substitution,2,59X268327,59Y268327,X>Y,,,2,0.9755,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/1xemay2481_jpg.rf.d930b9b236dd88bcc63a4b5057429bf3.jpg
 substitution,2,47N69618,17N69618,4>1,,,0,0.9143,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/1xemay291_jpg.rf.a98528814fb37336e6bce4ae0e2cbaf7.jpg
 substitution,2,59E168973,59F168973,E>F,,,2,0.9800,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/1xemay327_jpg.rf.01b3ff68f2c4202c15aeaf51f6bd35ec.jpg
 substitution,2,54X26487,51X26487,4>1,,,1,0.9408,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/1xemay436_jpg.rf.bfc68c69c30f49af9aefe9df9c0369dd.jpg
-missing_chars,2,72F135507,35507,,72F1,,0 1 2 3,0.9988,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/1xemay537_jpg.rf.f6d3f9469554c30bb526ef315bcb6eae.jpg
 substitution,2,59N173958,59N173948,5>4,,,7,0.9902,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/1xemay564_jpg.rf.4ca8dad47f5b99d6f40c935324f1ad4f.jpg
-mixed,2,51P98308,51PQ8308JIP9,9>Q,,JIP9,3,0.8735,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/1xemay793_jpg.rf.a8137900c114fee77be335f12c1a2dfc.jpg
-missing_chars,2,75F102991,02991,,75F1,,0 1 2 3,0.9998,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/1xemay930_jpg.rf.019557a8e4b8da03f0b258152527556d.jpg
+substitution,2,51P98308,51P08308,9>0,,,3,0.9212,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/1xemay793_jpg.rf.a8137900c114fee77be335f12c1a2dfc.jpg
 extra_chars,2,59T12219,59T122189,,,8,,0.9575,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/2xemay1189_jpg.rf.82491dfa46491811ab6aaf89a2375ca6.jpg
 substitution,2,52P49134,52PL9134,4>L,,,3,0.9773,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/2xemay1268_jpg.rf.4f6b3a131b26df7e5058168fe9e0464e.jpg
 substitution,2,59E164239,59F164239,E>F,,,2,0.9923,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/2xemay142_jpg.rf.8aca4dcc82d023ce0ecfd03f2c8e2e28.jpg
 mixed,2,54U25965,54L125965,U>1,,L,2,0.9062,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/2xemay1515_jpg.rf.8f19a0e276e8e81d45a4d77a7c6c5e93.jpg
 missing_chars,2,43S60133,0133,,43S6,,0 1 2 3,0.9959,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/2xemay1569_jpg.rf.d34dfc886d1b284006dba3667881737e.jpg
-missing_chars,2,60B801075,01075,,60B8,,0 1 2 3,0.9984,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/2xemay1783_jpg.rf.d107d40e0e8f8f5c4ba01f9ca47f8ca3.jpg
-extra_chars,2,59S208082,59S208082J952,,,2J95,,0.8932,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/2xemay1786_jpg.rf.ce1be86343d57978b8194e0cecfe6511.jpg
-missing_chars,2,47M74206,4206,,47M7,,0 1 2 3,0.9986,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/2xemay1812_jpg.rf.771b4ead6a92b7d06dd9dd91eeaf8b3f.jpg
-missing_chars,2,85D101611,01611,,85D1,,0 1 2 3,0.9984,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/2xemay1839_jpg.rf.45527832d26fcd74dbfd06a8dfd1be70.jpg
-mixed,2,59U101985,5011019855901,9>0 U>1,,5901,1 2,0.9494,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/2xemay1873_jpg.rf.468712fac86f1a7baaf275faef936b7b.jpg
+substitution,2,47M74206,17M74206,4>1,,,0,0.9986,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/2xemay1812_jpg.rf.771b4ead6a92b7d06dd9dd91eeaf8b3f.jpg
+substitution,2,59U101985,50L101985,9>0 U>L,,,1 2,0.9322,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/2xemay1873_jpg.rf.468712fac86f1a7baaf275faef936b7b.jpg
 mixed,2,59U166141,59111S6141,U>1 6>S,,1,2 4,0.9315,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/2xemay1883_jpg.rf.6185b50451a11ec06541c9f3e6375478.jpg
-mixed,2,51L82105,51182105J1L8,L>1,,J1L8,2,0.9037,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/2xemay1926_jpg.rf.4fd46de6678230a06b2d5287da34d062.jpg
-missing_chars,2,72F120741,20741,,72F1,,0 1 2 3,0.9994,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/2xemay1982_jpg.rf.1da6a5544333cbe98986a37fdbc59d01.jpg
-mixed,2,59E168973,50168973JSE1,E>0,9,JSE1,1 2,0.9149,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/2xemay1994_jpg.rf.e6b731cc9511dc74db7ff9738b2ef85c.jpg
-missing_chars,2,85S15378,5378,,85S1,,0 1 2 3,0.9987,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/2xemay2010_jpg.rf.4613faf0e616a9f4d69554f1167c3d7f.jpg
+mixed,2,72F120741,72E20741,1>E,F,,2 3,0.9994,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/2xemay1982_jpg.rf.1da6a5544333cbe98986a37fdbc59d01.jpg
+mixed,2,59E168973,50L68973,E>0 1>L,9,,1 2 3,0.9423,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/2xemay1994_jpg.rf.e6b731cc9511dc74db7ff9738b2ef85c.jpg
 substitution,2,52F64378,52F61378,4>1,,,4,0.9251,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/2xemay2022_jpg.rf.d39b83ab3c26c63a210ab90f61b45757.jpg
 substitution,2,63B703323,63R7U3323,B>R 0>U,,,2 4,0.9038,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/2xemay2024_jpg.rf.e94ba9f3e6229633204a493490b1e9bc.jpg
-mixed,2,59L159150,50S9150,1>0 5>S,9L,,1 2 3 4,0.9779,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/2xemay2039_jpg.rf.e6b636278766ef7e46e2517fefae8b34.jpg
-extra_chars,2,77C139373,77C139373TLH,,,TLH,,0.8583,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/2xemay2060_jpg.rf.cae85955d3ea43e743f10046fa52cf4c.jpg
-substitution,2,59C148275,48Z7559EC,5>4 9>8 C>Z 1>7 4>5 8>5 2>9 7>E 5>C,,,0 1 2 3 4 5 6 7 8,0.8474,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/2xemay2112_jpg.rf.50d54dc0cfd1ed581067274527aa1925.jpg
 substitution,2,71B217757,71R217757,B>R,,,2,0.9170,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/2xemay2116_jpg.rf.b6a38ac759a3cd75f36b0f928e720402.jpg
-missing_chars,2,72K108989,08989,,72K1,,0 1 2 3,0.9994,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/2xemay2125_jpg.rf.ce8e010e0f8b876fdef68b833114f335.jpg
-missing_chars,2,49F108660,08660,,49F1,,0 1 2 3,0.9939,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/2xemay2141_jpg.rf.8db38cf073ac2129417244657b6f67f2.jpg
-mixed,2,50HB2282,5049228250HB,H>4 B>9,,50HB,2 3,0.8926,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/2xemay2160_jpg.rf.a6d6645f941e9b4d9e933682bbf0e892.jpg
-extra_chars,2,59T108264,59T108264JSE1,,,JSE1,,0.9031,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/2xemay2184_jpg.rf.b70dfe047148dc5a832cbe181f4990ec.jpg
+substitution,2,50HB2282,50A92282,H>A B>9,,,2 3,0.9085,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/2xemay2160_jpg.rf.a6d6645f941e9b4d9e933682bbf0e892.jpg
 mixed,2,59N147102,50H47102,N>0 1>H,9,,1 2 3,0.8828,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/2xemay2194_jpg.rf.53dea566afa1044c767a7696528af85c.jpg
-mixed,2,77D112938,12938ERU,,77D1,ERU,0 1 2 3,0.7496,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/2xemay2308_jpg.rf.f7b218c3a0a0d6d5906d47b55f3478ef.jpg
 mixed,2,59D101978,54D1978,9>4,10,,1 3 4,0.9865,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/2xemay2345_jpg.rf.adf3b12e3f78f5153bbc4db93d581fe7.jpg
-mixed,2,59U159175,5911159175J301,U>1,,1J301,2,0.8792,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/2xemay2392_jpg.rf.270db0e2a4fca1c67d46fb46229087dd.jpg
-missing_chars,2,59K113099,13099,,59K1,,0 1 2 3,0.9983,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/2xemay2397_jpg.rf.d543ae986c8900d0cdf7ad0f8af5a6c7.jpg
+substitution,2,59U159175,59L159175,U>L,,,2,0.9395,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/2xemay2392_jpg.rf.270db0e2a4fca1c67d46fb46229087dd.jpg
 missing_chars,2,16G111649,11649,,16G1,,0 1 2 3,0.9982,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/2xemay2412_jpg.rf.b59665322d31d953809b4f3f005eeb62.jpg
-missing_chars,2,72F120741,20741,,72F1,,0 1 2 3,0.9968,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/2xemay248_jpg.rf.e23d6b95c47f5937f6a400523a6cc1d9.jpg
 substitution,2,67B181846,67R181846,B>R,,,2,0.9721,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/2xemay38_jpg.rf.16b923cf30626a5d252ebd3fab98f552.jpg
-extra_chars,2,59N100018,59KN100018,,,K,,0.8322,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/2xemay393_jpg.rf.151a2aba560fc1e97d58c0c3bf259c0a.jpg
-missing_chars,2,81H12204,2204,,81H1,,0 1 2 3,0.9950,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/2xemay821_jpg.rf.9166314fc4e209db2de0b39e4e6ed84e.jpg
 substitution,2,59U155529,59U156529,5>6,,,5,0.9937,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/2xemay859_jpg.rf.3379e19c3f88e77bc691d70ecbc23c4e.jpg
 substitution,2,55E100115,59E100179,5>9 1>7 5>9,,,1 7 8,0.9898,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/2xemay870_jpg.rf.5b5df4c2dd17f305c9b1fe64d5debbb1.jpg
-mixed,2,59X140243,59Y14043J9X1,X>Y,2,J9X1,2 6,0.8266,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/2xemay924_jpg.rf.ede5ea09a1e9f35ff7c037b7fc45271d.jpg
+mixed,2,59X140243,59Y14043,X>Y,2,,2 6,0.8448,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/2xemay924_jpg.rf.ede5ea09a1e9f35ff7c037b7fc45271d.jpg
 mixed,1,51G37307,637307,G>6,51,,0 1 2,0.9394,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/3CarLongPlate532_jpg.rf.6177053b47f699a6eb0d76265ef5479e.jpg
 substitution,2,30N45882,30NL5882,4>L,,,3,0.8865,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/3xemay102_jpg.rf.eab39a066ffed7fe946cb83a480bbccc.jpg
 mixed,2,54Z32177,54T322172,Z>T 7>2,,2,2 7,0.7935,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/3xemay1318_jpg.rf.b0c48470f58a492706de6a0aa73a1a42.jpg
@@ -787,109 +559,81 @@ mixed,2,59U109278,5911109278,U>1,,1,2,0.8956,D:/DATN/datasets/raw/roboflow_ocr_p
 substitution,2,79Z15804,79T15804,Z>T,,,2,0.9387,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/3xemay1448_jpg.rf.dfdf7034b9189751afa9f170907420b2.jpg
 mixed,2,69B132267,98L32267,B>8 1>L,6,,0 2 3,0.9806,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/3xemay1523_jpg.rf.260cf4fede2167f9cab5ea630c7aa7f0.jpg
 substitution,2,59U135226,59D135226,U>D,,,2,0.9758,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/3xemay175_jpg.rf.eed4a1cba012b45d2dbc47544d40e3c0.jpg
-mixed,2,59P220947,00Z094759,P>0 2>0 2>Z,59,59,0 1 2 3 4,0.8965,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/3xemay1799_jpg.rf.78010261a009531d0e32716a4dd2003a.jpg
-mixed,2,59U166141,5911166141,U>1,,1,2,0.9858,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/3xemay1833_jpg.rf.8103ccae966691a0478769de0c4aab5d.jpg
-extra_chars,2,59N187515,59N187515JJSH,,,JJSH,,0.8541,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/3xemay1845_jpg.rf.71a2aa17a90dac9491d0f995b3cf5c82.jpg
 mixed,2,54U57001,54L157001,U>1,,L,2,0.9836,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/3xemay1856_jpg.rf.ad79fc8b0cc90cbc8729fdc0f0874f3c.jpg
-substitution,2,60C123774,23T741U11,6>2 0>3 C>T 1>7 2>4 3>1 7>U 7>1 4>1,,,0 1 2 3 4 5 6 7 8,0.7963,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/3xemay1953_jpg.rf.d4592ebaa7042d8cf6173efb2c798c9e.jpg
+substitution,2,60C123774,30C123774,6>3,,,0,0.9983,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/3xemay1953_jpg.rf.d4592ebaa7042d8cf6173efb2c798c9e.jpg
 substitution,2,72C112511,77C112511,2>7,,,1,0.9679,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/3xemay2140_jpg.rf.5d3d0172b350e2de5d6f6fdc6163e243.jpg
-missing_chars,2,59C131162,31162,,59C1,,0 1 2 3,0.9865,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/3xemay2176_jpg.rf.5adcbb86ececc4c2cf541fc22e5aa2f3.jpg
-extra_chars,2,59S232928,59S232928JJJZ,,,JJJZ,,0.9122,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/3xemay2292_jpg.rf.f81628b49510409240d58754572bd3c3.jpg
-extra_chars,2,66P15739,66P1573966F1,,,66F1,,0.8584,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/3xemay2442_jpg.rf.ddeb1b8f090ca8ca0a6978437edf0924.jpg
-mixed,2,59U139619,5911139619J90,U>1,,19J0,2,0.9446,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/3xemay61_jpg.rf.1ca392ac7906c25c7161d8d8eb59a78c.jpg
+mixed,2,59U139619,5911139619,U>1,,1,2,0.9822,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/3xemay61_jpg.rf.1ca392ac7906c25c7161d8d8eb59a78c.jpg
 substitution,2,59Z120681,59T120681,Z>T,,,2,0.9920,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/3xemay780_jpg.rf.b52cdc19e5649f9606ebb11fda0a0761.jpg
-mixed,2,77C139373,CC39373TEI,1>C,77,TEI,0 1 3,0.6787,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/4xemay1939_jpg.rf.e3c2e765736df882749081b9f46cea8f.jpg
-missing_chars,2,55X17546,7546,,55X1,,0 1 2 3,0.9919,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/4xemay1959_jpg.rf.79b6fe6737604edcabaf4b96b3380322.jpg
+substitution,2,55X17546,55L17546,X>L,,,2,0.9919,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/4xemay1959_jpg.rf.79b6fe6737604edcabaf4b96b3380322.jpg
 missing_chars,2,59S115133,59S15133,,1,,3,0.9162,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/4xemay1970_jpg.rf.9664c6bac4cdb07f79dfdea344278016.jpg
 substitution,2,59P220947,59PZ20947,2>Z,,,3,0.9506,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/4xemay2015_jpg.rf.0d582eb12cd5172f35a173840b45f5be.jpg
 extra_chars,2,86H7991,86H79591,,,5,,0.9975,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/4xemay2031_jpg.rf.8ee5db250bdff84297f4ee0308058455.jpg
 missing_chars,2,59B135294,59B13294,,5,,5,0.9425,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/4xemay2072_jpg.rf.1ce36b881b1b1d40d35861bc18381ee9.jpg
-mixed,2,59B134917,508134917J961,9>0 B>8,,J961,1 2,0.9092,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/4xemay2074_jpg.rf.7d18b7dcee210a4be8b5a8047b1c7acf.jpg
-extra_chars,2,59M176054,59M176054JSH,,,JSH,,0.8586,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/4xemay2084_jpg.rf.c1fb347dec5f29cc69f12fa9a7261457.jpg
-mixed,2,51M21719,51121719J1H2,M>1,,J1H2,2,0.7692,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/4xemay2090_jpg.rf.9827d963cf6c3d35710e002204d6c745.jpg
-mixed,2,51V44549,4579,4>7,51V4,,0 1 2 3 6,0.9955,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/4xemay2093_jpg.rf.7b14e59cca9d9c1e2ed69eb09538df8f.jpg
+substitution,2,59B134917,50B134917,9>0,,,1,0.9338,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/4xemay2074_jpg.rf.7d18b7dcee210a4be8b5a8047b1c7acf.jpg
+substitution,2,51M21719,51L21719,M>L,,,2,0.8910,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/4xemay2090_jpg.rf.9827d963cf6c3d35710e002204d6c745.jpg
+substitution,2,51V44549,51V44579,4>7,,,6,0.9955,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/4xemay2093_jpg.rf.7b14e59cca9d9c1e2ed69eb09538df8f.jpg
 substitution,2,60B223567,60B723567,2>7,,,3,0.9402,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/4xemay2158_jpg.rf.82b69fde010a9d23477e3112d0d5c9db.jpg
-substitution,2,59T164417,64A171971,5>6 9>4 T>A 6>7 4>1 4>9 1>7 7>1,,,0 1 2 4 5 6 7 8,0.8372,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/4xemay2179_jpg.rf.cc9a3a84af52f02b46ec4757c5a211a4.jpg
 substitution,2,59E165903,59F165903,E>F,,,2,0.9628,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/4xemay2206_jpg.rf.eb4dbe66fb01eabc5f68b2e5c86d477d.jpg
-mixed,2,81B126810,91R1268108101,8>9 B>R,,8101,0 2,0.8638,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/4xemay2233_jpg.rf.bbe2dcebd0066db77d35e5030414b38e.jpg
+substitution,2,81B126810,91R126810,8>9 B>R,,,0 2,0.9045,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/4xemay2233_jpg.rf.bbe2dcebd0066db77d35e5030414b38e.jpg
 mixed,2,54X41983,51Y1983,X>1 4>Y,4,,1 2 3,0.7942,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/4xemay2236_jpg.rf.752ad93aeb92fe0ee6df8e6b450df604.jpg
 substitution,2,59E119283,19Z8359E1,5>1 E>Z 1>8 1>3 9>5 2>9 8>E 3>1,,,0 2 3 4 5 6 7 8,0.9943,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/4xemay2252_jpg.rf.db7e9d33ede2348aa2c3def046c025bd.jpg
-mixed,2,60B236161,60823616100BZ,B>8,,00BZ,2,0.8386,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/4xemay2299_jpg.rf.831cce6c3e79deb0441b406fb0fae13f.jpg
-mixed,2,59E129660,29660JSTE1,5>2 E>6 1>0 2>J 9>S 6>T 6>E 0>1,,6,0 2 3 4 5 6 7 8,0.8585,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/4xemay2323_jpg.rf.1ac554eb5f9ca9b9007965ad413ad3bf.jpg
-mixed,2,59E155040,5955504059E1,1>5,E,59E1,2 3,0.8361,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/4xemay2331_jpg.rf.654a38b7effa7235e5e6f7fca79f0e28.jpg
-mixed,2,71H15511,5518,1>8,71H1,,0 1 2 3 7,0.9980,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/4xemay2369_jpg.rf.ef10368bc40cced77c73a3b170363cd3.jpg
-extra_chars,2,59C124785,59C124785L,,,L,,0.9375,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/4xemay2372_jpg.rf.2e6dcd965c6d6975b42cdf72edb412c5.jpg
+mixed,2,59E155040,59S55040,1>S,E,,2 3,0.8894,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/4xemay2331_jpg.rf.654a38b7effa7235e5e6f7fca79f0e28.jpg
+substitution,2,71H15511,71H15518,1>8,,,7,0.9980,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/4xemay2369_jpg.rf.ef10368bc40cced77c73a3b170363cd3.jpg
 mixed,2,52F73840,IRL,8>I 4>R 0>L,52F73,,0 1 2 3 4 5 6 7,0.5115,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/4xemay2374_jpg.rf.db070997d12c126346069036498128c7.jpg
-substitution,2,59M108275,08Z7515M7,5>0 9>8 M>Z 1>7 0>5 8>1 2>5 7>M 5>7,,,0 1 2 3 4 5 6 7 8,0.6589,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/4xemay2380_jpg.rf.c4c669e050cd6ca2db6a4da85471ef71.jpg
-mixed,2,69AB02673,69AP0767309AB,B>P 2>7,,09AB,3 5,0.8579,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/4xemay2404_jpg.rf.147d61b69575d52bb272a52f701743e0.jpg
-mixed,2,59X136052,36D52154,9>3 X>6 1>D 3>5 6>2 0>1 2>4,5,,0 1 2 3 4 5 6 8,0.7905,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/4xemay2424_jpg.rf.41b79fb1805f89b0f37413aaddddcc22.jpg
+missing_chars,2,59M108275,08275,,59M1,,0 1 2 3,0.9402,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/4xemay2380_jpg.rf.c4c669e050cd6ca2db6a4da85471ef71.jpg
+substitution,2,69AB02673,69AP07673,B>P 2>7,,,3 5,0.9003,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/4xemay2404_jpg.rf.147d61b69575d52bb272a52f701743e0.jpg
 substitution,2,94H41831,91H11831,4>1 4>1,,,1 3,0.8131,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/4xemay2473_jpg.rf.eaf7edc3da8e6d532c949e30025d5e2c.jpg
-missing_chars,2,59L187760,87760,,59L1,,0 1 2 3,0.9998,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/4xemay2480_jpg.rf.3cafd80e53cd62742cd48adcf09919b1.jpg
+substitution,2,59L187760,50L187760,9>0,,,1,0.9998,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/4xemay2480_jpg.rf.3cafd80e53cd62742cd48adcf09919b1.jpg
 substitution,2,52U49980,52D49980,U>D,,,2,0.9459,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/5xemay1056_jpg.rf.c76f80aad78ca61309c6494c25282ff6.jpg
 substitution,2,59U152884,59L152884,U>L,,,2,0.9623,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/5xemay1143_jpg.rf.f02b8dd019ea26a9912ca9259e85d70c.jpg
-substitution,2,93B117085,93R117085,B>R,,,2,0.9867,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/5xemay1317_jpg.rf.e5e6391d3c761a49472b68ad64907717.jpg
-missing_chars,2,95AA00839,00839,,95AA,,0 1 2 3,0.9963,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/5xemay133_jpg.rf.3145d4f591e9f3e96830fe80d11a3666.jpg
+missing_chars,2,95AA00839,95A00839,,A,,2,0.9963,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/5xemay133_jpg.rf.3145d4f591e9f3e96830fe80d11a3666.jpg
 substitution,2,99K140650,59K140650,9>5,,,0,0.9353,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/5xemay140_jpg.rf.f504e542291e7d2002996318c046a462.jpg
-missing_chars,2,62K109571,09571,,62K1,,0 1 2 3,0.9968,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/5xemay1487_jpg.rf.17b4f3e220c3c5e811a688e66abcbf6a.jpg
 substitution,2,79M125990,79N125990,M>N,,,2,0.9843,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/5xemay1680_jpg.rf.9150139d47e3ceec98b8121efd64881d.jpg
-extra_chars,2,59S131386,59S131386J9J1,,,J9J1,,0.9201,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/5xemay1788_jpg.rf.ed2255d44f1d3ce630c5559da9f9ad5f.jpg
 substitution,2,60F110494,60F140494,1>4,,,4,0.9943,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/5xemay186_jpg.rf.ca552cd6273693557d6dee2fa58bd78e.jpg
-extra_chars,2,86B624682,86B62468200B0,,,00B0,,0.8891,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/5xemay2065_jpg.rf.57a92c23aee09fe2944cd52e1a740189.jpg
-missing_chars,2,59L156720,56720,,59L1,,0 1 2 3,0.9964,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/5xemay2320_jpg.rf.a19e084e1a1ac8b8437db82b26733ab6.jpg
-substitution,2,84G122593,22S930161,8>2 4>2 G>S 1>9 2>3 2>0 5>1 9>6 3>1,,,0 1 2 3 4 5 6 7 8,0.9026,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/5xemay2488_jpg.rf.6468d119ace775a65af80cef1a2a7691.jpg
 substitution,2,59U184366,59U784366,1>7,,,3,0.8828,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/5xemay952_jpg.rf.50b6d6b85d3e44d5b94b8f18dd1dab5b.jpg
-substitution,1,52P5688,02P5688,5>0,,,0,0.9268,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/6CarLongPlate298_jpg.rf.d68e23d9eee9f8f2b5e3975d55c8d11a.jpg
 substitution,2,54Z28101,54T28101,Z>T,,,2,0.9232,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/6xemay345_jpg.rf.e19e16ea08a9793e82e3cea65d796a42.jpg
 substitution,2,62H136169,62M136169,H>M,,,2,0.9479,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/6xemay364_jpg.rf.56423f4dbb345a4c32c43c20301a967f.jpg
 substitution,2,59H121704,59M121704,H>M,,,2,0.9290,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/6xemay377_jpg.rf.dcf20cf92684e4b199cadfcf5e263adb.jpg
 substitution,2,59H121704,59M121704,H>M,,,2,0.9228,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/6xemay432_jpg.rf.23166c472fa052e1044e780552aa564a.jpg
 mixed,2,77C139373,17C39373,7>1,1,,0 3,0.9671,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/6xemay555_jpg.rf.8e99799689cf4e66f0e58658867a7e6d.jpg
 mixed,2,76H117550,6HL17550,1>L,7,,0 3,0.9976,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/6xemay603_jpg.rf.81e08a7d3f7d8f9f5a78c190910311f2.jpg
-missing_chars,2,54T12473,2473,,54T1,,0 1 2 3,0.9994,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/6xemay618_jpg.rf.c3e50908a0ed3b6a0b13cd62763a3c2e.jpg
 mixed,2,62H27327,67U7327,H>7 2>U,2,,1 2 3,0.8889,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/6xemay69_jpg.rf.f36de4ed2f11d6149151b1d83cb430e9.jpg
-mixed,2,59S218904,189041937,5>8 S>0 2>4 0>3 4>7,8,1,0 2 3 5 7 8,0.8475,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/7xemay1973_jpg.rf.6e2b9fe67075c4c344af8e04342ba814.jpg
-mixed,2,59B131489,50R1314895961,9>0 B>R,,9561,1 2,0.8884,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/7xemay2428_jpg.rf.8ff2fe5e382981d5ebe0be8bb4b95416.jpg
+substitution,2,59B131489,50R131489,9>0 B>R,,,1 2,0.8624,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/7xemay2428_jpg.rf.8ff2fe5e382981d5ebe0be8bb4b95416.jpg
 missing_chars,2,59L184759,59L84759,,1,,3,0.9583,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/8xemay1884_jpg.rf.74076f0161e9d8b4d1b018d2f0aaf47a.jpg
-extra_chars,2,59P232334,59P232334JJPZ,,,JJPZ,,0.9550,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/8xemay979_jpg.rf.293eb46ffaf0117d3540d4640ae6dff4.jpg
 substitution,2,59M153773,59H153773,M>H,,,2,0.9660,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/9xemay1700_jpg.rf.b894189cd6083e0140527c45faf79059.jpg
 substitution,2,51H22212,51H25512,2>5 2>5,,,4 5,0.9330,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/9xemay350_jpg.rf.500d2368d64b5f6a1f9787e55cf31b87.jpg
-extra_chars,2,29N172764,29N172764LJNI,,,LJNI,,0.8018,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/ndata102_jpg.rf.90ef121cd928b1c3cc06905f0a61ea17.jpg
 substitution,2,29E12134,29F12134,E>F,,,2,0.9599,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/ndata11_jpg.rf.bee032d91df21619fa2978a578385b8e.jpg
 missing_chars,2,30N55555,30N5555,,5,,3,0.8783,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/ndata204_jpg.rf.0c37cd7a5ef340654f1ae5a0b6c08ec2.jpg
 mixed,2,29M114361,79M14361,2>7,1,,0 3,0.9564,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/ndata216_jpg.rf.3c9ad01187e59e7e4c2efbff4d8de2be.jpg
 substitution,2,29E153856,29F153856,E>F,,,2,0.9361,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/ndata280_jpg.rf.ce937c8f543ecdb75a550e0ec57825d5.jpg
 substitution,2,29Z88694,29T88694,Z>T,,,2,0.9684,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/ndata288_jpg.rf.85aedf15370ce9e1ba83001661f5b296.jpg
 substitution,2,29E135599,29F135599,E>F,,,2,0.9694,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/ndata290_jpg.rf.dfe15839032cad2275d895bdd7aa40a9.jpg
-missing_chars,2,29E116061,16061,,29E1,,0 1 2 3,0.9959,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/ndata296_jpg.rf.c08cbb59cf4cb661bdf18a2433e948da.jpg
+substitution,2,29E116061,29Z116061,E>Z,,,2,0.9959,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/ndata296_jpg.rf.c08cbb59cf4cb661bdf18a2433e948da.jpg
 substitution,2,29E277971,29F277971,E>F,,,2,0.9862,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/ndata300_jpg.rf.c6d29e56e6065b11e3643147984807a1.jpg
 substitution,2,29E106736,29F106736,E>F,,,2,0.9339,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/ndata314_jpg.rf.e28c8e3b7c2d0786f34186ca4627a36d.jpg
 substitution,2,29E216604,29F716604,E>F 2>7,,,2 3,0.9731,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/ndata315_jpg.rf.f2c5e7ade90b18c5d4054c041f813f7a.jpg
 substitution,2,29E109811,29F109811,E>F,,,2,0.9633,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/ndata316_jpg.rf.09ca84e61de97e10af77ada7cde74e9b.jpg
 substitution,2,66N74444,66M74444,N>M,,,2,0.8384,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/ndata331_jpg.rf.649cd234cb9e6ef86c4392c89d2694e9.jpg
-mixed,2,29U16789,2911167892SU1,U>1,,12SU1,2,0.8770,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/ndata332_jpg.rf.eeeb0bb0f7a1fecb0373aa25134c7c5e.jpg
-mixed,2,59D277777,590277777J902,D>0,,J902,2,0.9156,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/ndata334_jpg.rf.2c8f1b5652dc91d64bf1b9bf1e18b94d.jpg
+mixed,2,29U16789,29L116789,U>1,,L,2,0.9867,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/ndata332_jpg.rf.eeeb0bb0f7a1fecb0373aa25134c7c5e.jpg
 mixed,2,51U33333,51L133333,U>1,,L,2,0.9558,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/ndata343_jpg.rf.07a0df2d4aa4b151192da6bf731fb750.jpg
 mixed,2,29U102222,29I1102222,U>1,,I,2,0.8972,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/ndata344_jpg.rf.6dc8f141ff8b18af9292ae6d0ed98142.jpg
 substitution,2,30F10577,30E10577,F>E,,,2,0.9522,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/ndata356_jpg.rf.2f789831a65d43bda1d53ab63efd8d44.jpg
-missing_chars,2,29K53333,29K533,,33,,4 5,0.8768,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/ndata369_jpg.rf.35b3bab6e08d5c3b11e5c59939e9ede6.jpg
 substitution,2,30A99524,30L99524,A>L,,,2,0.9068,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/ndata40_jpg.rf.1c08adc7a92b6a6871a9f43f29ca0455.jpg
 substitution,2,34B459238,34BL59238,4>L,,,3,0.9438,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/ndata43_jpg.rf.291964aa4bd588c0360d8abad9a60763.jpg
 substitution,2,29V737694,29A737694,V>A,,,2,0.9497,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/ndata480_jpg.rf.c526e766a6fd9eb829f2883bbfec68ab.jpg
 missing_chars,2,29X553937,29X53937,,5,,3,0.8662,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/ndata481_jpg.rf.68c7471cf1f22ceab036eb1311c23e1e.jpg
-missing_chars,2,14B165772,65772,,14B1,,0 1 2 3,0.9915,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/ndata487_jpg.rf.c589f6c4c4c5f3397049b8fe97820a38.jpg
+substitution,2,14B165772,11B165772,4>1,,,1,0.9915,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/ndata487_jpg.rf.c589f6c4c4c5f3397049b8fe97820a38.jpg
 substitution,2,14B165772,11B165772,4>1,,,1,0.9054,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/ndata488_jpg.rf.85d783e503574ff9c3ca1b540d2047dd.jpg
 missing_chars,2,35M27333,35M7333,,2,,3,0.9660,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/ndata491_jpg.rf.396194ca3acd5a7af0391fdf06b84696.jpg
 mixed,2,14X139154,14Y39154,1>Y,X,,2 3,0.8538,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/ndata494_jpg.rf.18f441cf3783410fb6d3e85390938402.jpg
-substitution,2,38F111464,11A6438F1,3>1 8>1 F>A 1>6 1>4 1>3 4>8 6>F 4>1,,,0 1 2 3 4 5 6 7 8,0.9939,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/ndata508_jpg.rf.5cb6d848e65a4eb32ba8bdaf5da46bc5.jpg
 mixed,2,17H55965,79A5965,H>9 5>A,1,,0 2 3,0.8832,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/ndata50_jpg.rf.5b8b878d57f67ff46f8803c7509c5686.jpg
 substitution,1,30M8472,30M9472,8>9,,,3,0.8873,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/ndata528_jpg.rf.bdc149f391dad1b9d4e80760b3584a76.jpg
-extra_chars,2,33N63094,338N63094JJ,,,8JJ,,0.9364,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/ndata532_jpg.rf.803cd95bb7954761a91d8aa380eeaaa2.jpg
+extra_chars,2,33N63094,33BN63094,,,B,,0.9850,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/ndata532_jpg.rf.803cd95bb7954761a91d8aa380eeaaa2.jpg
 substitution,2,36M77802,36MZ7802,7>Z,,,3,0.9537,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/ndata539_jpg.rf.8887df95f892212da1a5650ecd853eff.jpg
 missing_chars,2,20D102797,20D02797,,1,,3,0.9203,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/ndata548_jpg.rf.5e00d18f6e7578b374b339929b6edc27.jpg
 substitution,2,70E144676,20F144676,7>2 E>F,,,0 2,0.8969,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/ndata610_jpg.rf.89509385d133a3a64bcafa2b84538abb.jpg
-mixed,2,29A94170,29194170Z9A,A>1,,Z9A,2,0.8266,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/ndata61_jpg.rf.8f106ec7c085c60f13d129b25d6aa376.jpg
-mixed,2,30L90860,30190860JUC,L>1,,JUC,2,0.8556,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/ndata74_jpg.rf.d87975e8a3afd2f4b3775a57f51109bc.jpg
-mixed,2,29N180623,29H180623LJA,N>H,,LJA,2,0.8058,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/ndata7_jpg.rf.65385ab432c694f044dd5bbd102b8c3d.jpg
+substitution,2,29A94170,29L94170,A>L,,,2,0.9074,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/ndata61_jpg.rf.8f106ec7c085c60f13d129b25d6aa376.jpg
+substitution,2,29N180623,29H180623,N>H,,,2,0.9506,D:/DATN/datasets/raw/roboflow_ocr_plate/valid/images/ndata7_jpg.rf.65385ab432c694f044dd5bbd102b8c3d.jpg
 mixed,2,19A19737,94L9737,A>4 1>L,1,,0 2 3,0.9896,D:/DATN/datasets/raw/roboflow_ocr_conversion/train/images/2109_--2022-03-09-21-04-35_png.rf.a36c8de24a34ff4dc5e1fed80338b005.jpg
 missing_chars,2,30A42503,42503,,30A,,0 1 2,0.9964,D:/DATN/datasets/raw/roboflow_ocr_conversion/train/images/2111_--2022-03-09-21-04-51_png.rf.bf0f9260a69d7693204cc004a00f5fe8.jpg
 missing_chars,2,30A10040,10040,,30A,,0 1 2,0.9909,D:/DATN/datasets/raw/roboflow_ocr_conversion/train/images/2122_--2022-03-09-21-05-32_png.rf.c89ec24f134fc104ab4465e45255843d.jpg
@@ -897,67 +641,55 @@ mixed,2,30A0040,5UA10040,3>5 0>U,,1,0 1,0.9390,D:/DATN/datasets/raw/roboflow_ocr
 substitution,2,30E95190,30F95190,E>F,,,2,0.9922,D:/DATN/datasets/raw/roboflow_ocr_conversion/train/images/2144_--2022-03-09-21-07-46_png.rf.9b7da6f4866b227d44be1db9456a5115.jpg
 substitution,2,30E95190,30F95190,E>F,,,2,0.9903,D:/DATN/datasets/raw/roboflow_ocr_conversion/train/images/2145_--2022-03-09-21-08-01_png.rf.7810b739279f676b49b52dc0d370b53a.jpg
 substitution,2,30E95190,30F95190,E>F,,,2,0.9895,D:/DATN/datasets/raw/roboflow_ocr_conversion/train/images/2147_--2022-03-09-21-08-31_png.rf.29b77a360fed02abe8d6db6d38fee0c1.jpg
-missing_chars,2,30E06547,06547,,30E,,0 1 2,0.9882,D:/DATN/datasets/raw/roboflow_ocr_conversion/train/images/2155_--2022-03-09-21-09-11_png.rf.3463f487b5fd72f63c7632e12ffb75f4.jpg
+substitution,2,30E06547,30F06547,E>F,,,2,0.9882,D:/DATN/datasets/raw/roboflow_ocr_conversion/train/images/2155_--2022-03-09-21-09-11_png.rf.3463f487b5fd72f63c7632e12ffb75f4.jpg
 substitution,2,30E93250,30F93250,E>F,,,2,0.9839,D:/DATN/datasets/raw/roboflow_ocr_conversion/train/images/2163_--2022-03-09-21-11-10_png.rf.a87260069fce141c51dc53bd7f288337.jpg
-missing_chars,2,30F08093,08093,,30F,,0 1 2,0.9982,D:/DATN/datasets/raw/roboflow_ocr_conversion/train/images/2169_--2022-03-09-21-11-27_png.rf.1ce029622027bf0af7498ba512174396.jpg
+mixed,2,30F08093,30D8093,0>D,F,,2 3,0.9982,D:/DATN/datasets/raw/roboflow_ocr_conversion/train/images/2169_--2022-03-09-21-11-27_png.rf.1ce029622027bf0af7498ba512174396.jpg
 substitution,2,30E47464,30E47461,4>1,,,7,0.9176,D:/DATN/datasets/raw/roboflow_ocr_conversion/train/images/2180_--2022-03-09-21-12-28_png.rf.c2efeda9e90cfb16fe761c50e64bf732.jpg
-missing_chars,2,30E68743,68743,,30E,,0 1 2,0.9935,D:/DATN/datasets/raw/roboflow_ocr_conversion/train/images/2188_--2022-03-09-21-17-54_png.rf.0c0ddd0544cbd9143addfb05acfbaa1f.jpg
 empty_read,2,30E74997,,,30E74997,,0 1 2 3 4 5 6 7,0.0000,D:/DATN/datasets/raw/roboflow_ocr_conversion/train/images/2198_--2022-03-09-21-18-34_png.rf.ff170b4ff6fdc9579180ed5a056439e8.jpg
 missing_chars,2,30E74997,9,,30E7497,,0 1 2 3 4 5 7,0.9269,D:/DATN/datasets/raw/roboflow_ocr_conversion/train/images/2200_--2022-03-09-21-18-43_png.rf.712f0373d641194e42f09dde0a2a9679.jpg
 extra_chars,1,30A7726,30A77236,,,3,,0.9989,D:/DATN/datasets/raw/roboflow_ocr_conversion/train/images/2210_--2022-03-09-21-19-19_png.rf.251d5bbfafe119fde84fa58a20162abe.jpg
 substitution,2,30E67654,30F67654,E>F,,,2,0.9934,D:/DATN/datasets/raw/roboflow_ocr_conversion/train/images/2212_--2022-03-09-21-19-24_png.rf.d5ad88ab443f9dc9c5544fdef17f8206.jpg
-missing_chars,2,30E08043,08043,,30E,,0 1 2,0.9910,D:/DATN/datasets/raw/roboflow_ocr_conversion/train/images/2213_--2022-03-09-21-19-28_png.rf.f8637577fbefe94a5dfe23d27ad91d39.jpg
+substitution,2,30E08043,30F08043,E>F,,,2,0.9910,D:/DATN/datasets/raw/roboflow_ocr_conversion/train/images/2213_--2022-03-09-21-19-28_png.rf.f8637577fbefe94a5dfe23d27ad91d39.jpg
 empty_read,2,29A17782,,,29A17782,,0 1 2 3 4 5 6 7,0.0000,D:/DATN/datasets/raw/roboflow_ocr_conversion/train/images/2214_--2022-03-09-21-19-32_png.rf.81918ece4617b77ff129c769b51e8bc6.jpg
 substitution,2,30E96860,30F96860,E>F,,,2,0.9455,D:/DATN/datasets/raw/roboflow_ocr_conversion/train/images/2216_--2022-03-09-21-19-40_png.rf.d9c78dce9ae74571b12809afcedf7347.jpg
-mixed,2,30A26533,E26533,A>E,30,,0 1 2,0.9077,D:/DATN/datasets/raw/roboflow_ocr_conversion/train/images/2219_--2022-03-09-21-19-52_png.rf.db0bfb3f30e6eeff24722884b0ae3c1a.jpg
+extra_chars,2,30A26533,30AE26533,,,E,,0.9077,D:/DATN/datasets/raw/roboflow_ocr_conversion/train/images/2219_--2022-03-09-21-19-52_png.rf.db0bfb3f30e6eeff24722884b0ae3c1a.jpg
 extra_chars,2,30E6064,30E60364,,,3,,0.9715,D:/DATN/datasets/raw/roboflow_ocr_conversion/train/images/2220_--2022-03-09-21-19-58_png.rf.687cc27c3a411525a7b5c3c23b30cf8e.jpg
-missing_chars,2,30A98405,98405,,30A,,0 1 2,0.9977,D:/DATN/datasets/raw/roboflow_ocr_conversion/train/images/2222_--2022-03-09-21-20-08_png.rf.0b638bc7093c9d97569e4f177008bad0.jpg
 substitution,2,30E47979,30F47979,E>F,,,2,0.9833,D:/DATN/datasets/raw/roboflow_ocr_conversion/train/images/2229_--2022-03-09-21-21-06_png.rf.7b114c0fc34ece0c460067c5d54d4a32.jpg
 empty_read,2,30E74997,,,30E74997,,0 1 2 3 4 5 6 7,0.0000,D:/DATN/datasets/raw/roboflow_ocr_conversion/train/images/2237_--2022-03-09-21-21-22_png.rf.a3e770c19c76fd2525e8d221ca573675.jpg
 empty_read,2,30E74997,,,30E74997,,0 1 2 3 4 5 6 7,0.0000,D:/DATN/datasets/raw/roboflow_ocr_conversion/train/images/2239_--2022-03-09-21-21-31_png.rf.5a3e954cddf72faffaa89cacdb1c738a.jpg
 empty_read,2,30E74997,,,30E74997,,0 1 2 3 4 5 6 7,0.0000,D:/DATN/datasets/raw/roboflow_ocr_conversion/train/images/2266_--2022-03-09-21-23-22_png.rf.aa35bcf4b863fbdd56915b9cc2499d11.jpg
 missing_chars,2,30A95419,95419,,30A,,0 1 2,0.9646,D:/DATN/datasets/raw/roboflow_ocr_conversion/train/images/2276_--2022-03-09-21-23-54_png.rf.699a8a6649810d9c45009c3f01317392.jpg
-missing_chars,2,30E19855,19855,,30E,,0 1 2,0.9877,D:/DATN/datasets/raw/roboflow_ocr_conversion/train/images/2283_--2022-03-09-21-24-25_png.rf.d7bb71dcc8df0331048d9c39828c7b0b.jpg
 empty_read,2,30E61292,,,30E61292,,0 1 2 3 4 5 6 7,0.0000,D:/DATN/datasets/raw/roboflow_ocr_conversion/train/images/2284_--2022-03-09-21-24-25_png.rf.b1a0ca65a56d5e13eff727ea6979e04f.jpg
 substitution,2,30E61292,30F61292,E>F,,,2,0.9948,D:/DATN/datasets/raw/roboflow_ocr_conversion/train/images/2287_--2022-03-09-21-24-34_png.rf.7950cfadbdc8e3639bc3dc63c1620b87.jpg
-missing_chars,2,30E46482,46482,,30E,,0 1 2,0.9947,D:/DATN/datasets/raw/roboflow_ocr_conversion/train/images/2296_--2022-03-09-21-25-09_png.rf.e6a7f35f75be870a6a2ec7090c1d3b81.jpg
-missing_chars,2,30E97366,97366,,30E,,0 1 2,0.9937,D:/DATN/datasets/raw/roboflow_ocr_conversion/train/images/2297_--2022-03-09-21-25-14_png.rf.d4d5f7c12cbb87a26e32c13a8be27365.jpg
-missing_chars,2,51G67675,67675,,51G,,0 1 2,0.9686,D:/DATN/datasets/raw/roboflow_ocr_conversion/train/images/2298_--2022-03-09-21-25-20_png.rf.6788049219f44adc8c93b58fd3a3525a.jpg
+substitution,2,30E46482,30F46482,E>F,,,2,0.9947,D:/DATN/datasets/raw/roboflow_ocr_conversion/train/images/2296_--2022-03-09-21-25-09_png.rf.e6a7f35f75be870a6a2ec7090c1d3b81.jpg
+substitution,2,30E97366,30F97366,E>F,,,2,0.9937,D:/DATN/datasets/raw/roboflow_ocr_conversion/train/images/2297_--2022-03-09-21-25-14_png.rf.d4d5f7c12cbb87a26e32c13a8be27365.jpg
 mixed,2,29D88585,20LH98585,9>L D>H 8>9,,0,1 2 3,0.7491,D:/DATN/datasets/raw/roboflow_ocr_conversion/train/images/2313_--2022-03-09-21-26-07_png.rf.7e8401b65431afd89a2928b34138ba83.jpg
 substitution,2,29D08585,29N08585,D>N,,,2,0.9507,D:/DATN/datasets/raw/roboflow_ocr_conversion/train/images/2314_--2022-03-09-21-26-11_png.rf.f32fbccc8743c3d4d416e1bebd959b4a.jpg
-mixed,2,30A09887,10D9887,3>1 0>D,A,,0 2 3,0.7912,D:/DATN/datasets/raw/roboflow_ocr_conversion/train/images/2319_--2022-03-09-21-26-24_png.rf.2e12ca550388cd116a9d53dbd3b39dba.jpg
-missing_chars,2,29D07985,07985,,29D,,0 1 2,0.9927,D:/DATN/datasets/raw/roboflow_ocr_conversion/train/images/2323_--2022-03-09-21-26-48_png.rf.dc3a73d3f063d26c19bf7e74cc6acfbf.jpg
+substitution,2,29D07985,79D07985,2>7,,,0,0.9927,D:/DATN/datasets/raw/roboflow_ocr_conversion/train/images/2323_--2022-03-09-21-26-48_png.rf.dc3a73d3f063d26c19bf7e74cc6acfbf.jpg
 missing_chars,2,30A64829,64829,,30A,,0 1 2,0.9948,D:/DATN/datasets/raw/roboflow_ocr_conversion/train/images/2326_--2022-03-09-21-44-01_png.rf.6d696560ae9dfe3fc9fa18195359f29e.jpg
 substitution,2,30E96482,30F96482,E>F,,,2,0.9898,D:/DATN/datasets/raw/roboflow_ocr_conversion/train/images/2329_--2022-03-09-21-44-14_png.rf.cb53e5c5a0784965720579b354c86a74.jpg
-mixed,2,29C65969,55969,6>5,29C,,0 1 2 3,0.9221,D:/DATN/datasets/raw/roboflow_ocr_conversion/train/images/2330_--2022-03-09-21-44-20_png.rf.df238babfe63b23e241de075990cbf74.jpg
-missing_chars,2,30A14687,14687,,30A,,0 1 2,0.8825,D:/DATN/datasets/raw/roboflow_ocr_conversion/train/images/2343_--2022-03-09-21-45-40_png.rf.27eb8f60713a05151bced8fef24435d1.jpg
+substitution,2,29C65969,29D55969,C>D 6>5,,,2 3,0.9221,D:/DATN/datasets/raw/roboflow_ocr_conversion/train/images/2330_--2022-03-09-21-44-20_png.rf.df238babfe63b23e241de075990cbf74.jpg
 substitution,2,30T8783,30L8783,T>L,,,2,0.9975,D:/DATN/datasets/raw/roboflow_ocr_conversion/train/images/2344_--2022-03-09-21-45-40_png.rf.2e6b691ede5e1f1f4aa5efe69f59a3ec.jpg
 mixed,2,30A32958,32959,8>9,30A,,0 1 2 7,0.9899,D:/DATN/datasets/raw/roboflow_ocr_conversion/train/images/2346_--2022-03-09-21-45-49_png.rf.8fb35757e654e0f1d7f2fe50c315c481.jpg
 substitution,2,30E79214,30F79214,E>F,,,2,0.9953,D:/DATN/datasets/raw/roboflow_ocr_conversion/train/images/2349_--2022-03-09-21-46-04_png.rf.47825a3cbf49c247e7000671108fe062.jpg
 substitution,2,30E49882,30F49882,E>F,,,2,0.9894,D:/DATN/datasets/raw/roboflow_ocr_conversion/train/images/2356_--2022-03-09-21-46-32_png.rf.74055e6c32ba0a6ca271461aa0db82c9.jpg
-missing_chars,2,30E99710,99710,,30E,,0 1 2,0.9947,D:/DATN/datasets/raw/roboflow_ocr_conversion/train/images/2359_--2022-03-09-21-47-03_png.rf.a7e7a6a38814e4ab40593a8a0a2b7139.jpg
-missing_chars,2,30A35624,35624,,30A,,0 1 2,0.9895,D:/DATN/datasets/raw/roboflow_ocr_conversion/train/images/2364_--2022-03-09-21-47-28_png.rf.c7675c2fa7cdd2b270695d6907d8b7d1.jpg
-substitution,2,29D30293,P0L30293,2>P 9>0 D>L,,,0 1 2,0.7981,D:/DATN/datasets/raw/roboflow_ocr_conversion/train/images/2368_--2022-03-09-21-48-11_png.rf.78a36dc40aea71f14329257f1b7b21c6.jpg
 missing_chars,2,30A76661,76661,,30A,,0 1 2,0.9845,D:/DATN/datasets/raw/roboflow_ocr_conversion/train/images/2377_--2022-03-09-21-49-11_png.rf.d3b32d2dca6f7ed26c05a4f03fedc993.jpg
 substitution,2,30E55542,30F55542,E>F,,,2,0.9938,D:/DATN/datasets/raw/roboflow_ocr_conversion/train/images/2386_--2022-03-09-21-50-17_png.rf.6cb32948d3acd956a294b73dd6727b6a.jpg
 missing_chars,2,30A21624,21624,,30A,,0 1 2,0.9920,D:/DATN/datasets/raw/roboflow_ocr_conversion/train/images/2395_--2022-03-09-21-50-55_png.rf.a8aa85a288ee0fd60c17204abbb8d5e9.jpg
 missing_chars,2,29H04239,04239,,29H,,0 1 2,0.9941,D:/DATN/datasets/raw/roboflow_ocr_conversion/train/images/2412_--2022-03-09-21-52-07_png.rf.cf44ec7657bed8ea1a6c638849e87303.jpg
 missing_chars,2,30E94252,94252,,30E,,0 1 2,0.9949,D:/DATN/datasets/raw/roboflow_ocr_conversion/train/images/2416_--2022-03-09-21-52-23_png.rf.3e9670ab797894818c7c6307c3a32a27.jpg
-missing_chars,2,30E29312,29312,,30E,,0 1 2,0.9784,D:/DATN/datasets/raw/roboflow_ocr_conversion/valid/images/2134_--2022-03-09-21-06-42_png.rf.e70b5e299a97e9655bb3df2b889c2daf.jpg
+substitution,2,30E29312,30F29312,E>F,,,2,0.9784,D:/DATN/datasets/raw/roboflow_ocr_conversion/valid/images/2134_--2022-03-09-21-06-42_png.rf.e70b5e299a97e9655bb3df2b889c2daf.jpg
 mixed,2,30E3250,93250,E>9,30,,0 1 2,0.9916,D:/DATN/datasets/raw/roboflow_ocr_conversion/valid/images/2139_--2022-03-09-21-07-12_png.rf.d4cc8e76f13156792f867e5af3ba2011.jpg
-missing_chars,1,31A5259,315259,,A,,2,0.9264,D:/DATN/datasets/raw/roboflow_ocr_conversion/valid/images/2154_--2022-03-09-21-09-11_png.rf.5670f7aa432c1a280987a87c198b75be.jpg
-missing_chars,2,30E95190,95190,,30E,,0 1 2,0.9972,D:/DATN/datasets/raw/roboflow_ocr_conversion/valid/images/2158_--2022-03-09-21-10-25_png.rf.507113e9aed2eff038ee225f5b9f3b38.jpg
-missing_chars,2,30F08093,08093,,30F,,0 1 2,0.9976,D:/DATN/datasets/raw/roboflow_ocr_conversion/valid/images/2164_--2022-03-09-21-11-10_png.rf.64192e17c34f7f37ebede5e1f608e35e.jpg
+substitution,2,30E95190,30F95190,E>F,,,2,0.9972,D:/DATN/datasets/raw/roboflow_ocr_conversion/valid/images/2158_--2022-03-09-21-10-25_png.rf.507113e9aed2eff038ee225f5b9f3b38.jpg
 missing_chars,2,30E74997,997,,30E74,,0 1 2 3 4,0.9583,D:/DATN/datasets/raw/roboflow_ocr_conversion/valid/images/2175_--2022-03-09-21-12-05_png.rf.442998a805032940babc04404f8eab02.jpg
 empty_read,2,30E74997,,,30E74997,,0 1 2 3 4 5 6 7,0.0000,D:/DATN/datasets/raw/roboflow_ocr_conversion/valid/images/2192_--2022-03-09-21-18-22_png.rf.31d0f7afc8a2be09bc7fc58990544392.jpg
 missing_chars,2,30A61505,61505,,30A,,0 1 2,0.9202,D:/DATN/datasets/raw/roboflow_ocr_conversion/valid/images/2223_--2022-03-09-21-20-20_png.rf.1154773a1f56c0b2c168a441713e660c.jpg
-missing_chars,2,29A64692,64692,,29A,,0 1 2,0.9949,D:/DATN/datasets/raw/roboflow_ocr_conversion/valid/images/2224_--2022-03-09-21-20-26_png.rf.cce5a748b164aa4386e66c30277741ca.jpg
-missing_chars,2,30E74997,74997,,30E,,0 1 2,0.9269,D:/DATN/datasets/raw/roboflow_ocr_conversion/valid/images/2234_--2022-03-09-21-21-14_png.rf.8ed4c92382f9ba7721ec61fd1789232c.jpg
+substitution,2,30E74997,30F74997,E>F,,,2,0.9269,D:/DATN/datasets/raw/roboflow_ocr_conversion/valid/images/2234_--2022-03-09-21-21-14_png.rf.8ed4c92382f9ba7721ec61fd1789232c.jpg
 empty_read,2,30E74997,,,30E74997,,0 1 2 3 4 5 6 7,0.0000,D:/DATN/datasets/raw/roboflow_ocr_conversion/valid/images/2251_--2022-03-09-21-22-52_png.rf.e08b4b66b385bc3b64c398c4581187e9.jpg
 substitution,2,30E66971,30F66971,E>F,,,2,0.8617,D:/DATN/datasets/raw/roboflow_ocr_conversion/valid/images/2310_--2022-03-09-21-26-02_png.rf.ef96fb92456b0cf77779bc6e535aaed9.jpg
 missing_chars,2,30A7916,30A,,7916,,3 4 5 6,0.9503,D:/DATN/datasets/raw/roboflow_ocr_conversion/valid/images/2328_--2022-03-09-21-44-09_png.rf.d5e43b8275e509a0e7c030977dbad040.jpg
 missing_chars,2,30E63202,63202,,30E,,0 1 2,0.9967,D:/DATN/datasets/raw/roboflow_ocr_conversion/valid/images/2341_--2022-03-09-21-45-31_png.rf.13bb7f9f96c5507539736f5c16d2d7ce.jpg
-missing_chars,2,30T8783,8783,,30T,,0 1 2,0.9990,D:/DATN/datasets/raw/roboflow_ocr_conversion/valid/images/2342_--2022-03-09-21-45-37_png.rf.ea33da55ce422fdec2cb4f7c0d6e0279.jpg
+substitution,2,30T8783,30L8783,T>L,,,2,0.9990,D:/DATN/datasets/raw/roboflow_ocr_conversion/valid/images/2342_--2022-03-09-21-45-37_png.rf.ea33da55ce422fdec2cb4f7c0d6e0279.jpg
 missing_chars,2,30A32958,32958,,30A,,0 1 2,0.9879,D:/DATN/datasets/raw/roboflow_ocr_conversion/valid/images/2348_--2022-03-09-21-45-54_png.rf.8e3125928a10c408b419eae8a34ad041.jpg
 mixed,2,30F0213,02134,,30F,4,0 1 2,0.9905,D:/DATN/datasets/raw/roboflow_ocr_conversion/valid/images/2351_--2022-03-09-21-46-13_png.rf.874802a1dedf771cfa45227d93a739f2.jpg
 substitution,2,30E33768,30F33768,E>F,,,2,0.9878,D:/DATN/datasets/raw/roboflow_ocr_conversion/valid/images/2358_--2022-03-09-21-46-42_png.rf.ff9420b5f0de889151f2e943534a68f8.jpg

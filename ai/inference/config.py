@@ -229,6 +229,22 @@ class InferenceConfig:
             own. Harmless when the environment lacks ``cv2.dnn_superres`` --
             the variant is simply skipped.
 
+            **Off by default since 28/07/2026, on measurement.** The ablation
+            in ``docs/reports/27-retry-ladder-cost-benefit.md`` put its price
+            at +319 ms on p95 latency and +1381 ms on p99, against a
+            contribution of exactly zero plates on the 2801-sample labelled
+            corpus -- and zero there is structural, not empirical: every
+            corpus crop is at least 565 px on its long side while the SR gate
+            only opens below :data:`~ai.inference.pipeline.RETRY_SR_MAX_SIDE`
+            (200 px), so the corpus cannot exercise this rung at all. The only
+            evidence for it remains one hand-picked demo crop out of four
+            tried (report 24). An unquantified benefit cannot justify pushing
+            a Must-level requirement (NFR-P1) past its floor, so the rung
+            ships off, with the code, the tests and this switch intact:
+            ``ALPR_SR_RETRY_ENABLED=true`` restores it. Measuring it honestly
+            needs a labelled set of small, detector-produced crops, which the
+            project does not have.
+
     Raises:
         ValueError: If any value is outside its valid range.
     """
@@ -243,7 +259,7 @@ class InferenceConfig:
     ocr_rec_model_dir: Path | None = None
     two_line_aspect_ratio_threshold: float = 2.5
     rectify_enabled: bool = True
-    sr_retry_enabled: bool = True
+    sr_retry_enabled: bool = False
 
     def __post_init__(self) -> None:
         """Normalise the model path and validate every field.

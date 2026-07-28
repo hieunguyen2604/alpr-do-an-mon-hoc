@@ -69,6 +69,34 @@ class TestDefaults:
         assert InferenceConfig().device == "cpu"
         assert InferenceConfig().ocr_use_gpu is False
 
+    def test_geometry_retry_ships_on_and_super_resolution_ships_off(self) -> None:
+        """The two rungs of the retry ladder are priced differently (28/07/2026).
+
+        Measured on the same 2801-sample corpus and the same 100 test images:
+
+        =========================== ======== ============ ==========
+        Rung                        NFR-A6   plates won   p95 latency
+        =========================== ======== ============ ==========
+        neither                     0.7437   0            866 ms
+        deskew/stretch only         0.7512   34           1110 ms
+        deskew/stretch + SR         0.7512   34           1429 ms
+        =========================== ======== ============ ==========
+
+        Super-resolution therefore bought nothing for +319 ms on p95 and
+        +1381 ms on p99, and on its own pushed NFR-P1 past its 1500 ms floor.
+        Its zero is structural: every corpus crop is >= 565 px on the long
+        side while the gate opens below 200 px, so no labelled data the
+        project owns can exercise it. Off by default until that data exists;
+        the code and the switch stay.
+
+        This test exists so the defaults are a recorded decision rather than
+        an accident -- flipping either one should require reading the numbers
+        above and replacing them with better ones.
+        """
+        config = InferenceConfig()
+        assert config.rectify_enabled is True
+        assert config.sr_retry_enabled is False
+
     def test_the_default_model_path_is_under_the_project_root(self) -> None:
         config = InferenceConfig()
         assert config.model_path == PROJECT_ROOT / "models" / "best.pt"

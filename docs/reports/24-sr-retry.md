@@ -63,7 +63,14 @@ dưới từ lần đọc gốc, cùng tiêu chí chấp nhận và cùng sàn t
   hơn lợi ích, không làm.
 - Kết quả SR **phụ thuộc phiên bản OpenCV** (thí nghiệm 5.0 và sản xuất
   4.10 cho fragment khác nhau ở biên) — lý do phải pin đúng
-  `opencv-contrib-python-headless==4.10.0.84` trong image.
+  `opencv-contrib-python==4.10.0.84` trong image.
+
+  > **Đính chính 28/07/2026:** bản đầu của mục này ghi
+  > `opencv-contrib-python-headless`. Sai, và sai theo hướng nguy hiểm: `paddlex`
+  > kiểm tra phụ thuộc **theo tên gói pip**, nên bản `-headless` làm nó từ chối
+  > khởi tạo và **toàn bộ OCR ngừng hoạt động**, chứ không chỉ mất siêu phân
+  > giải. `deployment/docker/Dockerfile.backend` vẫn luôn ghim đúng bản không
+  > headless — chỉ dòng văn bản này lệch với bản build thật.
 - Cụm crop LỚN đọc sai (`50F01690`, `79E00392`, `51B09865`, 600 px+) là
   bài toán khác (nghi liên quan trần nén 64 px trước OCR) — chưa xử trong
   báo cáo này.

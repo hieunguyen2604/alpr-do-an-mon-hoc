@@ -281,7 +281,7 @@
       "roboflow_school_fuhih|roboflow_traffic_camera"
     ],
     "so_ban_ghi_khong_ro_split": 0,
-    "tep_nguon": "datasets\\processed\\yolo_v3\\split_manifest.csv",
+    "tep_nguon": "D:\\DATN\\datasets\\processed\\yolo_v3\\split_manifest.csv",
     "ghi_chu": "Moi dong la mot TO HOP xuat xu, khong phai mot nguon: sau khi khu trung lap, mot anh giu lai co the den tu nhieu nguon cung luc va manifest ghi ca tap xuat xu ngan cach bang '|'. Do do so dong lon hon con so 6 nguon nguyen to cua tap v3; khoa 'nguon_nguyen_to' liet ke tung nguon rieng le, nhung cac so trong do CONG DON QUA 15.133 vi anh da nguon bi dem nhieu lan — khong duoc dung lam mau so. Ti le cua tung dong tinh theo mau so la TONG SO ANH CUA CHINH DONG do, khong phai tong toan bo corpus. Cot lech so sanh ti le test cua dong voi ti le test tong the; nguong canh bao 10.0 diem phan tram lay tu tieu chi doc bang o muc 5.3.4."
   },
   "T5.4b": {
@@ -590,18 +590,18 @@
     "ghi_chu": "Dai duoc tinh tu (w x h) cua hop nhan that chia cho dien tich anh goc. Chi so cua moi dai tinh bang chinh ham evaluate_group cua ai/evaluation/evaluate.py nen cong thuc mAP la duy nhat trong do an."
   },
   "T5.7a": {
-    "p50_ms": 419.06,
-    "p95_ms": 780.36,
-    "p99_ms": 948.42,
-    "mean_ms": 374.65,
+    "p50_ms": 405.77,
+    "p95_ms": 1143.1,
+    "p99_ms": 1420.07,
+    "mean_ms": 447.38,
     "std_ms": null,
-    "min_ms": 82.39,
-    "max_ms": 1060.13,
+    "min_ms": 72.95,
+    "max_ms": 1487.41,
     "so_anh_do": 100,
     "so_bien_trung_binh_moi_anh": 1.33,
-    "boi_so_vuot_nguong_toi_thieu": 0.52,
-    "boi_so_vuot_muc_tieu": 0.98,
-    "ket_qua_nfr_p1": "✅ đạt",
+    "boi_so_vuot_nguong_toi_thieu": 0.76,
+    "boi_so_vuot_muc_tieu": 1.43,
+    "ket_qua_nfr_p1": "🟡 đạt ngưỡng tối thiểu",
     "moc_baseline_416_v1_p95_ms": 763.75,
     "tep_nguon": "D:\\DATN\\docs\\reports\\05-benchmark-system-best.json"
   },
@@ -610,16 +610,16 @@
       "decode_ms": {
         "ten_buoc": "Giải mã ảnh + tiền xử lý",
         "uoc_luong_phase0_ms": 50.0,
-        "do_that_ms": 2.65,
-        "chenh_lech_lan": 0.05,
-        "phan_tram_tong": 1.5
+        "do_that_ms": 2.83,
+        "chenh_lech_lan": 0.06,
+        "phan_tram_tong": 1.7
       },
       "detect_ms": {
         "ten_buoc": "Suy luận YOLO11n @ 640px (CPU)",
         "uoc_luong_phase0_ms": 150.0,
-        "do_that_ms": 59.83,
-        "chenh_lech_lan": 0.4,
-        "phan_tram_tong": 34.2
+        "do_that_ms": 57.27,
+        "chenh_lech_lan": 0.38,
+        "phan_tram_tong": 34.0
       },
       "crop_ms": {
         "ten_buoc": "Cắt + tiền xử lý vùng biển số",
@@ -631,8 +631,8 @@
       "ocr_ms": {
         "ten_buoc": "**PaddleOCR (mỗi biển)**",
         "uoc_luong_phase0_ms": 120.0,
-        "do_that_ms": 112.55,
-        "chenh_lech_lan": 0.94,
+        "do_that_ms": 108.28,
+        "chenh_lech_lan": 0.9,
         "phan_tram_tong": 64.3
       },
       "normalize_ms": {
@@ -653,8 +653,8 @@
     "tong": {
       "uoc_luong_phase0_ms": 405.0,
       "uoc_luong_cung_pham_vi_ms": 355.0,
-      "do_that_ms": 175.06,
-      "chenh_lech_lan": 0.49,
+      "do_that_ms": 168.41,
+      "chenh_lech_lan": 0.47,
       "phan_tram_tong": 100.0
     },
     "so_mau": 40,
@@ -662,36 +662,36 @@
     "ghi_chu": "Buoc 'ghi CSDL + luu anh' khong co doi ung trong so do vi benchmark_system do pipeline suy luan thuan, khong di qua tang API — o 'do that' cua no giu '—'. Cot ty so 'chenh lech (lan)' o dong tong vi vay so voi uoc luong CUNG PHAM VI (da tru buoc ghi CSDL), khong so voi con so 405 ms tron."
   },
   "T5.6a": {
-    "char_accuracy_truoc": 0.8704,
-    "char_accuracy_sau": 0.8848,
-    "cer_truoc": 0.1296,
-    "cer_sau": 0.1152,
+    "char_accuracy_truoc": 0.9061,
+    "char_accuracy_sau": 0.9454,
+    "cer_truoc": 0.0939,
+    "cer_sau": 0.0546,
     "N_so_ky_tu_nhan_that": 23855,
-    "S_thay_the": 1007,
-    "D_bi_xoa": 1182,
-    "I_chen_thua": 903,
-    "S_D_I_nguon": "dan ra tu confusion_matrix cua 16-ocr-accuracy-rescued.json: S = tong o ngoai duong cheo, D = tong deletions, I = tong insertions, N = tong ma tran cong D. Khong phai so uoc luong. Ma tran nay do tren chuoi THO truoc chuan hoa nen S/D/I khong doi so voi luot do truoc buoc cuu dong tren.",
+    "S_thay_the": 862,
+    "D_bi_xoa": 1272,
+    "I_chen_thua": 107,
+    "S_D_I_nguon": "dan ra tu confusion_matrix cua 05-ocr-accuracy.json: S = tong o ngoai duong cheo, D = tong deletions, I = tong insertions, N = tong ma tran cong D. Khong phai so uoc luong.",
     "S_D_I_ly_do": null,
     "so_ca_theo_loai_loi": {
-      "correct": 1885,
-      "empty_read": 11,
-      "substitution": 399,
-      "missing_chars": 134,
-      "extra_chars": 95,
+      "correct": 2104,
+      "empty_read": 10,
+      "substitution": 445,
+      "missing_chars": 73,
+      "extra_chars": 18,
       "transposition": 0,
-      "mixed": 277
+      "mixed": 151
     },
     "so_mau": 2801,
-    "ket_qua_nfr_a4": "❌ không đạt",
-    "tep_nguon": "D:\\DATN\\docs\\reports\\16-ocr-accuracy-rescued.json"
+    "ket_qua_nfr_a4": "🟡 đạt ngưỡng tối thiểu",
+    "tep_nguon": "D:\\DATN\\docs\\reports\\05-ocr-accuracy.json"
   },
   "T5.6b": {
-    "a5_truoc_hau_xu_ly": 0.6098,
-    "a6_sau_hau_xu_ly": 0.673,
-    "muc_cai_thien_diem_pt": 6.32,
-    "so_bien_duoc_sua_dung": 177,
+    "a5_truoc_hau_xu_ly": 0.6373,
+    "a6_sau_hau_xu_ly": 0.7512,
+    "muc_cai_thien_diem_pt": 11.39,
+    "so_bien_duoc_sua_dung": 319,
     "so_bien_bi_lam_hong": 0,
-    "so_bien_sai_ca_truoc_lan_sau": 916,
+    "so_bien_sai_ca_truoc_lan_sau": 697,
     "so_mau": 2801,
     "ket_qua_nfr_a5": "❌ không đạt",
     "ket_qua_nfr_a6": "❌ không đạt",
@@ -699,33 +699,31 @@
     "phan_ra_theo_nhom_luat": {
       "trang_thai": "chua do",
       "ly_do": "Chua co co che bat/tat tung nhom luat trong ai/inference/plate_rules.py. Muc D.2 cua ch5-thuc-nghiem.md ghi day la hang muc can viet ma truoc khi dien duoc."
-    },
-    "tep_nguon": "D:\\DATN\\docs\\reports\\16-ocr-accuracy-rescued.json"
+    }
   },
   "T5.6c": {
     "mot_dong": {
       "so_mau": 567,
-      "char_accuracy": 0.9903,
+      "char_accuracy": 0.9925,
       "a5": 0.9418,
-      "a6": 0.9489,
-      "gain_points": 0.71,
-      "a7": 0.6843
+      "a6": 0.9541,
+      "gain_points": 1.23,
+      "a7": 0.6861
     },
     "hai_dong": {
       "so_mau": 2234,
-      "char_accuracy": 0.8601,
-      "a5": 0.5255,
-      "a6": 0.603,
-      "gain_points": 7.74,
-      "a7": 0.4902
+      "char_accuracy": 0.9344,
+      "a5": 0.56,
+      "a6": 0.6996,
+      "gain_points": 13.97,
+      "a7": 0.5219
     },
     "chenh_lech_diem_pt": {
-      "char_accuracy": 13.02,
-      "a5": 41.63,
-      "a6": 34.59
+      "char_accuracy": 5.81,
+      "a5": 38.18,
+      "a6": 25.45
     },
-    "moc_tham_chieu": "Laroca va cong su (VISAPP 2022) bao cao 94,3% (bien mot dong) so voi 45,7% (bien hai dong), chenh 48,6 diem, do tren bo du lieu RodoSol-ALPR CUA BRAZIL. Day KHONG phai so lieu Viet Nam.",
-    "tep_nguon": "D:\\DATN\\docs\\reports\\16-ocr-accuracy-rescued.json"
+    "moc_tham_chieu": "Laroca va cong su (VISAPP 2022) bao cao 94,3% (bien mot dong) so voi 45,7% (bien hai dong), chenh 48,6 diem, do tren bo du lieu RodoSol-ALPR CUA BRAZIL. Day KHONG phai so lieu Viet Nam."
   },
   "T5.6d": {
     "top_cap_nham": [
@@ -734,7 +732,7 @@
         "ky_tu_that": "L",
         "doc_thanh": "1",
         "so_lan": 90,
-        "ty_le_trong_tong_thay_the": 0.0894,
+        "ty_le_trong_tong_thay_the": 0.1044,
         "co_trong_bang_luat": true,
         "bang_luat": "TO_DIGIT",
         "huong_anh_xa": "đúng chiều — luật `L → 1` thuộc TO_DIGIT"
@@ -744,7 +742,7 @@
         "ky_tu_that": "E",
         "doc_thanh": "F",
         "so_lan": 73,
-        "ty_le_trong_tong_thay_the": 0.0725,
+        "ty_le_trong_tong_thay_the": 0.0847,
         "co_trong_bang_luat": false,
         "bang_luat": null,
         "huong_anh_xa": "chưa có luật nào phủ cặp này"
@@ -753,8 +751,8 @@
         "hang": 3,
         "ky_tu_that": "4",
         "doc_thanh": "L",
-        "so_lan": 54,
-        "ty_le_trong_tong_thay_the": 0.0536,
+        "so_lan": 53,
+        "ty_le_trong_tong_thay_the": 0.0615,
         "co_trong_bang_luat": false,
         "bang_luat": null,
         "huong_anh_xa": "chưa có luật nào phủ cặp này"
@@ -764,7 +762,7 @@
         "ky_tu_that": "U",
         "doc_thanh": "1",
         "so_lan": 38,
-        "ty_le_trong_tong_thay_the": 0.0377,
+        "ty_le_trong_tong_thay_the": 0.0441,
         "co_trong_bang_luat": false,
         "bang_luat": null,
         "huong_anh_xa": "chưa có luật nào phủ cặp này"
@@ -774,7 +772,7 @@
         "ky_tu_that": "D",
         "doc_thanh": "0",
         "so_lan": 34,
-        "ty_le_trong_tong_thay_the": 0.0338,
+        "ty_le_trong_tong_thay_the": 0.0394,
         "co_trong_bang_luat": true,
         "bang_luat": "TO_DIGIT",
         "huong_anh_xa": "đúng chiều — luật `D → 0` thuộc TO_DIGIT"
@@ -784,7 +782,7 @@
         "ky_tu_that": "Z",
         "doc_thanh": "7",
         "so_lan": 32,
-        "ty_le_trong_tong_thay_the": 0.0318,
+        "ty_le_trong_tong_thay_the": 0.0371,
         "co_trong_bang_luat": false,
         "bang_luat": null,
         "huong_anh_xa": "chưa có luật nào phủ cặp này"
@@ -794,7 +792,7 @@
         "ky_tu_that": "2",
         "doc_thanh": "7",
         "so_lan": 26,
-        "ty_le_trong_tong_thay_the": 0.0258,
+        "ty_le_trong_tong_thay_the": 0.0302,
         "co_trong_bang_luat": false,
         "bang_luat": null,
         "huong_anh_xa": "chưa có luật nào phủ cặp này"
@@ -804,33 +802,33 @@
         "ky_tu_that": "X",
         "doc_thanh": "Y",
         "so_lan": 21,
-        "ty_le_trong_tong_thay_the": 0.0209,
+        "ty_le_trong_tong_thay_the": 0.0244,
         "co_trong_bang_luat": false,
         "bang_luat": null,
         "huong_anh_xa": "chưa có luật nào phủ cặp này"
       },
       {
         "hang": 9,
-        "ky_tu_that": "9",
-        "doc_thanh": "0",
+        "ky_tu_that": "B",
+        "doc_thanh": "R",
         "so_lan": 20,
-        "ty_le_trong_tong_thay_the": 0.0199,
+        "ty_le_trong_tong_thay_the": 0.0232,
         "co_trong_bang_luat": false,
         "bang_luat": null,
         "huong_anh_xa": "chưa có luật nào phủ cặp này"
       },
       {
         "hang": 10,
-        "ky_tu_that": "B",
-        "doc_thanh": "R",
-        "so_lan": 20,
-        "ty_le_trong_tong_thay_the": 0.0199,
+        "ky_tu_that": "9",
+        "doc_thanh": "0",
+        "so_lan": 19,
+        "ty_le_trong_tong_thay_the": 0.022,
         "co_trong_bang_luat": false,
         "bang_luat": null,
         "huong_anh_xa": "chưa có luật nào phủ cặp này"
       }
     ],
-    "tong_so_thay_the": 1007,
+    "tong_so_thay_the": 862,
     "doi_chieu_bang_luat": {
       "confirmed": [
         {
@@ -856,7 +854,7 @@
         {
           "table": "TO_LETTER",
           "rule": "5 -> S",
-          "observed_confusions": 7
+          "observed_confusions": 6
         },
         {
           "table": "TO_LETTER",
@@ -870,17 +868,17 @@
         },
         {
           "table": "TO_DIGIT",
-          "rule": "L -> 1",
-          "observed_confusions": 2
-        },
-        {
-          "table": "TO_DIGIT",
           "rule": "Q -> 0",
           "observed_confusions": 1
         },
         {
           "table": "TO_DIGIT",
           "rule": "I -> 1",
+          "observed_confusions": 1
+        },
+        {
+          "table": "TO_DIGIT",
+          "rule": "L -> 1",
           "observed_confusions": 1
         },
         {
@@ -950,7 +948,7 @@
         {
           "true": "4",
           "predicted": "L",
-          "count": 54
+          "count": 53
         },
         {
           "true": "U",
@@ -973,33 +971,28 @@
           "count": 21
         },
         {
-          "true": "9",
-          "predicted": "0",
-          "count": 20
-        },
-        {
           "true": "B",
           "predicted": "R",
           "count": 20
         },
         {
+          "true": "9",
+          "predicted": "0",
+          "count": 19
+        },
+        {
           "true": "4",
           "predicted": "1",
-          "count": 14
-        },
-        {
-          "true": "1",
-          "predicted": "0",
-          "count": 12
-        },
-        {
-          "true": "7",
-          "predicted": "1",
-          "count": 11
+          "count": 13
         },
         {
           "true": "1",
           "predicted": "7",
+          "count": 9
+        },
+        {
+          "true": "7",
+          "predicted": "1",
           "count": 9
         },
         {
@@ -1008,8 +1001,13 @@
           "count": 9
         },
         {
-          "true": "5",
-          "predicted": "6",
+          "true": "0",
+          "predicted": "U",
+          "count": 8
+        },
+        {
+          "true": "1",
+          "predicted": "0",
           "count": 8
         },
         {
@@ -1023,24 +1021,24 @@
           "count": 8
         },
         {
-          "true": "0",
-          "predicted": "U",
+          "true": "5",
+          "predicted": "6",
           "count": 7
         },
         {
-          "true": "1",
-          "predicted": "5",
+          "true": "B",
+          "predicted": "9",
           "count": 7
         },
         {
-          "true": "3",
-          "predicted": "1",
+          "true": "F",
+          "predicted": "E",
           "count": 7
         },
         {
           "true": "5",
-          "predicted": "0",
-          "count": 7
+          "predicted": "9",
+          "count": 6
         }
       ],
       "proposed_updates": {
@@ -1049,9 +1047,9 @@
           {
             "emitted": "L",
             "current_target": "1",
-            "current_support": 2,
+            "current_support": 1,
             "proposed_target": "4",
-            "proposed_support": 54,
+            "proposed_support": 53,
             "action": "change"
           },
           {
@@ -1059,7 +1057,15 @@
             "current_target": null,
             "current_support": 0,
             "proposed_target": "0",
-            "proposed_support": 7,
+            "proposed_support": 8,
+            "action": "add"
+          },
+          {
+            "emitted": "C",
+            "current_target": null,
+            "current_support": 0,
+            "proposed_target": "0",
+            "proposed_support": 5,
             "action": "add"
           },
           {
@@ -1071,51 +1077,11 @@
             "action": "change"
           },
           {
-            "emitted": "C",
-            "current_target": null,
-            "current_support": 0,
-            "proposed_target": "0",
-            "proposed_support": 4,
-            "action": "add"
-          },
-          {
-            "emitted": "J",
-            "current_target": "1",
-            "current_support": 0,
-            "proposed_target": "0",
-            "proposed_support": 4,
-            "action": "change"
-          },
-          {
             "emitted": "R",
             "current_target": null,
             "current_support": 0,
             "proposed_target": "1",
             "proposed_support": 3,
-            "action": "add"
-          },
-          {
-            "emitted": "T",
-            "current_target": "7",
-            "current_support": 0,
-            "proposed_target": "6",
-            "proposed_support": 3,
-            "action": "change"
-          },
-          {
-            "emitted": "A",
-            "current_target": "4",
-            "current_support": 0,
-            "proposed_target": "1",
-            "proposed_support": 2,
-            "action": "change"
-          },
-          {
-            "emitted": "E",
-            "current_target": null,
-            "current_support": 0,
-            "proposed_target": "3",
-            "proposed_support": 2,
             "action": "add"
           },
           {
@@ -1125,6 +1091,14 @@
             "proposed_target": "5",
             "proposed_support": 2,
             "action": "add"
+          },
+          {
+            "emitted": "J",
+            "current_target": "1",
+            "current_support": 0,
+            "proposed_target": "0",
+            "proposed_support": 2,
+            "action": "change"
           },
           {
             "emitted": "M",
@@ -1143,11 +1117,11 @@
             "action": "change"
           },
           {
-            "emitted": "S",
-            "current_target": "5",
-            "current_support": 1,
-            "proposed_target": "2",
-            "proposed_support": 2,
+            "emitted": "A",
+            "current_target": "4",
+            "current_support": 0,
+            "proposed_target": "5",
+            "proposed_support": 1,
             "action": "change"
           },
           {
@@ -1162,9 +1136,17 @@
             "emitted": "D",
             "current_target": "0",
             "current_support": 0,
-            "proposed_target": "2",
+            "proposed_target": "6",
             "proposed_support": 1,
             "action": "change"
+          },
+          {
+            "emitted": "E",
+            "current_target": null,
+            "current_support": 0,
+            "proposed_target": "8",
+            "proposed_support": 1,
+            "action": "add"
           },
           {
             "emitted": "G",
@@ -1178,7 +1160,7 @@
             "emitted": "H",
             "current_target": null,
             "current_support": 0,
-            "proposed_target": "0",
+            "proposed_target": "1",
             "proposed_support": 1,
             "action": "add"
           },
@@ -1186,17 +1168,9 @@
             "emitted": "I",
             "current_target": "1",
             "current_support": 1,
-            "proposed_target": "0",
-            "proposed_support": 1,
-            "action": "change"
-          },
-          {
-            "emitted": "K",
-            "current_target": null,
-            "current_support": 0,
             "proposed_target": "1",
             "proposed_support": 1,
-            "action": "add"
+            "action": "agree"
           },
           {
             "emitted": "N",
@@ -1213,6 +1187,22 @@
             "proposed_target": "1",
             "proposed_support": 1,
             "action": "add"
+          },
+          {
+            "emitted": "S",
+            "current_target": "5",
+            "current_support": 1,
+            "proposed_target": "2",
+            "proposed_support": 1,
+            "action": "change"
+          },
+          {
+            "emitted": "T",
+            "current_target": "7",
+            "current_support": 0,
+            "proposed_target": "1",
+            "proposed_support": 1,
+            "action": "change"
           },
           {
             "emitted": "X",
@@ -1234,9 +1224,9 @@
             "emitted": "Z",
             "current_target": "2",
             "current_support": 1,
-            "proposed_target": "0",
+            "proposed_target": "2",
             "proposed_support": 1,
-            "action": "change"
+            "action": "agree"
           }
         ],
         "TO_LETTER": [
@@ -1283,7 +1273,7 @@
           {
             "emitted": "5",
             "current_target": "S",
-            "current_support": 7,
+            "current_support": 6,
             "proposed_target": "F",
             "proposed_support": 9,
             "action": "change"
@@ -1334,15 +1324,14 @@
     ]
   },
   "T5.6e": {
-    "a7_e2e": 0.5295,
-    "a7_voi_dieu_kien_da_phat_hien": 0.6014,
+    "a7_e2e": 0.5552,
+    "a7_voi_dieu_kien_da_phat_hien": 0.6306,
     "ty_le_bien_bi_bo_sot": 0.1196,
-    "ty_le_phat_hien_dung_nhung_doc_sai": 0.3986,
-    "chenh_lech_a6_tru_a7": 14.35,
+    "ty_le_phat_hien_dung_nhung_doc_sai": 0.3694,
+    "chenh_lech_a6_tru_a7": 19.6,
     "so_mau": 2801,
     "ket_qua_nfr_a7": "❌ không đạt",
-    "canh_bao_hieu_luc": "Con so nay do tren anh CROP bien so, khong phai anh hien truong, vi khong bo du lieu nao trong do an co dong thoi anh toan canh va chuoi bien so. Bo detect duoc huan luyen tren anh giao thong day du nen mot tam anh chi co bien so chiem gan het khung la NGOAI PHAN BO: phan lon that bai la do detect khong bat duoc box, khong phai do OCR doc sai (xem e2e.exact_given_detected va e2e.missed_by_detector). Mo hinh chinh thuc best.pt dat mAP@0.5 = 0,9829 tren tap test v3 (1.514 anh) — tuc bo phat hien hoat dong tot tren anh hien truong; that bai o phep do A7 den tu viec dua anh CROP vao bo phat hien, ngoai phan bo huan luyen cua no. De do NFR-A7 dung cach can gan nhan chuoi bien so cho mot phan bo test cua yolo_v2 -- viec nay CHUA lam.",
-    "tep_nguon": "D:\\DATN\\docs\\reports\\16-ocr-accuracy-rescued.json"
+    "canh_bao_hieu_luc": "Con so nay do tren anh CROP bien so, khong phai anh hien truong, vi khong bo du lieu nao trong do an co dong thoi anh toan canh va chuoi bien so. Bo detect duoc huan luyen tren anh giao thong day du nen mot tam anh chi co bien so chiem gan het khung la NGOAI PHAN BO: phan lon that bai la do detect khong bat duoc box, khong phai do OCR doc sai (xem e2e.exact_given_detected va e2e.missed_by_detector). Mo hinh chinh thuc best.pt dat mAP@0.5 = 0,9829 tren tap test v3 (1.514 anh) — tuc bo phat hien hoat dong tot tren anh hien truong; that bai o phep do A7 den tu viec dua anh CROP vao bo phat hien, ngoai phan bo huan luyen cua no. De do NFR-A7 dung cach can gan nhan chuoi bien so cho mot phan bo test cua yolo_v2 -- viec nay CHUA lam."
   },
   "T5.10": {
     "loai_loi": {
@@ -1363,27 +1352,27 @@
       },
       "E3": {
         "ten": "Nhầm ký tự",
-        "so_ca": 399,
-        "ty_le_trong_tong_ca_sai": 0.4356,
-        "ty_le_trong_toan_tap": 0.1424,
-        "mot_dong": 18,
-        "hai_dong": 381
+        "so_ca": 445,
+        "ty_le_trong_tong_ca_sai": 0.6385,
+        "ty_le_trong_toan_tap": 0.1589,
+        "mot_dong": 17,
+        "hai_dong": 428
       },
       "E4": {
         "ten": "Thiếu ký tự",
-        "so_ca": 134,
-        "ty_le_trong_tong_ca_sai": 0.1463,
-        "ty_le_trong_toan_tap": 0.0478,
-        "mot_dong": 1,
-        "hai_dong": 133
+        "so_ca": 73,
+        "ty_le_trong_tong_ca_sai": 0.1047,
+        "ty_le_trong_toan_tap": 0.0261,
+        "mot_dong": 0,
+        "hai_dong": 73
       },
       "E5": {
         "ten": "Thừa ký tự",
-        "so_ca": 95,
-        "ty_le_trong_tong_ca_sai": 0.1037,
-        "ty_le_trong_toan_tap": 0.0339,
+        "so_ca": 18,
+        "ty_le_trong_tong_ca_sai": 0.0258,
+        "ty_le_trong_toan_tap": 0.0064,
         "mot_dong": 5,
-        "hai_dong": 90
+        "hai_dong": 13
       },
       "E6": {
         "ten": "Sai thứ tự",
@@ -1395,22 +1384,22 @@
       }
     },
     "cac_loai_khac": {
-      "empty_read": 11,
-      "mixed": 277,
+      "empty_read": 10,
+      "mixed": 151,
       "ghi_chu": "Hai loai nay co trong cai dat nhung khong co ma E tuong ung trong bang 5.10.1. Phai them dong cho chung hoac gop co giai thich — khong duoc bo im lang vi khi do tong se khong bang 100%."
     },
-    "tong_so_ca_sai": 916,
+    "tong_so_ca_sai": 697,
     "tong_so_ca_danh_gia": 2801,
-    "ty_le_loi": 0.327,
-    "tep_nguon": "D:\\DATN\\docs\\reports\\16-ocr-accuracy-rescued.json (khoa by_line_count.*.error_classes)"
+    "ty_le_loi": 0.2488,
+    "tep_nguon": "D:\\DATN\\docs\\reports\\05-ocr-errors\\error_analysis.json"
   },
   "T5.7e": {
     "so_yeu_cau_dong_thoi_on_dinh": 10,
     "dat_nfr_sc1": true,
-    "soak_so_yeu_cau": 1684,
+    "soak_so_yeu_cau": 1660,
     "soak_ty_le_thanh_cong": 1.0,
     "soak_dat_nfr_r4": true,
-    "soak_tang_rss_gb": -0.009,
+    "soak_tang_rss_gb": 0.008,
     "rss_pipeline_gb": null,
     "muc_dong_thoi_da_do": [
       1,
@@ -1465,7 +1454,7 @@
       "map50_mot_dong": 0.98839,
       "map50_hai_dong": 0.96748,
       "chenh_layout_diem_pt": 2.09,
-      "do_tre_p95_ms": 780.36
+      "do_tre_p95_ms": 1143.1
     },
     "trong_so_chinh_thuc": "D:\\DATN\\models\\best.pt",
     "canh_bao_quy_ket": "Ba bien thay doi dong thoi (imgsz, bo du lieu + cach chia, so epoch) va chung tac dong NGUOC CHIEU nhau. Phat bieu duy nhat duoc phep la mo ta: 'cau hinh A cho X, cau hinh B cho Y'. Khong duoc quy ket nguyen nhan cho bat ky bien nao."
@@ -1475,9 +1464,9 @@
       {
         "ma": "P1",
         "chi_tieu": "Độ trễ E2E một ảnh, p95 (ms)",
-        "do_duoc": 780.36,
+        "do_duoc": 1143.1,
         "nfr": "NFR-P1",
-        "ket_qua": "✅ đạt"
+        "ket_qua": "🟡 đạt ngưỡng tối thiểu"
       },
       {
         "ma": "P2",
@@ -1564,35 +1553,35 @@
       {
         "ma": "A4",
         "chi_tieu": "1 − CER (mức ký tự)",
-        "do_duoc": 0.8848,
+        "do_duoc": 0.9454,
         "nfr": "NFR-A4",
-        "ket_qua": "❌ không đạt"
+        "ket_qua": "🟡 đạt ngưỡng tối thiểu"
       },
       {
         "ma": "A5",
         "chi_tieu": "Chuỗi đầy đủ trước hậu xử lý",
-        "do_duoc": 0.6098,
+        "do_duoc": 0.6373,
         "nfr": "NFR-A5",
         "ket_qua": "❌ không đạt"
       },
       {
         "ma": "A6",
         "chi_tieu": "Chuỗi đầy đủ sau hậu xử lý",
-        "do_duoc": 0.673,
+        "do_duoc": 0.7512,
         "nfr": "NFR-A6",
         "ket_qua": "❌ không đạt"
       },
       {
         "ma": "A6−A5",
         "chi_tieu": "Đóng góp của khối hậu xử lý (điểm %)",
-        "do_duoc": 6.32,
+        "do_duoc": 11.39,
         "nfr": null,
         "ket_qua": "n/a"
       },
       {
         "ma": "A7",
         "chi_tieu": "Độ chính xác E2E toàn trình",
-        "do_duoc": 0.5295,
+        "do_duoc": 0.5552,
         "nfr": "NFR-A7",
         "ket_qua": "❌ không đạt"
       },
@@ -1644,7 +1633,7 @@
     ]
   },
   "_meta": {
-    "thoi_diem_do": "2026-07-20T03:09:48",
+    "thoi_diem_do": "2026-07-28T17:43:40",
     "he_dieu_hanh": "Windows 11",
     "cpu_ten": "Intel(R) Core(TM) i5-14600K",
     "so_nhan_logic": 20,
@@ -1658,15 +1647,14 @@
     "device": "cpu",
     "duong_dan_model": "D:\\DATN\\models\\best.pt",
     "model_ton_tai": true,
-    "dataset_yaml": "datasets\\processed\\yolo_v3\\data.yaml",
+    "dataset_yaml": "D:\\DATN\\datasets\\processed\\yolo_v3\\data.yaml",
     "split": "test",
     "so_anh_split": 1514,
     "skip_slow": false,
     "ghi_chu": "Moi so lieu hieu nang trong tep nay chi co nghia khi doc kem khoi _meta nay. Kich thuoc lo = 1, bo 3 luot khoi dong nong dau tien.",
     "torch_threads": 14,
     "tien_trinh_canh_tranh": [
-      "pid=0 cpu=1785% System Idle Process",
-      "pid=33540 cpu=80% SrTasks.exe"
+      "pid=0 cpu=1946% System Idle Process"
     ],
     "phien_ban_thu_vien": {
       "torch": "2.13.0+cpu",
@@ -1676,32 +1664,6 @@
       "openvino": "2026.2.1",
       "numpy": "2.3.5"
     },
-    "thoi_gian_chay_giay": 3810.0,
-    "cap_nhat_ocr_2026_07_20": {
-      "ly_do": "Do lai toan bo chi so OCR sau khi noi buoc 'cuu dong tren' (rescue_two_line_upper) vao ai/evaluation/ocr_accuracy.py o CA hai duong do: nhanh crop (A4/A5/A6) va nhanh E2E (A7).",
-      "tep_ket_qua": "D:\\DATN\\docs\\reports\\16-ocr-accuracy-rescued.json",
-      "thoi_diem_do": "2026-07-20T11:33:43+00:00",
-      "khoa_da_cap_nhat": [
-        "T5.6a",
-        "T5.6b",
-        "T5.6c",
-        "T5.6e",
-        "T5.9 (A4/A5/A6/A6-A5/A7)",
-        "T5.10"
-      ],
-      "khoa_khong_doi": [
-        "T5.5a",
-        "T5.5b",
-        "T5.5c",
-        "T5.6d",
-        "T5.7a",
-        "T5.7b",
-        "T5.7e",
-        "T5.8"
-      ],
-      "so_anh_duoc_cuu": 89,
-      "so_anh_cuu_thanh_chuoi_dung_hoan_toan": 49,
-      "ghi_chu": "A5 khong doi (0,6098) vi buoc cuu chay SAU chuan hoa nen khong the anh huong con so TRUOC chuan hoa; bien mot dong khong doi vi cong kiem tra should_rescue_two_line chi mo cho line_count == 2. Ma tran nham lan (T5.6d) do tren chuoi tho nen cung khong doi."
-    }
+    "thoi_gian_chay_giay": 4130.8
   }
 }

@@ -1,5 +1,5 @@
 {
-  "measured_at": "2026-07-20T04:08:04",
+  "measured_at": "2026-07-28T18:47:16",
   "hardware": {
     "cpu_name": "Intel(R) Core(TM) i5-14600K",
     "physical_cores": 14,
@@ -17,16 +17,16 @@
         "successes": 20,
         "failures": 0,
         "error_rate": 0.0,
-        "wall_seconds": 3.066,
-        "throughput_rps": 6.523,
+        "wall_seconds": 3.171,
+        "throughput_rps": 6.306,
         "latency": {
           "samples": 20,
-          "mean_ms": 153.15,
-          "p50_ms": 150.78,
-          "p95_ms": 165.02,
-          "p99_ms": 179.59,
-          "min_ms": 136.99,
-          "max_ms": 179.59
+          "mean_ms": 158.39,
+          "p50_ms": 152.18,
+          "p95_ms": 193.43,
+          "p99_ms": 208.42,
+          "min_ms": 140.55,
+          "max_ms": 208.42
         },
         "errors": []
       },
@@ -36,16 +36,16 @@
         "successes": 20,
         "failures": 0,
         "error_rate": 0.0,
-        "wall_seconds": 3.703,
-        "throughput_rps": 5.401,
+        "wall_seconds": 3.779,
+        "throughput_rps": 5.293,
         "latency": {
           "samples": 20,
-          "mean_ms": 362.0,
-          "p50_ms": 363.53,
-          "p95_ms": 431.12,
-          "p99_ms": 456.8,
-          "min_ms": 187.73,
-          "max_ms": 456.8
+          "mean_ms": 367.36,
+          "p50_ms": 382.71,
+          "p95_ms": 428.78,
+          "p99_ms": 436.78,
+          "min_ms": 176.23,
+          "max_ms": 436.78
         },
         "errors": []
       },
@@ -55,16 +55,16 @@
         "successes": 20,
         "failures": 0,
         "error_rate": 0.0,
-        "wall_seconds": 3.427,
-        "throughput_rps": 5.835,
+        "wall_seconds": 3.705,
+        "throughput_rps": 5.398,
         "latency": {
           "samples": 20,
-          "mean_ms": 768.86,
-          "p50_ms": 848.81,
-          "p95_ms": 916.62,
-          "p99_ms": 924.37,
-          "min_ms": 194.27,
-          "max_ms": 924.37
+          "mean_ms": 824.29,
+          "p50_ms": 918.19,
+          "p95_ms": 1009.09,
+          "p99_ms": 1015.69,
+          "min_ms": 188.71,
+          "max_ms": 1015.69
         },
         "errors": []
       },
@@ -74,21 +74,21 @@
         "successes": 20,
         "failures": 0,
         "error_rate": 0.0,
-        "wall_seconds": 3.441,
-        "throughput_rps": 5.812,
+        "wall_seconds": 3.407,
+        "throughput_rps": 5.871,
         "latency": {
           "samples": 20,
-          "mean_ms": 1291.11,
-          "p50_ms": 1594.99,
-          "p95_ms": 1844.75,
-          "p99_ms": 1904.83,
-          "min_ms": 144.7,
-          "max_ms": 1904.83
+          "mean_ms": 1288.39,
+          "p50_ms": 1634.85,
+          "p95_ms": 1826.42,
+          "p99_ms": 1837.68,
+          "min_ms": 136.53,
+          "max_ms": 1837.68
         },
         "errors": []
       }
     ],
-    "peak_throughput_rps": 6.523,
+    "peak_throughput_rps": 6.306,
     "peak_throughput_at_concurrency": 1,
     "max_error_free_concurrency": 10,
     "nfr_sc1_target_concurrency": 5,
@@ -98,25 +98,25 @@
   "soak": {
     "duration_seconds": 300.0,
     "concurrency": 2,
-    "requests": 1684,
-    "successes": 1684,
+    "requests": 1660,
+    "successes": 1660,
     "failures": 0,
     "success_rate": 1.0,
     "target_rate": 0.99,
     "meets_target": true,
-    "throughput_rps": 5.613,
+    "throughput_rps": 5.533,
     "latency": {
-      "samples": 1684,
-      "mean_ms": 336.22,
-      "p50_ms": 334.85,
-      "p95_ms": 390.52,
-      "p99_ms": 407.44,
-      "min_ms": 153.24,
-      "max_ms": 450.42
+      "samples": 1660,
+      "mean_ms": 341.45,
+      "p50_ms": 339.56,
+      "p95_ms": 396.16,
+      "p99_ms": 414.42,
+      "min_ms": 160.2,
+      "max_ms": 447.82
     },
-    "rss_start_gb": 1.308,
-    "rss_end_gb": 1.299,
-    "rss_growth_gb": -0.009,
+    "rss_start_gb": 1.04,
+    "rss_end_gb": 1.047,
+    "rss_growth_gb": 0.008,
     "errors": []
   }
 }

@@ -84,7 +84,7 @@ import statistics
 import sys
 import time
 from collections import Counter
-from dataclasses import asdict, dataclass, field
+from dataclasses import asdict, dataclass, field, replace
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Final, Sequence
@@ -1258,7 +1258,14 @@ def main(argv: list[str] | None = None) -> int:
     LOGGER.info("Engine        : %s", args.engine)
     LOGGER.info("Pre-processing: %s", "off" if args.no_preprocess else "on")
 
-    config = InferenceConfig(two_line_aspect_ratio_threshold=args.aspect_ratio_threshold)
+    # Environment first, explicit CLI second: the aspect-ratio threshold is this
+    # benchmark's own subject, so it wins, but every other field -- notably the
+    # retry-ladder switches -- must come through rather than be pinned to the
+    # dataclass defaults. See the same fix in benchmark_system.py / ocr_accuracy.py.
+    config = replace(
+        InferenceConfig.from_env(),
+        two_line_aspect_ratio_threshold=args.aspect_ratio_threshold,
+    )
     try:
         recognizer = build_recognizer(args.engine, config, preprocess=not args.no_preprocess)
     except ValueError as error:

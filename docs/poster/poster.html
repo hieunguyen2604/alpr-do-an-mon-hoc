@@ -293,7 +293,7 @@
             ⇒ điểm yếu nằm ở tầng OCR, không phải phát hiện</li>
       </ul>
       <div class="kpi">
-        <div><b class="green">731 ms</b><span>độ trễ p95 trên CPU<br>(mục tiêu ≤ 800 ms)</span></div>
+        <div><b class="green">1.143 ms</b><span>độ trễ p95 trên CPU<br>(sàn ≤ 1.500 ms · p50 chỉ 406 ms)</span></div>
         <div><b>4.578</b><span>ảnh · 5.200 khung biển<br>chia 70/20/10 phân tầng</span></div>
       </div>
       <div style="font-size:var(--t6); color:#475569; margin-top:3mm">
@@ -316,9 +316,9 @@
     <div class="block alert">
       <h2>HẠN CHẾ</h2>
       <ul>
-        <li class="bad"><strong>OCR biển 2 dòng chưa đạt</strong> — chính xác ký tự 0,873;
-            toàn bộ khoảng cách nằm ở biển xe máy (0,846 so với 0,990 của biển 1 dòng)</li>
-        <li class="warn">Chỉ số đầu-cuối 0,5227 đo trên ảnh cắt sẵn — là <em>cận dưới bi quan</em></li>
+        <li class="bad"><strong>OCR biển 2 dòng chưa đạt</strong> — chuỗi đúng 0,700;
+            toàn bộ khoảng cách nằm ở biển xe máy (so với 0,954 của biển 1 dòng)</li>
+        <li class="warn">Chỉ số đầu-cuối 0,5552 đo trên ảnh cắt sẵn — là <em>cận dưới bi quan</em>: 335/2.801 ca hỏng ở bước phát hiện vì ảnh crop nằm ngoài phân bố huấn luyện</li>
         <li class="warn">Chưa có tập kiểm tra <strong>xuyên bộ dữ liệu</strong> ⇒ mAP lạc quan hơn thực tế</li>
         <li class="warn">Một yêu cầu mức <em>Must</em> (trang Tổng quan) đã đưa ra khỏi phạm vi để thu gọn demo;
             API thống kê vẫn phục vụ và vẫn có kiểm thử</li>

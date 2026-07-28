@@ -1,10 +1,8 @@
 # Bảng số liệu Chương 5 — sinh tự động
 
-*Sinh lúc 2026-07-20T03:09:48 bằng `scripts/fill_chapter5.py`.*
+*Sinh lúc 2026-07-28T17:43:40 bằng `scripts/fill_chapter5.py`.*
 
-> **Cập nhật thủ công 2026-07-20T11:33:43 — khối OCR đo lại.** Các bảng **T5.6a, T5.6b, T5.6c, T5.6e, T5.10** và năm dòng A4/A5/A6/A6−A5/A7 của bảng **T5.9** đã được điền lại từ `docs/reports/16-ocr-accuracy-rescued.json` — lượt đo lại sau khi nối bước **cứu dòng trên** (`rescue_two_line_upper`) vào **cả hai** đường đo của `ai/evaluation/ocr_accuracy.py`: nhánh vùng cắt (A4/A5/A6) **và** nhánh đầu-cuối (A7). Mọi bảng khác giữ nguyên số của lượt sinh 03:09:48. Bảng **T5.6d** (ma trận nhầm lẫn) **không đổi** vì nó đo trên chuỗi thô trước chuẩn hoá.
-
-> **Điều kiện đo — bắt buộc đọc kèm mọi bảng bên dưới.** CPU Intel(R) Core(TM) i5-14600K, 14 nhân vật lý / 20 nhân logic, RAM 31,77 GB, Windows 11, Python 3.13.12, torch 2.13.0+cpu, ultralytics 8.4.101, `device=cpu`, kích thước lô = 1. Mô hình: `D:\DATN\models\best.pt`. Bộ dữ liệu: `datasets\processed\yolo_v3\data.yaml`, split `test`, 1.514 ảnh.
+> **Điều kiện đo — bắt buộc đọc kèm mọi bảng bên dưới.** CPU Intel(R) Core(TM) i5-14600K, 14 nhân vật lý / 20 nhân logic, RAM 31,77 GB, Windows 11, Python 3.13.12, torch 2.13.0+cpu, ultralytics 8.4.101, `device=cpu`, kích thước lô = 1. Mô hình: `D:\DATN\models\best.pt`. Bộ dữ liệu: `D:\DATN\datasets\processed\yolo_v3\data.yaml`, split `test`, 1.514 ảnh.
 
 Ô ghi `—` là ô **chưa đo được**; lý do cụ thể nằm ở khoá `ly_do` trong `docs/reports/05-results.json`. Không được điền 0 vào các ô đó.
 
@@ -148,28 +146,28 @@ Epoch tốt nhất theo mAP@0.5:0.95 trên val: **20** (20 epoch đã chạy).
 
 | Chỉ số | Ngưỡng tối thiểu | Mục tiêu | **Đo được (trước hậu xử lý)** | **Đo được (sau hậu xử lý)** | Kết quả |
 |---|---:|---:|---:|---:|:---:|
-| 1 − CER (NFR-A4) | 0,92 | 0,95 | 0,8704 | **0,8848** | ❌ không đạt |
-| CER | ≤ 0,08 | ≤ 0,05 | 0,1296 | 0,1152 | n/a |
+| 1 − CER (NFR-A4) | 0,92 | 0,95 | 0,9061 | **0,9454** | 🟡 đạt ngưỡng tối thiểu |
+| CER | ≤ 0,08 | ≤ 0,05 | 0,0939 | 0,0546 | n/a |
 | Số ký tự nhãn thật ($N$) | — | — | 23.855 | 23.855 | n/a |
-| Số ký tự thay thế ($S$) | — | — | 1.007 | 1.007 | n/a |
-| Số ký tự bị xoá ($D$) | — | — | 1.182 | 1.182 | n/a |
-| Số ký tự chèn thừa ($I$) | — | — | 903 | 903 | n/a |
+| Số ký tự thay thế ($S$) | — | — | 862 | 862 | n/a |
+| Số ký tự bị xoá ($D$) | — | — | 1.272 | 1.272 | n/a |
+| Số ký tự chèn thừa ($I$) | — | — | 107 | 107 | n/a |
 | **Số biển có nhãn chuỗi (mẫu số)** | — | — | **2.801** | **2.801** | n/a |
 
-> dan ra tu confusion_matrix cua 16-ocr-accuracy-rescued.json: S = tong o ngoai duong cheo, D = tong deletions, I = tong insertions, N = tong ma tran cong D. Khong phai so uoc luong. Ba cột $S$/$D$/$I$ đo trên **chuỗi thô trước hậu xử lý**, nên chúng giống nhau ở cả hai cột đo được — và cũng vì thế bước cứu dòng trên (chạy **sau** chuẩn hoá) không làm chúng đổi.
+> dan ra tu confusion_matrix cua 05-ocr-accuracy.json: S = tong o ngoai duong cheo, D = tong deletions, I = tong insertions, N = tong ma tran cong D. Khong phai so uoc luong. Ba cột $S$/$D$/$I$ đo trên **chuỗi thô trước hậu xử lý**, nên chúng giống nhau ở cả hai cột đo được.
 
-> Phân bố số ca theo loại lỗi: `{'correct': 1885, 'empty_read': 11, 'substitution': 399, 'missing_chars': 134, 'extra_chars': 95, 'transposition': 0, 'mixed': 277}`.
+> Phân bố số ca theo loại lỗi: `{'correct': 2104, 'empty_read': 10, 'substitution': 445, 'missing_chars': 73, 'extra_chars': 18, 'transposition': 0, 'mixed': 151}`.
 
 ## {{T5.6b}} Chuỗi đầy đủ trước và sau hậu xử lý (NFR-A5 ↔ A6)
 
 | Chỉ số | Mã NFR | Ngưỡng tối thiểu | Mục tiêu | **Đo được** | Kết quả |
 |---|:---:|---:|---:|---:|:---:|
-| Độ chính xác chuỗi **trước** hậu xử lý | NFR-A5 | 0,80 | 0,85 | **0,6098** | ❌ không đạt |
-| Độ chính xác chuỗi **sau** hậu xử lý | NFR-A6 | 0,85 | 0,90 | **0,6730** | ❌ không đạt |
-| **Mức cải thiện (A6 − A5), điểm %** | — | — | — | **6,32** | n/a |
-| Số biển **được sửa đúng** nhờ hậu xử lý | — | — | — | 177 | n/a |
+| Độ chính xác chuỗi **trước** hậu xử lý | NFR-A5 | 0,80 | 0,85 | **0,6373** | ❌ không đạt |
+| Độ chính xác chuỗi **sau** hậu xử lý | NFR-A6 | 0,85 | 0,90 | **0,7512** | ❌ không đạt |
+| **Mức cải thiện (A6 − A5), điểm %** | — | — | — | **11,39** | n/a |
+| Số biển **được sửa đúng** nhờ hậu xử lý | — | — | — | 319 | n/a |
 | Số biển **bị hậu xử lý làm hỏng** | — | — | — | 0 | n/a |
-| Số biển sai cả trước lẫn sau | — | — | — | 916 | n/a |
+| Số biển sai cả trước lẫn sau | — | — | — | 697 | n/a |
 | **Số mẫu (biển có nhãn chuỗi)** | — | — | — | **2.801** | n/a |
 
 > Nhánh diễn giải phải giữ lại ở mục 5.6.2: **nhánh A** (A nếu hiệu số dương, B nếu bằng 0 hoặc âm).
@@ -181,11 +179,11 @@ Epoch tốt nhất theo mAP@0.5:0.95 trên val: **20** (20 epoch đã chạy).
 | Chỉ số | Biển **một dòng** | Biển **hai dòng** | Chênh lệch (điểm %) |
 |---|---:|---:|---:|
 | Số mẫu có nhãn chuỗi | **567** | **2.234** | n/a |
-| 1 − CER (NFR-A4) | 0,9903 | 0,8601 | 13,02 |
-| Chuỗi đúng **trước** hậu xử lý (A5) | 0,9418 | 0,5255 | 41,63 |
-| Chuỗi đúng **sau** hậu xử lý (A6) | 0,9489 | 0,6030 | 34,59 |
-| Mức cải thiện do hậu xử lý (A6 − A5) | 0,71 | 7,74 | n/a |
-| Độ chính xác E2E (A7) | 0,6843 | 0,4902 | — |
+| 1 − CER (NFR-A4) | 0,9925 | 0,9344 | 5,81 |
+| Chuỗi đúng **trước** hậu xử lý (A5) | 0,9418 | 0,5600 | 38,18 |
+| Chuỗi đúng **sau** hậu xử lý (A6) | 0,9541 | 0,6996 | 25,45 |
+| Mức cải thiện do hậu xử lý (A6 − A5) | 1,23 | 13,97 | n/a |
+| Độ chính xác E2E (A7) | 0,6861 | 0,5219 | — |
 
 > Laroca va cong su (VISAPP 2022) bao cao 94,3% (bien mot dong) so voi 45,7% (bien hai dong), chenh 48,6 diem, do tren bo du lieu RodoSol-ALPR CUA BRAZIL. Day KHONG phai so lieu Viet Nam.
 
@@ -193,28 +191,28 @@ Epoch tốt nhất theo mAP@0.5:0.95 trên val: **20** (20 epoch đã chạy).
 
 | Hạng | Ký tự thật | Ký tự bị đọc thành | Số lần | Tỉ lệ trong tổng số lỗi thay thế | Bảng luật hiện có phủ cặp này không? | Hướng ánh xạ có đúng không? |
 |:---:|:---:|:---:|---:|---:|:---:|---|
-| 1 | L | 1 | 90 | 8,94% | có (`TO_DIGIT`) | đúng chiều — luật `L → 1` thuộc TO_DIGIT |
-| 2 | E | F | 73 | 7,25% | không | chưa có luật nào phủ cặp này |
-| 3 | 4 | L | 54 | 5,36% | không | chưa có luật nào phủ cặp này |
-| 4 | U | 1 | 38 | 3,77% | không | chưa có luật nào phủ cặp này |
-| 5 | D | 0 | 34 | 3,38% | có (`TO_DIGIT`) | đúng chiều — luật `D → 0` thuộc TO_DIGIT |
-| 6 | Z | 7 | 32 | 3,18% | không | chưa có luật nào phủ cặp này |
-| 7 | 2 | 7 | 26 | 2,58% | không | chưa có luật nào phủ cặp này |
-| 8 | X | Y | 21 | 2,09% | không | chưa có luật nào phủ cặp này |
-| 9 | 9 | 0 | 20 | 1,99% | không | chưa có luật nào phủ cặp này |
-| 10 | B | R | 20 | 1,99% | không | chưa có luật nào phủ cặp này |
+| 1 | L | 1 | 90 | 10,44% | có (`TO_DIGIT`) | đúng chiều — luật `L → 1` thuộc TO_DIGIT |
+| 2 | E | F | 73 | 8,47% | không | chưa có luật nào phủ cặp này |
+| 3 | 4 | L | 53 | 6,15% | không | chưa có luật nào phủ cặp này |
+| 4 | U | 1 | 38 | 4,41% | không | chưa có luật nào phủ cặp này |
+| 5 | D | 0 | 34 | 3,94% | có (`TO_DIGIT`) | đúng chiều — luật `D → 0` thuộc TO_DIGIT |
+| 6 | Z | 7 | 32 | 3,71% | không | chưa có luật nào phủ cặp này |
+| 7 | 2 | 7 | 26 | 3,02% | không | chưa có luật nào phủ cặp này |
+| 8 | X | Y | 21 | 2,44% | không | chưa có luật nào phủ cặp này |
+| 9 | B | R | 20 | 2,32% | không | chưa có luật nào phủ cặp này |
+| 10 | 9 | 0 | 19 | 2,20% | không | chưa có luật nào phủ cặp này |
 
-> Ma trận `36x36`, mẫu số 2.801 biển có nhãn chuỗi, tổng số lỗi thay thế (S) = 1.007. Cột tỉ lệ lấy S làm mẫu số, không lấy tổng của riêng nhóm dẫn đầu. Bảng đối chiếu ngược — các cặp **có trong bảng luật nhưng không quan sát thấy** — nằm ở khoá `doi_chieu_bang_luat.unobserved` trong `05-results.json`.
+> Ma trận `36x36`, mẫu số 2.801 biển có nhãn chuỗi, tổng số lỗi thay thế (S) = 862. Cột tỉ lệ lấy S làm mẫu số, không lấy tổng của riêng nhóm dẫn đầu. Bảng đối chiếu ngược — các cặp **có trong bảng luật nhưng không quan sát thấy** — nằm ở khoá `doi_chieu_bang_luat.unobserved` trong `05-results.json`.
 
 ## {{T5.6e}} Độ chính xác E2E toàn trình (NFR-A7)
 
 | Chỉ số | Ngưỡng tối thiểu | Mục tiêu | **Đo được** | Kết quả |
 |---|---:|---:|---:|:---:|
-| Độ chính xác E2E (NFR-A7) | 0,82 | 0,88 | **0,5295** | ❌ không đạt |
-| Độ chính xác E2E **với điều kiện đã phát hiện được biển** | — | — | 0,6014 | n/a |
+| Độ chính xác E2E (NFR-A7) | 0,82 | 0,88 | **0,5552** | ❌ không đạt |
+| Độ chính xác E2E **với điều kiện đã phát hiện được biển** | — | — | 0,6306 | n/a |
 | Tỉ lệ biển **bị bỏ sót** ở tầng phát hiện | — | — | 0,1196 | n/a |
-| Tỉ lệ biển phát hiện đúng nhưng **đọc sai chuỗi** (mẫu số = số biển đã phát hiện) | — | — | 0,3986 | n/a |
-| Chênh lệch A6 − A7 (điểm %) | — | — | 14,35 | n/a |
+| Tỉ lệ biển phát hiện đúng nhưng **đọc sai chuỗi** | — | — | 0,3694 | n/a |
+| Chênh lệch A6 − A7 (điểm %) | — | — | 19,60 | n/a |
 | **Số mẫu** | — | — | **2.801** | n/a |
 
 > ⚠ **Cảnh báo hiệu lực:** Con so nay do tren anh CROP bien so, khong phai anh hien truong, vi khong bo du lieu nao trong do an co dong thoi anh toan canh va chuoi bien so. Bo detect duoc huan luyen tren anh giao thong day du nen mot tam anh chi co bien so chiem gan het khung la NGOAI PHAN BO: phan lon that bai la do detect khong bat duoc box, khong phai do OCR doc sai (xem e2e.exact_given_detected va e2e.missed_by_detector). Mo hinh chinh thuc best.pt dat mAP@0.5 = 0,9829 tren tap test v3 (1.514 anh) — tuc bo phat hien hoat dong tot tren anh hien truong; that bai o phep do A7 den tu viec dua anh CROP vao bo phat hien, ngoai phan bo huan luyen cua no. De do NFR-A7 dung cach can gan nhan chuoi bien so cho mot phan bo test cua yolo_v2 -- viec nay CHUA lam.
@@ -223,14 +221,14 @@ Epoch tốt nhất theo mAP@0.5:0.95 trên val: **20** (20 epoch đã chạy).
 
 | Chỉ số | Ngưỡng tối thiểu | Mục tiêu | **Đo trên `baseline-416-v1.pt`** | **Đo trên mô hình đang đánh giá** | Kết quả |
 |---|---:|---:|---:|---:|:---:|
-| Độ trễ E2E p50 (ms) | — | — | — | 419,06 | n/a |
-| **Độ trễ E2E p95 (ms)** | **≤ 1500** | **≤ 800** | **763,75** | **780,36** | **✅ đạt** |
-| Độ trễ E2E p99 (ms) | — | — | — | 948,42 | n/a |
-| Độ trễ trung bình (ms) | — | — | — | 374,65 | n/a |
+| Độ trễ E2E p50 (ms) | — | — | — | 405,77 | n/a |
+| **Độ trễ E2E p95 (ms)** | **≤ 1500** | **≤ 800** | **763,75** | **1.143,10** | **🟡 đạt ngưỡng tối thiểu** |
+| Độ trễ E2E p99 (ms) | — | — | — | 1.420,07 | n/a |
+| Độ trễ trung bình (ms) | — | — | — | 447,38 | n/a |
 | Độ lệch chuẩn (ms) | — | — | — | — | n/a |
 | Số ảnh đo | — | — | 100 | **100** | n/a |
-| Bội số vượt ngưỡng tối thiểu | — | — | 0,51× | 0,52× | n/a |
-| Bội số vượt mục tiêu | — | — | 0,95× | 0,98× | n/a |
+| Bội số vượt ngưỡng tối thiểu | — | — | 0,51× | 0,76× | n/a |
+| Bội số vượt mục tiêu | — | — | 0,95× | 1,43× | n/a |
 
 > Số biển trung bình mỗi ảnh: 1,33. Hai cột **không thay thế được cho nhau** — chúng đo hai mô hình ở hai độ phân giải khác nhau; cột baseline là **client-side warm p95 qua HTTP, máy rảnh** (`07-benchmark-p1-resolved.json`), cột mô hình đang đánh giá là in-process. Con số cũ **5.857,19 ms** từng ghi cho baseline **đã bị bác bỏ** (nhiễm tải cạnh tranh + sai checkpoint + lỗi crop).
 
@@ -238,13 +236,13 @@ Epoch tốt nhất theo mAP@0.5:0.95 trên val: **20** (20 epoch đã chạy).
 
 | Bước xử lý | Ước lượng Phase 0 (ms) | **Đo thật (ms)** | Chênh lệch (lần) | % tổng thời gian |
 |---|---:|---:|---:|---:|
-| Giải mã ảnh + tiền xử lý | 50 | 2,65 | 0,05 | 1,5% |
-| Suy luận YOLO11n @ 640px (CPU) | 150 | 59,83 | 0,40 | 34,2% |
+| Giải mã ảnh + tiền xử lý | 50 | 2,83 | 0,06 | 1,7% |
+| Suy luận YOLO11n @ 640px (CPU) | 150 | 57,27 | 0,38 | 34,0% |
 | Cắt + tiền xử lý vùng biển số | 30 | 0,00 | 0,00 | 0,0% |
-| **PaddleOCR (mỗi biển)** | 120 | 112,55 | 0,94 | 64,3% |
+| **PaddleOCR (mỗi biển)** | 120 | 108,28 | 0,90 | 64,3% |
 | Hậu xử lý regex + kiểm tra hợp lệ | 5 | 0,03 | 0,01 | 0,0% |
 | Ghi CSDL + lưu ảnh | 50 | — | — | — |
-| **Tổng (một biển số)** | **405** | **175,06** | **0,49** | **100%** |
+| **Tổng (một biển số)** | **405** | **168,41** | **0,47** | **100%** |
 
 > Mẫu số: 40 ảnh, trung bình 1,57 biển mỗi ảnh. Buoc 'ghi CSDL + luu anh' khong co doi ung trong so do vi benchmark_system do pipeline suy luan thuan, khong di qua tang API — o 'do that' cua no giu '—'. Cot ty so 'chenh lech (lan)' o dong tong vi vay so voi uoc luong CUNG PHAM VI (da tru buoc ghi CSDL), khong so voi con so 405 ms tron.
 
@@ -267,8 +265,8 @@ Epoch tốt nhất theo mAP@0.5:0.95 trên val: **20** (20 epoch đã chạy).
 | RSS pipeline (GB) | NFR-P7a | ≤ 4 | ≤ 2 | 0,759 *(baseline)* | ✅ đạt |
 | RSS máy chủ backend (GB) | NFR-P7b | ≤ 4 | ≤ 2 | 0,806 *(baseline)* | ✅ đạt |
 | Số yêu cầu đồng thời xử lý ổn định | NFR-SC1 | ≥ 5 | ≥ 5 | **10** | ✅ đạt |
-| Tỉ lệ thành công soak 300 giây | NFR-R4 | ≥ 99% | ≥ 99% | **100,0% (1.684 yêu cầu)** | ✅ đạt |
-| Tăng RSS sau soak (GB) | — | không có | không có | -0,009 | n/a |
+| Tỉ lệ thành công soak 300 giây | NFR-R4 | ≥ 99% | ≥ 99% | **100,0% (1.660 yêu cầu)** | ✅ đạt |
+| Tăng RSS sau soak (GB) | — | không có | không có | 0,008 | n/a |
 | Cơ sở dữ liệu sống sót qua khởi động lại | NFR-R5 | 100% | 100% | — | ⬜ chưa đo |
 
 ## {{T5.8}} So sánh baseline 416/v1 với mô hình chính thức 640/v3
@@ -286,7 +284,7 @@ Epoch tốt nhất theo mAP@0.5:0.95 trên val: **20** (20 epoch đã chạy).
 | mAP biển một dòng | **0,9856** | 0,9884 | — |
 | mAP biển hai dòng | **0,9592** | 0,9675 | — |
 | Chênh lệch theo layout (điểm %) | **2,6** | 2,09 | — |
-| Độ trễ E2E p95 (ms) | **763,75** | 780,36 | — |
+| Độ trễ E2E p95 (ms) | **763,75** | 1.143,10 | — |
 
 > ⚠ Ba bien thay doi dong thoi (imgsz, bo du lieu + cach chia, so epoch) va chung tac dong NGUOC CHIEU nhau. Phat bieu duy nhat duoc phep la mo ta: 'cau hinh A cho X, cau hinh B cho Y'. Khong duoc quy ket nguyen nhan cho bat ky bien nao.
 >
@@ -296,7 +294,7 @@ Epoch tốt nhất theo mAP@0.5:0.95 trên val: **20** (20 epoch đã chạy).
 
 | Mã | Chỉ tiêu | Ngưỡng tối thiểu | Mục tiêu | **Đo được** | Kết quả |
 |:---:|---|---:|---:|---:|:---:|
-| P1 | Độ trễ E2E một ảnh, p95 (ms) | 1.500,00 | 800,00 | 780,3600 | ✅ đạt |
+| P1 | Độ trễ E2E một ảnh, p95 (ms) | 1.500,00 | 800,00 | 1.143,1000 | 🟡 đạt ngưỡng tối thiểu |
 | P2 | Tốc độ khung hình webcam (FPS) | — | — | — *(chua co kich ban do webcam — muc D.3 cua ch5-thuc-nghiem.md)* | ⬜ chưa đo |
 | P3 | Tốc độ xử lý video (× thời gian thực) | — | — | — *(chua co kich ban do video)* | ⬜ chưa đo |
 | P4 | Thời gian nạp mô hình (s) | 30,00 | 15,00 | 6,4100 *(do tren baseline-416-v1.pt)* | ✅ đạt |
@@ -308,11 +306,11 @@ Epoch tốt nhất theo mAP@0.5:0.95 trên val: **20** (20 epoch đã chạy).
 | A2 | mAP@0.5:0.95 của bộ phát hiện | 0,55 | 0,65 | 0,7834 | ✅ đạt |
 | A3-P | Precision phát hiện | 0,88 | 0,92 | 0,9837 | ✅ đạt |
 | A3-R | Recall phát hiện | 0,85 | 0,90 | 0,9714 | ✅ đạt |
-| A4 | 1 − CER (mức ký tự) | 0,92 | 0,95 | 0,8848 | ❌ không đạt |
-| A5 | Chuỗi đầy đủ trước hậu xử lý | 0,80 | 0,85 | 0,6098 | ❌ không đạt |
-| A6 | Chuỗi đầy đủ sau hậu xử lý | 0,85 | 0,90 | 0,6730 | ❌ không đạt |
-| A6−A5 | Đóng góp của khối hậu xử lý (điểm %) | — | — | 6,3200 | n/a |
-| A7 | Độ chính xác E2E toàn trình | 0,82 | 0,88 | 0,5295 | ❌ không đạt |
+| A4 | 1 − CER (mức ký tự) | 0,92 | 0,95 | 0,9454 | 🟡 đạt ngưỡng tối thiểu |
+| A5 | Chuỗi đầy đủ trước hậu xử lý | 0,80 | 0,85 | 0,6373 | ❌ không đạt |
+| A6 | Chuỗi đầy đủ sau hậu xử lý | 0,85 | 0,90 | 0,7512 | ❌ không đạt |
+| A6−A5 | Đóng góp của khối hậu xử lý (điểm %) | — | — | 11,3900 | n/a |
+| A7 | Độ chính xác E2E toàn trình | 0,82 | 0,88 | 0,5552 | ❌ không đạt |
 | A8 | Chênh lệch layout, detection (điểm %) | — | — | 2,0900 | n/a |
 | A9 | Tách theo điều kiện ảnh | — | — | — *(bo du lieu KHONG co nhan dieu kien anh — day la han che that, khong phai 'chua toi luot do'. Khong duoc gan nhan bang suy doan.)* | ⬜ chưa đo |
 | R4 | Tỉ lệ thành công soak 300 s | 0,99 | 0,99 | 1,0000 | ✅ đạt |
@@ -326,20 +324,18 @@ Epoch tốt nhất theo mAP@0.5:0.95 trên val: **20** (20 epoch đã chạy).
 |:---:|---|---:|---:|---:|---:|---:|
 | E1 | Bỏ sót biển | 335 | — | — | — | — |
 | E2 | Phát hiện nhầm | — | — | — | — | — |
-| E3 | Nhầm ký tự | 399 | 43,56% | 14,24% | 18 | 381 |
-| E4 | Thiếu ký tự | 134 | 14,63% | 4,78% | 1 | 133 |
-| E5 | Thừa ký tự | 95 | 10,37% | 3,39% | 5 | 90 |
+| E3 | Nhầm ký tự | 445 | 63,85% | 15,89% | 17 | 428 |
+| E4 | Thiếu ký tự | 73 | 10,47% | 2,61% | 0 | 73 |
+| E5 | Thừa ký tự | 18 | 2,58% | 0,64% | 5 | 13 |
 | E6 | Sai thứ tự | 0 | 0,00% | 0,00% | 0 | 0 |
-| | **Tổng số ca sai** | **916** | 100% | 32,70% | — | — |
+| | **Tổng số ca sai** | **697** | 100% | 24,88% | — | — |
 | | **Tổng số ca đánh giá (mẫu số)** | **2.801** | n/a | 100% | — | — |
 
 > **Mẫu số của E1 khác mẫu số của E3–E6.** E1 lấy từ lượt đo E2E của bảng T5.6e (2.801 mẫu), còn E3–E6 lấy từ lượt đo trên vùng cắt (2.801 mẫu). Hai cột tỉ lệ vì vậy **cố ý để trống ở dòng E1** — gộp chung một mẫu số sẽ cho ra con số vô nghĩa. Tỉ lệ E1 trên mẫu số riêng của nó: 11,96%.
 >
 > E2 (phát hiện nhầm) để `—`: số dương tính giả nằm ở bảng T5.5a và cũng không cùng mẫu số với E3–E6.
 >
-> Hai loại lỗi ngoài khung E1–E6: `empty_read` = 11, `mixed` = 277. Hai loai nay co trong cai dat nhung khong co ma E tuong ung trong bang 5.10.1. Phai them dong cho chung hoac gop co giai thich — khong duoc bo im lang vi khi do tong se khong bang 100%.
->
-> **Nguồn của bảng này đã đổi.** Số ca lấy trực tiếp từ khoá `by_line_count.*.error_classes` của `docs/reports/16-ocr-accuracy-rescued.json` (lượt đo có bước cứu dòng trên), không còn lấy từ `05-ocr-errors/error_analysis.json` của lượt đo cũ. So với lượt cũ: E4 (thiếu ký tự) giảm 217 → 134 vì bước cứu dòng trên nhắm đúng chế độ thất bại "mất hẳn dòng trên"; phần ca không cứu được chuyển sang E3 và `mixed`.
+> Hai loại lỗi ngoài khung E1–E6: `empty_read` = 10, `mixed` = 151. Hai loai nay co trong cai dat nhung khong co ma E tuong ung trong bang 5.10.1. Phai them dong cho chung hoac gop co giai thich — khong duoc bo im lang vi khi do tong se khong bang 100%.
 
 ---
 

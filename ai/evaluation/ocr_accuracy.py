@@ -103,7 +103,7 @@ import statistics
 import sys
 import time
 from collections import Counter, defaultdict
-from dataclasses import asdict, dataclass
+from dataclasses import asdict, dataclass, replace
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Final, Sequence
@@ -115,7 +115,13 @@ from ai.evaluation.benchmark_ocr import align, build_confusion_matrix
 from ai.inference.config import PROJECT_ROOT, InferenceConfig
 from ai.inference.exceptions import ALPRError
 from ai.inference.normalizer import VietnamesePlateNormalizer
-from ai.inference.pipeline import rescue_two_line_upper, should_rescue_two_line
+from ai.inference.pipeline import (
+    rescue_two_line_upper,
+    retry_skewed_variants,
+    should_rescue_two_line,
+    should_retry_skewed,
+)
+from ai.inference.plate_color import classify_plate_color
 from ai.inference.plate_rules import TO_DIGIT, TO_LETTER, clean_text
 from ai.inference.recognizer import PaddleOcrRecognizer
 from ai.inference.types import PlateRecognition
@@ -200,6 +206,12 @@ class Sample:
             final answer. Recorded per sample so the contribution of that step
             can be reported separately instead of being folded silently into
             NFR-A6.
+        retried_skewed: Whether the failure-retry ladder
+            (:func:`~ai.inference.pipeline.retry_skewed_variants`) supplied the
+            final answer. Recorded for the same reason as
+            :attr:`rescued_upper_line`, and because the ladder is the most
+            expensive rung in the chain -- its cost is only justifiable against
+            a measured contribution.
         error: Message when a stage raised, else ``None``.
     """
 
@@ -220,6 +232,7 @@ class Sample:
     e2e_raw_detected: bool = False
     no_repair_text: str | None = None
     rescued_upper_line: bool = False
+    retried_skewed: bool = False
     error: str | None = None
 
 
@@ -490,6 +503,28 @@ def _load_labels(path: Path, limit: int = 0) -> list[Sample]:
 # ---------------------------------------------------------------------------
 
 
+def _crop_color_name(crop: np.ndarray) -> str:
+    """Return the crop's background colour the way the pipeline sees it.
+
+    The retry ladder refuses to upgrade a read off a red crop, because red is
+    an army plate and no army plate may be turned into a valid civil string.
+    Measuring without that gate would credit the ladder with recoveries the
+    deployed system refuses to make.
+
+    Args:
+        crop: The plate image, BGR.
+
+    Returns:
+        The colour name, or ``""`` when classification fails -- a failure here
+        must not abort a measurement run.
+    """
+    try:
+        color = classify_plate_color(crop)
+    except ALPRError:
+        return ""
+    return color.color.value if color is not None else ""
+
+
 def measure_crops(
     samples: Sequence[Sample],
     recognizer: PaddleOcrRecognizer,
@@ -544,12 +579,30 @@ def measure_crops(
             line_count=sample.line_count,
             is_valid_format=outcome.is_valid_format,
         )
+        color_name = _crop_color_name(repaired)
         if should_rescue_two_line(candidate):
-            rescued = rescue_two_line_upper(recognizer, normalizer, repaired, candidate)
+            rescued = rescue_two_line_upper(
+                recognizer, normalizer, repaired, candidate, color=color_name
+            )
             if rescued.is_valid_format:
                 sample.plate_number = rescued.text
                 sample.is_valid_format = True
                 sample.rescued_upper_line = True
+                candidate = rescued
+
+        # The failure-retry ladder, in the same position and under the same
+        # condition as ALPRPipeline._process_one. Omitted here until 28/07/2026,
+        # which meant NFR-A4/A5/A6 described a pipeline two rungs shorter than
+        # the shipped one -- the identical defect the rescue block above already
+        # carries a comment about, repeated for the stage added after it.
+        if recognizer.config.rectify_enabled and should_retry_skewed(candidate):
+            retried = retry_skewed_variants(
+                recognizer, normalizer, repaired, candidate, color=color_name
+            )
+            if retried.is_valid_format:
+                sample.plate_number = retried.text
+                sample.is_valid_format = True
+                sample.retried_skewed = True
 
         if ablate_repair:
             try:
@@ -622,12 +675,25 @@ def _run_pipeline(
         line_count=recognition.line_count,
         is_valid_format=outcome.is_valid_format,
     )
+    color_name = _crop_color_name(crop)
     if should_rescue_two_line(candidate):
-        rescued = rescue_two_line_upper(recognizer, normalizer, crop, candidate)
+        rescued = rescue_two_line_upper(
+            recognizer, normalizer, crop, candidate, color=color_name
+        )
         if rescued.is_valid_format:
             return rescued.text, True
+        candidate = rescued
 
-    return outcome.text, True
+    # Same omission as in measure_crops, same fix: the ladder is part of the
+    # product, so it is part of the end-to-end number.
+    if recognizer.config.rectify_enabled and should_retry_skewed(candidate):
+        retried = retry_skewed_variants(
+            recognizer, normalizer, crop, candidate, color=color_name
+        )
+        if retried.is_valid_format:
+            return retried.text, True
+
+    return candidate.text, True
 
 
 def measure_end_to_end(
@@ -1225,7 +1291,12 @@ def main(argv: list[str] | None = None) -> int:
         return 2
     LOGGER.info("Loaded %d labelled crops", len(samples))
 
-    config = InferenceConfig()
+    # Read the environment, so ALPR_RECTIFY_ENABLED / ALPR_SR_RETRY_ENABLED can
+    # ablate the retry ladder here too. Constructing InferenceConfig() bare --
+    # which this did until 28/07/2026 -- pinned both switches on regardless, so
+    # the accuracy contribution of each rung could not be attributed at all.
+    # Same defect, same day, as in ai/evaluation/benchmark_system.py.
+    config = InferenceConfig.from_env()
     recognizer = PaddleOcrRecognizer(config)
     normalizer = VietnamesePlateNormalizer()
     recognizer.warmup()
@@ -1241,7 +1312,11 @@ def main(argv: list[str] | None = None) -> int:
         weights = Path(args.detector)
         if not weights.is_absolute():
             weights = PROJECT_ROOT / weights
-        e2e_config = InferenceConfig(model_path=weights, imgsz=args.detector_imgsz)
+        e2e_config = replace(
+            InferenceConfig.from_env(),
+            model_path=weights,
+            imgsz=args.detector_imgsz,
+        )
         detector = YoloPlateDetector(e2e_config)
         detector.warmup()
         detector_name = detector.name
@@ -1361,6 +1436,25 @@ def main(argv: list[str] | None = None) -> int:
                 "gain_points = (NFR-A6 - NFR-A5) x 100. plates_broken counts "
                 "strings the raw engine already had right and normalisation then "
                 "changed; a positive value means the rules are not loss-free."
+            ),
+        },
+        # What each failure-recovery rung actually delivered on this corpus.
+        # Both rungs cost real time -- the ladder alone raises p95 latency by
+        # about two thirds -- so the count of plates each one supplied is the
+        # only thing that can justify keeping it switched on.
+        "recovery_contribution": {
+            "rescue_upper_line_plates": sum(1 for s in samples if s.rescued_upper_line),
+            "retry_ladder_plates": sum(1 for s in samples if s.retried_skewed),
+            "config": {
+                "rectify_enabled": config.rectify_enabled,
+                "sr_retry_enabled": config.sr_retry_enabled,
+            },
+            "note": (
+                "Counts are plates where that rung supplied the final, "
+                "validating answer. Both rungs run only after a failed read and "
+                "keep a result only when it validates, so neither can lower the "
+                "figures above -- a zero count means no contribution, never a "
+                "regression."
             ),
         },
         "by_line_count": {

@@ -151,11 +151,13 @@ Hệ thống chạy nội bộ (giả định A-04), nên mô hình đe doạ �
 
 Bảng này dùng làm bảng "chốt hạ" trình bày khi bảo vệ:
 
-| Hạng mục | Chỉ tiêu | Trạng thái *(cập nhật 2026-07-20)* |
+| Hạng mục | Chỉ tiêu | Trạng thái *(cập nhật 2026-07-28)* |
 |---|---|---|
 | mAP@0.5 | ≥ 0.90 | ✅ **0,9829** trên `models/best.pt`, tập test split v3 ([07-benchmark-report.md](../reports/07-benchmark-report.md)) |
-| Độ chính xác E2E | ≥ 0.88 | ❌ **0,5227** (A7, khớp tuyệt đối toàn pipeline — [05-results.json](../reports/05-results.json) T5.6e). Nút thắt là OCR biển 2 dòng: biển 1 dòng đạt 0,9489 nhưng biển 2 dòng chỉ 0,581 (A6). Phân tích và hướng khắc phục tại ch5/ch6 |
-| Độ trễ 1 ảnh (p95, CPU) | ≤ 800 ms | ✅ **731,15 ms** client-side / 780,36 ms in-process, đo trên `best.pt` máy rảnh ([07-benchmark-report.md](../reports/07-benchmark-report.md)) |
+| Chính xác ký tự (A4) | ≥ 0.92 | 🟡 **0,9454** — đạt ngưỡng tối thiểu, dưới mục tiêu 0,95. Lật từ ❌ 0,8848 (đo 20/07) nhờ các bản sửa đọc biển 2 dòng và bậc thang thử-lại ([27](../reports/27-retry-ladder-cost-benefit.md)) |
+| Chuỗi đúng sau hậu xử lý (A6) | ≥ 0.85 | ❌ **0,7512** ([05-results.json](../reports/05-results.json) T5.9). Toàn bộ khoảng cách nằm ở biển 2 dòng: biển 1 dòng đạt **0,9489**, biển 2 dòng **~0,70**. Hậu xử lý đóng góp **+11,39 điểm** và không phá hỏng biển nào |
+| Độ chính xác E2E (A7) | ≥ 0.88 | ❌ **0,5552** — **cận dưới bi quan, không đại diện**: phép đo đưa ảnh biển *đã cắt sẵn* vào bộ phát hiện vốn huấn luyện trên ảnh toàn cảnh, nên 335/2.801 ca hỏng ngay ở bước phát hiện. Cùng bộ trọng số đạt mAP 0,9829 trên ảnh hiện trường. Chi tiết [27](../reports/27-retry-ladder-cost-benefit.md) mục 6 |
+| Độ trễ 1 ảnh (p95, CPU) | ≤ 800 ms | 🟡 **1.143,1 ms** in-process — đạt sàn 1.500 ms, trên mục tiêu 800 ms. Bậc thang thử-lại là nguyên nhân (chỉ chạy khi đọc hỏng: p50 chỉ 405,8 ms). Tắt siêu phân giải mặc định đã kéo p95 từ 1.514 xuống 1.143 ms ([27](../reports/27-retry-ladder-cost-benefit.md) mục 5) |
 | Webcam FPS (CPU) | ≥ 5 | ⬜ **Chưa đo trên `best.pt`** — đo ở tầng API `POST /api/detect/frame` (giao diện webcam đã gỡ 2026-07-20) |
 | Bao phủ test | ≥ 70% | ✅ **882 test thu thập / 881 đạt + 1 `xfail`, 0 fail**. Bao phủ tầng nghiệp vụ: **87,7%** (đo 20/07/2026, [13-refactor-result.json](../reports/13-refactor-result.json)); **88,1%** ở lần đo Phase 7 trước đó ([07-testing-report.md](../reports/07-testing-report.md) mục 3.3). Cả hai mốc đều đạt |
 | Triển khai một lệnh | `docker compose up` | ✅ Đã dựng và xác minh chạy được ([08-deployment-guide.md](../reports/08-deployment-guide.md)) |
