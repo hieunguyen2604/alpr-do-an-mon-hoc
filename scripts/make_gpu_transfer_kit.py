@@ -222,7 +222,7 @@ def ensure_paddleocr(py: Path) -> Path:
 
 def main() -> int:
     ap = argparse.ArgumentParser(description="Fine-tune PP-OCRv5 rec trên GPU.")
-    ap.add_argument("--epochs", type=int, default=50)
+    ap.add_argument("--epochs", type=int, default=70)
     ap.add_argument("--batch-size", type=int, default=128)
     ap.add_argument("--lr", type=float, default=0.0001)
     ap.add_argument("--workers", type=int, default=4)
@@ -334,18 +334,44 @@ GPU NVIDIA. Không cần kho mã của đồ án, không cần cài gì trước
 
 ## 0. Vì sao cần chạy trên GPU
 
-Lượt chạy trên CPU trước đó dừng ở **epoch 5** với kết quả:
+Lượt chạy trên CPU trước đó dừng ở **epoch 5**. Đường cong thật, đọc từ các
+tệp `.states` của từng epoch:
 
-| Chỉ số | Giá trị |
-|---|---|
-| `acc` (chuỗi đúng hoàn toàn) | **0,166** |
-| `norm_edit_dis` | 0,8114 |
-| `best_epoch` | **5** |
+| Epoch | Bước | `acc` | `norm_edit_dis` |
+|---|---|---|---|
+| 1 | 146 | 0,0000 | — |
+| 2 | 292 | 0,0000 | 0,3681 |
+| 3 | 438 | 0,0000 | 0,5706 |
+| 4 | 584 | 0,0000 | 0,5706 |
+| **5** | 600 | **0,1660** | **0,8114** |
 
-`best_epoch` bằng đúng epoch cuối cùng nghĩa là mô hình **vẫn đang tốt lên khi
-bị dừng** — nó chưa hội tụ. Kết quả kém là vì **thiếu epoch**, không phải vì
-fine-tune sai hướng. Trên GPU, 50 epoch chạy trong khoảng một đến hai giờ,
-thay vì hàng ngày trời trên CPU.
+`acc` nằm im ở **0 suốt bốn epoch** rồi mới bật lên ở epoch 5. Đó là hình dạng
+kinh điển của bài toán đọc chuỗi: `norm_edit_dis` đo ở **mức ký tự** nên leo
+đều ngay từ đầu, còn `acc` đòi **mọi ký tự trong chuỗi 8–9 ký tự đều đúng**
+nên nó bám sát 0 cho tới khi độ chính xác ký tự vượt một ngưỡng, rồi mới vọt.
+
+Nghĩa là lượt CPU dừng **đúng vào lúc mô hình vừa bắt đầu học được**. Kết quả
+kém là vì **thiếu epoch**, không phải vì fine-tune sai hướng.
+
+### Nên chạy bao nhiêu epoch
+
+**Đặt 60–80.** Lý do không phải cảm tính:
+
+* `acc` mới rời 0 ở epoch 5, tức 5 epoch còn chưa qua giai đoạn khởi động;
+* `norm_edit_dis` ở 0,81 nghĩa là vẫn còn ~19% ký tự sai — còn xa mới bão hoà;
+* để thắng được model gốc thì cần với tới vùng **0,75** ở thang A6, một quãng
+  rất dài so với 0,166.
+
+**Đặt cao không có rủi ro.** `Global.save_epoch_step=1` cộng cơ chế
+`best_accuracy` nghĩa là PaddleOCR **tự giữ lại checkpoint tốt nhất**; chạy
+thừa epoch chỉ tốn thời gian GPU, không bao giờ làm xấu kết quả cuối. Ngược
+lại, đặt thiếu thì mất hẳn phần chưa học tới.
+
+Cách đọc lúc chạy: theo dõi dòng `cur metric, acc:`. Khi `acc` **không nhích
+lên trong khoảng 10 epoch liên tiếp** thì coi như đã bão hoà, dừng được.
+
+Trên GPU mỗi epoch chỉ khoảng một đến hai phút, nên 60–80 epoch mất cỡ **một
+đến hai giờ** — so với hàng ngày trời trên CPU.
 
 ## 1. Yêu cầu máy GPU
 
