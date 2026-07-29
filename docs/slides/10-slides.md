@@ -17,8 +17,12 @@ thì hội đồng nghe người nói; một slide đầy chữ thì hội đồ
 
 HAI QUY ƯỚC BẮT BUỘC KHI SỬA FILE NÀY
 
-1. `#` = slide phân đoạn · `##` = một slide nội dung. Cấp này được ghim bằng
+1. **Chỉ dùng `##`.** Mỗi `##` là một slide. Cấp này ghim bằng
    `--slide-level=2` trong `scripts/build_thesis.py`, không suy ra từ nội dung.
+
+   Bộ này từng có 7 slide phân đoạn (`#`) cho 7 nhóm chủ đề. Đã bỏ: trong một
+   bài 15 phút chúng chiếm 7 slide mà không truyền tải gì, và người nghe vốn
+   đã biết đang ở đâu nhờ slide NỘI DUNG ở đầu. Đừng thêm lại.
 
 2. **Bảng hoặc hình phải là khối CUỐI CÙNG của slide, và chỉ được có MỘT.**
    Pandoc cắt sang slide mới ở mọi thứ đứng sau một bảng hoặc một hình, và một
@@ -32,7 +36,13 @@ HAI QUY ƯỚC BẮT BUỘC KHI SỬA FILE NÀY
 Mọi con số lấy từ lượt đo 28/07/2026 (`docs/reports/05-results.json`).
 -->
 
-# Mở đầu
+## NỘI DUNG
+
+1. **Tổng quan đề tài**
+2. **Cơ sở lý thuyết**
+3. **Phân tích và thiết kế hệ thống**
+4. **Kết quả thực nghiệm**
+5. **Kết luận và hướng phát triển**
 
 ## Vì sao đề tài này
 
@@ -52,8 +62,6 @@ Cùng hệ thống, cùng phép đo: **chênh 48,6 điểm**, chỉ khác bố c
 - Chỉ tiêu chốt **trước** khi làm, mỗi chỉ tiêu hai mức
 
 **Ngoài phạm vi:** phân loại loại xe · tracking · barie · huấn luyện OCR từ đầu
-
-# Nền tảng
 
 ## Chọn hướng tiếp cận
 
@@ -85,8 +93,6 @@ Tỉ lệ **đo thật** lệch khỏi chuẩn nhưng vẫn đúng phía ngưỡ
 
 ⇒ Bộ luật xây trên văn bản **đang có hiệu lực**
 
-# Thiết kế
-
 ## Kiến trúc 5 tầng
 
 Tầng AI là **Python thuần** — cấm import FastAPI hoặc Pydantic. Nó không có
@@ -102,16 +108,14 @@ mũi tên nào đi lên, nên thay engine OCR **không đụng một dòng mã A
 
 ## Cơ sở dữ liệu — một cột làm nên đóng góp
 
-Bảng `detection_history` lưu **cả hai** chuỗi trên **cùng một bản ghi**
+Lưu **cả hai** chuỗi trên **cùng một bản ghi** — không có `raw_ocr_text` thì
+**không đo được** đóng góp của hậu xử lý
 
 | Cột | Nội dung |
 |---|---|
 | `raw_ocr_text` | Chuỗi **thô** do PaddleOCR trả về |
 | `plate_number` | Chuỗi **sau** bộ luật hậu xử lý |
 | `is_valid_format` | Hợp quy cách Việt Nam hay không |
-
-⇒ Không có cột `raw_ocr_text` thì **không đo được** đóng góp của hậu xử lý.
-Đây là quyết định thiết kế từ Phase 0, không phải cột gỡ lỗi thừa
 
 ## Pipeline AI
 
@@ -125,8 +129,6 @@ Không thấy biển ⇒ trả rỗng, **HTTP 200** — không phải lỗi
     → chuẩn hoá + sửa lỗi theo VỊ TRÍ → kiểm tra hợp lệ
     → lưu CẢ chuỗi thô LẪN chuỗi đã sửa
 ```
-
-# Dữ liệu và huấn luyện
 
 ## Bộ dữ liệu
 
@@ -159,8 +161,6 @@ Không thấy biển ⇒ trả rỗng, **HTTP 200** — không phải lỗi
 | Biển 2 dòng | 1.325 | 0,973 | 0,969 | **0,968** | 0,765 |
 | **TẤT CẢ** | **1.611** | **0,984** | **0,971** | **0,983** | **0,783** |
 | *Chỉ tiêu* | | *≥0,92* | *≥0,90* | *≥0,90* | *≥0,65* |
-
-# Đóng góp kỹ thuật
 
 ## Xử lý biển 2 dòng
 
@@ -221,8 +221,6 @@ Chỉ chạy **sau khi đọc hỏng**, chỉ nhận chuỗi **hợp lệ**
 | Cứu dòng trên của biển 2 dòng | **209 biển** |
 | Nắn hình / giãn dọc chống méo | **34 biển** |
 
-# Kết quả và hệ thống
-
 ## Giao diện
 
 Mọi vùng dữ liệu xử lý đủ **4 trạng thái**: chờ · rỗng · lỗi · thành công
@@ -264,8 +262,6 @@ Vượt mục tiêu p95 là **đánh đổi có chủ ý**: tắt bậc thang th
 Phần lớn ảnh xong dưới nửa giây; đuôi phải là những ảnh phải thử lại nhiều lượt
 
 ![](../reports/figures/07-latency-distribution.png)
-
-# Kết luận
 
 ## Đối chiếu chỉ tiêu — bảng chốt hạ
 
