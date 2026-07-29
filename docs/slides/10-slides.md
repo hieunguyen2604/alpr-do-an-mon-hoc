@@ -95,16 +95,9 @@ Tỉ lệ **đo thật** lệch khỏi chuẩn nhưng vẫn đúng phía ngưỡ
 
 ## Kiến trúc 5 tầng
 
-Tầng AI là **Python thuần** — cấm import FastAPI hoặc Pydantic. Nó không có
-mũi tên nào đi lên, nên thay engine OCR **không đụng một dòng mã API**
+Tầng AI là **Python thuần** — cấm import FastAPI hoặc Pydantic
 
-| Tầng | Công nghệ |
-|---|---|
-| L1 — Trình bày | React + TypeScript + Tailwind · 3 trang |
-| L2 — API | FastAPI + Swagger · 10 endpoint |
-| L3 — Nghiệp vụ | Detection / Video / History / Storage |
-| **L4 — AI** | **Python thuần** — YOLO11 + PaddleOCR + Normalizer |
-| L5 — Dữ liệu | SQLite + SQLAlchemy + Alembic |
+![](figures/fig-architecture.png)
 
 ## Cơ sở dữ liệu — một cột làm nên đóng góp
 
@@ -138,13 +131,10 @@ Không thấy biển ⇒ trả rỗng, **HTTP 200** — không phải lỗi
 
 ## Huấn luyện
 
-**Chọn YOLO11n — loại bằng hai bước**
+**YOLO11n**, `imgsz 640`, 20 epoch, seed cố định — huấn luyện **và** suy luận
+đều trên CPU, hết 10,1 giờ, không dùng GPU nào
 
-1. Máy triển khai không GPU ⇒ bắt buộc có **số liệu tốc độ CPU chính thức**
-2. YOLO11n vượt YOLOv8n **đồng thời cả hai chiều**: mAP 39,5 vs 37,3 · CPU 56,1 ms vs 80,4 ms
-
-- Huấn luyện **và** suy luận đều **trên CPU** — 10,1 giờ, không dùng GPU nào
-- `imgsz 640` · 20 epoch · seed cố định · `deterministic`
+![](figures/fig-training-curve.png)
 
 ## Kết quả phát hiện — đạt cả 4 chỉ tiêu
 
@@ -166,14 +156,9 @@ Nguyên nhân gốc là **kiến trúc**: CRNN/CTC giả định căn chỉnh **
 
 ## Bộ luật hậu xử lý theo vị trí
 
-Sửa theo **VỊ TRÍ**, không sửa toàn cục — cùng ký tự `O`/`0` nhưng hai vị trí cần hai luật ngược nhau
+Sửa theo **VỊ TRÍ**, không sửa toàn cục — đóng góp kỹ thuật riêng của đồ án
 
-| Vị trí | Ràng buộc | Luật sửa |
-|---|---|---|
-| 2 ký tự đầu — mã tỉnh | Chữ số, thuộc 81 mã hợp lệ | `O→0` `I→1` `S→5` |
-| Vị trí seri | Chữ cái | `0→O` `1→I` `5→S` |
-| Số đăng ký | Chữ số | ép về chữ số |
-| **Vùng cấm sửa** | Cả chữ và số đều hợp lệ | **không đụng vào** |
+![](figures/fig-position-rules.png)
 
 ## Kết quả OCR — nói thẳng phần chưa đạt
 
@@ -194,16 +179,9 @@ Cùng một hệ thống, cùng một phép đo — tách theo bố cục biển
 
 ## Đóng góp của hậu xử lý — đo được bằng số
 
-CSDL lưu **cả hai** chuỗi trên cùng một bản ghi ⇒ đo được hiệu số
+Sửa đúng **319 biển**, làm hỏng **0** — dồn gần trọn vào biển 2 dòng
 
-Dồn gần trọn vào biển 2 dòng: **+13,97 điểm** *(1 dòng chỉ +1,23)*
-
-| Chỉ số | Đo được |
-|---|---:|
-| A5 — chuỗi đúng **trước** hậu xử lý | 0,6373 |
-| A6 — chuỗi đúng **sau** hậu xử lý | **0,7512** |
-| **Đóng góp** | **+11,39 điểm** |
-| Số biển sửa đúng / làm hỏng | **319 / 0** |
+![](figures/fig-postprocess-gain.png)
 
 ## Bậc thang cứu chữa khi đọc hỏng
 

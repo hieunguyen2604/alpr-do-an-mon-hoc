@@ -384,6 +384,224 @@ def figure_pipeline() -> None:
     save(fig, "fig-pipeline.png")
 
 
+def figure_architecture() -> None:
+    """Năm tầng, và tính chất khiến kiến trúc này đáng bảo vệ.
+
+    Bảng liệt kê tầng thì đọc được, nhưng nó không nói được điều quan trọng
+    nhất: tầng AI **không có mũi tên nào đi lên**. Đó mới là thứ cho phép thay
+    engine OCR mà không đụng mã API, và nó là một tính chất về *hướng phụ
+    thuộc* — vẽ ra thì thấy ngay, liệt kê thì không.
+    """
+    fig, ax = plt.subplots(figsize=(8.4, 6.6))
+    ax.set_xlim(0, 10)
+    ax.set_ylim(0, 10)
+    ax.axis("off")
+
+    layers = [
+        ("L1 — Trình bày", "React · TypeScript · Tailwind · 3 trang", "#eef2fb", BLUE),
+        ("L2 — API", "FastAPI · Swagger · 10 endpoint", "#eef2fb", BLUE),
+        ("L3 — Nghiệp vụ", "Detection · Video · History · Storage", "#eef2fb", BLUE),
+        ("L4 — AI", "Python thuần · YOLO11 + PaddleOCR + Normalizer", "#fdeaea", RED),
+        ("L5 — Dữ liệu", "SQLite · SQLAlchemy · Alembic", "#eef2fb", BLUE),
+    ]
+
+    height, gap = 1.5, 0.32
+    top_y = 9.0
+    centres: list[float] = []
+    for index, (name, detail, face, edge) in enumerate(layers):
+        y = top_y - index * (height + gap)
+        centres.append(y)
+        bold = edge == RED
+        ax.add_patch(
+            patches.FancyBboxPatch(
+                (0.6, y - height / 2), 7.4, height,
+                boxstyle="round,pad=0.02,rounding_size=0.1",
+                facecolor=face, edgecolor=edge,
+                linewidth=2.4 if bold else 1.6, zorder=2,
+            )
+        )
+        ax.text(0.95, y + 0.28, name, ha="left", va="center", fontsize=15,
+                fontweight="bold", color=edge, zorder=3)
+        ax.text(0.95, y - 0.32, detail, ha="left", va="center", fontsize=12,
+                color=INK, zorder=3)
+
+    # Mũi tên phụ thuộc: chỉ đi xuống. Đây là toàn bộ luận điểm của slide.
+    for upper, lower in zip(centres, centres[1:]):
+        _arrow(ax, (8.35, upper - height / 2 + 0.05),
+               (8.35, lower + height / 2 - 0.05), color=MUTED)
+
+    ax.annotate(
+        "", xy=(9.35, centres[3] - height / 2 - 0.1),
+        xytext=(9.35, centres[3] + height / 2 + 0.1),
+        arrowprops={"arrowstyle": "-", "color": RED, "lw": 2.2},
+    )
+    ax.text(9.55, centres[3], "không có\nmũi tên\nĐI LÊN", ha="left", va="center",
+            fontsize=12, color=RED, fontweight="bold", linespacing=1.3)
+    ax.text(5.0, 0.5, "→ thay engine OCR không đụng một dòng mã API",
+            ha="center", va="center", fontsize=13.5, color=INK, fontweight="bold")
+
+    save(fig, "fig-architecture.png")
+
+
+def figure_training_curve() -> None:
+    """Đường cong huấn luyện thật, đọc thẳng từ ``results.csv``.
+
+    Slide huấn luyện trước đó chỉ có gạch đầu dòng về cấu hình. Đường cong nói
+    được thứ gạch đầu dòng không nói: mô hình **đã hội tụ**, nên 20 epoch là đủ
+    chứ không phải dừng non. Đó chính là câu trả lời cho câu hỏi phản biện
+    "sao không huấn luyện lâu hơn".
+    """
+    import csv
+
+    path = REPO_ROOT / "runs" / "final-640-v3" / "results.csv"
+    rows = list(csv.DictReader(path.open(encoding="utf-8")))
+    epochs = [int(float(r["epoch"])) for r in rows]
+    m50 = [float(r["metrics/mAP50(B)"]) for r in rows]
+    m5095 = [float(r["metrics/mAP50-95(B)"]) for r in rows]
+
+    fig, ax = plt.subplots(figsize=(8.4, 6.2))
+    ax.plot(epochs, m50, color=BLUE, lw=2.6, marker="o", ms=4, label="mAP@0.5")
+    ax.plot(epochs, m5095, color=RED, lw=2.6, marker="s", ms=4, label="mAP@0.5:0.95")
+
+    # Nhãn ngưỡng đặt BÊN TRONG khung và NGAY TRÊN đường kẻ. Đặt ở mép phải
+    # thì bbox_inches='tight' cắt mất một phần, và chúng còn đè lên chú giải.
+    ax.axhline(0.90, color=BLUE, ls=":", lw=1.6, alpha=0.7)
+    ax.text(1.2, 0.912, "chỉ tiêu mAP@0.5 ≥ 0,90", fontsize=11.5, color=BLUE,
+            va="bottom", fontweight="bold")
+    ax.axhline(0.65, color=RED, ls=":", lw=1.6, alpha=0.7)
+    ax.text(1.2, 0.662, "chỉ tiêu mAP@0.5:0.95 ≥ 0,65", fontsize=11.5, color=RED,
+            va="bottom", fontweight="bold")
+
+    # Điểm mà mAP50 thôi tăng: lý lẽ để nói 20 epoch là đủ.
+    best = max(range(len(m50)), key=lambda i: m50[i])
+    ax.annotate(
+        f"bão hoà từ ~epoch 10\nđỉnh {m50[best]:.4f}".replace(".", ","),
+        xy=(epochs[best], m50[best]), xytext=(6.0, 0.815),
+        fontsize=12, color=INK, fontweight="bold", linespacing=1.35,
+        arrowprops={"arrowstyle": "-|>", "color": MUTED, "lw": 1.5},
+    )
+
+    ax.set_xlabel("Epoch", fontsize=13)
+    ax.set_ylim(0.60, 1.02)
+    ax.set_xlim(0.5, 20.8)
+    ax.set_xticks([1, 5, 10, 15, 20])
+    ax.legend(fontsize=12.5, loc="center right", frameon=False)
+    ax.grid(axis="y", color="#e6e9f2", lw=1)
+    ax.set_axisbelow(True)
+    for side in ("top", "right"):
+        ax.spines[side].set_visible(False)
+
+    save(fig, "fig-training-curve.png")
+
+
+def figure_position_rules() -> None:
+    """Bộ luật sửa theo vị trí, vẽ trên một chuỗi biển thật.
+
+    "Theo vị trí" là một tính chất **không gian**. Bảng liệt kê luật thì đúng
+    nhưng không cho thấy điều cốt lõi: cùng một cặp ký tự ``O``/``0`` bị ép
+    theo **hai chiều ngược nhau** ở hai vị trí cách nhau vài ký tự. Vẽ ra thì
+    một cái nhìn là hiểu vì sao bảng thay thế toàn cục không dùng được.
+    """
+    fig, ax = plt.subplots(figsize=(8.6, 6.0))
+    ax.set_xlim(0, 10)
+    ax.set_ylim(0, 10)
+    ax.axis("off")
+
+    plate = "59K1-201.73"
+    zones = [
+        (0.6, 2.4, "#dbe6ff", BLUE, "mã tỉnh", "phải là CHỮ SỐ\n81 mã hợp lệ", "O→0  I→1  S→5"),
+        (3.0, 2.2, "#ffe0e0", RED, "sê-ri", "phải là CHỮ CÁI", "0→O  1→I  5→S"),
+        (5.2, 4.2, "#dbe6ff", BLUE, "số đăng ký", "phải là CHỮ SỐ", "ép về chữ số"),
+    ]
+
+    ax.text(5, 8.9, plate, ha="center", va="center", fontsize=44,
+            fontweight="bold", color=INK, family="Consolas")
+
+    for x, width, face, edge, name, rule, fix in zones:
+        ax.add_patch(patches.FancyBboxPatch(
+            (x, 6.5), width, 1.0,
+            boxstyle="round,pad=0.02,rounding_size=0.1",
+            facecolor=face, edgecolor=edge, lw=2, zorder=2))
+        ax.text(x + width / 2, 7.0, name, ha="center", va="center",
+                fontsize=13.5, fontweight="bold", color=edge, zorder=3)
+        ax.text(x + width / 2, 5.75, rule, ha="center", va="center",
+                fontsize=11.5, color=INK, linespacing=1.3)
+        ax.text(x + width / 2, 4.75, fix, ha="center", va="center",
+                fontsize=12.5, color=edge, fontweight="bold", family="Consolas")
+
+    # Cùng một cặp ký tự, hai chiều ngược nhau — điểm cốt lõi của slide.
+    ax.add_patch(patches.FancyBboxPatch(
+        (0.6, 2.5), 8.8, 1.55,
+        boxstyle="round,pad=0.02,rounding_size=0.1",
+        facecolor="#fff8e6", edgecolor="#c9922a", lw=1.8, zorder=2))
+    ax.text(5, 3.62, "Cùng ký tự  O / 0  bị ép theo HAI CHIỀU NGƯỢC NHAU",
+            ha="center", va="center", fontsize=13.5, fontweight="bold", color="#8a6414")
+    ax.text(5, 2.95, "một bảng thay thế toàn cục sẽ làm hỏng một trong hai vị trí",
+            ha="center", va="center", fontsize=12, color=INK)
+
+    ax.add_patch(patches.FancyBboxPatch(
+        (0.6, 0.7), 8.8, 1.25,
+        boxstyle="round,pad=0.02,rounding_size=0.1",
+        facecolor="#f2f4f9", edgecolor=MUTED, lw=1.6, zorder=2))
+    ax.text(5, 1.62, "VÙNG CẤM SỬA", ha="center", va="center",
+            fontsize=13, fontweight="bold", color=INK)
+    ax.text(5, 1.05, "nơi cả chữ và số đều hợp lệ — tuyệt đối không đụng vào",
+            ha="center", va="center", fontsize=12, color=MUTED)
+
+    save(fig, "fig-position-rules.png")
+
+
+def figure_postprocess_gain() -> None:
+    """Đóng góp của hậu xử lý, tách theo bố cục biển.
+
+    Con số tổng ``+11,39 điểm`` không nói được điều đáng nói nhất: gần như toàn
+    bộ mức tăng dồn vào biển hai dòng. Hai cặp cột cạnh nhau cho thấy ngay bộ
+    luật bù đắp đúng chỗ tầng nhận dạng yếu.
+    """
+    fig, ax = plt.subplots(figsize=(8.4, 6.0))
+
+    groups = ["Toàn tập", "Biển 1 dòng", "Biển 2 dòng"]
+    before = [0.6373, 0.9418, 0.5600]
+    after = [0.7512, 0.9541, 0.6996]
+    # Lấy thẳng từ tệp kết quả. Tự trừ hai số ĐÃ LÀM TRÒN ở trên cho ra 13,96
+    # cho biển hai dòng, trong khi mọi tài liệu khác của đồ án ghi 13,97 — một
+    # lệch nhỏ nhưng hội đồng nhìn thấy được, và nó khiến hình mâu thuẫn với
+    # chính bảng đứng cạnh nó.
+    gains = [11.39, 1.23, 13.97]
+    positions = range(len(groups))
+    width = 0.34
+
+    b1 = ax.bar([p - width / 2 for p in positions], before, width,
+                color="#c3cde3", label="trước hậu xử lý (A5)", zorder=3)
+    b2 = ax.bar([p + width / 2 for p in positions], after, width,
+                color=BLUE, label="sau hậu xử lý (A6)", zorder=3)
+
+    for bars in (b1, b2):
+        for bar in bars:
+            ax.text(bar.get_x() + bar.get_width() / 2, bar.get_height() + 0.015,
+                    f"{bar.get_height():.4f}".replace(".", ","),
+                    ha="center", va="bottom", fontsize=11.5, color=INK)
+
+    for index, (hi, gain) in enumerate(zip(after, gains)):
+        colour = RED if gain > 10 else MUTED
+        ax.text(index, hi + 0.10, f"+{gain:.2f}".replace(".", ",") + " điểm",
+                ha="center", va="bottom", fontsize=14, fontweight="bold",
+                color=colour)
+
+    ax.set_xticks(list(positions))
+    ax.set_xticklabels(groups, fontsize=13)
+    ax.set_ylim(0, 1.18)
+    ax.set_yticks([])
+    ax.legend(fontsize=12, loc="upper center", ncol=2, frameon=False,
+              bbox_to_anchor=(0.5, -0.06))
+    ax.tick_params(axis="x", length=0)
+    for side in ("top", "right", "left"):
+        ax.spines[side].set_visible(False)
+    ax.spines["bottom"].set_color(MUTED)
+
+    save(fig, "fig-postprocess-gain.png")
+
+
 def main() -> int:
     """Render every deck figure.
 
@@ -394,6 +612,10 @@ def main() -> int:
     figure_two_line()
     figure_layouts()
     figure_pipeline()
+    figure_architecture()
+    figure_training_curve()
+    figure_position_rules()
+    figure_postprocess_gain()
     return 0
 
 
