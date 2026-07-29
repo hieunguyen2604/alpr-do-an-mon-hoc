@@ -115,4 +115,4 @@ docs/reports/05-ocr-accuracy-adapted.json
 # 105 MB toàn bản chép của dữ liệu và trọng số đã có trong kho; theo dõi nó là
 # lưu cùng một thứ hai lần.
 /transfer-gpu-finetune/
-/transfer-gpu-finetune.zip
+/transfer-gpu-finetune*.zip

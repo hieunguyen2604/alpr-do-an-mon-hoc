@@ -56,6 +56,11 @@ DEFAULT_OUT: Path = REPO_ROOT / "transfer-gpu-finetune"
 MIN_WEIGHT_BYTES: int = 10_000_000
 """Dưới ngưỡng này thì tệp trọng số là rác, không phải trọng số."""
 
+_INCOMPRESSIBLE: frozenset[str] = frozenset(
+    {".jpg", ".jpeg", ".png", ".webp", ".mp4", ".zip", ".gz"}
+)
+"""Định dạng đã nén sẵn — nén lại chỉ tốn CPU, không giảm được kích thước."""
+
 
 # ---------------------------------------------------------------------------
 # Nội dung kịch bản huấn luyện đi kèm bộ
@@ -754,6 +759,45 @@ huấn luyện phải chứa đúng thứ bộ nhận dạng gặp khi chạy th
 """
 
 
+def _zip_subset(
+    out_dir: Path,
+    archive: Path,
+    include_top: set[str] | None = None,
+    exclude_top: set[str] | None = None,
+) -> None:
+    """Nén một phần của bộ thành một tệp .zip.
+
+    Args:
+        out_dir: Thư mục bộ.
+        archive: Tệp .zip cần tạo.
+        include_top: Nếu có, chỉ lấy các mục cấp một nằm trong tập này.
+        exclude_top: Nếu có, bỏ các mục cấp một nằm trong tập này.
+    """
+    print(f"  nén -> {archive.name} ...")
+    stored = deflated = 0
+    with zipfile.ZipFile(archive, "w", zipfile.ZIP_DEFLATED, compresslevel=6) as zf:
+        for path in sorted(out_dir.rglob("*")):
+            if not path.is_file() or "__pycache__" in path.parts:
+                continue
+            top = path.relative_to(out_dir).parts[0]
+            if include_top is not None and top not in include_top:
+                continue
+            if exclude_top is not None and top in exclude_top:
+                continue
+            # Ảnh JPEG/PNG đã nén sẵn. Đo thử trên 200 ảnh của bộ này: deflate
+            # cho ra đúng 100% kích thước gốc — không lợi một byte nào, chỉ tốn
+            # CPU trên 37.000 tệp. Lưu nguyên thì bước nén thành thuần I/O.
+            if path.suffix.lower() in _INCOMPRESSIBLE:
+                zf.write(path, path.relative_to(out_dir.parent),
+                         compress_type=zipfile.ZIP_STORED)
+                stored += 1
+            else:
+                zf.write(path, path.relative_to(out_dir.parent))
+                deflated += 1
+    size = archive.stat().st_size / 1048576
+    print(f"[ok] {archive.name}  ({size:.0f} MB · {stored} lưu nguyên, {deflated} nén)")
+
+
 def build(out_dir: Path, make_zip: bool, with_yolo: bool = False) -> int:
     """Dựng bộ chuyển giao.
 
@@ -826,13 +870,18 @@ def build(out_dir: Path, make_zip: bool, with_yolo: bool = False) -> int:
     print(f"[ok] {n_files} tệp · {total / 1048576:.0f} MB")
 
     if make_zip:
-        archive = out_dir.with_suffix(".zip")
-        print(f"  nén -> {archive.name} ...")
-        with zipfile.ZipFile(archive, "w", zipfile.ZIP_DEFLATED, compresslevel=6) as zf:
-            for path in sorted(out_dir.rglob("*")):
-                if path.is_file():
-                    zf.write(path, path.relative_to(out_dir.parent))
-        print(f"[ok] {archive}  ({archive.stat().st_size / 1048576:.0f} MB)")
+        # Nén thành HAI tệp thay vì một, khi bộ có cả phần YOLO. Lý do thực
+        # dụng: phần OCR chỉ ~120 MB và đó là phần có kỳ vọng cải thiện thật,
+        # còn phần YOLO là 1,5 GB cho một lượt mà mAP50 đã bão hoà. Gộp làm một
+        # buộc người dùng phải tải lên và tải về cả 1,6 GB chỉ để chạy phần
+        # nhỏ. Tách ra thì phần cần trước đi trước.
+        if with_yolo:
+            _zip_subset(out_dir, out_dir.parent / f"{out_dir.name}-ocr.zip",
+                        exclude_top={"yolo", "train_yolo.py"})
+            _zip_subset(out_dir, out_dir.parent / f"{out_dir.name}-yolo.zip",
+                        include_top={"yolo", "train_yolo.py", "README.md"})
+        else:
+            _zip_subset(out_dir, out_dir.with_suffix(".zip"))
 
     print()
     print("Gửi thư mục (hoặc tệp .zip) sang máy GPU, rồi ở đó chạy:")
