@@ -137,9 +137,32 @@ vi khả thi của một đồ án.
 
 ### 3.3. Kết luận chiến lược: phân vai rõ ràng giữa hai máy
 
-| Việc | Chạy ở đâu | Lý do |
+> ## ⚠ Kế hoạch dưới đây KHÔNG phải thứ đã xảy ra
+>
+> Mục 3.3 này viết ở Phase 3, mô tả **dự định**: huấn luyện trên Colab GPU.
+> Thực tế lượt sinh ra `models/best.pt` chạy **trên máy cục bộ, `device: cpu`,
+> hết 10,1 giờ**. Bằng chứng nằm trong chính tệp trọng số:
+>
+> ```
+> train_args.device : cpu
+> train_args.data   : D:\DATN\datasets\processed\yolo_v3\data.yaml
+> ```
+>
+> Đường dẫn Windows đó không thể sinh ra từ Colab (ở đó sẽ là `/content/...`).
+> `runs/final-640-v3/args.yaml` ghi cùng một điều, và `results.csv` cho tổng
+> thời gian **36.181 giây = 10,1 giờ**, tức ~30 phút mỗi epoch — đúng dáng của
+> CPU, không phải T4.
+>
+> **Điều này không làm hỏng kết quả nào.** Thiết bị huấn luyện không ảnh hưởng
+> tới chất lượng mô hình, chỉ ảnh hưởng tốc độ; và mô hình vẫn đạt cả bốn chỉ
+> tiêu phát hiện. Ngược lại nó còn là một khẳng định mạnh hơn dự định ban đầu:
+> **toàn bộ đồ án — huấn luyện, đánh giá lẫn triển khai — chạy được mà không
+> cần một GPU nào.** Phải nói đúng như vậy khi bảo vệ, thay vì nói "GPU đám
+> mây" rồi bị hỏi là GPU nào.
+
+| Việc | Dự định (Phase 3) | Thực tế đã chạy |
 |---|---|---|
-| **Huấn luyện** | **Google Colab (GPU T4)** | Là nơi duy nhất có GPU CUDA |
+| **Huấn luyện** | Google Colab (GPU T4) | **Máy cục bộ, `device: cpu`, 10,1 giờ** |
 | Đánh giá độ chính xác | Colab hoặc cục bộ | mAP/P/R **không phụ thuộc thiết bị** |
 | **Đo độ trễ** | **Bắt buộc máy cục bộ, `--device cpu`** | Số liệu phải mô tả đúng máy triển khai |
 | Xuất ONNX / OpenVINO | Nơi nào cũng được | Export chạy trên CPU (`device="cpu"` cố định trong `export.py`) |

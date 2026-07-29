@@ -146,7 +146,7 @@ Không thấy biển ⇒ trả rỗng, **HTTP 200** — không phải lỗi
 1. Máy triển khai không GPU ⇒ bắt buộc có **số liệu tốc độ CPU chính thức**
 2. YOLO11n vượt YOLOv8n **đồng thời cả hai chiều**: mAP 39,5 vs 37,3 · CPU 56,1 ms vs 80,4 ms
 
-- Huấn luyện trên **GPU đám mây**, triển khai suy luận **trên CPU**
+- Huấn luyện **và** suy luận đều **trên CPU** — 10,1 giờ, không dùng GPU nào
 - `imgsz 640` · 20 epoch · seed cố định · `deterministic`
 
 ## Kết quả phát hiện — đạt cả 4 chỉ tiêu
