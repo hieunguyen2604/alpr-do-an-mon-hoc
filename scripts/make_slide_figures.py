@@ -257,6 +257,133 @@ def figure_layouts() -> None:
     save(fig, "fig-layouts.png")
 
 
+def _box(
+    ax: plt.Axes,
+    xy: tuple[float, float],
+    size: tuple[float, float],
+    text: str,
+    *,
+    face: str = "white",
+    edge: str = MUTED,
+    color: str = INK,
+    weight: str = "normal",
+    fontsize: float = 11.5,
+) -> tuple[float, float]:
+    """Draw one rounded box with centred text.
+
+    Args:
+        ax: Target axes.
+        xy: Centre of the box.
+        size: ``(width, height)``.
+        text: Label, newlines allowed.
+        face: Fill colour.
+        edge: Border colour.
+        color: Text colour.
+        weight: Font weight.
+        fontsize: Point size.
+
+    Returns:
+        The centre, so callers can chain arrows without recomputing it.
+    """
+    x, y = xy
+    width, height = size
+    ax.add_patch(
+        patches.FancyBboxPatch(
+            (x - width / 2, y - height / 2),
+            width,
+            height,
+            boxstyle="round,pad=0.02,rounding_size=0.12",
+            facecolor=face,
+            edgecolor=edge,
+            linewidth=1.6,
+            zorder=2,
+        )
+    )
+    ax.text(x, y, text, ha="center", va="center", fontsize=fontsize,
+            color=color, fontweight=weight, zorder=3, linespacing=1.35)
+    return x, y
+
+
+def _arrow(ax: plt.Axes, start: tuple[float, float], end: tuple[float, float],
+           color: str = MUTED, style: str = "-|>") -> None:
+    """Draw one connector between two points."""
+    ax.annotate(
+        "", xy=end, xytext=start,
+        arrowprops={"arrowstyle": style, "color": color, "lw": 1.8,
+                    "shrinkA": 2, "shrinkB": 2},
+        zorder=1,
+    )
+
+
+def figure_pipeline() -> None:
+    """The inference pipeline as a diagram rather than an ASCII drawing.
+
+    The slide previously carried this as a monospaced code block. That reads
+    badly on a projector -- the box-drawing characters depend on the font
+    keeping perfect column alignment, which a presentation theme does not
+    guarantee, and the branch structure disappears entirely once a line wraps.
+    Drawing it makes the two-line branch -- the project's own contribution --
+    visible at a glance instead of buried in the middle of a text block.
+    """
+    # Khung gần vuông và KHÔNG rộng hơn mức cần. Ô nội dung của layout chỉ
+    # khoảng 654 px, nên mỗi phần thừa bề ngang đều biến thành chữ nhỏ đi khi
+    # hình được thu vào đó. Bản đầu có một chú thích chạy dài sang phải, kéo
+    # hình rộng ra và làm mọi hộp co lại tới mức không đọc nổi từ cuối phòng;
+    # chú thích ấy chuyển sang phần chữ của slide.
+    fig, ax = plt.subplots(figsize=(7.4, 7.0))
+    ax.set_xlim(0.2, 9.8)
+    ax.set_ylim(0, 10)
+    ax.axis("off")
+
+    wide, tall = 7.2, 0.82
+    half = 3.5
+    body = 14.5
+
+    top = _box(ax, (5, 9.45), (3.4, 0.68), "Ảnh vào", face="#eef2fb",
+               edge=BLUE, color=BLUE, weight="bold", fontsize=body)
+    detect = _box(ax, (5, 8.3), (wide, tall), "YOLO11n — phát hiện vùng biển",
+                  weight="bold", fontsize=body)
+    _arrow(ax, (5, 9.11), (5, 8.71))
+
+    crop = _box(ax, (5, 7.2), (wide, tall), "Cắt vùng biển", fontsize=body)
+    _arrow(ax, (5, 7.91), (5, 7.59))
+
+    split = _box(ax, (5, 6.1), (wide, tall),
+                 "Phân loại số dòng — tỉ lệ 2,5", weight="bold", fontsize=body)
+    _arrow(ax, (5, 6.79), (5, 6.51))
+
+    one = _box(ax, (2.7, 4.8), (half, 0.72), "1 dòng", fontsize=body)
+    two = _box(ax, (7.3, 4.8), (half, 0.72), "2 dòng",
+               face="#fdeaea", edge=RED, color=RED, weight="bold", fontsize=body)
+    _arrow(ax, (4.0, 5.69), (3.1, 5.16))
+    _arrow(ax, (6.0, 5.69), (6.9, 5.16), color=RED)
+
+    # Đóng góp kỹ thuật lõi của đồ án: tô riêng để nhìn ra ngay.
+    hstack = _box(ax, (7.3, 3.55), (half, 1.0),
+                  "nắn hình → tách\n→ ghép ngang",
+                  face="#fdeaea", edge=RED, color=RED, weight="bold",
+                  fontsize=body - 1.5)
+    _arrow(ax, (7.3, 4.44), (7.3, 4.05), color=RED)
+
+    ocr = _box(ax, (5, 2.4), (wide, tall), "PaddleOCR — đọc MỘT lần",
+               weight="bold", fontsize=body)
+    _arrow(ax, (2.7, 4.44), (4.0, 2.81))
+    _arrow(ax, (7.3, 3.05), (6.0, 2.81), color=RED)
+
+    norm = _box(ax, (5, 1.3), (wide, tall),
+                "Chuẩn hoá + sửa theo VỊ TRÍ", weight="bold", fontsize=body)
+    _arrow(ax, (5, 1.99), (5, 1.71))
+
+    _box(ax, (5, 0.35), (wide, 0.74),
+         "Lưu CẢ chuỗi thô LẪN chuỗi đã sửa",
+         face="#eef2fb", edge=BLUE, color=BLUE, weight="bold", fontsize=body)
+    _arrow(ax, (5, 0.89), (5, 0.72))
+
+    del top, detect, crop, split, one, two, hstack, ocr, norm
+
+    save(fig, "fig-pipeline.png")
+
+
 def main() -> int:
     """Render every deck figure.
 
@@ -266,6 +393,7 @@ def main() -> int:
     figure_gap()
     figure_two_line()
     figure_layouts()
+    figure_pipeline()
     return 0
 
 

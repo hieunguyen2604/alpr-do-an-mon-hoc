@@ -119,16 +119,11 @@ Lưu **cả hai** chuỗi trên **cùng một bản ghi** — không có `raw_oc
 
 ## Pipeline AI
 
+Nhánh **đỏ** là đóng góp kỹ thuật lõi
+
 Không thấy biển ⇒ trả rỗng, **HTTP 200** — không phải lỗi
 
-```
-Ảnh → YOLO11n phát hiện → cắt vùng biển
-    → phân loại số dòng (ngưỡng tỉ lệ 2,5)
-        ├─ 1 dòng → PaddleOCR
-        └─ 2 dòng → nắn hình → tách → ghép ngang → PaddleOCR
-    → chuẩn hoá + sửa lỗi theo VỊ TRÍ → kiểm tra hợp lệ
-    → lưu CẢ chuỗi thô LẪN chuỗi đã sửa
-```
+![](figures/fig-pipeline.png)
 
 ## Bộ dữ liệu
 
