@@ -15,11 +15,16 @@ Two questions, two sections
 
 Where the database benchmark went
 ---------------------------------
-NFR-P6 (history query at 10,000 rows) is measured by
-``scripts/benchmark_history_query.py``, **not** here. Timing the real query
-requires importing ``backend.repositories``, and NFR-M1 forbids the ``ai``
-package from depending on the service tier. ``scripts/`` may depend on both, so
-that is where it lives; ``tests/test_architecture.py`` enforces the boundary.
+NFR-P6 (history query at 10,000 rows) is **not** measured here. Timing the real
+query requires importing ``backend.repositories``, and NFR-M1 forbids the ``ai``
+package from depending on the service tier -- ``tests/test_architecture.py``
+enforces that boundary. It therefore lived in ``scripts/``, which may depend on
+both tiers.
+
+That script (``scripts/benchmark_history_query.py``) was removed in the
+2026-08-02 cleanup. Its measured output survives in
+``docs/reports/07-stress-db.json``; the script itself is recoverable from git
+history if the measurement ever has to be re-run.
 
 Example:
     python -m ai.evaluation.stress_test --soak-seconds 300

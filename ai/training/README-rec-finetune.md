@@ -1,5 +1,26 @@
 # Fine-tune bộ nhận dạng ký tự (PP-OCRv5 mobile rec) trên biển số Việt Nam
 
+> ## ⛔ Trạng thái 02/08/2026 — ĐÃ DỪNG, và hai script đã bị gỡ khỏi kho
+>
+> **Bản giao hàng dùng model gốc, không dùng bản tinh chỉnh** —
+> `ocr_rec_model_dir` mặc định `None`. Đồ án đã chạy **một lượt fine-tune hoàn
+> chỉnh** (`models/rec_finetuned/`) và đo đủ bốn cấu hình ở mục 5.4: ở đúng chế
+> độ production (det + rec) bản tinh chỉnh **thua 7,50 điểm**; nó chỉ thắng
+> +12,46 điểm ở chế độ bỏ bước phát hiện chữ, mà chế độ đó đã bị bác trên ảnh
+> toàn cảnh ([31-detection-stage-ablation.md](../../docs/reports/31-detection-stage-ablation.md)).
+> Lượt fine-tune trên ngữ liệu đã gộp 521 biển hiếm **quyết định không chạy** —
+> lý do đầy đủ ở [30-rare-plate-integration.md](../../docs/reports/30-rare-plate-integration.md)
+> mục 8.3.
+>
+> **Hai script `finetune_ppocr_rec.py` và `finetune_ppocr_rec_mac.py` đã gỡ khỏi
+> kho** ở đợt dọn dẹp cùng ngày; lấy lại từ lịch sử git nếu cần
+> (`git show f14df03:ai/training/finetune_ppocr_rec.py`). Notebook Colab
+> `finetune_ppocr_rec_colab.ipynb` **vẫn còn** và là đường chạy được duy nhất
+> hiện tại.
+>
+> Tài liệu dưới đây giữ nguyên làm mô tả quy trình cho ai muốn chạy lại. Các
+> lệnh gọi hai script đã gỡ sẽ **không chạy** cho tới khi khôi phục chúng.
+
 Đường ray đầy đủ cho hướng phát triển có kỳ vọng lớn nhất còn lại của luận
 văn: nâng độ chính xác chuỗi **biển 2 dòng** từ ~0,60 lên vùng 0,8+ bằng
 fine-tune model recognition trên đúng dữ liệu miền. Ba mảnh, hai mảnh đầu đã

@@ -5430,7 +5430,7 @@ Chương 5 đã trình bày hệ thống *đã được xây dựng* như thế 
 
 Hai vế của câu hỏi có trọng số ngang nhau. Một chương thực nghiệm chỉ liệt kê các chỉ số cao mà không nói rõ chúng được đo trên tập dữ liệu nào, bằng phần cứng nào, và với những nhiễu loạn phương pháp luận nào, thì không phải là bằng chứng — nó là quảng cáo. Vì vậy chương này được tổ chức sao cho **mỗi con số đều đi kèm ngữ cảnh đo của nó**, và các mục có giá trị phương pháp luận cao nhất (kiểm chứng rò rỉ dữ liệu ở 6.3.3, đóng góp định lượng của khối hậu xử lý ở 6.5.2, các mối đe doạ đến tính hợp lệ ở 6.9.3) được dành dung lượng tương xứng với tầm quan trọng của chúng, chứ không bị nén thành một dòng chú thích.
 
-> **Trạng thái của bản thảo này.** Khung chương được dựng **trước khi** mô hình chính thức `models/best.pt` (`imgsz=640`, split v3, 20 epoch, thiết bị CPU, khoảng 35,6 phút mỗi epoch) huấn luyện xong, đúng theo nguyên tắc **cấu trúc lập luận, tiêu chí đối chiếu và giao thức đo phải được cố định *trước* khi biết kết quả**, để kết quả không thể uốn cong cách trình bày theo hướng có lợi. Bản hiện tại đã điền toàn bộ số liệu đo được trên `best.pt`: các ô còn để `—` hoặc *(chưa đo)* là những phép đo **thật sự chưa chạy được** (webcam/video, so sánh backend, khởi động lại CSDL, phân rã theo nhóm luật), mỗi ô ghi rõ lý do và nơi sẽ đo. Mọi con số trong chương lấy trực tiếp từ `docs/reports/05-results.json` / `05-tables.md` (sinh bởi `scripts/fill_chapter5.py`) và, riêng NFR-P1, từ `docs/reports/07-benchmark-p1-resolved.json`. Mục [Hướng dẫn điền số](#huong-dan-dien-so) ở cuối chương liệt kê đầy đủ mã bảng, tệp kết quả nguồn và lệnh sinh ra tệp đó.
+> **Trạng thái của bản thảo này.** Khung chương được dựng **trước khi** mô hình chính thức `models/best.pt` (`imgsz=640`, split v3, 20 epoch, thiết bị CPU, khoảng 35,6 phút mỗi epoch) huấn luyện xong, đúng theo nguyên tắc **cấu trúc lập luận, tiêu chí đối chiếu và giao thức đo phải được cố định *trước* khi biết kết quả**, để kết quả không thể uốn cong cách trình bày theo hướng có lợi. Bản hiện tại đã điền toàn bộ số liệu đo được trên `best.pt`: các ô còn để `—` hoặc *(chưa đo)* là những phép đo **thật sự chưa chạy được** (webcam/video, so sánh backend, khởi động lại CSDL, phân rã theo nhóm luật), mỗi ô ghi rõ lý do và nơi sẽ đo. Mọi con số trong chương lấy trực tiếp từ `docs/reports/05-results.json` / `05-tables.md` (sinh bởi `scripts/fill_chapter5.py`, đã gỡ khỏi kho ở đợt dọn dẹp 02/08/2026 — xem ghi chú cuối phụ lục) và, riêng NFR-P1, từ `docs/reports/07-benchmark-p1-resolved.json`. Mục [Hướng dẫn điền số](#huong-dan-dien-so) ở cuối chương liệt kê đầy đủ mã bảng, tệp kết quả nguồn và lệnh sinh ra tệp đó.
 
 ---
 
@@ -6712,11 +6712,11 @@ Không lệnh nào dưới đây được chạy trước khi hoàn tất ba vi�
 | **T6.6c** | So sánh backend suy luận | `docs/reports/07-benchmark-optimized.json` | `python -m ai.evaluation.benchmark_cpu --weights models/best.pt --backends pytorch onnx openvino --imgsz 640 --runs 50 --warmup 5` |
 | **T6.6d** | Webcam và video | *(cần sinh)* | Chưa có script chuyên dụng. Cần bổ sung kịch bản đo FPS webcam 60 giây **gọi trực tiếp `POST /api/detect/frame`** (trang webcam đã gỡ khỏi giao diện 2026-07-20) và đo thời gian xử lý video 60 giây, kèm **định nghĩa tường minh** của "FPS hiệu dụng" |
 | **T5.4** | Fine-tune so với model gốc | `docs/reports/28-ocr-accuracy-finetuned.json`, `29-reconly-ablation.json` | `ALPR_OCR_REC_MODEL_DIR=models/rec_finetuned python -m ai.evaluation.ocr_accuracy --output docs/reports/28-ocr-accuracy-finetuned.json` |
-| **T6.6e** | Chịu tải, bộ nhớ, độ tin cậy | `docs/reports/07-stress-load.json`, `07-stress-db.json`, `07-api-overhead.json`, `07-leak-check.json` | `python -m ai.evaluation.stress_test --weights models/best.pt --concurrency 1 2 5 10 --soak-seconds 300`; `python scripts/benchmark_api_overhead.py`; `python scripts/benchmark_history_query.py` |
+| **T6.6e** | Chịu tải, bộ nhớ, độ tin cậy | `docs/reports/07-stress-load.json`, `07-stress-db.json`, `07-api-overhead.json`, `07-leak-check.json` | `python -m ai.evaluation.stress_test --weights models/best.pt --concurrency 1 2 5 10 --soak-seconds 300`; `scripts/benchmark_api_overhead.py` và `scripts/benchmark_history_query.py` — **đã gỡ**, xem ghi chú cuối phụ lục |
 | **T6.6d** | Webcam và video (P2, P3) | `docs/reports/33-runtime-nfr.json` | `python scripts/benchmark_runtime_nfr.py --images datasets/processed/yolo_v3/images/test --output docs/reports/33-runtime-nfr.json` |
 | **T6.6f** | Bỏ bước phát hiện chữ: hai ngữ liệu | `docs/reports/29-reconly-ablation.json`, `31-demo-ab-reconly.json` | `ALPR_OCR_SKIP_DETECTION=1 python -m ai.evaluation.ocr_accuracy …` (ngữ liệu); so sánh bộ demo qua `ALPRPipeline.process` |
 | **T3.6** | So sánh baseline ↔ chính thức | T6.4a + `models/baseline-416-v1.results.csv` | Không có lệnh mới — ghép số từ hai nguồn đã có |
-| **T6.7** | Đối chiếu toàn bộ NFR | tổng hợp mọi tệp trên | `python scripts/aggregate_benchmark_report.py` để gộp, phần NFR-M/S/C/U lấy từ `docs/reports/07-testing-report.md` |
+| **T6.7** | Đối chiếu toàn bộ NFR | tổng hợp mọi tệp trên | `scripts/aggregate_benchmark_report.py` — **đã gỡ**, xem ghi chú cuối phụ lục; phần NFR-M/S/C/U lấy từ `docs/reports/07-testing-report.md` |
 | **T6.8** | Tần suất các loại lỗi | `docs/reports/04-ocr-errors/` | `python -m ai.evaluation.error_analysis --report docs/reports/04-ocr-accuracy.json --errors-dir docs/reports/04-ocr-errors` |
 
 ### C. Danh mục hình cần sinh
@@ -6750,6 +6750,37 @@ Không lệnh nào dưới đây được chạy trước khi hoàn tất ba vi�
 4. **Cặp số 94,3% / 45,7% (Laroca, VISAPP 2022, RodoSol-ALPR)** mỗi lần xuất hiện phải kèm tên bộ dữ liệu và quốc gia **ngay trong câu**.
 5. **Mục 6.5.2 phải giữ đúng một trong hai nhánh A/B**, do số liệu quyết định. Nhánh còn lại bị xoá, không được giữ cả hai.
 6. **Phụ lục kỹ thuật này không thuộc thân đồ án** — giữ lại để tái lập số liệu; có thể lược bỏ khi in bản cuối nếu quy chế yêu cầu.
+
+### F. Bốn công cụ đã gỡ khỏi kho ngày 02/08/2026
+
+Đợt dọn dẹp mã nguồn ngày 02/08/2026 đã gỡ bốn script từng dùng để sinh hoặc gộp
+số liệu của chương này:
+
+| Script đã gỡ | Việc nó từng làm | Bảng liên quan |
+|---|---|---|
+| `scripts/fill_chapter5.py` | Sinh `docs/reports/05-results.json` và `05-tables.md` | mọi bảng số liệu |
+| `scripts/benchmark_api_overhead.py` | Đo chi phí phụ trội của tầng API | T6.6e |
+| `scripts/benchmark_history_query.py` | Đo độ trễ truy vấn lịch sử trên CSDL | T6.6e |
+| `scripts/aggregate_benchmark_report.py` | Gộp các tệp `07-*.json` thành bảng đối chiếu NFR | T6.7 |
+
+**Điều này KHÔNG làm mất khả năng truy nguyên số liệu.** Mọi tệp kết quả mà bốn
+script ấy sinh ra đều **vẫn nằm trong kho và vẫn được commit**:
+`05-results.json`, `05-tables.md`, `07-stress-load.json`, `07-stress-db.json`,
+`07-api-overhead.json`, `07-leak-check.json`, `07-benchmark-p1-resolved.json`.
+Mỗi con số trong chương vẫn đối chiếu được về đúng tệp nguồn của nó.
+
+Thứ mất đi là **khả năng chạy lại phép đo bằng một lệnh**. Muốn chạy lại thì lấy
+script từ lịch sử git — chúng không bị xoá khỏi lịch sử, chỉ bị gỡ khỏi bản làm
+việc:
+
+```bash
+git show f14df03:scripts/aggregate_benchmark_report.py > scripts/aggregate_benchmark_report.py
+```
+
+Các công cụ đo **vẫn còn trong kho** và không bị ảnh hưởng:
+`ai/evaluation/` (evaluate, ocr_accuracy, benchmark_cpu, benchmark_ocr,
+benchmark_system, stress_test, leak_check, error_analysis, color_accuracy) và
+`scripts/benchmark_runtime_nfr.py` (NFR-P2, P3, R4, R5).
 
 
 ```{=openxml}
