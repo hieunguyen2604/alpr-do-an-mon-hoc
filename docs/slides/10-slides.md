@@ -320,6 +320,21 @@ Ba tình huống, chạy trên máy thật — **không phải video quay sẵn*
 
 **Em sẵn sàng nhận câu hỏi.**
 
+## Tài liệu tham khảo chính
+
+Đầy đủ **232 mục** trong `docs/references.bib` — dưới đây là các nguồn chống đỡ
+những khẳng định chính của bài
+
+| | |
+|---|---|
+| **Laroca** và cộng sự, VISAPP **2022** | *On the Cross-Dataset Generalization in License Plate Recognition* — **nguồn của cặp số 94,3% / 45,7%**, đo trên RodoSol-ALPR của **Brazil** |
+| **Laroca** và cộng sự, IET ITS **2021** | *An efficient and layout-independent ALPR system based on the YOLO detector* |
+| **Du** và cộng sự, arXiv **2020** | *PP-OCR: A Practical Ultra Lightweight OCR System* |
+| PaddlePaddle Team, arXiv **2025** | *PaddleOCR 3.0 Technical Report* |
+| **Jocher & Qiu**, Ultralytics **2024** | *Ultralytics YOLO11* |
+| **TT 79/2024/TT-BCA** · **TT 51/2025/TT-BCA** | Cấu trúc biển, seri, màu nền · phụ lục mã tỉnh (34 tỉnh/thành) |
+| **QCVN 08:2024/BCA** | Kích thước và tỉ lệ khung hình biển số |
+
 ## Tra nhanh số liệu
 
 | | |

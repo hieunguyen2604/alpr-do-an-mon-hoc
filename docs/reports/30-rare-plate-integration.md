@@ -115,16 +115,66 @@ Biển xanh (n=66) vẫn phải báo cáo kèm khoảng tin cậy và xếp vào
 
 ---
 
-## 8. Việc còn lại
+## 8. Đã gộp — 02/08/2026
 
-- [ ] Khử 74 biển trùng + 1 biển giao với ngữ liệu cũ
-- [ ] Chia lại train/val/test theo **biển số**, không theo tệp
-- [ ] Gộp `plate_labels_rare.csv` vào `plate_labels.csv` kèm cột `plate_color` và `source_dataset`
-- [ ] Fine-tune lại **sau khi** chế độ chỉ-rec đã vào đường ống (xem
-      [29-reconly-ablation.json](29-reconly-ablation.json)) — nếu fine-tune trước, lần đo lại sẽ
-      lặp đúng cái bẫy chênh lệch det/rec vừa phát hiện
-- [ ] Cập nhật mục 6.3.8 của [ch6-ket-luan.md](../papers/ch6-ket-luan.md): câu *"97,68% mẫu thuộc
-      một lớp duy nhất"* sẽ không còn đúng sau khi gộp
+Chạy bằng [`scripts/dataset/merge_rare_plates.py`](../../scripts/dataset/merge_rare_plates.py),
+đầu ra `datasets/annotations/plate_labels_merged.csv`.
 
-**Đầu ra đã có:** `datasets/annotations/plate_labels_rare.csv` — 571 dòng, mỗi dòng gồm đường dẫn
-ảnh, chuỗi biển đã qua validator, màu biển và nguồn.
+| Bước | Kết quả |
+|---|---|
+| Khử trùng lặp trong bộ mới | bỏ **50**, còn 521 |
+| Khử giao với ngữ liệu cũ | **0** — xem ghi chú dưới |
+| Chia lại theo **biển số** | 413 train / 108 valid (seed 42, tỷ lệ khớp ngữ liệu gốc) |
+| **Ngữ liệu sau khi gộp** | **3.322 dòng** — 2.637 train / 679 valid |
+| **Tỷ lệ biển hiếm** | **0,86% → 15,7%** (476 vàng + 45 xanh) |
+
+> **Vì sao 0 biển giao mà khảo sát mục 5 lại ghi 1?** Khảo sát quét **toàn bộ**
+> 1.570 biển của bộ màu và tìm thấy `29H03102` trùng ngữ liệu cũ. Nhưng tệp
+> xuất ra chỉ gồm biển **vàng và xanh**, còn `29H03102` là biển **trắng** — nó
+> chưa bao giờ lọt vào. Hai con số cùng đúng, khác phạm vi.
+
+### 8.1. Hai chỗ phải sửa trong bộ sinh dữ liệu trước khi fine-tune lại
+
+Gộp dữ liệu **một mình là không đủ**. Lượt fine-tune 02/08 thất bại vì chênh lệch
+giữa lúc huấn luyện và lúc chạy, không phải vì thiếu dữ liệu — lặp lại y nguyên
+quy trình cũ với dữ liệu nhiều hơn sẽ cho ra đúng thất bại cũ.
+
+**(a) Thiếu bước nắn tỉ lệ.** `build_rec_finetune_set.py` đọc ảnh thẳng từ đĩa,
+trong khi đường ống thật gọi `restore_aspect_ratio` trước khi đọc. Hai bộ Roboflow
+đều xuất crop lên khung **vuông**, nên model được dạy một hình dạng mà production
+không bao giờ đưa cho nó. Đã sửa.
+
+**(b) Model chưa từng thấy mảnh vụn.** Đây là nguyên nhân gốc của lượt trước:
+PaddleOCR đánh giá bằng **nguyên ảnh**, còn hệ thống chạy **det trước rồi rec**,
+tức đưa cho model từng mảnh. Nay bộ sinh phát thêm **hai nửa của biển 2 dòng làm
+mẫu riêng**, mỗi nửa mang nhãn của chính nó.
+
+Chỉ phát khi điểm cắt **không nhập nhằng** — biển 9 ký tự (4+5) và 7 ký tự (3+4).
+Biển 8 ký tự bị bỏ qua vì `67C10815` có thể là `67C`+`10815` hoặc `67C1`+`0815`,
+cả hai đều hợp lệ; đoán ở đây là đúng cách mà lượt fine-tune **đầu tiên** đã hỏng
+(nhãn sai sinh ra âm thầm).
+
+### 8.2. Tập huấn luyện mới
+
+| | train | val |
+|---|---:|---:|
+| Nguyên ảnh biển (`base`) | 2.637 | 679 |
+| Tăng cường (`tiny`, `deg`) | 5.274 | — |
+| **Nửa trên / nửa dưới** (`up`, `low`) | **2.364** | **632** |
+| **Tổng** | **10.275** | **1.311** |
+
+**Điểm quan trọng nhất nằm ở cột val.** Lần trước tập kiểm định chỉ có nguyên ảnh,
+nên val acc 0,8809 đo một chế độ hệ thống **không dùng** — và vì thế không nhìn
+thấy được cái hỏng. Nay val có **632 mẫu mảnh vụn**, tức phép đo lúc huấn luyện đã
+chạm được vào chính chế độ mà production chạy.
+
+### 8.3. Còn lại
+
+- [ ] Fine-tune lại (người thực hiện chạy)
+- [ ] Đo lại A4–A7 bằng `ai/evaluation/ocr_accuracy.py` và **đối chiếu với bộ demo
+      ảnh toàn cảnh** trước khi kết luận — bài học của mục 5 trong
+      [31-detection-stage-ablation.md](31-detection-stage-ablation.md)
+- [ ] Cập nhật mục 6.3.8 của [ch6-ket-luan.md](../papers/ch6-ket-luan.md): câu
+      *"97,68% mẫu thuộc một lớp duy nhất"* chỉ còn đúng cho ngữ liệu **trước** khi gộp
+- [ ] Biển đỏ và ngoại giao **vẫn bằng 0** — không nguồn công khai nào lấp được,
+      giữ nguyên trong mục Hạn chế

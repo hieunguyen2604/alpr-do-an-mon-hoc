@@ -44,6 +44,7 @@ import numpy as np
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
+from ai.evaluation.ocr_accuracy import restore_aspect_ratio  # noqa: E402
 from ai.inference.recognizer import OCR_INPUT_HEIGHT  # noqa: E402
 from ai.inference.two_line import (  # noqa: E402
     estimate_line_count,
@@ -52,7 +53,13 @@ from ai.inference.two_line import (  # noqa: E402
     split_two_line,
 )
 
-LABELS = ROOT / "datasets" / "annotations" / "plate_labels.csv"
+LABELS = ROOT / "datasets" / "annotations" / "plate_labels_merged.csv"
+"""Ngu lieu DA GOP 521 bien vang/xanh (02/08/2026).
+
+Ban goc `plate_labels.csv` chi co 24 bien hiem tren 2.801 (0,86%), nen model
+fine-tune tu no chi biet doc bien trang. Ban gop dua ty le do len 15,7%.
+Xem `docs/reports/30-rare-plate-integration.md`.
+"""
 OUT = ROOT / "datasets" / "processed" / "rec_finetune"
 SEED = 42
 
@@ -62,9 +69,16 @@ letter is an observable mistake instead of an architecturally invisible one."""
 
 
 def production_view(crop: np.ndarray, line_count: int) -> np.ndarray:
-    """Return the crop exactly as the deployed recogniser would feed it to OCR."""
-    working = crop
-    if line_count == 2 or (line_count == 0 and estimate_line_count(crop) == 2):
+    """Return the crop exactly as the deployed recogniser would feed it to OCR.
+
+    The aspect-ratio repair is part of that path and was missing here until
+    02/08/2026. Both Roboflow sources export their crops onto a *square* canvas,
+    so a plate arrives with its geometry destroyed; ``ai/evaluation/ocr_accuracy``
+    and the pipeline both undo that before recognising, and a training set built
+    without it teaches the model a shape production never shows it.
+    """
+    working = restore_aspect_ratio(crop, line_count)
+    if line_count == 2 or (line_count == 0 and estimate_line_count(working) == 2):
         upper, lower = split_two_line(working)
         working = merge_two_line(upper, lower)
     return preprocess_plate(
@@ -72,6 +86,43 @@ def production_view(crop: np.ndarray, line_count: int) -> np.ndarray:
         upscale_to_height=OCR_INPUT_HEIGHT,
         downscale_to_height=OCR_INPUT_HEIGHT,
     )
+
+
+def line_split(text: str, line_count: int) -> tuple[str, str] | None:
+    """Split a plate string at its physical line break, or ``None`` if ambiguous.
+
+    Why this matters more than it looks
+    -----------------------------------
+    The deployed pipeline runs PaddleOCR's **text-detection** stage before
+    recognition, so the recogniser is handed one FRAGMENT per line, never the
+    whole strip. The first fine-tune attempt was trained only on whole strips
+    and collapsed from 0.8233 to 0.2667 on its own training images the moment it
+    was measured through that pipeline (``docs/reports/31-detection-stage-ablation.md``).
+
+    Emitting the two halves as their own samples is what closes that gap: the
+    model sees fragments during training because it will see fragments at run
+    time.
+
+    Only unambiguous splits are emitted. An eight-character two-line plate is
+    genuinely ambiguous -- ``67C10815`` is ``67C`` + ``10815`` or ``67C1`` +
+    ``0815`` and both are legal -- so guessing would inject wrong labels, which
+    is exactly how the *first* fine-tune failed.
+
+    Args:
+        text: The plate string, separators already stripped.
+        line_count: ``1`` or ``2``.
+
+    Returns:
+        ``(upper, lower)`` for a 7- or 9-character two-line plate; ``None``
+        otherwise.
+    """
+    if line_count != 2:
+        return None
+    if len(text) == 9:  # province(2) + serial(2) + number(5)
+        return text[:4], text[4:]
+    if len(text) == 7:  # province(2) + serial(1) + number(4)
+        return text[:3], text[3:]
+    return None
 
 
 def augment_tiny(image: np.ndarray, rng: random.Random) -> np.ndarray:
@@ -164,11 +215,42 @@ def main() -> None:
 
         split = row["split"]
         variants = [("base", base)]
+
+        # Hai nua cua bien 2 dong, moi nua mot mau rieng — de model hoc doc
+        # MANH, dung thu ma buoc phat hien chu cua PaddleOCR se dua cho no luc
+        # chay that. Xem `line_split` de biet vi sao chi lam voi bien 7 va 9 ky
+        # tu. Nhan cua tung nua thay doi, nen chung duoc ghi rieng chu khong di
+        # chung vong `variants`.
+        halves: list[tuple[str, np.ndarray, str]] = []
+        cut = line_split(text, line_count)
+        if cut is not None:
+            upper_img, lower_img = split_two_line(restore_aspect_ratio(crop, line_count))
+            for tag, half_img, half_text in (
+                ("up", upper_img, cut[0]),
+                ("low", lower_img, cut[1]),
+            ):
+                halves.append(
+                    (
+                        tag,
+                        preprocess_plate(
+                            half_img,
+                            upscale_to_height=OCR_INPUT_HEIGHT,
+                            downscale_to_height=OCR_INPUT_HEIGHT,
+                        ),
+                        half_text,
+                    )
+                )
+
         if split == "train":
             variants.append(("tiny", production_view(augment_tiny(base, rng), 1)))
             variants.append(
                 ("deg", production_view(augment_degraded(base, rng), 1))
             )
+
+        for tag, image, half_text in halves:
+            name = f"{split}_{index:05d}_{tag}.jpg"
+            cv2.imwrite(str(images_dir / name), image, [cv2.IMWRITE_JPEG_QUALITY, 95])
+            manifests[split].append(f"images/{name}\t{half_text}")
 
         for tag, image in variants:
             name = f"{split}_{index:05d}_{tag}.jpg"
