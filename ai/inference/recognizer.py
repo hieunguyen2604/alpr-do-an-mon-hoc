@@ -364,6 +364,19 @@ class PaddleOcrRecognizer(BaseRecognizer):
         text = "".join(raw_text.split()).upper()
         confidence = _aggregate_confidence(texts, scores)
 
+        # Where the serial ends on a two-line plate. The halves were stacked
+        # side by side above, so the engine returns one fragment per half and
+        # the first fragment IS the upper line -- `67C` (three characters, one
+        # letter of serial) versus `77H5` (four, two characters of serial).
+        # That distinction is invisible in the flat string and decides whether
+        # the number is grouped as five digits or four.
+        #
+        # Stays 0 when the engine returned a single fragment, which means the
+        # upper line was not read: absent evidence, not wrong evidence.
+        upper_char_count = 0
+        if line_count == 2 and len(texts) >= 2:
+            upper_char_count = sum(1 for ch in texts[0] if ch.isalnum())
+
         _LOGGER.info(
             "Plate recognition finished",
             extra={
@@ -373,6 +386,7 @@ class PaddleOcrRecognizer(BaseRecognizer):
                 "text": text,
                 "confidence": round(confidence, 4),
                 "segments": len(texts),
+                "upper_char_count": upper_char_count,
                 "elapsed_ms": round((time.perf_counter() - started) * 1000.0, 2),
             },
         )
@@ -383,6 +397,7 @@ class PaddleOcrRecognizer(BaseRecognizer):
             confidence=confidence,
             line_count=line_count,
             is_valid_format=False,
+            upper_char_count=upper_char_count,
         )
 
     def warmup(self) -> None:
@@ -453,7 +468,7 @@ class PaddleOcrRecognizer(BaseRecognizer):
             return self._engine
 
         try:
-            from paddleocr import PaddleOCR
+            from paddleocr import PaddleOCR, TextRecognition
         except ImportError as error:
             raise ModelLoadError(
                 "PaddleOCR is not installed in the active environment; "
@@ -461,6 +476,9 @@ class PaddleOcrRecognizer(BaseRecognizer):
             ) from error
 
         device = "gpu" if self._config.ocr_use_gpu else "cpu"
+
+        if self._config.ocr_skip_detection:
+            return self._build_recognition_only_engine(TextRecognition, device)
 
         # Both sub-model names are pinned together, or neither is. Supplying
         # only one makes PaddleOCR ignore lang/ocr_version for the other and
@@ -545,6 +563,58 @@ class PaddleOcrRecognizer(BaseRecognizer):
         )
         return self._engine
 
+    def _build_recognition_only_engine(self, factory: Any, device: str) -> Any:
+        """Build a recognition-only engine that reads the whole crop at once.
+
+        The crop handed to this class has already been localised by the
+        detector, aspect-repaired, and -- when two-line -- split and re-stacked
+        into one horizontal strip. It is a single text line, so PaddleOCR's
+        text-detection stage has nothing left to find; all it does is cut the
+        strip into fragments that then have to be stitched back together.
+
+        See :attr:`~ai.inference.config.InferenceConfig.ocr_skip_detection` for
+        the measurement that put this on by default.
+
+        Args:
+            factory: The ``paddleocr.TextRecognition`` class.
+            device: ``"cpu"`` or ``"gpu"``.
+
+        Returns:
+            The recognition module, which exposes the same ``predict(image)``
+            call as the full pipeline.
+
+        Raises:
+            ModelLoadError: If the recognition model cannot be loaded.
+        """
+        recognition_model = RECOGNITION_MODEL_BY_LANG.get(self._config.ocr_lang)
+        kwargs: dict[str, Any] = {"device": device}
+        if recognition_model is not None:
+            kwargs["model_name"] = recognition_model
+
+        rec_dir = self._config.ocr_rec_model_dir
+        if rec_dir is not None and rec_dir.is_dir() and (rec_dir / "inference.pdiparams").exists():
+            kwargs["model_dir"] = str(rec_dir)
+
+        started = time.perf_counter()
+        try:
+            self._engine = factory(**kwargs)
+        except Exception as error:
+            raise ModelLoadError(
+                f"Failed to load the recognition-only engine ({kwargs}): {error}"
+            ) from error
+
+        _LOGGER.info(
+            "OCR engine loaded (recognition only, detection stage skipped)",
+            extra={
+                "engine": self.name,
+                "model_name": recognition_model,
+                "model_dir": str(rec_dir) if "model_dir" in kwargs else None,
+                "device": device,
+                "elapsed_ms": round((time.perf_counter() - started) * 1000.0, 2),
+            },
+        )
+        return self._engine
+
     @staticmethod
     def _validate_crop(plate_image: ImageArray) -> None:
         """Reject crops that cannot be processed.
@@ -623,6 +693,20 @@ def _parse_ocr_output(raw_results: Any) -> tuple[list[str], list[float]]:
     for result in raw_results:
         texts = _lookup(result, "rec_texts") or []
         scores = _lookup(result, "rec_scores") or []
+
+        if not texts:
+            # Recognition-only mode (``ocr_skip_detection``). ``TextRecognition``
+            # reads the whole strip in one pass, so it reports a single
+            # ``rec_text``/``rec_score`` rather than the pipeline's plural
+            # fields, and no polygons at all. Everything downstream already
+            # copes with absent geometry, so the singular payload only has to be
+            # widened into a one-element list here.
+            single = _lookup(result, "rec_text")
+            if single:
+                texts = [single]
+                score = _lookup(result, "rec_score")
+                scores = [score] if score is not None else []
+
         polys = _lookup(result, "rec_polys")
         if polys is None:
             polys = _lookup(result, "dt_polys")

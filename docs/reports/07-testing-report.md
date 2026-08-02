@@ -4,6 +4,20 @@
 **Ngày cập nhật:** 20/07/2026 (đo lại trên mô hình chính thức `models/best.pt`; số lượng test cập nhật theo lần chạy hồi quy ghi tại [13-refactor-result.json](13-refactor-result.json))
 **Trạng thái:** Bộ kiểm thử chạy sạch (**882 test thu thập / 881 đạt, 1 `xfail`, 0 fail**). **NFR-P1 ĐẠT** trên `best.pt` (5.857 ms → **731 ms** client-side / **780 ms** in-process p95). Rò rỉ dữ liệu **đã xử lý** bằng bộ `yolo_v3`; detection đo trên `best.pt` đạt cả bốn chỉ tiêu (mAP@0.5 0,9829 / mAP@0.5:0.95 0,7834). Nút thắt còn lại là **NFR-A4/A5/A6: độ chính xác OCR biển 2 dòng** (KHÔNG ĐẠT — kết quả thật, xem báo cáo OCR).
 
+> ## ⚠ Ba con số trong báo cáo này đã lỗi thời (cập nhật 02/08/2026)
+>
+> Số liệu dưới đây **giữ nguyên như đã đo ngày 19–20/07/2026** — đây là bản ghi
+> của một lần đo, không phải trạng thái hiện tại. Ba chỗ đã đổi:
+>
+> | Trong báo cáo này | Hiện tại | Nguồn |
+> |---|---|---|
+> | 882 test thu thập / 881 đạt | **1.001 thu thập / 1.000 đạt**, 1 `xfail` | chạy 02/08/2026 |
+> | **NFR-P1 ĐẠT**, p95 731 ms | 🟡 **chỉ đạt sàn**, p95 **1.143 ms** | [27](27-retry-ladder-cost-benefit.md) |
+> | NFR-P2/P3/R4/R5 chưa đo | **P2 ❌ 2,379 FPS** · P3 ✅ 0,746× · R4 ✅ 100% · R5 ✅ 0 mất | [33-runtime-nfr.json](33-runtime-nfr.json) |
+>
+> NFR-P1 thoái lui **có chủ ý**: bậc thang thử-lại mua thêm 34 biển đọc đúng và
+> trả bằng đuôi độ trễ. Cùng nguyên nhân đó làm NFR-P2 trượt sàn.
+
 ---
 
 ## 0. Ba điều phải đọc trước khi tin bất kỳ con số nào

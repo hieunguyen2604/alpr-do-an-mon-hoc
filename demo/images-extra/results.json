@@ -66,8 +66,8 @@
   "canh-nhieu-bien-2.png": [
     {
       "plate": "51H60969",
-      "display": "51H6-0969",
-      "kind": "motorcycle_old",
+      "display": "51H-609.69",
+      "kind": "car",
       "color": "white",
       "valid": true,
       "lines": 2
@@ -82,8 +82,8 @@
     },
     {
       "plate": "51C92087",
-      "display": "51C9-2087",
-      "kind": "motorcycle_old",
+      "display": "51C-920.87",
+      "kind": "car",
       "color": "yellow",
       "valid": true,
       "lines": 2
@@ -108,8 +108,8 @@
     },
     {
       "plate": "51H14573",
-      "display": "51H1-4573",
-      "kind": "motorcycle_old",
+      "display": "51H-145.73",
+      "kind": "car",
       "color": "white",
       "valid": true,
       "lines": 2
@@ -254,8 +254,8 @@
   "vang-61C15282.jpg": [
     {
       "plate": "61C15282",
-      "display": "61C1-5282",
-      "kind": "motorcycle_old",
+      "display": "61C-152.82",
+      "kind": "car",
       "color": "yellow",
       "valid": true,
       "lines": 2
@@ -340,8 +340,8 @@
   "xe-tai.jpg": [
     {
       "plate": "67C10815",
-      "display": "67C1-0815",
-      "kind": "motorcycle_old",
+      "display": "67C-108.15",
+      "kind": "car",
       "color": "white",
       "valid": true,
       "lines": 2

@@ -429,7 +429,10 @@ def to_job_response(job: DetectionJob, storage: StorageService) -> DetectionJobR
 
 
 def display_text(
-    plate_number: str | None, line_count: int | None, kind: str | None = None
+    plate_number: str | None,
+    line_count: int | None,
+    kind: str | None = None,
+    upper_char_count: int | None = None,
 ) -> str | None:
     """Render a stored plate number with the separators the real plate carries.
 
@@ -449,6 +452,15 @@ def display_text(
             re-deriving here without that evidence used to regroup it as the
             motorcycle ``51H6-0969`` while the badge said car (field bug,
             24/07/2026; rules in ``docs/reports/23-display-format-rules.md``).
+        upper_char_count: ``row.upper_char_count`` -- how many characters the
+            recogniser read from the upper line of a two-line plate, or
+            ``None``.
+
+            Outranks ``kind`` when present, because it is an observation of the
+            image rather than an inference from the string. ``kind`` cannot
+            settle ``67C10815``: both ``67C-108.15`` (serial ``C``) and
+            ``67C1-0815`` (serial ``C1``) are legal, and the flat string
+            carries no evidence either way. The upper line does.
 
     Returns:
         The formatted string, e.g. ``"29E-015.66"``; ``None`` when there is no
@@ -460,7 +472,10 @@ def display_text(
         return None
     try:
         return _NORMALIZER.format_for_display(
-            plate_number, line_count=line_count, kind=kind or None
+            plate_number,
+            line_count=line_count,
+            kind=kind or None,
+            upper_char_count=upper_char_count or 0,
         )
     except Exception:  # noqa: BLE001 - presentation must never break a response
         logger.debug("format_for_display failed for %r", plate_number)
@@ -487,7 +502,9 @@ def _to_result_schema(row: DetectionHistory, storage: StorageService) -> Detecti
         plate_kind=row.plate_kind,
         plate_color=row.plate_color,
         plate_color_confidence=row.plate_color_confidence,
-        plate_display=display_text(row.plate_number, row.plate_line_count, row.plate_kind),
+        plate_display=display_text(
+            row.plate_number, row.plate_line_count, row.plate_kind, row.upper_char_count
+        ),
         video_time_seconds=row.video_time_seconds,
         plate_line_count=row.plate_line_count,
         processing_time=row.processing_time,
@@ -1375,6 +1392,17 @@ class DetectionService:
                 bbox_h=bbox.height,
                 is_valid_format=bool(recognition.is_valid_format) if recognition else False,
                 plate_line_count=recognition.line_count if recognition else None,
+                # Only a 3- or 4-character upper line is a legal Vietnamese
+                # reading, and the column's CHECK says so. Anything else came
+                # from a mis-segmented crop rather than from the plate, so it is
+                # stored as "not recorded" instead of being pushed at the
+                # constraint -- an unusable observation must not be able to fail
+                # the write for a plate that was otherwise read fine.
+                upper_char_count=(
+                    recognition.upper_char_count
+                    if recognition and recognition.upper_char_count in (3, 4)
+                    else None
+                ),
                 # Vehicle-class attributes. Stored as NULL rather than "" when
                 # absent, matching how the text columns above treat "nothing
                 # read": one value for "not recorded", not two.

@@ -307,7 +307,7 @@ Với 1,5 m ⇒ tối thiểu **7,5 mm** chiều cao chữ ⇒ khoảng **21 pt*
 
 **(c) Nhận biết mấy dòng — ngưỡng có hai căn cứ độc lập** (T4 + hình nhỏ)
 - Từ **QCVN 08:2024**: khoảng trống (2,000 ; 4,727) không có loại biển nào rơi vào
-- Từ **dữ liệu**: phân bố AR của 5.200 box **lưỡng đỉnh**, vùng trũng ở 2,2–2,6 ⇒ ngưỡng **2,5** rơi đúng đáy
+- Từ **dữ liệu**: phân bố AR của 15.977 khung **lưỡng đỉnh**, vùng trũng ở 2,2–2,6 ⇒ ngưỡng **2,5** rơi đúng đáy
 
 **Hình nhỏ** *(~60 mm)*: biểu đồ phân bố AR, có đường đứng đỏ tại 2,5. Nguồn: `datasets/statistics/`.
 
@@ -318,7 +318,8 @@ Với 1,5 m ⇒ tối thiểu **7,5 mm** chiều cao chữ ⇒ khoảng **21 pt*
 | **Thật 1 dòng** (1.641) | 1.509 ✓ | 132 ✗ |
 | **Thật 2 dòng** (3.559) | 7 ✗ | 3.552 ✓ |
 
-→ **97,33%** · lệch **một chiều 19:1** · nguyên nhân: box bao polygon có đệm, biển dài mảnh thì đệm chiều cao chiếm tỉ lệ lớn hơn
+→ **97,33%** trên 5.200 khung của `hf_vn_plates_segment` — bộ **duy nhất** trong 9 bộ có nhãn số dòng thật, nên đây là chỗ duy nhất đo trực tiếp được
+→ lệch **một chiều 19:1** · nguyên nhân: box bao polygon có đệm, biển dài mảnh thì đệm chiều cao chiếm tỉ lệ lớn hơn
 
 ---
 
@@ -329,7 +330,7 @@ Với 1,5 m ⇒ tối thiểu **7,5 mm** chiều cao chữ ⇒ khoảng **21 pt*
 **Tiêu đề khối:** `KẾT QUẢ` (T2)
 
 **(a) Bộ dữ liệu** (T4)
-- **4.578 ảnh / 5.200 box** · chia 3.203 / 917 / 458 (70/20/10, phân tầng, seed 42)
+- **15.133 ảnh / 15.977 khung** · chia 10.592 / 3.027 / 1.514 (70/20/10, phân tầng, seed 42)
 - Lệch tỉ lệ biển 2 dòng giữa 3 tập tối đa **0,06 điểm phần trăm**
 - Chống rò rỉ: perceptual hash 64-bit, chia theo **nhóm** không theo ảnh
 - 🔴 **Phát hiện: 73 cặp ảnh trùng vắt qua ranh giới train↔val của bản chia gốc tác giả** ⇒ vứt bỏ bản chia gốc, chia lại từ đầu

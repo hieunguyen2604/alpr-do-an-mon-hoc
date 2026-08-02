@@ -1,0 +1,20 @@
+{
+  "source": "nguyenluanai/license-plate-color v4 (CC BY 4.0)",
+  "total_images": 2107,
+  "by_class": {
+    "bien_vang": 694,
+    "bien_unknown": 542,
+    "bien_trang": 808,
+    "bien_xanh": 63
+  },
+  "with_char_label": 1661,
+  "with_char_label_by_class": {
+    "bien_vang": 509,
+    "bien_unknown": 535,
+    "bien_trang": 555,
+    "bien_xanh": 62
+  },
+  "unique_plates": 1570,
+  "duplicate_plates": 74,
+  "overlap_with_existing_corpus": 1
+}

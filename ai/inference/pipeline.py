@@ -565,7 +565,11 @@ class ALPRPipeline:
                 # labelled "wrong format" with nothing to explain why.
                 kind = refine_kind_with_color(outcome, plate_color, recognition.line_count)
                 display_text = _format_for_display(
-                    self._normalizer, text, recognition.line_count, kind=kind
+                    self._normalizer,
+                    text,
+                    recognition.line_count,
+                    kind=kind,
+                    upper_char_count=recognition.upper_char_count,
                 )
             else:
                 text, is_valid = self._normalizer.normalize(raw_source)
@@ -589,6 +593,11 @@ class ALPRPipeline:
             is_valid_format=is_valid,
             kind=kind,
             display_text=display_text,
+            # Carried through, not recomputed: the count belongs to the read
+            # that produced this string. Dropping it here would leave the
+            # database with nothing to re-derive the grouping from, and the API
+            # renders `plate_display` from stored columns on every read.
+            upper_char_count=recognition.upper_char_count,
         )
 
     @staticmethod
@@ -862,6 +871,15 @@ def rescue_two_line_upper(
 
             combined = f"{upper_read.text}{recognition.raw_text}"
 
+            # This branch read the upper line on its own, so its length is known
+            # outright rather than inferred from fragment order -- the strongest
+            # form of the evidence described in
+            # `PlateRecognition.upper_char_count`. Counted over alphanumerics
+            # because the OCR fragment may carry a separator that normalisation
+            # strips. Bound here, before the branch below, because both the
+            # rendering and the returned record need it.
+            upper_chars = sum(1 for ch in upper_read.text if ch.isalnum())
+
             detailed = getattr(normalizer, "normalize_detailed", None)
             if callable(detailed):
                 outcome = detailed(combined, line_count=2)
@@ -871,7 +889,15 @@ def rescue_two_line_upper(
                 # recomputed here. Carrying the first attempt's values over would
                 # describe a string that no longer exists.
                 kind = refine_kind_with_color(outcome, color, 2)
-                display_text = _format_for_display(normalizer, text, 2, kind=kind)
+                # This branch read the upper line on its own, so its length is
+                # known outright rather than inferred from fragment order --
+                # the strongest form of the evidence described in
+                # `PlateRecognition.upper_char_count`. Counted over
+                # alphanumerics because the OCR fragment may carry a separator
+                # that normalisation strips.
+                display_text = _format_for_display(
+                    normalizer, text, 2, kind=kind, upper_char_count=upper_chars
+                )
             else:
                 text, is_valid = normalizer.normalize(combined)
         except Exception as error:  # noqa: BLE001 - a rescue must not become a failure
@@ -909,6 +935,7 @@ def rescue_two_line_upper(
             is_valid_format=True,
             kind=kind,
             display_text=display_text,
+            upper_char_count=upper_chars,
         )
 
     return recognition
@@ -1120,8 +1147,13 @@ def retry_skewed_variants(
                         is_valid_format=outcome.is_valid_format,
                         kind=variant_kind,
                         display_text=_format_for_display(
-                            normalizer, outcome.text, attempt.line_count, kind=variant_kind
+                            normalizer,
+                            outcome.text,
+                            attempt.line_count,
+                            kind=variant_kind,
+                            upper_char_count=attempt.upper_char_count,
                         ),
+                        upper_char_count=attempt.upper_char_count,
                     )
                 else:
                     text, is_valid = normalizer.normalize(attempt.raw_text)
@@ -1131,6 +1163,7 @@ def retry_skewed_variants(
                         confidence=attempt.confidence,
                         line_count=attempt.line_count,
                         is_valid_format=is_valid,
+                        upper_char_count=attempt.upper_char_count,
                     )
 
             # A variant read can fail exactly the way a first read fails --
@@ -1160,6 +1193,7 @@ def retry_skewed_variants(
                     confidence=recognition.confidence,
                     line_count=recognition.line_count,
                     is_valid_format=False,
+                    upper_char_count=recognition.upper_char_count,
                 )
                 if should_rescue_two_line(hybrid_base):
                     rescued = rescue_two_line_upper(
@@ -1194,7 +1228,11 @@ def retry_skewed_variants(
 
 
 def _format_for_display(
-    normalizer: BaseNormalizer, text: str, line_count: int, kind: str = ""
+    normalizer: BaseNormalizer,
+    text: str,
+    line_count: int,
+    kind: str = "",
+    upper_char_count: int = 0,
 ) -> str:
     """Render a plate string with the separators the physical plate carries.
 
@@ -1218,11 +1256,23 @@ def _format_for_display(
         return text
     try:
         try:
-            return formatter(text, line_count=line_count, kind=kind or None) or text
+            return (
+                formatter(
+                    text,
+                    line_count=line_count,
+                    kind=kind or None,
+                    upper_char_count=upper_char_count,
+                )
+                or text
+            )
         except TypeError:
-            # An alternative normalizer predating the `kind` parameter: the
-            # capability is probed, not required, so degrade to the old call.
-            return formatter(text, line_count=line_count) or text
+            # An alternative normalizer predating one of the later parameters.
+            # The capability is probed, not required, so degrade one step at a
+            # time rather than giving up on formatting altogether.
+            try:
+                return formatter(text, line_count=line_count, kind=kind or None) or text
+            except TypeError:
+                return formatter(text, line_count=line_count) or text
     except Exception:  # noqa: BLE001 - presentation must not break recognition
         _LOGGER.debug("format_for_display failed for %r, showing the bare string", text)
         return text

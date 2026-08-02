@@ -5,6 +5,20 @@ văn: nâng độ chính xác chuỗi **biển 2 dòng** từ ~0,60 lên vùng 0
 fine-tune model recognition trên đúng dữ liệu miền. Ba mảnh, hai mảnh đầu đã
 chạy được ngay:
 
+## 0. Trọng số gốc — KHÔNG nằm trong kho mã
+
+Tệp `models/pretrained/en_PP-OCRv5_mobile_rec_pretrained.pdparams` (68 MB) đã
+**bỏ theo dõi git từ 02/08/2026**: nó là tệp công khai tải được, không phải sản
+phẩm của đồ án, và một mình nó chiếm hơn một phần ba dung lượng kho mã.
+
+Cả `finetune_ppocr_rec.py` lẫn notebook Colab đều **tự tải khi thiếu**, nên
+thường không phải làm gì. Nếu cần lấy tay:
+
+```bash
+curl -L -o models/pretrained/en_PP-OCRv5_mobile_rec_pretrained.pdparams \
+  https://paddleocr.bj.bcebos.com/PP-OCRv5/multilingual/official_pretrained_model/en_PP-OCRv5_mobile_rec_pretrained.pdparams
+```
+
 ## 1. Sinh dataset (local, đã chạy — tái tạo được)
 
 ```bash

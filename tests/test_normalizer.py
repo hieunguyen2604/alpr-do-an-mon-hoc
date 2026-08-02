@@ -566,6 +566,67 @@ def test_dot_evidence_flows_through_normalize_detailed(
     )
 
 
+def test_the_upper_line_outranks_the_family_for_digit_grouping(
+    normalizer: VietnamesePlateNormalizer,
+) -> None:
+    """Where the plate's own line break falls beats any inference from the string.
+
+    An eight-character two-line string is genuinely ambiguous. ``67C10815`` is
+    ``67C-108.15`` when the upper line reads ``67C`` (serial ``C``, five
+    digits) and ``67C1-0815`` when it reads ``67C1`` (serial ``C1``, four).
+    Both are legal Vietnamese plates, so no rule over the flat string can
+    separate them -- only the image can.
+
+    Measured on the demo set (02/08/2026): grouping derived from the family got
+    five of seven such plates right and two wrong (``77H54374`` rendered
+    ``77H-543.74``); the upper-line count gets all seven right, taking the demo
+    from 39/49 to 46/49 exact with zero grouping mismatches left.
+
+    Absent evidence must change nothing: ``0`` leaves the family-derived
+    grouping in charge, so the observation can only improve the answer.
+    """
+    assert (
+        normalizer.format_for_display(
+            "67C10815", line_count=2, kind=PlateKind.CAR, upper_char_count=4
+        )
+        == "67C1-0815"
+    )
+    assert (
+        normalizer.format_for_display(
+            "77H54374", line_count=2, kind=PlateKind.CAR, upper_char_count=4
+        )
+        == "77H5-4374"
+    )
+    assert (
+        normalizer.format_for_display(
+            "51H60969", line_count=2, kind=PlateKind.MOTORCYCLE_OLD, upper_char_count=3
+        )
+        == "51H-609.69"
+    )
+    # No observation -> the family decides, exactly as before this parameter.
+    assert (
+        normalizer.format_for_display(
+            "67C10815", line_count=2, kind=PlateKind.CAR, upper_char_count=0
+        )
+        == "67C-108.15"
+    )
+    # A count the plate rules cannot honour is ignored rather than applied: the
+    # implied number would be six digits, which no Vietnamese layout carries.
+    assert (
+        normalizer.format_for_display(
+            "67C10815", line_count=2, kind=PlateKind.CAR, upper_char_count=2
+        )
+        == "67C-108.15"
+    )
+    # One-line plates have no upper line; a stray count must not regroup them.
+    assert (
+        normalizer.format_for_display(
+            "51H60969", line_count=1, kind=PlateKind.CAR, upper_char_count=4
+        )
+        == "51H-609.69"
+    )
+
+
 def test_format_for_display_follows_the_established_kind(
     normalizer: VietnamesePlateNormalizer,
 ) -> None:

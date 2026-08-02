@@ -229,7 +229,9 @@ class HistoryService:
             plate_kind=row.plate_kind,
             plate_color=row.plate_color,
             plate_color_confidence=row.plate_color_confidence,
-            plate_display=display_text(row.plate_number, row.plate_line_count, row.plate_kind),
+            plate_display=display_text(
+                row.plate_number, row.plate_line_count, row.plate_kind, row.upper_char_count
+            ),
             video_time_seconds=row.video_time_seconds,
             plate_line_count=row.plate_line_count,
             processing_time=row.processing_time,

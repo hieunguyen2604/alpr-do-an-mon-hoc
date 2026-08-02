@@ -56,6 +56,17 @@ EMU_PER_PIXEL: int = 9525
 """OOXML English Metric Units per pixel at the 96 dpi the template was drawn in."""
 
 
+TITLE_PSEUDO_IDX: int = 0
+"""Index a mapping uses to reach a title placeholder, which carries no ``idx``.
+
+``<p:ph type="title"/>`` has no index attribute, so a mapping keyed on real
+indices cannot reach it -- and a title whose frame is wrong is exactly the
+defect this script exists to fix. Index 0 is unused by every layout in the
+donor deck, so it is safe as a private convention. Documented rather than
+inferred, because a future layout that *does* use idx 0 would silently collide.
+"""
+
+
 LAYOUT_MAP: dict[str, tuple[str, dict[int, Fix]]] = {
     # Vietnamese layout name -> (Pandoc name, {source idx: replacement <p:ph>})
     #
@@ -118,11 +129,38 @@ LAYOUT_MAP: dict[str, tuple[str, dict[int, Fix]]] = {
     # into idx 1 and the caption into idx 2. Left as-is, every figure would be
     # squeezed into the narrow text column and its caption sprawled across the
     # image area.
+    # Pandoc routes EVERY slide carrying a table or a figure here, which in this
+    # deck is 21 of 32 slides -- so this layout, not "Title and Content", is what
+    # the audience mostly sees. The donor drew it as a narrow left column beside
+    # a picture frame: title 412 px wide, caption under it, image on the right.
+    #
+    # That geometry is wrong for the content it actually receives. A title like
+    # "Đối chiếu chỉ tiêu — bảng chốt hạ" wrapped to three lines inside 412 px,
+    # every table was squeezed into the right-hand half while the bottom third of
+    # the slide sat empty, and the deck read as two unrelated designs depending on
+    # whether a slide happened to contain a table.
+    #
+    # Re-laid out to match "Title and Content" exactly -- full-width title, lead
+    # paragraph beneath it, content filling the rest -- so a table slide and a
+    # text slide are the same slide with different content.
     "Hình ảnh": (
         "Content with Caption",
         {
-            2: '<p:ph idx="1"/>',  # picture frame -> content
-            1: '<p:ph type="body" sz="half" idx="2"/>',  # text column -> caption
+            TITLE_PSEUDO_IDX: ('<p:ph type="title"/>', (81, 21, 1111, 83)),
+            2: ('<p:ph idx="1"/>', (81, 244, 1111, 404)),  # picture frame -> content
+            1: (  # text column -> caption, now a full-width lead paragraph
+                '<p:ph type="body" sz="half" idx="2"/>',
+                # Sized for THREE rendered lines (~90 pt), measured on the built
+                # deck rather than guessed: of 21 slides on this layout, most
+                # lead paragraphs render at 90 pt and none should exceed it.
+                #
+                # A caption box that is too short does not clip. PowerPoint lets
+                # the text spill and draws it straight over whatever sits below,
+                # so an over-long lead silently OVERPRINTS the table -- a defect
+                # a height-only check cannot see, because nothing leaves the
+                # slide. `scripts/check_slides.ps1` tests for the overlap.
+                (81, 112, 1111, 124),
+            ),
         },
     ),
     "BLANK": ("Blank", {}),
@@ -135,7 +173,7 @@ _TYPE_RE = re.compile(r'\btype="([^"]+)"')
 _SHAPE_RE = re.compile(r"<p:sp>.*?</p:sp>|<p:pic>.*?</p:pic>", re.DOTALL)
 _OFFSET_RE = re.compile(r'<a:off\b[^>]*/>\s*<a:ext\b[^>]*/>')
 
-_REWRITABLE_TYPES = frozenset({"body", "pic", "obj"})
+_REWRITABLE_TYPES = frozenset({"body", "pic", "obj", "title"})
 """Placeholder types the mapping may convert.
 
 Chrome -- ``dt``, ``ftr``, ``sldNum`` -- and any placeholder already correctly
@@ -184,8 +222,13 @@ def rewrite_layout(xml: str) -> tuple[str, str | None]:
         idx_match = _IDX_RE.search(tag)
         type_match = _TYPE_RE.search(tag)
         if idx_match is None:
-            return shape
-        idx = int(idx_match.group(1))
+            # A title placeholder is the one slot with no index; see
+            # TITLE_PSEUDO_IDX. Anything else without an index is chrome.
+            if type_match is None or type_match.group(1) != "title":
+                return shape
+            idx = TITLE_PSEUDO_IDX
+        else:
+            idx = int(idx_match.group(1))
         if idx not in fixes:
             return shape
         if type_match is not None and type_match.group(1) not in _REWRITABLE_TYPES:

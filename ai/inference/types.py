@@ -196,6 +196,25 @@ class PlateRecognition:
             :class:`~ai.inference.plate_rules.PlateKind`, as a plain string so
             this layer's types stay free of enum imports at the boundary. Empty
             when classification did not run.
+        upper_char_count: For a two-line plate, how many characters the OCR
+            engine read from the **upper** line; ``0`` when unknown or when the
+            plate has one line.
+
+            This is the only image-side evidence that says where the serial
+            ends, and without it an eight-character string is genuinely
+            ambiguous: ``67C10815`` is ``67C-108.15`` when the upper line reads
+            ``67C`` but ``67C1-0815`` when it reads ``67C1``. Both are legal
+            Vietnamese plates and the flat string cannot tell them apart --
+            the split-then-hstack step that makes the plate readable is exactly
+            what discards the line boundary.
+
+            It is recovered for free: after the halves are stacked side by
+            side, the recogniser returns one text fragment per half, so the
+            length of the first fragment *is* the upper line's character count.
+            ``0`` whenever the engine returned a single fragment (the upper
+            line was not read at all), which leaves the previous
+            family-derived grouping in charge -- evidence improves the answer
+            or is absent, it never makes it worse.
         display_text: :attr:`text` rendered with the separators the physical
             plate carries, e.g. ``"29E-015.66"`` for ``"29E01566"``. Kept
             alongside rather than instead of :attr:`text`, because comparisons,
@@ -209,6 +228,7 @@ class PlateRecognition:
     is_valid_format: bool
     kind: str = ""
     display_text: str = ""
+    upper_char_count: int = 0
 
 
 @dataclass(slots=True)

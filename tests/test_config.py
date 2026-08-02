@@ -97,6 +97,36 @@ class TestDefaults:
         assert config.rectify_enabled is True
         assert config.sr_retry_enabled is False
 
+    def test_text_detection_stays_in_the_pipeline_by_default(self) -> None:
+        """Skipping PaddleOCR's detection stage ships OFF (02/08/2026).
+
+        Two measurements disagree, and the one that ships is the one whose
+        inputs match the deployed path:
+
+        ======================== ============= =============
+        Configuration            corpus A6     demo plates
+        ======================== ============= =============
+        stock, det + rec         0.7512        **17 / 22**
+        stock, rec only          0.7508        13 / 22
+        fine-tuned, det + rec    0.6762        14 / 22
+        fine-tuned, rec only     **0.8758**    15 / 22
+        ======================== ============= =============
+
+        Every image in the 2,801-plate corpus is a pre-cropped Roboflow export,
+        so a text detector inside the crop has nothing left to localise and the
+        column reads as "detection is free to remove". The demo set runs whole
+        scenes through YOLO, whose crops are looser, and there the ordering
+        reverses: without the detection stage the recogniser reads bumper and
+        windscreen clutter as characters.
+
+        The flag stays because the fine-tuned model gains from rec-only in
+        *both* columns -- a model trained on whole-plate images has never seen a
+        fragment. Turning it on for production needs a scene-level corpus with
+        plate-string labels, which this project does not have.
+        """
+        config = InferenceConfig()
+        assert config.ocr_skip_detection is False
+
     def test_the_default_model_path_is_under_the_project_root(self) -> None:
         config = InferenceConfig()
         assert config.model_path == PROJECT_ROOT / "models" / "best.pt"

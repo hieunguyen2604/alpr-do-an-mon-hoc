@@ -452,6 +452,7 @@ class VietnamesePlateNormalizer(BaseNormalizer):
         text: str,
         line_count: int | None = None,
         kind: PlateKind | str | None = None,
+        upper_char_count: int = 0,
     ) -> str:
         """Re-insert separators so a plate reads naturally in the UI.
 
@@ -485,6 +486,23 @@ class VietnamesePlateNormalizer(BaseNormalizer):
                 keeps the family badge and the digit grouping telling the same
                 story: ``51H60969`` classified as a car by the printed-dot
                 evidence must render ``51H-609.69``, never ``51H6-0969``.
+            upper_char_count: For a two-line plate, how many characters the
+                engine read from the **upper** line (see
+                :attr:`~ai.inference.types.PlateRecognition.upper_char_count`).
+                ``0`` means unknown.
+
+                When it is known it **outranks** ``kind``, because it is direct
+                evidence from the image rather than an inference from the
+                string. An eight-character two-line plate is genuinely
+                ambiguous otherwise: ``67C10815`` groups as ``67C-108.15`` if
+                the upper line read ``67C`` and as ``67C1-0815`` if it read
+                ``67C1``, and both are legal. Measured on the demo set, the
+                family-derived grouping got five of seven such plates right and
+                two wrong; the upper line gets all seven right.
+
+                Ignored unless the implied split leaves a 4- or 5-digit number,
+                so a mis-read fragment length cannot produce a grouping the
+                plate rules do not allow.
 
         Returns:
             The formatted string, or ``text`` unchanged when it matches no
@@ -525,7 +543,42 @@ class VietnamesePlateNormalizer(BaseNormalizer):
 
         number = groups["number"]
         prefix = text[: len(text) - len(number)]
+
+        # The upper line, when the engine read it, says where the serial ends.
+        # Applied only for two-line plates of a civil family, and only when the
+        # implied number is a legal 4- or 5-digit group -- a stray fragment
+        # length must not be able to invent a grouping.
+        if (
+            upper_char_count > 0
+            and line_count == 2
+            and resolved_kind in _UPPER_LINE_ADJUSTABLE_KINDS
+            and upper_char_count != len(prefix)
+            and len(text) - upper_char_count in (4, 5)
+            and text[:upper_char_count].isalnum()
+        ):
+            prefix = text[:upper_char_count]
+            number = text[upper_char_count:]
+
         return f"{prefix}-{_group_number(number)}"
+
+
+_UPPER_LINE_ADJUSTABLE_KINDS: Final[frozenset[PlateKind]] = frozenset(
+    {
+        PlateKind.CAR,
+        PlateKind.MOTORCYCLE_OLD,
+        PlateKind.MOTORCYCLE_NEW,
+        PlateKind.BLUE_CAR,
+        PlateKind.BLUE_MOTORCYCLE,
+    }
+)
+"""Families whose grouping is `serial-number` and therefore movable.
+
+Diplomatic and military plates are excluded on purpose: their layouts are not
+`serial` + `number` at all (``80-001-NG-01``, ``KV-6938``), so a character
+count taken from the upper line has nothing to move there. Restricting the
+adjustment to civil families keeps it from reformatting a layout it does not
+model.
+"""
 
 
 def _group_number(number: str) -> str:

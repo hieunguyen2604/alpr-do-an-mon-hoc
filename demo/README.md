@@ -54,6 +54,32 @@ phóng to (2026-07-21). Đây là **ground truth, không phải kết quả hệ
   hạn chế OCR biển 2 dòng đã mô tả trong Chương 6 luận văn, không giấu.
 - Biển mờ/che khuất đến mức người cũng không đọc được thì ghi `plate: ""`.
 
+### Vòng xác minh thứ hai — 2026-08-02, sửa 5 nhãn trong `images-extra/results.json`
+
+Năm biển bị ghi sai **cả cách nhóm chữ số lẫn loại xe**: chúng là biển 2 dòng
+của ô tô / xe tải nhưng bị gán `motorcycle_old`, kéo theo chuỗi hiển thị sai.
+
+| Ảnh | Biển vật lý ghi | Nhãn cũ | Đã sửa |
+|---|---|---|---|
+| `xe-tai.jpg` | `67C` / `108.15` | `67C1-0815` | `67C-108.15` |
+| `vang-61C15282.jpg` | `61C` / `152.82` | `61C1-5282` | `61C-152.82` |
+| `canh-nhieu-bien-2.png` | `51C` / `920.87` | `51C9-2087` | `51C-920.87` |
+| `canh-nhieu-bien-2.png` | `51H` / `609.69` | `51H6-0969` | `51H-609.69` |
+| `canh-nhieu-bien-3.png` | `51H` / `145.73` | `51H1-4573` | `51H-145.73` |
+
+**Bằng chứng là dấu chấm in trên chính tấm biển.** Biển Việt Nam chỉ in dấu
+chấm trước hai chữ số cuối khi số đăng ký có **5 chữ số**, và chỉ cách đọc ô tô
+mới có số 5 chữ số. Thấy `108.15` trên biển là biết sê-ri dừng ở `C`.
+
+**Hai nhãn KHÔNG sửa, vì ở đó nhãn mới đúng còn hệ thống sai:** `60F16272`
+(biển ghi `60-F1` / `6272`) và `77H54374` (ghi `77-H5` / `4374`) — không dấu
+chấm, số 4 chữ số, sê-ri hai ký tự. Hai ca này dẫn tới việc thêm cột
+`upper_char_count` (xem Nhật ký quyết định trong `CLAUDE.md`, 02/08/2026).
+
+Sau vòng này bộ demo đạt **46/49 biển đúng hoàn toàn**, **0 ca lệch cách nhóm
+hiển thị**; 3 ca còn lại là lỗi OCR thật trên ảnh nhiều biển, không phải lỗi
+trình bày.
+
 Đối chiếu tự động: script eval trong quá trình phát triển bắn từng ảnh vào
 `POST /api/detect/image` rồi so `plate/display/kind/color/valid/lines` với
 file này.

@@ -33,7 +33,28 @@ HAI QUY ƯỚC BẮT BUỘC KHI SỬA FILE NÀY
    và ảnh demo của dự án — để một tấm hình không thể mô tả thứ hệ thống không
    làm. Biểu đồ đo đạc thì lấy thẳng từ `docs/reports/figures/`.
 
-Mọi con số lấy từ lượt đo 28/07/2026 (`docs/reports/05-results.json`).
+4. **Câu dẫn trên bảng/hình tối đa BA DÒNG khi render.** Ô chứa nó cao 124 px
+   trong `scripts/make_slide_template.py`. Câu dài hơn **không bị cắt** —
+   PowerPoint cho chữ tràn ra và **vẽ đè lên bảng bên dưới**, một lỗi không
+   thấy được bằng phép đo chiều cao vì chẳng có gì ra khỏi slide.
+
+5. **Thứ tự slide bám đúng năm phần của slide NỘI DUNG.** Slide mô tả *cách
+   làm* nằm ở phần 3, slide *đo được bao nhiêu* nằm ở phần 4 — không trộn.
+   Ba slide dự phòng đặt **sau** slide Cảm ơn, chỉ chiếu khi được hỏi.
+
+**Kiểm tra bắt buộc sau mỗi lần sửa:**
+
+```
+python scripts/build_thesis.py
+powershell -File scripts/check_slides.ps1
+```
+
+Script thứ hai bắt cả tràn đáy lẫn **đè nhau giữa các khối**. Nó tồn tại vì
+loại lỗi thứ hai đã từng lọt: một câu dẫn hai dòng in đè lên bảng ở slide 9,
+trong khi phép đo chiều cao báo "0 lỗi".
+
+Mọi con số lấy từ lượt đo 28/07/2026 (`docs/reports/05-results.json`) và
+02/08/2026 (`docs/reports/33-runtime-nfr.json`).
 -->
 
 ## NỘI DUNG
@@ -48,9 +69,7 @@ Mọi con số lấy từ lượt đo 28/07/2026 (`docs/reports/05-results.json`
 
 **~77 triệu xe máy** — **85–90%** lưu lượng đường bộ Việt Nam
 
-Cùng hệ thống, cùng phép đo: **chênh 48,6 điểm**, chỉ khác bố cục
-
-*Số liệu Brazil, không phải Việt Nam*
+Cùng hệ thống, cùng phép đo: **chênh 48,6 điểm** *(số liệu Brazil)*
 
 ![](figures/fig-gap.png)
 
@@ -78,8 +97,7 @@ Cùng hệ thống, cùng phép đo: **chênh 48,6 điểm**, chỉ khác bố c
 
 Bố cục tách bạch theo **tỉ lệ khung hình** *(QCVN 08:2024/BCA)*
 
-Tỉ lệ **đo thật** lệch khỏi chuẩn nhưng vẫn đúng phía ngưỡng — nên ngưỡng
-đặt ở **2,5**, giữa vùng trống
+Tỉ lệ đo thật lệch khỏi chuẩn nhưng vẫn đúng phía ngưỡng **2,5**
 
 ![](figures/fig-layouts.png)
 
@@ -99,6 +117,37 @@ Tầng AI là **Python thuần** — cấm import FastAPI hoặc Pydantic
 
 ![](figures/fig-architecture.png)
 
+## Pipeline AI
+
+Nhánh **đỏ** là đóng góp kỹ thuật lõi
+
+Không thấy biển ⇒ trả rỗng, **HTTP 200** — không phải lỗi
+
+![](figures/fig-pipeline.png)
+
+## Xử lý biển 2 dòng
+
+Giả định **một dòng** nằm trong **hàm mất mát** của CRNN/CTC — thêm dữ liệu không sửa được
+
+![](figures/fig-two-line.png)
+
+## Bộ luật hậu xử lý theo vị trí
+
+Sửa theo **VỊ TRÍ**, không sửa toàn cục — đóng góp kỹ thuật riêng của đồ án
+
+![](figures/fig-position-rules.png)
+
+## Bậc thang cứu chữa khi đọc hỏng
+
+Chỉ chạy **sau khi đọc hỏng**, chỉ nhận chuỗi **hợp lệ**
+
+⇒ không thể làm hỏng kết quả đang đúng
+
+| Bậc | Cứu được |
+|---|---:|
+| Cứu dòng trên của biển 2 dòng | **209 biển** |
+| Nắn hình / giãn dọc chống méo | **34 biển** |
+
 ## Cơ sở dữ liệu — một cột làm nên đóng góp
 
 Lưu **cả hai** chuỗi trên **cùng một bản ghi** — không có `raw_ocr_text` thì
@@ -110,24 +159,21 @@ Lưu **cả hai** chuỗi trên **cùng một bản ghi** — không có `raw_oc
 | `plate_number` | Chuỗi **sau** bộ luật hậu xử lý |
 | `is_valid_format` | Hợp quy cách Việt Nam hay không |
 
-## Pipeline AI
+## Giao diện
 
-Nhánh **đỏ** là đóng góp kỹ thuật lõi
+Mọi vùng dữ liệu xử lý đủ **4 trạng thái**: chờ · rỗng · lỗi · thành công
 
-Không thấy biển ⇒ trả rỗng, **HTTP 200** — không phải lỗi
-
-![](figures/fig-pipeline.png)
+![](../screenshots/image-detection.png)
 
 ## Bộ dữ liệu
 
-- **15.133 ảnh · 15.977 khung biển** · 6 nguồn · 1 lớp
-- Chia **10.592 / 3.027 / 1.514** *(phân tầng theo bố cục biển)*
+- **15.133 ảnh · 15.977 khung** · chia **10.592 / 3.027 / 1.514**
+- Hợp nhất **7 bộ công khai**, loại **44,2%** là bản sao — hai bộ mất **98%** và **100%**
+- Chống rò rỉ: băm tri giác, chia theo **nhóm** — **9.126 cặp → 0**
 
-**Chống rò rỉ giữa các tập**
+⇒ Các bộ công khai **không độc lập với nhau**
 
-- Băm tri giác, chia theo **nhóm** chứ không theo ảnh
-- Rò rỉ vắt qua các tập: **9.126 cặp → 0**
-- Phần tồn dư **được công bố**, không giấu
+⚠️ Hai bộ chiếm **74,3%** — đa dạng giấy phép, **chưa** đa dạng nội dung
 
 ## Huấn luyện
 
@@ -147,29 +193,16 @@ Không thấy biển ⇒ trả rỗng, **HTTP 200** — không phải lỗi
 | **TẤT CẢ** | **1.611** | **0,984** | **0,971** | **0,983** | **0,783** |
 | *Chỉ tiêu* | | *≥0,92* | *≥0,90* | *≥0,90* | *≥0,65* |
 
-## Xử lý biển 2 dòng
-
-Nguyên nhân gốc là **kiến trúc**: CRNN/CTC giả định căn chỉnh **trên một dòng**
-— giả định nằm trong **hàm mất mát**, thêm dữ liệu không sửa được
-
-![](figures/fig-two-line.png)
-
-## Bộ luật hậu xử lý theo vị trí
-
-Sửa theo **VỊ TRÍ**, không sửa toàn cục — đóng góp kỹ thuật riêng của đồ án
-
-![](figures/fig-position-rules.png)
-
 ## Kết quả OCR — nói thẳng phần chưa đạt
 
 Toàn bộ khoảng cách nằm ở **biển 2 dòng**: 0,6996 so với **0,9541** của biển 1 dòng
 
-| Chỉ tiêu | Đo được | Ngưỡng | |
+| Đo cái gì | Đo được | Ngưỡng | |
 |---|---:|---:|:--:|
-| A4 — chính xác ký tự | **0,9454** | 0,92 | 🟡 |
-| A5 — chuỗi trước hậu xử lý | 0,6373 | 0,80 | ❌ |
-| A6 — chuỗi sau hậu xử lý | **0,7512** | 0,85 | ❌ |
-| A7 — đầu-cuối | 0,5552 | 0,82 | ❌ |
+| Đúng từng **ký tự** | **0,9454** | 0,92 | 🟡 |
+| Đúng **cả chuỗi** — chưa hậu xử lý | 0,6373 | 0,80 | ❌ |
+| Đúng **cả chuỗi** — sau hậu xử lý | **0,7512** | 0,85 | ❌ |
+| Đúng **đầu-cuối** — ảnh vào, chuỗi ra | 0,5552 | 0,82 | ❌ |
 
 ## Khoảng cách nằm trọn ở biển 2 dòng
 
@@ -183,46 +216,20 @@ Sửa đúng **319 biển**, làm hỏng **0** — dồn gần trọn vào biể
 
 ![](figures/fig-postprocess-gain.png)
 
-## Bậc thang cứu chữa khi đọc hỏng
+## Ba can thiệp, một kết luận
 
-Chỉ chạy **sau khi đọc hỏng**, chỉ nhận chuỗi **hợp lệ**
+Cả ba **ngoài** mô hình nhận dạng: **0,6098 → 0,7512**.
+**Dư địa đã cạn** — lỗi còn lại là ký tự *chưa từng đọc ra*
 
-⇒ không thể làm hỏng kết quả đang đúng
-
-| Bậc | Cứu được |
+| Can thiệp | Thu được |
 |---|---:|
-| Cứu dòng trên của biển 2 dòng | **209 biển** |
-| Nắn hình / giãn dọc chống méo | **34 biển** |
-
-## Giao diện
-
-Mọi vùng dữ liệu xử lý đủ **4 trạng thái**: chờ · rỗng · lỗi · thành công
-
-![](../screenshots/image-detection.png)
-
-## Demo trực tiếp
-
-Ba tình huống, chạy trên máy thật — **không phải video quay sẵn**
-
-| Bước | Cho thấy điều gì |
-|---|---|
-| Ảnh ô tô — biển 1 dòng | Đường đi cơ bản, đọc đúng, dưới 1 giây |
-| Ảnh xe máy — biển 2 dòng | Chính chỗ khó nhất, split-then-hstack chạy thật |
-| Video + Lịch sử | Xử lý bất đồng bộ, tra cứu lại kết quả |
-
-## Kiểm thử và triển khai
-
-- **999 kiểm thử tự động** đạt · bao phủ tầng nghiệp vụ **87,7%**
-- Kiểm thử **đơn vị · tích hợp · độ chính xác AI · hiệu năng · chịu tải**
-- Tầng AI có bộ test **chạy không cần dựng server**
-- `docker compose up` — **một lệnh**, đã dựng và xác minh chạy được
-- Soak 300 giây: **1.684 yêu cầu, không rò rỉ bộ nhớ**
+| Bộ luật hậu xử lý theo vị trí | **+11,39 điểm** |
+| Cứu dòng trên | 209 biển |
+| Nắn hình chống méo | 34 biển |
 
 ## Hiệu năng trên CPU
 
-**i5-14600K · 20 luồng · KHÔNG có GPU CUDA**
-
-Vượt mục tiêu p95 là **đánh đổi có chủ ý**: tắt bậc thang thì p95 về **866 ms**, mất 34 biển
+**i5-14600K · 20 luồng · KHÔNG có GPU CUDA** — vượt p95 là **đánh đổi có chủ ý**
 
 | Chỉ số | Đo được | Ngưỡng |
 |---|---:|---|
@@ -236,45 +243,55 @@ Phần lớn ảnh xong dưới nửa giây; đuôi phải là những ảnh ph�
 
 ![](../reports/figures/07-latency-distribution.png)
 
+## Kiểm thử và triển khai
+
+- **1.000 kiểm thử tự động** đạt · bao phủ tầng nghiệp vụ **87,7%**
+- Đơn vị · tích hợp · độ chính xác AI · hiệu năng · chịu tải
+- Tầng AI có bộ test **chạy không cần dựng server**
+- Chạy liên tục **15 phút**: 2.028 yêu cầu, **0 lỗi**, không rò rỉ bộ nhớ
+- Cơ sở dữ liệu **sống sót qua khởi động lại**: 9.031 bản ghi, **0 mất**
+- `docker compose up` — **một lệnh**, đã dựng và xác minh chạy được
+
 ## Đối chiếu chỉ tiêu — bảng chốt hạ
 
 ✅ đạt mục tiêu · 🟡 đạt ngưỡng tối thiểu · ❌ chưa đạt
 
 | Nhóm | Chỉ tiêu | Kết quả |
 |---|---|:--:|
-| Phát hiện | mAP@0.5 **0,9829** · mAP@0.5:0.95 **0,7834** · P **0,9837** · R **0,9714** | ✅ |
-| Đọc ký tự | A4 **0,9454** | 🟡 |
-| Đọc chuỗi | A5 **0,6373** · A6 **0,7512** · A7 **0,5552** | ❌ |
-| Hiệu năng | p95 **1.143 ms** *(sàn 1.500)* · nạp mô hình **6,4 s** · truy vấn **18,7 ms** | 🟡 |
-| Phần mềm | 999 test · bao phủ 87,7% · `docker compose up` | ✅ |
+| Phát hiện | mAP50 **0,9829** · mAP50-95 **0,7834** · P **0,9837** · R **0,9714** | ✅ |
+| Đọc ký tự | Đúng từng ký tự **0,9454** | 🟡 |
+| Đọc chuỗi | Đúng cả chuỗi **0,7512** · đầu-cuối **0,5552** | ❌ |
+| Hiệu năng | p95 **1.143 ms** *(sàn 1.500)* · video **0,746×** · truy vấn **18,7 ms** | 🟡 |
+| Thời gian thực | Webcam **2,379 FPS** *(sàn 3)* | ❌ |
+| Độ tin cậy | Chạy liên tục **100%** · CSDL sống sót khởi động lại **0 mất** | ✅ |
+| Phần mềm | **1.000 test** · bao phủ 87,7% · `docker compose up` | ✅ |
+
+## Demo trực tiếp
+
+Ba tình huống, chạy trên máy thật — **không phải video quay sẵn**
+
+| Bước | Cho thấy điều gì |
+|---|---|
+| Ảnh ô tô — biển 1 dòng | Đường đi cơ bản, đọc đúng, dưới 1 giây |
+| Ảnh xe máy — biển 2 dòng | Chính chỗ khó nhất, split-then-hstack chạy thật |
+| Video + Lịch sử | Xử lý bất đồng bộ, tra cứu lại kết quả |
 
 ## Hạn chế — nói thẳng
 
 | Hạn chế | Nguyên nhân gốc |
 |---|---|
-| **OCR biển 2 dòng chưa đạt** — A6 0,6996 so với 0,9541 của biển 1 dòng | Bộ đọc dòng đơn; xe máy chiếm 79,8% tập nhãn |
-| **A7 = 0,5552 không đại diện** | Không bộ dữ liệu nào vừa có ảnh toàn cảnh vừa có chuỗi biển ⇒ đo trên ảnh cắt sẵn, ngoài phân bố bộ phát hiện |
+| **Biển 2 dòng chưa đạt** — đọc đúng cả chuỗi 0,6996 so với 0,9541 của biển 1 dòng | Bộ đọc dòng đơn; xe máy chiếm 79,8% tập nhãn |
+| **Số đầu-cuối 0,5552 không đại diện** | Không bộ dữ liệu nào vừa có ảnh toàn cảnh vừa có chuỗi biển ⇒ đo trên ảnh cắt sẵn, ngoài phân bố bộ phát hiện |
+| **Số OCR là số trên biển TRẮNG** — tập nhãn có 97,7% biển trắng, 20 vàng, 4 xanh, **0 đỏ, 0 ngoại giao** | Không nguồn công khai nào đủ biển hiếm; nói "0,9454 trên biển số Việt Nam" là **nói quá** |
 | Tập test **không xuyên bộ dữ liệu** | Chỉ đo tổng quát hoá *trong* phân bố ⇒ mAP lạc quan hơn thực tế |
 | Một yêu cầu mức **Must** đã đưa ra khỏi phạm vi | Thu gọn cho demo; API thống kê vẫn phục vụ và vẫn có kiểm thử |
-
-## Ba can thiệp, một kết luận
-
-Cả ba **ngoài** mô hình nhận dạng: A6 **0,6098 → 0,7512**
-
-**Dư địa đã cạn** — lỗi còn lại là ký tự *chưa từng đọc ra*
-
-| Can thiệp | Thu được |
-|---|---:|
-| Bộ luật hậu xử lý theo vị trí | **+11,39 điểm** A6 |
-| Cứu dòng trên | 209 biển |
-| Nắn hình chống méo | 34 biển |
 
 ## Hướng phát triển
 
 **Ngắn hạn** — gỡ đúng nút thắt đã định vị
 
 1. **Fine-tune bộ nhận dạng** trên vùng cắt biển Việt Nam
-2. **Gán nhãn chuỗi cho ảnh hiện trường** ⇒ đo được A7 đúng cách
+2. **Gán nhãn chuỗi cho ảnh hiện trường** ⇒ đo được số đầu-cuối đúng cách
 
 **Trung hạn**
 
@@ -288,7 +305,7 @@ Cả ba **ngoài** mô hình nhận dạng: A6 **0,6098 → 0,7512**
 - Hệ thống **5 tầng chạy thật**, đóng gói Docker một lệnh
 - Phát hiện đạt **cả 4 chỉ tiêu**: mAP50 **0,983** · mAP50-95 **0,783**
 - Hậu xử lý theo vị trí — **+11,39 điểm**, đo tách bạch
-- **999 kiểm thử** đạt · bao phủ tầng nghiệp vụ 87,7%
+- **1.000 kiểm thử** đạt · bao phủ tầng nghiệp vụ 87,7%
 
 **Đóng góp học thuật**
 
@@ -297,12 +314,31 @@ Cả ba **ngoài** mô hình nhận dạng: A6 **0,6098 → 0,7512**
 
 ## Cảm ơn
 
-**Em xin cảm ơn thầy cô đã lắng nghe. Em xin sẵn sàng nhận câu hỏi.**
+<br>
 
-| Tra nhanh | |
+**Em xin cảm ơn thầy cô đã lắng nghe.**
+
+**Em xin sẵn sàng nhận câu hỏi.**
+
+## Tra nhanh số liệu
+
+| | |
 |---|---|
-| Dữ liệu | 15.133 ảnh · 15.977 khung · 6 nguồn |
-| Mô hình | YOLO11n · imgsz 640 · 20 epoch |
+| Dữ liệu | **15.133** ảnh · **15.977** khung · 6 nguồn |
+| Mô hình | YOLO11n · `imgsz 640` · 20 epoch · CPU |
 | Phát hiện | mAP50 **0,983** · mAP50-95 **0,783** |
-| Đọc chuỗi | A4 **0,9454** · A6 **0,7512** · A7 **0,5552** |
-| Độ trễ p95 | **1.143 ms** trên CPU *(p50 406 ms)* |
+| Đúng từng ký tự | **0,9454** |
+| Đúng cả chuỗi | **0,7512** *(1 dòng 0,954 · 2 dòng 0,700)* |
+| Độ trễ | p50 **406 ms** · p95 **1.143 ms** |
+| Kiểm thử | **1.000** đạt · bao phủ **87,7%** |
+
+## Fine-tune bộ nhận dạng: có và không
+
+Val acc **0,8809** nhưng chạy thật lại **kém hơn**: PaddleOCR **đánh giá**
+bằng nguyên ảnh, hệ thống **chạy** bằng cắt mảnh
+
+| Cấu hình | Đúng cả chuỗi | Bộ demo |
+|---|---:|---:|
+| **Model gốc** — bản giao hàng | **0,7512** | **17/22** |
+| Fine-tune, giữ bước dò chữ | 0,6762 | 14/22 |
+| Fine-tune, bỏ bước dò chữ | **0,8758** | 15/22 |

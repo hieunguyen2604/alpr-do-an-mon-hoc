@@ -116,3 +116,28 @@ docs/reports/05-ocr-accuracy-adapted.json
 # lưu cùng một thứ hai lần.
 /transfer-gpu-finetune/
 /transfer-gpu-finetune*.zip
+
+# Trọng số PP-OCRv5 gốc dùng làm điểm khởi đầu khi fine-tune — 68 MB, và là
+# tệp công khai tải được, không phải sản phẩm của đồ án. Bỏ theo dõi 02/08/2026:
+# một mình nó chiếm hơn một phần ba dung lượng kho mã.
+#
+# Cả ai/training/finetune_ppocr_rec.py lẫn notebook Colab đều TỰ TẢI khi thiếu:
+#   https://paddleocr.bj.bcebos.com/PP-OCRv5/multilingual/
+#       official_pretrained_model/en_PP-OCRv5_mobile_rec_pretrained.pdparams
+models/pretrained/*.pdparams
+
+# Bản nén của models/rec_finetuned/ — trùng từng byte với thư mục đã giải nén
+# (977 / 7.578.229 / 214.461). Xoá 02/08/2026.
+/rec_finetuned.zip
+
+# Nguyên liệu gán nhãn ảnh toàn cảnh: 1.606 ảnh cắt + phiếu HTML, 49 MB, dựng
+# lại bằng `scripts/dataset/build_scene_label_kit.py`. Thứ KHÔNG dựng lại được
+# là nhãn do người gõ — nó là một tệp CSV đặt ở datasets/annotations/, nơi quy
+# tắc `!datasets/annotations/*.csv` ở trên đã ép theo dõi.
+datasets/annotations/scene_review/
+
+# Hình lỗi của hai lượt đo phụ (28b — đối chứng nắn tỉ lệ trên 600 mẫu). Lượt
+# này chỉ dùng để loại một giả thuyết trong lúc truy nguyên và không báo cáo
+# nào trích; giữ payload JSON làm bằng chứng, bỏ 3 MB ảnh tái tạo được.
+docs/reports/figures/28b-err/
+docs/reports/figures/28b/

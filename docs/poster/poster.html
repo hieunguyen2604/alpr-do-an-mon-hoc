@@ -269,7 +269,9 @@
         <ul>
           <li class="ok">Cứu dòng trên: đọc lại nửa trên, ghép — <strong>kèm sàn tin cậy 0,8</strong></li>
           <li class="ok">Nắn hình: xoay phẳng · giãn dọc chống méo phối cảnh</li>
-          <li class="ok">Siêu phân giải (FSRCNN) cho ảnh cắt nhỏ dưới 200 px</li>
+          <li class="warn">Siêu phân giải (FSRCNN) — cài đặt xong nhưng <strong>tắt mặc định</strong>:
+              cổng chỉ mở cho ảnh cắt dưới 200 px, và <strong>0/120</strong> mẫu ngữ liệu lọt cổng
+              ⇒ chi phí đo được (+319 ms p95) nhưng lợi ích chưa đo được</li>
           <li class="warn">Chỉ chạy <em>sau khi</em> lần đọc đầu thất bại, chỉ nhận khi chuỗi mới hợp lệ
               ⇒ <strong>không thể làm hỏng</strong> kết quả đang đúng</li>
         </ul>
@@ -294,7 +296,7 @@
       </ul>
       <div class="kpi">
         <div><b class="green">1.143 ms</b><span>độ trễ p95 trên CPU<br>(sàn ≤ 1.500 ms · p50 chỉ 406 ms)</span></div>
-        <div><b>4.578</b><span>ảnh · 5.200 khung biển<br>chia 70/20/10 phân tầng</span></div>
+        <div><b>15.133</b><span>ảnh · 15.977 khung biển<br>chia 70/20/10 phân tầng</span></div>
       </div>
       <div style="font-size:var(--t6); color:#475569; margin-top:3mm">
         Phần cứng đo: Intel Core i5-14600K, 14 nhân / 20 luồng, <strong>không có GPU CUDA</strong>.
@@ -328,7 +330,7 @@
     <div class="block win">
       <h2>KẾT LUẬN</h2>
       <ul>
-        <li class="ok">Hệ thống <strong>hoàn chỉnh, chạy thật</strong>: 998 kiểm thử tự động đạt, đóng gói Docker</li>
+        <li class="ok">Hệ thống <strong>hoàn chỉnh, chạy thật</strong>: 1.000 kiểm thử tự động đạt, đóng gói Docker</li>
         <li class="ok">Đóng góp: bộ luật hậu xử lý <strong>ràng buộc theo vị trí</strong> theo quy chuẩn Việt Nam</li>
       </ul>
     </div>

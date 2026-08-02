@@ -109,18 +109,53 @@ def test_videos():
                 if job_res.status_code == 200:
                     job_data = job_res.json()
                     job_status = job_data.get("status")
-                    progress = job_data.get("progress_percent", 0)
+                    # `GET /api/jobs/{id}` tra `progress` trong khoang 0..1, KHONG
+                    # phai `progress_percent`. Ban truoc doc sai ten truong nen
+                    # luon in ra 0,0%.
+                    progress = float(job_data.get("progress") or 0.0) * 100.0
                     print(f"      Polling ({poll_count * 2}s): status={job_status}, progress={progress:.1f}%", end="\r")
 
                     if job_status == "completed":
                         total_vid_time = time.perf_counter() - start_t
-                        results = job_data.get("results", [])
                         total_frames = job_data.get("total_frames", 0)
                         processed_frames = job_data.get("processed_frames", 0)
-                        
+
+                        # Job KHONG mang theo danh sach bien — no chi dem
+                        # (`detection_count`). Muon tung bien thi hoi lich su,
+                        # loc theo job. Ban truoc doc `job_data["results"]`, mot
+                        # truong khong ton tai, nen moi video deu bao 0 bien
+                        # trong khi he thong that su doc duoc.
+                        # `page_size` toi da la 100 (backend/services/
+                        # history_service.py). Mot video dai co the vuot con so
+                        # do, nen phai di het cac trang thay vi xin mot trang
+                        # that to — xin 200 se bi tu choi 422 va lai ra 0 bien.
+                        results = []
+                        try:
+                            page_no = 1
+                            while page_no <= 20:
+                                hist = requests.get(
+                                    f"{BASE_URL}/history",
+                                    params={
+                                        "job_id": job_id,
+                                        "page": page_no,
+                                        "page_size": 100,
+                                    },
+                                    timeout=30,
+                                )
+                                if hist.status_code != 200:
+                                    print(f"\n  (API lich su tra HTTP {hist.status_code})")
+                                    break
+                                body = hist.json()
+                                results.extend(body.get("items", []))
+                                if not body.get("has_next"):
+                                    break
+                                page_no += 1
+                        except requests.RequestException as hist_err:
+                            print(f"\n  (khong lay duoc lich su cua job: {hist_err})")
+
                         unique_plates = sorted(list(set(
-                            r.get("plate_display") or r.get("plate_number") 
-                            for r in results 
+                            r.get("plate_display") or r.get("plate_number")
+                            for r in results
                             if r.get("plate_display") or r.get("plate_number")
                         )))
 

@@ -352,6 +352,18 @@ class DetectionHistory(Base):
             rejecting it.
         plate_line_count: ``1`` or ``2``. Lets accuracy be reported separately
             for single-line and two-line plates, which behave very differently.
+        upper_char_count: For a two-line plate, how many characters were read
+            from the **upper** line; ``NULL`` when unknown or single-line.
+
+            Stored because it is *evidence*, not presentation. Separators are
+            still derived on read (see
+            :func:`~backend.services.detection_service.display_text`), but that
+            derivation cannot succeed without this: an eight-character two-line
+            string is genuinely ambiguous, and ``67C10815`` is ``67C-108.15``
+            when the upper line read ``67C`` and ``67C1-0815`` when it read
+            ``67C1``. Both are legal Vietnamese plates, so no rule over the
+            flat string can separate them -- only the image can, and this
+            column is where that observation survives.
         processing_time: Seconds spent on this plate, detection plus OCR.
         detected_time: When the plate was detected. For a video this is the
             moment of processing, not a position within the video.
@@ -382,6 +394,7 @@ class DetectionHistory(Base):
 
     is_valid_format: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
     plate_line_count: Mapped[int | None] = mapped_column(Integer)
+    upper_char_count: Mapped[int | None] = mapped_column(Integer)
 
     # Vehicle-class attributes, added 2026-07-20. Both were already computed
     # during recognition and then discarded before reaching this table, which
@@ -450,6 +463,15 @@ class DetectionHistory(Base):
         CheckConstraint(
             "plate_line_count IS NULL OR plate_line_count IN (1, 2)",
             name="ck_detection_history_plate_line_count",
+        ),
+        # A Vietnamese two-line plate carries province + serial on the upper
+        # line: three characters (`67C`) or four (`77H5`). Nothing else is a
+        # legal reading, so a value outside that range means the count was
+        # miscomputed rather than observed, and it must not reach the
+        # display rule.
+        CheckConstraint(
+            "upper_char_count IS NULL OR upper_char_count IN (3, 4)",
+            name="ck_detection_history_upper_char_count",
         ),
         CheckConstraint(
             "bbox_w > 0 AND bbox_h > 0",

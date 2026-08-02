@@ -211,6 +211,58 @@ class InferenceConfig:
             ``en_PP-OCRv5_mobile_rec`` weights. When set, the directory must
             exist: a mistyped path failing at start-up beats a container that
             silently recognises with the wrong model.
+        ocr_skip_detection: Whether to feed the whole prepared crop straight to
+            the recognition model instead of running PaddleOCR's text-DETECTION
+            stage first. **Off by default** -- see the second table below, which
+            is the reason.
+
+            On the 2,801-plate label corpus, skipping detection looks like a
+            large win (``docs/reports/29-reconly-ablation.json``):
+
+            ======================== ============ ============ ==========
+            Configuration            NFR-A5       NFR-A6       ms / crop
+            ======================== ============ ============ ==========
+            stock, det + rec         0.6373       0.7512       328.8
+            stock, rec only          0.6776       0.7508        35.7
+            fine-tuned, det + rec    0.5998       0.6762           --
+            fine-tuned, rec only     0.8618       0.8758        38.5
+            ======================== ============ ============ ==========
+
+            **That corpus cannot settle the question, because every image in it
+            is a pre-cropped Roboflow export.** A crop that is already tight
+            around the plate gives a text detector nothing to do. The crops the
+            deployed system actually recognises come from YOLO, on full scenes,
+            and they are looser -- they carry bumper, windscreen and background.
+
+            Re-measured on the demo set, the only material in this project that
+            runs whole scenes through the real detector
+            (``docs/reports/31-demo-ab-reconly.json``, 22 plates):
+
+            ======================== ==========
+            Configuration            plates read
+            ======================== ==========
+            stock, det + rec         **17 / 22**
+            stock, rec only          13 / 22
+            fine-tuned, det + rec    14 / 22
+            fine-tuned, rec only     15 / 22
+            ======================== ==========
+
+            The ordering reverses. On loose detector crops the detection stage
+            earns its 290 ms: it re-localises the text inside the crop, and
+            without it the recogniser reads the surrounding clutter as
+            characters (``TCA7A22104``, ``5KB274184`` on ``nhieu-bien-2.png``).
+
+            Note what survives both tables: rec-only helps the **fine-tuned**
+            model (+1 plate on demo, +12.46 points on corpus) and hurts the
+            **stock** one (-4 plates on demo). A model fine-tuned on whole-plate
+            images has never seen a fragment. That is a real effect, and it is
+            why this switch exists rather than being deleted -- but 22 plates is
+            too small a sample to change what ships.
+
+            Set ``ALPR_OCR_SKIP_DETECTION=1`` to enable it for ablation. Turning
+            it on for production needs a scene-level corpus with plate-string
+            labels, which this project does not have (see NFR-A7's validity
+            note in ``docs/reports/27-ocr-accuracy-with-ladder.json``).
         two_line_aspect_ratio_threshold: Width/height ratio below which a plate
             crop is treated as a two-line plate. Vietnamese single-line plates
             are much wider than tall; two-line plates are nearly square. A crop
@@ -257,6 +309,7 @@ class InferenceConfig:
     ocr_lang: str = "en"
     ocr_use_gpu: bool = False
     ocr_rec_model_dir: Path | None = None
+    ocr_skip_detection: bool = False
     two_line_aspect_ratio_threshold: float = 2.5
     rectify_enabled: bool = True
     sr_retry_enabled: bool = False
@@ -319,6 +372,7 @@ class InferenceConfig:
         ``ALPR_OCR_LANG``                   :attr:`ocr_lang`
         ``ALPR_OCR_USE_GPU``                :attr:`ocr_use_gpu`
         ``ALPR_OCR_REC_MODEL_DIR``          :attr:`ocr_rec_model_dir`
+        ``ALPR_OCR_SKIP_DETECTION``         :attr:`ocr_skip_detection`
         ``ALPR_TWO_LINE_ASPECT_RATIO``      :attr:`two_line_aspect_ratio_threshold`
         ``ALPR_RECTIFY_ENABLED``            :attr:`rectify_enabled`
         ``ALPR_SR_RETRY_ENABLED``           :attr:`sr_retry_enabled`
@@ -348,6 +402,9 @@ class InferenceConfig:
             ocr_lang=_read_str(prefix, "OCR_LANG", defaults.ocr_lang),
             ocr_use_gpu=_read_bool(prefix, "OCR_USE_GPU", defaults.ocr_use_gpu),
             ocr_rec_model_dir=_read_optional_path(prefix, "OCR_REC_MODEL_DIR"),
+            ocr_skip_detection=_read_bool(
+                prefix, "OCR_SKIP_DETECTION", defaults.ocr_skip_detection
+            ),
             two_line_aspect_ratio_threshold=_read_float(
                 prefix,
                 "TWO_LINE_ASPECT_RATIO",
