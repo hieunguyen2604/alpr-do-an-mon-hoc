@@ -46,22 +46,7 @@ Sự phân biệt giữa điều kiện **ràng buộc** và **không ràng bu�
 
 Hình 2.1 mô tả sơ đồ đầy đủ của một pipeline ALPR hiện đại, trong đó các khối nét đứt là khối tuỳ chọn.
 
-```mermaid
-flowchart LR
-    A["Ảnh / khung hình<br/>đầu vào"] --> B["Tiền xử lý<br/>(resize, chuẩn hoá)"]
-    B --> C["Phát hiện biển số<br/>(License Plate Detection)"]
-    C --> D["Nắn chỉnh phối cảnh<br/>(Rectification)<br/><i>tuỳ chọn</i>"]
-    D --> E["Nhận dạng ký tự<br/>(Character Recognition)"]
-    E --> F["Hậu xử lý theo luật<br/>(regex, kiểm tra hợp lệ)<br/><i>tuỳ chọn</i>"]
-    F --> G["Chuỗi biển số<br/>+ confidence"]
-
-    C -. "một số hệ thống<br/>thêm bước này" .-> C2["Phát hiện xe<br/>(Vehicle Detection)"]
-    C2 -.-> C
-
-    style D stroke-dasharray: 5 5
-    style F stroke-dasharray: 5 5
-    style C2 stroke-dasharray: 5 5
-```
+![](figures/fig-ch2-01.png)
 
 **Hình 2.1.** Sơ đồ pipeline ALPR điển hình *(tổng hợp từ [2], [3], [20], [22], [23])*
 
@@ -79,23 +64,7 @@ Mục này đặc tả quy chuẩn biển số xe Việt Nam ở mức đủ chi
 
 Ngày 15/11/2024, Bộ trưởng Bộ Công an ký ban hành **Thông tư 79/2024/TT-BCA** quy định về cấp, thu hồi chứng nhận đăng ký xe, biển số xe cơ giới, xe máy chuyên dùng, thay thế Thông tư 24/2023/TT-BCA, hiệu lực từ **01/01/2025** [8]<!-- bocongan_2024_tt79 -->. Văn bản này sau đó được sửa đổi hai lần. Hình 2.2 và Bảng 2.2 mô tả chuỗi văn bản đang có hiệu lực.
 
-```mermaid
-graph LR
-    A["TT 24/2023/TT-BCA<br/>01/7/2023<br/>HẾT HIỆU LỰC 01/01/2025"]
-    B["TT 79/2024/TT-BCA<br/>ký 15/11/2024<br/>hiệu lực 01/01/2025"]
-    C["TT 13/2025/TT-BCA<br/>28/02/2025<br/>sửa đổi"]
-    D["TT 51/2025/TT-BCA<br/>30/6/2025<br/>hiệu lực 01/7/2025<br/>thay Phụ lục mã tỉnh"]
-    E["TT 81/2024/TT-BCA<br/>kèm QCVN 08:2024/BCA<br/>hiệu lực 01/01/2025"]
-
-    A -->|thay thế bởi| B
-    B -->|sửa đổi bởi| C
-    C -->|sửa đổi bởi| D
-    B -.->|song hành:<br/>quy chuẩn kỹ thuật| E
-
-    style A fill:#fecaca,stroke:#dc2626,stroke-width:2px
-    style D fill:#dcfce7,stroke:#16a34a,stroke-width:2px
-    style E fill:#dbeafe,stroke:#2563eb,stroke-width:2px
-```
+![](figures/fig-ch2-02.png)
 
 **Hình 2.2.** Chuỗi văn bản pháp lý về biển số xe đang có hiệu lực
 
@@ -295,25 +264,7 @@ Mục này cung cấp cơ sở định lượng trực tiếp cho việc phân b
 
 **c) Khoảng trống tỷ lệ khung hình — cơ sở cho ngưỡng phân loại.** Ba giá trị tỷ lệ khung hình ở Bảng 2.10 có một đặc tính rất thuận lợi: **không có loại biển nào rơi vào khoảng (2,000 ; 4,727)**. Khoảng trống rộng 2,727 đơn vị này khiến việc phân biệt biển một dòng và biển hai dòng bằng tỷ lệ khung hình trở nên đáng tin cậy. Hình 2.3 minh hoạ.
 
-```mermaid
-graph LR
-    subgraph TWO["BIỂN 2 DÒNG"]
-        M["Xe máy<br/>AR = 1,357"]
-        C2["Ô tô ngắn<br/>AR = 2,000"]
-    end
-    subgraph GAP["KHOẢNG TRỐNG — rộng 2,727"]
-        G["Không có loại biển nào<br/>rơi vào vùng này"]
-    end
-    subgraph ONE["BIỂN 1 DÒNG"]
-        C1["Ô tô dài<br/>AR = 4,727"]
-    end
-
-    M --> C2 --> G --> C1
-
-    style TWO fill:#fecaca,stroke:#dc2626
-    style GAP fill:#f3f4f6,stroke:#9ca3af,stroke-dasharray: 5 5
-    style ONE fill:#dcfce7,stroke:#16a34a
-```
+![](figures/fig-ch2-03.png)
 
 **Hình 2.3.** Khoảng trống tỷ lệ khung hình giữa biển hai dòng và biển một dòng *(dẫn xuất từ [11])*
 
@@ -447,43 +398,7 @@ Tài liệu chuyên ngành thường trộn lẫn hai trục phân loại vốn 
 
 Hình 2.4 tổng hợp hai trục phân loại cùng các công trình đại diện.
 
-```mermaid
-flowchart TD
-    ROOT["Các hướng tiếp cận ALPR"]
-
-    ROOT --> AX1["Trục 1: Tổ chức pipeline"]
-    ROOT --> AX2["Trục 2: Xử lý ký tự"]
-
-    AX1 --> TS["Two-stage<br/>(detection rồi recognition)"]
-    AX1 --> E2E["End-to-end<br/>(một mạng thống nhất)"]
-
-    TS --> TS1["WPOD-NET<br/>Silva và Jung, 2018"]
-    TS --> TS2["Pipeline YOLO nhiều giai đoạn<br/>Laroca, 2018"]
-    TS --> TS3["Layout-independent<br/>Laroca, 2021"]
-
-    E2E --> E1["RPnet<br/>Xu, 2018"]
-    E2E --> E2["Li, Wang, Shen<br/>2019"]
-    E2E --> E3["VSNet<br/>Wang, 2021"]
-
-    AX2 --> SB["Segmentation-based<br/>(tách ký tự rồi phân lớp)"]
-    AX2 --> SF["Segmentation-free<br/>(đọc thẳng cả chuỗi)"]
-
-    SB --> SB1["CNN phân lớp<br/>từng ký tự"]
-    SB --> SB2["KNN / SVM / template<br/>(cổ điển)"]
-
-    SF --> SF1["Hướng CTC<br/>LPRNet, 2018"]
-    SF --> SF2["Hướng attention 2D<br/>Zhang, 2020"]
-    SF --> SF3["Bộ phân lớp chia sẻ<br/>trọng số — SCR-Net, 2021"]
-    SF --> SF4["Hướng VLM / LLM<br/>2024-2026"]
-
-    ROOT --> CHOICE["<b>Lựa chọn của đồ án</b><br/>two-stage + segmentation-free"]
-
-    style TS fill:#e0f2fe
-    style E2E fill:#e0f2fe
-    style SB fill:#fef3c7
-    style SF fill:#fef3c7
-    style CHOICE fill:#dcfce7,stroke:#16a34a,stroke-width:2px
-```
+![](figures/fig-ch2-04.png)
 
 **Hình 2.4.** Sơ đồ phân loại hai trục các hướng tiếp cận ALPR và định vị lựa chọn của đồ án
 
@@ -525,41 +440,7 @@ Với ràng buộc suy luận trên CPU, họ two-stage bị loại ngay từ đ
 
 Kiến trúc của một mô hình YOLO hiện đại gồm ba phần, minh hoạ ở Hình 2.5:
 
-```mermaid
-flowchart LR
-    IN["Ảnh đầu vào<br/>640 x 640 x 3"] --> BB
-
-    subgraph BB["BACKBONE"]
-        direction TB
-        B1["Các khối tích chập<br/>+ khối CSP"]
-        B2["SPPF<br/>gộp đặc trưng đa tỷ lệ"]
-        B3["C2PSA<br/>attention theo vị trí"]
-        B1 --> B2 --> B3
-    end
-
-    BB --> NK
-
-    subgraph NK["NECK"]
-        direction TB
-        N1["Đường đi xuống<br/>(top-down)"]
-        N2["Đường đi lên<br/>(bottom-up)"]
-        N1 --> N2
-    end
-
-    NK --> HD
-
-    subgraph HD["HEAD"]
-        direction TB
-        H1["Nhánh phân lớp"]
-        H2["Nhánh hồi quy hộp"]
-    end
-
-    HD --> NMS["NMS"] --> OUT["Danh sách bounding box<br/>+ confidence"]
-
-    style BB fill:#e0f2fe
-    style NK fill:#fef3c7
-    style HD fill:#dcfce7
-```
+![](figures/fig-ch2-05.png)
 
 **Hình 2.5.** Kiến trúc tổng quát backbone – neck – head của YOLO11 *(theo [49], [16])*
 
@@ -577,36 +458,7 @@ Bài tổng quan độc lập về YOLO11 xác định ba thành phần chính c
 
 **b) C2PSA — thành phần mà YOLOv8 hoàn toàn không có.** Đây mới là khác biệt kiến trúc thực sự giữa YOLO11 và YOLOv8. Cấu trúc phân cấp theo mã nguồn được minh hoạ ở Hình 2.6.
 
-```mermaid
-flowchart TD
-    subgraph C2PSA["<b>C2PSA</b> — đặt ngay sau SPPF"]
-        direction TB
-        CV1["cv1 — tách input thành 2 nhánh"]
-        CHAIN["<b>Chuỗi nhiều PSABlock</b><br/>(khác với PSA chỉ có 1 Attention)"]
-        CV2["cv2 — nối lại 2 nhánh"]
-        CV1 --> CHAIN --> CV2
-    end
-
-    subgraph PSABlock["<b>PSABlock</b> — Position-Sensitive Attention"]
-        direction TB
-        ATT["module <b>Attention</b>"]
-        FFN["Feed-forward<br/>gồm 2 lớp tích chập"]
-        SC["shortcut (tuỳ chọn)"]
-        ATT --> FFN --> SC
-    end
-
-    subgraph Attention["<b>Attention</b>"]
-        direction TB
-        QKV["qkv — tích chập sinh query/key/value"]
-        PROJ["proj — phép chiếu đầu ra"]
-        PE["pe — tích chập mã hoá vị trí"]
-    end
-
-    CHAIN -.-> PSABlock
-    ATT -.-> Attention
-
-    style C2PSA fill:#e0f2fe,stroke:#2563eb,stroke-width:2px
-```
+![](figures/fig-ch2-06.png)
 
 **Hình 2.6.** Cấu trúc phân cấp của khối C2PSA trong YOLO11 *(đối chiếu mã nguồn [51])*
 
@@ -781,18 +633,7 @@ Tổng ở công thức (2.8) có số hạng tăng theo hàm mũ, nhưng tính 
 
 Khi ảnh đầu vào có hai dòng, giả định này bị vi phạm nghiêm trọng. Vì tầng tích chập của CRNN đã downsample chiều cao **về 1**, mỗi vector đặc trưng tại cột $t$ chứa thông tin của **cả hai ký tự chồng nhau theo chiều dọc** — một ở dòng trên, một ở dòng dưới. Mạng bị ép phải chọn một trong hai, cho ra chuỗi lộn xộn hoặc chỉ đọc được một dòng [61]<!-- arxiv_2019_arbitraryshaped -->. Hình 2.7 minh hoạ cơ chế này.
 
-```mermaid
-flowchart TB
-    subgraph OK["Biển 1 dòng — CTC hoạt động đúng"]
-        A1["Ảnh crop: 30A-12345"] --> A2["Cột đặc trưng 1: '3'<br/>Cột đặc trưng 2: '0'<br/>Cột đặc trưng 3: 'A'<br/>..."] --> A3["Alignment đơn điệu<br/>trái sang phải<br/>→ đọc đúng"]
-    end
-    subgraph BAD["Biển 2 dòng — giả định của CTC bị vi phạm"]
-        B1["Ảnh crop:<br/>Dòng trên: 29-K1<br/>Dòng dưới: 12345"] --> B2["Cột đặc trưng 1: '2' VÀ '1'<br/>Cột đặc trưng 2: '9' VÀ '2'<br/>hai ký tự chồng nhau<br/>theo chiều dọc"] --> B3["Mạng buộc phải chọn một<br/>→ chuỗi lộn xộn hoặc<br/>chỉ đọc được một dòng"]
-    end
-
-    style BAD fill:#fee2e2,stroke:#dc2626,stroke-width:2px
-    style OK fill:#dcfce7,stroke:#16a34a
-```
+![](figures/fig-ch2-07.png)
 
 **Hình 2.7.** Cơ chế sụp đổ của CTC trên ảnh văn bản hai dòng *(theo [61])*
 

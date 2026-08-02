@@ -203,35 +203,7 @@ Bổ sung hai yêu cầu phân tích phục vụ chương đánh giá:
 
 ### 1.3.4. Ranh giới hệ thống
 
-```mermaid
-graph TB
-    subgraph EXT["Ngoài hệ thống"]
-        U["Người dùng<br/>(trình duyệt)"]
-        CAM["Client thời gian thực<br/>(webcam — gọi API trực tiếp)"]
-        FS["Tệp ảnh / video"]
-        COLAB["Colab / Kaggle<br/>(huấn luyện — ngoại tuyến)"]
-    end
-
-    subgraph SYS["Trong phạm vi hệ thống"]
-        FE["Frontend<br/>React + Vite"]
-        BE["Backend API<br/>FastAPI"]
-        AI["Pipeline AI<br/>YOLO11 + PaddleOCR"]
-        DB[("SQLite")]
-        ST["Kho tệp ảnh, video"]
-    end
-
-    U --> FE
-    CAM --> BE
-    FS --> FE
-    FE <--> BE
-    BE --> AI
-    BE --> DB
-    BE --> ST
-    COLAB -.->|"best.pt<br/>(thủ công, một chiều)"| AI
-
-    style COLAB stroke-dasharray: 5 5
-    style SYS fill:#f0f9ff,stroke:#0284c7
-```
+![](figures/fig-ch1-01.png)
 
 Colab/Kaggle nằm **ngoài** ranh giới hệ thống khi vận hành — chúng chỉ là công cụ ngoại tuyến sản xuất ra tệp trọng số `best.pt`. Hệ thống khi chạy **không phụ thuộc vào bất kỳ dịch vụ ngoài nào**, đây là hệ quả trực tiếp của tiêu chí "demo chạy được không cần Internet" ở mục 1.2.3. Lưu ý luồng thời gian thực: sau khi trang webcam được gỡ khỏi giao diện web (thu gọn phạm vi 2026-07-20), client thời gian thực gửi khung hình **trực tiếp vào tầng API** qua `POST /api/detect/frame` thay vì đi qua frontend.
 

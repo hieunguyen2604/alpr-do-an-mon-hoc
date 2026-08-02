@@ -39,32 +39,7 @@ Nguyên tắc 2 kéo theo một quy tắc trích dẫn:
 
 Sơ đồ dưới mô tả trình tự đo và ràng buộc phụ thuộc giữa các bước. Điểm cần chú ý: **không bước đo nào được phép chạy trước khi trọng số chính thức được đóng băng**, và **tập test không được chạm vào trong suốt quá trình huấn luyện và chọn epoch** — việc chọn epoch tốt nhất chỉ dựa vào tập validation.
 
-```mermaid
-flowchart TD
-    A["Bộ dữ liệu v3<br/>15.133 ảnh, 6 nguồn nguyên tố"] --> B["Chia split<br/>train 10.592 / val 3.027 / test 1.514"]
-    B --> C["Huấn luyện YOLO11n<br/>imgsz=640, 20 epoch, CPU"]
-    C --> D{"Chọn epoch tốt nhất<br/><b>chỉ theo tập val</b>"}
-    D --> E["Đóng băng trọng số<br/>models/best.pt"]
-
-    B -.->|"tập test — niêm phong"| F
-
-    E --> F["5.5 — Đánh giá phát hiện<br/>mAP, P, R, F1"]
-    E --> G["5.6 — Đánh giá OCR<br/>CER, chuỗi trước/sau hậu xử lý"]
-    E --> H["5.7 — Đánh giá hiệu năng<br/>độ trễ, FPS, bộ nhớ"]
-
-    F --> I["5.8 — So sánh<br/>baseline 416 ↔ chính thức 640"]
-    G --> J["6.5.4 — Ma trận nhầm lẫn 36×36<br/>→ hiệu chỉnh bảng luật sửa lỗi"]
-    H --> K["6.6.2 — Phân rã ngân sách độ trễ<br/>→ xác định nút thắt"]
-
-    F --> L["5.9 — Bảng đối chiếu<br/>toàn bộ chỉ tiêu NFR"]
-    G --> L
-    H --> L
-    I --> L
-
-    style E fill:#e8f4ff,stroke:#2b6cb0,stroke-width:2px
-    style L fill:#fff4e6,stroke:#c05621,stroke-width:2px
-    style J fill:#f0fff4,stroke:#276749,stroke-width:2px
-```
+![](figures/fig-ch6-01.png)
 
 *Hình 6.1. Giao thức đo và ràng buộc phụ thuộc giữa các bước đánh giá.*
 

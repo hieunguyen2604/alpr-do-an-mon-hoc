@@ -113,6 +113,18 @@ SLIDES_TEMPLATE_FILENAME: str = "template-uit.pptx"
 PANDOC_FROM: str = "gfm+raw_attribute"
 PANDOC_TOC_DEPTH: str = "3"
 
+# How many image pixels count as one printed inch.
+#
+# The 25 diagrams are rendered by mermaid-cli at scale 2, so the widest are
+# 1568 px. At Pandoc's default of 96 dpi that is 16.3 inches -- four times the
+# page width, and each diagram would swallow a page. ``{width=14cm}`` cannot fix
+# this here because the sources are read as ``gfm``, which does not support
+# ``link_attributes``; the annotation would print verbatim instead.
+#
+# 285 dpi puts a 1568 px diagram at 1568/285 = 5.5 in = 14.0 cm, which fits
+# inside the 15.9 cm text column with margin to spare.
+PANDOC_IMAGE_DPI: str = "285"
+
 
 def read_section(path: Path) -> str:
     """Read one Markdown source file, preserving its bytes exactly.
@@ -270,6 +282,14 @@ def export_docx(pandoc: Path, markdown_path: Path, docx_path: Path) -> None:
             PANDOC_FROM,
             "--toc",
             f"--toc-depth={PANDOC_TOC_DEPTH}",
+            # The chapters reference diagrams as ``figures/fig-chN-MM.png``,
+            # relative to themselves. Pandoc resolves image paths against the
+            # working directory, so without this the build silently produces a
+            # DOCX with broken image placeholders instead of the 25 diagrams.
+            "--resource-path",
+            str(markdown_path.parent),
+            "--dpi",
+            PANDOC_IMAGE_DPI,
             "-o",
             str(docx_path),
         ],

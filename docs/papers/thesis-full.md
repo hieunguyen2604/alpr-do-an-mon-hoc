@@ -688,35 +688,7 @@ Bổ sung hai yêu cầu phân tích phục vụ chương đánh giá:
 
 ### 1.3.4. Ranh giới hệ thống
 
-```mermaid
-graph TB
-    subgraph EXT["Ngoài hệ thống"]
-        U["Người dùng<br/>(trình duyệt)"]
-        CAM["Client thời gian thực<br/>(webcam — gọi API trực tiếp)"]
-        FS["Tệp ảnh / video"]
-        COLAB["Colab / Kaggle<br/>(huấn luyện — ngoại tuyến)"]
-    end
-
-    subgraph SYS["Trong phạm vi hệ thống"]
-        FE["Frontend<br/>React + Vite"]
-        BE["Backend API<br/>FastAPI"]
-        AI["Pipeline AI<br/>YOLO11 + PaddleOCR"]
-        DB[("SQLite")]
-        ST["Kho tệp ảnh, video"]
-    end
-
-    U --> FE
-    CAM --> BE
-    FS --> FE
-    FE <--> BE
-    BE --> AI
-    BE --> DB
-    BE --> ST
-    COLAB -.->|"best.pt<br/>(thủ công, một chiều)"| AI
-
-    style COLAB stroke-dasharray: 5 5
-    style SYS fill:#f0f9ff,stroke:#0284c7
-```
+![](figures/fig-ch1-01.png)
 
 Colab/Kaggle nằm **ngoài** ranh giới hệ thống khi vận hành — chúng chỉ là công cụ ngoại tuyến sản xuất ra tệp trọng số `best.pt`. Hệ thống khi chạy **không phụ thuộc vào bất kỳ dịch vụ ngoài nào**, đây là hệ quả trực tiếp của tiêu chí "demo chạy được không cần Internet" ở mục 1.2.3. Lưu ý luồng thời gian thực: sau khi trang webcam được gỡ khỏi giao diện web (thu gọn phạm vi 2026-07-20), client thời gian thực gửi khung hình **trực tiếp vào tầng API** qua `POST /api/detect/frame` thay vì đi qua frontend.
 
@@ -964,22 +936,7 @@ Sự phân biệt giữa điều kiện **ràng buộc** và **không ràng bu�
 
 Hình 2.1 mô tả sơ đồ đầy đủ của một pipeline ALPR hiện đại, trong đó các khối nét đứt là khối tuỳ chọn.
 
-```mermaid
-flowchart LR
-    A["Ảnh / khung hình<br/>đầu vào"] --> B["Tiền xử lý<br/>(resize, chuẩn hoá)"]
-    B --> C["Phát hiện biển số<br/>(License Plate Detection)"]
-    C --> D["Nắn chỉnh phối cảnh<br/>(Rectification)<br/><i>tuỳ chọn</i>"]
-    D --> E["Nhận dạng ký tự<br/>(Character Recognition)"]
-    E --> F["Hậu xử lý theo luật<br/>(regex, kiểm tra hợp lệ)<br/><i>tuỳ chọn</i>"]
-    F --> G["Chuỗi biển số<br/>+ confidence"]
-
-    C -. "một số hệ thống<br/>thêm bước này" .-> C2["Phát hiện xe<br/>(Vehicle Detection)"]
-    C2 -.-> C
-
-    style D stroke-dasharray: 5 5
-    style F stroke-dasharray: 5 5
-    style C2 stroke-dasharray: 5 5
-```
+![](figures/fig-ch2-01.png)
 
 **Hình 2.1.** Sơ đồ pipeline ALPR điển hình *(tổng hợp từ [2], [3], [20], [22], [23])*
 
@@ -997,23 +954,7 @@ Mục này đặc tả quy chuẩn biển số xe Việt Nam ở mức đủ chi
 
 Ngày 15/11/2024, Bộ trưởng Bộ Công an ký ban hành **Thông tư 79/2024/TT-BCA** quy định về cấp, thu hồi chứng nhận đăng ký xe, biển số xe cơ giới, xe máy chuyên dùng, thay thế Thông tư 24/2023/TT-BCA, hiệu lực từ **01/01/2025** [8]<!-- bocongan_2024_tt79 -->. Văn bản này sau đó được sửa đổi hai lần. Hình 2.2 và Bảng 2.2 mô tả chuỗi văn bản đang có hiệu lực.
 
-```mermaid
-graph LR
-    A["TT 24/2023/TT-BCA<br/>01/7/2023<br/>HẾT HIỆU LỰC 01/01/2025"]
-    B["TT 79/2024/TT-BCA<br/>ký 15/11/2024<br/>hiệu lực 01/01/2025"]
-    C["TT 13/2025/TT-BCA<br/>28/02/2025<br/>sửa đổi"]
-    D["TT 51/2025/TT-BCA<br/>30/6/2025<br/>hiệu lực 01/7/2025<br/>thay Phụ lục mã tỉnh"]
-    E["TT 81/2024/TT-BCA<br/>kèm QCVN 08:2024/BCA<br/>hiệu lực 01/01/2025"]
-
-    A -->|thay thế bởi| B
-    B -->|sửa đổi bởi| C
-    C -->|sửa đổi bởi| D
-    B -.->|song hành:<br/>quy chuẩn kỹ thuật| E
-
-    style A fill:#fecaca,stroke:#dc2626,stroke-width:2px
-    style D fill:#dcfce7,stroke:#16a34a,stroke-width:2px
-    style E fill:#dbeafe,stroke:#2563eb,stroke-width:2px
-```
+![](figures/fig-ch2-02.png)
 
 **Hình 2.2.** Chuỗi văn bản pháp lý về biển số xe đang có hiệu lực
 
@@ -1213,25 +1154,7 @@ Mục này cung cấp cơ sở định lượng trực tiếp cho việc phân b
 
 **c) Khoảng trống tỷ lệ khung hình — cơ sở cho ngưỡng phân loại.** Ba giá trị tỷ lệ khung hình ở Bảng 2.10 có một đặc tính rất thuận lợi: **không có loại biển nào rơi vào khoảng (2,000 ; 4,727)**. Khoảng trống rộng 2,727 đơn vị này khiến việc phân biệt biển một dòng và biển hai dòng bằng tỷ lệ khung hình trở nên đáng tin cậy. Hình 2.3 minh hoạ.
 
-```mermaid
-graph LR
-    subgraph TWO["BIỂN 2 DÒNG"]
-        M["Xe máy<br/>AR = 1,357"]
-        C2["Ô tô ngắn<br/>AR = 2,000"]
-    end
-    subgraph GAP["KHOẢNG TRỐNG — rộng 2,727"]
-        G["Không có loại biển nào<br/>rơi vào vùng này"]
-    end
-    subgraph ONE["BIỂN 1 DÒNG"]
-        C1["Ô tô dài<br/>AR = 4,727"]
-    end
-
-    M --> C2 --> G --> C1
-
-    style TWO fill:#fecaca,stroke:#dc2626
-    style GAP fill:#f3f4f6,stroke:#9ca3af,stroke-dasharray: 5 5
-    style ONE fill:#dcfce7,stroke:#16a34a
-```
+![](figures/fig-ch2-03.png)
 
 **Hình 2.3.** Khoảng trống tỷ lệ khung hình giữa biển hai dòng và biển một dòng *(dẫn xuất từ [11])*
 
@@ -1365,43 +1288,7 @@ Tài liệu chuyên ngành thường trộn lẫn hai trục phân loại vốn 
 
 Hình 2.4 tổng hợp hai trục phân loại cùng các công trình đại diện.
 
-```mermaid
-flowchart TD
-    ROOT["Các hướng tiếp cận ALPR"]
-
-    ROOT --> AX1["Trục 1: Tổ chức pipeline"]
-    ROOT --> AX2["Trục 2: Xử lý ký tự"]
-
-    AX1 --> TS["Two-stage<br/>(detection rồi recognition)"]
-    AX1 --> E2E["End-to-end<br/>(một mạng thống nhất)"]
-
-    TS --> TS1["WPOD-NET<br/>Silva và Jung, 2018"]
-    TS --> TS2["Pipeline YOLO nhiều giai đoạn<br/>Laroca, 2018"]
-    TS --> TS3["Layout-independent<br/>Laroca, 2021"]
-
-    E2E --> E1["RPnet<br/>Xu, 2018"]
-    E2E --> E2["Li, Wang, Shen<br/>2019"]
-    E2E --> E3["VSNet<br/>Wang, 2021"]
-
-    AX2 --> SB["Segmentation-based<br/>(tách ký tự rồi phân lớp)"]
-    AX2 --> SF["Segmentation-free<br/>(đọc thẳng cả chuỗi)"]
-
-    SB --> SB1["CNN phân lớp<br/>từng ký tự"]
-    SB --> SB2["KNN / SVM / template<br/>(cổ điển)"]
-
-    SF --> SF1["Hướng CTC<br/>LPRNet, 2018"]
-    SF --> SF2["Hướng attention 2D<br/>Zhang, 2020"]
-    SF --> SF3["Bộ phân lớp chia sẻ<br/>trọng số — SCR-Net, 2021"]
-    SF --> SF4["Hướng VLM / LLM<br/>2024-2026"]
-
-    ROOT --> CHOICE["<b>Lựa chọn của đồ án</b><br/>two-stage + segmentation-free"]
-
-    style TS fill:#e0f2fe
-    style E2E fill:#e0f2fe
-    style SB fill:#fef3c7
-    style SF fill:#fef3c7
-    style CHOICE fill:#dcfce7,stroke:#16a34a,stroke-width:2px
-```
+![](figures/fig-ch2-04.png)
 
 **Hình 2.4.** Sơ đồ phân loại hai trục các hướng tiếp cận ALPR và định vị lựa chọn của đồ án
 
@@ -1443,41 +1330,7 @@ Với ràng buộc suy luận trên CPU, họ two-stage bị loại ngay từ đ
 
 Kiến trúc của một mô hình YOLO hiện đại gồm ba phần, minh hoạ ở Hình 2.5:
 
-```mermaid
-flowchart LR
-    IN["Ảnh đầu vào<br/>640 x 640 x 3"] --> BB
-
-    subgraph BB["BACKBONE"]
-        direction TB
-        B1["Các khối tích chập<br/>+ khối CSP"]
-        B2["SPPF<br/>gộp đặc trưng đa tỷ lệ"]
-        B3["C2PSA<br/>attention theo vị trí"]
-        B1 --> B2 --> B3
-    end
-
-    BB --> NK
-
-    subgraph NK["NECK"]
-        direction TB
-        N1["Đường đi xuống<br/>(top-down)"]
-        N2["Đường đi lên<br/>(bottom-up)"]
-        N1 --> N2
-    end
-
-    NK --> HD
-
-    subgraph HD["HEAD"]
-        direction TB
-        H1["Nhánh phân lớp"]
-        H2["Nhánh hồi quy hộp"]
-    end
-
-    HD --> NMS["NMS"] --> OUT["Danh sách bounding box<br/>+ confidence"]
-
-    style BB fill:#e0f2fe
-    style NK fill:#fef3c7
-    style HD fill:#dcfce7
-```
+![](figures/fig-ch2-05.png)
 
 **Hình 2.5.** Kiến trúc tổng quát backbone – neck – head của YOLO11 *(theo [49], [16])*
 
@@ -1495,36 +1348,7 @@ Bài tổng quan độc lập về YOLO11 xác định ba thành phần chính c
 
 **b) C2PSA — thành phần mà YOLOv8 hoàn toàn không có.** Đây mới là khác biệt kiến trúc thực sự giữa YOLO11 và YOLOv8. Cấu trúc phân cấp theo mã nguồn được minh hoạ ở Hình 2.6.
 
-```mermaid
-flowchart TD
-    subgraph C2PSA["<b>C2PSA</b> — đặt ngay sau SPPF"]
-        direction TB
-        CV1["cv1 — tách input thành 2 nhánh"]
-        CHAIN["<b>Chuỗi nhiều PSABlock</b><br/>(khác với PSA chỉ có 1 Attention)"]
-        CV2["cv2 — nối lại 2 nhánh"]
-        CV1 --> CHAIN --> CV2
-    end
-
-    subgraph PSABlock["<b>PSABlock</b> — Position-Sensitive Attention"]
-        direction TB
-        ATT["module <b>Attention</b>"]
-        FFN["Feed-forward<br/>gồm 2 lớp tích chập"]
-        SC["shortcut (tuỳ chọn)"]
-        ATT --> FFN --> SC
-    end
-
-    subgraph Attention["<b>Attention</b>"]
-        direction TB
-        QKV["qkv — tích chập sinh query/key/value"]
-        PROJ["proj — phép chiếu đầu ra"]
-        PE["pe — tích chập mã hoá vị trí"]
-    end
-
-    CHAIN -.-> PSABlock
-    ATT -.-> Attention
-
-    style C2PSA fill:#e0f2fe,stroke:#2563eb,stroke-width:2px
-```
+![](figures/fig-ch2-06.png)
 
 **Hình 2.6.** Cấu trúc phân cấp của khối C2PSA trong YOLO11 *(đối chiếu mã nguồn [51])*
 
@@ -1699,18 +1523,7 @@ Tổng ở công thức (2.8) có số hạng tăng theo hàm mũ, nhưng tính 
 
 Khi ảnh đầu vào có hai dòng, giả định này bị vi phạm nghiêm trọng. Vì tầng tích chập của CRNN đã downsample chiều cao **về 1**, mỗi vector đặc trưng tại cột $t$ chứa thông tin của **cả hai ký tự chồng nhau theo chiều dọc** — một ở dòng trên, một ở dòng dưới. Mạng bị ép phải chọn một trong hai, cho ra chuỗi lộn xộn hoặc chỉ đọc được một dòng [61]<!-- arxiv_2019_arbitraryshaped -->. Hình 2.7 minh hoạ cơ chế này.
 
-```mermaid
-flowchart TB
-    subgraph OK["Biển 1 dòng — CTC hoạt động đúng"]
-        A1["Ảnh crop: 30A-12345"] --> A2["Cột đặc trưng 1: '3'<br/>Cột đặc trưng 2: '0'<br/>Cột đặc trưng 3: 'A'<br/>..."] --> A3["Alignment đơn điệu<br/>trái sang phải<br/>→ đọc đúng"]
-    end
-    subgraph BAD["Biển 2 dòng — giả định của CTC bị vi phạm"]
-        B1["Ảnh crop:<br/>Dòng trên: 29-K1<br/>Dòng dưới: 12345"] --> B2["Cột đặc trưng 1: '2' VÀ '1'<br/>Cột đặc trưng 2: '9' VÀ '2'<br/>hai ký tự chồng nhau<br/>theo chiều dọc"] --> B3["Mạng buộc phải chọn một<br/>→ chuỗi lộn xộn hoặc<br/>chỉ đọc được một dòng"]
-    end
-
-    style BAD fill:#fee2e2,stroke:#dc2626,stroke-width:2px
-    style OK fill:#dcfce7,stroke:#16a34a
-```
+![](figures/fig-ch2-07.png)
 
 **Hình 2.7.** Cơ chế sụp đổ của CTC trên ảnh văn bản hai dòng *(theo [61])*
 
@@ -2283,43 +2096,7 @@ Do hệ thống được xác định là chạy trong mạng nội bộ hoặc 
 
 #### a) Sơ đồ use case
 
-```mermaid
-graph TB
-    subgraph ACTORS[" "]
-        OP["Người vận hành"]
-        AN["Người phân tích"]
-        DEV["Nhà phát triển"]
-    end
-
-    subgraph SYS["Hệ thống ALPR"]
-        UC1(["UC-01<br/>Nhận dạng từ ảnh"])
-        UC2(["UC-02<br/>Nhận dạng từ video"])
-        UC3(["UC-03<br/>Nhận dạng thời gian thực"])
-        UC4(["UC-04<br/>Tra cứu lịch sử"])
-        UC5(["UC-05<br/>Xem thống kê"])
-        UC6(["UC-06<br/>Xuất / tải kết quả"])
-        UC7(["UC-07<br/>Quản lý bản ghi"])
-        UC8(["UC-08<br/>Tích hợp qua REST API"])
-        UC9(["UC-09<br/>Theo dõi tiến độ tác vụ"])
-    end
-
-    OP --> UC1
-    OP --> UC2
-    OP --> UC4
-    DEV --> UC3
-    AN --> UC4
-    AN --> UC5
-    AN --> UC6
-    AN --> UC7
-    DEV --> UC8
-
-    UC2 -.->|"«include»"| UC9
-    UC8 -.->|"«include»"| UC1
-    UC8 -.->|"«include»"| UC2
-    UC4 -.->|"«extend»"| UC6
-
-    style SYS fill:#f0f9ff,stroke:#0284c7
-```
+![](figures/fig-ch4-01.png)
 
 Ba quan hệ trên sơ đồ đáng được giải thích:
 
@@ -2627,60 +2404,7 @@ Ràng buộc thứ tư đáng lưu ý ở cách phát biểu. Nó **không** nó
 
 Hệ thống được tổ chức thành năm tầng:
 
-```mermaid
-graph TB
-    subgraph L1["Tầng 1 — Trình bày (React + Vite + TypeScript)"]
-        UI1[Nhận dạng ảnh<br/>— trang chủ]
-        UI2[Nhận dạng video]
-        UI3[Lịch sử và tra cứu]
-    end
-
-    subgraph L2["Tầng 2 — Giao diện lập trình (FastAPI)"]
-        R1["POST /detect/image"]
-        R2["POST /detect/video"]
-        R3["POST /detect/frame"]
-        R4["GET /jobs/{id}"]
-        R5["GET /history"]
-        R6["GET /statistics"]
-        R7["GET /health"]
-    end
-
-    subgraph L3["Tầng 3 — Nghiệp vụ (Services)"]
-        S1[DetectionService]
-        S2[HistoryService]
-        S3[StatisticsService]
-        S4[StorageService]
-    end
-
-    subgraph L4["Tầng 4 — AI (thuần Python, độc lập)"]
-        A4[ALPRPipeline<br/>điều phối]
-        A1[PlateDetector]
-        A2[PlateRecognizer]
-        A3[PlateNormalizer]
-    end
-
-    subgraph L5["Tầng 5 — Dữ liệu"]
-        D2[Repository<br/>SQLAlchemy]
-        D1[(SQLite)]
-        D3[Kho tệp<br/>ảnh và video]
-    end
-
-    L1 -->|"HTTP / JSON"| L2
-    L2 --> L3
-    S1 --> A4
-    A4 --> A1
-    A4 --> A2
-    A4 --> A3
-    S1 --> D2
-    S2 --> D2
-    S3 --> D2
-    D2 --> D1
-    S4 --> D3
-
-    style L4 fill:#fef3c7,stroke:#d97706,stroke-width:3px
-    style L3 fill:#dbeafe,stroke:#2563eb
-    style L5 fill:#dcfce7,stroke:#16a34a
-```
+![](figures/fig-ch4-02.png)
 
 > **Ghi chú thay đổi phạm vi 2026-07-20 (hai đợt trong ngày):** tầng trình bày còn **ba trang** — trang Webcam thời gian thực và trang Tổng quan (Dashboard) đều đã được gỡ khỏi giao diện. **Tầng 2 đến tầng 5 không đổi một dòng nào:** `POST /detect/frame`, `GET /statistics` và `GET /health` vẫn giữ nguyên ở tầng 2, `StatisticsService` vẫn giữ nguyên ở tầng 3, và cả ba endpoint đều vẫn có kiểm thử tích hợp. Chúng nay phục vụ client gọi API trực tiếp thay vì phục vụ một trang giao diện. Sự kiện này là một phép thử ngoài dự kiến cho nguyên tắc phụ thuộc một chiều của kiến trúc: gỡ hai màn hình ở tầng trên cùng không gây một thay đổi nào ở bốn tầng dưới.
 
@@ -2769,41 +2493,7 @@ Một hệ quả phụ đáng giá của phép kiểm tra động: nó cũng đo
 
 Sơ đồ dưới đây mô tả luồng xử lý bên trong tầng AI cho một ảnh hoặc một khung hình đầu vào:
 
-```mermaid
-flowchart TB
-    IN["Ảnh / khung hình<br/>(mảng NumPy)"] --> PRE["Tiền xử lý:<br/>thay đổi kích thước, chuẩn hoá"]
-    PRE --> DET["Bộ phát hiện<br/>trả về danh sách bounding box"]
-    DET --> Q{"Có<br/>biển số?"}
-    Q -->|"Không"| EMPTY["Trả kết quả rỗng<br/>(hợp lệ, không phải lỗi)"]
-    Q -->|"Có"| LOOP["Lặp qua từng bounding box"]
-    LOOP --> CROP["Cắt vùng biển số<br/>+ hiệu chỉnh hình học"]
-    CROP --> LINE{"Xác định số dòng<br/>theo tỉ lệ khung"}
-
-    LINE -->|"AR ≈ 4,7 → 1 dòng"| OCR1["Nhận dạng<br/>toàn bộ vùng"]
-    LINE -->|"AR ≈ 2,0 hoặc 1,36 → 2 dòng"| SPLIT["Tách vùng thành<br/>nửa trên / nửa dưới"]
-    SPLIT --> OCR2A["Nhận dạng nửa trên"]
-    SPLIT --> OCR2B["Nhận dạng nửa dưới"]
-    OCR2A --> MERGE["Ghép hai kết quả<br/>theo thứ tự trên → dưới"]
-    OCR2B --> MERGE
-
-    OCR1 --> RAW["Chuỗi OCR thô<br/>+ độ tin cậy OCR"]
-    MERGE --> RAW
-    RAW --> NORM["Chuẩn hoá THEO VỊ TRÍ:<br/>bỏ ký tự phân cách,<br/>sửa nhầm lẫn theo hướng phụ thuộc vị trí<br/>(vị trí chữ số: O→0, I→1, B→8, S→5, Z→2;<br/>vị trí chữ cái: 0→D, 1→T, 8→B)"]
-    NORM --> VAL{"Khớp định dạng<br/>biển số Việt Nam?"}
-    VAL -->|"Có"| OK["is_valid_format = true"]
-    VAL -->|"Không"| WARN["is_valid_format = false<br/>VẪN GIỮ LẠI bản ghi"]
-    OK --> OUT["Kết quả cho một biển số"]
-    WARN --> OUT
-    OUT --> NEXT{"Còn bounding box?"}
-    NEXT -->|"Có"| LOOP
-    NEXT -->|"Không"| DONE["Danh sách kết quả<br/>trả về tầng nghiệp vụ"]
-
-    style SPLIT fill:#fecaca,stroke:#dc2626,stroke-width:2px
-    style OCR2A fill:#fecaca,stroke:#dc2626
-    style OCR2B fill:#fecaca,stroke:#dc2626
-    style MERGE fill:#fecaca,stroke:#dc2626
-    style LINE fill:#fed7aa,stroke:#ea580c,stroke-width:2px
-```
+![](figures/fig-ch4-03.png)
 
 #### a) Nhánh xử lý biển hai dòng
 
@@ -2869,108 +2559,7 @@ Toàn bộ các quyết định kiến trúc của hệ thống được ghi l�
 
 Tầng AI được tổ chức quanh ba lớp trừu tượng, mỗi lớp tương ứng một giai đoạn của pipeline, cùng một tập kiểu dữ liệu bất biến dùng để truyền thông tin giữa các giai đoạn.
 
-```mermaid
-classDiagram
-    class BoundingBox {
-        <<frozen dataclass>>
-        +int x
-        +int y
-        +int width
-        +int height
-        +int x2
-        +int y2
-        +float aspect_ratio
-        +int area
-        +to_xyxy() tuple
-        +from_xyxy(x1,y1,x2,y2) BoundingBox$
-    }
-
-    class PlateDetection {
-        <<frozen dataclass>>
-        +BoundingBox box
-        +float confidence
-    }
-
-    class PlateRecognition {
-        <<frozen dataclass>>
-        +str raw_text
-        +str normalized_text
-        +float confidence
-        +bool is_valid_format
-        +int line_count
-    }
-
-    class DetectionResult {
-        <<dataclass>>
-        +PlateDetection detection
-        +PlateRecognition recognition
-        +ndarray plate_image
-        +bool has_text
-    }
-
-    class PipelineResult {
-        <<dataclass>>
-        +list~DetectionResult~ results
-        +float processing_time
-        +int plate_count
-        +int recognized_count
-    }
-
-    class BaseDetector {
-        <<abstract>>
-        +str name
-        +detect(image) list~PlateDetection~*
-        +warmup() void
-    }
-
-    class BaseRecognizer {
-        <<abstract>>
-        +str name
-        +recognize(plate_image) PlateRecognition*
-        +warmup() void
-    }
-
-    class BaseNormalizer {
-        <<abstract>>
-        +normalize(raw_text) tuple~str,bool~*
-    }
-
-    class ALPRPipeline {
-        -BaseDetector detector
-        -BaseRecognizer recognizer
-        -BaseNormalizer normalizer
-        +str name
-        +bool is_ready
-        +process(image) PipelineResult
-        +warmup() void
-    }
-
-    class YoloPlateDetector {
-        +detect(image) list~PlateDetection~
-    }
-
-    class PaddlePlateRecognizer {
-        +recognize(plate_image) PlateRecognition
-    }
-
-    class VietnamPlateNormalizer {
-        +normalize(raw_text) tuple~str,bool~
-    }
-
-    BaseDetector <|-- YoloPlateDetector
-    BaseRecognizer <|-- PaddlePlateRecognizer
-    BaseNormalizer <|-- VietnamPlateNormalizer
-
-    ALPRPipeline o-- BaseDetector
-    ALPRPipeline o-- BaseRecognizer
-    ALPRPipeline o-- BaseNormalizer
-
-    PlateDetection *-- BoundingBox
-    DetectionResult *-- PlateDetection
-    DetectionResult *-- PlateRecognition
-    PipelineResult o-- DetectionResult
-    ALPRPipeline ..> PipelineResult : tạo ra
-```
+![](figures/fig-ch4-04.png)
 
 #### a) Các lớp trừu tượng
 
@@ -3019,19 +2608,7 @@ Giao thức này được thoả mãn đồng thời bởi ba cài đặt: `ALPR
 
 `DetectionService` chịu trách nhiệm cho toàn bộ vòng đời tác vụ video, gồm các chuyển trạng thái:
 
-```mermaid
-stateDiagram-v2
-    [*] --> pending : nhận tệp, trả 202
-    pending --> processing : tác vụ nền tiếp nhận
-    processing --> processing : cập nhật tiến độ mỗi khung
-    processing --> completed : duyệt hết khung hình
-    processing --> failed : lỗi không phục hồi được
-    processing --> cancelled : người dùng huỷ
-    pending --> cancelled : huỷ trước khi bắt đầu
-    completed --> [*]
-    failed --> [*]
-    cancelled --> [*]
-```
+![](figures/fig-ch4-05.png)
 
 Trạng thái `pending` được giữ tách biệt với `processing` một cách có chủ đích. Vì lời gọi tải video trả về ngay lập tức, sẽ có một khoảng thời gian mà tác vụ đã được ghi nhận nhưng tác vụ nền chưa kịp tiếp nhận. Nếu gộp hai trạng thái làm một, sẽ không phân biệt được một tác vụ *đang xếp hàng* với một tác vụ *đã treo*.
 
@@ -3090,97 +2667,13 @@ Cần nói rõ phạm vi của việc xác minh này: nó chứng minh **hợp �
 
 #### a) Nhận dạng từ ảnh
 
-```mermaid
-sequenceDiagram
-    autonumber
-    actor U as Người dùng
-    participant FE as Giao diện web
-    participant API as Tầng API
-    participant SVC as DetectionService
-    participant ST as StorageService
-    participant AI as Pipeline AI
-    participant DB as CSDL
-
-    U->>FE: Chọn ảnh và bấm nhận dạng
-    FE->>FE: Kiểm tra sơ bộ, hiện ảnh xem trước
-    FE->>API: POST /api/detect/image (multipart)
-    API->>API: Kiểm tra magic bytes + hạn mức kích thước
-
-    alt Đầu vào không hợp lệ
-        API-->>FE: 400 / 413 — thông báo lỗi tiếng Việt
-        FE->>U: Hiển thị thông báo, giữ nguyên ảnh đã chọn
-    else Đầu vào hợp lệ
-        API->>SVC: detect_image(bytes)
-        SVC->>DB: Tạo DetectionJob (input_type = image)
-        SVC->>ST: Lưu ảnh gốc (tên sinh từ UUID)
-        ST-->>SVC: Đường dẫn ảnh gốc
-        SVC->>SVC: Giải mã ảnh thành mảng NumPy
-        SVC->>AI: process(image)
-
-        loop Mỗi bounding box phát hiện được
-            AI->>AI: Cắt vùng → xác định số dòng → OCR → chuẩn hoá
-        end
-
-        AI-->>SVC: PipelineResult
-        SVC->>ST: Lưu từng ảnh biển số đã cắt
-        SVC->>DB: Ghi N bản ghi DetectionHistory (cùng source_job_id)
-        SVC->>DB: Cập nhật tác vụ sang trạng thái completed
-        SVC-->>API: Đối tượng kết quả
-        API-->>FE: 200 — JSON kết quả
-        FE->>U: Vẽ bounding box, hiện bảng biển số và thời gian xử lý
-    end
-```
+![](figures/fig-ch4-06.png)
 
 Điểm cần chú ý ở bước ghi cơ sở dữ liệu: N bản ghi biển số đều mang cùng một `source_job_id`. Lý do và hậu quả của việc thiếu trường này được phân tích tại mục 4.4.3(c).
 
 #### b) Nhận dạng video bất đồng bộ
 
-```mermaid
-sequenceDiagram
-    autonumber
-    actor U as Người dùng
-    participant FE as Giao diện web
-    participant API as Tầng API
-    participant SVC as DetectionService
-    participant BG as Tác vụ nền
-    participant AI as Pipeline AI
-    participant DB as CSDL
-
-    U->>FE: Chọn video và bấm tải lên
-    FE->>API: POST /api/detect/video (multipart)
-    API->>API: Kiểm tra định dạng và kích thước
-    API->>SVC: create_video_job(bytes)
-    SVC->>DB: Tạo DetectionJob (status = pending)
-    SVC-->>API: job_id
-    API->>BG: Đưa công việc vào hàng đợi nền
-    API-->>FE: 202 Accepted — { job_id, status: pending }
-    FE->>U: Hiện thanh tiến độ ở 0%
-
-    BG->>DB: Chuyển trạng thái sang processing
-    BG->>BG: Mở video, xác định tổng số khung hình
-
-    loop Mỗi khung hình được lấy mẫu
-        BG->>AI: process(frame)
-        AI-->>BG: Kết quả của khung hình
-        BG->>BG: Gộp trùng theo chuỗi biển số
-        BG->>DB: Cập nhật processed_frames và progress
-        BG->>DB: Kiểm tra cờ huỷ
-    end
-
-    BG->>BG: Kết xuất video có vẽ bounding box và nhãn
-    BG->>DB: Ghi các kết quả đã gộp trùng
-    BG->>DB: Chuyển trạng thái sang completed, đặt completed_at
-
-    loop Hỏi tiến độ định kỳ
-        FE->>API: GET /api/jobs/{job_id}
-        API-->>FE: { status, progress, processed_frames }
-        FE->>U: Cập nhật thanh tiến độ
-    end
-
-    FE->>API: GET /api/jobs/{job_id}
-    API-->>FE: { status: completed, output_url }
-    FE->>U: Hiện kết quả và liên kết tải video
-```
+![](figures/fig-ch4-07.png)
 
 Vòng lặp hỏi tiến độ ở phía giao diện chạy độc lập với vòng lặp xử lý ở tác vụ nền — hai bên chỉ giao tiếp gián tiếp qua bản ghi tác vụ trong cơ sở dữ liệu. Việc kiểm tra cờ huỷ được đặt bên trong vòng lặp xử lý để yêu cầu huỷ có hiệu lực trong vòng vài khung hình thay vì phải chờ hết video.
 
@@ -3188,43 +2681,7 @@ Vòng lặp hỏi tiến độ ở phía giao diện chạy độc lập với v
 
 > Sơ đồ dưới đây mô tả luồng thời gian thực với một **client gọi API** (từ 2026-07-20, trang Webcam đã gỡ khỏi giao diện web; trang đó trước đây chính là client trong sơ đồ). Toàn bộ phần phía máy chủ — tầng API, service, pipeline và CSDL — giữ nguyên.
 
-```mermaid
-sequenceDiagram
-    autonumber
-    participant RT as Client thời gian thực
-    participant API as Tầng API
-    participant SVC as DetectionService
-    participant AI as Pipeline AI
-    participant DB as CSDL
-
-    Note over RT: Trách nhiệm phía client — hàng đợi một khe:<br/>bỏ khung mới nếu khung trước chưa có kết quả
-
-    RT->>RT: Mở nguồn thu hình, chụp khung đầu tiên, mã hoá JPEG
-    RT->>API: POST /api/detect/frame (không kèm job_id)
-    API->>SVC: detect_frame(bytes, job_id = None)
-    SVC->>DB: Tạo DetectionJob (input_type = webcam)
-    SVC->>AI: process(frame)
-    AI-->>SVC: PipelineResult
-    SVC->>DB: Ghi bản ghi biển số
-    SVC-->>API: Kết quả kèm job_id
-    API-->>RT: 200 — { results, job_id }
-    RT->>RT: Ghi nhớ job_id cho cả phiên
-
-    loop Mỗi chu kỳ chụp, đến khi client kết thúc phiên
-        RT->>RT: Nếu còn khung đang chờ kết quả → bỏ khung này
-        RT->>API: POST /api/detect/frame (kèm job_id của phiên)
-        API->>SVC: detect_frame(bytes, job_id)
-        SVC->>DB: Gắn vào tác vụ đang chạy, tăng processed_frames
-        SVC->>AI: process(frame)
-        AI-->>SVC: PipelineResult
-        SVC->>SVC: Gộp trùng trong phạm vi phiên
-        SVC-->>API: Kết quả
-        API-->>RT: 200
-        RT->>RT: Sử dụng kết quả theo nhu cầu (hiển thị, cảnh báo, ghi log…)
-    end
-
-    RT->>RT: Đóng nguồn thu hình, kết thúc phiên
-```
+![](figures/fig-ch4-08.png)
 
 *Ghi chú:* trước ngày 2026-07-20, client trong sơ đồ này chính là trang Webcam của giao diện web; nay giao diện không còn trang đó, nên sơ đồ mô tả **hợp đồng tương tác cho một client bất kỳ** gọi `POST /api/detect/frame`.
 
@@ -3238,45 +2695,7 @@ Ba chi tiết thiết kế thể hiện trên sơ đồ này. Thứ nhất, **h�
 
 Mô hình dữ liệu gồm hai thực thể có quan hệ một–nhiều:
 
-```mermaid
-erDiagram
-    DETECTION_JOB {
-        string id PK "UUID"
-        string input_type "image / video / webcam"
-        string status "pending → processing → completed / failed / cancelled"
-        float progress "0.0 … 1.0"
-        string source_path "đường dẫn tệp đầu vào"
-        string output_path "đường dẫn kết quả có gắn nhãn"
-        string error_message "chỉ dùng nội bộ"
-        int total_frames "video: tổng số khung"
-        int processed_frames "số khung đã xử lý"
-        datetime created_at
-        datetime completed_at
-    }
-
-    DETECTION_HISTORY {
-        int id PK "tự tăng"
-        string plate_number "chuỗi ĐÃ chuẩn hoá — nullable"
-        string raw_ocr_text "chuỗi OCR THÔ — nullable"
-        float confidence "độ tin cậy PHÁT HIỆN — bắt buộc"
-        float ocr_confidence "độ tin cậy OCR — nullable"
-        string input_type "khử chuẩn hoá từ tác vụ cha"
-        string image_path "ảnh nguồn — nullable"
-        string plate_image_path "ảnh biển số đã cắt — nullable"
-        int bbox_x "toạ độ — bắt buộc"
-        int bbox_y "toạ độ — bắt buộc"
-        int bbox_w "chiều rộng — bắt buộc, > 0"
-        int bbox_h "chiều cao — bắt buộc, > 0"
-        bool is_valid_format "khớp định dạng VN"
-        int plate_line_count "1 hoặc 2 — nullable"
-        float processing_time "giây"
-        datetime detected_time
-        datetime created_at
-        string source_job_id FK "BẮT BUỘC"
-    }
-
-    DETECTION_JOB ||--o{ DETECTION_HISTORY : "sinh ra 0..N biển số"
-```
+![](figures/fig-ch4-09.png)
 
 Quan hệ được đọc như sau: **một lần sử dụng hệ thống** (một ảnh tải lên, một video, hoặc một phiên webcam) là một bản ghi `DetectionJob`; **mỗi biển số tìm thấy trong lần đó** là một bản ghi `DetectionHistory`. Số bản ghi con có thể bằng không (ảnh không có biển số nào), bằng một, hoặc nhiều.
 
@@ -3473,24 +2892,7 @@ Cuối cùng, việc giữ lại các trường hợp thất bại còn mang gi�
 
 Giao diện được xây dựng dưới dạng ứng dụng một trang (Single Page Application) với **ba màn hình** chính, chia sẻ chung một khung bố cục gồm thanh điều hướng và vùng nội dung:
 
-```mermaid
-graph LR
-    ROOT["Khung bố cục<br/>(thanh điều hướng + vùng nội dung)"]
-
-    ROOT --> P1["/<br/>Nhận dạng ảnh (trang chủ)"]
-    ROOT --> P2["/video<br/>Nhận dạng video"]
-    ROOT --> P3["/history<br/>Lịch sử và tra cứu"]
-
-    P3 -.->|"bấm vào một dòng"| M1["Hộp thoại chi tiết<br/>bản ghi"]
-    P3 -.->|"bấm nút xoá"| M2["Hộp thoại<br/>xác nhận xoá"]
-    P2 -.->|"tác vụ hoàn tất"| P3
-
-    ANY["Đường dẫn không hợp lệ"] -->|"chuyển hướng"| P1
-
-    style ROOT fill:#e0e7ff,stroke:#4f46e5
-    style M1 fill:#fef9c3,stroke:#ca8a04
-    style M2 fill:#fef9c3,stroke:#ca8a04
-```
+![](figures/fig-ch4-10.png)
 
 > **Ghi chú thay đổi phạm vi 2026-07-20 — hai đợt liên tiếp trong cùng một ngày.** Thiết kế ban đầu có **năm màn hình** và Dashboard là trang chủ. Đợt thứ nhất gỡ màn hình Webcam (`/webcam`) và chuyển trang chủ sang **Nhận dạng ảnh**; đợt thứ hai gỡ tiếp màn hình **Tổng quan / Dashboard** (`/dashboard`). Cả hai đợt đều nhằm thu gọn phạm vi demo, và cả hai đều **không** gỡ năng lực nào ở tầng dưới: `POST /api/detect/frame`, `GET /api/statistics` và `GET /health` vẫn phục vụ và vẫn có kiểm thử tích hợp. Hệ quả về yêu cầu: FR-3.1/FR-3.4 chuyển M → W ở đợt 1, **FR-4.1 chuyển M → W** và FR-4.2 chuyển S → W ở đợt 2 — xem khung ghi chú ở mục 4.1.3(a) về việc đây là yêu cầu mức Must đầu tiên bị đưa ra khỏi phạm vi. Mã giao diện của cả hai màn hình còn nguyên trong lịch sử git.
 
@@ -3691,18 +3093,7 @@ Việc `Dockerfile` dùng Python 3.12 trong khi máy local dùng 3.13 là **ch�
 
 Bộ dữ liệu được xây dựng bằng một đường ống gồm sáu bước, mỗi bước là một script độc lập trong `scripts/dataset/`, có thể chạy riêng và đều sinh báo cáo JSON/CSV:
 
-```mermaid
-flowchart LR
-    A["download.py<br/>tải 9 bộ dữ liệu"] --> B["verify_annotations.py<br/>kiểm tra nhãn"]
-    B --> C["deduplicate.py<br/>khử trùng lặp phash"]
-    C --> D["merge.py<br/>gộp về một lược đồ"]
-    D --> E["split.py<br/>chia train/val/test"]
-    E --> F["statistics.py<br/>thống kê + biểu đồ"]
-    E --> G["verify_split_leakage.py<br/>kiểm tra rò rỉ"]
-
-    style C fill:#fef9c3,stroke:#ca8a04
-    style G fill:#fef2f2,stroke:#dc2626
-```
+![](figures/fig-ch5-01.png)
 
 Toàn bộ đường ống chạy được bằng một lệnh qua `run_pipeline.py`, nhưng mỗi bước vẫn giữ giao diện dòng lệnh riêng — điều này quan trọng vì bước khử trùng lặp cần chạy lại nhiều lần với các ngưỡng khác nhau để khảo sát (mục 5.2.3).
 
@@ -4071,20 +3462,7 @@ Một ràng buộc thứ hai được kiểm chứng cùng cách là NFR-M4 — 
 
 Toàn bộ khả năng thay thế thành phần của hệ thống nằm ở ba lớp cơ sở trừu tượng trong `interfaces.py`:
 
-```mermaid
-graph LR
-    A["ALPRPipeline"] --> B["BaseDetector<br/><i>where are the plates?</i>"]
-    A --> C["BaseRecognizer<br/><i>what characters?</i>"]
-    A --> D["BaseNormalizer<br/><i>correct + validate</i>"]
-    B -.-> B1["YoloPlateDetector"]
-    C -.-> C1["PaddleOcrRecognizer"]
-    D -.-> D1["VietnamesePlateNormalizer"]
-
-    style A fill:#e0f2fe,stroke:#0284c7
-    style B fill:#f0fdf4,stroke:#16a34a
-    style C fill:#f0fdf4,stroke:#16a34a
-    style D fill:#f0fdf4,stroke:#16a34a
-```
+![](figures/fig-ch5-02.png)
 
 **`BaseDetector`** trả lời đúng một câu hỏi — *biển số nằm ở đâu?* — và không làm gì khác. Nó không đọc ký tự và không chạm vào hệ thống tệp ngoài việc nạp trọng số của chính nó. Hợp đồng của phương thức `detect(image) -> list[PlateDetection]` quy định ba điều kiện mà mọi cài đặt phải bảo đảm: kết quả đã được lọc theo ngưỡng tin cậy và NMS; mọi hộp bao đã được **kẹp về trong biên ảnh** để có thể dùng trực tiếp để cắt; và **danh sách rỗng là kết quả bình thường**, không bao giờ là lỗi. Điều kiện thứ ba đáng chú ý — nó buộc mọi tầng phía trên phải xử lý trường hợp "ảnh không có biển số" như một kết quả hợp lệ, thay vì như một ngoại lệ.
 
@@ -4471,26 +3849,7 @@ Một quy tắc an toàn thứ hai: **ký tự không có mục trong bảng áp
 
 `VietnamesePlateNormalizer.normalize_detailed` thực hiện luồng sau:
 
-```mermaid
-flowchart TD
-    A["Chuỗi OCR thô"] --> B["clean_text: gập Đ→D,<br/>viết hoa, xoá mọi dấu phân cách"]
-    B --> C{"Rỗng?"}
-    C -->|Có| Z1["Trả về: không hợp lệ"]
-    C -->|Không| D{"Đã khớp một mẫu<br/>dân sự sẵn?"}
-    D -->|Có| Z2["Hợp lệ — TRẢ NGUYÊN,<br/>không sửa gì"]
-    D -->|Không| E{"Độ dài trong 7..9?"}
-    E -->|Không| Z3["Thất bại có kiểm soát,<br/>vẫn trả về chuỗi"]
-    E -->|Có| F["Áp mặt nạ vị trí<br/>(bỏ qua ký tự ?)"]
-    F --> G{"Khớp mẫu<br/>sau khi sửa?"}
-    G -->|Có| Z4["Hợp lệ — ghi log<br/>danh sách ký tự đã sửa"]
-    G -->|Không| Z5["Thất bại có kiểm soát,<br/>vẫn trả về chuỗi"]
-
-    style Z2 fill:#f0fdf4,stroke:#16a34a
-    style Z4 fill:#f0fdf4,stroke:#16a34a
-    style Z1 fill:#fef2f2,stroke:#dc2626
-    style Z3 fill:#fef2f2,stroke:#dc2626
-    style Z5 fill:#fef2f2,stroke:#dc2626
-```
+![](figures/fig-ch5-03.png)
 
 Ba nguyên tắc vận hành mang tính chịu lực:
 
@@ -4701,20 +4060,7 @@ Ba điều phải nói kèm để con số này không bị đọc rộng hơn s
 
 Backend gồm 21 mô-đun Python (không kể tám tệp `__init__.py`), trong đó 19 mô-đun ứng dụng và 2 tệp thuộc Alembic, được tổ chức thành năm tầng, với **luồng phụ thuộc một chiều nghiêm ngặt**:
 
-```mermaid
-graph TD
-    R["api/routes/<br/>detection · health · history · statistics"] --> D["api/deps.py<br/>tiêm phụ thuộc"]
-    D --> S["services/<br/>detection · history · statistics · storage"]
-    S --> RE["repositories/<br/>base · detection · job"]
-    RE --> M["models/<br/>database · detection (ORM)"]
-    S --> AI["ai.inference<br/>(gói ngoài)"]
-    S --> SC["schemas/<br/>Pydantic vào–ra"]
-    R --> SC
-    C["core/<br/>config · logging · exceptions"] -.->|"mọi tầng dùng"| S
-
-    style AI fill:#f0fdf4,stroke:#16a34a
-    style C fill:#fef9c3,stroke:#ca8a04
-```
+![](figures/fig-ch5-04.png)
 
 Ba quy tắc phân tầng được cài đặt và kiểm chứng:
 
@@ -4732,46 +4078,7 @@ Ngoài ra `MAX_PAGE_SIZE = 200` chặn cứng `?page_size=1000000` — nếu kh�
 
 Lược đồ gồm hai bảng với quan hệ một–nhiều:
 
-```mermaid
-erDiagram
-    DETECTION_JOB ||--o{ DETECTION_HISTORY : "chứa"
-    DETECTION_JOB {
-        string id PK "UUID"
-        string input_type "image|video|webcam"
-        string status "pending|processing|completed|failed|cancelled"
-        float progress "0.0..1.0"
-        string source_path
-        string output_path
-        text error_message "chỉ phía máy chủ"
-        int total_frames
-        int processed_frames
-        datetime created_at
-        datetime completed_at
-    }
-    DETECTION_HISTORY {
-        int id PK
-        string plate_number "đã chuẩn hoá"
-        string raw_ocr_text "thô, chưa sửa"
-        float confidence "của BỘ PHÁT HIỆN"
-        float ocr_confidence "của OCR"
-        string input_type "phi chuẩn hoá"
-        string image_path
-        string plate_image_path
-        int bbox_x
-        int bbox_y
-        int bbox_w
-        int bbox_h
-        bool is_valid_format
-        int plate_line_count "1 hoặc 2"
-        string plate_kind "họ biển, cho phép NULL"
-        string plate_color "màu nền, cho phép NULL"
-        float plate_color_confidence "cho phép NULL"
-        float processing_time
-        datetime detected_time
-        datetime created_at
-        string source_job_id FK
-    }
-```
+![](figures/fig-ch5-05.png)
 
 Trạng thái đã kiểm chứng bằng Alembic: bảng `detection_history` có **21 cột** (18 cột ban đầu cộng ba cột do di trú `0002_plate_kind_and_color` bổ sung, trình bày ở cuối mục này), bảng `detection_job` có **11 cột**.
 
@@ -5229,18 +4536,7 @@ Việc đóng gói phục vụ NFR-C1: môi trường chạy phải tái lập �
 
 ### 5.8.1. `Dockerfile.backend` — build hai giai đoạn
 
-```mermaid
-graph LR
-    A["builder<br/>python:3.12-slim-bookworm"] -->|"COPY /opt/venv"| B["runtime<br/>python:3.12-slim-bookworm"]
-    A1["requirements.txt<br/>(web + CSDL)"] --> A
-    A2["requirements-inference.txt<br/>(torch, ultralytics, paddleocr)"] --> A
-    B --> B1["USER appuser<br/>(không phải root)"]
-    B --> B2["HEALTHCHECK /health"]
-    B --> B3["uvicorn backend.main:app"]
-
-    style A fill:#e0f2fe,stroke:#0284c7
-    style B fill:#f0fdf4,stroke:#16a34a
-```
+![](figures/fig-ch5-06.png)
 
 Bốn điểm cài đặt đáng ghi nhận:
 
@@ -5438,32 +4734,7 @@ Nguyên tắc 2 kéo theo một quy tắc trích dẫn:
 
 Sơ đồ dưới mô tả trình tự đo và ràng buộc phụ thuộc giữa các bước. Điểm cần chú ý: **không bước đo nào được phép chạy trước khi trọng số chính thức được đóng băng**, và **tập test không được chạm vào trong suốt quá trình huấn luyện và chọn epoch** — việc chọn epoch tốt nhất chỉ dựa vào tập validation.
 
-```mermaid
-flowchart TD
-    A["Bộ dữ liệu v3<br/>15.133 ảnh, 6 nguồn nguyên tố"] --> B["Chia split<br/>train 10.592 / val 3.027 / test 1.514"]
-    B --> C["Huấn luyện YOLO11n<br/>imgsz=640, 20 epoch, CPU"]
-    C --> D{"Chọn epoch tốt nhất<br/><b>chỉ theo tập val</b>"}
-    D --> E["Đóng băng trọng số<br/>models/best.pt"]
-
-    B -.->|"tập test — niêm phong"| F
-
-    E --> F["5.5 — Đánh giá phát hiện<br/>mAP, P, R, F1"]
-    E --> G["5.6 — Đánh giá OCR<br/>CER, chuỗi trước/sau hậu xử lý"]
-    E --> H["5.7 — Đánh giá hiệu năng<br/>độ trễ, FPS, bộ nhớ"]
-
-    F --> I["5.8 — So sánh<br/>baseline 416 ↔ chính thức 640"]
-    G --> J["6.5.4 — Ma trận nhầm lẫn 36×36<br/>→ hiệu chỉnh bảng luật sửa lỗi"]
-    H --> K["6.6.2 — Phân rã ngân sách độ trễ<br/>→ xác định nút thắt"]
-
-    F --> L["5.9 — Bảng đối chiếu<br/>toàn bộ chỉ tiêu NFR"]
-    G --> L
-    H --> L
-    I --> L
-
-    style E fill:#e8f4ff,stroke:#2b6cb0,stroke-width:2px
-    style L fill:#fff4e6,stroke:#c05621,stroke-width:2px
-    style J fill:#f0fff4,stroke:#276749,stroke-width:2px
-```
+![](figures/fig-ch6-01.png)
 
 *Hình 6.1. Giao thức đo và ràng buộc phụ thuộc giữa các bước đánh giá.*
 

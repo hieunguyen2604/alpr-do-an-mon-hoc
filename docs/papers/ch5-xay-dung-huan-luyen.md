@@ -88,18 +88,7 @@ Việc `Dockerfile` dùng Python 3.12 trong khi máy local dùng 3.13 là **ch�
 
 Bộ dữ liệu được xây dựng bằng một đường ống gồm sáu bước, mỗi bước là một script độc lập trong `scripts/dataset/`, có thể chạy riêng và đều sinh báo cáo JSON/CSV:
 
-```mermaid
-flowchart LR
-    A["download.py<br/>tải 9 bộ dữ liệu"] --> B["verify_annotations.py<br/>kiểm tra nhãn"]
-    B --> C["deduplicate.py<br/>khử trùng lặp phash"]
-    C --> D["merge.py<br/>gộp về một lược đồ"]
-    D --> E["split.py<br/>chia train/val/test"]
-    E --> F["statistics.py<br/>thống kê + biểu đồ"]
-    E --> G["verify_split_leakage.py<br/>kiểm tra rò rỉ"]
-
-    style C fill:#fef9c3,stroke:#ca8a04
-    style G fill:#fef2f2,stroke:#dc2626
-```
+![](figures/fig-ch5-01.png)
 
 Toàn bộ đường ống chạy được bằng một lệnh qua `run_pipeline.py`, nhưng mỗi bước vẫn giữ giao diện dòng lệnh riêng — điều này quan trọng vì bước khử trùng lặp cần chạy lại nhiều lần với các ngưỡng khác nhau để khảo sát (mục 5.2.3).
 
@@ -468,20 +457,7 @@ Một ràng buộc thứ hai được kiểm chứng cùng cách là NFR-M4 — 
 
 Toàn bộ khả năng thay thế thành phần của hệ thống nằm ở ba lớp cơ sở trừu tượng trong `interfaces.py`:
 
-```mermaid
-graph LR
-    A["ALPRPipeline"] --> B["BaseDetector<br/><i>where are the plates?</i>"]
-    A --> C["BaseRecognizer<br/><i>what characters?</i>"]
-    A --> D["BaseNormalizer<br/><i>correct + validate</i>"]
-    B -.-> B1["YoloPlateDetector"]
-    C -.-> C1["PaddleOcrRecognizer"]
-    D -.-> D1["VietnamesePlateNormalizer"]
-
-    style A fill:#e0f2fe,stroke:#0284c7
-    style B fill:#f0fdf4,stroke:#16a34a
-    style C fill:#f0fdf4,stroke:#16a34a
-    style D fill:#f0fdf4,stroke:#16a34a
-```
+![](figures/fig-ch5-02.png)
 
 **`BaseDetector`** trả lời đúng một câu hỏi — *biển số nằm ở đâu?* — và không làm gì khác. Nó không đọc ký tự và không chạm vào hệ thống tệp ngoài việc nạp trọng số của chính nó. Hợp đồng của phương thức `detect(image) -> list[PlateDetection]` quy định ba điều kiện mà mọi cài đặt phải bảo đảm: kết quả đã được lọc theo ngưỡng tin cậy và NMS; mọi hộp bao đã được **kẹp về trong biên ảnh** để có thể dùng trực tiếp để cắt; và **danh sách rỗng là kết quả bình thường**, không bao giờ là lỗi. Điều kiện thứ ba đáng chú ý — nó buộc mọi tầng phía trên phải xử lý trường hợp "ảnh không có biển số" như một kết quả hợp lệ, thay vì như một ngoại lệ.
 
@@ -868,26 +844,7 @@ Một quy tắc an toàn thứ hai: **ký tự không có mục trong bảng áp
 
 `VietnamesePlateNormalizer.normalize_detailed` thực hiện luồng sau:
 
-```mermaid
-flowchart TD
-    A["Chuỗi OCR thô"] --> B["clean_text: gập Đ→D,<br/>viết hoa, xoá mọi dấu phân cách"]
-    B --> C{"Rỗng?"}
-    C -->|Có| Z1["Trả về: không hợp lệ"]
-    C -->|Không| D{"Đã khớp một mẫu<br/>dân sự sẵn?"}
-    D -->|Có| Z2["Hợp lệ — TRẢ NGUYÊN,<br/>không sửa gì"]
-    D -->|Không| E{"Độ dài trong 7..9?"}
-    E -->|Không| Z3["Thất bại có kiểm soát,<br/>vẫn trả về chuỗi"]
-    E -->|Có| F["Áp mặt nạ vị trí<br/>(bỏ qua ký tự ?)"]
-    F --> G{"Khớp mẫu<br/>sau khi sửa?"}
-    G -->|Có| Z4["Hợp lệ — ghi log<br/>danh sách ký tự đã sửa"]
-    G -->|Không| Z5["Thất bại có kiểm soát,<br/>vẫn trả về chuỗi"]
-
-    style Z2 fill:#f0fdf4,stroke:#16a34a
-    style Z4 fill:#f0fdf4,stroke:#16a34a
-    style Z1 fill:#fef2f2,stroke:#dc2626
-    style Z3 fill:#fef2f2,stroke:#dc2626
-    style Z5 fill:#fef2f2,stroke:#dc2626
-```
+![](figures/fig-ch5-03.png)
 
 Ba nguyên tắc vận hành mang tính chịu lực:
 
@@ -1098,20 +1055,7 @@ Ba điều phải nói kèm để con số này không bị đọc rộng hơn s
 
 Backend gồm 21 mô-đun Python (không kể tám tệp `__init__.py`), trong đó 19 mô-đun ứng dụng và 2 tệp thuộc Alembic, được tổ chức thành năm tầng, với **luồng phụ thuộc một chiều nghiêm ngặt**:
 
-```mermaid
-graph TD
-    R["api/routes/<br/>detection · health · history · statistics"] --> D["api/deps.py<br/>tiêm phụ thuộc"]
-    D --> S["services/<br/>detection · history · statistics · storage"]
-    S --> RE["repositories/<br/>base · detection · job"]
-    RE --> M["models/<br/>database · detection (ORM)"]
-    S --> AI["ai.inference<br/>(gói ngoài)"]
-    S --> SC["schemas/<br/>Pydantic vào–ra"]
-    R --> SC
-    C["core/<br/>config · logging · exceptions"] -.->|"mọi tầng dùng"| S
-
-    style AI fill:#f0fdf4,stroke:#16a34a
-    style C fill:#fef9c3,stroke:#ca8a04
-```
+![](figures/fig-ch5-04.png)
 
 Ba quy tắc phân tầng được cài đặt và kiểm chứng:
 
@@ -1129,46 +1073,7 @@ Ngoài ra `MAX_PAGE_SIZE = 200` chặn cứng `?page_size=1000000` — nếu kh�
 
 Lược đồ gồm hai bảng với quan hệ một–nhiều:
 
-```mermaid
-erDiagram
-    DETECTION_JOB ||--o{ DETECTION_HISTORY : "chứa"
-    DETECTION_JOB {
-        string id PK "UUID"
-        string input_type "image|video|webcam"
-        string status "pending|processing|completed|failed|cancelled"
-        float progress "0.0..1.0"
-        string source_path
-        string output_path
-        text error_message "chỉ phía máy chủ"
-        int total_frames
-        int processed_frames
-        datetime created_at
-        datetime completed_at
-    }
-    DETECTION_HISTORY {
-        int id PK
-        string plate_number "đã chuẩn hoá"
-        string raw_ocr_text "thô, chưa sửa"
-        float confidence "của BỘ PHÁT HIỆN"
-        float ocr_confidence "của OCR"
-        string input_type "phi chuẩn hoá"
-        string image_path
-        string plate_image_path
-        int bbox_x
-        int bbox_y
-        int bbox_w
-        int bbox_h
-        bool is_valid_format
-        int plate_line_count "1 hoặc 2"
-        string plate_kind "họ biển, cho phép NULL"
-        string plate_color "màu nền, cho phép NULL"
-        float plate_color_confidence "cho phép NULL"
-        float processing_time
-        datetime detected_time
-        datetime created_at
-        string source_job_id FK
-    }
-```
+![](figures/fig-ch5-05.png)
 
 Trạng thái đã kiểm chứng bằng Alembic: bảng `detection_history` có **21 cột** (18 cột ban đầu cộng ba cột do di trú `0002_plate_kind_and_color` bổ sung, trình bày ở cuối mục này), bảng `detection_job` có **11 cột**.
 
@@ -1626,18 +1531,7 @@ Việc đóng gói phục vụ NFR-C1: môi trường chạy phải tái lập �
 
 ### 5.8.1. `Dockerfile.backend` — build hai giai đoạn
 
-```mermaid
-graph LR
-    A["builder<br/>python:3.12-slim-bookworm"] -->|"COPY /opt/venv"| B["runtime<br/>python:3.12-slim-bookworm"]
-    A1["requirements.txt<br/>(web + CSDL)"] --> A
-    A2["requirements-inference.txt<br/>(torch, ultralytics, paddleocr)"] --> A
-    B --> B1["USER appuser<br/>(không phải root)"]
-    B --> B2["HEALTHCHECK /health"]
-    B --> B3["uvicorn backend.main:app"]
-
-    style A fill:#e0f2fe,stroke:#0284c7
-    style B fill:#f0fdf4,stroke:#16a34a
-```
+![](figures/fig-ch5-06.png)
 
 Bốn điểm cài đặt đáng ghi nhận:
 
