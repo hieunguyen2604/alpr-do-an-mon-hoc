@@ -357,3 +357,21 @@ bằng nguyên ảnh, hệ thống **chạy** bằng cắt mảnh
 | **Model gốc** — bản giao hàng | **0,7512** | **17/22** |
 | Fine-tune, giữ bước dò chữ | 0,6762 | 14/22 |
 | Fine-tune, bỏ bước dò chữ | **0,8758** | 15/22 |
+
+## Vì sao PaddleOCR — và vì sao bản v5 mobile
+
+Lý do **kỹ thuật**, không phải độ chính xác — nhẹ hơn EasyOCR ~10 lần
+
+| | Chuỗi đúng | Trung vị |
+|---|---:|---:|
+| **PP-OCRv5_mobile** — đang dùng | 67,0% | **23,0 ms** |
+| PP-OCRv6_medium | **72,5%** | 386,9 ms |
+
+## v6 chính xác hơn — vì sao vẫn không đổi
+
+Gói không có bản **Tiny** — chỉ Medium, chậm **16,8 lần**. Ràng buộc **phần cứng**
+
+| Chỉ tiêu | Hiện tại | Nếu đổi sang v6 |
+|---|---:|---|
+| NFR-P1 p95 | 1.143 ms 🟡 | **vượt sàn** ❌ |
+| NFR-P2 FPS | 2,379 ❌ | tệ hơn |
