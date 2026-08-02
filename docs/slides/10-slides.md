@@ -77,7 +77,7 @@ Cùng hệ thống, cùng phép đo: **chênh 48,6 điểm** *(số liệu Brazi
 
 - Hệ thống ALPR **hoàn chỉnh**: AI · API · giao diện · CSDL · Docker
 - Xử lý **cả biển 1 dòng và 2 dòng**
-- Suy luận **hoàn toàn trên CPU** — mặc định, không phải dự phòng
+- Suy luận **trên CPU** — mặc định, không phải dự phòng
 - Chỉ tiêu chốt **trước** khi làm, mỗi chỉ tiêu hai mức
 
 **Ngoài phạm vi:** phân loại loại xe · tracking · barie · huấn luyện OCR từ đầu
@@ -103,7 +103,7 @@ Tỉ lệ đo thật lệch khỏi chuẩn nhưng vẫn đúng phía ngưỡng *
 
 ## Căn cứ pháp lý: một phát hiện
 
-> Đề bài dẫn **TT 24/2023/TT-BCA** — văn bản này **đã hết hiệu lực từ 01/01/2025**
+> Đề bài dẫn **TT 24/2023/TT-BCA** — **đã hết hiệu lực từ 01/01/2025**
 
 - **TT 79/2024/TT-BCA** — cấu trúc biển, seri, màu sắc
 - **TT 51/2025/TT-BCA** — thay phụ lục mã tỉnh, còn **34 tỉnh/thành**
@@ -178,7 +178,7 @@ Mọi vùng dữ liệu xử lý đủ **4 trạng thái**: chờ · rỗng · l
 ## Huấn luyện
 
 **YOLO11n**, `imgsz 640`, 20 epoch, seed cố định — huấn luyện **và** suy luận
-đều trên CPU, hết 10,1 giờ, không dùng GPU nào
+đều trên CPU, hết 10,1 giờ
 
 ![](figures/fig-training-curve.png)
 
@@ -239,7 +239,7 @@ Cả ba **ngoài** mô hình nhận dạng: **0,6098 → 0,7512**.
 
 ## Phân bố độ trễ — đuôi mới là chỗ tốn
 
-Phần lớn ảnh xong dưới nửa giây; đuôi phải là những ảnh phải thử lại nhiều lượt
+Phần lớn ảnh xong dưới nửa giây; đuôi phải là những ảnh thử lại nhiều lượt
 
 ![](../reports/figures/07-latency-distribution.png)
 
@@ -318,7 +318,7 @@ Ba tình huống, chạy trên máy thật — **không phải video quay sẵn*
 
 **Em xin cảm ơn thầy cô đã lắng nghe.**
 
-**Em xin sẵn sàng nhận câu hỏi.**
+**Em sẵn sàng nhận câu hỏi.**
 
 ## Tra nhanh số liệu
 

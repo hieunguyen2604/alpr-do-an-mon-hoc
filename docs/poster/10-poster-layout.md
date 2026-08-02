@@ -83,7 +83,7 @@
 ## 3. Quy định font size — bắt buộc đọc được từ 1,5 m
 
 Quy tắc kinh nghiệm: **chiều cao chữ tính bằng mm ≥ khoảng cách đọc tính bằng m × 5**.
-Với 1,5 m ⇒ tối thiểu **7,5 mm** chiều cao chữ ⇒ khoảng **21 pt**. Bảng dưới đã cộng biên an toàn.
+Với 1,5 m ⇒ tối thiểu **7,5 mm** ⇒ khoảng **21 pt**. Bảng dưới đã cộng biên an toàn.
 
 | Cấp | Dùng ở đâu | Cỡ **tối thiểu** | Cỡ **đề xuất** | Đọc được từ |
 |---|---|---:|---:|---|
@@ -96,12 +96,12 @@ Với 1,5 m ⇒ tối thiểu **7,5 mm** chiều cao chữ ⇒ khoảng **21 pt*
 | **T6 — Nhãn hình / chú thích** | Nhãn trong sơ đồ, caption | **22 pt** | 24 pt | 1,2 m |
 | **T7 — Nguồn trích dẫn** | Chân trang, nguồn dưới hình | **18 pt** | 20 pt | 0,8 m |
 
-> ⛔ **Không có chữ nào dưới 18 pt trên poster.** Nếu một nội dung buộc phải nhỏ hơn 18 pt mới vừa, đó là dấu hiệu nội dung đó **thừa** — cắt nó đi, đừng thu nhỏ.
+> ⛔ **Không có chữ nào dưới 18 pt trên poster.** Nội dung nào phải nhỏ hơn 18 pt mới vừa là nội dung **thừa** — cắt đi, đừng thu nhỏ.
 
 **Ràng buộc chữ thân**
 - Chiều dài dòng: **45–75 ký tự**. Cột trái 180 mm ở 32 pt ≈ 50 ký tự/dòng — đạt.
 - Giãn dòng: **1,4×** cỡ chữ.
-- Không viết đoạn văn quá **4 dòng**. Quá 4 dòng ⇒ chuyển thành gạch đầu dòng hoặc bảng.
+- Không viết đoạn văn quá **4 dòng** — quá thì chuyển thành gạch đầu dòng hoặc bảng.
 - **Không căn đều hai bên** (justify) — căn trái, để lề phải tự nhiên.
 
 **Font chữ**
@@ -178,7 +178,7 @@ Với 1,5 m ⇒ tối thiểu **7,5 mm** chiều cao chữ ⇒ khoảng **21 pt*
 **Chú thích bắt buộc** (T7 — 20 pt, đặt góc phải dưới khối):
 > *Nguồn: Laroca và cộng sự, VISAPP 2022 — OpenALPR trên RodoSol-ALPR (Brazil), tập cân bằng 4.000 + 4.000 ảnh. Dẫn làm analogue về độ khó của biển hai dòng, **không phải số liệu Việt Nam**.*
 
-⚠️ Chú thích này **bắt buộc**, không được lược bỏ để tiết kiệm chỗ. Trình bày số liệu Brazil như số liệu Việt Nam là một lỗi phương pháp luận nghiêm trọng.
+⚠️ Không lược bỏ chú thích này để tiết kiệm chỗ. Trình bày số liệu Brazil như số liệu Việt Nam là một lỗi phương pháp luận nghiêm trọng.
 
 ---
 
@@ -196,7 +196,7 @@ Với 1,5 m ⇒ tối thiểu **7,5 mm** chiều cao chữ ⇒ khoảng **21 pt*
   - **Tập ký tự seri phụ thuộc VỊ TRÍ**
   - Mã tỉnh là tập hữu hạn có lỗ hổng — 89 giá trị, **81 mã dùng thật**
 
-**Hình:** 3 ảnh biển số thật xếp dọc (ô tô dài / ô tô ngắn / xe máy), mỗi ảnh cao ~28 mm, có nhãn tỉ lệ khung hình bên cạnh: **4,727 · 2,000 · 1,357**. Ảnh cắt từ tập dữ liệu thật.
+**Hình:** 3 ảnh biển số cắt từ tập dữ liệu thật, xếp dọc (ô tô dài / ô tô ngắn / xe máy), mỗi ảnh cao ~28 mm, có nhãn tỉ lệ khung hình bên cạnh: **4,727 · 2,000 · 1,357**.
 
 ---
 
@@ -228,7 +228,7 @@ Với 1,5 m ⇒ tối thiểu **7,5 mm** chiều cao chữ ⇒ khoảng **21 pt*
 
 **Nội dung**
 - Kiến trúc **hai giai đoạn**: YOLO11n phát hiện → PaddleOCR đọc → **luật hậu xử lý Việt Nam**
-- Vì sao YOLO11n: yêu cầu bắt buộc là **có số liệu tốc độ CPU chính thức**; YOLO11n vượt YOLOv8n **cả hai chiều** (mAP 39,5 vs 37,3 · CPU 56,1 ms vs 80,4 ms)
+- Vì sao YOLO11n: yêu cầu bắt buộc là **có số liệu tốc độ CPU chính thức**; và nó vượt YOLOv8n **cả hai chiều** (mAP 39,5 vs 37,3 · CPU 56,1 ms vs 80,4 ms)
 - **Căn cứ pháp lý hiện hành** — không dùng văn bản hết hiệu lực:
 
 > ⚠️ Đề bài dẫn **TT 24/2023/TT-BCA**. Đối chiếu nguồn gốc: văn bản này **đã hết hiệu lực từ 01/01/2025**.
@@ -283,14 +283,14 @@ Với 1,5 m ⇒ tối thiểu **7,5 mm** chiều cao chữ ⇒ khoảng **21 pt*
 
 **Tiêu đề khối:** `XỬ LÝ BIỂN HAI DÒNG` (T2, có viền đỏ quanh cả khối để nổi bật)
 
-> **Đây là khối đắt nhất về mặt kỹ thuật. Cho nó nhiều diện tích nhất trong ba cột.**
+> **Đây là khối đắt nhất về mặt kỹ thuật — cho nó nhiều diện tích nhất.**
 
 **Nội dung — chia 3 phần:**
 
 **(a) Vấn đề** (T4)
 - Nguyên nhân gốc là **KIẾN TRÚC**, không phải chất lượng model
-- CRNN/CTC giả định **alignment đơn điệu trên MỘT dòng** — giả định nằm trong **hàm mất mát**, không sửa được bằng thêm dữ liệu
-- Bằng chứng cụ thể: PaddleOCR resize về **cao cố định 48 px**. Crop biển xe máy AR ≈ **1,36** ⇒ **mỗi dòng chỉ còn ~24 px**
+- CRNN/CTC giả định **alignment đơn điệu trên MỘT dòng** — nó nằm trong **hàm mất mát**, không sửa được bằng thêm dữ liệu
+- Bằng chứng: PaddleOCR resize về **cao cố định 48 px**. Crop biển xe máy AR ≈ **1,36** ⇒ **mỗi dòng chỉ còn ~24 px**
 
 **(b) Giải pháp — HÌNH QUAN TRỌNG NHẤT POSTER** *(cao ~110 mm)*
 
@@ -298,9 +298,9 @@ Với 1,5 m ⇒ tối thiểu **7,5 mm** chiều cao chữ ⇒ khoảng **21 pt*
 >
 > `[crop gốc, AR 1,36]` → `[đã rectify]` → `[2 nửa tách rời]` → `[dải ghép ngang, AR ~5,4]`
 >
-> Bốn khung ảnh xếp ngang, giữa các khung có mũi tên. Mỗi khung có nhãn T6 phía dưới. Đây là hình mà người xem sẽ nhớ lâu nhất — đầu tư làm cho đẹp.
+> Bốn khung xếp ngang, nối bằng mũi tên, mỗi khung có nhãn T6 phía dưới. Đây là hình người xem nhớ lâu nhất — đầu tư làm cho đẹp.
 
-- Mỗi dòng được dùng **trọn 48 px** thay vì 24 px
+- Mỗi dòng dùng **trọn 48 px** thay vì 24 px
 - Chuỗi trở lại **đơn điệu một chiều** — đúng giả định CRNN
 - OCR gọi **một lần** trên dải đã ghép
 - ⚠️ Bắt buộc **rectify trước khi tách** — biển nghiêng thì đường cắt sẽ cắt qua ký tự
@@ -346,7 +346,7 @@ Với 1,5 m ⇒ tối thiểu **7,5 mm** chiều cao chữ ⇒ khoảng **21 pt*
 | **TẤT CẢ (1.611)** | **0,984** | **0,971** | **0,983** | **0,783** |
 | *Ngưỡng chỉ tiêu* | *≥0,92* | *≥0,90* | *≥0,90* | *≥0,65* |
 
-> ✅ Chênh layout ở detection chỉ **2,09 điểm** mAP50 — detection ít nhạy với layout. Điểm yếu biển 2 dòng nằm ở tầng OCR.
+> ✅ Chênh layout chỉ **2,09 điểm** mAP50 — detection ít nhạy với layout. Điểm yếu biển 2 dòng nằm ở tầng OCR.
 
 **(c) Hiệu năng — ✅ NFR-P1 ĐẠT** (T5)
 
@@ -372,7 +372,7 @@ Với 1,5 m ⇒ tối thiểu **7,5 mm** chiều cao chữ ⇒ khoảng **21 pt*
 
 *(`docs/screenshots/` còn **3 tệp dùng được**: `image-detection.png` · `video-detection.png` · `history.png` — đúng ba trang của giao diện hiện hành, poster dùng cả ba. `dashboard.png` **không còn dùng**: trang Tổng quan đã gỡ khỏi giao diện 2026-07-20.)*
 
-⚠️ **Chụp lại ảnh trước khi in.** Cả 3 ảnh hiện có được chụp khi sidebar còn **5 mục** và trang chủ còn là **Tổng quan**. Giao diện nay chỉ còn **3 trang**, trang chủ là **Nhận dạng ảnh** và **không còn trang Tổng quan** — poster in ảnh cũ sẽ mâu thuẫn với dòng "3 trang" ngay bên dưới.
+⚠️ **Chụp lại ảnh trước khi in.** Cả 3 ảnh hiện có chụp khi sidebar còn **5 mục** và trang chủ còn là **Tổng quan**. Giao diện nay chỉ còn **3 trang**, trang chủ là **Nhận dạng ảnh** và **không còn trang Tổng quan** — poster in ảnh cũ sẽ mâu thuẫn với dòng "3 trang" ngay bên dưới.
 
 **Nội dung chữ** (T4, 2 dòng)
 - **3 trang**: Nhận dạng ảnh *(trang chủ)* · Video (bất đồng bộ, `job_id`) · Lịch sử — cộng chế độ thời gian thực và số liệu tổng hợp giữ ở tầng API (`POST /api/detect/frame`, `GET /api/statistics`)
@@ -457,7 +457,7 @@ Với 1,5 m ⇒ tối thiểu **7,5 mm** chiều cao chữ ⇒ khoảng **21 pt*
 **Yêu cầu chung cho hình**
 - Sơ đồ → **SVG hoặc PDF vector**. Bitmap phóng to sẽ vỡ ở 300 DPI.
 - Ảnh chụp màn hình → độ phân giải gốc, **tối thiểu 2× kích thước in**.
-- Biểu đồ tự vẽ → chữ trong biểu đồ tối thiểu **T6 = 22 pt** ở kích thước in cuối cùng, không phải kích thước lúc thiết kế.
+- Biểu đồ tự vẽ → chữ tối thiểu **T6 = 22 pt** ở kích thước in cuối cùng, không phải kích thước lúc thiết kế.
 - Mọi hình có số liệu → ghi **nguồn** ngay dưới hình (T7).
 
 ---
@@ -485,6 +485,6 @@ Nếu họ trả lời được cả ba ⇒ bố cục đạt. Không trả lờ
 - [ ] Không gian âm ≥ 25% — nếu thấy chật thì **cắt nội dung**, đừng thu nhỏ chữ
 
 **Ba lỗi phổ biến nhất cần tránh**
-1. **Nhồi chữ.** Poster không phải quyển đồ án thu nhỏ. Chỗ nào phải thu chữ xuống dưới 24 pt mới vừa thì chỗ đó có nội dung thừa.
+1. **Nhồi chữ.** Poster không phải quyển đồ án thu nhỏ. Chỗ nào phải thu chữ xuống dưới 24 pt mới vừa là chỗ có nội dung thừa.
 2. **Sơ đồ chữ quá nhỏ.** Sơ đồ mermaid xuất mặc định có chữ khoảng 14 pt — đọc được trên màn hình, không đọc được trên poster. Phải chỉnh trước khi render.
 3. **Bỏ mục Hạn chế.** Cám dỗ lớn khi hết chỗ. Nhưng một poster toàn kết quả đẹp mà không có ranh giới sẽ bị hỏi đúng vào chỗ đó.

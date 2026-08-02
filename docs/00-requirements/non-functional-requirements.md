@@ -9,9 +9,9 @@
 
 > **Mọi chỉ tiêu dưới đây đều là chỉ tiêu CPU.**
 
-Máy phát triển **không có GPU CUDA** (ràng buộc CON-02 — chỉ có Intel UHD Graphics 770). Việc huấn luyện diễn ra trên GPU miễn phí của Colab/Kaggle, nhưng **suy luận và toàn bộ phần demo bảo vệ chạy trên CPU**.
+Máy phát triển **không có GPU CUDA** (ràng buộc CON-02 — chỉ có Intel UHD Graphics 770). Huấn luyện chạy trên GPU miễn phí của Colab/Kaggle, nhưng **suy luận và toàn bộ phần demo bảo vệ chạy trên CPU**.
 
-Đây là lý do các chỉ tiêu độ trễ dưới đây trông "rộng rãi" hơn so với các bài báo ALPR thường công bố (thường đo trên RTX/V100 và báo cáo vài chục mili-giây). Trong quyển đồ án, **phải nêu rõ điều này** — công bố một con số FPS mà không kèm cấu hình phần cứng là lỗi phương pháp luận, và là câu hỏi phản biện gần như chắc chắn sẽ bị hỏi.
+Đây là lý do các chỉ tiêu độ trễ dưới đây trông "rộng rãi" hơn so với các bài báo ALPR (thường đo trên RTX/V100 và báo cáo vài chục mili-giây). Trong quyển đồ án, **phải nêu rõ điều này** — công bố một con số FPS mà không kèm cấu hình phần cứng là lỗi phương pháp luận, và là câu hỏi phản biện gần như chắc chắn sẽ bị hỏi.
 
 **Quy tắc:** mọi số liệu hiệu năng công bố phải kèm: model CPU, số luồng, kích thước ảnh đầu vào, backend suy luận (PyTorch / ONNX / OpenVINO), và cỡ mẫu đo.
 
@@ -29,7 +29,7 @@ Máy phát triển **không có GPU CUDA** (ràng buộc CON-02 — chỉ có In
 | **NFR-P6** | Thời gian phản hồi truy vấn lịch sử (10.000 bản ghi) | ≤ 500 ms | ≤ 1000 ms | Đo có phân trang và bộ lọc |
 | **NFR-P7** | Bộ nhớ thường trú của backend | ≤ 2 GB | ≤ 4 GB | Theo dõi RSS khi chạy tải liên tục |
 
-> **Ghi chú NFR-P2 (2026-07-20):** giao diện webcam đã gỡ khỏi phạm vi (FR-3.1/FR-3.4 chuyển M → W — xem [functional-requirements.md](functional-requirements.md)). Chỉ tiêu **giữ nguyên** nhưng được đo ở **tầng API**: gọi `POST /api/detect/frame` liên tục trong 60 giây và tính FPS hiệu dụng. Phía gọi API tự triển khai bỏ bớt khung hình (frame skipping) và/hoặc hàng đợi một khe để không dồn ứ yêu cầu.
+> **Ghi chú NFR-P2 (2026-07-20):** giao diện webcam đã gỡ khỏi phạm vi (FR-3.1/FR-3.4 chuyển M → W — xem [functional-requirements.md](functional-requirements.md)). Chỉ tiêu **giữ nguyên** nhưng đo ở **tầng API**: gọi `POST /api/detect/frame` liên tục trong 60 giây và tính FPS hiệu dụng. Phía gọi API tự triển khai bỏ bớt khung hình (frame skipping) và/hoặc hàng đợi một khe để không dồn ứ yêu cầu.
 
 **Phân rã ngân sách độ trễ NFR-P1** *(ước lượng ban đầu, sẽ hiệu chỉnh sau Phase 3–4)*:
 
@@ -43,7 +43,7 @@ Máy phát triển **không có GPU CUDA** (ràng buộc CON-02 — chỉ có In
 | Ghi CSDL + lưu ảnh | ~50 ms |
 | **Tổng (1 biển số)** | **~405 ms** |
 
-Ngân sách 800 ms để lại khoảng ~2× dự phòng cho ảnh nhiều biển số và biến động của máy.
+Ngân sách 800 ms để lại ~2× dự phòng cho ảnh nhiều biển số và biến động của máy.
 
 > **Cảnh báo rủi ro:** nếu đo thực tế ở Phase 4 vượt ngưỡng, các phương án giảm tải theo thứ tự ưu tiên là: (1) xuất mô hình sang **ONNX Runtime hoặc OpenVINO** — thường nhanh gấp 2–3× so với PyTorch trên CPU Intel; (2) giảm `imgsz` xuống 480; (3) dùng biến thể PaddleOCR mobile thay vì server. Chỉ hạ chỉ tiêu **sau khi** đã thử hết ba phương án này.
 
@@ -61,7 +61,7 @@ Ngân sách 800 ms để lại khoảng ~2× dự phòng cho ảnh nhiều biể
 | **NFR-A6** | Độ chính xác biển đầy đủ **sau** hậu xử lý | ≥ 0.90 | ≥ 0.85 | Đo mức cải thiện do regex đem lại |
 | **NFR-A7** | Độ chính xác E2E toàn trình (ảnh vào → biển đúng) | ≥ 0.88 | ≥ 0.82 | Chỉ tiêu quan trọng nhất với hội đồng |
 
-> **NFR-A5 và NFR-A6 phải được đo tách bạch.** Hiệu số giữa chúng chính là **đóng góp định lượng của khối hậu xử lý** — một đóng góp kỹ thuật có thể trình bày và bảo vệ được, thay vì chỉ nói "chúng em có thêm bước sửa lỗi regex".
+> **NFR-A5 và NFR-A6 phải đo tách bạch.** Hiệu số giữa chúng là **đóng góp định lượng của khối hậu xử lý** — một kết quả kỹ thuật trình bày và bảo vệ được, thay vì chỉ nói "chúng em có thêm bước sửa lỗi regex".
 
 **Yêu cầu phân tích bổ sung** (phục vụ chương Đánh giá của đồ án):
 
@@ -98,7 +98,7 @@ Ngân sách 800 ms để lại khoảng ~2× dự phòng cho ảnh nhiều biể
 
 | Mã | Chỉ tiêu | Mục tiêu |
 |---|---|---|
-| **NFR-M1** | **Mã AI tách biệt hoàn toàn khỏi mã API** — pipeline nhận dạng không import bất cứ thứ gì của FastAPI | Kiểm tra bằng phân tích import; đây là ràng buộc cứng từ `CLAUDE.md` |
+| **NFR-M1** | **Mã AI tách biệt khỏi mã API** — pipeline nhận dạng không import bất cứ thứ gì của FastAPI | Kiểm tra bằng phân tích import; đây là ràng buộc cứng từ `CLAUDE.md` |
 | **NFR-M2** | Độ bao phủ test cho tầng nghiệp vụ | ≥ 70% |
 | **NFR-M3** | Mọi hàm public đều có type hint và docstring | 100% |
 | **NFR-M4** | Không hard-code đường dẫn — mọi đường dẫn qua cấu hình | Kiểm tra bằng grep, 0 vi phạm |
@@ -116,7 +116,7 @@ Hệ thống chạy nội bộ (giả định A-04), nên mô hình đe doạ �
 | Mã | Chỉ tiêu | Mục tiêu |
 |---|---|---|
 | **NFR-S1** | Kiểm tra tệp tải lên bằng **magic bytes**, không tin phần mở rộng | Tệp giả mạo bị chặn |
-| **NFR-S2** | Chống path traversal ở mọi thao tác tệp | Tên tệp được chuẩn hoá, sinh lại bằng UUID |
+| **NFR-S2** | Chống path traversal ở mọi thao tác tệp | Chuẩn hoá tên tệp, sinh lại bằng UUID |
 | **NFR-S3** | Giới hạn kích thước tệp tải lên, thực thi ở tầng server | Vượt hạn mức ⇒ HTTP 413 |
 | **NFR-S4** | CORS chỉ cho phép origin đã khai báo, **không dùng `*`** | Cấu hình rõ ràng |
 | **NFR-S5** | Không ghi dữ liệu nhạy cảm vào log | Không log toàn bộ nội dung tệp |
@@ -143,13 +143,13 @@ Hệ thống chạy nội bộ (giả định A-04), nên mô hình đe doạ �
 | **NFR-SC2** | Số bản ghi CSDL không làm suy giảm hiệu năng | ≥ 100.000 bản ghi |
 | **NFR-SC3** | Tác vụ video chạy nền, không chặn các yêu cầu khác | Bắt buộc — dùng background task |
 
-> **Giới hạn đã biết:** SQLite chỉ cho phép **một tiến trình ghi tại một thời điểm**. Với quy mô đồ án điều này chấp nhận được, nhưng **phải nêu rõ trong phần Hạn chế của quyển đồ án**, kèm hướng khắc phục (chuyển sang PostgreSQL) nếu triển khai thực tế. Đây là câu hỏi phản biện rất dễ gặp.
+> **Giới hạn đã biết:** SQLite chỉ cho phép **một tiến trình ghi tại một thời điểm**. Với quy mô đồ án điều này chấp nhận được, nhưng **phải nêu rõ trong phần Hạn chế của quyển đồ án**, kèm hướng khắc phục (chuyển sang PostgreSQL) nếu triển khai thực tế. Đây là câu hỏi phản biện dễ gặp.
 
 ---
 
 ## 9. Tổng hợp chỉ tiêu then chốt
 
-Bảng này dùng làm bảng "chốt hạ" trình bày khi bảo vệ:
+Bảng "chốt hạ" trình bày khi bảo vệ:
 
 | Hạng mục | Chỉ tiêu | Trạng thái *(cập nhật 2026-07-28)* |
 |---|---|---|
