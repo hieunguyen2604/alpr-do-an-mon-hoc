@@ -241,51 +241,120 @@ def resample_sheet(count: int) -> None:
 
 
 def write_review_sheet(rows: list[dict]) -> None:
-    """Phiếu gán nhãn mở bằng trình duyệt, tự tải CSV khi bấm nút."""
+    """Phiếu gán nhãn mở bằng trình duyệt.
+
+    Bốn thứ khiến phiếu này dùng được thật chứ không chỉ chạy được:
+
+    * **Nút "không đọc được" riêng.** Ô để trống nghĩa là *chưa xem tới*; biển
+      mờ tới mức người cũng không đọc nổi là một *kết quả*, không phải một chỗ
+      bỏ sót. Trộn hai thứ đó lại thì mất đúng nhóm mẫu có sức phân định cao
+      nhất: ở đó cấu hình trả **chuỗi rỗng** mới là cấu hình đúng, còn cấu hình
+      bịa ra một biển số là sai. Chính khác biệt ấy đã đo được ở
+      ``docs/reports/31-detection-stage-ablation.md`` (0/1.606 so với 173).
+    * **Tự lưu vào trình duyệt** sau mỗi lần gõ. Đây là việc gõ tay 40 phút;
+      đóng nhầm tab mà mất sạch thì không ai làm lại lần hai.
+    * **Bấm vào ảnh để phóng to.** Vùng cắt do bộ phát hiện sinh ra thường nhỏ.
+    * **Đếm tiến độ và phím Enter nhảy ô**, để không phải rời tay khỏi bàn phím.
+    """
     blocks = []
-    for i, r in enumerate(rows):
+    for r in rows:
         reads = " · ".join(
             f"<b>{html.escape(k)}</b>: {html.escape(v) or '—'}" for k, v in r["reads"].items()
         )
-        flag = "" if r["agree"] else ' <span class="warn">BẤT ĐỒNG — phải gõ tay</span>'
+        flag = "" if r["agree"] else ' <span class="warn">BẤT ĐỒNG</span>'
+        key = html.escape(r["key"])
         blocks.append(
             f'<div class="row{"" if r["agree"] else " dis"}">'
-            f'<img src="crops/{html.escape(r["crop"])}" alt="">'
+            f'<img src="crops/{html.escape(r["crop"])}" alt="" onclick="zoom(this)">'
             f'<div class="meta"><div class="scene">{html.escape(r["scene"])}{flag}</div>'
             f'<div class="reads">{reads}</div>'
-            f'<input data-key="{html.escape(r["key"])}" value="{html.escape(r["suggestion"])}" '
-            f'placeholder="gõ chuỗi biển số đúng"></div></div>'
+            f'<input data-key="{key}" value="{html.escape(r["suggestion"])}" '
+            f'placeholder="gõ chuỗi biển số đúng">'
+            f'<button class="nr" onclick="nore(this)">không đọc được</button>'
+            f"</div></div>"
         )
 
+    total = len(rows)
     OUT_DIR.joinpath("review.html").write_text(
         f"""<!doctype html><meta charset="utf-8"><title>Gán nhãn biển số ảnh toàn cảnh</title>
 <style>
-body{{font:15px system-ui;margin:24px;max-width:1000px}}
+body{{font:15px system-ui;margin:24px;max-width:1040px}}
 .row{{display:flex;gap:16px;align-items:center;padding:10px;border-bottom:1px solid #ddd}}
-.row.dis{{background:#fff6f6}}
-img{{height:64px;image-rendering:pixelated;border:1px solid #bbb}}
+.row.dis{{background:#fff6f6}} .row.done{{background:#f2fbf4}}
+img{{height:72px;image-rendering:pixelated;border:1px solid #bbb;cursor:zoom-in}}
+img.big{{height:300px;cursor:zoom-out}}
 .meta{{flex:1}} .scene{{font-size:12px;color:#666}}
 .reads{{font-size:12px;color:#333;margin:3px 0}}
 .warn{{color:#c00;font-weight:600}}
-input{{width:260px;padding:6px;font-size:15px;font-family:ui-monospace,monospace}}
-button{{position:sticky;top:0;padding:10px 18px;font-size:15px}}
+input{{width:250px;padding:7px;font-size:16px;font-family:ui-monospace,monospace}}
+input.nr{{background:#eee;color:#999;font-style:italic}}
+.nr{{margin-left:8px;padding:6px 10px;font-size:13px}}
+#bar{{position:sticky;top:0;background:#fff;padding:12px 0;border-bottom:2px solid #333;z-index:9}}
+#bar button{{padding:10px 18px;font-size:15px}}
+#dem{{margin-left:14px;font-weight:600}}
 </style>
 <h1>Gán nhãn chuỗi biển số — ảnh toàn cảnh</h1>
-<p>Dòng nền đỏ là chỗ các cấu hình đọc khác nhau: <b>bắt buộc nhìn ảnh và gõ tay</b>.
-Dòng còn lại đã điền sẵn chuỗi mà mọi cấu hình cùng đọc ra — vẫn phải <b>nhìn ảnh xác nhận</b>,
-đừng bấm qua, vì tất cả có thể cùng đọc sai.</p>
-<button onclick="dl()">Tải CSV</button>
+<p>Dòng nền đỏ là chỗ các cấu hình đọc khác nhau — <b>đây là phần quyết định</b>.
+Dòng còn lại đã điền sẵn chuỗi mọi cấu hình cùng đọc ra; vẫn phải nhìn ảnh xác nhận,
+vì tất cả có thể cùng đọc sai.</p>
+<p><b>Biển mờ, bị che, hoặc bộ phát hiện bắt nhầm vào thứ không phải biển số?</b>
+Bấm <i>không đọc được</i>. Đừng bỏ trống — ô trống nghĩa là <i>chưa xem</i>.
+Những dòng này <b>không bỏ đi</b>: ở đó cấu hình trả chuỗi rỗng mới là cấu hình
+đúng, còn cấu hình bịa ra một biển số là sai.</p>
+<div id="bar">
+  <button onclick="dl()">Tải CSV</button>
+  <button onclick="if(confirm('Xoá hết nhãn đã gõ?')){{localStorage.clear();location.reload()}}">Xoá hết</button>
+  <span id="dem"></span>
+</div>
 {"".join(blocks)}
 <script>
-function dl(){{
+const TONG = {total};
+const inputs = [...document.querySelectorAll("input[data-key]")];
+
+function dem() {{
+  const n = inputs.filter(i => i.value.trim()).length;
+  document.getElementById("dem").textContent = n + " / " + TONG + " dòng đã gán";
+  inputs.forEach(i => i.closest(".row").classList.toggle("done", !!i.value.trim()));
+}}
+
+// Tu luu: viec go tay 40 phut khong duoc phep mat vi mot lan dong tab.
+inputs.forEach((i, k) => {{
+  const luu = localStorage.getItem("nhan:" + i.dataset.key);
+  if (luu !== null) {{ i.value = luu; i.classList.toggle("nr", luu === "KHONG_DOC_DUOC"); }}
+  i.addEventListener("input", () => {{
+    localStorage.setItem("nhan:" + i.dataset.key, i.value.trim().toUpperCase());
+    i.classList.remove("nr");
+    dem();
+  }});
+  i.addEventListener("keydown", e => {{
+    if (e.key === "Enter") {{ e.preventDefault(); (inputs[k + 1] || i).focus(); }}
+  }});
+}});
+
+function nore(btn) {{
+  const i = btn.previousElementSibling;
+  i.value = "KHONG_DOC_DUOC";
+  i.classList.add("nr");
+  localStorage.setItem("nhan:" + i.dataset.key, i.value);
+  dem();
+  const k = inputs.indexOf(i);
+  (inputs[k + 1] || i).focus();
+}}
+
+function zoom(img) {{ img.classList.toggle("big"); }}
+
+function dl() {{
   let out = "key,plate_text\\n";
-  document.querySelectorAll("input[data-key]").forEach(i => {{
-    if (i.value.trim()) out += i.dataset.key + "," + i.value.trim().toUpperCase() + "\\n";
+  inputs.forEach(i => {{
+    const v = i.value.trim().toUpperCase();
+    if (v) out += i.dataset.key + "," + v + "\\n";
   }});
   const a = document.createElement("a");
-  a.href = URL.createObjectURL(new Blob([out], {{type:"text/csv"}}));
+  a.href = URL.createObjectURL(new Blob([out], {{type: "text/csv"}}));
   a.download = "scene_labels.csv"; a.click();
 }}
+
+dem();
 </script>""",
         encoding="utf-8",
     )
