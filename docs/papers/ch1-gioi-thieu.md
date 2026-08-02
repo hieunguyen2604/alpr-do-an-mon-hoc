@@ -1,4 +1,4 @@
-# CHƯƠNG 1 — MỞ ĐẦU
+# CHƯƠNG 1. GIỚI THIỆU
 
 > **Ghi chú biên tập.** Ký hiệu trích dẫn `[n]` trong chương này trỏ tới mục *Tài liệu tham khảo* của quyển đồ án. Số thứ tự `n` là **số tạm thời trong phạm vi chương**, sẽ được đánh lại tự động khi hợp nhất toàn bộ các chương ở Phase 9. Mỗi trích dẫn đều kèm khóa BibTeX trong chú thích HTML để công cụ hợp nhất ánh xạ chính xác về `docs/references.bib`. Bảng ánh xạ đầy đủ đặt ở cuối chương (mục 1.8).
 
@@ -12,7 +12,7 @@ Chương này trả lời bốn câu hỏi theo đúng thứ tự mà một quy�
 
 Việt Nam là một trong những quốc gia có mật độ phương tiện cá nhân cao nhất thế giới. Tính đến tháng 9/2024, cả nước có khoảng **77 triệu xe máy đã đăng ký, tương đương 770 xe trên 1.000 dân**; xe máy chiếm khoảng **85–90% lưu lượng phương tiện lưu thông trên đường** [1]<!-- dantri_2024_77trieuxemay -->.
 
-Con số này không chỉ là thống kê về quy mô thị trường; nó là **ràng buộc kỹ thuật trực tiếp** đối với mọi hệ thống thị giác máy tính làm việc với giao thông Việt Nam, với ba hệ quả xuyên suốt các quyết định thiết kế ở Chương 3: (i) **biển hai dòng dạng gần vuông chiếm đa số tuyệt đối** chứ không phải thiểu số như tại Hoa Kỳ hay châu Âu, vì toàn bộ xe mô tô mang biển hai dòng; (ii) **mật độ phương tiện cao gây che khuất (occlusion) lẫn nhau**, đồng thời khiến mỗi khung hình thường chứa **nhiều biển số** phải xử lý đồng thời; (iii) **diện tích biển số trên khung hình nhỏ** — biển xe mô tô chỉ 140 × 190 mm — dẫn tới bài toán phát hiện đối tượng nhỏ.
+Con số này không chỉ là thống kê về quy mô thị trường; nó là **ràng buộc kỹ thuật trực tiếp** đối với mọi hệ thống thị giác máy tính làm việc với giao thông Việt Nam, với ba hệ quả xuyên suốt các quyết định thiết kế ở Chương 4: (i) **biển hai dòng dạng gần vuông chiếm đa số tuyệt đối** chứ không phải thiểu số như tại Hoa Kỳ hay châu Âu, vì toàn bộ xe mô tô mang biển hai dòng; (ii) **mật độ phương tiện cao gây che khuất (occlusion) lẫn nhau**, đồng thời khiến mỗi khung hình thường chứa **nhiều biển số** phải xử lý đồng thời; (iii) **diện tích biển số trên khung hình nhỏ** — biển xe mô tô chỉ 140 × 190 mm — dẫn tới bài toán phát hiện đối tượng nhỏ.
 
 Song song với mật độ phương tiện là nhu cầu tự động hoá: ghi nhận, đối chiếu và tra cứu biển số bằng thao tác thủ công không còn khả thi ở quy mô hàng chục triệu phương tiện. Đây là lý do tồn tại của lớp bài toán **ALPR (Automatic License Plate Recognition)**, một trong những bài toán ứng dụng lâu đời và được nghiên cứu bền bỉ nhất của thị giác máy tính [2]<!-- anagnostopoulos_2008_survey --> [3]<!-- du_2013_review -->.
 
@@ -27,7 +27,7 @@ Tại Việt Nam, ALPR đã và đang là thành phần lõi của bốn nhóm �
 | **Giám sát giao thông** | Truy vết phương tiện, hỗ trợ nghiệp vụ xử phạt nguội | Điều kiện ánh sáng biến thiên lớn, ảnh đêm, ngược sáng |
 | **Kiểm soát ra vào** | Xác thực phương tiện tại cổng cơ quan, khu công nghiệp, chung cư | Triển khai tại chỗ, không phụ thuộc kết nối Internet [6]<!-- viscom_nd_vietanpr --> |
 
-Điểm chung của cả bốn nhóm: **chỉ số có ý nghĩa với người dùng cuối không phải mAP của khâu phát hiện, mà là tỉ lệ đọc đúng toàn bộ chuỗi biển số** (plate-level exact match). Một hệ thống bãi xe đọc đúng 9 trên 10 ký tự vẫn là hệ thống đọc sai biển số. Nhận định này định hình cách đặt chỉ tiêu ở mục 1.2.2 và cách đánh giá ở Chương 5.
+Điểm chung của cả bốn nhóm: **chỉ số có ý nghĩa với người dùng cuối không phải mAP của khâu phát hiện, mà là tỉ lệ đọc đúng toàn bộ chuỗi biển số** (plate-level exact match). Một hệ thống bãi xe đọc đúng 9 trên 10 ký tự vẫn là hệ thống đọc sai biển số. Nhận định này định hình cách đặt chỉ tiêu ở mục 1.2.2 và cách đánh giá ở Chương 6.
 
 ### 1.1.3. Vì sao không thể dùng trực tiếp giải pháp nước ngoài
 
@@ -49,7 +49,7 @@ Nghiên cứu *On the Cross-Dataset Generalization in License Plate Recognition*
 
 > ### ⚠️ Cảnh báo phạm vi áp dụng của số liệu
 >
-> Cặp số **94,3% / 45,7%** được đo trên **RodoSol-ALPR của Brazil**, **không phải trên dữ liệu Việt Nam**. Nó được dẫn ở đây như một ***analogue*** định lượng về độ khó vượt trội của biển hai dòng — Brazil được chọn làm đối chiếu vì cũng là quốc gia có tỉ lệ xe máy cao. **Tuyệt đối không được trình bày cặp số này như số liệu Việt Nam.** Số liệu tương ứng cho biển số Việt Nam do chính đồ án đo sẽ được trình bày ở **Chương 5**.
+> Cặp số **94,3% / 45,7%** được đo trên **RodoSol-ALPR của Brazil**, **không phải trên dữ liệu Việt Nam**. Nó được dẫn ở đây như một ***analogue*** định lượng về độ khó vượt trội của biển hai dòng — Brazil được chọn làm đối chiếu vì cũng là quốc gia có tỉ lệ xe máy cao. **Tuyệt đối không được trình bày cặp số này như số liệu Việt Nam.** Số liệu tương ứng cho biển số Việt Nam do chính đồ án đo sẽ được trình bày ở **Chương 6**.
 
 Ý nghĩa của bằng chứng này đối với đề tài: một hệ thống ALPR đạt hiệu năng xuất sắc ở thị trường nơi biển một dòng chiếm đa số hoàn toàn có thể **sụp đổ về gần một nửa hiệu năng** khi gặp phân bố phương tiện của Việt Nam, nơi biển hai dòng chiếm đa số. Đây không phải suy đoán — đây là kết quả đo.
 
@@ -97,6 +97,8 @@ Mục tiêu cụ thể được phát biểu dưới dạng **chỉ tiêu đo đ
 
 **(a) Nhóm chỉ tiêu độ chính xác**
 
+**Bảng 1.1.** Nhóm chỉ tiêu độ chính xác
+
 | Mã | Chỉ tiêu | Mục tiêu | Ngưỡng tối thiểu |
 |---|---|:--:|:--:|
 | NFR-A1 | mAP@0.5 của bộ phát hiện biển số | ≥ 0,90 | ≥ 0,85 |
@@ -116,6 +118,8 @@ Bổ sung hai yêu cầu phân tích phục vụ chương đánh giá:
 
 **(b) Nhóm chỉ tiêu hiệu năng — toàn bộ là chỉ tiêu CPU**
 
+**Bảng 1.2.** Nhóm chỉ tiêu hiệu năng trên CPU
+
 | Mã | Chỉ tiêu | Mục tiêu | Ngưỡng tối thiểu |
 |---|---|:--:|:--:|
 | **NFR-P1** | **Độ trễ E2E một ảnh (p95)** | **≤ 800 ms** | **≤ 1500 ms** |
@@ -128,7 +132,7 @@ Bổ sung hai yêu cầu phân tích phục vụ chương đánh giá:
 
 > **Vì sao các chỉ tiêu độ trễ này "rộng rãi" hơn số liệu thường thấy trong các bài báo ALPR.** Máy phát triển của đồ án **không có GPU CUDA** (ràng buộc CON-02). Việc huấn luyện diễn ra trên GPU miễn phí của Colab/Kaggle, nhưng **toàn bộ suy luận và phần demo bảo vệ chạy trên CPU**. Các bài báo ALPR thường đo trên RTX/V100 và công bố vài chục mili-giây; đặt hai loại số liệu này cạnh nhau là so sánh sai. Đây là lý do mọi số liệu hiệu năng của đồ án đều **bắt buộc công bố kèm cấu hình phần cứng** — xem mục 1.4.2.
 
-**(c) Nhóm chỉ tiêu chức năng, chất lượng phần mềm và triển khai:** hiện thực **34 yêu cầu chức năng** (21 *Must*, 6 *Should*, 3 *Could*, 4 *Won't*) tổ chức thành **sáu nhóm** — nhận dạng ảnh, nhận dạng video, nhận dạng thời gian thực qua API, thống kê – lịch sử – tra cứu, quản lý dữ liệu, và hệ thống–vận hành (chi tiết ở mục 3.1.3); **tách biệt kiến trúc bắt buộc** (NFR-M1: mã pipeline AI **không import bất cứ thành phần nào của FastAPI**, kiểm chứng bằng phân tích import); **khả năng thay thế bộ OCR** không phải sửa mã tầng API (NFR-M5); **độ bao phủ kiểm thử tầng nghiệp vụ ≥ 70%** (NFR-M2); và **khởi động một lệnh duy nhất** `docker compose up` trên máy sạch, demo hoạt động **không cần kết nối Internet**.
+**(c) Nhóm chỉ tiêu chức năng, chất lượng phần mềm và triển khai:** hiện thực **34 yêu cầu chức năng** (21 *Must*, 6 *Should*, 3 *Could*, 4 *Won't*) tổ chức thành **sáu nhóm** — nhận dạng ảnh, nhận dạng video, nhận dạng thời gian thực qua API, thống kê – lịch sử – tra cứu, quản lý dữ liệu, và hệ thống–vận hành (chi tiết ở mục 4.1.3); **tách biệt kiến trúc bắt buộc** (NFR-M1: mã pipeline AI **không import bất cứ thành phần nào của FastAPI**, kiểm chứng bằng phân tích import); **khả năng thay thế bộ OCR** không phải sửa mã tầng API (NFR-M5); **độ bao phủ kiểm thử tầng nghiệp vụ ≥ 70%** (NFR-M2); và **khởi động một lệnh duy nhất** `docker compose up` trên máy sạch, demo hoạt động **không cần kết nối Internet**.
 
 > ### Bốn yêu cầu mức *Won't* — phải nói thẳng
 >
@@ -140,7 +144,7 @@ Bổ sung hai yêu cầu phân tích phục vụ chương đánh giá:
 > | 2 — gỡ trang Tổng quan (Dashboard) | FR-4.1 | **M → W** | Số liệu thống kê vẫn truy vấn được và vẫn có kiểm thử tích hợp ở tầng API: `GET /api/statistics`, `GET /health` |
 > | 2 — gỡ trang Tổng quan (Dashboard) | FR-4.2 | **S → W** | Như trên (biểu đồ theo thời gian nằm trong cùng đáp ứng của `GET /api/statistics`) |
 >
-> **FR-4.1 là yêu cầu mức *Must* đầu tiên và duy nhất bị đưa ra khỏi phạm vi trong toàn bộ đồ án.** Điều này được nêu ở đây, ở mục 3.1.3, ở mục 6.3 và trong đặc tả yêu cầu, chứ không để hội đồng tự phát hiện. Đây là một **quyết định phạm vi có chủ đích** nhằm thu gọn phần demo, không phải một hạng mục bị bỏ sót: cả bốn yêu cầu đều mất **màn hình hiển thị**, không mất **năng lực hệ thống**, và mã giao diện tương ứng còn nguyên trong lịch sử git. Đánh đổi đo được của đợt 2: gỡ thư viện biểu đồ `recharts` cùng trang Tổng quan làm gói tải về của giao diện giảm từ ~730 KB xuống **328,8 KB** (−55%).
+> **FR-4.1 là yêu cầu mức *Must* đầu tiên và duy nhất bị đưa ra khỏi phạm vi trong toàn bộ đồ án.** Điều này được nêu ở đây, ở mục 4.1.3, ở mục 7.3 và trong đặc tả yêu cầu, chứ không để hội đồng tự phát hiện. Đây là một **quyết định phạm vi có chủ đích** nhằm thu gọn phần demo, không phải một hạng mục bị bỏ sót: cả bốn yêu cầu đều mất **màn hình hiển thị**, không mất **năng lực hệ thống**, và mã giao diện tương ứng còn nguyên trong lịch sử git. Đánh đổi đo được của đợt 2: gỡ thư viện biểu đồ `recharts` cùng trang Tổng quan làm gói tải về của giao diện giảm từ ~730 KB xuống **328,8 KB** (−55%).
 
 ### 1.2.3. Tiêu chí thành công
 
@@ -152,7 +156,7 @@ Bổ sung hai yêu cầu phân tích phục vụ chương đánh giá:
 4. Hệ thống khởi động được trên máy sạch bằng một lệnh `docker compose up`.
 5. Demo trực tiếp chạy được không cần kết nối Internet.
 
-> **Trạng thái tại thời điểm viết chương này.** Các chỉ tiêu ở mục 1.2.2 là **chỉ tiêu đặt ra**. Hệ thống chạy pipeline nhận dạng **thật** với mô hình chính thức `models/best.pt` (`imgsz=640`, split v3); các chỉ tiêu phát hiện **đều đạt** (mAP@0.5 = 0,9829) và độ trễ NFR-P1 **đạt** (p95 731/780 ms). Các chỉ tiêu độ chính xác OCR **đã đo** và biển hai dòng **chưa đạt** (kết quả thật). **Kết quả đo đầy đủ đối chiếu với từng chỉ tiêu được trình bày ở Chương 5.**
+> **Trạng thái tại thời điểm viết chương này.** Các chỉ tiêu ở mục 1.2.2 là **chỉ tiêu đặt ra**. Hệ thống chạy pipeline nhận dạng **thật** với mô hình chính thức `models/best.pt` (`imgsz=640`, split v3); các chỉ tiêu phát hiện **đều đạt** (mAP@0.5 = 0,9829) và độ trễ NFR-P1 **đạt** (p95 731/780 ms). Các chỉ tiêu độ chính xác OCR **đã đo** và biển hai dòng **chưa đạt** (kết quả thật). **Kết quả đo đầy đủ đối chiếu với từng chỉ tiêu được trình bày ở Chương 6.**
 
 ---
 
@@ -166,13 +170,15 @@ Bổ sung hai yêu cầu phân tích phục vụ chương đánh giá:
 
 2. **Mô hình phát hiện đối tượng họ YOLO** — cụ thể là YOLO11 [16]<!-- jocher_2024_yolo11 --> — trong vai trò bộ phát hiện vùng biển số một giai đoạn.
 
-3. **Engine nhận dạng ký tự quang học (OCR)** không cần phân đoạn ký tự — với PaddleOCR [17]<!-- cui_2026_ppocrv5 --> giữ vai trò **baseline**, EasyOCR là ứng viên ngang hàng và Tesseract là mốc so sánh dưới — cùng bộ luật hậu xử lý ràng buộc theo vị trí xây trên quy chuẩn Việt Nam. Cần nói rõ ngay: **lựa chọn engine OCR chưa được chốt ở giai đoạn thiết kế**. Khảo sát ở Phase 1 kết luận rằng không tồn tại số liệu công khai nào phân định được PaddleOCR và EasyOCR trên ảnh biển số, nên quyết định cuối cùng thuộc về benchmark do chính đồ án chạy trên tập dữ liệu biển số Việt Nam — luận cứ đầy đủ ở **mục 2.8.2**, kết quả ở **Chương 5**.
+3. **Engine nhận dạng ký tự quang học (OCR)** không cần phân đoạn ký tự — với PaddleOCR [17]<!-- cui_2026_ppocrv5 --> giữ vai trò **baseline**, EasyOCR là ứng viên ngang hàng và Tesseract là mốc so sánh dưới — cùng bộ luật hậu xử lý ràng buộc theo vị trí xây trên quy chuẩn Việt Nam. Cần nói rõ ngay: **lựa chọn engine OCR chưa được chốt ở giai đoạn thiết kế**. Khảo sát ở Phase 1 kết luận rằng không tồn tại số liệu công khai nào phân định được PaddleOCR và EasyOCR trên ảnh biển số, nên quyết định cuối cùng thuộc về benchmark do chính đồ án chạy trên tập dữ liệu biển số Việt Nam — luận cứ đầy đủ ở **mục 3.3**, kết quả ở **Chương 6**.
 
 ### 1.3.2. Phạm vi trong nghiên cứu
 
+**Bảng 1.3.** Phạm vi trong nghiên cứu
+
 | Nhóm | Nội dung trong phạm vi |
 |---|---|
-| **(a) Trí tuệ nhân tạo** | Huấn luyện bộ phát hiện biển số YOLO11 trên dữ liệu Việt Nam; so sánh các biến thể kích thước mô hình (n / s / m) để chọn điểm cân bằng tốc độ – độ chính xác, kèm huấn luyện YOLO26n song song làm đối chứng (mục 2.8.1); **benchmark các engine OCR ứng viên** trên chính tập kiểm thử biển số Việt Nam rồi tích hợp engine thắng cuộc (đã tinh chỉnh) để nhận dạng ký tự trên vùng đã cắt; hậu xử lý bằng biểu thức chính quy và luật kiểm tra tính hợp lệ theo vị trí; **hỗ trợ cả biển một dòng và hai dòng**; đánh giá đầy đủ (mAP, precision, recall, F1, ma trận nhầm lẫn, đường cong loss); đo hiệu năng suy luận trên CPU |
+| **(a) Trí tuệ nhân tạo** | Huấn luyện bộ phát hiện biển số YOLO11 trên dữ liệu Việt Nam; so sánh các biến thể kích thước mô hình (n / s / m) để chọn điểm cân bằng tốc độ – độ chính xác, kèm huấn luyện YOLO26n song song làm đối chứng (mục 3.2); **benchmark các engine OCR ứng viên** trên chính tập kiểm thử biển số Việt Nam rồi tích hợp engine thắng cuộc (đã tinh chỉnh) để nhận dạng ký tự trên vùng đã cắt; hậu xử lý bằng biểu thức chính quy và luật kiểm tra tính hợp lệ theo vị trí; **hỗ trợ cả biển một dòng và hai dòng**; đánh giá đầy đủ (mAP, precision, recall, F1, ma trận nhầm lẫn, đường cong loss); đo hiệu năng suy luận trên CPU |
 | **(b) Dữ liệu** | Thu thập, gộp và làm sạch các bộ dữ liệu công khai; kiểm tra và sửa nhãn; loại bỏ ảnh trùng lặp; tăng cường dữ liệu (augmentation); chia tập train / val / test **có kiểm soát rò rỉ dữ liệu**; thống kê và trực quan hoá |
 | **(c) Phần mềm** | REST API bằng FastAPI có tài liệu Swagger tự sinh; nhận dạng từ ảnh, video và khung hình thời gian thực gửi qua API (`POST /api/detect/frame`); lưu lịch sử bằng SQLite + SQLAlchemy + Alembic; giao diện web React + Vite + TypeScript + TailwindCSS gồm **ba trang** — Nhận dạng ảnh (trang chủ), Nhận dạng video, Lịch sử — sau hai đợt thu gọn phạm vi ngày 2026-07-20 đã gỡ trang Webcam rồi tới trang Tổng quan (Dashboard); lịch sử, tìm kiếm, lọc, xem chi tiết và tải về trên giao diện, còn số liệu thống kê tổng hợp phục vụ ở tầng API (`GET /api/statistics`); đóng gói bằng Docker và Docker Compose |
 | **(d) Kiểm thử và tài liệu** | Unit test, integration test, kiểm thử độ chính xác AI, kiểm thử hiệu năng và chịu tải; bộ tài liệu học thuật và kỹ thuật đầy đủ |
@@ -180,6 +186,8 @@ Bổ sung hai yêu cầu phân tích phục vụ chương đánh giá:
 ### 1.3.3. Phạm vi ngoài nghiên cứu
 
 > **Vì sao mục này quan trọng hơn vẻ ngoài của nó.** Việc ghi rõ những gì **không làm** quan trọng ngang với việc ghi những gì sẽ làm. Danh sách dưới đây có hai chức năng: giữ đề tài khỏi phình phạm vi trong quá trình thực hiện, và là **hàng rào bảo vệ đề án trước câu hỏi phản biện dạng "sao không làm X"**. Mỗi hạng mục loại trừ đều nêu lý do; không hạng mục nào bị loại trừ vì "không kịp làm".
+
+**Bảng 1.4.** Các hạng mục nằm ngoài phạm vi và lý do loại trừ
 
 | # | Hạng mục loại trừ | Lý do loại trừ |
 |:-:|---|---|
@@ -271,6 +279,8 @@ Công bố một con số FPS mà không kèm cấu hình phần cứng là **l�
 
 Đề tài được thực hiện theo quy trình **12 giai đoạn (Phase 0 – Phase 11)**, tổng công sức ước lượng **77 ngày-người** (quy ước 1 ngày-người ≈ 6 giờ làm việc tập trung). Mỗi giai đoạn kết thúc bằng một **điểm chốt (milestone)** có điều kiện thông qua tường minh; **không tự động chuyển sang giai đoạn tiếp theo** khi điểm chốt chưa đạt.
 
+**Bảng 1.5.** Mười hai giai đoạn thực hiện, công sức và điều kiện thông qua
+
 | Phase | Tên giai đoạn | Công sức | Điểm chốt | Điều kiện thông qua |
 |:---:|---|:---:|:---:|---|
 | 0 | Requirement Analysis | 2 | M0 | Yêu cầu được phê duyệt, phạm vi được chốt |
@@ -295,7 +305,7 @@ Công bố một con số FPS mà không kèm cấu hình phần cứng là **l�
 | P3 → P4 | Bounding box lệch ⇒ vùng cắt lệch ⇒ OCR sai, dù OCR có hoàn hảo | `mAP@0.5:0.95` thấp dù `mAP@0.5` cao |
 | P4 | **Biển hai dòng** — chính là rủi ro đã được định lượng ở mục 1.1.3 | Độ chính xác biển hai dòng thấp hơn biển một dòng rõ rệt |
 
-**Trạng thái tại thời điểm viết chương này.** Phase 0 và Phase 1 đã hoàn thành, chốt M0 và M1. Backend FastAPI đã chạy được và được xác minh bằng yêu cầu HTTP thật (10 endpoint phản hồi đúng, migration cơ sở dữ liệu hoàn tất, tài liệu Swagger render được); frontend đã hoàn thành và build sạch. **Hệ thống đang vận hành pipeline nhận dạng thật** với mô hình chính thức `models/best.pt` — `/health` báo `model_loaded: true`, engine `yolo:best.pt+paddleocr-PP-OCRv5-mobile`. Mô hình chính thức (YOLO11n, `imgsz=640`, split v3, 20 epoch) **đã huấn luyện xong**, đạt mAP@0.5 = 0,9829 và mAP@0.5:0.95 = 0,7834; các chỉ tiêu NFR-A4/A5/A6/A7 và NFR-P1 **đã được đo**. `models/baseline-416-v1.pt` chỉ còn giữ vai trò **mô hình đối chứng** và không đóng góp con số nào vào kết quả công bố, vì hai khiếm khuyết đã biết: huấn luyện ở `imgsz=416` trong khi chỉ tiêu đặt ở 640, và dùng split v1 vốn có rò rỉ train↔test. **Toàn bộ kết quả thực nghiệm được trình bày ở Chương 5.**
+**Trạng thái tại thời điểm viết chương này.** Phase 0 và Phase 1 đã hoàn thành, chốt M0 và M1. Backend FastAPI đã chạy được và được xác minh bằng yêu cầu HTTP thật (10 endpoint phản hồi đúng, migration cơ sở dữ liệu hoàn tất, tài liệu Swagger render được); frontend đã hoàn thành và build sạch. **Hệ thống đang vận hành pipeline nhận dạng thật** với mô hình chính thức `models/best.pt` — `/health` báo `model_loaded: true`, engine `yolo:best.pt+paddleocr-PP-OCRv5-mobile`. Mô hình chính thức (YOLO11n, `imgsz=640`, split v3, 20 epoch) **đã huấn luyện xong**, đạt mAP@0.5 = 0,9829 và mAP@0.5:0.95 = 0,7834; các chỉ tiêu NFR-A4/A5/A6/A7 và NFR-P1 **đã được đo**. `models/baseline-416-v1.pt` chỉ còn giữ vai trò **mô hình đối chứng** và không đóng góp con số nào vào kết quả công bố, vì hai khiếm khuyết đã biết: huấn luyện ở `imgsz=416` trong khi chỉ tiêu đặt ở 640, và dùng split v1 vốn có rò rỉ train↔test. **Toàn bộ kết quả thực nghiệm được trình bày ở Chương 6.**
 
 ---
 
@@ -335,7 +345,7 @@ Các con số vượt 99% xuất hiện trong tài liệu ALPR quốc tế là s
 
 Sản phẩm là một hệ thống có **kiến trúc phần mềm**, không phải một tập script rời rạc: pipeline AI tách biệt hoàn toàn khỏi tầng API (NFR-M1, kiểm chứng được bằng phân tích import), interface trừu tượng cho phép thay thế engine OCR mà không sửa mã tầng API (NFR-M5), REST API có tài liệu tự sinh, giao diện web **ba màn hình** (thu gọn từ năm qua hai đợt gỡ trang ngày 2026-07-20 — năng lực thời gian thực và số liệu thống kê đều giữ ở tầng API), cơ sở dữ liệu có migration, bộ kiểm thử độ bao phủ ≥ 70%, và đóng gói Docker khởi động một lệnh.
 
-> **Mức độ hoàn thành tại thời điểm viết.** Bốn hạng mục đầu — tách tầng AI, interface trừu tượng, REST API có tài liệu tự sinh, cơ sở dữ liệu có migration — **đã được cài đặt và xác minh bằng yêu cầu HTTP thật**. Giao diện web **đã hoàn thành** và build sạch. Chỉ tiêu độ bao phủ kiểm thử ≥ 70% **đã đạt và đã đo**: **87,7%** ở tầng nghiệp vụ theo lần đo mới nhất ngày 2026-07-20 (`docs/reports/13-refactor-result.json`; lần đo ở Phase 7 trước đó là 88,1% theo `docs/reports/07-testing-report.md`, và 42,0% trên toàn kho), với **882 test thu thập / 881 đạt / 1 xfail / 0 thất bại**. Đóng gói Docker và Docker Compose **đã hoàn thành**. Số liệu chi tiết của từng hạng mục được báo cáo ở **Chương 5**.
+> **Mức độ hoàn thành tại thời điểm viết.** Bốn hạng mục đầu — tách tầng AI, interface trừu tượng, REST API có tài liệu tự sinh, cơ sở dữ liệu có migration — **đã được cài đặt và xác minh bằng yêu cầu HTTP thật**. Giao diện web **đã hoàn thành** và build sạch. Chỉ tiêu độ bao phủ kiểm thử ≥ 70% **đã đạt và đã đo**: **87,7%** ở tầng nghiệp vụ theo lần đo mới nhất ngày 2026-07-20 (`docs/reports/13-refactor-result.json`; lần đo ở Phase 7 trước đó là 88,1% theo `docs/reports/07-testing-report.md`, và 42,0% trên toàn kho), với **882 test thu thập / 881 đạt / 1 xfail / 0 thất bại**. Đóng gói Docker và Docker Compose **đã hoàn thành**. Số liệu chi tiết của từng hạng mục được báo cáo ở **Chương 6**.
 
 Khảo sát ở Phase 1 cho thấy hệ sinh thái mã nguồn mở ALPR Việt Nam chủ yếu gồm các script rời rạc **không công bố số liệu độ chính xác** và **không có kiến trúc phần mềm**. Đây là **khoảng trống kỹ nghệ** chứ không phải khoảng trống thuật toán — nhưng vẫn là khoảng trống có thật.
 
@@ -357,7 +367,7 @@ Bộ luật khai thác ba ràng buộc đặc thù của quy chuẩn Việt Nam:
 
 Phần lớn công trình mô tả bước hậu xử lý ở mức định tính ("có thêm bước sửa lỗi bằng regex"), không trả lời được câu hỏi *bước đó đóng góp bao nhiêu*.
 
-Đề tài giải quyết bằng một quyết định thiết kế cụ thể ở tầng dữ liệu: **lưu đồng thời cả chuỗi OCR thô và chuỗi đã sửa** cho mỗi lần nhận dạng. Nhờ đó, hiệu số giữa **NFR-A5** (độ chính xác biển đầy đủ *trước* hậu xử lý) và **NFR-A6** (*sau* hậu xử lý) trở thành một **con số đo được**, chính là đóng góp định lượng của khối hậu xử lý. Con số này sẽ được trình bày ở **Chương 5**.
+Đề tài giải quyết bằng một quyết định thiết kế cụ thể ở tầng dữ liệu: **lưu đồng thời cả chuỗi OCR thô và chuỗi đã sửa** cho mỗi lần nhận dạng. Nhờ đó, hiệu số giữa **NFR-A5** (độ chính xác biển đầy đủ *trước* hậu xử lý) và **NFR-A6** (*sau* hậu xử lý) trở thành một **con số đo được**, chính là đóng góp định lượng của khối hậu xử lý. Con số này sẽ được trình bày ở **Chương 6**.
 
 ### 1.6.5. Đóng góp (d) — Đánh giá tách riêng biển một dòng và biển hai dòng
 
@@ -369,9 +379,9 @@ Mọi số liệu hiệu năng của đề tài được công bố kèm **model
 
 ### 1.6.7. Đóng góp (f) — Benchmark các engine OCR trên chính ảnh biển số Việt Nam
 
-Khảo sát ở Phase 1 xác định rằng **không tồn tại benchmark công khai nào so sánh các engine OCR trên riêng ảnh biển số xe máy Việt Nam hai dòng**; hơn nữa, hai số liệu thường được viện dẫn để chứng minh ưu thế của một engine cụ thể đã **bị bác bỏ khi truy ngược về nguồn gốc** — chi tiết ở mục 2.8.2. Đây là lý do lựa chọn engine OCR được để mở một cách có chủ ý ở giai đoạn thiết kế thay vì được khẳng định không căn cứ.
+Khảo sát ở Phase 1 xác định rằng **không tồn tại benchmark công khai nào so sánh các engine OCR trên riêng ảnh biển số xe máy Việt Nam hai dòng**; hơn nữa, hai số liệu thường được viện dẫn để chứng minh ưu thế của một engine cụ thể đã **bị bác bỏ khi truy ngược về nguồn gốc** — chi tiết ở mục 3.3. Đây là lý do lựa chọn engine OCR được để mở một cách có chủ ý ở giai đoạn thiết kế thay vì được khẳng định không căn cứ.
 
-Đồ án lấp khoảng trống này bằng cách tự chạy một ma trận thí nghiệm so sánh các engine ứng viên trên chính tập kiểm thử biển số Việt Nam, với chỉ số chính là **độ chính xác mức chuỗi tách riêng cho biển một dòng và biển hai dòng**, kèm độ trễ p50/p95/p99 đo trên cùng một cấu hình phần cứng. Chương 2 đánh giá đây là **đóng góp khoa học có giá trị nhất mà đồ án có thể tuyên bố** (khoảng trống số 4, Bảng 2.23), vì nó biến một điểm chưa chứng minh được thành một phép đo mà đồ án là bên đầu tiên thực hiện. Kết quả sẽ được trình bày ở **Chương 5**.
+Đồ án lấp khoảng trống này bằng cách tự chạy một ma trận thí nghiệm so sánh các engine ứng viên trên chính tập kiểm thử biển số Việt Nam, với chỉ số chính là **độ chính xác mức chuỗi tách riêng cho biển một dòng và biển hai dòng**, kèm độ trễ p50/p95/p99 đo trên cùng một cấu hình phần cứng. Chương 2 đánh giá đây là **đóng góp khoa học có giá trị nhất mà đồ án có thể tuyên bố** (khoảng trống số 4, Bảng 2.23), vì nó biến một điểm chưa chứng minh được thành một phép đo mà đồ án là bên đầu tiên thực hiện. Kết quả sẽ được trình bày ở **Chương 6**.
 
 ### 1.6.8. Những gì đề tài KHÔNG tuyên bố
 
@@ -379,27 +389,28 @@ Khảo sát ở Phase 1 xác định rằng **không tồn tại benchmark công
 
 1. Đề tài **không** tuyên bố vượt qua các con số độ chính xác cao nhất đã công bố trong nước — các con số đó được đo trên tập dữ liệu riêng không công khai, **không tồn tại cơ sở để so sánh công bằng**.
 2. Đề tài **không** đề xuất kiến trúc mạng nơ-ron mới; nó **tích hợp và tinh chỉnh** các thành phần đã có.
-3. Đề tài **không** giải quyết các thách thức mở của lĩnh vực: nhận dạng ở độ phân giải rất thấp, tổng quát hoá xuyên tập dữ liệu, che khuất nặng. Những vấn đề này được nêu ở phần **Hướng phát triển (Chương 6)**.
+3. Đề tài **không** giải quyết các thách thức mở của lĩnh vực: nhận dạng ở độ phân giải rất thấp, tổng quát hoá xuyên tập dữ liệu, che khuất nặng. Những vấn đề này được nêu ở phần **Hướng phát triển (Chương 7)**.
 4. Mọi số liệu hiệu năng của đề tài là **số liệu CPU**, **không so sánh trực tiếp được** với các con số FPS đo trên GPU trong tài liệu tham khảo.
 
 ---
 
 ## 1.7. Bố cục quyển đồ án
 
-Quyển đồ án gồm sáu chương:
+Quyển đồ án gồm bảy chương:
 
 | Chương | Tên | Nội dung chính |
 |:---:|---|---|
-| **1** | **Mở đầu** | Bối cảnh và lý do chọn đề tài; mục tiêu dưới dạng chỉ tiêu đo được; đối tượng và phạm vi; phương pháp nghiên cứu; ý nghĩa và đóng góp |
-| **2** | **Tổng quan và cơ sở lý thuyết** | Tổng quan bài toán ALPR và lịch sử phát triển; phân loại các hướng tiếp cận; cơ sở lý thuyết về phát hiện đối tượng họ YOLO và nhận dạng ký tự không phân đoạn; **quy chuẩn biển số Việt Nam theo TT 79/2024 và QCVN 08:2024**; khảo sát bộ dữ liệu; so sánh và lựa chọn công nghệ |
-| **3** | **Phân tích và thiết kế hệ thống** | Phân tích yêu cầu (34 FR, các nhóm NFR, ràng buộc, rủi ro); kiến trúc tổng thể và nguyên tắc tách tầng; thiết kế pipeline AI, khối hậu xử lý theo vị trí, cơ sở dữ liệu, API, giao diện và kiểm soát đầu vào |
-| **4** | **Xây dựng hệ thống** | Môi trường và công cụ; xây dựng bộ dữ liệu; huấn luyện mô hình phát hiện; hiện thực module OCR và luật hậu xử lý; hiện thực backend, frontend và đóng gói triển khai |
-| **5** | **Kết quả và đánh giá** | Kết quả huấn luyện; đánh giá bộ phát hiện và OCR; **đánh giá toàn trình tách riêng biển một dòng và hai dòng**; **đo đóng góp định lượng của khối hậu xử lý**; đo hiệu năng CPU kèm cấu hình phần cứng; đối chiếu từng chỉ tiêu NFR; phân tích ca lỗi |
-| **6** | **Kết luận và hướng phát triển** | Tổng kết kết quả đạt được và chưa đạt; hạn chế; hướng phát triển |
+| **1** | **Giới thiệu** | Bối cảnh và lý do chọn đề tài; mục tiêu dưới dạng chỉ tiêu đo được; đối tượng và phạm vi; phương pháp nghiên cứu; ý nghĩa và đóng góp |
+| **2** | **Cơ sở lý thuyết** | Tổng quan bài toán ALPR và lịch sử phát triển; phân loại các hướng tiếp cận; cơ sở lý thuyết về phát hiện đối tượng họ YOLO và nhận dạng ký tự không phân đoạn; **quy chuẩn biển số Việt Nam theo TT 79/2024 và QCVN 08:2024**; các công trình liên quan và khoảng trống nghiên cứu |
+| **3** | **Khảo sát công nghệ và lựa chọn mô hình** | Tiêu chí lựa chọn và **ranh giới giữa cái đã đo và cái mới chỉ khảo sát tài liệu**; chọn mô hình phát hiện trong bảy thế hệ YOLO; chọn engine OCR trong tám ứng viên, kèm phép đo PP-OCRv5 mobile so với PP-OCRv6; chọn runtime suy luận trên CPU; ảnh hưởng của độ phân giải đầu vào |
+| **4** | **Phân tích và thiết kế hệ thống** | Phân tích yêu cầu (34 FR, các nhóm NFR, ràng buộc, rủi ro); kiến trúc tổng thể và nguyên tắc tách tầng; thiết kế pipeline AI, khối hậu xử lý theo vị trí, cơ sở dữ liệu, API và giao diện |
+| **5** | **Xây dựng hệ thống và huấn luyện mô hình** | Môi trường và công cụ; xây dựng bộ dữ liệu; huấn luyện bộ phát hiện; **tinh chỉnh bộ nhận dạng ký tự và phép đo có/không tinh chỉnh**; hiện thực tầng AI, backend, frontend; đóng gói triển khai; những chỗ cài đặt lệch khỏi thiết kế và lý do |
+| **6** | **Thực nghiệm và đánh giá** | Giao thức đo; đánh giá bộ phát hiện và khối OCR; **đánh giá toàn trình tách riêng biển một dòng và hai dòng**; **đo đóng góp định lượng của khối hậu xử lý**; đo hiệu năng CPU kèm cấu hình phần cứng; đối chiếu từng chỉ tiêu NFR; phân tích ca lỗi và các mối đe doạ đến tính hợp lệ |
+| **7** | **Kết luận và hướng phát triển** | Tổng kết kết quả đạt được và chưa đạt; hạn chế; hướng phát triển |
 
 Phần cuối quyển gồm **Tài liệu tham khảo** và các **Phụ lục** (bảng mã tỉnh đầy đủ, bảng tổng hợp yêu cầu chức năng, đặc tả API, hướng dẫn cài đặt và vận hành).
 
-> **Ghi chú về trạng thái viết.** Mô hình chính thức (`models/best.pt`) đã huấn luyện xong và các chỉ tiêu NFR-A1–A7 đã được đo (số liệu ở `docs/reports/05-tables.md`). Các tham chiếu tới kết quả thực nghiệm trong Chương 1 được ghi là *"trình bày ở Chương 5"* để giữ đúng cấu trúc quyển; số liệu đầy đủ (detection đạt, OCR biển hai dòng không đạt, NFR-P1 đạt) nằm ở Chương 5.
+> **Vì sao khảo sát công nghệ được tách thành chương riêng.** Ở bản thảo trước, toàn bộ luận cứ chọn mô hình nằm gọn trong một mục cuối chương cơ sở lý thuyết. Đó là chỗ người đọc mục lục không nhìn thấy, trong khi lại là phần mà một hội đồng hỏi nhiều nhất. Chương 3 tồn tại để câu hỏi *"vì sao chọn YOLO11 chứ không phải YOLOv8, vì sao PaddleOCR chứ không phải EasyOCR, vì sao bản mobile của v5 chứ không phải v6"* có một chỗ trả lời tường minh — kể cả khi câu trả lời trung thực đôi lúc là *"chưa đo được"*.
 
 ---
 

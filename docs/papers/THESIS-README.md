@@ -17,22 +17,29 @@ Tài liệu này trả lời bốn câu hỏi: **quyển đồ án nằm ở đ�
 
 ```
 docs/papers/
-├── THESIS-README.md          ← tài liệu này — quy ước biên soạn
-├── 00-thesis-outline.md      ← đề cương chi tiết toàn quyển (đến cấp 3)
-├── 01-front-matter.md        ← bìa, cam đoan, cảm ơn, mục lục, danh mục, abstract
-├── ch1-mo-dau.md             ← ✅ đã viết — Chương 1
-├── ch2-tong-quan.md          ← ✅ đã viết — Chương 2
-├── ch3-phan-tich-thiet-ke.md ← ✅ đã viết — Chương 3
-├── ch4-cai-dat.md            ← ✅ đã viết — Chương 4
-├── ch5-thuc-nghiem.md        ← ✅ đã viết — Chương 5
-├── ch6-ket-luan.md           ← ✅ đã viết — Chương 6
-└── build/                    ← đầu ra khi ghép — KHÔNG sửa tay, KHÔNG commit
-    └── thesis-full.md
+├── THESIS-README.md            ← tài liệu này — quy ước biên soạn
+├── 00-thesis-outline-v2.md     ← đề cương ĐANG DÙNG (7 chương, áp dụng 02/08/2026)
+├── 00-thesis-outline.md        ← đề cương cũ (6 chương) — giữ để tra lịch sử, KHÔNG dùng
+├── 01-front-matter.md          ← bìa, cam đoan, cảm ơn, mục lục, danh mục, abstract
+├── ch1-gioi-thieu.md           ← ✅ Chương 1
+├── ch2-co-so-ly-thuyet.md      ← ✅ Chương 2
+├── ch3-khao-sat-lua-chon.md    ← ✅ Chương 3
+├── ch4-phan-tich-thiet-ke.md   ← ✅ Chương 4
+├── ch5-xay-dung-huan-luyen.md  ← ✅ Chương 5
+├── ch6-thuc-nghiem.md          ← ✅ Chương 6
+├── ch7-ket-luan.md             ← ✅ Chương 7
+└── thesis-full.md / .docx / .pdf  ← đầu ra khi ghép — KHÔNG sửa tay
 ```
 
-Phần **Tài liệu tham khảo** sinh từ `docs/references.bib` khi ghép, còn **Phụ lục** trích từ các tài liệu nguồn (xem `00-thesis-outline.md` §10) — cả hai không tồn tại dưới dạng tệp riêng trong thư mục này.
+Phần **Tài liệu tham khảo** sinh từ `docs/references.bib` khi ghép, còn **Phụ lục** trích từ các tài liệu nguồn — cả hai không tồn tại dưới dạng tệp riêng trong thư mục này.
 
-**Quy tắc đặt tên tệp:** các tệp chương dùng tiền tố `ch<số chương>-<slug không dấu, gạch nối>.md`; hai tệp không phải chương giữ tiền tố số (`00-`, `01-`) và đứng trước khi ghép. Thứ tự ghép là: `01-front-matter.md` → `ch1` → … → `ch6` → tài liệu tham khảo → phụ lục. **Không đổi tên tệp chương** sau khi đã đặt, vì mọi tham chiếu chéo trong `00-thesis-outline.md` và tài liệu này đều trỏ theo tên hiện tại.
+**Quy tắc đặt tên tệp:** các tệp chương dùng tiền tố `ch<số chương>-<slug không dấu, gạch nối>.md`; các tệp không phải chương giữ tiền tố số (`00-`, `01-`) và đứng trước khi ghép. Thứ tự ghép khai báo tường minh ở `CHAPTER_FILENAMES` trong `scripts/build_thesis.py`.
+
+> ⚠️ **Đổi tên tệp chương thì phải đổi ở bốn chỗ:** `CHAPTER_FILENAMES`
+> (`scripts/build_thesis.py`), danh sách `CHUONG` (`scripts/gen_front_matter_lists.py`),
+> cây thư mục ở trên, và bảng trạng thái ở §2. Lần tái cấu trúc 02/08/2026 đã đổi
+> cả bảy tệp một lượt — xem `00-thesis-outline-v2.md` để biết bảng ánh xạ và hai
+> lớp kiểm chứng đã chạy.
 
 ### Các thư mục liên quan
 
@@ -50,13 +57,14 @@ Phần **Tài liệu tham khảo** sinh từ `docs/references.bib` khi ghép, c�
 
 | Tệp | Chương | Trạng thái | Điều kiện chặn |
 |---|---|---|---|
-| `01-front-matter.md` | Phần đầu quyển | 🟢 **Xong phần làm được** — danh mục từ viết tắt và hai abstract hoàn chỉnh (đã cập nhật số liệu thật); bìa/cam đoan/cảm ơn là mẫu chờ điền; mục lục và danh mục hình/bảng là placeholder | — |
-| `ch1-mo-dau.md` | 1. Mở đầu | 🟢 **ĐÃ VIẾT** | — |
-| `ch2-tong-quan.md` | 2. Tổng quan và cơ sở lý thuyết | 🟢 **ĐÃ VIẾT** | — |
-| `ch3-phan-tich-thiet-ke.md` | 3. Phân tích và thiết kế hệ thống | 🟢 **ĐÃ VIẾT** | — |
-| `ch4-cai-dat.md` | 4. Cài đặt hệ thống | 🟢 **ĐÃ VIẾT** | — |
-| `ch5-thuc-nghiem.md` | 5. Thực nghiệm và đánh giá | 🟢 **ĐÃ VIẾT** | Số liệu đã đầy đủ (`docs/reports/05-results.json`) |
-| `ch6-ket-luan.md` | 6. Kết luận và hướng phát triển | 🟢 **ĐÃ VIẾT** | — |
+| `01-front-matter.md` | Phần đầu quyển | 🟢 **Xong phần làm được** — danh mục từ viết tắt và hai abstract hoàn chỉnh; **mục lục và danh mục hình/bảng nay sinh tự động** bằng `scripts/gen_front_matter_lists.py`; bìa/cam đoan/cảm ơn là mẫu chờ điền | — |
+| `ch1-gioi-thieu.md` | 1. Giới thiệu | 🟢 **ĐÃ VIẾT** | — |
+| `ch2-co-so-ly-thuyet.md` | 2. Cơ sở lý thuyết | 🟢 **ĐÃ VIẾT** | — |
+| `ch3-khao-sat-lua-chon.md` | 3. Khảo sát công nghệ và lựa chọn mô hình | 🟢 **ĐÃ VIẾT** | — |
+| `ch4-phan-tich-thiet-ke.md` | 4. Phân tích và thiết kế hệ thống | 🟢 **ĐÃ VIẾT** | — |
+| `ch5-xay-dung-huan-luyen.md` | 5. Xây dựng hệ thống và huấn luyện mô hình | 🟢 **ĐÃ VIẾT** | — |
+| `ch6-thuc-nghiem.md` | 6. Thực nghiệm và đánh giá | 🟢 **ĐÃ VIẾT** | Số liệu đã đầy đủ (`docs/reports/05-results.json`) |
+| `ch7-ket-luan.md` | 7. Kết luận và hướng phát triển | 🟢 **ĐÃ VIẾT** | — |
 | — | Tài liệu tham khảo | ⚪ Sinh khi ghép từ `references.bib` | — |
 | — | Phụ lục | 🟢 Nguyên liệu đã sẵn (A, B, C, D, E) | — |
 
@@ -90,7 +98,7 @@ Dùng đánh số phân cấp kiểu `1.`, `1.1.`, `1.1.1.` — tối đa **ba c
 
 **Mỗi tệp chương chỉ có đúng một tiêu đề cấp `#`.** Đây là điều kiện để công cụ sinh mục lục tự động hoạt động và để việc ghép tệp không tạo ra cấu trúc lệch.
 
-Danh sách mục chính thức nằm ở `00-thesis-outline.md`. **Sửa đề cương trước, viết chương sau** — không tự thêm mục mới trực tiếp vào tệp chương, vì mục lục sẽ lệch với đề cương.
+Danh sách mục chính thức nằm ở `00-thesis-outline-v2.md`. Mục lục ở đầu quyển **sinh tự động** từ chính tiêu đề trong tệp chương (`scripts/gen_front_matter_lists.py`), nên nó luôn khớp nội dung thật — nhưng vẫn phải sửa đề cương để giữ chủ ý về cấu trúc. **Sửa đề cương trước, viết chương sau** — không tự thêm mục mới trực tiếp vào tệp chương, vì mục lục sẽ lệch với đề cương.
 
 ### 3.2. Đánh số hình và bảng
 
@@ -181,7 +189,7 @@ Bất biến phải kiểm tra sau khi ghép: **mọi khoá xuất hiện trong 
 
 ### 5.1. Thứ tự ghép
 
-Theo đúng thứ tự: `01-front-matter.md` → `ch1-mo-dau.md` → `ch2-tong-quan.md` → `ch3-phan-tich-thiet-ke.md` → `ch4-cai-dat.md` → `ch5-thuc-nghiem.md` → `ch6-ket-luan.md` → Tài liệu tham khảo (sinh từ `references.bib`) → Phụ lục. Tệp `00-thesis-outline.md` và `THESIS-README.md` là **tài liệu công cụ, KHÔNG ghép vào quyển**.
+Theo đúng thứ tự: `01-front-matter.md` → `ch1-gioi-thieu.md` → `ch2-co-so-ly-thuyet.md` → `ch3-khao-sat-lua-chon.md` → `ch4-phan-tich-thiet-ke.md` → `ch5-xay-dung-huan-luyen.md` → `ch6-thuc-nghiem.md` → `ch7-ket-luan.md` → Tài liệu tham khảo (sinh từ `references.bib`) → Phụ lục. Tệp `00-thesis-outline.md` và `THESIS-README.md` là **tài liệu công cụ, KHÔNG ghép vào quyển**.
 
 ### 5.2. Ghép bằng script
 
@@ -200,7 +208,7 @@ backend/.venv/Scripts/python.exe scripts/build_thesis.py
 backend/.venv/Scripts/python.exe scripts/build_thesis.py --out build/thesis-full.md --no-docx
 ```
 
-Script nối **đúng bảy tệp** theo thứ tự ở §5.1 (danh sách khai báo tường minh trong mã, **không** dùng glob nên không nuốt nhầm `00-thesis-outline.md` hay `THESIS-README.md`), chèn dấu ngắt trang giữa các phần, và ghi ra `docs/papers/thesis-full.md`. Chạy lại luôn cho kết quả **byte-identical** (idempotent), nên có thể tái sinh bản ghép bất cứ lúc nào rồi đối chiếu bằng `diff`.
+Script nối **đúng tám tệp** theo thứ tự ở §5.1 (danh sách khai báo tường minh trong mã, **không** dùng glob nên không nuốt nhầm `00-thesis-outline-v2.md` hay `THESIS-README.md`), chèn dấu ngắt trang giữa các phần, và ghi ra `docs/papers/thesis-full.md`. Chạy lại luôn cho kết quả **byte-identical** (idempotent), nên có thể tái sinh bản ghép bất cứ lúc nào rồi đối chiếu bằng `diff`.
 
 > **Lưu ý về dấu ngắt trang.** Bản ghép hiện tại dùng dấu phân tách `\n\n\newpage\n\n`; do quy tắc escape của chuỗi Python, `\n` là ký tự xuống dòng nên phần `\newpage` để lại **chuỗi chữ `ewpage`** giữa các phần chứ không phải lệnh LaTeX `\newpage`. Script tái tạo **nguyên trạng** hành vi này để bản dựng khớp byte với tệp đã commit. Nếu sau này muốn dấu ngắt trang LaTeX thật, sửa hằng `SECTION_SEPARATOR` thành chuỗi thô `r"\n\n\newpage\n\n"` — đây là một thay đổi nội dung có chủ đích và sẽ làm bản ghép khác đi.
 

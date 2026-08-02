@@ -153,124 +153,208 @@ Chúng tôi xin chân thành cảm ơn!
 
 ## E. MỤC LỤC
 
-> **Placeholder — sinh tự động khi ghép quyển.** Không gõ tay. Cấu trúc dưới đây chỉ để kiểm tra rằng đánh số mục ở các chương khớp với đề cương `00-thesis-outline.md`. Xem hướng dẫn sinh mục lục tại `THESIS-README.md` §5.
+> **Sinh tự động** bằng `scripts/gen_front_matter_lists.py` từ chính các tệp chương. Không gõ tay — chạy lại script sau mỗi lần đổi cấu trúc. Số trang do Word điền khi xuất bản `.docx`.
 
 ```
-LỜI CAM ĐOAN .............................................................. i
-LỜI CẢM ƠN ................................................................ ii
-MỤC LỤC ................................................................... iii
-DANH MỤC HÌNH VẼ .......................................................... vi
-DANH MỤC BẢNG BIỂU ........................................................ viii
-DANH MỤC TỪ VIẾT TẮT ...................................................... x
-TÓM TẮT ĐỒ ÁN ............................................................. xii
-ABSTRACT .................................................................. xiii
+LỜI CAM ĐOAN
+LỜI CẢM ƠN
+MỤC LỤC
+DANH MỤC HÌNH VẼ
+DANH MỤC BẢNG BIỂU
+DANH MỤC TỪ VIẾT TẮT
+TÓM TẮT ĐỒ ÁN
+ABSTRACT
 
-CHƯƠNG 1. MỞ ĐẦU .......................................................... 1
+CHƯƠNG 1. GIỚI THIỆU
     1.1. Đặt vấn đề
     1.2. Mục tiêu đề tài
     1.3. Đối tượng và phạm vi nghiên cứu
     1.4. Phương pháp nghiên cứu
-    1.5. Đóng góp của đồ án
-    1.6. Cấu trúc quyển đồ án
+    1.5. Ý nghĩa khoa học và thực tiễn
+    1.6. Đóng góp của đề tài
+    1.7. Bố cục quyển đồ án
+    1.8. Bảng ánh xạ trích dẫn của chương
+    Tóm tắt chương
 
-CHƯƠNG 2. TỔNG QUAN VÀ CƠ SỞ LÝ THUYẾT ....................................
+CHƯƠNG 2. CƠ SỞ LÝ THUYẾT
     2.1. Tổng quan bài toán ALPR
-    2.2. Phân loại các hướng tiếp cận
-    2.3. Các công trình tiêu biểu
-    2.4. Cơ sở lý thuyết phát hiện đối tượng
-    2.5. Cơ sở lý thuyết nhận dạng ký tự quang học
+    2.2. Lịch sử phát triển các phương pháp
+    2.3. Phân loại các hướng tiếp cận hiện nay
+    2.4. Cơ sở lý thuyết về phát hiện đối tượng
+    2.5. Cơ sở lý thuyết về nhận dạng ký tự
     2.6. Quy chuẩn biển số xe Việt Nam
-    2.7. Các chỉ số đánh giá
-    2.8. Khảo sát bộ dữ liệu
-    2.9. Công nghệ nền tảng
-    2.10. Tóm tắt chương
+    2.7. Các công trình liên quan
+    2.8. Kết luận chương
 
-CHƯƠNG 3. PHÂN TÍCH VÀ THIẾT KẾ HỆ THỐNG ..................................
-    3.1. Phân tích yêu cầu
-    3.2. Kiến trúc tổng thể
-    3.3. Thiết kế pipeline AI
-    3.4. Thiết kế backend
-    3.5. Thiết kế cơ sở dữ liệu
-    3.6. Thiết kế giao diện người dùng
-    3.7. Thiết kế bảo mật và kiểm soát đầu vào
-    3.8. Các quyết định thiết kế và đánh đổi
-    3.9. Tóm tắt chương
+CHƯƠNG 3. KHẢO SÁT CÔNG NGHỆ VÀ LỰA CHỌN MÔ HÌNH
+    3.1. Phương pháp khảo sát và tiêu chí lựa chọn
+    3.2. Mô hình phát hiện: YOLO11
+    3.3. Engine nhận dạng ký tự
+    3.4. Runtime suy luận trên CPU: ONNX Runtime
+    3.5. Các lựa chọn công nghệ nền tảng khác
+    3.6. Khảo sát ảnh hưởng của độ phân giải và chất lượng split
+    3.7. Kết luận chương
 
-CHƯƠNG 4. CÀI ĐẶT HỆ THỐNG ................................................
-    4.1. Môi trường và công cụ phát triển
-    4.2. Cài đặt tầng AI
-    4.3. Cài đặt backend
-    4.4. Cài đặt frontend
-    4.5. Xây dựng bộ dữ liệu
-    4.6. Triển khai bằng Docker
-    4.7. Những chỗ cài đặt lệch khỏi thiết kế ở Chương 3, và lý do
-    4.8. Kết luận chương
+CHƯƠNG 4. PHÂN TÍCH VÀ THIẾT KẾ HỆ THỐNG
+    4.1. Phân tích yêu cầu
+    4.2. Kiến trúc hệ thống
+    4.3. Thiết kế chi tiết
+    4.4. Thiết kế cơ sở dữ liệu
+    4.5. Thiết kế giao diện người dùng
+    4.6. Kết luận chương
 
-CHƯƠNG 5. THỰC NGHIỆM VÀ ĐÁNH GIÁ .........................................
-    5.1. Mục tiêu và phương pháp đánh giá
-    5.2. Môi trường thực nghiệm
-    5.3. Bộ dữ liệu thực nghiệm
-    5.4. Quá trình huấn luyện
-    5.5. Đánh giá bộ phát hiện biển số
-    5.6. Đánh giá khối OCR và hậu xử lý
-    5.7. Đánh giá hiệu năng
-    5.8. Khảo sát ảnh hưởng của độ phân giải và chất lượng split
-    5.9. Đối chiếu toàn bộ chỉ tiêu phi chức năng
-    5.10. Phân tích lỗi
-    5.11. Bàn luận
-    5.12. Kết luận chương
+CHƯƠNG 5. XÂY DỰNG HỆ THỐNG VÀ HUẤN LUYỆN MÔ HÌNH
+    5.1. Môi trường và công cụ phát triển
+    5.2. Xây dựng bộ dữ liệu
+    5.3. Huấn luyện bộ phát hiện biển số
+    5.4. Tinh chỉnh bộ nhận dạng ký tự
+    5.5. Cài đặt tầng AI
+    5.6. Cài đặt backend
+    5.7. Cài đặt frontend
+    5.8. Triển khai bằng Docker
+    5.9. Những chỗ cài đặt lệch khỏi thiết kế ở Chương 4, và lý do
+    5.10. Kết luận chương
 
-CHƯƠNG 6. KẾT LUẬN VÀ HƯỚNG PHÁT TRIỂN ....................................
-    6.1. Tổng kết công việc đã thực hiện
-    6.2. Các kết quả đạt được
-    6.3. Các hạn chế của đồ án
-    6.4. Hướng phát triển
-    6.5. Kết luận chung
+CHƯƠNG 6. THỰC NGHIỆM VÀ ĐÁNH GIÁ
+    6.1. Mục tiêu và phương pháp đánh giá
+    6.2. Môi trường thực nghiệm
+    6.3. Bộ dữ liệu thực nghiệm
+    6.4. Đánh giá bộ phát hiện biển số
+    6.5. Đánh giá khối OCR và hậu xử lý
+    6.6. Đánh giá hiệu năng
+    6.7. Đối chiếu toàn bộ chỉ tiêu phi chức năng
+    6.8. Phân tích lỗi
+    6.9. Bàn luận
+    6.10. Kết luận chương
+    Phụ lục kỹ thuật — Ánh xạ số liệu và lệnh tái lập
 
-TÀI LIỆU THAM KHẢO ........................................................
-PHỤ LỤC ...................................................................
+CHƯƠNG 7. KẾT LUẬN VÀ HƯỚNG PHÁT TRIỂN
+    7.1. Tổng kết công việc đã thực hiện
+    7.2. Các kết quả đạt được
+    7.3. Các hạn chế của đồ án
+    7.4. Hướng phát triển
+    7.5. Kết luận chung
+
+TÀI LIỆU THAM KHẢO
+PHỤ LỤC
 ```
 
 ---
 
 ## F. DANH MỤC HÌNH VẼ
 
-> **Placeholder — sinh tự động khi ghép quyển.**
->
-> **Quy ước đánh số hình:** `Hình <số chương>.<số thứ tự trong chương>` — ví dụ `Hình 2.3`. Chú thích đặt **phía dưới** hình, căn giữa. Hình lấy hoặc phỏng theo nguồn khác **bắt buộc** ghi nguồn ngay trong chú thích, kèm ký hiệu `[n]`.
+> **Sinh tự động** bằng `scripts/gen_front_matter_lists.py` từ chính các tệp chương. Không gõ tay — chạy lại script sau mỗi lần đổi cấu trúc. Số trang do Word điền khi xuất bản `.docx`.
 
-| Ký hiệu | Tên hình | Trang | Trạng thái |
-|---|---|:---:|---|
-| Hình 1.1 | Sơ đồ khối tổng quát của một hệ thống ALPR | — | Chờ Chương 1 |
-| Hình 2.x | *(các hình của Chương 2 — kiến trúc YOLO11, kiến trúc CRNN, cấu trúc biển số ô tô và xe máy, phân bố tỷ lệ khung hình theo loại biển…)* | — | Chờ Chương 2 |
-| Hình 3.1 | Sơ đồ use case của hệ thống | — | Chờ Chương 3 |
-| Hình 3.2 | Kiến trúc phân tầng của hệ thống | — | Chờ Chương 3 |
-| Hình 3.3 | Luồng xử lý của pipeline AI | — | Chờ Chương 3 |
-| Hình 3.4 | Sơ đồ tuần tự — nhận dạng ảnh | — | Chờ Chương 3 |
-| Hình 3.5 | Sơ đồ tuần tự — nhận dạng video bất đồng bộ | — | Chờ Chương 3 |
-| Hình 3.6 | Sơ đồ thực thể – liên kết của cơ sở dữ liệu | — | Chờ Chương 3 |
-| Hình 4.x | *(các hình của Chương 4)* | — | Chờ Chương 4 |
-| Hình 5.x | *(các hình của Chương 5 — đường cong loss, ma trận nhầm lẫn, biểu đồ độ trễ…)* | — | Chờ Chương 5 |
+> **Quy ước đánh số hình:** `Hình <số chương>.<số thứ tự trong chương>`. Chú thích đặt **phía dưới** hình, căn giữa. Hình lấy hoặc phỏng theo nguồn khác **bắt buộc** ghi nguồn ngay trong chú thích, kèm ký hiệu `[n]`.
+
+| Ký hiệu | Tên hình | Trang |
+|---|---|:---:|
+| Hình 2.1 | * Sơ đồ pipeline ALPR điển hình (tổng hợp từ [2], [3], [4], [6], [7]) | — |
+| Hình 2.2 | ** Sơ đồ phân loại hai trục các hướng tiếp cận ALPR và định vị lựa chọn của đồ án | — |
+| Hình 2.3 | * Kiến trúc tổng quát backbone – neck – head của YOLO11 (theo [27], [28]) | — |
+| Hình 2.4 | * Cấu trúc phân cấp của khối C2PSA trong YOLO11 (đối chiếu mã nguồn [30]) | — |
+| Hình 2.5 | * Cơ chế sụp đổ của CTC trên ảnh văn bản hai dòng (theo [41]) | — |
+| Hình 2.6 | ** Chuỗi văn bản pháp lý về biển số xe đang có hiệu lực | — |
+| Hình 2.7 | * Khoảng trống tỷ lệ khung hình giữa biển hai dòng và biển một dòng (dẫn xuất từ [57]) | — |
+| Hình 5.1 | * Đường cong hàm mất mát theo epoch — box_loss, cls_loss, dfl_loss, tách riêng train và val | — |
+| Hình 5.2 | * Tiến triển mAP@0.5 và mAP@0.5:0.95 trên tập validation theo epoch | — |
+| Hình 5.3 | * Tiến triển precision và recall trên tập validation theo epoch | — |
+| Hình 6.1 | Giao thức đo và ràng buộc phụ thuộc giữa các bước đánh giá | — |
+| Hình 6.2 | * Đường cong Precision–Recall trên tập test, vẽ tách theo layout (một dòng / hai dòng) | — |
+| Hình 6.3 | * Ma trận nhầm lẫn nhận biết layout: hàng là quần thể nhãn thật (một dòng / hai dòng / nền), cột là dự đoán | — |
+| Hình 6.4 | * Đường cong F1 theo ngưỡng confidence — dùng để xác định ngưỡng vận hành | — |
+| Hình 6.5 | * Ma trận nhầm lẫn ký tự 36×36, thang log(1+n), đo trên chuỗi thô trước hậu xử lý | — |
+| Hình 6.6 | * Biểu đồ cột 15 cặp ký tự bị nhầm nhiều nhất | — |
+| Hình 6.7 | * Phân bố độ trễ đầu-cuối — biểu đồ tần suất kèm vạch đánh dấu p50/p95/p99 và hai ngưỡng chỉ tiêu | — |
+| Hình 6.8 | * Biểu đồ cột chồng phân rã ngân sách độ trễ: ước lượng Phase 0 so với số đo thật | — |
+| Hình 6.9 | * Đường cong thông lượng và tỉ lệ lỗi theo mức đồng thời 1 / 2 / 5 / 10 | — |
+| Hình 6.10 | * Ảnh minh hoạ loại E1 — biển bị bỏ sót. Ghi rõ: kích thước box tương đối, điều kiện ảnh quan sát được | — |
+| Hình 6.11 | * Ảnh minh hoạ loại E3 — nhầm ký tự. Hiển thị vùng cắt, chuỗi thô, chuỗi sau hậu xử lý, nhãn thật | — |
+| Hình 6.12 | * Ảnh minh hoạ loại E6 — sai thứ tự trên biển hai dòng | — |
+| Hình 6.13 | * Ca mà hậu xử lý làm hỏng một chuỗi vốn đã đúng — nếu tồn tại ca như vậy, bắt buộc phải trưng ra, vì nó là bằng chứng phản biện đối với đóng góp được công bố ở mục 6.5.2 | — |
 
 ---
 
 ## G. DANH MỤC BẢNG BIỂU
 
-> **Placeholder — sinh tự động khi ghép quyển.**
->
-> **Quy ước đánh số bảng:** `Bảng <số chương>.<số thứ tự trong chương>` — ví dụ `Bảng 2.5`. Chú thích đặt **phía trên** bảng. Bảng tổng hợp số liệu từ nguồn khác bắt buộc có cột hoặc dòng ghi nguồn kèm ký hiệu `[n]`.
+> **Sinh tự động** bằng `scripts/gen_front_matter_lists.py` từ chính các tệp chương. Không gõ tay — chạy lại script sau mỗi lần đổi cấu trúc. Số trang do Word điền khi xuất bản `.docx`.
 
-| Ký hiệu | Tên bảng | Trang | Trạng thái |
-|---|---|:---:|---|
-| Bảng 1.1 | Phạm vi trong và ngoài của đồ án | — | Chờ Chương 1 |
-| Bảng 2.x | *(các bảng của Chương 2 — so sánh các phiên bản YOLO, so sánh các engine OCR, bảng mã tỉnh, tập ký tự seri, kích thước và tỷ lệ khung hình, so sánh bộ dữ liệu, tổng hợp quyết định công nghệ…)* | — | Chờ Chương 2 |
-| Bảng 3.1 | Tổng hợp 34 yêu cầu chức năng theo mức ưu tiên MoSCoW | — | Chờ Chương 3 |
-| Bảng 3.2 | Tổng hợp chỉ tiêu phi chức năng | — | Chờ Chương 3 |
-| Bảng 3.3 | Ràng buộc, giả định và phụ thuộc | — | Chờ Chương 3 |
-| Bảng 3.4 | Đặc tả trường của bảng `DetectionHistory` | — | Chờ Chương 3 |
-| Bảng 3.5 | Các quyết định thiết kế AD-01 … AD-08 | — | Chờ Chương 3 |
-| Bảng 4.x | *(các bảng của Chương 4)* | — | Chờ Chương 4 |
-| Bảng 5.x | *(các bảng của Chương 5 — kết quả detection, OCR, end-to-end, tách theo layout, hiệu năng CPU, đối chiếu NFR…)* | — | Chờ Chương 5 |
+> **Quy ước đánh số bảng:** `Bảng <số chương>.<số thứ tự trong chương>`. Chú thích đặt **phía trên** bảng. Bảng tổng hợp số liệu từ nguồn khác bắt buộc có cột hoặc dòng ghi nguồn kèm ký hiệu `[n]`.
+
+| Ký hiệu | Tên bảng | Trang |
+|---|---|:---:|
+| Bảng 1.1 | Nhóm chỉ tiêu độ chính xác | — |
+| Bảng 1.2 | Nhóm chỉ tiêu hiệu năng trên CPU | — |
+| Bảng 1.3 | Phạm vi trong nghiên cứu | — |
+| Bảng 1.4 | Các hạng mục nằm ngoài phạm vi và lý do loại trừ | — |
+| Bảng 1.5 | Mười hai giai đoạn thực hiện, công sức và điều kiện thông qua | — |
+| Bảng 2.1 | Các nhóm ứng dụng của hệ thống ALPR | — |
+| Bảng 2.2 | So sánh phương pháp xử lý ảnh cổ điển và phương pháp học sâu | — |
+| Bảng 2.3 | Bốn nhánh kỹ thuật của hướng segmentation-free | — |
+| Bảng 2.4 | So sánh khác biệt kiến trúc giữa các phiên bản YOLO gần đây | — |
+| Bảng 2.5 | So sánh OCR văn bản tài liệu và OCR biển số xe | — |
+| Bảng 2.6 | Tác động của việc resize về chiều cao cố định 48 px lên crop biển xe máy | — |
+| Bảng 2.7 | Các phương pháp phân biệt biển một dòng và biển hai dòng | — |
+| Bảng 2.8 | Các văn bản pháp lý là căn cứ của đồ án | — |
+| Bảng 2.9 | Phân rã thành phần biển số ô tô | — |
+| Bảng 2.10 | Hai kiểu seri biển xe máy đang cùng lưu hành | — |
+| Bảng 2.11 | Tám mã không được sử dụng | — |
+| Bảng 2.12 | Tổng hợp các tập ký tự seri | — |
+| Bảng 2.13 | Các ký hiệu seri đặc biệt [64] | — |
+| Bảng 2.14 | Màu nền biển số và đối tượng áp dụng [60] | — |
+| Bảng 2.15 | Số lượng và dạng biển số theo loại phương tiện [67] | — |
+| Bảng 2.16 | Kích thước và tỷ lệ khung hình của các loại biển số [57] | — |
+| Bảng 2.17 | Ngưỡng phân loại bố cục theo tỷ lệ khung hình — đề xuất của đồ án | — |
+| Bảng 2.18 | Bố cục nội dung của biển hai dòng | — |
+| Bảng 2.19 | Từ quy chuẩn pháp lý tới quyết định thiết kế | — |
+| Bảng 2.20 | Các công trình quốc tế tiêu biểu về ALPR | — |
+| Bảng 2.21 | Các công trình về nhận dạng biển số xe Việt Nam | — |
+| Bảng 2.22 | So sánh các bộ dữ liệu chuẩn quốc tế | — |
+| Bảng 2.23 | Sáu khoảng trống nghiên cứu và cách đồ án lấp | — |
+| Bảng 3.1 | Mức bằng chứng của từng phép so sánh trong chương | — |
+| Bảng 3.2 | So sánh các engine OCR ứng viên | — |
+| Bảng 3.3 | PP-OCRv6_medium_rec so với PP-OCRv5_mobile_rec, đo trên 200 vùng cắt biển số của đồ án | — |
+| Bảng 3.4 | Tổng hợp quyết định công nghệ nền tảng | — |
+| Bảng 3.5 | So sánh baseline-416-v1.pt với best.pt — ba biến thay đổi đồng thời | — |
+| Bảng 3.6 | Tổng hợp các quyết định công nghệ và căn cứ | — |
+| Bảng 4.1 | Phân bố 34 yêu cầu chức năng theo nhóm và mức ưu tiên MoSCoW | — |
+| Bảng 4.2 | Chỉ tiêu phi chức năng nhóm hiệu năng (NFR-P) | — |
+| Bảng 4.3 | Chỉ tiêu phi chức năng nhóm độ chính xác (NFR-A) | — |
+| Bảng 4.4 | Bốn ràng buộc kiến trúc và hệ quả trực tiếp | — |
+| Bảng 4.5 | Trách nhiệm của từng tầng trong kiến trúc phân tầng | — |
+| Bảng 4.6 | Các quyết định kiến trúc AD-01 … AD-08 | — |
+| Bảng 4.7 | Đặc tả các endpoint REST API | — |
+| Bảng 4.8 | Đặc tả trường của bảng detection_job | — |
+| Bảng 4.9 | Đặc tả trường của bảng detection_history | — |
+| Bảng 5.1 | Siêu tham số huấn luyện mô hình chính thức | — |
+| Bảng 5.2 | Tiến triển chỉ số trên tập validation theo mốc epoch | — |
+| Bảng 5.3 | So sánh bộ nhận dạng gốc và bản tinh chỉnh trên cùng ngữ liệu | — |
+| Bảng 6.1 | Cấu hình phần cứng và hệ thống của máy thực nghiệm | — |
+| Bảng 6.2 | Phiên bản thư viện tại thời điểm đo | — |
+| Bảng 6.3 | So sánh ba phiên bản bộ dữ liệu | — |
+| Bảng 6.4 | Số cặp ảnh gần trùng xuyên split theo ngưỡng Hamming | — |
+| Bảng 6.5 | Phân bố nguồn dữ liệu giữa các split của phiên bản v3 | — |
+| Bảng 6.6 | Kết quả phát hiện tổng thể trên tập test v3 | — |
+| Bảng 6.7 | Kết quả phát hiện tách theo biển một dòng và hai dòng (NFR-A8) | — |
+| Bảng 6.8 | Kết quả phát hiện tách theo dải kích thước hộp giới hạn | — |
+| Bảng 6.9 | Độ chính xác mức ký tự (NFR-A4) | — |
+| Bảng 6.10 | Độ chính xác chuỗi đầy đủ trước và sau hậu xử lý | — |
+| Bảng 6.11 | Độ chính xác nhận dạng tách theo biển một dòng và hai dòng | — |
+| Bảng 6.12 | Các cặp ký tự bị nhầm nhiều nhất, đối chiếu bảng luật hiện hành | — |
+| Bảng 6.13 | Độ chính xác đầu-cuối toàn trình (NFR-A7) | — |
+| Bảng 6.14 | So sánh A/B hai chiến lược đọc biển hai dòng | — |
+| Bảng 6.15 | So sánh A/B bước cứu dòng trên trên hai mẫu độc lập | — |
+| Bảng 6.16 | Trước và sau bước cứu dòng trên, đo trên toàn tập có nhãn chuỗi | — |
+| Bảng 6.17 | Chi phí và lợi ích của từng bậc trong bậc thang thử-lại | — |
+| Bảng 6.18 | Độ trễ đầu-cuối một ảnh, đối chiếu NFR-P1 | — |
+| Bảng 6.19 | Phân rã ngân sách độ trễ theo từng bước | — |
+| Bảng 6.20 | So sánh backend suy luận cho bộ phát hiện | — |
+| Bảng 6.21 | Hiệu năng chế độ webcam và xử lý video | — |
+| Bảng 6.22 | Chịu tải, bộ nhớ và độ tin cậy | — |
+| Bảng 6.23 | Bỏ bước phát hiện chữ — hai ngữ liệu, hai kết luận ngược nhau | — |
+| Bảng 6.24 | Đối chiếu toàn bộ chỉ tiêu phi chức năng | — |
+| Bảng 6.25 | Tần suất từng loại lỗi | — |
+| Bảng 7.1 | Đối chiếu chỉ tiêu cam kết ở Phase 0 với số đo trên best.pt | — |
 
 ---
 

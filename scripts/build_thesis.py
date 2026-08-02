@@ -50,19 +50,24 @@ REPO_ROOT: Path = Path(__file__).resolve().parent.parent
 PAPERS_DIR: Path = REPO_ROOT / "docs" / "papers"
 SLIDES_DIR: Path = REPO_ROOT / "docs" / "slides"
 
-# Front matter + the six chapters, in binding order. Listed explicitly (not via
-# a glob) so that tool files such as ``00-thesis-outline.md`` and
+# Front matter + the seven chapters, in binding order. Listed explicitly (not
+# via a glob) so that tool files such as ``00-thesis-outline-v2.md`` and
 # ``THESIS-README.md`` — and any future stray file — are never merged in by
-# accident. Bibliography and appendices are generated separately and are not
-# part of this concatenation.
+# accident.
+#
+# Restructured 2026-08-02 from six chapters to seven: technology selection was
+# buried as §2.8 at the end of a 1,193-line chapter even though it is what a
+# defence committee asks about most, so it became Chapter 3 of its own. See
+# ``docs/papers/00-thesis-outline-v2.md`` for the full mapping.
 CHAPTER_FILENAMES: tuple[str, ...] = (
     "01-front-matter.md",
-    "ch1-mo-dau.md",
-    "ch2-tong-quan.md",
-    "ch3-phan-tich-thiet-ke.md",
-    "ch4-cai-dat.md",
-    "ch5-thuc-nghiem.md",
-    "ch6-ket-luan.md",
+    "ch1-gioi-thieu.md",
+    "ch2-co-so-ly-thuyet.md",
+    "ch3-khao-sat-lua-chon.md",
+    "ch4-phan-tich-thiet-ke.md",
+    "ch5-xay-dung-huan-luyen.md",
+    "ch6-thuc-nghiem.md",
+    "ch7-ket-luan.md",
 )
 
 # Separator inserted after every section (including the last, matching the
