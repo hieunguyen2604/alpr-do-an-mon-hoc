@@ -123,7 +123,23 @@ Bốn hệ quả trực tiếp cho việc chọn engine:
 >
 > **Quy tắc khi viết vào quyển:** chỉ trích dẫn cặp "+5.1 / +4.6" **kèm nguyên văn baseline 78.1% / 81.6% của bài v6**, và tuyệt đối **không đặt cạnh** bảng PaddleX ở đầu mục này như thể cùng một thang đo. **Cần bổ sung ở Phase 4:** bài PP-OCRv6 không mô tả đầy đủ tập đánh giá của nó, nên **chưa kiểm chứng được** vì sao baseline v5_server lệch tới 8.3 điểm so với số PaddleX công bố.
 
-> **Cần bổ sung ở Phase 4:** kích thước lưu trữ (MB) của các model PP-OCRv6 **không được công bố trong bài báo** — bài chỉ báo cáo số tham số. Phải lấy con số này từ model zoo chính thức trước khi đưa vào quyển. Ngoài ra chưa xác định được PP-OCRv6 đã có sẵn trong gói `paddleocr 3.7.0` hay chưa và tải model ở đâu.
+> **Cần bổ sung ở Phase 4:** kích thước lưu trữ (MB) của các model PP-OCRv6 **không được công bố trong bài báo** — bài chỉ báo cáo số tham số. Phải lấy con số này từ model zoo chính thức trước khi đưa vào quyển.
+>
+> ### ✅ Đã trả lời 02/08/2026 — xem [35-ppocrv6-evaluation.md](35-ppocrv6-evaluation.md)
+>
+> `paddleocr 3.7.0` **có** PP-OCRv6, nhưng **chỉ bậc Medium** (`PP-OCRv6_medium_det`,
+> `PP-OCRv6_medium_rec`) — **không có Tiny, không có Small**. Đây là điểm quyết định,
+> vì bậc hấp dẫn cho hệ thống CPU chính là Tiny.
+>
+> Đo trên 200 vùng cắt biển số của đồ án, chỉ nhánh nhận dạng, cùng máy:
+>
+> | Mô hình | Đúng chuỗi | Trung vị |
+> |---|---:|---:|
+> | PP-OCRv5_mobile_rec *(đang dùng)* | 67,0% | **23,0 ms** |
+> | PP-OCRv6_medium_rec | **72,5%** | 386,9 ms |
+>
+> **Chính xác hơn 5,5 điểm, chậm hơn 16,8 lần.** Đồ án giữ v5 mobile: đổi sang v6
+> Medium sẽ đẩy NFR-P1 vượt sàn 1.500 ms và làm NFR-P2 (vốn đã trượt) tệ thêm.
 
 ### 2.2. EasyOCR — Jaided AI
 
