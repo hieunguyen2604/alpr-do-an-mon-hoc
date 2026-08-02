@@ -102,7 +102,7 @@ Tỉ lệ đo thật lệch khỏi chuẩn nhưng vẫn đúng phía ngưỡng *
 | Một giai đoạn *(YOLO đọc ký tự)* | Cần nhãn ký tự — Việt Nam gần như không có |
 | End-to-end *(Transformer)* | Đói dữ liệu, nặng, không hợp CPU |
 
-## Lựa chọn mô hình: YOLO11n & PP-OCRv5 mobile
+## Chọn mô hình: YOLO11n & PP-OCRv5 mobile
 
 Đánh đổi tối ưu cho mục tiêu **suy luận trên CPU** — nhẹ, nhanh, chính xác
 
@@ -227,9 +227,7 @@ Sửa đúng **319 biển**, làm hỏng **0** — dồn gần trọn vào biể
 
 ## Ba can thiệp, một kết luận
 
-Thu hẹp khoảng cách 2 dòng từ **48,6 điểm** *(Laroca 2022)* xuống **25,4 điểm**
-
-**Dư địa đã cạn** — lỗi còn lại là ký tự *chưa từng đọc ra*
+Chênh lệch 2 dòng còn **25,4 điểm**, cùng bậc mốc quốc tế **48,6** *(Laroca 2022 — RodoSol, Brazil)* — **dư địa đã cạn**
 
 | Can thiệp | Thu được |
 |---|---:|
@@ -364,7 +362,7 @@ Top 3 nguyên nhân dẫn đến 24,88% chuỗi đọc chưa đúng
 | **Biển 2 dòng bị mất nét dòng trên** | **31,5%** | Vùng crop dòng 1 mờ/bị đinh ốc che ⇒ PaddleOCR bỏ sót seri |
 | **Biển hiếm & Biển màu đặc thù** | **22,3%** | Biển vàng/xanh/ngoại giao chiếm <2,3% tập nhãn ⇒ thiếu mẫu |
 
-## Backup 4 — Bóc tách đóng góp kỹ thuật (Ablation Study)
+## Backup 4 — Bóc tách đóng góp (Ablation)
 
 Đóng góp độc lập của từng module kỹ thuật vào độ chính xác đọc chuỗi
 
@@ -376,7 +374,7 @@ Top 3 nguyên nhân dẫn đến 24,88% chuỗi đọc chưa đúng
 | **+ Bậc thang nắn hình chống nghiêng/méo** | — | **+34 biển** được cứu hợp lệ |
 | **Fine-tune OCR (giữ detector)** | 0,6762 | ❌ Sụt -7,5 điểm do lệch phân phối |
 
-## Backup 5 — Siêu tham số & Biểu đồ huấn luyện
+## Backup 5 — Siêu tham số và huấn luyện
 
 Cấu hình huấn luyện mô hình YOLO11n trên CPU *(seed cố định, PyTorch)*
 
