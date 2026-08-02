@@ -116,12 +116,23 @@ def main() -> None:
             "toàn bộ tập bất đồng quá lớn để gõ tay hết."
         ),
     )
+    parser.add_argument(
+        "--agree",
+        type=int,
+        default=0,
+        help=(
+            "Như --resample nhưng lấy từ tầng ĐỒNG THUẬN. Cần cho NFR-A7: "
+            "tập bất đồng gồm toàn ca khó, nên tính độ chính xác tuyệt đối "
+            "trên nó sẽ ra con số bi quan sai lệch. Gán nhãn cả hai tầng rồi "
+            "ước lượng phân tầng mới cho ra số đại diện."
+        ),
+    )
     args = parser.parse_args()
 
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
 
-    if args.resample:
-        resample_sheet(args.resample)
+    if args.resample or args.agree:
+        resample_sheet(args.resample or args.agree, dong_thuan=bool(args.agree))
         return
 
     # Đường ống ghi ba dòng cho MỖI khung biển của MỖI cấu hình. Với 1.514 ảnh
@@ -211,32 +222,45 @@ def main() -> None:
     _LOGGER.info("Phiếu gán nhãn: %s", OUT_DIR / "review.html")
 
 
-def resample_sheet(count: int) -> None:
-    """Dựng lại phiếu từ ``32-scene-candidates.json``, chỉ lấy N khung bất đồng.
+def resample_sheet(count: int, dong_thuan: bool = False) -> None:
+    """Dựng lại phiếu từ ``32-scene-candidates.json``, lấy N khung của một tầng.
 
-    Toàn bộ 1.232 khung bất đồng là khoảng ba giờ gõ tay. Một mẫu ngẫu nhiên
-    300 khung cho sai số khoảng ±5 điểm phần trăm — đủ để phân định cấu hình
-    nào thắng, ở một phần tư công sức. Seed cố định để mẫu tái lập được.
+    Vì sao chia hai tầng
+    --------------------
+    Trong 1.606 khung, **1.232 (76,7%) là bất đồng** — nghĩa là tập bất đồng
+    gồm hầu hết các ca khó. Dùng nó để so *cấu hình nào hơn* thì đúng, vì hai
+    bên cùng chịu một tập; nhưng dùng nó để công bố *độ chính xác tuyệt đối*
+    (NFR-A7) thì sai, và sai theo hướng bi quan.
+
+    Tầng đồng thuận chỉ có 374 khung, nên gán nhãn một mẫu của nó là rẻ. Có
+    nhãn cả hai tầng thì ước lượng phân tầng cho ra con số đại diện::
+
+        A7 = (p_đồng_thuận x 374 + p_bất_đồng x 1.232) / 1.606
 
     Args:
-        count: Số khung bất đồng lấy vào phiếu.
+        count: Số khung lấy vào phiếu.
+        dong_thuan: Lấy từ tầng đồng thuận thay vì tầng bất đồng.
     """
     import random
 
     payload = json.loads(REPORT.read_text(encoding="utf-8"))
-    disagree = [r for r in payload["rows"] if not r["agree"]]
-    rng = random.Random(42)
-    sample = rng.sample(disagree, min(count, len(disagree)))
+    tang = [r for r in payload["rows"] if r["agree"] is dong_thuan]
+    ten = "đồng thuận" if dong_thuan else "bất đồng"
+
+    # Seed khac nhau cho hai tang, de mau nay khong phu thuoc mau kia.
+    rng = random.Random(43 if dong_thuan else 42)
+    sample = rng.sample(tang, min(count, len(tang)))
     sample.sort(key=lambda r: r["scene"])
 
     write_review_sheet(sample)
-    (OUT_DIR / "sample_keys.json").write_text(
+    hau_to = "_agree" if dong_thuan else ""
+    (OUT_DIR / f"sample_keys{hau_to}.json").write_text(
         json.dumps([r["key"] for r in sample], ensure_ascii=False, indent=2),
         encoding="utf-8",
     )
     _LOGGER.info(
-        "Phiếu rút gọn: %d/%d khung bất đồng (seed 42) -> %s",
-        len(sample), len(disagree), OUT_DIR / "review.html",
+        "Phiếu: %d/%d khung %s -> %s",
+        len(sample), len(tang), ten, OUT_DIR / "review.html",
     )
 
 

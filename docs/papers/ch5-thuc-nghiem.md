@@ -1052,9 +1052,26 @@ cài đặt, mặc định **tắt**, và được ghim bằng kiểm thử. Nó
 ứng "chỉ-rec giúp model fine-tune, hại model gốc" là thật và có cơ chế rõ ràng
 — chỉ là 22 biển thì quá ít để đổi cấu hình đem giao.
 
-**Điều kiện để xét lại:** một tập **ảnh toàn cảnh có nhãn chuỗi biển số**. Đồ án
-không có, và đó cũng chính là lý do NFR-A7 mang nhãn "không đại diện" (mục
-5.6.5) — **cùng một lỗ hổng dữ liệu chặn hai câu hỏi khác nhau**.
+**Điều kiện để xét lại:** một tập **ảnh toàn cảnh có nhãn chuỗi biển số** — cùng
+một lỗ hổng dữ liệu chặn cả câu hỏi này lẫn nhãn "không đại diện" của NFR-A7.
+
+**Lỗ hổng đó đã được lấp một phần ngày 02/08/2026** ([34-scene-level-a7.md](../reports/34-scene-level-a7.md)):
+385 khung biển trên ảnh hiện trường được gán nhãn chuỗi, lấy mẫu phân tầng vì
+1.232/1.606 khung thuộc nhóm bất đồng — dùng riêng nhóm đó sẽ cho con số bi quan
+sai lệch. Kết quả **giữ nguyên quyết định** và làm nó chắc hơn:
+
+| Cấu hình | Tầng dễ | Tầng khó | **A7 phân tầng** |
+|---|---:|---:|---:|
+| **Gốc + det+rec** — *bản giao hàng* | 97,3% | 44,1% | **56,5%** |
+| Gốc + chỉ rec | 97,3% | 19,9% | 37,9% |
+| Fine-tune + det+rec | 97,3% | 30,9% | 46,4% |
+| Fine-tune + chỉ rec | **93,3%** | 44,5% | 55,9% |
+
+Cột "tầng dễ" hé lộ một điều mà phép đo trên ngữ liệu ảnh cắt sẵn không thấy được:
+fine-tune + chỉ rec là cấu hình **duy nhất kém đi ở ca dễ** (93,3% so với 97,3%).
+Nó thắng ở ca khó nhưng đánh mất ca dễ, mà trên một tập thật thì ca dễ chiếm phần
+lớn — nên lợi thế 12,46 điểm đo trên ngữ liệu cắt sẵn không sống sót ở đường chạy
+thật.
 
 > **Ghi lại vì đây là lần thứ tư cùng một họ lỗi, và là lần đầu chặn được trước
 > khi vào bản giao.** Ba lần trước — siêu phân giải, công cụ đo bỏ sót bậc thang
@@ -1153,7 +1170,7 @@ Bảng dưới là bảng tổng hợp trình bày khi bảo vệ. Nó liệt k�
 | A5 | Chuỗi đầy đủ **trước** hậu xử lý | ≥ 0,80 | ≥ 0,85 | **0,6373** | ❌ | 5.6.2 |
 | A6 | Chuỗi đầy đủ **sau** hậu xử lý | ≥ 0,85 | ≥ 0,90 | **0,7512** | ❌ | 5.6.2 |
 | **A6 − A5** | **Đóng góp của khối hậu xử lý** | — | — | **+11,39 điểm** | ✅ | **5.6.2** |
-| A7 | Độ chính xác E2E toàn trình | ≥ 0,82 | ≥ 0,88 | **0,5552** | ❌ | 5.6.5 |
+| A7 | Độ chính xác E2E toàn trình | ≥ 0,82 | ≥ 0,88 | **0,565** *(ảnh toàn cảnh, phân tầng)* | ❌ | 5.6.5 |
 | A8 | Tách theo layout một dòng / hai dòng | báo cáo tách bạch | — | detection: **2,09 điểm**; OCR (A6): **25,45 điểm** | 🟡 | 5.5.3, 5.6.3 |
 | A9 | Tách theo điều kiện ảnh | báo cáo nếu có nhãn | — | — | ⬜ | 5.9.1 |
 | **NFR-R — Độ tin cậy** | | | | | | |
