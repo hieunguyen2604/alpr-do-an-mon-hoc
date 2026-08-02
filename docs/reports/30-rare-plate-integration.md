@@ -168,13 +168,34 @@ nên val acc 0,8809 đo một chế độ hệ thống **không dùng** — và 
 thấy được cái hỏng. Nay val có **632 mẫu mảnh vụn**, tức phép đo lúc huấn luyện đã
 chạm được vào chính chế độ mà production chạy.
 
-### 8.3. Còn lại
+### 8.3. Quyết định 02/08/2026 — DỪNG ở đây, không fine-tune lại
 
-- [ ] Fine-tune lại (người thực hiện chạy)
-- [ ] Đo lại A4–A7 bằng `ai/evaluation/ocr_accuracy.py` và **đối chiếu với bộ demo
-      ảnh toàn cảnh** trước khi kết luận — bài học của mục 5 trong
-      [31-detection-stage-ablation.md](31-detection-stage-ablation.md)
-- [ ] Cập nhật mục 6.3.8 của [ch6-ket-luan.md](../papers/ch6-ket-luan.md): câu
-      *"97,68% mẫu thuộc một lớp duy nhất"* chỉ còn đúng cho ngữ liệu **trước** khi gộp
-- [ ] Biển đỏ và ngoại giao **vẫn bằng 0** — không nguồn công khai nào lấp được,
-      giữ nguyên trong mục Hạn chế
+Ngữ liệu đã gộp xong và kiểm định xong. **Lượt fine-tune dùng ngữ liệu này sẽ
+không chạy trong khuôn khổ đồ án.**
+
+**Vì sao dừng được mà không để lại lỗ hổng.** Đồ án đã có một lượt fine-tune
+hoàn chỉnh (`models/rec_finetuned/`, đo ở [28](28-ocr-accuracy-finetuned.json),
+[28b](28b-finetuned-repair-ablation.json), [29](29-reconly-ablation.json)) và
+kết quả của nó nằm đầy đủ ở mục 5.4 của quyển, bốn cấu hình. Bản giao hàng
+**vốn đã dùng model gốc** (`ocr_rec_model_dir` mặc định `None`), nên không có
+mã nguồn nào chờ lượt fine-tune này. Mục 7.3.8 cũng đã ghi rõ phần gộp biển
+hiếm là *"nguyên liệu đã chuẩn bị cho lần đo sau, không phải một bộ số mới"* —
+tức quyển không hứa một việc chưa làm.
+
+**Cái phải giữ nguyên vì quyết định này.** Biển vàng vẫn kẹt ở n = 20 trong ngữ
+liệu đánh giá 2.801 mẫu, nên mọi kết luận về độ chính xác OCR **vẫn chỉ áp cho
+biển trắng** (mục 7.3.8). Ngữ liệu 3.322 mẫu ở trên chỉ nâng được giới hạn ấy
+*nếu* có lượt đo dùng nó.
+
+| Hạng mục | Trạng thái |
+|---|---|
+| Gộp 521 biển hiếm, khử trùng lặp, chia lại theo số biển | ✅ xong, kiểm định ở mục 5–7 |
+| Fine-tune lại bằng ngữ liệu đã gộp | ⬜ **quyết định không chạy** |
+| Đo lại A4–A7 và đối chiếu bộ demo ảnh toàn cảnh | ⬜ không cần — không có model mới để đo |
+| Mục 7.3.8: giới hạn kết luận cho biển trắng | ✅ giữ nguyên, vẫn đúng |
+| Biển đỏ và ngoại giao vẫn bằng 0 | ✅ giữ trong mục Hạn chế — hạn chế **thật**, không phải "chưa tới lượt" |
+
+> ⚠️ **Nếu về sau chạy lại:** gói `datasets/processed/rec_finetune.zip` là bản
+> **24/07 đã cũ** (6.672 dòng train), không khớp dữ liệu trên đĩa sau khi gộp
+> (10.275 train + 1.311 val). Phải đóng gói lại từ
+> `datasets/processed/rec_finetune/`, đừng dùng lại zip cũ.
