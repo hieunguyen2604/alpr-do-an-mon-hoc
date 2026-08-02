@@ -70,6 +70,7 @@ CHAPTER_FILENAMES: tuple[str, ...] = (
     "ch6-thuc-nghiem.md",
     "ch7-ket-luan.md",
     "ch8-tai-lieu-tham-khao.md",
+    "ch9-phu-luc.md",
 )
 
 # Page break inserted after every section.

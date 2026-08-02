@@ -116,7 +116,7 @@ Kết quả học sâu nhạy cảm với phiên bản thư viện ở mức có
 | `onnxruntime` | Backend suy luận thay thế (mục 6.6.3) | 1.27.0 |
 | `openvino` | Backend suy luận thay thế (mục 6.6.3) | 2026.2.1 |
 | `opencv-python` | Giải mã và tiền xử lý ảnh | 4.10.0.84 |
-| `numpy` | Hạ tầng số học | 2.3.5 |
+| `numpy` | Hạ tầng số học | 2.4.5 |
 | `fastapi` | Tầng API | 0.139.2 |
 | `uvicorn` | Máy chủ ASGI | 0.51.0 |
 | `sqlalchemy` | ORM | 2.0.51 |
@@ -330,7 +330,7 @@ Trong bảng dưới, layout được xác định theo nhãn lớp khi bộ d�
 
 ### 6.4.4. Tách theo dải kích thước hộp giới hạn
 
-Mục này tồn tại vì một lý do cụ thể và phải được nêu thẳng: **bộ dữ liệu không đạt tiêu chí chất lượng Q6**. Cụ thể, **10,91% số hộp giới hạn có diện tích dưới 0,5% diện tích ảnh**, trong khi ngưỡng cho phép của tiêu chí là 10%. Đối tượng nhỏ là chế độ thất bại đã được ghi nhận rộng rãi của các bộ phát hiện một giai đoạn [119]<!-- ultralytics_2026_modelevaluation -->, và bài toán biển số ở độ phân giải thấp đã trở thành một hướng nghiên cứu riêng [64]<!-- laroca_2026_icprlrlpr -->.
+Mục này tồn tại vì một lý do cụ thể và phải được nêu thẳng: **bộ dữ liệu không đạt tiêu chí chất lượng Q6**. Cụ thể, **10,91% số hộp giới hạn có diện tích dưới 0,5% diện tích ảnh**, trong khi ngưỡng cho phép của tiêu chí là 10%. Đối tượng nhỏ là chế độ thất bại đã được ghi nhận rộng rãi của các bộ phát hiện một giai đoạn [119]<!-- ultralytics_2026_modelevaluation -->, và bài toán biển số ở độ phân giải thấp đã trở thành một hướng nghiên cứu riêng [71]<!-- laroca_2026_icprlrlpr -->.
 
 Báo cáo một con số mAP tổng trong tình huống này sẽ **giấu chế độ thất bại phía sau giá trị trung bình**. Bảng dưới là cách trả lời trung thực: nếu mô hình yếu ở dải nhỏ, bảng sẽ cho thấy điều đó.
 
@@ -736,7 +736,7 @@ Suy ra hai hệ quả. Thứ nhất, toàn bộ 34 biển mà bậc thang cứu 
 
 > Chi phí đã đo được và lớn; lợi ích **chưa ai đo được** trên bất kỳ tập đại diện nào; trong khi NFR-P1 là yêu cầu mức *Must* và riêng bậc này làm nó vượt ngưỡng. Một lợi ích chưa định lượng không đủ để biện minh cho một vi phạm đã định lượng.
 
-Bằng chứng duy nhất hiện có cho bậc siêu phân giải vẫn là **một vùng cắt demo được chọn tay trong bốn ca thử**. Mã, kiểm thử, công tắc và báo cáo của nó **giữ nguyên**; đặt `ALPR_SR_RETRY_ENABLED=true` là bật lại. Muốn đo cho tử tế cần một tập **vùng cắt nhỏ do chính bộ phát hiện sinh ra, có nhãn chuỗi** — đồ án không có, và đó là hạng mục bỏ ngỏ được ghi ở mục 6.10 chứ không phải một điểm bị lờ đi.
+Bằng chứng duy nhất hiện có cho bậc siêu phân giải vẫn là **một vùng cắt demo được chọn tay trong bốn ca thử**. Mã, kiểm thử, công tắc và báo cáo của nó **giữ nguyên**; đặt `ALPR_SR_RETRY_ENABLED=true` là bật lại. Muốn đo cho tử tế cần một tập **vùng cắt nhỏ do chính bộ phát hiện sinh ra, có nhãn chuỗi** — đồ án không có, và đó là hạng mục bỏ ngỏ được ghi ở mục 6.11 chứ không phải một điểm bị lờ đi.
 
 ---
 
@@ -1209,7 +1209,102 @@ Mục này liệt kê các yếu tố có thể khiến kết luận của chư�
 
 ---
 
-## 6.10. Kết luận chương
+## 6.10. Đối chiếu với các công trình đã công bố
+
+Mục này đặt kết quả của đồ án cạnh các công trình đã khảo sát ở mục 2.7. Nó bắt
+đầu bằng phần **không so được** chứ không bằng bảng số, vì đó mới là phần quyết
+định cách đọc mọi con số phía sau.
+
+### 6.10.1. Vì sao phần lớn các con số không so trực tiếp được
+
+Ba khác biệt khiến việc đặt cạnh nhau hai con số độ chính xác của hai công trình
+khác nhau là **không hợp lệ về phương pháp**, trừ khi cả ba đều trùng:
+
+| Khác biệt | Vì sao nó phá vỡ phép so |
+|---|---|
+| **Bộ dữ liệu và quốc gia** | Biển Trung Quốc chủ yếu một dòng; biển Brazil có bố cục và phông chữ riêng; biển Việt Nam có tỷ lệ biển hai dòng cao. Cùng một mô hình cho ra con số rất khác trên ba tập này |
+| **Định nghĩa chỉ số** | *"Accuracy"* trong các bài được khảo sát khi thì là mức ký tự, khi là mức chuỗi, khi là toàn trình có tính cả bước phát hiện. Ba định nghĩa này không cùng thang |
+| **Điều kiện ảnh** | Camera tĩnh ở trạm thu phí khác hẳn ảnh chụp tự do; độ phân giải vùng biển chênh nhau nhiều lần |
+
+Bằng chứng mạnh nhất cho luận điểm này đến từ chính lĩnh vực: Laroca và cộng sự
+(2022) chạy **12 mô hình OCR trên 9 tập dữ liệu công khai** và ghi nhận độ chính
+xác trung bình **sụt từ 82,4% xuống 45,2%** khi chuyển sang đánh giá xuyên tập
+dữ liệu. Nói cách khác, **cùng một mô hình mất gần một nửa độ chính xác chỉ vì
+đổi tập kiểm thử**. Một bảng xếp hạng ghép số từ nhiều bài khác nhau vì vậy đo
+sự khác nhau của các tập dữ liệu nhiều hơn là đo sự khác nhau của các mô hình.
+
+> ⚠️ **Hệ quả bắt buộc cho toàn mục này.** Mọi con số của công trình khác dẫn ở
+> dưới đều **kèm tên bộ dữ liệu và quốc gia ngay trong bảng**, và không con số
+> nào được dùng để kết luận rằng hệ thống của đồ án tốt hơn hay kém hơn. Chúng
+> chỉ trả lời một câu hỏi hẹp hơn nhiều: *kết quả của đồ án có nằm trong vùng
+> giá trị mà lĩnh vực đã ghi nhận hay không.*
+
+### 6.10.2. Khối phát hiện — nằm trong vùng giá trị đã công bố
+
+Đây là khối so sánh được nhiều nhất, vì chỉ số mAP@0.5 có định nghĩa thống nhất
+và phần lớn công trình trong nước đều báo cáo nó.
+
+| Công trình | Bộ dữ liệu · quốc gia | mAP@0.5 |
+|---|---|---:|
+| Batra và cộng sự (2022) | Google Open Images + biển Ấn Độ, 5.991 ảnh | 87,2% |
+| Ba nghiên cứu dùng YOLO11 cho ALPR (mục 3.2) | các tập khác nhau | 90,6% – 99,5% |
+| **Đồ án này** | **corpus Việt Nam hợp nhất, 1.514 ảnh test** | **98,29%** |
+
+Kết quả của đồ án nằm trong vùng trên. Điều này **không** chứng minh mô hình tốt
+hơn hay kém hơn công trình nào — mỗi dòng đo trên một tập khác nhau — nhưng nó
+xác nhận khối phát hiện không có bất thường so với mặt bằng đã công bố.
+
+Một điều kiện phải nêu kèm: tập test của đồ án **không xuyên bộ dữ liệu**. Theo
+đúng phát hiện của Laroca ở trên, con số 98,29% vì vậy **lạc quan hơn** mức mà hệ
+thống đạt được khi gặp nguồn ảnh hoàn toàn mới. Hạn chế này ghi ở mục 7.3.3.
+
+### 6.10.3. Khối nhận dạng — chỗ đồ án thua, và thua ở đâu
+
+| Công trình | Bộ dữ liệu · quốc gia | Chỉ số công bố | Giá trị |
+|---|---|---|---:|
+| Xu và cộng sự — RPnet (2018) | CCPD · Trung Quốc | accuracy end-to-end | 98,5% |
+| Laroca và cộng sự (2021) | 8 tập từ 5 khu vực | recognition rate trung bình | 96,9% |
+| Xu và cộng sự — LPTR-AFLNet (2025) | biển Trung Quốc | accuracy **riêng biển hai dòng** | 99,37% |
+| Tran và Bui (2024) | biển Việt Nam, chạy trên Raspberry Pi 4 | accuracy | 95,68% |
+| **Đồ án này** | **2.801 biển Việt Nam có nhãn chuỗi** | **chuỗi đầy đủ sau hậu xử lý (A6)** | **75,12%** |
+| **Đồ án này** | *(cùng tập)* | **toàn trình từ ảnh gốc (A7)** | **55,52%** |
+
+**Khoảng cách là thật và không được lấy khác biệt bộ dữ liệu ra biện minh cho
+toàn bộ nó.** Nhưng chẩn đoán ở mục 6.5.3 định vị khoảng cách ấy rất rõ: chênh
+lệch giữa biển một dòng và biển hai dòng ở khối OCR là **25,45 điểm**. Phần thiếu
+hụt nằm gần như trọn ở biển hai dòng — loại biển chiếm tỷ lệ lớn ở Việt Nam
+nhưng chiếm tỷ lệ nhỏ trong các bộ dữ liệu Trung Quốc mà phần lớn công trình ở
+bảng trên dùng để đánh giá.
+
+Hai dòng đáng đọc kỹ nhất trong bảng là **LPTR-AFLNet (99,37% riêng biển hai
+dòng)** và **Tran–Bui (95,68% trên biển Việt Nam)**. Cả hai cho thấy vùng giá trị
+này là **đạt được**, tức khoảng cách của đồ án không phải giới hạn của bài toán
+mà là giới hạn của lựa chọn kỹ thuật: đồ án dùng một engine OCR **đa ngữ tổng
+quát chưa tinh chỉnh**, trong khi cả hai công trình kia dùng mô hình huấn luyện
+riêng cho biển số. Đây chính là hướng phát triển được xếp ưu tiên cao nhất ở mục
+7.4.1, và mục 5.4 đã đo thử một bước theo hướng đó.
+
+### 6.10.4. Ba điều đồ án báo cáo mà khảo sát không tìm thấy tương đương
+
+Khảo sát ở mục 2.7.4 xác định sáu khoảng trống. Ba trong số đó liên quan trực
+tiếp tới cách **báo cáo** kết quả, và đây là chỗ đồ án đóng góp được:
+
+| Khoảng trống | Đồ án báo cáo |
+|---|---|
+| Chưa có công trình Việt Nam nào tách riêng độ chính xác biển một dòng và hai dòng trên cùng hệ thống | Bảng 6.11 — tách bạch, chênh **25,45 điểm** |
+| Hầu hết công trình trong nước chỉ báo cáo mAP của khâu phát hiện, không báo cáo độ chính xác toàn trình mức chuỗi | Báo cáo cả hai: mAP 98,29% **và** A7 = 55,52% |
+| Số liệu hiệu năng thường công bố không kèm phần cứng | Mọi số hiệu năng kèm model CPU, số luồng, kích thước ảnh (mục 6.2.1) |
+
+Điều đáng nói là **con số thứ hai kém hơn hẳn con số thứ nhất**, và đó chính là
+lý do khoảng trống này tồn tại: báo cáo toàn trình thì phải công bố cả phần
+hỏng. Một hệ thống chỉ công bố mAP của khâu phát hiện luôn trông tốt hơn thực tế
+mà người dùng gặp.
+
+Ngoài ba mục trên, đồ án còn đo được **đóng góp thuần của khối hậu xử lý theo
+luật** — **+11,39 điểm**, sửa đúng 319 biển, làm hỏng 0 biển (mục 6.5.2). Khảo
+sát không tìm thấy công trình Việt Nam nào công bố đại lượng này tách bạch.
+
+## 6.11. Kết luận chương
 
 **Trả lời trực tiếp sáu câu hỏi nghiên cứu.** *RQ1:* bộ phát hiện YOLO11n đạt **toàn bộ** chỉ tiêu — mAP@0.5 = 0,9829, mAP@0.5:0.95 = 0,7834, Precision = 0,9837, Recall = 0,9714 (T6.4a), vượt mục tiêu. *RQ2:* có, chênh lệch giữa biển một dòng và hai dòng là **có ý nghĩa và rất lớn** — 25,45 điểm A6, nhưng nằm ở tầng OCR (T6.5c) chứ không ở tầng phát hiện (chỉ 2,09 điểm, T6.4b). *RQ3:* khối hậu xử lý đóng góp **+11,39 điểm** chuỗi đầy đủ, sửa đúng **319** biển, làm hỏng 0 (T6.5b). *RQ4:* NFR-P1 **chỉ đạt ngưỡng tối thiểu** (🟡): p95 = 1.143,10 ms — dưới sàn 1.500 ms nhưng vượt mục tiêu 800 ms 1,43 lần (T6.6a). Đây là thoái lui có chủ ý, đổi lấy 34 biển đọc thêm từ bậc thang thử-lại; cùng nguyên nhân đó làm **NFR-P2 trượt cả sàn** (2,379 FPS, sàn 3). Nút thắt thời gian vẫn là OCR (64,3%) và detector (34,0%, T6.6b). *RQ5:* bảng luật hiện hành **phần lớn không khớp** cặp nhầm thật — chỉ 2/10 cặp nhầm nhiều nhất được phủ (T6.5d). *RQ6:* các mối đe doạ được liệt kê và đánh giá ở 6.9.3, ba mối nghiêm trọng nhất ở mức "cao".
 

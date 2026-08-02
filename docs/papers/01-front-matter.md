@@ -171,11 +171,11 @@ CHƯƠNG 1. GIỚI THIỆU
 
 CHƯƠNG 2. CƠ SỞ LÝ THUYẾT
     2.1. Tổng quan bài toán ALPR
-    2.2. Lịch sử phát triển các phương pháp
-    2.3. Phân loại các hướng tiếp cận hiện nay
-    2.4. Cơ sở lý thuyết về phát hiện đối tượng
-    2.5. Cơ sở lý thuyết về nhận dạng ký tự
-    2.6. Quy chuẩn biển số xe Việt Nam
+    2.2. Quy chuẩn biển số xe Việt Nam
+    2.3. Lịch sử phát triển các phương pháp
+    2.4. Phân loại các hướng tiếp cận hiện nay
+    2.5. Cơ sở lý thuyết về phát hiện đối tượng
+    2.6. Cơ sở lý thuyết về nhận dạng ký tự
     2.7. Các công trình liên quan
     2.8. Kết luận chương
 
@@ -218,7 +218,8 @@ CHƯƠNG 6. THỰC NGHIỆM VÀ ĐÁNH GIÁ
     6.7. Đối chiếu toàn bộ chỉ tiêu phi chức năng
     6.8. Phân tích lỗi
     6.9. Bàn luận
-    6.10. Kết luận chương
+    6.10. Đối chiếu với các công trình đã công bố
+    6.11. Kết luận chương
 
 CHƯƠNG 7. KẾT LUẬN VÀ HƯỚNG PHÁT TRIỂN
     7.1. Tổng kết công việc đã thực hiện
@@ -244,12 +245,12 @@ PHỤ LỤC
 | Ký hiệu | Tên hình | Trang |
 |---|---|:---:|
 | Hình 2.1 | * Sơ đồ pipeline ALPR điển hình (tổng hợp từ [2], [3], [20], [22], [23]) | — |
-| Hình 2.2 | ** Sơ đồ phân loại hai trục các hướng tiếp cận ALPR và định vị lựa chọn của đồ án | — |
-| Hình 2.3 | * Kiến trúc tổng quát backbone – neck – head của YOLO11 (theo [42], [16]) | — |
-| Hình 2.4 | * Cấu trúc phân cấp của khối C2PSA trong YOLO11 (đối chiếu mã nguồn [44]) | — |
-| Hình 2.5 | * Cơ chế sụp đổ của CTC trên ảnh văn bản hai dòng (theo [54]) | — |
-| Hình 2.6 | ** Chuỗi văn bản pháp lý về biển số xe đang có hiệu lực | — |
-| Hình 2.7 | * Khoảng trống tỷ lệ khung hình giữa biển hai dòng và biển một dòng (dẫn xuất từ [11]) | — |
+| Hình 2.2 | ** Chuỗi văn bản pháp lý về biển số xe đang có hiệu lực | — |
+| Hình 2.3 | * Khoảng trống tỷ lệ khung hình giữa biển hai dòng và biển một dòng (dẫn xuất từ [11]) | — |
+| Hình 2.4 | ** Sơ đồ phân loại hai trục các hướng tiếp cận ALPR và định vị lựa chọn của đồ án | — |
+| Hình 2.5 | * Kiến trúc tổng quát backbone – neck – head của YOLO11 (theo [49], [16]) | — |
+| Hình 2.6 | * Cấu trúc phân cấp của khối C2PSA trong YOLO11 (đối chiếu mã nguồn [51]) | — |
+| Hình 2.7 | * Cơ chế sụp đổ của CTC trên ảnh văn bản hai dòng (theo [61]) | — |
 | Hình 5.1 | * Đường cong hàm mất mát theo epoch — box_loss, cls_loss, dfl_loss, tách riêng train và val | — |
 | Hình 5.2 | * Tiến triển mAP@0.5 và mAP@0.5:0.95 trên tập validation theo epoch | — |
 | Hình 5.3 | * Tiến triển precision và recall trên tập validation theo epoch | — |
@@ -285,24 +286,24 @@ PHỤ LỤC
 | Bảng 1.4 | Các hạng mục nằm ngoài phạm vi và lý do loại trừ | — |
 | Bảng 1.5 | Mười hai giai đoạn thực hiện, công sức và điều kiện thông qua | — |
 | Bảng 2.1 | Các nhóm ứng dụng của hệ thống ALPR | — |
-| Bảng 2.2 | So sánh phương pháp xử lý ảnh cổ điển và phương pháp học sâu | — |
-| Bảng 2.3 | Bốn nhánh kỹ thuật của hướng segmentation-free | — |
-| Bảng 2.4 | So sánh khác biệt kiến trúc giữa các phiên bản YOLO gần đây | — |
-| Bảng 2.5 | So sánh OCR văn bản tài liệu và OCR biển số xe | — |
-| Bảng 2.6 | Tác động của việc resize về chiều cao cố định 48 px lên crop biển xe máy | — |
-| Bảng 2.7 | Các phương pháp phân biệt biển một dòng và biển hai dòng | — |
-| Bảng 2.8 | Các văn bản pháp lý là căn cứ của đồ án | — |
-| Bảng 2.9 | Phân rã thành phần biển số ô tô | — |
-| Bảng 2.10 | Hai kiểu seri biển xe máy đang cùng lưu hành | — |
-| Bảng 2.11 | Tám mã không được sử dụng | — |
-| Bảng 2.12 | Tổng hợp các tập ký tự seri | — |
-| Bảng 2.13 | Các ký hiệu seri đặc biệt [68] | — |
-| Bảng 2.14 | Màu nền biển số và đối tượng áp dụng [13] | — |
-| Bảng 2.15 | Số lượng và dạng biển số theo loại phương tiện [71] | — |
-| Bảng 2.16 | Kích thước và tỷ lệ khung hình của các loại biển số [11] | — |
-| Bảng 2.17 | Ngưỡng phân loại bố cục theo tỷ lệ khung hình — đề xuất của đồ án | — |
-| Bảng 2.18 | Bố cục nội dung của biển hai dòng | — |
-| Bảng 2.19 | Từ quy chuẩn pháp lý tới quyết định thiết kế | — |
+| Bảng 2.2 | Các văn bản pháp lý là căn cứ của đồ án | — |
+| Bảng 2.3 | Phân rã thành phần biển số ô tô | — |
+| Bảng 2.4 | Hai kiểu seri biển xe máy đang cùng lưu hành | — |
+| Bảng 2.5 | Tám mã không được sử dụng | — |
+| Bảng 2.6 | Tổng hợp các tập ký tự seri | — |
+| Bảng 2.7 | Các ký hiệu seri đặc biệt [29] | — |
+| Bảng 2.8 | Màu nền biển số và đối tượng áp dụng [13] | — |
+| Bảng 2.9 | Số lượng và dạng biển số theo loại phương tiện [32] | — |
+| Bảng 2.10 | Kích thước và tỷ lệ khung hình của các loại biển số [11] | — |
+| Bảng 2.11 | Ngưỡng phân loại bố cục theo tỷ lệ khung hình — đề xuất của đồ án | — |
+| Bảng 2.12 | Bố cục nội dung của biển hai dòng | — |
+| Bảng 2.13 | Từ quy chuẩn pháp lý tới quyết định thiết kế | — |
+| Bảng 2.14 | So sánh phương pháp xử lý ảnh cổ điển và phương pháp học sâu | — |
+| Bảng 2.15 | Bốn nhánh kỹ thuật của hướng segmentation-free | — |
+| Bảng 2.16 | So sánh khác biệt kiến trúc giữa các phiên bản YOLO gần đây | — |
+| Bảng 2.17 | So sánh OCR văn bản tài liệu và OCR biển số xe | — |
+| Bảng 2.18 | Tác động của việc resize về chiều cao cố định 48 px lên crop biển xe máy | — |
+| Bảng 2.19 | Các phương pháp phân biệt biển một dòng và biển hai dòng | — |
 | Bảng 2.20 | Các công trình quốc tế tiêu biểu về ALPR | — |
 | Bảng 2.21 | Các công trình về nhận dạng biển số xe Việt Nam | — |
 | Bảng 2.22 | So sánh các bộ dữ liệu chuẩn quốc tế | — |
