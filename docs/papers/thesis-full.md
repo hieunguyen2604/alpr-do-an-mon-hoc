@@ -1947,7 +1947,7 @@ Bốn engine bị loại sớm với lý do rõ ràng: **TrOCR** vì ảo giác 
 **Bằng chứng thực sự đứng vững cho PaddleOCR.** Trong quá trình khảo sát, hai số liệu thường được viện dẫn để chứng minh "PaddleOCR tốt cho biển số" đã **bị bác bỏ khi truy ngược về nguồn gốc**: cả hai đều đến từ một bài báo dùng **EasyOCR**, không phải PaddleOCR [108]<!-- scirep_2024_yolov8ocr -->. Việc trích dẫn nhầm này đã được loại bỏ hoàn toàn. Sau khi loại, những bằng chứng còn đứng vững là:
 
 1. **Nhẹ nhất trong nhóm khả dụng:** khoảng 21 MB so với khoảng 200 MB của EasyOCR — yếu tố quyết định với ràng buộc bộ nhớ của đồ án.
-2. **Thời gian CPU khả thi** và có lộ trình nâng cấp rõ ràng: PP-OCRv6 bản Tiny chỉ 1,5 triệu tham số và đạt 0,20 giây mỗi ảnh trên CPU, nhanh hơn PP-OCRv5 mobile khoảng 3,9 lần [109]<!-- paddlepaddle_2026_ppocrv6 -->.
+2. **Thời gian CPU khả thi**, và trên giấy có lộ trình nâng cấp: PP-OCRv6 bản Tiny chỉ 1,5 triệu tham số và đạt 0,20 giây mỗi ảnh trên CPU, nhanh hơn PP-OCRv5 mobile khoảng 3,9 lần [109]<!-- paddlepaddle_2026_ppocrv6 -->. **Lộ trình này về sau không lấy được** — xem khối ngay dưới mục 2.8.
 3. **Ràng buộc siêu nhẹ là chủ đích thiết kế xuyên suốt của dòng PP-OCR** chứ không phải kết quả ngẫu nhiên của một bản phát hành [110]<!-- du_2020_ppocr -->, [111]<!-- du_2021_ppocrv2 --> — đúng thứ mà ràng buộc CPU của đồ án cần.
 4. **Có bằng chứng tinh chỉnh trên biển số cho kết quả tốt:** recognition tăng từ 90,97% lên 94,54%, detection Hmean tăng từ 76,12% lên 99,00% [48] — tuy nhiên đây là **biển số Trung Quốc một dòng**.
 5. **Kiến trúc hai giai đoạn trả mỗi dòng một hộp** — đúng thứ cần cho biển hai dòng.
@@ -1966,6 +1966,42 @@ Bốn engine bị loại sớm với lý do rõ ràng: **TrOCR** vì ảo giác 
 > Cách xử lý đúng về mặt học thuật: **giữ PaddleOCR làm baseline** vì các lý do kỹ thuật ở điểm 2, nhưng coi **quyết định cuối cùng là kết luận của giai đoạn thực nghiệm**, dựa trên benchmark tự chạy trên chính tập dữ liệu biển số Việt Nam. **EasyOCR phải được coi là ứng viên ngang hàng, không phải phương án dự phòng hình thức.** Tesseract được giữ làm mốc so sánh dưới.
 >
 > Cách làm này vừa trung thực nhất, vừa biến điểm yếu "chưa chứng minh được" thành đóng góp khoa học "đồ án là bên đầu tiên đo" — đúng khoảng trống số 4 ở Bảng 2.23. **Cần ghi nhận trung thực rằng benchmark này cuối cùng đã không chạy được** trong khuôn khổ đồ án: PaddleOCR PP-OCRv5_mobile được giữ làm engine duy nhất vì các lý do kỹ thuật ở điểm 2 ở trên, **không phải vì đã chứng minh được nó chính xác hơn EasyOCR**. Hạng mục được ghi nhận là chưa đo ở mục 5.11.2 và chuyển thành hướng phát triển.
+
+> ### Vì sao bậc `mobile` của v5, chứ không phải PP-OCRv6 — đo 02/08/2026
+>
+> Câu hỏi này khác với câu hỏi "PaddleOCR hay EasyOCR" ở trên, và phải trả lời
+> riêng. Chi tiết ở `docs/reports/35-ppocrv6-evaluation.md`.
+>
+> **Gói `paddleocr 3.7.0` chỉ có bậc Medium của v6** — `PP-OCRv6_medium_det` và
+> `PP-OCRv6_medium_rec`. **Không có Tiny, không có Small.** Đây là điểm quyết
+> định: bậc hợp với ràng buộc CPU-only của đồ án chính là Tiny, và nó không tải
+> được. Bậc duy nhất lấy được là bậc mà chính bài báo ghi 1,40 giây mỗi ảnh, tức
+> *chậm hơn* v5 mobile 1,8 lần.
+>
+> Số của bài báo đo trên Intel Xeon 8350C có OpenVINO và trên **văn bản tài
+> liệu**, không phải biển số, nên phải tự đo. Trên 200 vùng cắt biển số của đồ
+> án, chỉ chạy nhánh nhận dạng, cùng máy:
+>
+> | Mô hình | Chuỗi đúng | Trung vị |
+> |---|---:|---:|
+> | **PP-OCRv5_mobile_rec** — *đang dùng* | 67,0% | **23,0 ms** |
+> | PP-OCRv6_medium_rec | **72,5%** | 386,9 ms |
+>
+> **Chính xác hơn 5,5 điểm, chậm hơn 16,8 lần.**
+>
+> Năm phẩy năm điểm ấy vẫn không đủ, vì hệ thống đã căng độ trễ ở cả hai đầu:
+> NFR-P1 đạt sàn sát nút (p95 1.143 ms, sàn 1.500) và NFR-P2 thì **đã trượt**
+> (2,379 FPS, sàn 3). Nhánh nhận dạng chỉ chiếm khoảng 23 ms trong 108,28 ms của
+> bước OCR, nên thay v5 bằng v6 Medium cộng thêm khoảng 364 ms mỗi biển — chiếu
+> ra p95 khoảng 1.507 ms, tức **vượt sàn**. *(Đây là phép chiếu từ độ trễ đo cô
+> lập, chưa chạy lại toàn đường ống; nhưng ngay cả với sai số rộng thì hướng kết
+> luận không đổi.)*
+>
+> **Vì vậy quyết định giữ v5 mobile là một ràng buộc phần cứng, không phải một
+> đánh giá rằng v6 kém hơn.** v6 Medium chính xác hơn thật. Nếu PaddleOCR phát
+> hành bậc Tiny vào gói pip, hoặc nếu xuất được v6 Medium sang ONNX/OpenVINO đạt
+> trên 8 lần tăng tốc, thì quyết định này phải xét lại — cả hai đều **đo được**,
+> và cả hai đã nằm trong hướng phát triển ở Chương 6.
 
 **Ma trận thí nghiệm dự kiến** gồm bốn trục: engine (PaddleOCR chưa tinh chỉnh, PaddleOCR đã tinh chỉnh, EasyOCR, Tesseract); phương án xử lý biển hai dòng (đưa thẳng, sắp xếp hộp theo toạ độ dọc, tách rồi ghép ngang, tách rồi gọi OCR hai lần); có hoặc không nắn chỉnh phối cảnh; và runtime suy luận. Chỉ số chính là **độ chính xác mức chuỗi tách riêng cho biển một dòng và biển hai dòng**, kèm độ trễ ở các phân vị p50, p95, p99 đo trên chính máy của đồ án.
 
