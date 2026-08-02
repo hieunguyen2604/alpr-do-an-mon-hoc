@@ -38,6 +38,7 @@ Write the merged Markdown somewhere else::
 from __future__ import annotations
 
 import argparse
+import os
 import shutil
 import subprocess
 import sys
@@ -175,7 +176,8 @@ def find_pandoc() -> Path | None:
     Returns:
         The path to a Pandoc executable, or ``None`` if none is found.
     """
-    vendored = REPO_ROOT / "tools" / "pandoc-3.10" / "pandoc.exe"
+    exe_name = "pandoc.exe" if os.name == "nt" else "pandoc"
+    vendored = REPO_ROOT / "tools" / "pandoc-3.10" / exe_name
     if vendored.is_file():
         return vendored
     on_path = shutil.which("pandoc")

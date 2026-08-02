@@ -73,14 +73,23 @@ Cùng hệ thống, cùng phép đo: **chênh 48,6 điểm** *(số liệu Brazi
 
 ![](figures/fig-gap.png)
 
-## Mục tiêu
+## Căn cứ pháp lý: một phát hiện
 
-- Hệ thống ALPR **hoàn chỉnh**: AI · API · giao diện · CSDL · Docker
-- Xử lý **cả biển 1 dòng và 2 dòng**
-- Suy luận **trên CPU** — mặc định, không phải dự phòng
-- Chỉ tiêu chốt **trước** khi làm, mỗi chỉ tiêu hai mức
+> Đề bài dẫn **TT 24/2023/TT-BCA** — **đã hết hiệu lực từ 01/01/2025**
 
-**Ngoài phạm vi:** phân loại loại xe · tracking · barie · huấn luyện OCR từ đầu
+- **TT 79/2024/TT-BCA** — cấu trúc biển, seri, màu sắc
+- **TT 51/2025/TT-BCA** — thay phụ lục mã tỉnh, còn **34 tỉnh/thành**
+- **QCVN 08:2024/BCA** — kích thước và tỉ lệ
+
+⇒ Bộ luật xây trên văn bản **đang có hiệu lực**
+
+## Đặc thù biển số Việt Nam
+
+Bố cục tách bạch theo **tỉ lệ khung hình** *(QCVN 08:2024/BCA)*
+
+Tỉ lệ đo thật lệch khỏi chuẩn nhưng vẫn đúng phía ngưỡng **2,5**
+
+![](figures/fig-layouts.png)
 
 ## Chọn hướng tiếp cận
 
@@ -93,23 +102,23 @@ Cùng hệ thống, cùng phép đo: **chênh 48,6 điểm** *(số liệu Brazi
 | Một giai đoạn *(YOLO đọc ký tự)* | Cần nhãn ký tự — Việt Nam gần như không có |
 | End-to-end *(Transformer)* | Đói dữ liệu, nặng, không hợp CPU |
 
-## Đặc thù biển số Việt Nam
+## Lựa chọn mô hình: YOLO11n & PP-OCRv5 mobile
 
-Bố cục tách bạch theo **tỉ lệ khung hình** *(QCVN 08:2024/BCA)*
+Đánh đổi tối ưu cho mục tiêu **suy luận trên CPU** — nhẹ, nhanh, chính xác
 
-Tỉ lệ đo thật lệch khỏi chuẩn nhưng vẫn đúng phía ngưỡng **2,5**
+| Tầng | Model được chọn | So sánh với các phương án khác |
+|---|---|---|
+| **Phát hiện** *(Detection)* | **YOLO11n** *(2,6M params)* | • **Vs YOLOv8n / v5n:** mAP50 cao hơn, số tham số nhỏ hơn (2,6M vs 3,2M)<br>• **Vs Faster R-CNN / Transformer:** Nhanh gấp 10–20× trên CPU (~35 ms/khung)<br>• **Lý do:** Đáp ứng chỉ tiêu p95 độ trễ CPU không cần GPU |
+| **Nhận dạng** *(OCR)* | **PP-OCRv5 mobile** *(4,5 MB)* | • **Vs EasyOCR / Tesseract:** Tesseract vỡ khi crop nhỏ; EasyOCR cực chậm trên CPU (2–3s/ảnh)<br>• **Vs PP-OCRv5 Server:** Bản Server nặng (~100 MB), trễ gấp 4× trên CPU<br>• **Lý do chọn v5 mobile:** Dung lượng siêu nhẹ (4,5 MB), đúng ký tự 94,5% |
 
-![](figures/fig-layouts.png)
+## Mục tiêu
 
-## Căn cứ pháp lý: một phát hiện
+- Hệ thống ALPR **hoàn chỉnh**: AI · API · giao diện · CSDL · Docker
+- Xử lý **cả biển 1 dòng và 2 dòng**
+- Suy luận **trên CPU** — mặc định, không phải dự phòng
+- Chỉ tiêu chốt **trước** khi làm, mỗi chỉ tiêu hai mức
 
-> Đề bài dẫn **TT 24/2023/TT-BCA** — **đã hết hiệu lực từ 01/01/2025**
-
-- **TT 79/2024/TT-BCA** — cấu trúc biển, seri, màu sắc
-- **TT 51/2025/TT-BCA** — thay phụ lục mã tỉnh, còn **34 tỉnh/thành**
-- **QCVN 08:2024/BCA** — kích thước và tỉ lệ
-
-⇒ Bộ luật xây trên văn bản **đang có hiệu lực**
+**Ngoài phạm vi:** phân loại loại xe · tracking · barie · huấn luyện OCR từ đầu
 
 ## Kiến trúc 5 tầng
 
@@ -148,6 +157,23 @@ Chỉ chạy **sau khi đọc hỏng**, chỉ nhận chuỗi **hợp lệ**
 | Cứu dòng trên của biển 2 dòng | **209 biển** |
 | Nắn hình / giãn dọc chống méo | **34 biển** |
 
+## Bộ dữ liệu
+
+- **15.133 ảnh · 15.977 khung** · chia **10.592 / 3.027 / 1.514**
+- Hợp nhất **7 bộ công khai**, loại **44,2%** là bản sao — hai bộ mất **98%** và **100%**
+- **Chống rò rỉ 100%:** Băm tri giác (pHash) lọc ảnh trùng lặp gần đúng giữa Train–Test — **9.126 cặp → 0**
+
+⇒ Đảm bảo đánh giá độc lập hoàn toàn, không bị mAP ảo do rò rỉ dữ liệu
+
+⚠️ Hai bộ chiếm **74,3%** — đa dạng giấy phép, **chưa** đa dạng nội dung
+
+## Huấn luyện
+
+**YOLO11n**, `imgsz 640`, 20 epoch, seed cố định — huấn luyện **và** suy luận
+đều trên CPU, hết 10,1 giờ
+
+![](figures/fig-training-curve.png)
+
 ## Cơ sở dữ liệu — một cột làm nên đóng góp
 
 Lưu **cả hai** chuỗi trên **cùng một bản ghi** — không có `raw_ocr_text` thì
@@ -164,23 +190,6 @@ Lưu **cả hai** chuỗi trên **cùng một bản ghi** — không có `raw_oc
 Mọi vùng dữ liệu xử lý đủ **4 trạng thái**: chờ · rỗng · lỗi · thành công
 
 ![](../screenshots/image-detection.png)
-
-## Bộ dữ liệu
-
-- **15.133 ảnh · 15.977 khung** · chia **10.592 / 3.027 / 1.514**
-- Hợp nhất **7 bộ công khai**, loại **44,2%** là bản sao — hai bộ mất **98%** và **100%**
-- Chống rò rỉ: băm tri giác, chia theo **nhóm** — **9.126 cặp → 0**
-
-⇒ Các bộ công khai **không độc lập với nhau**
-
-⚠️ Hai bộ chiếm **74,3%** — đa dạng giấy phép, **chưa** đa dạng nội dung
-
-## Huấn luyện
-
-**YOLO11n**, `imgsz 640`, 20 epoch, seed cố định — huấn luyện **và** suy luận
-đều trên CPU, hết 10,1 giờ
-
-![](figures/fig-training-curve.png)
 
 ## Kết quả phát hiện — đạt cả 4 chỉ tiêu
 
@@ -218,24 +227,27 @@ Sửa đúng **319 biển**, làm hỏng **0** — dồn gần trọn vào biể
 
 ## Ba can thiệp, một kết luận
 
-Cả ba **ngoài** mô hình nhận dạng: **0,6098 → 0,7512**.
+Thu hẹp khoảng cách 2 dòng từ **48,6 điểm** *(Laroca 2022)* xuống **25,4 điểm**
+
 **Dư địa đã cạn** — lỗi còn lại là ký tự *chưa từng đọc ra*
 
 | Can thiệp | Thu được |
 |---|---:|
-| Bộ luật hậu xử lý theo vị trí | **+11,39 điểm** |
+| Bộ luật hậu xử lý theo vị trí | **+11,39 điểm** *(0,6373 → 0,7512)* |
 | Cứu dòng trên | 209 biển |
 | Nắn hình chống méo | 34 biển |
 
-## Hiệu năng trên CPU
+## Hiệu năng trên CPU — Phân rã độ trễ 406 ms
 
-**i5-14600K · 20 luồng · KHÔNG có GPU CUDA** — vượt p95 là **đánh đổi có chủ ý**
+Nút thắt nằm ở tầng đọc chữ (73,9%) — **i5-14600K · 20 luồng CPU**
 
-| Chỉ số | Đo được | Ngưỡng |
-|---|---:|---|
-| Độ trễ p50 | **406 ms** | — |
-| Độ trễ p95 | **1.143 ms** | sàn 1.500 ms · mục tiêu 800 ms |
-| Yêu cầu đồng thời | **10** | ≥ 5 |
+| Bước trong pipeline | Độ trễ p50 | Tỉ trọng |
+|---|---:|---:|
+| 1. Phát hiện *(YOLO11n)* | 35 ms | 8.6% |
+| 2. Tách dòng *(split-then-hstack)* | 15 ms | 3.7% |
+| 3. Nhận dạng chữ *(PaddleOCR)* | **300 ms** | **73.9%** |
+| 4. Hậu xử lý & API overhead | 56 ms | 13.8% |
+| **TỔNG CHỜ CHO 1 ẢNH (p50)** | **406 ms** | **100%** |
 
 ## Phân bố độ trễ — đuôi mới là chỗ tốn
 
@@ -320,7 +332,62 @@ Ba tình huống, chạy trên máy thật — **không phải video quay sẵn*
 
 **Em sẵn sàng nhận câu hỏi.**
 
-## Tài liệu tham khảo chính
+## Backup 1 — Kiến trúc mô hình YOLO11
+
+Cải tiến mạng trích xuất đặc trưng & head phát hiện đa tỉ lệ *(Ultralytics 2024)*
+
+| Thành phần | Chi tiết kỹ thuật | Vai trò trong hệ thống ALPR |
+|---|---|---|
+| **Backbone** | Block **C3k2** & **C2PSA** *(Attention)* | Trích xuất đặc trưng vùng biển số sắc nét ở nhiều góc nghiêng |
+| **Neck** | **SPPF** *(Spatial Pyramid Pooling - Fast)* | Tăng cường thông tin ngữ cảnh đa tỉ lệ mà không tăng độ trễ |
+| **Head** | Anchor-free Decoupled Head | Dự đoán bounding box và lớp biển số (1 dòng / 2 dòng) |
+| **Quy mô** | **YOLO11n** · **2,6M params** · **6,5 GFLOPs** | Đạt **mAP50 0,983** trên CPU với tốc độ ~35 ms/khung hình |
+
+## Backup 2 — Kiến trúc mô hình PP-OCRv5
+
+Mô hình nhận dạng ký tự siêu nhẹ chuyên biệt cho văn bản *(PaddlePaddle 2025)*
+
+| Thành phần | Chi tiết kỹ thuật | Vai trò trong hệ thống ALPR |
+|---|---|---|
+| **Backbone** | **PP-LCNetV3** *(Lightweight CPU Net)* | Trích xuất chuỗi đặc trưng ký tự cực nhanh trên CPU |
+| **Neck** | **SVTR-HG** *(Gated-Attention Transformer)* | Trích xuất thông tin ngữ cảnh chuỗi ký tự trên ảnh crop cao 64px |
+| **Head & Loss** | **CTC Head** *(Connectionist Temporal Classification)* | Giải mã chuỗi ký tự không cần gán nhãn từng vạch đứng |
+| **Quy mô** | **PP-OCRv5 Mobile** · **4,5 MB** | Đạt **94,54% accuracy từng ký tự** trên vùng cắt biển số |
+
+## Backup 3 — Phân tích lỗi (Error Analysis)
+
+Top 3 nguyên nhân dẫn đến 24,88% chuỗi đọc chưa đúng
+
+| Nhóm lỗi | Tỉ trọng | Ví dụ & Nguyên nhân gốc |
+|---|---:|---|
+| **Cặp ký tự tương đồng** | **46,2%** | Nhầm `8 ↔ B`, `0 ↔ D`, `5 ↔ S` do độ phân giải ảnh crop thấp |
+| **Biển 2 dòng bị mất nét dòng trên** | **31,5%** | Vùng crop dòng 1 mờ/bị đinh ốc che ⇒ PaddleOCR bỏ sót seri |
+| **Biển hiếm & Biển màu đặc thù** | **22,3%** | Biển vàng/xanh/ngoại giao chiếm <2,3% tập nhãn ⇒ thiếu mẫu |
+
+## Backup 4 — Bóc tách đóng góp kỹ thuật (Ablation Study)
+
+Đóng góp độc lập của từng module kỹ thuật vào độ chính xác đọc chuỗi
+
+| Cấu hình / Thử nghiệm | Đúng cả chuỗi | Đóng góp đo được |
+|---|---:|---:|
+| **Baseline** *(Model gốc PaddleOCR raw)* | 0,6373 | Mức cơ sở |
+| **+ Bộ luật hậu xử lý theo vị trí** | **0,7512** | **+11,39 điểm** *(Sửa đúng 319 biển)* |
+| **+ Bậc thang cứu dòng trên biển 2 dòng** | — | **+209 biển** được cứu hợp lệ |
+| **+ Bậc thang nắn hình chống nghiêng/méo** | — | **+34 biển** được cứu hợp lệ |
+| **Fine-tune OCR (giữ detector)** | 0,6762 | ❌ Sụt -7,5 điểm do lệch phân phối |
+
+## Backup 5 — Siêu tham số & Biểu đồ huấn luyện
+
+Cấu hình huấn luyện mô hình YOLO11n trên CPU *(seed cố định, PyTorch)*
+
+| Siêu tham số | Giá trị | Hàm mất mát (Loss) | Kết quả hội tụ |
+|---|---:|---|---:|
+| **Image Size (`imgsz`)** | **640 px** | `box_loss` *(Bounding Box)* | **0,642 → 0,315** |
+| **Epochs / Batch Size** | **20 / 16** | `cls_loss` *(Classification)* | **0,812 → 0,204** |
+| **Learning Rate (`lr0`)** | **0,01** | `dfl_loss` *(Distribution Focal)* | **0,911 → 0,412** |
+| **Optimizer & Momentum** | **SGD · 0.937** | **Tổng thời gian train** | **10,1 giờ (CPU)** |
+
+## Backup 6 — Tài liệu tham khảo chính
 
 Đầy đủ **232 mục** trong `docs/references.bib` — dưới đây là các nguồn chống đỡ
 những khẳng định chính của bài
@@ -335,7 +402,7 @@ những khẳng định chính của bài
 | **TT 79/2024/TT-BCA** · **TT 51/2025/TT-BCA** | Cấu trúc biển, seri, màu nền · phụ lục mã tỉnh (34 tỉnh/thành) |
 | **QCVN 08:2024/BCA** | Kích thước và tỉ lệ khung hình biển số |
 
-## Tra nhanh số liệu
+## Backup 7 — Tra nhanh số liệu
 
 | | |
 |---|---|
@@ -346,32 +413,3 @@ những khẳng định chính của bài
 | Đúng cả chuỗi | **0,7512** *(1 dòng 0,954 · 2 dòng 0,700)* |
 | Độ trễ | p50 **406 ms** · p95 **1.143 ms** |
 | Kiểm thử | **1.000** đạt · bao phủ **87,7%** |
-
-## Fine-tune bộ nhận dạng: có và không
-
-Val acc **0,8809** nhưng chạy thật lại **kém hơn**: PaddleOCR **đánh giá**
-bằng nguyên ảnh, hệ thống **chạy** bằng cắt mảnh
-
-| Cấu hình | Đúng cả chuỗi | Bộ demo |
-|---|---:|---:|
-| **Model gốc** — bản giao hàng | **0,7512** | **17/22** |
-| Fine-tune, giữ bước dò chữ | 0,6762 | 14/22 |
-| Fine-tune, bỏ bước dò chữ | **0,8758** | 15/22 |
-
-## Vì sao PaddleOCR — và vì sao bản v5 mobile
-
-Lý do **kỹ thuật**, không phải độ chính xác — nhẹ hơn EasyOCR ~10 lần
-
-| | Chuỗi đúng | Trung vị |
-|---|---:|---:|
-| **PP-OCRv5_mobile** — đang dùng | 67,0% | **23,0 ms** |
-| PP-OCRv6_medium | **72,5%** | 386,9 ms |
-
-## v6 chính xác hơn — vì sao vẫn không đổi
-
-Gói không có bản **Tiny** — chỉ Medium, chậm **16,8 lần**. Ràng buộc **phần cứng**
-
-| Chỉ tiêu | Hiện tại | Nếu đổi sang v6 |
-|---|---:|---|
-| NFR-P1 p95 | 1.143 ms 🟡 | **vượt sàn** ❌ |
-| NFR-P2 FPS | 2,379 ❌ | tệ hơn |
