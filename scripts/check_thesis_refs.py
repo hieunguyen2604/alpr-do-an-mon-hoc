@@ -73,6 +73,11 @@ def main() -> None:
 
     for f in files:
         for i, dong in enumerate(f.read_text(encoding="utf-8").splitlines(), 1):
+            # Ma neo `{{T6.6c}}` chi duoc nam trong chu thich HTML. Lot ra van
+            # xuoi thi no IN NGUYEN VAN ra ban giay — mot lan da xay ra that.
+            if "{{" in dong and not dong.lstrip().startswith("<!--"):
+                tong += 1
+                hong[f.name].append(f"  {i:>5}  mã neo lọt ra văn xuôi: {dong.strip()[:70]}")
             for m in REF_MUC.finditer(dong):
                 # "docs/reports/02-....md muc 7.3" tro sang TEP KHAC, khong phai quyen.
                 if ".md" in dong[: m.start()]:

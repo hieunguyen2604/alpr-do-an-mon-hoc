@@ -1,6 +1,6 @@
 # CHƯƠNG 1. GIỚI THIỆU
 
-> **Ghi chú biên tập.** Ký hiệu trích dẫn `[n]` trong chương này trỏ tới mục *Tài liệu tham khảo* của quyển đồ án. Số thứ tự `n` là **số tạm thời trong phạm vi chương**, sẽ được đánh lại tự động khi hợp nhất toàn bộ các chương ở Phase 9. Mỗi trích dẫn đều kèm khóa BibTeX trong chú thích HTML để công cụ hợp nhất ánh xạ chính xác về `docs/references.bib`. Bảng ánh xạ đầy đủ đặt ở cuối chương (mục 1.8).
+> **Ghi chú biên tập.** Ký hiệu trích dẫn `[n]` trỏ tới mục *Tài liệu tham khảo* ở cuối quyển. Số thứ tự được đánh **theo thứ tự xuất hiện lần đầu trong toàn quyển** (kiểu IEEE) và do `scripts/build_bibliography.py` sinh ra từ `docs/references.bib` — không gõ tay, nên không thể lệch giữa số trong bài và số trong danh mục.
 
 Chương này trả lời bốn câu hỏi theo đúng thứ tự mà một quyển đồ án cần trả lời: **vì sao làm**, **làm gì**, **làm đến đâu**, và **làm bằng cách nào**. Chương được viết sao cho **đọc được độc lập**: người đọc chỉ đọc Chương 1 vẫn nắm được toàn bộ đề tài, phạm vi và giới hạn của nó.
 
@@ -411,33 +411,6 @@ Quyển đồ án gồm bảy chương:
 Phần cuối quyển gồm **Tài liệu tham khảo** và các **Phụ lục** (bảng mã tỉnh đầy đủ, bảng tổng hợp yêu cầu chức năng, đặc tả API, hướng dẫn cài đặt và vận hành).
 
 > **Vì sao khảo sát công nghệ được tách thành chương riêng.** Ở bản thảo trước, toàn bộ luận cứ chọn mô hình nằm gọn trong một mục cuối chương cơ sở lý thuyết. Đó là chỗ người đọc mục lục không nhìn thấy, trong khi lại là phần mà một hội đồng hỏi nhiều nhất. Chương 3 tồn tại để câu hỏi *"vì sao chọn YOLO11 chứ không phải YOLOv8, vì sao PaddleOCR chứ không phải EasyOCR, vì sao bản mobile của v5 chứ không phải v6"* có một chỗ trả lời tường minh — kể cả khi câu trả lời trung thực đôi lúc là *"chưa đo được"*.
-
----
-
-## 1.8. Bảng ánh xạ trích dẫn của chương
-
-Bảng dưới đây phục vụ công cụ hợp nhất tài liệu tham khảo ở Phase 9. Số `[n]` là số tạm thời trong phạm vi Chương 1.
-
-| [n] | Khóa BibTeX | Nguồn (rút gọn) |
-|:--:|---|---|
-| [1] | `dantri_2024_77trieuxemay` | Việt Nam có 77 triệu xe máy, cứ 1.000 dân có 770 người sở hữu xe máy |
-| [2] | `anagnostopoulos_2008_survey` | License Plate Recognition From Still Images and Video Sequences: A Survey |
-| [3] | `du_2013_review` | Automatic License Plate Recognition (ALPR): A State-of-the-Art Review |
-| [4] | `eparking_nd_nhandangbienso` | Nhận dạng biển số xe tự động trong bãi giữ xe thông minh |
-| [5] | `vetc_nd_thuphikhongdung` | Ô tô đi qua trạm thu phí không dừng sẽ quét biển hay quét mã thẻ |
-| [6] | `viscom_nd_vietanpr` | VietANPR — phần mềm nhận diện biển số xe máy và xe hơi |
-| [7] | `laroca_2022_crossdataset` | On the Cross-Dataset Generalization in License Plate Recognition |
-| [8] | `bocongan_2024_tt79` | Thông tư 79/2024/TT-BCA |
-| [9] | `bocongan_2025_tt13` | Thông tư 13/2025/TT-BCA (sửa đổi TT 79/2024) |
-| [10] | `bocongan_2025_tt51` | Thông tư 51/2025/TT-BCA (sửa đổi TT 79/2024 đã sửa tại TT 13/2025) |
-| [11] | `bocongan_2024_qcvn08` | QCVN 08:2024/BCA — Quy chuẩn kỹ thuật quốc gia về biển số xe |
-| [12] | `bocongan_2023_tt24` | Thông tư 24/2023/TT-BCA *(đã hết hiệu lực — dẫn như bối cảnh lịch sử)* |
-| [13] | `bocongan_2024_nhandienbienso` | Nhận diện màu sắc, seri, ký hiệu biển số xe … từ 01/01/2025 |
-| [14] | `thuviennhadat_2025_kyhieu34tinh` | Ký hiệu biển số xe 34 tỉnh thành sau sáp nhập theo TT 51/2025/TT-BCA |
-| [15] | `boquocphong_2021_tt169` | Thông tư 169/2021/TT-BQP — xe cơ giới trong Bộ Quốc phòng |
-| [16] | `jocher_2024_yolo11` | Ultralytics YOLO11 |
-| [17] | `cui_2026_ppocrv5` | PP-OCRv5: A Specialized 5M-Parameter Model … on OCR Tasks |
-| [18] | `ultralytics_2026_openvinoexport` | Intel OpenVINO Export — Ultralytics Docs (bảng benchmark CPU i7-13700H) |
 
 ---
 

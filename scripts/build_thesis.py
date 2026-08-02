@@ -68,21 +68,28 @@ CHAPTER_FILENAMES: tuple[str, ...] = (
     "ch5-xay-dung-huan-luyen.md",
     "ch6-thuc-nghiem.md",
     "ch7-ket-luan.md",
+    "ch8-tai-lieu-tham-khao.md",
 )
 
-# Separator inserted after every section (including the last, matching the
-# original manual build).
+# Page break inserted after every section.
 #
-# IMPORTANT — do not "correct" this string. In a normal Python string the "\n"
-# sequences are newlines and, crucially, "\newpage" is "\n" (one more newline)
-# followed by the literal text "ewpage" — because "\n" is an escape sequence.
-# The committed ``thesis-full.md`` was produced this way and therefore contains
-# a literal "ewpage" marker between sections, not a LaTeX "\newpage" command.
-# We reproduce it verbatim so the rebuild stays byte-for-byte identical to the
-# committed file. If a real "\newpage" is ever wanted, change this to the raw
-# string ``r"\n\n\newpage\n\n"`` — but that is a deliberate content change and
-# will make the output differ from the current document.
-SECTION_SEPARATOR: str = "\n\n\newpage\n\n"
+# This used to be ``"\n\n\newpage\n\n"``, which in a non-raw Python string is
+# three newlines followed by the literal text ``ewpage`` — because ``\n`` is an
+# escape sequence. The word **ewpage** was therefore printed as a paragraph of
+# body text eight times in the delivered thesis, once before each chapter
+# heading. The previous comment here documented the bug correctly but chose to
+# keep it so rebuilds stayed byte-identical with an earlier committed file; that
+# reason expired when the book was restructured.
+#
+# A raw ``\newpage`` would not have helped either: Pandoc only honours it for
+# LaTeX output, and this build targets DOCX. The block below is raw OpenXML,
+# which Word renders as an actual page break — hence the ``raw_attribute``
+# extension on :data:`PANDOC_FROM`, without which Pandoc would print the XML.
+SECTION_SEPARATOR: str = (
+    "\n\n```{=openxml}\n"
+    '<w:p><w:r><w:br w:type="page"/></w:r></w:p>\n'
+    "```\n\n"
+)
 
 # Source outline and target for the slide deck.
 SLIDES_SOURCE_FILENAME: str = "10-slides.md"
@@ -98,7 +105,10 @@ SLIDES_OUTPUT_FILENAME: str = "slides.pptx"
 SLIDES_TEMPLATE_FILENAME: str = "template-uit.pptx"
 
 # Pandoc arguments shared by every export path.
-PANDOC_FROM: str = "gfm"
+# ``raw_attribute`` is what lets :data:`SECTION_SEPARATOR` reach Word as a real
+# page break instead of being printed as XML. Harmless for the slide export,
+# which contains no raw blocks.
+PANDOC_FROM: str = "gfm+raw_attribute"
 PANDOC_TOC_DEPTH: str = "3"
 
 

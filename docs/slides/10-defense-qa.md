@@ -642,7 +642,7 @@ Không. Đây là **quyết định thu gọn phạm vi giao diện** ngày 2026
 - **Về yêu cầu:** trong sáu nhóm yêu cầu chức năng, nhóm FR-3 có 5 yêu cầu. Hai yêu cầu **thuần giao diện** — FR-3.1 (xin quyền và hiển thị luồng camera) và FR-3.4 (vẽ chồng bounding box lên khung hình trực tiếp) — chuyển mức ưu tiên từ *Must* sang *Won't* cho bản này. Ba yêu cầu còn lại — FR-3.2 (nhận và xử lý từng khung), FR-3.3 (nhận dạng trên khung trực tiếp), FR-3.5 (lưu lịch sử phiên có gộp trùng theo `job_id`) — **vẫn là Must và vẫn được đáp ứng**, chỉ là kiểm chứng ở mức API thay vì qua giao diện.
 - **Về khả năng khôi phục:** toàn bộ mã giao diện đã gỡ — trang `WebcamDetection`, thư mục `components/detection/webcam/`, hook `useFrameCaptureLoop` và hàm gọi `detectFrame` — **còn nguyên trong lịch sử git**. Khôi phục là thao tác phục hồi, không phải xây mới. Em ghi nó ở phần Hướng phát triển.
 - **Nếu hội đồng muốn xem chạy thật:** em demo được ngay bằng một lệnh gọi API (Bước 6 của kịch bản demo) hoặc qua Swagger tại `localhost:8000/docs`.
-- **Điểm đáng nêu về kiến trúc:** việc gỡ được một trang giao diện mà **không đụng một dòng nào** ở tầng API, tầng nghiệp vụ hay tầng AI chính là bằng chứng thực tế cho nguyên tắc tách tầng mà em trình bày ở Chương 3.
+- **Điểm đáng nêu về kiến trúc:** việc gỡ được một trang giao diện mà **không đụng một dòng nào** ở tầng API, tầng nghiệp vụ hay tầng AI chính là bằng chứng thực tế cho nguyên tắc tách tầng mà em trình bày ở Chương 4.
 
 **Cảnh báo.** Đừng nói "em bỏ vì không kịp làm" — sai sự thật, vì trang đã từng chạy được. Cũng đừng nói lảng như thể hệ thống chưa bao giờ có phần này. Nói đúng: **đã làm, đã chạy được, chủ động thu gọn khỏi giao diện, năng lực giữ ở API.**
 

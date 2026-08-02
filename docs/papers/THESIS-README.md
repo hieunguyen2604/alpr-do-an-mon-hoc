@@ -28,10 +28,11 @@ docs/papers/
 ├── ch5-xay-dung-huan-luyen.md  ← ✅ Chương 5
 ├── ch6-thuc-nghiem.md          ← ✅ Chương 6
 ├── ch7-ket-luan.md             ← ✅ Chương 7
+├── ch8-tai-lieu-tham-khao.md   ← ✅ SINH TỰ ĐỘNG bằng scripts/build_bibliography.py
 └── thesis-full.md / .docx / .pdf  ← đầu ra khi ghép — KHÔNG sửa tay
 ```
 
-Phần **Tài liệu tham khảo** sinh từ `docs/references.bib` khi ghép, còn **Phụ lục** trích từ các tài liệu nguồn — cả hai không tồn tại dưới dạng tệp riêng trong thư mục này.
+Phần **Tài liệu tham khảo** sinh ra thành tệp `ch8-tai-lieu-tham-khao.md` bằng `scripts/build_bibliography.py` (đọc `docs/references.bib`) — **không sửa tay tệp đó**. Phần **Phụ lục** trích từ các tài liệu nguồn và chưa tồn tại dưới dạng tệp riêng.
 
 **Quy tắc đặt tên tệp:** các tệp chương dùng tiền tố `ch<số chương>-<slug không dấu, gạch nối>.md`; các tệp không phải chương giữ tiền tố số (`00-`, `01-`) và đứng trước khi ghép. Thứ tự ghép khai báo tường minh ở `CHAPTER_FILENAMES` trong `scripts/build_thesis.py`.
 
@@ -65,7 +66,7 @@ Phần **Tài liệu tham khảo** sinh từ `docs/references.bib` khi ghép, c�
 | `ch5-xay-dung-huan-luyen.md` | 5. Xây dựng hệ thống và huấn luyện mô hình | 🟢 **ĐÃ VIẾT** | — |
 | `ch6-thuc-nghiem.md` | 6. Thực nghiệm và đánh giá | 🟢 **ĐÃ VIẾT** | Số liệu đã đầy đủ (`docs/reports/05-results.json`) |
 | `ch7-ket-luan.md` | 7. Kết luận và hướng phát triển | 🟢 **ĐÃ VIẾT** | — |
-| — | Tài liệu tham khảo | ⚪ Sinh khi ghép từ `references.bib` | — |
+| `ch8-tai-lieu-tham-khao.md` | Tài liệu tham khảo | 🟢 **SINH TỰ ĐỘNG** — 123 mục, đánh số theo thứ tự xuất hiện lần đầu trong quyển (kiểu IEEE) | — |
 | — | Phụ lục | 🟢 Nguyên liệu đã sẵn (A, B, C, D, E) | — |
 
 ### Nền tảng kỹ thuật của Chương 5 và Chương 6
@@ -208,7 +209,7 @@ backend/.venv/Scripts/python.exe scripts/build_thesis.py
 backend/.venv/Scripts/python.exe scripts/build_thesis.py --out build/thesis-full.md --no-docx
 ```
 
-Script nối **đúng tám tệp** theo thứ tự ở §5.1 (danh sách khai báo tường minh trong mã, **không** dùng glob nên không nuốt nhầm `00-thesis-outline-v2.md` hay `THESIS-README.md`), chèn dấu ngắt trang giữa các phần, và ghi ra `docs/papers/thesis-full.md`. Chạy lại luôn cho kết quả **byte-identical** (idempotent), nên có thể tái sinh bản ghép bất cứ lúc nào rồi đối chiếu bằng `diff`.
+Script nối **đúng chín tệp** theo thứ tự ở §5.1 (danh sách khai báo tường minh trong mã, **không** dùng glob nên không nuốt nhầm `00-thesis-outline-v2.md` hay `THESIS-README.md`), chèn dấu ngắt trang giữa các phần, và ghi ra `docs/papers/thesis-full.md`. Chạy lại luôn cho kết quả **byte-identical** (idempotent), nên có thể tái sinh bản ghép bất cứ lúc nào rồi đối chiếu bằng `diff`.
 
 > **Lưu ý về dấu ngắt trang.** Bản ghép hiện tại dùng dấu phân tách `\n\n\newpage\n\n`; do quy tắc escape của chuỗi Python, `\n` là ký tự xuống dòng nên phần `\newpage` để lại **chuỗi chữ `ewpage`** giữa các phần chứ không phải lệnh LaTeX `\newpage`. Script tái tạo **nguyên trạng** hành vi này để bản dựng khớp byte với tệp đã commit. Nếu sau này muốn dấu ngắt trang LaTeX thật, sửa hằng `SECTION_SEPARATOR` thành chuỗi thô `r"\n\n\newpage\n\n"` — đây là một thay đổi nội dung có chủ đích và sẽ làm bản ghép khác đi.
 

@@ -173,7 +173,6 @@ CHƯƠNG 1. GIỚI THIỆU
     1.5. Ý nghĩa khoa học và thực tiễn
     1.6. Đóng góp của đề tài
     1.7. Bố cục quyển đồ án
-    1.8. Bảng ánh xạ trích dẫn của chương
     Tóm tắt chương
 
 CHƯƠNG 2. CƠ SỞ LÝ THUYẾT
@@ -249,13 +248,13 @@ PHỤ LỤC
 
 | Ký hiệu | Tên hình | Trang |
 |---|---|:---:|
-| Hình 2.1 | * Sơ đồ pipeline ALPR điển hình (tổng hợp từ [2], [3], [4], [6], [7]) | — |
+| Hình 2.1 | * Sơ đồ pipeline ALPR điển hình (tổng hợp từ [2], [3], [20], [22], [23]) | — |
 | Hình 2.2 | ** Sơ đồ phân loại hai trục các hướng tiếp cận ALPR và định vị lựa chọn của đồ án | — |
-| Hình 2.3 | * Kiến trúc tổng quát backbone – neck – head của YOLO11 (theo [27], [28]) | — |
-| Hình 2.4 | * Cấu trúc phân cấp của khối C2PSA trong YOLO11 (đối chiếu mã nguồn [30]) | — |
-| Hình 2.5 | * Cơ chế sụp đổ của CTC trên ảnh văn bản hai dòng (theo [41]) | — |
+| Hình 2.3 | * Kiến trúc tổng quát backbone – neck – head của YOLO11 (theo [42], [16]) | — |
+| Hình 2.4 | * Cấu trúc phân cấp của khối C2PSA trong YOLO11 (đối chiếu mã nguồn [44]) | — |
+| Hình 2.5 | * Cơ chế sụp đổ của CTC trên ảnh văn bản hai dòng (theo [54]) | — |
 | Hình 2.6 | ** Chuỗi văn bản pháp lý về biển số xe đang có hiệu lực | — |
-| Hình 2.7 | * Khoảng trống tỷ lệ khung hình giữa biển hai dòng và biển một dòng (dẫn xuất từ [57]) | — |
+| Hình 2.7 | * Khoảng trống tỷ lệ khung hình giữa biển hai dòng và biển một dòng (dẫn xuất từ [11]) | — |
 | Hình 5.1 | * Đường cong hàm mất mát theo epoch — box_loss, cls_loss, dfl_loss, tách riêng train và val | — |
 | Hình 5.2 | * Tiến triển mAP@0.5 và mAP@0.5:0.95 trên tập validation theo epoch | — |
 | Hình 5.3 | * Tiến triển precision và recall trên tập validation theo epoch | — |
@@ -300,10 +299,10 @@ PHỤ LỤC
 | Bảng 2.10 | Hai kiểu seri biển xe máy đang cùng lưu hành | — |
 | Bảng 2.11 | Tám mã không được sử dụng | — |
 | Bảng 2.12 | Tổng hợp các tập ký tự seri | — |
-| Bảng 2.13 | Các ký hiệu seri đặc biệt [64] | — |
-| Bảng 2.14 | Màu nền biển số và đối tượng áp dụng [60] | — |
-| Bảng 2.15 | Số lượng và dạng biển số theo loại phương tiện [67] | — |
-| Bảng 2.16 | Kích thước và tỷ lệ khung hình của các loại biển số [57] | — |
+| Bảng 2.13 | Các ký hiệu seri đặc biệt [68] | — |
+| Bảng 2.14 | Màu nền biển số và đối tượng áp dụng [13] | — |
+| Bảng 2.15 | Số lượng và dạng biển số theo loại phương tiện [71] | — |
+| Bảng 2.16 | Kích thước và tỷ lệ khung hình của các loại biển số [11] | — |
 | Bảng 2.17 | Ngưỡng phân loại bố cục theo tỷ lệ khung hình — đề xuất của đồ án | — |
 | Bảng 2.18 | Bố cục nội dung của biển hai dòng | — |
 | Bảng 2.19 | Từ quy chuẩn pháp lý tới quyết định thiết kế | — |
