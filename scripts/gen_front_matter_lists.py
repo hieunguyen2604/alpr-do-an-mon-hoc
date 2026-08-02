@@ -103,10 +103,13 @@ def main() -> None:
     ap = "--apply" in sys.argv
     muc_luc, hinh, bang = quet()
 
+    # Ghi chu nay danh cho NGUOI SOAN, khong danh cho hoi dong. Phai la chu
+    # thich HTML — de o dang chu thuong thi Pandoc in thang no vao quyen, va
+    # ban nop se co dong "Khong go tay — chay lai script..." giua Muc luc.
     ghi_chu = (
-        "> **Sinh tự động** bằng `scripts/gen_front_matter_lists.py` từ chính các "
-        "tệp chương. Không gõ tay — chạy lại script sau mỗi lần đổi cấu trúc. Số "
-        "trang do Word điền khi xuất bản `.docx`."
+        "<!-- Sinh tự động bằng scripts/gen_front_matter_lists.py từ chính các tệp\n"
+        "     chương. Không sửa tay — chạy lại script sau mỗi lần đổi cấu trúc.\n"
+        "     Số trang do Word điền khi xuất .docx. -->"
     )
 
     e = [ghi_chu, "", "```"] + [
@@ -114,16 +117,15 @@ def main() -> None:
         "DANH MỤC BẢNG BIỂU", "DANH MỤC TỪ VIẾT TẮT", "TÓM TẮT ĐỒ ÁN", "ABSTRACT",
     ] + muc_luc + ["", "TÀI LIỆU THAM KHẢO", "PHỤ LỤC", "```"]
 
-    f = [ghi_chu, "",
-         "> **Quy ước đánh số hình:** `Hình <số chương>.<số thứ tự trong chương>`. "
-         "Chú thích đặt **phía dưới** hình, căn giữa. Hình lấy hoặc phỏng theo nguồn "
-         "khác **bắt buộc** ghi nguồn ngay trong chú thích, kèm ký hiệu `[n]`.", ""
+    # Quy uoc danh so cung la chi dan bien soan, khong phai noi dung quyen.
+    f = [ghi_chu,
+         "<!-- Quy ước: Hình <chương>.<thứ tự>. Chú thích đặt DƯỚI hình, căn giữa.\n"
+         "     Hình lấy/phỏng theo nguồn khác bắt buộc ghi nguồn kèm [n]. -->", ""
          ] + bang_md(hinh, "hình")
 
-    g = [ghi_chu, "",
-         "> **Quy ước đánh số bảng:** `Bảng <số chương>.<số thứ tự trong chương>`. "
-         "Chú thích đặt **phía trên** bảng. Bảng tổng hợp số liệu từ nguồn khác bắt "
-         "buộc có cột hoặc dòng ghi nguồn kèm ký hiệu `[n]`.", ""
+    g = [ghi_chu,
+         "<!-- Quy ước: Bảng <chương>.<thứ tự>. Chú thích đặt TRÊN bảng.\n"
+         "     Bảng tổng hợp từ nguồn khác bắt buộc ghi nguồn kèm [n]. -->", ""
          ] + bang_md(bang, "bảng")
 
     print(f"Mục lục : {sum(1 for l in muc_luc if l.strip())} dòng")

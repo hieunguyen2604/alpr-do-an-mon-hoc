@@ -1,23 +1,15 @@
-# Phần đầu quyển đồ án (Front Matter)
+<!-- PHẦN ĐẦU QUYỂN (front matter) — khối này là ghi chú biên soạn, không in ra.
 
-**Đề tài:** Xây dựng hệ thống nhận diện biển số xe bằng trí tuệ nhân tạo
-*(Developing an AI-based vehicle license plate recognition system)*
+     Đề tài: Xây dựng hệ thống nhận diện biển số xe bằng trí tuệ nhân tạo
+     (Developing an AI-based vehicle license plate recognition system)
 
-> Tên đề tài lấy **nguyên văn theo Đề cương chi tiết đã đăng ký** (GVHD:
-> ThS. Cáp Phạm Đình Thăng; thời gian thực hiện 16/07/2026 – 24/09/2026).
-> Bản nháp trước dùng "Xây dựng hệ thống nhận dạng biển số xe Việt Nam ứng
-> dụng Trí tuệ nhân tạo" — đã thay ở mọi vị trí để bìa khớp hồ sơ đăng ký.
+     Tên đề tài lấy nguyên văn theo Đề cương chi tiết đã đăng ký
+     (GVHD: ThS. Cáp Phạm Đình Thăng; thực hiện 16/07/2026 – 24/09/2026).
+     Bản nháp trước dùng "Xây dựng hệ thống nhận dạng biển số xe Việt Nam
+     ứng dụng Trí tuệ nhân tạo" — đã thay ở mọi vị trí để bìa khớp hồ sơ.
 
-| Mục | Nội dung |
-|---|---|
-| Mã tài liệu | `THESIS-FRONT-v1.0` |
-| Giai đoạn | Phase 9 — Documentation |
-| Ngày lập | 2026-07-19 |
-| Trạng thái | Danh mục từ viết tắt và hai abstract: **đã hoàn chỉnh**. Bìa, lời cam đoan, lời cảm ơn: **mẫu, chờ điền thông tin cá nhân**. Mục lục, danh mục hình, danh mục bảng: **placeholder, sinh tự động khi ghép** |
-
-> **Quy ước ký hiệu trong tài liệu này:** mọi chỗ đặt trong dấu `«…»` là **chỗ trống phải điền** thông tin thật (tên trường, khoa, sinh viên, giảng viên hướng dẫn, mã số sinh viên…). Không được để nguyên `«…»` trong bản nộp.
-
----
+     Mọi chỗ đặt trong dấu «…» là chỗ trống phải điền thông tin thật.
+-->
 
 ## A. TRANG BÌA
 
@@ -153,7 +145,9 @@ Chúng tôi xin chân thành cảm ơn!
 
 ## E. MỤC LỤC
 
-> **Sinh tự động** bằng `scripts/gen_front_matter_lists.py` từ chính các tệp chương. Không gõ tay — chạy lại script sau mỗi lần đổi cấu trúc. Số trang do Word điền khi xuất bản `.docx`.
+<!-- Sinh tự động bằng scripts/gen_front_matter_lists.py từ chính các tệp
+     chương. Không sửa tay — chạy lại script sau mỗi lần đổi cấu trúc.
+     Số trang do Word điền khi xuất .docx. -->
 
 ```
 LỜI CAM ĐOAN
@@ -225,7 +219,6 @@ CHƯƠNG 6. THỰC NGHIỆM VÀ ĐÁNH GIÁ
     6.8. Phân tích lỗi
     6.9. Bàn luận
     6.10. Kết luận chương
-    Phụ lục kỹ thuật — Ánh xạ số liệu và lệnh tái lập
 
 CHƯƠNG 7. KẾT LUẬN VÀ HƯỚNG PHÁT TRIỂN
     7.1. Tổng kết công việc đã thực hiện
@@ -242,9 +235,11 @@ PHỤ LỤC
 
 ## F. DANH MỤC HÌNH VẼ
 
-> **Sinh tự động** bằng `scripts/gen_front_matter_lists.py` từ chính các tệp chương. Không gõ tay — chạy lại script sau mỗi lần đổi cấu trúc. Số trang do Word điền khi xuất bản `.docx`.
-
-> **Quy ước đánh số hình:** `Hình <số chương>.<số thứ tự trong chương>`. Chú thích đặt **phía dưới** hình, căn giữa. Hình lấy hoặc phỏng theo nguồn khác **bắt buộc** ghi nguồn ngay trong chú thích, kèm ký hiệu `[n]`.
+<!-- Sinh tự động bằng scripts/gen_front_matter_lists.py từ chính các tệp
+     chương. Không sửa tay — chạy lại script sau mỗi lần đổi cấu trúc.
+     Số trang do Word điền khi xuất .docx. -->
+<!-- Quy ước: Hình <chương>.<thứ tự>. Chú thích đặt DƯỚI hình, căn giữa.
+     Hình lấy/phỏng theo nguồn khác bắt buộc ghi nguồn kèm [n]. -->
 
 | Ký hiệu | Tên hình | Trang |
 |---|---|:---:|
@@ -276,9 +271,11 @@ PHỤ LỤC
 
 ## G. DANH MỤC BẢNG BIỂU
 
-> **Sinh tự động** bằng `scripts/gen_front_matter_lists.py` từ chính các tệp chương. Không gõ tay — chạy lại script sau mỗi lần đổi cấu trúc. Số trang do Word điền khi xuất bản `.docx`.
-
-> **Quy ước đánh số bảng:** `Bảng <số chương>.<số thứ tự trong chương>`. Chú thích đặt **phía trên** bảng. Bảng tổng hợp số liệu từ nguồn khác bắt buộc có cột hoặc dòng ghi nguồn kèm ký hiệu `[n]`.
+<!-- Sinh tự động bằng scripts/gen_front_matter_lists.py từ chính các tệp
+     chương. Không sửa tay — chạy lại script sau mỗi lần đổi cấu trúc.
+     Số trang do Word điền khi xuất .docx. -->
+<!-- Quy ước: Bảng <chương>.<thứ tự>. Chú thích đặt TRÊN bảng.
+     Bảng tổng hợp từ nguồn khác bắt buộc ghi nguồn kèm [n]. -->
 
 | Ký hiệu | Tên bảng | Trang |
 |---|---|:---:|
@@ -480,37 +477,12 @@ On the held-out test split (1,514 images, de-duplicated across splits), the YOLO
 
 **Keywords:** license plate recognition, Vietnamese license plates, YOLO11, PaddleOCR, two-line plates, position-constrained post-processing, CPU inference.
 
----
-
-## K. Ghi chú về trạng thái của phần đầu quyển
-
-| Phần | Trạng thái | Việc còn lại |
-|---|---|---|
-| A. Trang bìa | 🟡 Mẫu | Điền thông tin trường, khoa, sinh viên, giảng viên hướng dẫn |
-| B. Nhiệm vụ đồ án và nhận xét | 🟡 Giữ chỗ | Lấy biểu mẫu của khoa; xoá trang nào khoa không yêu cầu |
-| C. Lời cam đoan | 🟡 Mẫu chuẩn | Điền tên, địa danh, ngày tháng |
-| D. Lời cảm ơn | 🟡 Mẫu | Điền tên, cá nhân hoá nếu muốn |
-| E. Mục lục | ⚪ Placeholder | Sinh tự động sau khi ghép đủ 6 chương |
-| F. Danh mục hình vẽ | ⚪ Placeholder | Sinh tự động khi ghép quyển (Chương 4 và 5 đã viết xong) |
-| G. Danh mục bảng biểu | ⚪ Placeholder | Sinh tự động khi ghép quyển (Chương 4 và 5 đã viết xong) |
-| H. **Danh mục từ viết tắt** | ✅ **Hoàn chỉnh** | Rà lại một lượt khi ghép quyển |
-| I. **Tóm tắt đồ án (tiếng Việt)** | ✅ **Hoàn chỉnh — bản v2, đã có số liệu thật** | — |
-| J. **Abstract (tiếng Anh)** | ✅ **Hoàn chỉnh — bản v2, đã có số liệu thật** | — |
-
-> **Ghi chú về hai bản tóm tắt.** Bản v1 được viết khi mô hình chính thức chưa huấn luyện xong nên kết lại bằng câu *"Kết quả thực nghiệm định lượng sẽ được trình bày ở Chương 5"* / *"will be reported in Chapter 5, once model training has been completed"*. Mô hình `models/best.pt` (YOLO11n, `imgsz=640`, split v3, 20 epoch) **đã huấn luyện xong** và toàn bộ chỉ tiêu NFR-A4/A5/A6/A7 cùng NFR-P1 **đã đo**, nên bản v2 hiện tại đã thay câu chờ đó bằng số liệu thật. Mọi lần cập nhật số liệu về sau **phải sửa đồng thời cả hai bản** để tiếng Việt và tiếng Anh không lệch nhau.
->
-> **Cảnh báo trích dẫn — áp dụng cho cả hai bản tóm tắt.** Cặp số 94,3% / 45,7% được đo trên **RodoSol-ALPR (Brazil)**, **không phải trên dữ liệu Việt Nam**. Cả hai bản đã ghi rõ nguồn gốc bộ dữ liệu ngay trong câu văn. Tuyệt đối không được rút gọn thành "OpenALPR đạt 94,3% trên biển một dòng" mà bỏ mất mệnh đề nêu bộ dữ liệu — làm vậy sẽ biến một *analogue* định lượng thành một tuyên bố sai về dữ liệu Việt Nam.
->
-> **Về số hiệu trích dẫn `[1]`, `[2]`, `[3]`:** đây là số **tạm thời**, sẽ được đánh lại toàn quyển khi ghép. Khoá BibTeX trong comment HTML mới là thông tin gốc và luôn đúng. Xem `THESIS-README.md` §4.
-
 
 ```{=openxml}
 <w:p><w:r><w:br w:type="page"/></w:r></w:p>
 ```
 
 # CHƯƠNG 1. GIỚI THIỆU
-
-> **Ghi chú biên tập.** Ký hiệu trích dẫn `[n]` trỏ tới mục *Tài liệu tham khảo* ở cuối quyển. Số thứ tự được đánh **theo thứ tự xuất hiện lần đầu trong toàn quyển** (kiểu IEEE) và do `scripts/build_bibliography.py` sinh ra từ `docs/references.bib` — không gõ tay, nên không thể lệch giữa số trong bài và số trong danh mục.
 
 Chương này trả lời bốn câu hỏi theo đúng thứ tự mà một quyển đồ án cần trả lời: **vì sao làm**, **làm gì**, **làm đến đâu**, và **làm bằng cách nào**. Chương được viết sao cho **đọc được độc lập**: người đọc chỉ đọc Chương 1 vẫn nắm được toàn bộ đề tài, phạm vi và giới hạn của nó.
 
@@ -5430,8 +5402,6 @@ Chương 5 đã trình bày hệ thống *đã được xây dựng* như thế 
 
 Hai vế của câu hỏi có trọng số ngang nhau. Một chương thực nghiệm chỉ liệt kê các chỉ số cao mà không nói rõ chúng được đo trên tập dữ liệu nào, bằng phần cứng nào, và với những nhiễu loạn phương pháp luận nào, thì không phải là bằng chứng — nó là quảng cáo. Vì vậy chương này được tổ chức sao cho **mỗi con số đều đi kèm ngữ cảnh đo của nó**, và các mục có giá trị phương pháp luận cao nhất (kiểm chứng rò rỉ dữ liệu ở 6.3.3, đóng góp định lượng của khối hậu xử lý ở 6.5.2, các mối đe doạ đến tính hợp lệ ở 6.9.3) được dành dung lượng tương xứng với tầm quan trọng của chúng, chứ không bị nén thành một dòng chú thích.
 
-> **Trạng thái của bản thảo này.** Khung chương được dựng **trước khi** mô hình chính thức `models/best.pt` (`imgsz=640`, split v3, 20 epoch, thiết bị CPU, khoảng 35,6 phút mỗi epoch) huấn luyện xong, đúng theo nguyên tắc **cấu trúc lập luận, tiêu chí đối chiếu và giao thức đo phải được cố định *trước* khi biết kết quả**, để kết quả không thể uốn cong cách trình bày theo hướng có lợi. Bản hiện tại đã điền toàn bộ số liệu đo được trên `best.pt`: các ô còn để `—` hoặc *(chưa đo)* là những phép đo **thật sự chưa chạy được** (webcam/video, so sánh backend, khởi động lại CSDL, phân rã theo nhóm luật), mỗi ô ghi rõ lý do và nơi sẽ đo. Mọi con số trong chương lấy trực tiếp từ `docs/reports/05-results.json` / `05-tables.md` (sinh bởi `scripts/fill_chapter5.py`, đã gỡ khỏi kho ở đợt dọn dẹp 02/08/2026 — xem ghi chú cuối phụ lục) và, riêng NFR-P1, từ `docs/reports/07-benchmark-p1-resolved.json`. Mục [Hướng dẫn điền số](#huong-dan-dien-so) ở cuối chương liệt kê đầy đủ mã bảng, tệp kết quả nguồn và lệnh sinh ra tệp đó.
-
 ---
 
 ## 6.1. Mục tiêu và phương pháp đánh giá
@@ -6655,133 +6625,6 @@ Kết luận phải nói làm hai vế: **kiến trúc phần mềm không còn 
 
 **Chuyển tiếp sang Chương 7.** Chương này xác định bằng số liệu — không bằng phỏng đoán — ba nhóm hướng phát triển: (i) **tối ưu hoặc thay thế khối OCR** cho biển hai dòng, bắt nguồn từ 6.5.3 và breakdown 6.6.2; (ii) **hiệu chỉnh bảng luật sửa lỗi theo ma trận nhầm lẫn đo được** (8/10 cặp nhầm nhiều nhất chưa có luật phủ), bắt nguồn từ 6.5.4, với ràng buộc phải kiểm chứng trên tập giữ riêng để tránh khớp luật trên chính tập đánh giá; (iii) **xây dựng tập test xuyên bộ dữ liệu, chia split theo nhóm biển số, và gán nhãn chuỗi cho một phân bố hiện trường** để đo NFR-A7 và NFR-A9 đúng cách, bắt nguồn từ 6.3.3, 6.5.5 và 5.11.3.
 
----
-
-<a id="huong-dan-dien-so"></a>
-
-## Phụ lục kỹ thuật — Ánh xạ số liệu và lệnh tái lập
-
-> **Ghi chú.** Mục này **không thuộc thân đồ án** (không tính vào nội dung chấm điểm); nó được giữ lại như **phụ lục kỹ thuật phục vụ tái lập số liệu**. Số liệu trong chương đã điền xong; phụ lục ghi lại mỗi bảng/hình truy về tệp kết quả nào và lệnh nào sinh ra tệp đó, để bất kỳ ai cũng có thể chạy lại và kiểm chứng con số. Có thể lược bỏ khi in bản cuối nếu quy chế yêu cầu, nhưng khuyến nghị giữ để bảo đảm tính tái lập.
-
-### A. Điều kiện tiên quyết
-
-Không lệnh nào dưới đây được chạy trước khi hoàn tất ba việc sau:
-
-1. Lượt huấn luyện `runs/final-640-v3/` kết thúc đủ 20 epoch.
-2. Sao chép trọng số tốt nhất: `runs/final-640-v3/weights/best.pt` → `models/best.pt`.
-3. Ghi lại `pip freeze` của cả hai môi trường ảo tại đúng thời điểm này (dùng cho bảng T6.2b).
-
-### B. Bảng ánh xạ mã bảng → nguồn số liệu → lệnh sinh
-
-| Mã bảng | Nội dung | Tệp kết quả nguồn | Lệnh sinh |
-|:---:|---|---|---|
-| **T6.2a** | Cấu hình phần cứng | `docs/00-requirements/environment.md` | **Đã điền** — không cần chạy |
-| **T6.2b** | Phiên bản thư viện | *(kết xuất tạm)* | `.venv-ai/Scripts/pip freeze` và `.venv-backend/Scripts/pip freeze` |
-| **T6.3a** | So sánh ba phiên bản bộ dữ liệu | `docs/reports/02-dataset-report.md` | **Đã điền** — không cần chạy |
-| **T6.3b** | Rò rỉ theo nhiều ngưỡng Hamming | `docs/reports/07-leak-check-t{N}.json` | `python -m ai.evaluation.leak_check --dataset-root datasets/processed/yolo_v3 --threshold {N} --output docs/reports/07-leak-check-v3-t{N}.json` — chạy lần lượt với `{N}` = **0, 4, 6, 8, 10, 12, 14, 20** — **chỉ dùng ngưỡng CHẴN**, xem ghi chú bên dưới. Khoá JSON: `total_cross_split_near_duplicate_pairs`, `cross_split_comparisons[].distance_histogram` |
-
-> **⚠️ Ngưỡng lẻ là vô nghĩa với `phash` — không được đưa vào bảng.**
-> `imagehash.phash` bật bit theo **trung vị** hệ số DCT, nên **mọi mã băm đều có đúng 32 bit 1**.
-> Hai vector nhị phân cùng trọng lượng luôn cách nhau một **số bit chẵn**. Kiểm chứng trên corpus
-> này: cả 15.133 mã băm đều có popcount = 32; trong 44.850 cặp lấy mẫu có **0 cặp** khoảng cách lẻ.
->
-> Hệ quả trực tiếp: `≤ 5` ⟺ `≤ 4`, `≤ 15` ⟺ `≤ 14`. Bảng
-> [`grouping_threshold_sweep.csv`](../../datasets/reports/v3/grouping_threshold_sweep.csv)
-> tự chứng minh điều đó — dòng 14 và dòng 15 **trùng khít từng con số** (122.837 cặp · 382 nhóm ·
-> 11.673 ảnh ở cụm lớn nhất).
->
-> Kéo theo hai điều phải nêu trong báo cáo: (a) hằng số `DEFAULT_THRESHOLD = 5` trong
-> `scripts/dataset/deduplicate.py` **thực chất hoạt động như ngưỡng 4**; (b) chi tiết
-> *"khoảng cách nhỏ nhất = 6 ở cả ba cặp split"* — từng bị diễn giải là **dấu vết phân bố bị cắt cụt
-> tại ngưỡng** — thực ra chỉ là **giá trị chẵn kế tiếp sau 5**, một tất yếu toán học, **không phải
-> bằng chứng về rò rỉ**. Lập luận vòng tròn ở §6.3.3 vẫn đứng vững, nhưng vì lý do đơn giản hơn:
-> đo bằng đúng ngưỡng đã dùng để gom thì kết quả 0 là tất yếu, bất kể phân bố có hình dạng gì. |
-| **T6.3c** | Phân bố nguồn giữa các split | *(cần sinh)* | `python -m scripts.dataset.statistics --dataset datasets/processed/yolo_v3 --by-source --by-split` |
-| **T5.3a** | Siêu tham số | `runs/final-640-v3/args.yaml` | **Đã điền** — không cần chạy |
-| **T5.3b** | Tiến triển mAP theo epoch | `runs/final-640-v3/results.csv` | Đọc trực tiếp CSV. Cột: `metrics/mAP50(B)`, `metrics/mAP50-95(B)`, `metrics/precision(B)`, `metrics/recall(B)`, `val/box_loss`, `val/cls_loss`, `val/dfl_loss` |
-| **T6.4a** | Detection tổng thể | `docs/reports/03-evaluation-{tên}.json` | `python -m ai.evaluation.evaluate --weights models/best.pt --data datasets/processed/yolo_v3/data.yaml --split test --imgsz 640 --device cpu --name best-640-v3-test` |
-| **T6.4b** | Detection tách theo layout | cùng tệp T6.4a | cùng lệnh — khoá `metrics_by_group.single_line` / `metrics_by_group.two_line`; ngưỡng tỉ lệ khung hình đặt bằng `--ar-threshold 2.5` |
-| **T6.4c** | Detection tách theo dải kích thước | *(cần bổ sung)* | `ai/evaluation/evaluate.py` **hiện chưa có** phân rã theo dải kích thước box. Cần bổ sung: gom nhãn thật theo `(w×h)/(W×H)` vào các dải 0–0,5% / 0,5–1% / 1–5% / 5–15% / >15% rồi tính mAP từng dải. **Đây là hạng mục cần viết mã trước khi điền được.** |
-| **T6.5a** | CER mức ký tự | `docs/reports/04-ocr-accuracy.json` | `python -m ai.evaluation.ocr_accuracy --detector models/best.pt --detector-imgsz 640 --labels datasets/annotations/plate_labels.csv --output docs/reports/04-ocr-accuracy.json` — khoá `cer_pre_norm`, `cer_post_norm` |
-| **T6.5b** | Chuỗi trước / sau hậu xử lý | cùng tệp T6.5a | cùng lệnh — khoá `postprocessing_contribution`: `nfr_a5_exact_before`, `nfr_a6_exact_after`, `gain_points`, `plates_fixed`, `plates_broken`. Bảng phân rã theo nhóm luật cần bổ sung mã (chạy lại với từng nhóm luật bị tắt) |
-| **T6.5c** | OCR tách theo layout | cùng tệp T6.5a | cùng lệnh — khoá `accuracy_block` theo từng layout |
-| **T6.5d** | Cặp ký tự bị nhầm | cùng tệp T6.5a | cùng lệnh — khoá `confusion_matrix.top_confusions` và `plate_rules_review` (chứa sẵn phần đối chiếu với `TO_DIGIT` / `TO_LETTER`, gồm `confirmed` và `missing_from_tables`). Hình: `docs/reports/figures/04-ocr-confusion-matrix.png`, `04-ocr-top-confusions.png` |
-| **T6.5e** | E2E toàn trình | cùng tệp T6.5a | cùng lệnh — khoá `e2e.exact`, `e2e.exact_given_detected` |
-| **T6.6a** | Độ trễ E2E | `docs/reports/07-benchmark-system.json` | `python -m ai.evaluation.benchmark_system --weights models/best.pt --images datasets/processed/yolo_v3/images/test --imgsz 640 --limit 100 --device cpu --output docs/reports/07-benchmark-system.json` |
-| **T6.6b** | Phân rã ngân sách độ trễ | cùng tệp T6.6a | cùng lệnh — hình `docs/reports/figures/07-latency-budget.png`. Cột "ước lượng Phase 0" lấy từ `docs/00-requirements/non-functional-requirements.md` §1 |
-| **T6.6c** | So sánh backend suy luận | `docs/reports/07-benchmark-optimized.json` | `python -m ai.evaluation.benchmark_cpu --weights models/best.pt --backends pytorch onnx openvino --imgsz 640 --runs 50 --warmup 5` |
-| **T6.6d** | Webcam và video | *(cần sinh)* | Chưa có script chuyên dụng. Cần bổ sung kịch bản đo FPS webcam 60 giây **gọi trực tiếp `POST /api/detect/frame`** (trang webcam đã gỡ khỏi giao diện 2026-07-20) và đo thời gian xử lý video 60 giây, kèm **định nghĩa tường minh** của "FPS hiệu dụng" |
-| **T5.4** | Fine-tune so với model gốc | `docs/reports/28-ocr-accuracy-finetuned.json`, `29-reconly-ablation.json` | `ALPR_OCR_REC_MODEL_DIR=models/rec_finetuned python -m ai.evaluation.ocr_accuracy --output docs/reports/28-ocr-accuracy-finetuned.json` |
-| **T6.6e** | Chịu tải, bộ nhớ, độ tin cậy | `docs/reports/07-stress-load.json`, `07-stress-db.json`, `07-api-overhead.json`, `07-leak-check.json` | `python -m ai.evaluation.stress_test --weights models/best.pt --concurrency 1 2 5 10 --soak-seconds 300`; `scripts/benchmark_api_overhead.py` và `scripts/benchmark_history_query.py` — **đã gỡ**, xem ghi chú cuối phụ lục |
-| **T6.6d** | Webcam và video (P2, P3) | `docs/reports/33-runtime-nfr.json` | `python scripts/benchmark_runtime_nfr.py --images datasets/processed/yolo_v3/images/test --output docs/reports/33-runtime-nfr.json` |
-| **T6.6f** | Bỏ bước phát hiện chữ: hai ngữ liệu | `docs/reports/29-reconly-ablation.json`, `31-demo-ab-reconly.json` | `ALPR_OCR_SKIP_DETECTION=1 python -m ai.evaluation.ocr_accuracy …` (ngữ liệu); so sánh bộ demo qua `ALPRPipeline.process` |
-| **T3.6** | So sánh baseline ↔ chính thức | T6.4a + `models/baseline-416-v1.results.csv` | Không có lệnh mới — ghép số từ hai nguồn đã có |
-| **T6.7** | Đối chiếu toàn bộ NFR | tổng hợp mọi tệp trên | `scripts/aggregate_benchmark_report.py` — **đã gỡ**, xem ghi chú cuối phụ lục; phần NFR-M/S/C/U lấy từ `docs/reports/07-testing-report.md` |
-| **T6.8** | Tần suất các loại lỗi | `docs/reports/04-ocr-errors/` | `python -m ai.evaluation.error_analysis --report docs/reports/04-ocr-accuracy.json --errors-dir docs/reports/04-ocr-errors` |
-
-### C. Danh mục hình cần sinh
-
-| Hình | Tệp đích | Nguồn |
-|:---:|---|---|
-| 5.2 | `figures/05-train-loss-curves.png` | `runs/final-640-v3/results.csv` — cần viết script vẽ |
-| 5.3 | `figures/05-train-map-curves.png` | như trên |
-| 5.4 | `figures/05-train-pr-curves.png` | như trên |
-| 5.5 | `figures/05-detection-pr-curve.png` | `ai.evaluation.evaluate` (tự sinh) |
-| 5.6 | `figures/05-detection-confusion-matrix.png` | `ai.evaluation.evaluate` (tự sinh) |
-| 5.7 | `figures/05-detection-f1-curve.png` | `ai.evaluation.evaluate` (tự sinh) |
-| 5.8 | `figures/04-ocr-confusion-matrix.png` | `ai.evaluation.ocr_accuracy` (tự sinh) |
-| 5.9 | `figures/04-ocr-top-confusions.png` | `ai.evaluation.ocr_accuracy` (tự sinh) |
-| 5.10 | `figures/07-latency-distribution.png` | `ai.evaluation.benchmark_system` (tự sinh) |
-| 5.11 | `figures/07-latency-budget.png` | `ai.evaluation.benchmark_system` (tự sinh) |
-| 5.12 | `figures/07-concurrency.png` | `ai.evaluation.stress_test` (tự sinh) |
-| 5.13–5.16 | `figures/05-error-*.png` | `ai.evaluation.error_analysis` (thư mục `04-ocr-errors/`) — cần chọn thủ công ca điển hình |
-
-### D. Ba hạng mục cần viết mã trước khi điền được
-
-1. **T6.4c — phân rã mAP theo dải kích thước box.** `ai/evaluation/evaluate.py` hiện chỉ phân rã theo layout. Cần thêm nhóm theo tỉ lệ diện tích box.
-2. **T6.5b — bảng phân rã đóng góp theo từng nhóm luật hậu xử lý.** Cần cơ chế bật/tắt từng nhóm luật trong `ai/inference/plate_rules.py` rồi chạy lại phép đo, để quy đóng góp về từng nhóm.
-3. **T6.6d — kịch bản đo webcam và video.** Chưa tồn tại. Đo qua API (`POST /api/detect/frame`) vì trang webcam đã gỡ khỏi giao diện; phải kèm định nghĩa tường minh của "FPS hiệu dụng".
-
-### E. Quy tắc bất di bất dịch khi điền
-
-1. **Không ô nào được điền bằng số suy ra.** Nếu tệp kết quả không có khoá tương ứng, ô đó giữ nguyên `—` và ghi *(chưa đo)*.
-2. **Mọi bảng độ chính xác phải điền dòng mẫu số** trước khi điền các dòng chỉ số.
-3. **Số của `baseline-416-v1.pt` không được chuyển thành số của `best.pt`** trong bất kỳ ô nào. Nơi nào dùng số baseline, nhãn cột phải ghi rõ.
-4. **Cặp số 94,3% / 45,7% (Laroca, VISAPP 2022, RodoSol-ALPR)** mỗi lần xuất hiện phải kèm tên bộ dữ liệu và quốc gia **ngay trong câu**.
-5. **Mục 6.5.2 phải giữ đúng một trong hai nhánh A/B**, do số liệu quyết định. Nhánh còn lại bị xoá, không được giữ cả hai.
-6. **Phụ lục kỹ thuật này không thuộc thân đồ án** — giữ lại để tái lập số liệu; có thể lược bỏ khi in bản cuối nếu quy chế yêu cầu.
-
-### F. Bốn công cụ đã gỡ khỏi kho ngày 02/08/2026
-
-Đợt dọn dẹp mã nguồn ngày 02/08/2026 đã gỡ bốn script từng dùng để sinh hoặc gộp
-số liệu của chương này:
-
-| Script đã gỡ | Việc nó từng làm | Bảng liên quan |
-|---|---|---|
-| `scripts/fill_chapter5.py` | Sinh `docs/reports/05-results.json` và `05-tables.md` | mọi bảng số liệu |
-| `scripts/benchmark_api_overhead.py` | Đo chi phí phụ trội của tầng API | T6.6e |
-| `scripts/benchmark_history_query.py` | Đo độ trễ truy vấn lịch sử trên CSDL | T6.6e |
-| `scripts/aggregate_benchmark_report.py` | Gộp các tệp `07-*.json` thành bảng đối chiếu NFR | T6.7 |
-
-**Điều này KHÔNG làm mất khả năng truy nguyên số liệu.** Mọi tệp kết quả mà bốn
-script ấy sinh ra đều **vẫn nằm trong kho và vẫn được commit**:
-`05-results.json`, `05-tables.md`, `07-stress-load.json`, `07-stress-db.json`,
-`07-api-overhead.json`, `07-leak-check.json`, `07-benchmark-p1-resolved.json`.
-Mỗi con số trong chương vẫn đối chiếu được về đúng tệp nguồn của nó.
-
-Thứ mất đi là **khả năng chạy lại phép đo bằng một lệnh**. Muốn chạy lại thì lấy
-script từ lịch sử git — chúng không bị xoá khỏi lịch sử, chỉ bị gỡ khỏi bản làm
-việc:
-
-```bash
-git show f14df03:scripts/aggregate_benchmark_report.py > scripts/aggregate_benchmark_report.py
-```
-
-Các công cụ đo **vẫn còn trong kho** và không bị ảnh hưởng:
-`ai/evaluation/` (evaluate, ocr_accuracy, benchmark_cpu, benchmark_ocr,
-benchmark_system, stress_test, leak_check, error_analysis, color_accuracy) và
-`scripts/benchmark_runtime_nfr.py` (NFR-P2, P3, R4, R5).
-
 
 ```{=openxml}
 <w:p><w:r><w:br w:type="page"/></w:r></w:p>
@@ -7338,7 +7181,9 @@ Giá trị của đồ án vì vậy không nằm ở một con số state-of-th
 
 # TÀI LIỆU THAM KHẢO
 
-> **Sinh tự động** bằng `scripts/build_bibliography.py` từ `docs/references.bib`. Không gõ tay. Đánh số theo **thứ tự xuất hiện lần đầu trong quyển** (kiểu IEEE); chạy lại script sau mỗi lần thêm hoặc đổi chỗ trích dẫn.
+<!-- Sinh tự động bằng scripts/build_bibliography.py từ docs/references.bib.
+     Không sửa tay. Đánh số theo thứ tự xuất hiện lần đầu trong quyển (IEEE);
+     chạy lại script sau mỗi lần thêm hoặc đổi chỗ trích dẫn. -->
 
 [1] Báo Dân trí, "Việt Nam có 77 triệu xe máy, cứ 1.000 dân có 770 người sở hữu xe máy," Báo Dân trí, 2024. [Trực tuyến]. Địa chỉ: <https://dantri.com.vn/thoi-su/viet-nam-co-77-trieu-xe-may-cu-1000-dan-co-770-nguoi-so-huu-xe-may-20241104141910472.htm> (truy cập ngày 2026-07-19).
 

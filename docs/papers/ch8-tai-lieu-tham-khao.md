@@ -1,6 +1,8 @@
 # TÀI LIỆU THAM KHẢO
 
-> **Sinh tự động** bằng `scripts/build_bibliography.py` từ `docs/references.bib`. Không gõ tay. Đánh số theo **thứ tự xuất hiện lần đầu trong quyển** (kiểu IEEE); chạy lại script sau mỗi lần thêm hoặc đổi chỗ trích dẫn.
+<!-- Sinh tự động bằng scripts/build_bibliography.py từ docs/references.bib.
+     Không sửa tay. Đánh số theo thứ tự xuất hiện lần đầu trong quyển (IEEE);
+     chạy lại script sau mỗi lần thêm hoặc đổi chỗ trích dẫn. -->
 
 [1] Báo Dân trí, "Việt Nam có 77 triệu xe máy, cứ 1.000 dân có 770 người sở hữu xe máy," Báo Dân trí, 2024. [Trực tuyến]. Địa chỉ: <https://dantri.com.vn/thoi-su/viet-nam-co-77-trieu-xe-may-cu-1000-dan-co-770-nguoi-so-huu-xe-may-20241104141910472.htm> (truy cập ngày 2026-07-19).
 

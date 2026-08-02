@@ -1,7 +1,5 @@
 # CHƯƠNG 1. GIỚI THIỆU
 
-> **Ghi chú biên tập.** Ký hiệu trích dẫn `[n]` trỏ tới mục *Tài liệu tham khảo* ở cuối quyển. Số thứ tự được đánh **theo thứ tự xuất hiện lần đầu trong toàn quyển** (kiểu IEEE) và do `scripts/build_bibliography.py` sinh ra từ `docs/references.bib` — không gõ tay, nên không thể lệch giữa số trong bài và số trong danh mục.
-
 Chương này trả lời bốn câu hỏi theo đúng thứ tự mà một quyển đồ án cần trả lời: **vì sao làm**, **làm gì**, **làm đến đâu**, và **làm bằng cách nào**. Chương được viết sao cho **đọc được độc lập**: người đọc chỉ đọc Chương 1 vẫn nắm được toàn bộ đề tài, phạm vi và giới hạn của nó.
 
 ---

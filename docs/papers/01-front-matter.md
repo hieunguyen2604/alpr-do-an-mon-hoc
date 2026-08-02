@@ -1,23 +1,15 @@
-# Phần đầu quyển đồ án (Front Matter)
+<!-- PHẦN ĐẦU QUYỂN (front matter) — khối này là ghi chú biên soạn, không in ra.
 
-**Đề tài:** Xây dựng hệ thống nhận diện biển số xe bằng trí tuệ nhân tạo
-*(Developing an AI-based vehicle license plate recognition system)*
+     Đề tài: Xây dựng hệ thống nhận diện biển số xe bằng trí tuệ nhân tạo
+     (Developing an AI-based vehicle license plate recognition system)
 
-> Tên đề tài lấy **nguyên văn theo Đề cương chi tiết đã đăng ký** (GVHD:
-> ThS. Cáp Phạm Đình Thăng; thời gian thực hiện 16/07/2026 – 24/09/2026).
-> Bản nháp trước dùng "Xây dựng hệ thống nhận dạng biển số xe Việt Nam ứng
-> dụng Trí tuệ nhân tạo" — đã thay ở mọi vị trí để bìa khớp hồ sơ đăng ký.
+     Tên đề tài lấy nguyên văn theo Đề cương chi tiết đã đăng ký
+     (GVHD: ThS. Cáp Phạm Đình Thăng; thực hiện 16/07/2026 – 24/09/2026).
+     Bản nháp trước dùng "Xây dựng hệ thống nhận dạng biển số xe Việt Nam
+     ứng dụng Trí tuệ nhân tạo" — đã thay ở mọi vị trí để bìa khớp hồ sơ.
 
-| Mục | Nội dung |
-|---|---|
-| Mã tài liệu | `THESIS-FRONT-v1.0` |
-| Giai đoạn | Phase 9 — Documentation |
-| Ngày lập | 2026-07-19 |
-| Trạng thái | Danh mục từ viết tắt và hai abstract: **đã hoàn chỉnh**. Bìa, lời cam đoan, lời cảm ơn: **mẫu, chờ điền thông tin cá nhân**. Mục lục, danh mục hình, danh mục bảng: **placeholder, sinh tự động khi ghép** |
-
-> **Quy ước ký hiệu trong tài liệu này:** mọi chỗ đặt trong dấu `«…»` là **chỗ trống phải điền** thông tin thật (tên trường, khoa, sinh viên, giảng viên hướng dẫn, mã số sinh viên…). Không được để nguyên `«…»` trong bản nộp.
-
----
+     Mọi chỗ đặt trong dấu «…» là chỗ trống phải điền thông tin thật.
+-->
 
 ## A. TRANG BÌA
 
@@ -153,7 +145,9 @@ Chúng tôi xin chân thành cảm ơn!
 
 ## E. MỤC LỤC
 
-> **Sinh tự động** bằng `scripts/gen_front_matter_lists.py` từ chính các tệp chương. Không gõ tay — chạy lại script sau mỗi lần đổi cấu trúc. Số trang do Word điền khi xuất bản `.docx`.
+<!-- Sinh tự động bằng scripts/gen_front_matter_lists.py từ chính các tệp
+     chương. Không sửa tay — chạy lại script sau mỗi lần đổi cấu trúc.
+     Số trang do Word điền khi xuất .docx. -->
 
 ```
 LỜI CAM ĐOAN
@@ -225,7 +219,6 @@ CHƯƠNG 6. THỰC NGHIỆM VÀ ĐÁNH GIÁ
     6.8. Phân tích lỗi
     6.9. Bàn luận
     6.10. Kết luận chương
-    Phụ lục kỹ thuật — Ánh xạ số liệu và lệnh tái lập
 
 CHƯƠNG 7. KẾT LUẬN VÀ HƯỚNG PHÁT TRIỂN
     7.1. Tổng kết công việc đã thực hiện
@@ -242,9 +235,11 @@ PHỤ LỤC
 
 ## F. DANH MỤC HÌNH VẼ
 
-> **Sinh tự động** bằng `scripts/gen_front_matter_lists.py` từ chính các tệp chương. Không gõ tay — chạy lại script sau mỗi lần đổi cấu trúc. Số trang do Word điền khi xuất bản `.docx`.
-
-> **Quy ước đánh số hình:** `Hình <số chương>.<số thứ tự trong chương>`. Chú thích đặt **phía dưới** hình, căn giữa. Hình lấy hoặc phỏng theo nguồn khác **bắt buộc** ghi nguồn ngay trong chú thích, kèm ký hiệu `[n]`.
+<!-- Sinh tự động bằng scripts/gen_front_matter_lists.py từ chính các tệp
+     chương. Không sửa tay — chạy lại script sau mỗi lần đổi cấu trúc.
+     Số trang do Word điền khi xuất .docx. -->
+<!-- Quy ước: Hình <chương>.<thứ tự>. Chú thích đặt DƯỚI hình, căn giữa.
+     Hình lấy/phỏng theo nguồn khác bắt buộc ghi nguồn kèm [n]. -->
 
 | Ký hiệu | Tên hình | Trang |
 |---|---|:---:|
@@ -276,9 +271,11 @@ PHỤ LỤC
 
 ## G. DANH MỤC BẢNG BIỂU
 
-> **Sinh tự động** bằng `scripts/gen_front_matter_lists.py` từ chính các tệp chương. Không gõ tay — chạy lại script sau mỗi lần đổi cấu trúc. Số trang do Word điền khi xuất bản `.docx`.
-
-> **Quy ước đánh số bảng:** `Bảng <số chương>.<số thứ tự trong chương>`. Chú thích đặt **phía trên** bảng. Bảng tổng hợp số liệu từ nguồn khác bắt buộc có cột hoặc dòng ghi nguồn kèm ký hiệu `[n]`.
+<!-- Sinh tự động bằng scripts/gen_front_matter_lists.py từ chính các tệp
+     chương. Không sửa tay — chạy lại script sau mỗi lần đổi cấu trúc.
+     Số trang do Word điền khi xuất .docx. -->
+<!-- Quy ước: Bảng <chương>.<thứ tự>. Chú thích đặt TRÊN bảng.
+     Bảng tổng hợp từ nguồn khác bắt buộc ghi nguồn kèm [n]. -->
 
 | Ký hiệu | Tên bảng | Trang |
 |---|---|:---:|
@@ -479,26 +476,3 @@ From a software engineering perspective, the thesis implements a layered archite
 On the held-out test split (1,514 images, de-duplicated across splits), the YOLO11n detector reaches mAP@0.5 = 0.9829 and mAP@0.5:0.95 = 0.7834 (precision 0.9837, recall 0.9714). The recognition stage attains a character-level accuracy (1 − CER) of 0.8734; full-string accuracy rises from 0.6098 to 0.6555 under the post-processing rule set (128 plates corrected, none corrupted), and end-to-end accuracy reaches 0.5227. The dominant gap is layout-related: single-line plates score 0.9489 whereas two-line plates score only 0.5810 — a 36.79 percentage-point gap — while two-line plates constitute 79.8% of the evaluation set. The 95th-percentile latency for a single image is 731.15 ms on CPU, meeting the 800 ms target. Chapter 5 reports the full results and error analysis.
 
 **Keywords:** license plate recognition, Vietnamese license plates, YOLO11, PaddleOCR, two-line plates, position-constrained post-processing, CPU inference.
-
----
-
-## K. Ghi chú về trạng thái của phần đầu quyển
-
-| Phần | Trạng thái | Việc còn lại |
-|---|---|---|
-| A. Trang bìa | 🟡 Mẫu | Điền thông tin trường, khoa, sinh viên, giảng viên hướng dẫn |
-| B. Nhiệm vụ đồ án và nhận xét | 🟡 Giữ chỗ | Lấy biểu mẫu của khoa; xoá trang nào khoa không yêu cầu |
-| C. Lời cam đoan | 🟡 Mẫu chuẩn | Điền tên, địa danh, ngày tháng |
-| D. Lời cảm ơn | 🟡 Mẫu | Điền tên, cá nhân hoá nếu muốn |
-| E. Mục lục | ⚪ Placeholder | Sinh tự động sau khi ghép đủ 6 chương |
-| F. Danh mục hình vẽ | ⚪ Placeholder | Sinh tự động khi ghép quyển (Chương 4 và 5 đã viết xong) |
-| G. Danh mục bảng biểu | ⚪ Placeholder | Sinh tự động khi ghép quyển (Chương 4 và 5 đã viết xong) |
-| H. **Danh mục từ viết tắt** | ✅ **Hoàn chỉnh** | Rà lại một lượt khi ghép quyển |
-| I. **Tóm tắt đồ án (tiếng Việt)** | ✅ **Hoàn chỉnh — bản v2, đã có số liệu thật** | — |
-| J. **Abstract (tiếng Anh)** | ✅ **Hoàn chỉnh — bản v2, đã có số liệu thật** | — |
-
-> **Ghi chú về hai bản tóm tắt.** Bản v1 được viết khi mô hình chính thức chưa huấn luyện xong nên kết lại bằng câu *"Kết quả thực nghiệm định lượng sẽ được trình bày ở Chương 5"* / *"will be reported in Chapter 5, once model training has been completed"*. Mô hình `models/best.pt` (YOLO11n, `imgsz=640`, split v3, 20 epoch) **đã huấn luyện xong** và toàn bộ chỉ tiêu NFR-A4/A5/A6/A7 cùng NFR-P1 **đã đo**, nên bản v2 hiện tại đã thay câu chờ đó bằng số liệu thật. Mọi lần cập nhật số liệu về sau **phải sửa đồng thời cả hai bản** để tiếng Việt và tiếng Anh không lệch nhau.
->
-> **Cảnh báo trích dẫn — áp dụng cho cả hai bản tóm tắt.** Cặp số 94,3% / 45,7% được đo trên **RodoSol-ALPR (Brazil)**, **không phải trên dữ liệu Việt Nam**. Cả hai bản đã ghi rõ nguồn gốc bộ dữ liệu ngay trong câu văn. Tuyệt đối không được rút gọn thành "OpenALPR đạt 94,3% trên biển một dòng" mà bỏ mất mệnh đề nêu bộ dữ liệu — làm vậy sẽ biến một *analogue* định lượng thành một tuyên bố sai về dữ liệu Việt Nam.
->
-> **Về số hiệu trích dẫn `[1]`, `[2]`, `[3]`:** đây là số **tạm thời**, sẽ được đánh lại toàn quyển khi ghép. Khoá BibTeX trong comment HTML mới là thông tin gốc và luôn đúng. Xem `THESIS-README.md` §4.

@@ -219,12 +219,15 @@ def main() -> None:
     if thieu_bib:
         print(f"⚠ Khoá được trích nhưng KHÔNG có trong .bib ({len(thieu_bib)}): {sorted(thieu_bib)}")
 
+    # Ghi chu quy trinh la chu thich HTML, khong phai chu in ra: mot ban nop
+    # co dong "Khong go tay, chay lai script..." ngay duoi tieu de Tai lieu
+    # tham khao la loi lo ra cua cong cu, khong phai noi dung do an.
     than = [
         "# TÀI LIỆU THAM KHẢO",
         "",
-        "> **Sinh tự động** bằng `scripts/build_bibliography.py` từ `docs/references.bib`. "
-        "Không gõ tay. Đánh số theo **thứ tự xuất hiện lần đầu trong quyển** (kiểu IEEE); "
-        "chạy lại script sau mỗi lần thêm hoặc đổi chỗ trích dẫn.",
+        "<!-- Sinh tự động bằng scripts/build_bibliography.py từ docs/references.bib.",
+        "     Không sửa tay. Đánh số theo thứ tự xuất hiện lần đầu trong quyển (IEEE);",
+        "     chạy lại script sau mỗi lần thêm hoặc đổi chỗ trích dẫn. -->",
         "",
     ]
     for i, k in enumerate(thu_tu, 1):
