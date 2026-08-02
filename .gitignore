@@ -141,3 +141,8 @@ datasets/annotations/scene_review/
 # nào trích; giữ payload JSON làm bằng chứng, bỏ 3 MB ảnh tái tạo được.
 docs/reports/figures/28b-err/
 docs/reports/figures/28b/
+
+# Goi du lieu fine-tune de tai len Colab — dung lai bang
+# `scripts/dataset/build_rec_finetune_set.py` roi nen thu muc
+# datasets/processed/rec_finetune. 80 MB anh khong nen duoc, khong theo doi.
+/rec_finetune.zip
