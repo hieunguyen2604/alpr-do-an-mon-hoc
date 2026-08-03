@@ -384,6 +384,15 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         ),
     )
     parser.add_argument(
+        "--slides",
+        type=Path,
+        default=None,
+        help=(
+            "Slide outline to export (default: docs/slides/10-slides.md). The "
+            "PPTX is written next to it, named after the source file."
+        ),
+    )
+    parser.add_argument(
         "--src",
         type=Path,
         default=PAPERS_DIR,
@@ -453,8 +462,11 @@ def main(argv: list[str] | None = None) -> int:
     export_docx(pandoc, out_path, docx_path)
     print(f"[ok] wrote DOCX -> {docx_path}")
 
-    pptx_path = SLIDES_DIR / SLIDES_OUTPUT_FILENAME
-    export_pptx(pandoc, SLIDES_DIR / SLIDES_SOURCE_FILENAME, pptx_path)
+    slides_src = args.slides or SLIDES_DIR / SLIDES_SOURCE_FILENAME
+    # Deck khac nguon thi ghi ra tep khac, de xuat mot bo khong de len bo kia.
+    pptx_path = (SLIDES_DIR / SLIDES_OUTPUT_FILENAME if args.slides is None
+                 else slides_src.with_suffix(".pptx"))
+    export_pptx(pandoc, slides_src, pptx_path)
     if pptx_path.is_file():
         print(f"[ok] wrote PPTX -> {pptx_path}")
 
