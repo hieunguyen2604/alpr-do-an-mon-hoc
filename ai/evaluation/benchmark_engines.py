@@ -60,7 +60,9 @@ from __future__ import annotations
 import argparse
 import csv
 import json
+import os
 import random
+import shutil
 import statistics as st
 import sys
 import time
@@ -157,17 +159,29 @@ class KetQua:
             "mau": self.tong,
             "dung_chuoi": self.dung,
             "do_chinh_xac": ty_le(self.dung, self.tong),
-            "mot_dong": {"mau": self.tong_1, "dung": self.dung_1,
-                         "do_chinh_xac": ty_le(self.dung_1, self.tong_1)},
-            "hai_dong": {"mau": self.tong_2, "dung": self.dung_2,
-                         "do_chinh_xac": ty_le(self.dung_2, self.tong_2)},
+            "mot_dong": {
+                "mau": self.tong_1,
+                "dung": self.dung_1,
+                "do_chinh_xac": ty_le(self.dung_1, self.tong_1),
+            },
+            "hai_dong": {
+                "mau": self.tong_2,
+                "dung": self.dung_2,
+                "do_chinh_xac": ty_le(self.dung_2, self.tong_2),
+            },
             "chenh_lech_layout_diem": (
                 round((self.dung_1 / self.tong_1 - self.dung_2 / self.tong_2) * 100, 2)
-                if self.tong_1 and self.tong_2 else None),
+                if self.tong_1 and self.tong_2
+                else None
+            ),
             "cer": round(self.tong_cer / self.tong, 4) if self.tong else None,
             "chuoi_rong": self.rong,
-            "ms": {"trung_vi": pct(0.5), "p95": pct(0.95), "p99": pct(0.99),
-                   "trung_binh": round(st.fmean(ms), 2) if ms else 0.0},
+            "ms": {
+                "trung_vi": pct(0.5),
+                "p95": pct(0.95),
+                "p99": pct(0.99),
+                "trung_binh": round(st.fmean(ms), 2) if ms else 0.0,
+            },
             "vi_du_sai": self.sai[:10],
         }
 
@@ -189,6 +203,7 @@ def _levenshtein(a: str, b: str) -> int:
 # --------------------------------------------------------------------------
 # Tang bao quanh DUNG CHUNG — sao dung chuoi buoc cua PaddleOcrRecognizer
 # --------------------------------------------------------------------------
+
 
 def chuan_bi(anh: np.ndarray, tach_hai_dong: bool) -> np.ndarray:
     """Chuẩn bị ảnh y hệt bộ nhận dạng của hệ thống, trước khi engine nhìn thấy.
@@ -226,6 +241,7 @@ def _loc_va_sap(manh: list[tuple[float, float, str]]) -> list[str]:
     giu = _drop_short_fragments(day_du)
     giu.sort(key=lambda m: m[0])
     return [chu for _, _, chu, _ in giu]
+
 
 def dung_paddle() -> Callable[[np.ndarray], list[str]]:
     from paddleocr import PaddleOCR
@@ -266,8 +282,7 @@ def dung_paddle() -> Callable[[np.ndarray], list[str]]:
                 continue
             if hop is not None and i < len(hop):
                 pts = np.asarray(hop[i], dtype=float)
-                ra.append((float(pts[:, 0].min()),
-                           float(pts[:, 1].max() - pts[:, 1].min()), chu))
+                ra.append((float(pts[:, 0].min()), float(pts[:, 1].max() - pts[:, 1].min()), chu))
             else:
                 ra.append((float(i), 0.0, chu))
         return ra
@@ -290,8 +305,7 @@ def dung_easyocr() -> Callable[[np.ndarray], list[str]]:
             if not chu:
                 continue
             ys = [p[1] for p in hop]
-            ra.append((float(min(p[0] for p in hop)),
-                       float(max(ys) - min(ys)), str(chu)))
+            ra.append((float(min(p[0] for p in hop)), float(max(ys) - min(ys)), str(chu)))
         return ra
 
     return doc
@@ -300,9 +314,16 @@ def dung_easyocr() -> Callable[[np.ndarray], list[str]]:
 def dung_tesseract() -> Callable[[np.ndarray], list[str]]:
     import pytesseract
 
-    duong_dan = Path(r"C:\Program Files\Tesseract-OCR\tesseract.exe")
-    if duong_dan.is_file():
-        pytesseract.pytesseract.tesseract_cmd = str(duong_dan)
+    # Tim theo thu tu: bien moi truong -> PATH -> mac dinh cua pytesseract.
+    #
+    # Truoc day cho nay ghi cung `C:\Program Files\Tesseract-OCR\tesseract.exe`,
+    # vi pham NFR-M4 (cam hard-code duong dan) va lam do
+    # tests/test_architecture.py::TestNoHardCodedPaths. Duong dan do cung chi
+    # dung tren mot may Windows cai theo mac dinh — tren Linux hay tren may cai
+    # bang scoop/choco thi no khong ton tai, va ham nay im lang bo qua.
+    duong_dan = os.environ.get("ALPR_TESSERACT_CMD") or shutil.which("tesseract")
+    if duong_dan and Path(duong_dan).is_file():
+        pytesseract.pytesseract.tesseract_cmd = duong_dan
 
     # psm 7 = "mot dong van ban duy nhat". Sau khi da ghep ngang thi day la gia
     # thiet DUNG, khong phai gia thiet uu ai Tesseract.
@@ -316,8 +337,7 @@ def dung_tesseract() -> Callable[[np.ndarray], list[str]]:
         # image_to_data thay vi image_to_string: can hop bao cua tung manh de
         # ap DUNG bo loc hinh hoc ma hai engine kia cung chiu.
         try:
-            d = pytesseract.image_to_data(anh, config=cau_hinh,
-                                          output_type=pytesseract.Output.DICT)
+            d = pytesseract.image_to_data(anh, config=cau_hinh, output_type=pytesseract.Output.DICT)
         except Exception:  # noqa: BLE001
             return []
         ra: list[tuple[float, float, str]] = []
@@ -414,26 +434,46 @@ def main() -> None:
                 manh = _loc_va_sap(doc(a))
                 ms = (time.perf_counter() - t) * 1000
                 tho = clean_text("".join(manh))
-                pred = (_NORM.normalize_detailed(tho, line_count=m.so_dong).text
-                        if nhanh == "post" else tho)
+                pred = (
+                    _NORM.normalize_detailed(tho, line_count=m.so_dong).text
+                    if nhanh == "post"
+                    else tho
+                )
                 kq.ghi(m.chuoi_dung, pred, m.so_dong, ms)
                 if (i + 1) % 500 == 0:
-                    print(f"   {nhanh}: {i + 1}/{len(mau)} — đúng "
-                          f"{kq.dung / kq.tong * 100:.1f}%", flush=True)
+                    print(
+                        f"   {nhanh}: {i + 1}/{len(mau)} — đúng " f"{kq.dung / kq.tong * 100:.1f}%",
+                        flush=True,
+                    )
             s = kq.tom_tat()
             ket.append(s)
-            print(f"   {nhanh:<8} → {s['do_chinh_xac'] * 100:5.2f}%   "
-                  f"(1 dòng {(s['mot_dong']['do_chinh_xac'] or 0) * 100:5.1f}% · "
-                  f"2 dòng {(s['hai_dong']['do_chinh_xac'] or 0) * 100:5.1f}%)   "
-                  f"trung vị {s['ms']['trung_vi']:.0f} ms", flush=True)
+            print(
+                f"   {nhanh:<8} → {s['do_chinh_xac'] * 100:5.2f}%   "
+                f"(1 dòng {(s['mot_dong']['do_chinh_xac'] or 0) * 100:5.1f}% · "
+                f"2 dòng {(s['hai_dong']['do_chinh_xac'] or 0) * 100:5.1f}%)   "
+                f"trung vị {s['ms']['trung_vi']:.0f} ms",
+                flush=True,
+            )
         print(flush=True)
 
     args.out.parent.mkdir(parents=True, exist_ok=True)
-    args.out.write_text(json.dumps({
-        "ngu_lieu": {"tep": "datasets/annotations/plate_labels.csv", "mau": len(mau),
-                     "mot_dong": n1, "hai_dong": len(mau) - n1, "anh_hong": hong},
-        "ket_qua": ket,
-    }, ensure_ascii=False, indent=2), encoding="utf-8")
+    args.out.write_text(
+        json.dumps(
+            {
+                "ngu_lieu": {
+                    "tep": "datasets/annotations/plate_labels.csv",
+                    "mau": len(mau),
+                    "mot_dong": n1,
+                    "hai_dong": len(mau) - n1,
+                    "anh_hong": hong,
+                },
+                "ket_qua": ket,
+            },
+            ensure_ascii=False,
+            indent=2,
+        ),
+        encoding="utf-8",
+    )
     print(f"Đã ghi {args.out}")
 
 
