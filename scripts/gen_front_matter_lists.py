@@ -90,9 +90,16 @@ def bang_md(muc: list[tuple[str, str]], nhan: str) -> list[str]:
 
 
 def thay_muc(goc: str, tieu_de: str, than: list[str]) -> str:
-    """Thay phần thân của một mục ``## X. TÊN`` bằng nội dung mới."""
+    """Thay phần thân của một mục ``## X. TÊN`` bằng nội dung mới.
+
+    Mục không tồn tại thì **trả nguyên văn bản**, không tạo mới. Bản rút gọn đã
+    gỡ hẳn các mục E, F, G theo yêu cầu người thực hiện; nếu hàm này dựng lại
+    chúng thì mỗi lần chạy script lại làm sống lại phần vừa gỡ.
+    """
     dong = goc.splitlines()
-    dau = next(i for i, l in enumerate(dong) if l.startswith(tieu_de))
+    dau = next((i for i, l in enumerate(dong) if l.startswith(tieu_de)), None)
+    if dau is None:
+        return goc
     cuoi = next((i for i in range(dau + 1, len(dong)) if dong[i].startswith("## ")), len(dong))
     # Giu lai dau phan cach '---' neu co ngay truoc muc ke tiep.
     duoi = dong[cuoi:]
