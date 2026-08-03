@@ -196,26 +196,7 @@ Phần lớn quyết định còn lại là **ràng buộc của đề bài**; g
 
 <!-- {{T3.6}} so sanh baseline 416/v1 voi mo hinh chinh thuc 640/v3 -->
 
-**Bảng 3.6.** So sánh `baseline-416-v1.pt` với `best.pt` — ba biến thay đổi đồng thời
-
-| Hạng mục | `baseline-416-v1.pt` | `best.pt` (chính thức) | Chênh lệch |
-|---|---:|---:|---:|
-| **Cấu hình** | | | |
-| `imgsz` | 416 | **640** | +224 px |
-| Bộ dữ liệu | v1 — 4.578 ảnh, 1 nguồn | **v3 — 15.133 ảnh, 6 nguồn nguyên tố (hợp nhất từ 7 bộ)** | ×3,3 |
-| Ngưỡng gộp trùng lặp | 5 | **10** | +5 |
-| Rò rỉ train↔test (ngưỡng 10) | **619 cặp** | **0 cặp** *(hệ quả định nghĩa, xem T5.3b)* | |
-| Số epoch | 40 | **20** | −20 |
-| Tổng thời gian huấn luyện | 156 phút | **≈ 712 phút** | |
-| **Kết quả trên tập test tương ứng** | | | |
-| mAP@0.5 | **0,9933** *(epoch 38)* | **0,9829** | −0,0104 |
-| mAP@0.5:0.95 | **0,8597** *(epoch 38)* | **0,7834** | −0,0763 |
-| Precision | **0,9822** | **0,9837** | +0,0015 |
-| Recall | **0,9810** | **0,9714** | −0,0096 |
-| mAP biển một dòng | **0,9856** | **0,9884** | +0,0028 |
-| mAP biển hai dòng | **0,9592** | **0,9675** | +0,0083 |
-| Chênh lệch theo layout (điểm %) | **2,6** | **2,09** | −0,51 |
-| Độ trễ E2E p95 (ms) | **763,75** *(client-side)* | **1.143,10** *(in-process, có bậc thang thử-lại)* | — |
+Bảng đối chiếu đầy đủ mười tám dòng chỉ số giữa hai mô hình ở **Phụ lục M.1**.
 
 > ⚠ Ba biến thay đổi đồng thời (imgsz, bộ dữ liệu + cách chia, số epoch) và chúng tác động **ngược chiều** nhau — không được quy kết nguyên nhân cho bất kỳ biến nào (xem 3.6.1). Dòng độ trễ E2E dùng con số **client-side đã xác minh** cho **cả hai** mô hình (763,75 ms và 731,15 ms, máy rảnh, qua HTTP); con số 5.857,19 ms từng ghi cho baseline ở báo cáo Phase 7 đã bị **bác bỏ** vì nhiễm tranh chấp CPU và đo sai checkpoint (mục 5.6.1). Đo cùng phương pháp trên máy rảnh, hai mô hình cho độ trễ gần như y hệt.
 
@@ -247,7 +228,7 @@ Ba thí nghiệm **không được thực hiện** vì tổng khoảng 33 giờ 
 
 ## 3.7. Kết luận chương
 
-**Bảng 3.7.** Tổng hợp các quyết định công nghệ và căn cứ
+**Bảng 3.6.** Tổng hợp các quyết định công nghệ và căn cứ
 
 | Hạng mục | Quyết định | Căn cứ quyết định | Mức bằng chứng | Đánh đổi đã chấp nhận |
 |---|---|---|:---:|---|
@@ -260,7 +241,7 @@ Ba thí nghiệm **không được thực hiện** vì tổng khoảng 33 giờ 
 
 **Ba điều rút ra từ chương này.**
 
-*Thứ nhất, ràng buộc phần cứng quyết định nhiều hơn chất lượng mô hình.* Ba trong sáu quyết định ở Bảng 3.7 — YOLO11n thay vì YOLO26n, v5 mobile thay vì v6 Medium, ONNX Runtime thay vì PyTorch — đều xoay quanh ràng buộc CPU; ở triển khai có GPU, ít nhất hai trong ba phải xét lại. Đây là ranh giới áp dụng của toàn bộ chương.
+*Thứ nhất, ràng buộc phần cứng quyết định nhiều hơn chất lượng mô hình.* Ba trong sáu quyết định ở Bảng 3.6 — YOLO11n thay vì YOLO26n, v5 mobile thay vì v6 Medium, ONNX Runtime thay vì PyTorch — đều xoay quanh ràng buộc CPU; ở triển khai có GPU, ít nhất hai trong ba phải xét lại. Đây là ranh giới áp dụng của toàn bộ chương.
 
 *Thứ hai, khoản nợ bằng chứng lớn nhất đã được trả, khoản còn lại thì chưa.* Lựa chọn họ engine OCR từng mang dấu ❌ suốt phần lớn thời gian làm đồ án — được nói *"chọn PaddleOCR vì nhẹ"* nhưng **không** được nói *"PaddleOCR chính xác hơn"*. Benchmark ba engine ngày 03/08/2026 đã lật dấu đó sang ✅ và cho phép phát biểu mạnh hơn, kèm đúng một giới hạn: phép đo chạy trên vùng biển đã cắt sẵn. Lựa chọn **runtime** thì vẫn mang dấu ❌ và vẫn là nợ kỹ thuật ghi ở mục 5.9.2.
 

@@ -26,7 +26,10 @@ for _l in (sys.stdout, sys.stderr):
         _l.reconfigure(encoding="utf-8", errors="replace")
 
 ROOT = Path(__file__).resolve().parents[1]
-PAPERS = ROOT / "docs" / "papers"
+# Tham so tuy chon: thu muc chua cac tep chuong. Mac dinh la ban chinh
+# docs/papers/; truyen "compact" de sinh danh muc cho ban rut gon.
+_BAN = next((a for a in sys.argv[1:] if not a.startswith("-")), "")
+PAPERS = ROOT / "docs" / "papers" / _BAN if _BAN else ROOT / "docs" / "papers"
 FRONT = PAPERS / "01-front-matter.md"
 
 CHUONG_H1 = re.compile(r"^#\s+(CHƯƠNG\s+\d+\..*)$")

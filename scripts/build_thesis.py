@@ -285,8 +285,14 @@ def export_docx(pandoc: Path, markdown_path: Path, docx_path: Path) -> None:
             # relative to themselves. Pandoc resolves image paths against the
             # working directory, so without this the build silently produces a
             # DOCX with broken image placeholders instead of the 25 diagrams.
+            #
+            # The parent directory is on the path too: the shortened edition
+            # lives in ``docs/papers/compact`` and shares the one ``figures/``
+            # folder with the full edition rather than duplicating 25 PNGs.
             "--resource-path",
-            str(markdown_path.parent),
+            os.pathsep.join(
+                [str(markdown_path.parent), str(markdown_path.parent.parent)]
+            ),
             "--dpi",
             PANDOC_IMAGE_DPI,
             "-o",
@@ -375,10 +381,23 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         ),
     )
     parser.add_argument(
+        "--src",
+        type=Path,
+        default=PAPERS_DIR,
+        help=(
+            "Directory holding the per-chapter Markdown files (default: "
+            "docs/papers). Point it at docs/papers/compact to build the "
+            "shortened edition from the same chapter list."
+        ),
+    )
+    parser.add_argument(
         "--out",
         type=Path,
-        default=PAPERS_DIR / "thesis-full.md",
-        help=("Path for the merged Markdown file " "(default: docs/papers/thesis-full.md)."),
+        default=None,
+        help=(
+            "Path for the merged Markdown file (default: thesis-full.md inside "
+            "the --src directory)."
+        ),
     )
     parser.add_argument(
         "--docx",
@@ -403,10 +422,11 @@ def main(argv: list[str] | None = None) -> int:
         Process exit code (0 on success).
     """
     args = parse_args(argv)
+    out_path = args.out or args.src / "thesis-full.md"
 
-    merged = merge_sections(PAPERS_DIR, CHAPTER_FILENAMES)
-    write_text_exact(args.out, merged)
-    print(f"[ok] wrote merged Markdown -> {args.out}")
+    merged = merge_sections(args.src, CHAPTER_FILENAMES)
+    write_text_exact(out_path, merged)
+    print(f"[ok] wrote merged Markdown -> {out_path}")
 
     if not args.docx:
         print("[info] --no-docx: skipping DOCX/PPTX export.")
@@ -426,8 +446,8 @@ def main(argv: list[str] | None = None) -> int:
 
     print(f"[info] using Pandoc: {pandoc}")
 
-    docx_path = args.out.with_suffix(".docx")
-    export_docx(pandoc, args.out, docx_path)
+    docx_path = out_path.with_suffix(".docx")
+    export_docx(pandoc, out_path, docx_path)
     print(f"[ok] wrote DOCX -> {docx_path}")
 
     pptx_path = SLIDES_DIR / SLIDES_OUTPUT_FILENAME
