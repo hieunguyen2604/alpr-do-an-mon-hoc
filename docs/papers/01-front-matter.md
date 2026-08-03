@@ -244,29 +244,40 @@ PHỤ LỤC
 
 | Ký hiệu | Tên hình | Trang |
 |---|---|:---:|
-| Hình 2.1 | * Sơ đồ pipeline ALPR điển hình (tổng hợp từ [2], [3], [20], [22], [23]) | — |
-| Hình 2.2 | ** Chuỗi văn bản pháp lý về biển số xe đang có hiệu lực | — |
-| Hình 2.3 | * Khoảng trống tỷ lệ khung hình giữa biển hai dòng và biển một dòng (dẫn xuất từ [11]) | — |
-| Hình 2.4 | ** Sơ đồ phân loại hai trục các hướng tiếp cận ALPR và định vị lựa chọn của đồ án | — |
-| Hình 2.5 | * Kiến trúc tổng quát backbone – neck – head của YOLO11 (theo [49], [16]) | — |
-| Hình 2.6 | * Cấu trúc phân cấp của khối C2PSA trong YOLO11 (đối chiếu mã nguồn [51]) | — |
-| Hình 2.7 | * Cơ chế sụp đổ của CTC trên ảnh văn bản hai dòng (theo [61]) | — |
-| Hình 5.1 | * Đường cong hàm mất mát theo epoch — box_loss, cls_loss, dfl_loss, tách riêng train và val | — |
-| Hình 5.2 | * Tiến triển mAP@0.5 và mAP@0.5:0.95 trên tập validation theo epoch | — |
-| Hình 5.3 | * Tiến triển precision và recall trên tập validation theo epoch | — |
-| Hình 6.1 | Giao thức đo và ràng buộc phụ thuộc giữa các bước đánh giá | — |
-| Hình 6.2 | * Đường cong Precision–Recall trên tập test, vẽ tách theo layout (một dòng / hai dòng) | — |
-| Hình 6.3 | * Ma trận nhầm lẫn nhận biết layout: hàng là quần thể nhãn thật (một dòng / hai dòng / nền), cột là dự đoán | — |
-| Hình 6.4 | * Đường cong F1 theo ngưỡng confidence — dùng để xác định ngưỡng vận hành | — |
-| Hình 6.5 | * Ma trận nhầm lẫn ký tự 36×36, thang log(1+n), đo trên chuỗi thô trước hậu xử lý | — |
-| Hình 6.6 | * Biểu đồ cột 15 cặp ký tự bị nhầm nhiều nhất | — |
-| Hình 6.7 | * Phân bố độ trễ đầu-cuối — biểu đồ tần suất kèm vạch đánh dấu p50/p95/p99 và hai ngưỡng chỉ tiêu | — |
-| Hình 6.8 | * Biểu đồ cột chồng phân rã ngân sách độ trễ: ước lượng Phase 0 so với số đo thật | — |
-| Hình 6.9 | * Đường cong thông lượng và tỉ lệ lỗi theo mức đồng thời 1 / 2 / 5 / 10 | — |
-| Hình 6.10 | * Ảnh minh hoạ loại E1 — biển bị bỏ sót. Ghi rõ: kích thước box tương đối, điều kiện ảnh quan sát được | — |
-| Hình 6.11 | * Ảnh minh hoạ loại E3 — nhầm ký tự. Hiển thị vùng cắt, chuỗi thô, chuỗi sau hậu xử lý, nhãn thật | — |
-| Hình 6.12 | * Ảnh minh hoạ loại E6 — sai thứ tự trên biển hai dòng | — |
-| Hình 6.13 | * Ca mà hậu xử lý làm hỏng một chuỗi vốn đã đúng — nếu tồn tại ca như vậy, bắt buộc phải trưng ra, vì nó là bằng chứng phản biện đối với đóng góp được công bố ở mục 6.5.2 | — |
+| Hình 1.1 | ** Ranh giới hệ thống — phần bên trong là hệ thống bàn giao, Colab/Kaggle nằm ngoài | — |
+| Hình 2.1 |   * Sơ đồ pipeline ALPR điển hình (tổng hợp từ [2], [3], [20], [22], [23]; khối nét đứt là tuỳ chọn) | — |
+| Hình 2.2 |   ** Chuỗi văn bản pháp lý về biển số xe đang có hiệu lực | — |
+| Hình 2.3 |   * Khoảng trống tỷ lệ khung hình giữa biển hai dòng và biển một dòng (dẫn xuất từ [11]) | — |
+| Hình 2.4 |   ** Sơ đồ phân loại hai trục các hướng tiếp cận ALPR và định vị lựa chọn của đồ án | — |
+| Hình 2.5 |   * Kiến trúc tổng quát backbone – neck – head của YOLO11 (theo [49], [16]) | — |
+| Hình 2.6 |   * Cấu trúc phân cấp của khối C2PSA trong YOLO11 (đối chiếu mã nguồn [51]) | — |
+| Hình 2.7 |   * Cơ chế sụp đổ của CTC trên ảnh văn bản hai dòng (theo [61]) | — |
+| Hình 4.1 | ** Sơ đồ use case tổng quát của hệ thống | — |
+| Hình 4.2 | ** Kiến trúc phân tầng năm tầng và chiều phụ thuộc | — |
+| Hình 4.3 | ** Luồng xử lý của pipeline AI, các khối tô đỏ là nhánh biển hai dòng | — |
+| Hình 4.4 | ** Sơ đồ lớp của tầng AI — ba lớp trừu tượng và các kiểu dữ liệu bất biến | — |
+| Hình 4.5 | ** Sơ đồ trạng thái của tác vụ xử lý video nền | — |
+| Hình 4.6 | ** Sơ đồ tuần tự — nhận dạng biển số từ ảnh tĩnh | — |
+| Hình 4.7 | ** Sơ đồ tuần tự — nhận dạng video bất đồng bộ | — |
+| Hình 4.8 | ** Sơ đồ tuần tự — nhận dạng thời gian thực qua tầng API | — |
+| Hình 4.9 | ** Sơ đồ thực thể — liên kết của cơ sở dữ liệu | — |
+| Hình 4.10 | ** Sơ đồ điều hướng giữa ba màn hình của giao diện | — |
+| Hình 5.1 | ** Đường ống sáu bước xây dựng bộ dữ liệu | — |
+| Hình 5.1 |  Đường cong hàm mất mát theo epoch — box_loss, cls_loss, dfl_loss, tách riêng train và val. docs/reports/figures/05-train-loss-curves.png (chưa sinh) | — |
+| Hình 5.2 |  Tiến triển mAP@0.5 và mAP@0.5:0.95 trên tập validation. docs/reports/figures/05-train-map-curves.png (chưa sinh) | — |
+| Hình 5.3 |  Tiến triển precision và recall trên tập validation. docs/reports/figures/05-train-pr-curves.png (chưa sinh) | — |
+| Hình 5.2 | ** Ba lớp trừu tượng của tầng AI và quan hệ giữa chúng | — |
+| Hình 5.3 | ** Thuật toán chuẩn hoá chuỗi biển số theo bộ luật ràng buộc vị trí | — |
+| Hình 5.4 | ** Cấu trúc phân tầng của backend và luồng phụ thuộc một chiều | — |
+| Hình 5.5 | ** Mô hình dữ liệu sau ba lần di trú Alembic | — |
+| Hình 5.6 | ** Build hai giai đoạn của Dockerfile.backend | — |
+| Hình 6.1 |   Giao thức đo và ràng buộc phụ thuộc giữa các bước đánh giá | — |
+| Hình 6.2 |  Đường cong Precision–Recall tách theo layout — 05-detection-pr-curve.png (chưa sinh). Hình 6.3. Ma trận nhầm lẫn nhận biết layout (hàng: nhãn thật một dòng / hai dòng / nền; cột: dự đoán) — 05-detection-confusion-matrix.png (chưa sinh). Hình 6.4. Đường cong F1 theo ngưỡng confidence — 05-detection-f1-curve.png (chưa sinh)*. Cả ba ở docs/reports/figures/ | — |
+| Hình 6.5 |  Ma trận nhầm lẫn ký tự 36×36, thang log(1+n), đo trên chuỗi thô trước hậu xử lý — 04-ocr-confusion-matrix.png (chưa sinh). Hình 6.6. Biểu đồ cột 15 cặp ký tự bị nhầm nhiều nhất — 04-ocr-top-confusions.png (chưa sinh) | — |
+| Hình 6.7 |  Phân bố độ trễ đầu-cuối — biểu đồ tần suất kèm vạch p50/p95/p99 và hai ngưỡng chỉ tiêu — 07-latency-distribution.png (đã có, cần vẽ lại cho best.pt) | — |
+| Hình 6.8 |  Biểu đồ cột chồng phân rã ngân sách độ trễ: ước lượng Phase 0 so với số đo thật — 07-latency-budget.png (đã có, cần vẽ lại) | — |
+| Hình 6.9 |  Đường cong thông lượng và tỉ lệ lỗi theo mức đồng thời 1 / 2 / 5 / 10 — 07-concurrency.png (đã có, cần vẽ lại) | — |
+| Hình 6.10 |  Loại E1 — biển bị bỏ sót, ghi rõ kích thước box tương đối và điều kiện ảnh quan sát được — 05-error-e1-missed.png (chưa sinh). Hình 6.11. Loại E3 — nhầm ký tự, hiển thị vùng cắt, chuỗi thô, chuỗi sau hậu xử lý, nhãn thật — 05-error-e3-substitution.png (chưa sinh). Hình 6.12. Loại E6 — sai thứ tự trên biển hai dòng — 05-error-e6-order.png (chưa sinh). Hình 6.13.* Ca mà hậu xử lý làm hỏng một chuỗi vốn đã đúng — nếu tồn tại ca như vậy, bắt buộc phải trưng ra, vì nó là bằng chứng phản biện đối với đóng góp công bố ở 6.5.2; một chương đánh giá chỉ trưng ra các ca hệ thống làm tốt là một chương đã tự loại bỏ khả năng bị kiểm chứng | — |
 
 ---
 
@@ -311,6 +322,7 @@ PHỤ LỤC
 | Bảng 3.1 | Mức bằng chứng của từng phép so sánh trong chương | — |
 | Bảng 3.2 | So sánh các engine OCR ứng viên | — |
 | Bảng 3.3 | PP-OCRv6_medium_rec so với PP-OCRv5_mobile_rec, đo trên 200 vùng cắt biển số của đồ án | — |
+| Bảng 3.5 | So sánh ba engine OCR trên 2.801 biển số Việt Nam (567 một dòng, 2.234 hai dòng) | — |
 | Bảng 3.4 | Tổng hợp quyết định công nghệ nền tảng | — |
 | Bảng 3.5 | So sánh baseline-416-v1.pt với best.pt — ba biến thay đổi đồng thời | — |
 | Bảng 3.6 | Tổng hợp các quyết định công nghệ và căn cứ | — |
@@ -351,7 +363,7 @@ PHỤ LỤC
 | Bảng 6.23 | Bỏ bước phát hiện chữ — hai ngữ liệu, hai kết luận ngược nhau | — |
 | Bảng 6.24 | Đối chiếu toàn bộ chỉ tiêu phi chức năng | — |
 | Bảng 6.25 | Tần suất từng loại lỗi | — |
-| Bảng 7.1 | Đối chiếu chỉ tiêu cam kết ở Phase 0 với số đo trên best.pt | — |
+| Bảng 7.1 | Đối chiếu chỉ tiêu cam kết ở Phase 0 với số đo trên best.pt (bản cô đọng của T6.7) | — |
 
 ---
 
