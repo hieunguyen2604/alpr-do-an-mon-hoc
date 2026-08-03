@@ -18,7 +18,7 @@
 | P4 · P5 · P6 | Nạp mô hình (s) · Overhead API · Truy vấn 10.000 bản ghi (ms) | ≤ 15 · ≤ 50 · ≤ 500 | **6,41 · 19,01 · 18,71** | ✅ |
 | P7 · R4 · SC1 | RSS (GB) · Thành công khi chạy liên tục · Yêu cầu đồng thời | ≤ 2 · ≥ 99% · ≥ 5 | **0,806 · 100% · 10** | ✅ |
 
-\* A7 phải đọc như **cận dưới bi quan** — đo trên ảnh nằm ngoài phân bố huấn luyện của bộ phát hiện nên tỉ lệ bỏ sót bị thổi phồng (Phụ lục G.2.1).
+\* A7 phải đọc như **cận dưới bi quan** — đo trên ảnh nằm ngoài phân bố huấn luyện của bộ phát hiện nên tỉ lệ bỏ sót bị thổi phồng.
 
 **Vạch ngăn "đạt / không đạt" trùng khít vạch ngăn giữa hai tầng:** mọi chỉ tiêu phát hiện, độ tin cậy và chịu tải đều đạt; mọi chỉ tiêu độ chính xác chuỗi đầy đủ đều không đạt. Riêng NFR-P1 chỉ đạt ngưỡng tối thiểu — thoái lui **có chủ ý** đổi lấy 34 biển đọc thêm.
 
@@ -29,11 +29,11 @@
 3. **Benchmark ba engine OCR trên 2.801 biển, cùng một tầng bao quanh:** PaddleOCR **68,87%** so với EasyOCR 14,28% và Tesseract 10,28%. Phép đo lấp khoảng trống nghiên cứu số 4 và **bác bỏ** tài liệu công khai vốn nghiêng về EasyOCR. Nó cũng cho một kết quả trái kỳ vọng: bước tách-rồi-ghép-ngang mua 34,92 điểm cho PaddleOCR nhưng chỉ 0,03 điểm cho Tesseract — **điều kiện cần, không đủ**.
 4. **Bộ nhận màu nền biển đạt 97,89%** trên 1.565 ảnh có nhãn, cung cấp nguồn bằng chứng mà chuỗi ký tự không mang được: phân giải nhập nhằng giữa biển xanh nhà nước và biển trắng cá nhân khi hai chuỗi giống hệt nhau.
 
-Ngoài các con số, đồ án để lại **một quy trình đánh giá có kiểm chứng**: mọi số liệu sinh lại được bằng một lệnh, mọi phép so sánh kèm điều kiện đo, và các kết quả âm — hai lượt tinh chỉnh bộ nhận dạng đều không thắng model gốc ở chế độ vận hành — được ghi lại thay vì bỏ đi. Phân tích đầy đủ sáu kết quả ở **Phụ lục G.1**.
+Ngoài các con số, đồ án để lại **một quy trình đánh giá có kiểm chứng**: mọi số liệu sinh lại được bằng một lệnh, mọi phép so sánh kèm điều kiện đo, và các kết quả âm — hai lượt tinh chỉnh bộ nhận dạng đều không thắng model gốc ở chế độ vận hành — được ghi lại thay vì bỏ đi.
 
 ## 6.2. Hạn chế
 
-**Bảng 6.2.** Tám hạn chế của đồ án — phân tích đầy đủ ở **Phụ lục G.2**
+**Bảng 6.2.** Tám hạn chế của đồ án
 
 | # | Hạn chế | Mức | Hệ quả cần lưu ý |
 |:--:|---|:--:|---|
@@ -48,16 +48,16 @@ Ngoài các con số, đồ án để lại **một quy trình đánh giá có k
 
 ## 6.3. Hướng phát triển
 
-**Bảng 6.3.** Chín hướng phát triển, xếp theo mức tác động — chi tiết ở **Phụ lục G.3**
+**Bảng 6.3.** Chín hướng phát triển, xếp theo mức tác động
 
 | # | Hướng | Giải hạn chế | Ghi chú |
 |:--:|---|:--:|---|
-| 1 | **Huấn luyện lại module nhận dạng riêng cho biển số Việt Nam** | 1 | Hướng quan trọng nhất. Hai lượt tinh chỉnh đã thực hiện đều chưa thắng model gốc ở chế độ vận hành; Phụ lục G.3.1 nêu điều kiện để lượt sau khác kết quả |
+| 1 | **Huấn luyện lại module nhận dạng riêng cho biển số Việt Nam** | 1 | Hướng quan trọng nhất. Hai lượt tinh chỉnh đã thực hiện đều chưa thắng model gốc ở chế độ vận hành |
 | 2 | Thu thập dữ liệu cho các loại biển hiếm | 2 | Điều kiện để mở rộng kết luận ra ngoài biển trắng |
 | 3 | Bổ sung nhãn chuỗi cho toàn tập | 1, 2 | Hiện chỉ 2.801/15.133 ảnh có nhãn chuỗi |
 | 4 | Xây dựng tập test xuyên bộ dữ liệu | 3, 4 | Giữ nguyên một nguồn hoàn toàn không dùng để huấn luyện |
 | 5 | Tăng tốc suy luận: lượng tử hoá OCR, đóng gói ONNX/OpenVINO | 5 | Phép so sánh runtime **chưa chạy** — khoản nợ ghi ở mục 5.9.2 |
-| 6 | Thí nghiệm cô lập biến độ phân giải · dữ liệu · số epoch | 4 | Ma trận E1–E3, ước tính ≈ 33 giờ CPU (Phụ lục G.3.6) |
+| 6 | Thí nghiệm cô lập biến độ phân giải · dữ liệu · số epoch | 4 | Ma trận E1–E3, ước tính ≈ 33 giờ CPU |
 | 7 | Bám vết đối tượng qua khung hình cho video (SORT/DeepSORT) | — | Gộp nhiều lần đọc cùng một biển thành một kết quả |
 | 8 | Tách lịch chạy giữa xem trực tiếp và xử lý nền | 8 | Hàng đợi ưu tiên hoặc giới hạn luồng cho tác vụ nền |
 | 9 | Chuyển sang PostgreSQL nếu triển khai đa người dùng | 7 | Chỉ cần khi vượt quy mô một tiến trình ghi |

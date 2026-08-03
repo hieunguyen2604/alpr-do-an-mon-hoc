@@ -18,7 +18,7 @@ Hệ thống có bốn tác nhân: **người vận hành** (đưa ảnh/video, 
 
 ### 4.1.2. Sơ đồ use case và ba use case chính
 
-Ba use case chính — nhận dạng từ ảnh (UC-01), từ video (UC-02) và tra cứu lịch sử (UC-05) — được đặc tả đầy đủ ở **Phụ lục H.1**, gồm tác nhân, tiền điều kiện, luồng chính, luồng thay thế và hậu điều kiện.
+Ba use case chính — nhận dạng từ ảnh (UC-01), từ video (UC-02) và tra cứu lịch sử (UC-05) — đều được đặc tả theo cùng một khuôn: tác nhân, tiền điều kiện, luồng chính, luồng thay thế và hậu điều kiện.
 
 ### 4.1.3. Yêu cầu chức năng
 
@@ -72,7 +72,7 @@ Mỗi quyết định ghi kèm lý do và **đánh đổi phải chấp nhận**
 
 <!-- {{T4.2}} cac quyet dinh kien truc AD-01 den AD-08 -->
 
-Tám quyết định kiến trúc được ghi thành hồ sơ AD-01 … AD-08, mỗi hồ sơ nêu **bối cảnh, phương án đã cân nhắc, quyết định và hệ quả phải chấp nhận** — dạng ghi chép này khiến một quyết định về sau có thể bị lật lại mà người lật hiểu được vì sao nó từng đúng. Bảng đầy đủ ở **Phụ lục H.5**; các mục 4.2.1 – 4.2.4 trình bày bốn quyết định có ảnh hưởng rộng nhất.
+Tám quyết định kiến trúc được ghi thành hồ sơ AD-01 … AD-08, mỗi hồ sơ nêu **bối cảnh, phương án đã cân nhắc, quyết định và hệ quả phải chấp nhận** — dạng ghi chép này khiến một quyết định về sau có thể bị lật lại mà người lật hiểu được vì sao nó từng đúng. Các mục 4.2.1 – 4.2.4 trình bày bốn quyết định có ảnh hưởng rộng nhất.
 
 Ghi chú: AD-03 không đổi sau khi gỡ trang Webcam vì ở ~5 FPS trên CPU, nút thắt là suy luận chứ không phải giao thức. AD-04 cố ý **không** chọn tracking vì phức tạp hơn đáng kể và thêm một họ siêu tham số. AD-05 là quyết định duy nhất **đã thay đổi** so với phác thảo (*"PyTorch trước, ONNX nếu cần"*) — ghi nhận tường minh thay vì lặng lẽ sửa bảng. AD-06 kéo theo hai quyết định phái sinh đã cài đặt: `yolo11n` và **PP-OCRv5 mobile** — ràng buộc CPU thay đổi *lựa chọn mô hình*, không chỉ tốc độ.
 
@@ -207,7 +207,7 @@ Detector **nạp trọng số ngay trong hàm khởi tạo** để tệp thiếu
 
 **Một phát hiện kỹ thuật phải nêu ở thân bài: backend oneDNN làm sập suy luận trên PP-OCRv5.** Trên đúng nền tảng mục tiêu (`paddlepaddle` 3.3.1, Windows, CPU), chạy mô hình phát hiện văn bản qua oneDNN kết thúc bằng `NotImplementedError: (Unimplemented) ConvertPirAttribute2RuntimeAttribute...` — khiếm khuyết phía thư viện, không phải lỗi cấu hình. Xử lý: hằng số có tài liệu `DEFAULT_ENABLE_MKLDNN: Final[bool] = False`. Đây là **núm hiệu năng, không phải núm độ chính xác** — khi lỗi thượng nguồn được sửa chỉ cần lật giá trị và đo lại. Nó cũng giải thích một phần NFR-P1: **một con đường tăng tốc CPU hiển nhiên đang bị chặn bởi lỗi thư viện chứ không phải chưa được thử.**
 
-Ngoài ra `PaddleOcrRecognizer` lọc mảnh văn bản **theo hình học chứ không theo ngưỡng tin cậy** — CLAHE có thể sinh mảnh rác đọc thành chuỗi vô nghĩa với độ tin cậy 0,84, mà ngưỡng tin cậy không tách được — và tổng hợp độ tin cậy bằng **trung bình có trọng số theo độ dài mảnh**, vì trung bình cộng cho phép một mảnh một ký tự 0,99 che lấp mảnh bảy ký tự 0,40. Chi tiết cài đặt của cả hai adapter ở **Phụ lục I.6**.
+Ngoài ra `PaddleOcrRecognizer` lọc mảnh văn bản **theo hình học chứ không theo ngưỡng tin cậy** — CLAHE có thể sinh mảnh rác đọc thành chuỗi vô nghĩa với độ tin cậy 0,84, mà ngưỡng tin cậy không tách được — và tổng hợp độ tin cậy bằng **trung bình có trọng số theo độ dài mảnh**, vì trung bình cộng cho phép một mảnh một ký tự 0,99 che lấp mảnh bảy ký tự 0,40.
 
 ### 4.6.4. Mô-đun xử lý biển hai dòng — `two_line.py`
 
@@ -297,7 +297,7 @@ Backend gồm 21 mô-đun Python (19 ứng dụng + 2 Alembic) trong năm tầng
 
 ### 4.7.2. Cơ sở dữ liệu: lược đồ, di trú và các quyết định thiết kế dữ liệu
 
-Cơ sở dữ liệu gồm hai bảng quan hệ một–nhiều: `detection_job` (một lần sử dụng hệ thống) và `detection_history` (mỗi biển số phát hiện được một bản ghi), nối bằng khoá `source_job_id`. Tách hai bảng là điều kiện để thống kê đếm đúng — *lượt nhận dạng* và *biển số phát hiện* là hai đại lượng khác nhau. `detection_history` hiện có **21 cột** sau ba lần di trú Alembic, trong đó hai quyết định đáng chú ý: lưu **song song** `raw_ocr_text` và `plate_number` để đo được đóng góp của khối hậu xử lý, và cột `upper_char_count` để giải nhập nhằng cách nhóm chữ số của biển hai dòng. Đặc tả từng trường, ràng buộc và chỉ mục ở **Phụ lục H.4**.
+Cơ sở dữ liệu gồm hai bảng quan hệ một–nhiều: `detection_job` (một lần sử dụng hệ thống) và `detection_history` (mỗi biển số phát hiện được một bản ghi), nối bằng khoá `source_job_id`. Tách hai bảng là điều kiện để thống kê đếm đúng — *lượt nhận dạng* và *biển số phát hiện* là hai đại lượng khác nhau. `detection_history` hiện có **21 cột** sau ba lần di trú Alembic, trong đó hai quyết định đáng chú ý: lưu **song song** `raw_ocr_text` và `plate_number` để đo được đóng góp của khối hậu xử lý, và cột `upper_char_count` để giải nhập nhằng cách nhóm chữ số của biển hai dòng.
 
 ### 4.7.3. REST API
 
@@ -311,11 +311,11 @@ Giai đoạn chưa có mô hình, hệ thống chạy `StubPipeline` — bịa k
 
 ### 4.7.5. Xử lý lỗi, log có cấu trúc và `request_id`
 
-Mỗi ngoại lệ mang **hai mô tả cho hai độc giả**: `user_message` tiếng Việt ngắn gọn có hành động, đi vào thân HTTP; `internal_detail` tiếng Anh kỹ thuật, chỉ đi vào log. Cây ngoại lệ `APIError` ánh xạ thẳng sang mã HTTP (400/404/413/415/500), và **bốn bộ xử lý được đăng ký** — trong đó một bộ *bắt tất cả* cho `Exception`, không có nó thì ngoại lệ ngoài dự kiến ở cấu hình debug sẽ hiển thị cả stack trace (NFR-S4). Log ghi **mỗi dòng một đối tượng JSON** kèm `request_id` truyền ngầm qua `ContextVar` — log video xen kẽ log tải lên đồng thời, văn bản thuần không tách lại được. Cây ngoại lệ đầy đủ, cơ chế `safe_extra()` và cấu hình middleware ở **Phụ lục I.1**.
+Mỗi ngoại lệ mang **hai mô tả cho hai độc giả**: `user_message` tiếng Việt ngắn gọn có hành động, đi vào thân HTTP; `internal_detail` tiếng Anh kỹ thuật, chỉ đi vào log. Cây ngoại lệ `APIError` ánh xạ thẳng sang mã HTTP (400/404/413/415/500), và **bốn bộ xử lý được đăng ký** — trong đó một bộ *bắt tất cả* cho `Exception`, không có nó thì ngoại lệ ngoài dự kiến ở cấu hình debug sẽ hiển thị cả stack trace (NFR-S4). Log ghi **mỗi dòng một đối tượng JSON** kèm `request_id` truyền ngầm qua `ContextVar` — log video xen kẽ log tải lên đồng thời, văn bản thuần không tách lại được.
 
 ### 4.7.6. Ba lỗi thực tế đã gặp và sửa trong quá trình cài đặt
 
-Ba lỗi đáng ghi nhận đã gặp khi cài đặt: pydantic-settings JSON-decode trường danh sách **trước** validator khiến dịch vụ sập lúc khởi động; SQLite âm thầm nuốt `tzinfo` khiến mọi phân tích theo thời gian sai lệch mà không gì trông sai; và log tiếng Việt làm sập console `cp1252` trên Windows — sự cố xảy ra *bên trong* cỗ máy logging, đúng lúc log quan trọng nhất. **Cả ba đều đi qua được kiểm thử đơn vị**, vì cả ba nằm ở ranh giới mã–môi trường (nguồn cấu hình, tầng lưu trữ, bảng mã đầu ra) — lập luận cụ thể cho việc bộ kiểm thử phải gồm kiểm thử tích hợp chạy trên đường dẫn thật. Cơ chế và cách sửa từng lỗi ở **Phụ lục I.2**.
+Ba lỗi đáng ghi nhận đã gặp khi cài đặt: pydantic-settings JSON-decode trường danh sách **trước** validator khiến dịch vụ sập lúc khởi động; SQLite âm thầm nuốt `tzinfo` khiến mọi phân tích theo thời gian sai lệch mà không gì trông sai; và log tiếng Việt làm sập console `cp1252` trên Windows — sự cố xảy ra *bên trong* cỗ máy logging, đúng lúc log quan trọng nhất. **Cả ba đều đi qua được kiểm thử đơn vị**, vì cả ba nằm ở ranh giới mã–môi trường (nguồn cấu hình, tầng lưu trữ, bảng mã đầu ra) — lập luận cụ thể cho việc bộ kiểm thử phải gồm kiểm thử tích hợp chạy trên đường dẫn thật.
 
 ## 4.8. Giao diện người dùng
 
@@ -331,7 +331,7 @@ Giao diện là SPA React + TypeScript dựng bằng Vite, gồm **3 trang** và
 
 ### 4.8.2. Tầng gọi API và ánh xạ kiểu dữ liệu
 
-`services/api.ts` là **nơi duy nhất frontend biết về axios hoặc mã HTTP**: component nhận dữ liệu đã có kiểu hoặc `ApiError` chuẩn hoá. Sáu hàm gọi API ứng một–một với sáu endpoint, cộng hai hàm dựng URL. **Ba endpoint còn lại không còn hàm gọi phía giao diện** nhưng **vẫn hoạt động ở backend** — cần phân biệt *hàm gọi bị xoá* với *endpoint thì không*. Không hostname nào viết cứng: origin đọc từ biến môi trường lúc build, mặc định rỗng (cùng-origin). Chi tiết ánh xạ kiểu ở **Phụ lục I.3**.
+`services/api.ts` là **nơi duy nhất frontend biết về axios hoặc mã HTTP**: component nhận dữ liệu đã có kiểu hoặc `ApiError` chuẩn hoá. Sáu hàm gọi API ứng một–một với sáu endpoint, cộng hai hàm dựng URL. **Ba endpoint còn lại không còn hàm gọi phía giao diện** nhưng **vẫn hoạt động ở backend** — cần phân biệt *hàm gọi bị xoá* với *endpoint thì không*. Không hostname nào viết cứng: origin đọc từ biến môi trường lúc build, mặc định rỗng (cùng-origin).
 
 ### 4.8.3. Nguyên tắc trải nghiệm người dùng
 
@@ -345,11 +345,11 @@ Giao diện là SPA React + TypeScript dựng bằng Vite, gồm **3 trang** và
 
 ### 4.8.4. Hàng đợi một khe ở client thời gian thực (trang webcam đã gỡ 2026-07-20)
 
-Trang webcam đã gỡ khỏi frontend, nhưng lập luận thiết kế của nó vẫn đúng và trở thành **khuyến nghị bắt buộc cho bất kỳ client nào** gọi `POST /api/detect/frame`. Suy luận CPU chỉ ~5 FPS, nên một bộ đếm giờ ngây thơ sẽ khởi động yêu cầu thứ hai trước khi yêu cầu thứ nhất trở về — tồn đọng chỉ tăng và tab đứng hình. Giải pháp là **giữ đúng một yêu cầu đang bay**; khung tới trong lúc khe bận thì bị **bỏ qua chứ không xếp hàng**: bỏ một khung không tốn gì vì khung sau cập nhật hơn, xếp hàng thì tốn tất cả. Cài đặt đầy đủ — vị trí giải phóng khe, tự tạm dừng sau 5 lỗi liên tiếp, `AbortController`, một `job_id` cho cả phiên, và khoá khử trùng — ở **Phụ lục I.4**.
+Trang webcam đã gỡ khỏi frontend, nhưng lập luận thiết kế của nó vẫn đúng và trở thành **khuyến nghị bắt buộc cho bất kỳ client nào** gọi `POST /api/detect/frame`. Suy luận CPU chỉ ~5 FPS, nên một bộ đếm giờ ngây thơ sẽ khởi động yêu cầu thứ hai trước khi yêu cầu thứ nhất trở về — tồn đọng chỉ tăng và tab đứng hình. Giải pháp là **giữ đúng một yêu cầu đang bay**; khung tới trong lúc khe bận thì bị **bỏ qua chứ không xếp hàng**: bỏ một khung không tốn gì vì khung sau cập nhật hơn, xếp hàng thì tốn tất cả.
 
 ## 4.9. Triển khai bằng Docker
 
-Đóng gói phục vụ NFR-C1: môi trường chạy tái lập được, không phụ thuộc máy cá nhân. `Dockerfile.backend` build hai giai đoạn, cài **hai tệp requirements thành hai lớp riêng** để thay đổi một tầng không mất bộ đệm tầng kia (hệ quả trực tiếp của 4.3.2), chạy dưới người dùng không đặc quyền, đặt `OMP_NUM_THREADS` tường minh để hai container không cạnh tranh nhân CPU đến mức cùng chậm, và `HEALTHCHECK` có `start-period` đủ dài cho việc nạp trọng số. `Dockerfile.frontend` build rồi phục vụ tĩnh bằng `nginx:alpine` — ảnh chạy không chứa Node hay mã nguồn. **Trọng số mô hình không nằm trong ảnh Docker** mà gắn từ ngoài, cùng một volume riêng cho bộ đệm mô hình PaddleOCR — không có volume này thì mỗi lần `down && up` phải tải lại vài trăm MB và không có mạng thì container không khởi động được. Nội dung ba tệp và bảng biến môi trường ở **Phụ lục I.5** và **F.2**. **Trạng thái kiểm chứng:** `docker compose config` hợp lệ; đo hiệu năng trong container thuộc Chương 5.
+Đóng gói phục vụ NFR-C1: môi trường chạy tái lập được, không phụ thuộc máy cá nhân. `Dockerfile.backend` build hai giai đoạn, cài **hai tệp requirements thành hai lớp riêng** để thay đổi một tầng không mất bộ đệm tầng kia (hệ quả trực tiếp của 4.3.2), chạy dưới người dùng không đặc quyền, đặt `OMP_NUM_THREADS` tường minh để hai container không cạnh tranh nhân CPU đến mức cùng chậm, và `HEALTHCHECK` có `start-period` đủ dài cho việc nạp trọng số. `Dockerfile.frontend` build rồi phục vụ tĩnh bằng `nginx:alpine` — ảnh chạy không chứa Node hay mã nguồn. **Trọng số mô hình không nằm trong ảnh Docker** mà gắn từ ngoài, cùng một volume riêng cho bộ đệm mô hình PaddleOCR — không có volume này thì mỗi lần `down && up` phải tải lại vài trăm MB và không có mạng thì container không khởi động được. Bảng biến môi trường ở **Phụ lục F.2**. **Trạng thái kiểm chứng:** `docker compose config` hợp lệ; đo hiệu năng trong container thuộc Chương 5.
 
 ---
 
@@ -380,14 +380,3 @@ Nguyên tắc: **mọi điểm lệch đều được nêu, kể cả những đ
 **(6)** `output_path` tồn tại trong lược đồ nhưng chưa điền: lúc viết đoạn mã đó hệ thống còn chạy stub, và chú thích các hộp bao **bịa ra** lên video thật sẽ tạo hiện vật trông thuyết phục nhưng sai sự thật. **(7)** oneDNN tắt do lỗi PIR của PaddlePaddle 3.3.1 (4.6.3), ghi thành hằng số có tài liệu để lật lại khi lỗi được sửa. **(8)** phash tóm tắt bố cục khung ảnh, không tóm tắt chiếc xe (4.4.3) — giới hạn phương pháp, không phải lỗi cài đặt. **(9)** là điểm lệch **thuộc về phép đo sản phẩm**, nguy hiểm hơn tám điểm trên vì nó không làm hệ thống chạy sai mà làm *các con số công bố* mô tả một thứ khác; đã sửa bằng hai hàm tự do cấp mô-đun (4.6.4g).
 
 **Bản chất các điểm lệch:** **1** cải tiến (#1); **3** bị ngoại cảnh cưỡng bức (#2, #7, #8); **4** chưa hoàn thành hoặc chưa đạt chỉ tiêu (#3, #4, #5, #6); **1** lỗi ở phương pháp đo (#9). Không điểm nào phát sinh từ sai lầm trong bản thân thiết kế kiến trúc; ba điểm do ngoại cảnh còn là bằng chứng gián tiếp cho giá trị thiết kế — nhờ `BaseRecognizer`, vấn đề PaddleOCR chỉ ảnh hưởng một tệp. Điểm #9 cần đọc như cảnh báo chứ không như mục đã đóng: **ranh giới giữa "hệ thống" và "phép đo hệ thống" cũng là một ranh giới kiến trúc**, và ranh giới đó không được test nào ở 4.2.3 canh giữ.
-
----
-## 4.11. Kết luận chương
-
-**Phân tích và kiến trúc.** Ba tác nhân, chín use case, **34 yêu cầu chức năng** (21 Must · 6 Should · 3 Could · 4 Won't) kèm tiêu chí chấp nhận kiểm chứng được; yêu cầu phi chức năng đặt ở dạng chỉ tiêu định lượng với nguyên tắc **mọi chỉ tiêu hiệu năng đo trên CPU** — ràng buộc sinh trực tiếp hai quyết định kiến trúc là xử lý video bất đồng bộ và bỏ khung có kiểm soát. Quyết định quan trọng nhất là **tách hoàn toàn tầng AI khỏi tầng API**, kiểm chứng tự động bằng hai công cụ bổ trợ nên không suy thoái theo thời gian; nhờ nó toàn bộ phần mềm được xây và chạy với pipeline mô phỏng **trước khi mô hình được huấn luyện**, và việc thay pipeline chỉ là một thay đổi trong `backend/main.py`.
-
-**Khối lượng và trạng thái.** Tầng AI 12 mô-đun / 4.852 dòng; backend 21 mô-đun, 10 endpoint REST, hai bảng 21 và 11 cột; frontend 3 trang / 48 mô-đun; đường ống dữ liệu sáu bước; Docker hai dịch vụ. Kiểm chứng bằng chạy thật: `/health` trả `model_loaded=true`, 10/10 ảnh test nhận dạng được, gói tải về **328,8 KB** (−55%), bộ kiểm thử **1.001 thu thập / 1.000 đạt / 1 `xfail` / 0 fail**, bao phủ tầng nghiệp vụ 87,7%.
-
-**Năm khối là đóng góp kỹ thuật của đồ án:** `two_line.py` cắt có chồng lấn rồi ghép ngang (4.6.4); **bộ luật hậu xử lý** với hai phát hiện trung tâm là ký tự đại diện `?` tại chỉ số 3 và tính **không đối xứng** của bảng ánh xạ nhầm lẫn (4.6.5); đường ống khử trùng lặp băm đa chỉ mục kèm bài học *perceptual hash tóm tắt bố cục khung ảnh chứ không tóm tắt chiếc xe* (4.4.2–4.4.3); `plate_color.py` cùng phép hợp nhất chuỗi–màu, trong đó ràng buộc an toàn còn đáng giá hơn con số 97,89% (4.6.7); và **bước cứu dòng trên**, đáng ghi nhận vì đường đi tới nó — giả thuyết đầu bị chính phép đo bác bỏ — hơn là vì mức cải thiện. Năm quyết định thiết kế dữ liệu đi kèm đều nhằm **bảo vệ tính đúng đắn của số liệu sẽ công bố**; mỗi quyết định, nếu bỏ qua, đều dẫn tới một con số sai mà không có gì báo hiệu.
-
-**Chưa hoàn thành:** video job chưa xuất video đã chú thích; bộ dữ liệu còn rò rỉ tồn dư; hai nhánh biển đỏ và ngoại giao của bộ nhận màu chưa có số đo. `models/best.pt` đã hoàn tất và đạt cả bốn chỉ tiêu phát hiện; nút thắt còn lại là **độ chính xác nhận dạng biển hai dòng**, trình bày đầy đủ ở Chương 5.
