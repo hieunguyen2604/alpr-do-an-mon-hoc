@@ -47,9 +47,8 @@ CHUONG = [
     "ch2-co-so-ly-thuyet.md",
     "ch3-khao-sat-lua-chon.md",
     "ch4-phan-tich-thiet-ke.md",
-    "ch5-xay-dung-huan-luyen.md",
-    "ch6-thuc-nghiem.md",
-    "ch7-ket-luan.md",
+    "ch5-thuc-nghiem.md",
+    "ch6-ket-luan.md",
 ]
 
 TRICH = re.compile(r"\[(\d{1,3})\]")

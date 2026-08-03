@@ -33,8 +33,8 @@ tự động.
 
 Tỷ trọng đáng chú ý: phần **kiểm thử và công cụ đo đạc** (`tests/` + `scripts/`)
 chiếm **26.641 dòng, tức 40,5%** toàn bộ mã nguồn — nhiều hơn cả tầng AI. Đây là
-hệ quả trực tiếp của nguyên tắc trình bày đã nêu ở mục 6.1.2: mỗi con số công bố
-trong Chương 6 phải sinh ra được bằng một lệnh chạy lại được.
+hệ quả trực tiếp của nguyên tắc trình bày đã nêu ở mục 5.1.2: mỗi con số công bố
+trong Chương 5 phải sinh ra được bằng một lệnh chạy lại được.
 
 ### A.2. Tổ chức thư mục
 
@@ -70,7 +70,7 @@ nếu ai đó vi phạm. Lý do và hệ quả trình bày ở mục 4.2.1 và 5
 ## Phụ lục B. Siêu tham số huấn luyện
 
 Cấu hình đầy đủ của lượt huấn luyện sinh ra `models/best.pt` — mô hình được dùng
-cho mọi số liệu công bố trong Chương 6. Nguồn: `runs/final-640-v3/args.yaml`.
+cho mọi số liệu công bố trong Chương 5. Nguồn: `runs/final-640-v3/args.yaml`.
 
 **Bảng B.1.** Siêu tham số huấn luyện YOLO11n
 
@@ -98,10 +98,10 @@ cho mọi số liệu công bố trong Chương 6. Nguồn: `runs/final-640-v3/a
 **Hai giá trị đáng giải thích thêm.** `batch = 8` không phải lựa chọn tối ưu mà
 là giới hạn phần cứng; `epochs = 20` là con số bị ngân sách thời gian CPU quyết
 định chứ không phải điểm hội tụ — chi phí và hệ quả của cả hai trình bày ở mục
-5.3.4 và 3.6.
+4.5.1 và 3.6.
 
 Cấu hình tinh chỉnh bộ nhận dạng ký tự (30 epoch, 6.672 mẫu, bộ ký tự 36) trình
-bày tại mục 5.4 cùng kết quả đo bốn cấu hình. **Bản giao hàng không dùng mô hình
+bày tại mục 4.5.3 cùng kết quả đo bốn cấu hình. **Bản giao hàng không dùng mô hình
 tinh chỉnh** — lý do ở cùng mục.
 
 ---
@@ -132,7 +132,7 @@ chứ không phải chi tiết bỏ qua được.
 
 **Bộ thứ bảy còn lại 0 ảnh** sau khử trùng lặp — toàn bộ 1.005 ảnh của nó trùng
 với ảnh đã có ở các bộ khác. Con số "hợp nhất từ 7 bộ" vì vậy phải đọc là **6
-nguồn nguyên tố**, và điều này được nêu nhất quán ở mục 5.2.2 và 6.3.1.
+nguồn nguyên tố**, và điều này được nêu nhất quán ở mục 4.4.2 và 6.3.1.
 
 ### C.2. Nguồn nhãn chuỗi ký tự — nhánh nhận dạng
 
@@ -144,8 +144,8 @@ nguồn nguyên tố**, và điều này được nêu nhất quán ở mục 5.
 | `roboflow_ocr_conversion` | Roboflow, nhãn mức ký tự | CC BY 4.0 | 151 |
 | | | **Tổng** | **2.801** |
 
-Toàn bộ số liệu độ chính xác OCR trong Chương 6 đo trên 2.801 mẫu này. Giới hạn
-phạm vi kết luận kéo theo (97,68% mẫu là biển trắng) nêu tại mục 7.3.8.
+Toàn bộ số liệu độ chính xác OCR trong Chương 5 đo trên 2.801 mẫu này. Giới hạn
+phạm vi kết luận kéo theo (97,68% mẫu là biển trắng) nêu tại mục 6.3.8.
 
 ### C.3. Khử trùng lặp và chia tập
 
@@ -160,9 +160,9 @@ Nguồn: `datasets/reports/v2/deduplication_report.json` và
 `datasets/reports/v3/deduplication_report.json`.
 
 Hai con số 44,2% và 47,8% **không cộng được với nhau** vì mẫu số khác nhau — đây
-là chỗ rất dễ đọc nhầm và được phân tích riêng ở mục 6.3.2. Bài học về giới hạn
+là chỗ rất dễ đọc nhầm và được phân tích riêng ở mục 5.3.2. Bài học về giới hạn
 của băm tri giác — nó tóm tắt bố cục khung ảnh chứ không tóm tắt chiếc xe — trình
-bày ở mục 5.2.3.
+bày ở mục 4.4.3.
 
 ---
 
@@ -202,7 +202,7 @@ curl http://localhost:8000/health
 
 Trường `model_loaded` phải trả về `true`. Nếu trả về `false`, hệ thống vẫn chạy
 nhưng mọi yêu cầu nhận dạng sẽ trả lỗi thay vì trả kết quả bịa — cơ chế
-`UnavailablePipeline`, trình bày ở mục 5.6.4.
+`UnavailablePipeline`, trình bày ở mục 4.7.4.
 
 ### D.3. Chạy trực tiếp không dùng Docker
 
@@ -219,7 +219,7 @@ cd frontend && npm install && npm run dev
 
 > **Lưu ý về môi trường ảo.** Đồ án dùng **ba môi trường ảo Python tách biệt**,
 > không phải một. Lý do bắt buộc phải tách — xung đột phiên bản giữa hai framework
-> học sâu — trình bày ở mục 5.1.3. Gộp chúng lại sẽ hỏng.
+> học sâu — trình bày ở mục 4.3.2. Gộp chúng lại sẽ hỏng.
 
 ### D.4. Biến môi trường đáng chú ý
 
@@ -227,8 +227,8 @@ cd frontend && npm install && npm run dev
 |---|---|---|
 | `ALPR_MODEL_PATH` | `models/best.pt` | Đường dẫn trọng số bộ phát hiện |
 | `ALPR_RECTIFY_ENABLED` | `true` | Bật bước nắn hình biển nghiêng |
-| `ALPR_SR_RETRY_ENABLED` | `false` | Bậc siêu phân giải — **tắt mặc định**, xem mục 6.5.7 |
-| `ALPR_OCR_SKIP_DETECTION` | `false` | Bỏ bước phát hiện chữ — **tắt mặc định**, xem mục 6.6.6 |
+| `ALPR_SR_RETRY_ENABLED` | `false` | Bậc siêu phân giải — **tắt mặc định**, xem mục 5.5.7 |
+| `ALPR_OCR_SKIP_DETECTION` | `false` | Bỏ bước phát hiện chữ — **tắt mặc định**, xem mục 5.6.6 |
 | `ALPR_OCR_REC_MODEL_DIR` | *(rỗng)* | Thư mục mô hình nhận dạng tinh chỉnh; để rỗng là dùng mô hình gốc |
 
 Chi tiết đầy đủ về triển khai — kiến trúc mạng Docker, các volume, cách xử lý sự
@@ -263,7 +263,7 @@ cố thường gặp và lưu ý dung lượng image — ở `deployment/README.
 **Ý nghĩa của con số 0 fail cần được đọc đúng.** Nó nói rằng hệ thống làm đúng
 những gì bộ kiểm thử kiểm; nó **không** nói rằng hệ thống đạt mọi chỉ tiêu. Ba
 chỉ tiêu phi chức năng hiện không đạt (NFR-A5, A6, A7) và một chỉ tiêu trượt sàn
-(NFR-P2) — bảng đối chiếu đầy đủ ở mục 6.7 và phân tích ở mục 6.9.2.
+(NFR-P2) — bảng đối chiếu đầy đủ ở mục 5.7 và phân tích ở mục 5.9.2.
 
 Báo cáo kiểm thử chi tiết theo từng nhóm: `docs/reports/07-testing-report.md`.
 
@@ -289,7 +289,7 @@ Báo cáo kiểm thử chi tiết theo từng nhóm: `docs/reports/07-testing-re
 | 10 | `GET` | `/health` | Trạng thái hệ thống và tình trạng nạp mô hình |
 
 Đặc tả đầy đủ — kiểu dữ liệu đầu vào, cấu trúc đầu ra, mã trạng thái và các
-quyết định thiết kế API — ở mục 4.3.3. Tài liệu OpenAPI do FastAPI **tự sinh**
+quyết định thiết kế API — ở mục 4.7.3. Tài liệu OpenAPI do FastAPI **tự sinh**
 tại `/docs` và `/openapi.json`, nên nó không bao giờ lệch với mã nguồn.
 
 ### F.2. Cấu hình Docker Compose
@@ -309,4 +309,4 @@ Ngoài hai volume có tên ở trên, thư mục `./storage` (ảnh và video đ
 
 Bộ ba tệp triển khai: `deployment/docker/Dockerfile.backend` (build hai giai
 đoạn), `Dockerfile.frontend` (build rồi phục vụ tĩnh) và `nginx.conf`. Phân tích
-từng tệp ở mục 5.8.
+từng tệp ở mục 4.9.

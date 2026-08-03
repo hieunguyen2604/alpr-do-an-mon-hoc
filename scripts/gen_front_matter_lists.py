@@ -41,9 +41,8 @@ CHUONG = [
     "ch2-co-so-ly-thuyet.md",
     "ch3-khao-sat-lua-chon.md",
     "ch4-phan-tich-thiet-ke.md",
-    "ch5-xay-dung-huan-luyen.md",
-    "ch6-thuc-nghiem.md",
-    "ch7-ket-luan.md",
+    "ch5-thuc-nghiem.md",
+    "ch6-ket-luan.md",
 ]
 
 
@@ -112,10 +111,12 @@ def main() -> None:
         "     Số trang do Word điền khi xuất .docx. -->"
     )
 
-    e = [ghi_chu, "", "```"] + [
-        "LỜI CAM ĐOAN", "LỜI CẢM ƠN", "MỤC LỤC", "DANH MỤC HÌNH VẼ",
-        "DANH MỤC BẢNG BIỂU", "DANH MỤC TỪ VIẾT TẮT", "TÓM TẮT ĐỒ ÁN", "ABSTRACT",
-    ] + muc_luc + ["", "TÀI LIỆU THAM KHẢO", "PHỤ LỤC", "```"]
+    # Muc E KHONG chua muc luc ASCII. Word da co truong TOC tu sinh (pandoc
+    # --toc); in them mot ban liet ke tay la quyen co HAI muc luc — loi da xay
+    # ra that o ban 231 trang. Ban ASCII chi de doi chieu, nam trong chu thich.
+    e = [ghi_chu, "",
+         "<!-- Mục lục do Word tự sinh tại đây (trường TOC). Bản đối chiếu:",
+         ] + [("     " + l) if l.strip() else "" for l in muc_luc] + ["-->"]
 
     # Quy uoc danh so cung la chi dan bien soan, khong phai noi dung quyen.
     f = [ghi_chu,
@@ -131,7 +132,7 @@ def main() -> None:
     print(f"Mục lục : {sum(1 for l in muc_luc if l.strip())} dòng")
     print(f"Hình    : {len(hinh)}")
     print(f"Bảng    : {len(bang)}")
-    thieu = [f"ch{c}" for c in "1234567"
+    thieu = [f"ch{c}" for c in "123456"
              if not any(s.startswith(c + ".") for s, _ in bang)]
     if thieu:
         print(f"⚠ Chương không có bảng nào được đánh số: {', '.join(thieu)}")
