@@ -164,14 +164,12 @@ Chúng tôi xin chân thành cảm ơn!
          Tóm tắt chương
 
      CHƯƠNG 2. CƠ SỞ LÝ THUYẾT
-         2.1. Tổng quan bài toán ALPR
+         2.1. Phạm vi và bố cục cơ sở lý thuyết
          2.2. Quy chuẩn biển số xe Việt Nam
-         2.3. Lịch sử phát triển các phương pháp
-         2.4. Phân loại các hướng tiếp cận hiện nay
-         2.5. Cơ sở lý thuyết về phát hiện đối tượng
-         2.6. Cơ sở lý thuyết về nhận dạng ký tự
-         2.7. Các công trình liên quan
-         2.8. Kết luận chương
+         2.3. Cơ sở lý thuyết về phát hiện đối tượng
+         2.4. Cơ sở lý thuyết về nhận dạng ký tự
+         2.5. Các công trình liên quan
+         2.6. Kết luận chương
 
      CHƯƠNG 3. KHẢO SÁT CÔNG NGHỆ VÀ LỰA CHỌN MÔ HÌNH
          3.1. Phương pháp khảo sát và tiêu chí lựa chọn
@@ -179,7 +177,7 @@ Chúng tôi xin chân thành cảm ơn!
          3.3. Engine nhận dạng ký tự
          3.4. Runtime suy luận trên CPU: ONNX Runtime
          3.5. Các lựa chọn công nghệ nền tảng khác
-         3.6. Khảo sát ảnh hưởng của độ phân giải và chất lượng split
+         3.6. Độ phân giải đầu vào: 640 thay vì 416
          3.7. Kết luận chương
 
      CHƯƠNG 4. THIẾT KẾ VÀ CÀI ĐẶT HỆ THỐNG
@@ -228,14 +226,12 @@ Chúng tôi xin chân thành cảm ơn!
 | Ký hiệu | Tên hình | Trang |
 |---|---|:---:|
 | Hình 1.1 | ** Ranh giới hệ thống — phần bên trong là hệ thống bàn giao, Colab/Kaggle nằm ngoài | — |
-| Hình 2.1 | * Sơ đồ pipeline ALPR điển hình (tổng hợp từ [2], [3], [20], [22], [23]; khối nét đứt là tuỳ chọn) | — |
-| Hình 2.2 | ** Sơ đồ phân loại hai trục các hướng tiếp cận ALPR và định vị lựa chọn của đồ án | — |
-| Hình 2.3 | * Kiến trúc tổng quát backbone – neck – head của YOLO11 (theo [49], [16]) | — |
-| Hình 2.4 | * Cơ chế sụp đổ của CTC trên ảnh văn bản hai dòng (theo [61]) | — |
-| Hình 4.2 | ** Kiến trúc phân tầng năm tầng và chiều phụ thuộc | — |
-| Hình 4.3 | ** Luồng xử lý của pipeline AI, các khối tô đỏ là nhánh biển hai dòng | — |
-| Hình 4.4 | ** Đường ống sáu bước xây dựng bộ dữ liệu | — |
-| Hình 4.7 | * Đường cong huấn luyện theo epoch — ba hàm mất mát và bốn chỉ số trên tập validation (nguồn: runs/final-640-v3/results.csv) | — |
+| Hình 2.1 | * Kiến trúc tổng quát backbone – neck – head của YOLO11 (theo [49], [16]) | — |
+| Hình 2.2 | * Cơ chế sụp đổ của CTC trên ảnh văn bản hai dòng (theo [61]) | — |
+| Hình 4.1 | ** Kiến trúc phân tầng năm tầng và chiều phụ thuộc | — |
+| Hình 4.2 | ** Luồng xử lý của pipeline AI, các khối tô đỏ là nhánh biển hai dòng | — |
+| Hình 4.3 | ** Đường ống sáu bước xây dựng bộ dữ liệu | — |
+| Hình 4.4 | * Đường cong huấn luyện theo epoch — ba hàm mất mát và bốn chỉ số trên tập validation (nguồn: runs/final-640-v3/results.csv) | — |
 | Hình 4.5 | ** Thuật toán chuẩn hoá chuỗi biển số theo bộ luật ràng buộc vị trí | — |
 | Hình 5.1 | ** Giao thức đo và ràng buộc phụ thuộc giữa các bước đánh giá | — |
 
@@ -256,17 +252,15 @@ Chúng tôi xin chân thành cảm ơn!
 | Bảng 2.1 | Tổng hợp các tập ký tự seri | — |
 | Bảng 2.2 | Màu nền biển số và đối tượng áp dụng [13] | — |
 | Bảng 2.3 | Kích thước và tỷ lệ khung hình của các loại biển số [11] | — |
-| Bảng 2.4 | So sánh phương pháp xử lý ảnh cổ điển và phương pháp học sâu | — |
-| Bảng 2.5 | So sánh khác biệt kiến trúc giữa các phiên bản YOLO gần đây | — |
-| Bảng 2.6 | So sánh OCR văn bản tài liệu và OCR biển số xe | — |
-| Bảng 2.7 | Các phương pháp phân biệt biển một dòng và biển hai dòng | — |
-| Bảng 2.8 | Sáu khoảng trống nghiên cứu và cách đồ án lấp | — |
+| Bảng 2.4 | So sánh khác biệt kiến trúc giữa các phiên bản YOLO gần đây | — |
+| Bảng 2.5 | So sánh OCR văn bản tài liệu và OCR biển số xe | — |
+| Bảng 2.6 | Các phương pháp phân biệt biển một dòng và biển hai dòng | — |
+| Bảng 2.7 | Sáu khoảng trống nghiên cứu và cách đồ án lấp | — |
 | Bảng 3.1 | Mức bằng chứng của từng phép so sánh trong chương | — |
-| Bảng 3.2 | So sánh các engine OCR ứng viên | — |
-| Bảng 3.3 | PP-OCRv6_medium_rec so với PP-OCRv5_mobile_rec, đo trên 200 vùng cắt biển số của đồ án | — |
-| Bảng 3.4 | So sánh ba engine OCR trên 2.801 biển số Việt Nam (567 một dòng, 2.234 hai dòng) | — |
-| Bảng 3.5 | Tổng hợp quyết định công nghệ nền tảng | — |
-| Bảng 3.6 | Tổng hợp các quyết định công nghệ và căn cứ | — |
+| Bảng 3.2 | PP-OCRv6_medium_rec so với PP-OCRv5_mobile_rec, đo trên 200 vùng cắt biển số của đồ án | — |
+| Bảng 3.3 | So sánh ba engine OCR trên 2.801 biển số Việt Nam (567 một dòng, 2.234 hai dòng) | — |
+| Bảng 3.4 | Tổng hợp quyết định công nghệ nền tảng | — |
+| Bảng 3.5 | Tổng hợp các quyết định công nghệ và căn cứ | — |
 | Bảng 4.1 | Đóng góp của từng bộ dữ liệu trước và sau khử trùng lặp | — |
 | Bảng 4.2 | Tiến triển chỉ số trên tập validation theo mốc epoch | — |
 | Bảng 4.3 | So sánh bộ nhận dạng gốc và bản tinh chỉnh trên cùng ngữ liệu | — |
@@ -281,7 +275,7 @@ Chúng tôi xin chân thành cảm ơn!
 | Bảng 5.7 | Độ trễ đầu-cuối một ảnh, đối chiếu NFR-P1 | — |
 | Bảng 5.8 | Phân rã ngân sách độ trễ theo từng bước | — |
 | Bảng 5.9 | Bỏ bước phát hiện chữ — ba ngữ liệu, hai kết luận ngược nhau | — |
-| Bảng 5.10 | Đối chiếu toàn bộ chỉ tiêu phi chức năng | — |
+| Bảng 5.10 | Đối chiếu chỉ tiêu phi chức năng, gom theo nhóm — bảng đầy đủ từng mã ở Phụ lục H.6 | — |
 | Bảng 5.11 | Tần suất từng loại lỗi | — |
 | Bảng 5.12 | Tám mối đe doạ đến tính hợp lệ của kết quả — phân tích đầy đủ ở Phụ lục L | — |
 | Bảng 5.13 | Đối chiếu với các công trình đã công bố — mọi dòng kèm bộ dữ liệu và quốc gia | — |

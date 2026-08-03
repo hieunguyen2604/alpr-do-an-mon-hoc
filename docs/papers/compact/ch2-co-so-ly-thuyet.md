@@ -2,25 +2,11 @@
 
 Chương đặt nền lý thuyết và tư liệu cho phần thiết kế. Nguyên tắc xuyên suốt: **mọi con số gắn nguồn tại chỗ, mọi cảnh báo về phạm vi áp dụng giữ nguyên** — lĩnh vực này hay công bố số trên 99% nhưng đo trên tập dữ liệu và giao thức rất khác nhau.
 
-## 2.1. Tổng quan bài toán ALPR
+## 2.1. Phạm vi và bố cục cơ sở lý thuyết
 
-### 2.1.1. Định nghĩa và các thành phần của một hệ thống ALPR
+Một hệ thống ALPR gồm bốn khối nối tiếp — **phát hiện vùng biển**, **nắn chỉnh và tiền xử lý**, **nhận dạng ký tự**, **hậu xử lý theo quy chuẩn** — và độ chính xác cuối cùng là **tích** của độ chính xác từng khối, nên một khối yếu kéo cả chuỗi xuống. Đồ án đi theo hướng **two-stage** (phát hiện rồi nhận dạng riêng) kết hợp bộ nhận dạng **segmentation-free**; căn cứ của lựa chọn đó trình bày ở Chương 3.
 
-Nhận dạng biển số xe tự động (*Automatic License Plate Recognition*, ALPR) là bài toán định vị biển số trong ảnh hoặc video và chuyển ký tự trên biển thành chuỗi văn bản, kèm độ tin cậy (*confidence*). Khác nhận dạng văn bản cảnh tổng quát, ALPR có ràng buộc cấu trúc mạnh — kích thước chuẩn hoá, bộ ký tự đóng, cú pháp theo luật: vừa là lợi thế cho hậu xử lý, vừa là bẫy — mô hình dễ học thuộc cú pháp tập huấn luyện rồi suy giảm khi định dạng đổi [19]<!-- meyer_2025_salt -->.
-
-Hai khảo sát kinh điển chuẩn hoá ALPR thành ba bước: trích xuất vùng biển, phân đoạn ký tự, nhận dạng ký tự [2]<!-- anagnostopoulos_2008_survey --> [3]<!-- du_2013_review -->; bài tổng quan mới nhất giữ cách phân rã này [20]<!-- li_2026_review -->. Ba khối tuỳ chọn: **phát hiện phương tiện** đặt trước, đã áp dụng cho xe máy Việt Nam [21]<!-- le_2023_vnmotorcycle -->; **nắn chỉnh phối cảnh** (*rectification*) — đóng góp cốt lõi của WPOD-NET [22]<!-- silva_2018_wpodnet -->; **hậu xử lý theo luật** — Laroca và cộng sự hợp nhất phân loại layout vào detector để chọn bộ luật theo khu vực [23]<!-- laroca_2021_layout -->.
-
-### 2.1.2. Ứng dụng thực tế
-
-Bốn nhóm ứng dụng khác nhau ở điều kiện vận hành: bãi đỗ, kiểm soát ra vào — điều kiện **ràng buộc** (*constrained*); thu phí không dừng; giám sát, phạt nguội — điều kiện **không ràng buộc** (*unconstrained*); camera tuần tra — khó nhất vì cả camera lẫn đối tượng chuyển động. AOLP tách ba tập AC, LE, RP theo độ khó tăng dần [24]<!-- hsu_2013_aolp -->; UFPR-ALPR đặt toàn bộ dữ liệu ở tình huống cả xe lẫn camera chuyển động [25]<!-- laroca_2018_ufpralpr -->. Riêng Việt Nam: thu phí không dừng dùng RFID làm cơ chế chính, ảnh biển số chỉ để đối soát, dự phòng [5]<!-- vetc_nd_thuphikhongdung --> — ALPR là hệ thống bổ trợ.
-
-### 2.1.3. Các bước trong pipeline ALPR điển hình
-
-![](figures/fig-ch2-01.png)
-
-**Hình 2.1.** Sơ đồ pipeline ALPR điển hình *(tổng hợp từ [2], [3], [20], [22], [23]; khối nét đứt là tuỳ chọn)*
-
-Quan hệ detection – recognition là **nhân quả một chiều, không phục hồi được**: box lệch làm ký tự bị cắt cụt vĩnh viễn; OCR sai một ký tự thì cả chuỗi sai. Vì chỉ tiêu cuối là khớp chuỗi tuyệt đối, sai số hai giai đoạn **nhân lên** — lý do mục 2.7 nhấn mạnh chỉ số end-to-end.
+Chương này chỉ giữ phần lý thuyết **ràng buộc trực tiếp một quyết định của hệ thống**: quy chuẩn biển số Việt Nam (2.2) — cơ sở của bộ luật hậu xử lý; kiến trúc YOLO11 và các chỉ số đánh giá khối phát hiện (2.3); kiến trúc CRNN/CTC cùng **điểm gãy của nó trên văn bản nhiều dòng** (2.4) — nền tảng lý thuyết của rủi ro R-04 và của đóng góp kỹ thuật lõi; và khảo sát công trình liên quan cùng sáu khoảng trống nghiên cứu (2.5). Phần bối cảnh lĩnh vực — định nghĩa và ứng dụng ALPR, lịch sử từ xử lý ảnh cổ điển tới học sâu, bảng phân loại các hướng tiếp cận, và các khái niệm nền IoU/NMS — đặt ở **Phụ lục N** để thân bài không phải mang kiến thức đại cương.
 
 ## 2.2. Quy chuẩn biển số xe Việt Nam
 
@@ -88,7 +74,7 @@ QCVN 08:2024/BCA chỉ quy định **4 tổ hợp màu**, **không có nền đ�
 
 ### 2.2.6. Kích thước vật lý và tỷ lệ khung hình
 
-Cơ sở định lượng phân biệt biển một dòng với hai dòng — then chốt với rủi ro R-04 (mục 2.6.3). Ô tô được cấp **02** biển: 01 ngắn (**2 dòng**), 01 dài (**1 dòng**); xe mô tô, xe gắn máy, rơ moóc được cấp **01** biển **2 dòng** [32] — **một ô tô mang cùng chuỗi ký tự trên hai biển hình dạng hoàn toàn khác nhau**.
+Cơ sở định lượng phân biệt biển một dòng với hai dòng — then chốt với rủi ro R-04 (mục 2.4.3). Ô tô được cấp **02** biển: 01 ngắn (**2 dòng**), 01 dài (**1 dòng**); xe mô tô, xe gắn máy, rơ moóc được cấp **01** biển **2 dòng** [32] — **một ô tô mang cùng chuỗi ký tự trên hai biển hình dạng hoàn toàn khác nhau**.
 
 **Bảng 2.3.** Kích thước và tỷ lệ khung hình của các loại biển số [11]
 
@@ -116,85 +102,25 @@ Bảy dữ kiện kéo theo bảy quyết định thiết kế: **81 mã tỉnh 
 
 Về mức đóng góp: luận điểm dự kiến ban đầu — "loại trừ 6 chữ I J O Q R W" — là **sai**, và việc sửa làm **yếu đi** đóng góp theo tiêu chí thu hẹp không gian tìm kiếm; đổi lại phần giá trị chuyển sang ràng buộc **phụ thuộc vị trí trong chuỗi**: danh sách phẳng sẽ sai hệ thống trên toàn bộ lớp biển xe máy có R ở vị trí thứ hai — lỗi mà bộ luật của đồ án ngăn được. Đóng góp là **đúng đắn về pháp lý và cấu trúc**, không phải cải thiện lớn về không gian tìm kiếm.
 
-## 2.3. Lịch sử phát triển các phương pháp
+## 2.3. Cơ sở lý thuyết về phát hiện đối tượng
 
-### 2.3.1. Giai đoạn xử lý ảnh cổ điển
-
-Trước học sâu, ALPR dùng đặc trưng thủ công: lọc cạnh dọc **Sobel**, nhị phân hoá, **hình thái học**, chiếu ngang dọc khoanh vùng ứng viên [33]<!-- springer_2012_edgemorphology --> [34]<!-- ieee_2013_edgegeometrical -->; phân đoạn ký tự bằng thành phần liên thông hoặc histogram chiếu; phân lớp bằng đối sánh mẫu, mạng nơ-ron nông hoặc **SVM**. Một công trình trên biển Việt Nam phân đoạn ký tự cho **cả biển một dòng và hai dòng**, thử trên 600 biển (300 mỗi loại), đạt 98,03% với phân đoạn *peak-to-valley* theo tham số thống kê biển Việt Nam [35]<!-- amr_2012_charsegmentation -->.
-
-Điểm yếu cố hữu là tính giòn: mỗi ngưỡng chỉnh thủ công, hiệu năng sụt nhanh khi ánh sáng không đều, biển nghiêng. Bằng chứng: một cài đặt cổ điển công khai cho biển Việt Nam (KNN + OpenCV) phát hiện chỉ đạt **49,2% biển một dòng** (182/370) và **39,3% biển hai dòng** (924/2.349); trong số đã phát hiện, đọc đúng hoàn toàn chỉ 33,5% và 31% [36]<!-- mrzaizai2k_2025_vietnameselp -->.
-
-> **Lưu ý khi đọc hai con số 33,5% và 31%.** Chúng tính **trên số biển đã phát hiện được**, không phải toàn tập kiểm thử; quy về end-to-end còn thấp hơn nhiều — ví dụ cho nguyên tắc phải đọc kỹ mẫu số trước khi so sánh (mục 2.7.1).
-
-### 2.3.2. Giai đoạn học sâu
-
-**Nhịp thứ nhất (2016 – 2020) — pipeline học sâu hai giai đoạn:** Laroca và cộng sự dùng YOLO cho từng giai đoạn, đạt **93,53% recognition rate ở 47 FPS** trên SSIG, vượt hai hệ thống thương mại đối chứng [37]<!-- laroca_2018_yolo -->; Silva và Jung giới thiệu WPOD-NET để mạng học luôn phép nắn chỉnh [22]; Xu và cộng sự công bố CCPD — bộ dữ liệu quy mô lớn đầu tiên — cùng baseline RPnet đạt **98,5% accuracy trên 61 FPS** [38]<!-- xu_2018_ccpd -->. **Nhịp thứ hai (2020 – 2026) — end-to-end, Transformer, VLM**: hợp nhất detection và recognition vào một mạng end-to-end [39]<!-- li_2019_endtoend -->; bỏ phân đoạn ký tự, đọc thẳng cả chuỗi bằng CTC [40]<!-- zherzdev_2018_lprnet --> hoặc attention 2D [41]<!-- zhang_2020_attentional -->; đưa mô hình ngôn ngữ–thị giác (*Vision-Language Model*, VLM) cùng LLM vào ALPR [42]<!-- shabaninia_2025_layoutindependent --> [43]<!-- aldahoul_2024_vehiclepaligemma --> [44]<!-- gong_2026_lpllm -->.
-
-### 2.3.3. So sánh ưu nhược điểm hai giai đoạn
-
-**Bảng 2.4.** So sánh phương pháp xử lý ảnh cổ điển và phương pháp học sâu
-
-| Tiêu chí | Xử lý ảnh cổ điển | Học sâu |
-|---|---|---|
-| Trích đặc trưng và phân lớp ký tự | Thủ công: Sobel, morphology, projection, contour; template matching, KNN, SVM, mạng nơ-ron nông | Học tự động qua các tầng tích chập; CNN, CRNN, Transformer, VLM |
-| Dữ liệu gán nhãn và chi phí phát triển | Thấp, chủ yếu hiệu chỉnh ngưỡng; rẻ ban đầu nhưng tăng nhanh khi mở rộng điều kiện | Cao, cần hàng nghìn tới hàng trăm nghìn ảnh; đắt ban đầu, ổn định khi mở rộng |
-| Chi phí tính toán khi suy luận | Rất thấp, chạy được trên phần cứng yếu | Cao hơn nhiều, thường cần tối ưu để chạy trên CPU |
-| Chịu nghiêng, mờ, thiếu sáng; khả năng giải thích | Kém, mỗi ngưỡng phải chỉnh lại theo điều kiện; bù lại quan sát được từng bước | Tốt hơn rõ rệt nếu dữ liệu đủ đa dạng; nhưng mô hình là hộp đen |
-| Bằng chứng định lượng trên biển số Việt Nam | Phát hiện 49,2% (một dòng) / 39,3% (hai dòng) [36] | Nhiều công trình báo cáo trên 90% (mục 2.7) |
-
-Học sâu là bắt buộc về hiệu năng, nhưng ràng buộc **suy luận trên CPU** khiến đồ án không thể chọn mô hình lớn nhất (Chương 3). Kỹ thuật cổ điển vẫn làm lớp dự phòng cho bài toán tách dòng: *peak-to-valley* [35] và biến đổi hình học OpenCV (mục 2.6.3).
-
-## 2.4. Phân loại các hướng tiếp cận hiện nay
-
-Hai trục độc lập thường bị trộn lẫn: **cách tổ chức pipeline** (two-stage / end-to-end) và **cách xử lý ký tự** (segmentation-based / segmentation-free); hệ thống two-stage hoàn toàn có thể dùng bộ nhận dạng segmentation-free.
-
-### 2.4.1. Two-stage và end-to-end
-
-**Two-stage** tách detection và recognition thành hai mô hình độc lập: tối ưu, thay thế, gỡ lỗi riêng được; nhược điểm là lỗi detection lan truyền không phục hồi, thời gian là tổng hai bước. Đại diện: WPOD-NET [22], pipeline YOLO nhiều giai đoạn [37], hệ thống độc lập layout [23]. **End-to-end** hợp nhất vào một mạng: Li, Wang và Shen định vị và nhận dạng trong **một lần lan truyền xuôi** [39]; RPnet đồng thời dự đoán hộp bao và chuỗi [38]. Nhược điểm: thay bộ nhận dạng phải huấn luyện lại toàn mạng.
-
-### 2.4.2. Segmentation-based và segmentation-free
-
-**Segmentation-based** tách từng ký tự rồi phân lớp riêng [37]; chất lượng phân đoạn quyết định tất cả — biển mờ hoặc ký tự sát nhau khiến bước này thất bại. **Segmentation-free** đọc thẳng cả chuỗi, bốn nhánh: **CTC** — LPRNet [40]; **attention 2D** — encoder Xception [41]; **bộ phân lớp chia sẻ trọng số** — SCR-Net trong VSNet [45]<!-- wang_2021_vsnet -->; **VLM / LLM** đọc trực tiếp [42], [44]. Về đa layout: **phân loại layout tường minh** — Laroca và cộng sự hợp nhất phát hiện biển và phân loại layout vào một mạng, đạt **96,9% end-to-end recognition rate trung bình trên 8 tập công khai từ 5 khu vực** [23]; hoặc **không phụ thuộc layout** bằng VLM kết hợp tinh chỉnh hậu-OCR [42].
-
-### 2.4.3. Sơ đồ phân loại
-
-![](figures/fig-ch2-04.png)
-
-**Hình 2.2.** Sơ đồ phân loại hai trục các hướng tiếp cận ALPR và định vị lựa chọn của đồ án
-
-Đồ án theo **two-stage** với bộ nhận dạng **segmentation-free** có sẵn — hệ quả của ràng buộc cứng: phải **thay được bộ OCR mà không huấn luyện lại toàn hệ thống**, vì quyết định engine OCR phụ thuộc thực nghiệm (mục 3.3), còn end-to-end khoá cứng lựa chọn đó. Về đa layout, chọn **phân loại layout tường minh** thay vì VLM: VLM chi phí suy luận cao hơn nhiều bậc độ lớn, không tương thích CPU (mục 2.7.1), còn quy chuẩn Việt Nam đã cho sẵn cơ sở định lượng mạnh (mục 2.2.6).
-
-## 2.5. Cơ sở lý thuyết về phát hiện đối tượng
-
-### 2.5.1. Bài toán object detection, IoU và NMS
-
-**Phát hiện đối tượng** đồng thời định vị và phân loại: mô hình trả về hộp bao $B = (x, y, w, h)$, nhãn lớp và điểm tin cậy $s \in [0, 1]$; đồ án chỉ có một lớp `license_plate`. **IoU** đo chồng lấp giữa hộp dự đoán $B_p$ và hộp thực $B_{gt}$:
-
-$$\mathrm{IoU}(B_p, B_{gt}) = \frac{|B_p \cap B_{gt}|}{|B_p \cup B_{gt}|}$$
-
-<div align="right">(2.1)</div>
-
-Dự đoán là đúng (*true positive*) khi IoU vượt ngưỡng, thường 0,5; $P_{75}$ là precision tại ngưỡng 0,75. Với biển số, **hộp bao rất dẹt** nên IoU nhạy với sai số định vị: hộp 4,7:1 lệch vài pixel chiều cao làm IoU giảm mạnh — nguyên nhân khoảng cách lớn giữa mAP@0.5 và mAP@0.5:0.95 (mục 2.5.4).
-
-**NMS** (*Non-Maximum Suppression*) khử hộp chồng lấp: giữ hộp điểm cao nhất, loại hộp có IoU với nó vượt ngưỡng, lặp lại. Ngưỡng quá thấp xoá nhầm hai biển sát nhau, quá cao để lọt hộp trùng — với ảnh giao thông Việt Nam nhiều xe máy sát nhau, tham số này hiệu chỉnh bằng thực nghiệm (Chương 5). Hướng mới **bỏ hẳn NMS**: YOLOv10 dùng *consistent dual assignments*, sinh đúng một dự đoán mỗi đối tượng khi suy luận [46]<!-- wang_2024_yolov10paper -->; YOLO26 đưa NMS-free thành mặc định [47]<!-- jocher_2025_yolo26 -->.
-
-### 2.5.2. Kiến trúc YOLO: nguyên lý one-stage và anchor-free
+### 2.3.1. Kiến trúc YOLO: nguyên lý one-stage và anchor-free
 
 **Họ two-stage** (Faster R-CNN) sinh vùng đề xuất rồi phân loại từng đề xuất — độ trễ cao; **họ one-stage** (YOLO, SSD, RetinaNet) hồi quy trực tiếp trong một lần lan truyền xuôi — thời gian thực. Ràng buộc CPU loại họ two-stage từ đầu; một nghiên cứu ALPR trên 50.000 ảnh và 10.000 video clip kết luận nhóm YOLO (v5–v10) vượt trội Faster R-CNN và SSD cả độ chính xác lẫn thời gian suy luận [48]<!-- scirep_2025_advanceddl -->.
 
 ![](figures/fig-ch2-05.png)
 
-**Hình 2.3.** Kiến trúc tổng quát backbone – neck – head của YOLO11 *(theo [49], [16])*
+**Hình 2.1.** Kiến trúc tổng quát backbone – neck – head của YOLO11 *(theo [49], [16])*
 
 Ba phần: **backbone** trích đặc trưng, kết thúc bằng SPPF gộp đa tỷ lệ; **neck** hợp nhất đặc trưng nhiều tầng; **head** sinh dự đoán — từ YOLOv8 dùng **anchor-free split head** [49]<!-- jocher_2023_yolov8 -->. Anchor-free có ý nghĩa riêng với biển số: anchor-based hồi quy theo tập hộp mẫu thiết kế theo phân bố COCO — biển số nằm ngoài phân bố đó (một dòng ≈ 4,7:1, hai dòng ≈ 1,4:1); anchor-free hồi quy **trực tiếp khoảng cách tâm đến bốn cạnh**, xử lý cả hai chế độ tỷ lệ bằng một cơ chế [16]<!-- jocher_2024_yolo11 -->.
 
-### 2.5.3. YOLO11: các cải tiến kiến trúc
+### 2.3.2. YOLO11: các cải tiến kiến trúc
 
 Bài tổng quan độc lập xác định ba thành phần chính của YOLO11: **C3k2**, **SPPF**, **C2PSA** [50]<!-- khanam_2024_yolov11overview -->; phần dưới đối chiếu trực tiếp mã nguồn Ultralytics [51]<!-- ultralytics_2026_blockpy -->. **a) C3k2 — là C2f có thể hoán đổi khối con:** `C3k2` **kế thừa trực tiếp từ `C2f`** của YOLOv8; khác biệt duy nhất là một cờ — tắt thì **giống hệt C2f**, bật thì dùng khối `C3k` tuỳ chỉnh kích thước nhân [51]. YOLO11 giảm tham số mà giữ độ chính xác vì không đổi triết lý CSP, chỉ cấu hình linh hoạt hơn. **b) C2PSA — thành phần YOLOv8 hoàn toàn không có**, khác biệt kiến trúc thực sự; đặt **ngay sau SPPF** để attention tái phân bổ trọng số theo vị trí không gian. Ultralytics khẳng định cơ chế này cải thiện phát hiện **đối tượng nhỏ** và **che khuất phức tạp** so với YOLOv8 [52]<!-- ultralytics_2025_yolo11vsyolov8 -->.
 
 > **Lưu ý về mức độ chứng minh.** Phát biểu về đối tượng nhỏ là **định tính**: Ultralytics không công bố AP_small/AP_medium/AP_large theo chuẩn COCO cho từng biến thể, nên không thể chứng minh định lượng YOLO11 hơn YOLOv8 bao nhiêu trên đối tượng nhỏ [16]. Đồ án phải **tự đo trên dữ liệu của mình**; kết quả ở Chương 5.
 
-**Bảng 2.5.** So sánh khác biệt kiến trúc giữa các phiên bản YOLO gần đây
+**Bảng 2.4.** So sánh khác biệt kiến trúc giữa các phiên bản YOLO gần đây
 
 | Phiên bản | Khối backbone | Cơ chế attention | Đầu dự đoán | NMS | Điểm mới đáng chú ý nhất |
 |---|---|---|---|:--:|---|
@@ -207,7 +133,7 @@ Bài tổng quan độc lập xác định ba thành phần chính của YOLO11:
 
 Luận cứ chọn YOLO11 trình bày đầy đủ ở mục 3.2.
 
-### 2.5.4. Các chỉ số đánh giá khối phát hiện
+### 2.3.3. Các chỉ số đánh giá khối phát hiện
 
 **a) Precision, Recall và F1.** Với $TP$ dự đoán đúng, $FP$ dự đoán sai, $FN$ đối tượng bỏ sót:
 
@@ -237,13 +163,13 @@ Khoảng cách giữa hai chỉ số với biển số thường rất lớn do 
 
 **d) Chỉ tiêu của đồ án.** Vì mục tiêu detection là cắt vùng crop đủ tốt để OCR đọc, đồ án dùng **mAP@0.5 làm chỉ tiêu chính**, **mAP@0.5:0.95 vẫn báo cáo** nhưng không đặt ngưỡng chấp nhận; giá trị ở Chương 5. **e) mIoU.** Một số công trình dùng IoU trung bình toàn tập — nhóm Học viện Kỹ thuật Quân sự báo cáo mIoU 95,01% trên biển Việt Nam [59]<!-- lqdtu_2021_vietnameselpr --> — chỉ số khác mAP, không so sánh chéo được.
 
-## 2.6. Cơ sở lý thuyết về nhận dạng ký tự
+## 2.4. Cơ sở lý thuyết về nhận dạng ký tự
 
-### 2.6.1. Bài toán OCR và đặc thù khi áp dụng cho biển số
+### 2.4.1. Bài toán OCR và đặc thù khi áp dụng cho biển số
 
 **OCR** (*Optical Character Recognition*) chuyển văn bản trong ảnh thành chuỗi, thường gồm **text detection** khoanh vùng rồi **text recognition** đọc từng vùng. Sai lầm phổ biến: lấy thẳng bảng xếp hạng OCR phổ thông làm căn cứ chọn engine cho ALPR.
 
-**Bảng 2.6.** So sánh OCR văn bản tài liệu và OCR biển số xe
+**Bảng 2.5.** So sánh OCR văn bản tài liệu và OCR biển số xe
 
 | Chiều so sánh | OCR văn bản tài liệu | OCR biển số xe |
 |---|---|---|
@@ -254,9 +180,9 @@ Khoảng cách giữa hai chỉ số với biển số thường rất lớn do 
 | Tiêu chí đánh giá | CER / WER — chấp nhận sai lẻ tẻ | **Khớp chuỗi tuyệt đối** — sai 1 ký tự là hỏng cả bản ghi |
 | Giá trị của thông tin ngôn ngữ | Cao — mô hình ngôn ngữ sửa lỗi hiệu quả | **Thấp** — không có từ vựng để dựa vào |
 
-Bốn hệ quả: **tập ký tự đóng là tài sản** — biển Việt Nam chỉ dùng A–Z, 0–9 không dấu nên ưu thế "hỗ trợ tiếng Việt" là **vô nghĩa**, từ điển đa ngôn ngữ còn tăng không gian nhầm lẫn; **ràng buộc cú pháp bù điểm yếu whitelist** qua hậu xử lý theo vị trí (Chương 4); đây là **ảnh cảnh, không phải ảnh tài liệu** — benchmark trên văn bản chỉ tham chiếu xu hướng; **bố cục hai dòng là lớp bài toán riêng** (mục 2.6.3).
+Bốn hệ quả: **tập ký tự đóng là tài sản** — biển Việt Nam chỉ dùng A–Z, 0–9 không dấu nên ưu thế "hỗ trợ tiếng Việt" là **vô nghĩa**, từ điển đa ngôn ngữ còn tăng không gian nhầm lẫn; **ràng buộc cú pháp bù điểm yếu whitelist** qua hậu xử lý theo vị trí (Chương 4); đây là **ảnh cảnh, không phải ảnh tài liệu** — benchmark trên văn bản chỉ tham chiếu xu hướng; **bố cục hai dòng là lớp bài toán riêng** (mục 2.4.3).
 
-### 2.6.2. Kiến trúc CRNN và hàm mất mát CTC
+### 2.4.2. Kiến trúc CRNN và hàm mất mát CTC
 
 **CRNN** gồm ba tầng: **tầng tích chập** trích đặc trưng và — điểm mấu chốt — downsample chiều cao **về 1**, biến bản đồ đặc trưng thành **chuỗi vector theo chiều rộng**; **tầng hồi quy** (Bi-LSTM) mô hình hoá ngữ cảnh hai chiều; **tầng phiên mã** giải mã thành chuỗi, thường bằng CTC. EasyOCR dùng đúng kiến trúc này (ResNet, Bi-LSTM, CTC) [60]<!-- jaided_2025_easyocrdeepwiki -->; PaddleOCR dùng SVTR-LCNet kết hợp GTC [17]<!-- cui_2026_ppocrv5 -->, vẫn thuộc họ CTC.
 
@@ -264,19 +190,19 @@ Bốn hệ quả: **tập ký tự đóng là tài sản** — biển Việt Nam
 
 $$p(\mathbf{l} \mid \mathbf{x}) = \sum_{\boldsymbol{\pi} \in \mathcal{B}^{-1}(\mathbf{l})} \prod_{t=1}^{T} y^{t}_{\pi_t}, \qquad \mathcal{L}_{\mathrm{CTC}} = -\log p(\mathbf{l} \mid \mathbf{x})$$
 
-<div align="right">(2.5)</div>
+<div align="right">(2.3)</div>
 
-Tổng ở (2.5) tính hiệu quả bằng quy hoạch động tiến–lùi. Ưu điểm quyết định: **không cần nhãn vị trí từng ký tự** — lý do CTC là mặc định của hầu hết engine OCR mã nguồn mở, và lý do LPRNet đạt 3 ms/biển trên GPU GTX 1080, 1,3 ms trên CPU i7-6700K mà vẫn 95% accuracy trên biển Trung Quốc [40].
+Tổng ở (2.3) tính hiệu quả bằng quy hoạch động tiến–lùi. Ưu điểm quyết định: **không cần nhãn vị trí từng ký tự** — lý do CTC là mặc định của hầu hết engine OCR mã nguồn mở, và lý do LPRNet đạt 3 ms/biển trên GPU GTX 1080, 1,3 ms trên CPU i7-6700K mà vẫn 95% accuracy trên biển Trung Quốc [40].
 
-### 2.6.3. Vì sao kiến trúc CTC gặp khó với văn bản nhiều dòng
+### 2.4.3. Vì sao kiến trúc CTC gặp khó với văn bản nhiều dòng
 
 Mục kỹ thuật quan trọng nhất của chương: nền tảng lý thuyết cho rủi ro **R-04** ("khả năng Cao, ảnh hưởng Cao") — ở Việt Nam nơi xe máy áp đảo, biển hai dòng là dạng phổ biến chứ không phải ngoại lệ.
 
-**a) Giả định alignment đơn điệu của CTC.** Ánh xạ $\mathcal{B}$ ở (2.5) hoạt động trên **chuỗi một chiều** theo trục $t$ — chính là **trục chiều rộng ảnh**: CTC giả định ngầm ký tự **tuần tự trái sang phải trên một dòng duy nhất**, đó là bản chất toán học của hàm mất mát chứ không phải tuỳ chọn cấu hình. Ảnh hai dòng vi phạm giả định: chiều cao đã downsample **về 1**, mỗi vector cột chứa **cả hai ký tự chồng nhau theo chiều dọc**, mạng cho ra chuỗi lộn xộn hoặc chỉ đọc một dòng [61]<!-- arxiv_2019_arbitraryshaped -->.
+**a) Giả định alignment đơn điệu của CTC.** Ánh xạ $\mathcal{B}$ ở (2.3) hoạt động trên **chuỗi một chiều** theo trục $t$ — chính là **trục chiều rộng ảnh**: CTC giả định ngầm ký tự **tuần tự trái sang phải trên một dòng duy nhất**, đó là bản chất toán học của hàm mất mát chứ không phải tuỳ chọn cấu hình. Ảnh hai dòng vi phạm giả định: chiều cao đã downsample **về 1**, mỗi vector cột chứa **cả hai ký tự chồng nhau theo chiều dọc**, mạng cho ra chuỗi lộn xộn hoặc chỉ đọc một dòng [61]<!-- arxiv_2019_arbitraryshaped -->.
 
 ![](figures/fig-ch2-07.png)
 
-**Hình 2.4.** Cơ chế sụp đổ của CTC trên ảnh văn bản hai dòng *(theo [61])*
+**Hình 2.2.** Cơ chế sụp đổ của CTC trên ảnh văn bản hai dòng *(theo [61])*
 
 **b) Bằng chứng cụ thể trong PaddleOCR — `rec_image_shape`.** Module recognition PP-OCRv3/v4/v5 resize mọi ảnh về **chiều cao cố định 48 pixel** (`rec_image_shape = 3 × 48 × 320`) [62]<!-- paddleocr_nd_issue14109 -->. Áp vào biển xe máy tỷ lệ 1,357: đưa thẳng crop 2 dòng thì chiều rộng sau resize chỉ còn $48 \times 1{,}357 \approx$ **65 px**, mỗi dòng **≈ 24 px** cao — **không đọc được**; sau tách dòng và ghép ngang (AR $\approx$ 5,43) chiều rộng $\approx$ **261 px**, mỗi dòng trọn **48 px** — **đọc được**. Kết luận kiến trúc: **không tồn tại cấu hình nào của module recognition PP-OCR giải được bài toán này**; phải giải ở **tầng trên** bằng module tách dòng, hoặc thay hẳn mô hình recognition — lý do mục 3.3 kết luận chọn engine OCR **không quyết định** thành bại của R-04.
 
@@ -286,7 +212,7 @@ Mục kỹ thuật quan trọng nhất của chương: nền tảng lý thuyết
 
 *Riêng kích thước ảnh đầu vào đã đủ phá huỷ hiệu năng:* trong PatrolVision, cùng mô hình chỉ đổi kích thước ảnh vào — 240×80 cho biển một dòng đạt 83%, hai dòng **chỉ 30%**; 288×200 bao phủ cả hai bố cục cho tổng thể 67% [63]<!-- arxiv_2025_patrolvision -->. *Hiệu quả của tách và ghép:* các cài đặt tham chiếu cho biển hai tầng Trung Quốc đều cắt crop thành hai phần rồi ghép ngang trước khi vào OCR [64]<!-- we0091234_nd_doubleplatesplit -->. **d) Nắn chỉnh trước khi tách:** chiếu ngang tìm điểm trũng và phân ngưỡng theo toạ độ dọc đều **vô hiệu khi biển nghiêng**; nghiên cứu cổ điển đặt hiệu chỉnh contour ngang ở tiền xử lý [35], cài đặt hiện đại nắn phối cảnh bốn điểm trước khi tách [64].
 
-**Bảng 2.7.** Các phương pháp phân biệt biển một dòng và biển hai dòng
+**Bảng 2.6.** Các phương pháp phân biệt biển một dòng và biển hai dòng
 
 | Phương án | Cơ chế | Ưu điểm và hạn chế |
 |---|---|---|
@@ -302,34 +228,34 @@ Mục kỹ thuật quan trọng nhất của chương: nền tảng lý thuyết
 
 **g) Vì sao không chọn kiến trúc thuần Transformer.** TrOCR resize ảnh thành ô vuông 384×384, chia 576 mảnh, mã hoá BEiT, giải mã RoBERTa [68]<!-- li_2021_trocr -->; bị loại vì ba lý do: huấn luyện cho văn bản **một dòng** nên với ảnh nhiều dòng **có thể sinh ảo giác** [69]<!-- roboflow_2025_trocr -->; quá lớn cho CPU — 334 đến 558 triệu tham số [68], nặng hơn recognition PP-OCRv5 mobile (5 triệu [17]) từ 67 đến 112 lần; và ép ảnh về ô vuông bất lợi cho crop biển vốn rất rộng (AR ≈ 4,73) hoặc gần vuông (AR ≈ 1,36).
 
-### 2.6.4. Chỉ số CER và độ chính xác mức chuỗi
+### 2.4.4. Chỉ số CER và độ chính xác mức chuỗi
 
 **a) CER** (*Character Error Rate*) dựa trên khoảng cách Levenshtein, với $S$ thay thế, $D$ xoá, $I$ chèn, $N$ tổng ký tự chuỗi thực; độ chính xác mức ký tự là $1 - \mathrm{CER}$:
 
 $$\mathrm{CER} = \frac{S + D + I}{N}$$
 
-<div align="right">(2.6)</div>
+<div align="right">(2.4)</div>
 
 CER **có thể vượt 1** khi chuỗi dự đoán dài hơn chuỗi thực rất nhiều — đúng tình huống CTC gặp ảnh hai dòng. **b) WER** tương tự nhưng đơn vị là từ; một công trình biển Việt Nam báo cáo WER 0,014 trên bãi đỗ xe trong nhà [70]<!-- dang_2024_crnn -->. **c) Độ chính xác mức chuỗi** (*plate-level accuracy*, *exact match*) là chỉ số nghiêm ngặt nhất:
 
 $$\mathrm{Acc}_{\text{plate}} = \frac{\#\{\text{biển số có TOÀN BỘ chuỗi ký tự khớp chính xác}\}}{\#\{\text{tổng số biển số trong tập kiểm thử}\}}$$
 
-<div align="right">(2.7)</div>
+<div align="right">(2.5)</div>
 
 Sai một ký tự vẫn tính sai hoàn toàn — phản ánh đúng giá trị sử dụng: chuỗi sai hoặc không khớp bản ghi nào, hoặc khớp nhầm sang phương tiện khác. Quan hệ CER – mức chuỗi **không tuyến tính và bất lợi**: biển 8 ký tự với xác suất đúng mỗi ký tự $p$, xác suất đúng cả chuỗi là $p^{8}$ — $p = 0{,}99$ chỉ còn $\approx 0{,}923$, $p = 0{,}95$ tụt xuống $\approx 0{,}663$ — lý do engine có CER rất tốt trên văn bản vẫn thất bại trên biển số. **d) End-to-end Recognition Rate** — tỷ lệ biển đọc đúng hoàn toàn trên **toàn bộ pipeline** — là chỉ số duy nhất phản ánh lỗi tích luỹ, chỉ tiêu quan trọng nhất của đồ án; cuộc thi ICPR 2026 về biển độ phân giải thấp dùng chỉ số này làm chính, đội vô địch đạt 82,13% [71]<!-- laroca_2026_icprlrlpr -->. Kèm theo là chỉ số vận hành: **độ trễ** p50, p95, p99 (bắt buộc kèm cấu hình phần cứng), **kích thước mô hình**, **bộ nhớ thường trú**, **số tham số**; giá trị ở Chương 5.
 
-## 2.7. Các công trình liên quan
+## 2.5. Các công trình liên quan
 
-### 2.7.1. Công trình quốc tế tiêu biểu
+### 2.5.1. Công trình quốc tế tiêu biểu
 
 
 Khảo sát lập danh mục **21 công trình quốc tế tiêu biểu** từ 2018 đến 2026, kèm phương pháp, bộ dữ liệu đánh giá và kết quả công bố của từng công trình; **bảng đầy đủ ở Phụ lục J.1**. Sáu mốc kiến trúc còn lại — số 4, 5, 12, 15, 18, 20 — **không kèm số liệu đối chứng công bố được**: Li–Wang–Shen 2019, mạng thống nhất một lần lan truyền xuôi [39]; Zhang và cộng sự 2020, attention 2D, công bố **CLPD** [41]; Nascimento và cộng sự 2024, **LCDNet** với hàm mất mát **LCOFL**, GAN có bộ phân biệt là OCR [78]<!-- nascimento_2024_lpsr -->; Meyer và cộng sự 2025, **SaLT** giảm phụ thuộc cú pháp [19]; Shabaninia và cộng sự 2025, nhận dạng **không phụ thuộc layout** trên IR-LPR, UFPR-ALPR, AOLP [42]; Gong–Liu 2026, **LP-LLM** trên Qwen3-VL với Character Slot Queries và LoRA [44].
 
-**Ba lưu ý bắt buộc khi đọc Bảng 2.8. Thứ nhất, không so sánh trực tiếp giữa các dòng** — mỗi công trình đo trên tập và định nghĩa chỉ số khác nhau; nghiêm trọng nhất là dòng 10: **tuyệt đối không rút gọn thành "Tesseract (93%) tốt hơn LPRNet (90%)"** — 93% chỉ trên dữ liệu **tổng hợp** và **sau tiền xử lý**, còn 90% trên biển **thật**. **Thứ hai, mọi con số tốc độ phải kèm phần cứng:** VSNet 149 FPS và YOLOv5-PDLPR 159,8 FPS đều **trên GPU**, 1,3 ms/biển của LPRNet là **trên CPU** — nhanh hơn con số GPU (3 ms) đúng theo bài báo gốc, thường do chi phí khởi tạo, truyền dữ liệu khi lô nhỏ; Batra và cộng sự đo 4,8 ms trên **Nvidia T4** — GPU máy chủ, không phải thiết bị biên. **Thứ ba, VLM đánh đổi tốc độ lấy tổng quát:** VehiclePaliGemma 87,6% nhưng chỉ **7 FPS trên A100-80GB** [43], chậm hơn hai bậc độ lớn so với 149 – 160 FPS của CNN chuyên dụng — lý do đồ án loại hướng này (mục 2.4.3).
+**Ba lưu ý bắt buộc khi đọc danh mục ở Phụ lục J.1. Thứ nhất, không so sánh trực tiếp giữa các dòng** — mỗi công trình đo trên tập và định nghĩa chỉ số khác nhau; nghiêm trọng nhất là dòng 10: **tuyệt đối không rút gọn thành "Tesseract (93%) tốt hơn LPRNet (90%)"** — 93% chỉ trên dữ liệu **tổng hợp** và **sau tiền xử lý**, còn 90% trên biển **thật**. **Thứ hai, mọi con số tốc độ phải kèm phần cứng:** VSNet 149 FPS và YOLOv5-PDLPR 159,8 FPS đều **trên GPU**, 1,3 ms/biển của LPRNet là **trên CPU** — nhanh hơn con số GPU (3 ms) đúng theo bài báo gốc, thường do chi phí khởi tạo, truyền dữ liệu khi lô nhỏ; Batra và cộng sự đo 4,8 ms trên **Nvidia T4** — GPU máy chủ, không phải thiết bị biên. **Thứ ba, VLM đánh đổi tốc độ lấy tổng quát:** VehiclePaliGemma 87,6% nhưng chỉ **7 FPS trên A100-80GB** [43], chậm hơn hai bậc độ lớn so với 149 – 160 FPS của CNN chuyên dụng — lý do đồ án loại hướng này (Phụ lục N.3).
 
 Quan sát tổng hợp: **các con số vượt 99% chủ yếu đạt trên tập dễ, giao thức dễ dãi** — 99,9% trên CCPD-Base nhưng 94,1% trên CCPD-Challenge [73]; giao thức xuyên tập làm trung bình tụt 82,4% → 74,5%, nặng nhất 28,1 điểm [7]; dữ liệu độ phân giải thấp thật: đội vô địch chỉ 82,13% [71]. Bài toán ALPR **chưa được giải quyết xong** như cách nó thường được mô tả.
 
-### 2.7.2. Công trình về biển số Việt Nam
+### 2.5.2. Công trình về biển số Việt Nam
 
 Nghiên cứu ALPR cho biển Việt Nam chủ yếu công bố tại hội nghị, tạp chí khu vực, **không xuất hiện trên các benchmark quốc tế lớn**, phần lớn đánh giá trên tập tự thu thập không công khai — so sánh công bằng gần như bất khả thi.
 
@@ -341,7 +267,7 @@ Con số cao nhất cho biển Việt Nam là **99,28% mức chuỗi** [59] như
 
 Khoảng tám kho mã nguồn mở về biển Việt Nam đang hoạt động, phần lớn **không công bố số liệu độ chính xác**, nhiều kho không ghi giấy phép; phía thương mại, các con số 98 – 99,9% do nhà cung cấp tự công bố trên định nghĩa "ảnh chuẩn" không thống nhất — **không dùng làm mốc so sánh học thuật**.
 
-### 2.7.3. Các bộ dữ liệu chuẩn trong lĩnh vực
+### 2.5.3. Các bộ dữ liệu chuẩn trong lĩnh vực
 
 
 Khảo sát đối chiếu **chín bộ dữ liệu chuẩn** của lĩnh vực theo quy mô, đặc điểm và **giấy phép sử dụng** — cột giấy phép quyết định bộ nào dùng được cho đồ án này; **bảng đầy đủ ở Phụ lục J.2**.
@@ -350,24 +276,24 @@ Khảo sát đối chiếu **chín bộ dữ liệu chuẩn** của lĩnh vực 
 
 Ba đặc điểm chung của dữ liệu Việt Nam: phần lớn chỉ có hộp bao một lớp — chỉ dùng cho detection; rất ít bộ phân biệt tường minh một dòng và hai dòng; **không bộ nào gán nhãn chuỗi biển số đầy đủ** — khoảng trống lớn nhất. Tin tốt: hiệu năng bão hoà quanh **4.750 ảnh thật (99,0% độ chính xác)**, và chỉ cần **300 ảnh thật** kết hợp sinh dữ liệu cùng tăng cường là tương đương 200.000 ảnh thật [92]<!-- arxiv_2018_howmanyplates -->; kho dữ liệu Việt Nam công khai vượt xa ngưỡng cho detection, nút thắt là **nhãn mức ký tự và nhãn chuỗi**. Có công cụ sinh ảnh biển Việt Nam tổng hợp **cả một dòng lẫn hai dòng** [93]<!-- nndam_2024_plategenerator -->.
 
-### 2.7.4. Khoảng trống nghiên cứu và định vị đề tài
+### 2.5.4. Khoảng trống nghiên cứu và định vị đề tài
 
-**Bảng 2.8.** Sáu khoảng trống nghiên cứu và cách đồ án lấp
+**Bảng 2.7.** Sáu khoảng trống nghiên cứu và cách đồ án lấp
 
 | # | Khoảng trống được xác định từ khảo sát | Cách đồ án lấp |
 |:--:|---|---|
-| 1 | **Chưa có nghiên cứu Việt Nam nào công bố bảng so sánh tách riêng độ chính xác biển một dòng và biển hai dòng trên cùng một hệ thống** (mục 2.7.2) | Đồ án báo cáo tách bạch hai con số này |
+| 1 | **Chưa có nghiên cứu Việt Nam nào công bố bảng so sánh tách riêng độ chính xác biển một dòng và biển hai dòng trên cùng một hệ thống** (mục 2.5.2) | Đồ án báo cáo tách bạch hai con số này |
 | 2 | **Chưa có nghiên cứu Việt Nam nào mô tả có hệ thống bộ luật hậu xử lý ràng buộc theo VỊ TRÍ trong chuỗi** — các mô tả hiện có dừng ở danh sách phẳng, phần lớn dùng nhầm con số 20 chữ cái cho toàn chuỗi (mục 2.2.4) | Thiết kế hậu xử lý **theo từng vị trí**, **đo tách bạch trước và sau hậu xử lý**; hiệu số là đóng góp định lượng |
-| 3 | **Hầu hết công trình trong nước chỉ báo cáo mAP của detection**, không báo cáo end-to-end mức chuỗi (mục 2.7.2) | Báo cáo cả hai, end-to-end là chỉ tiêu quan trọng nhất |
+| 3 | **Hầu hết công trình trong nước chỉ báo cáo mAP của detection**, không báo cáo end-to-end mức chuỗi (mục 2.5.2) | Báo cáo cả hai, end-to-end là chỉ tiêu quan trọng nhất |
 | 4 | **Không tồn tại benchmark công khai nào so sánh các engine OCR trên riêng ảnh biển số xe máy Việt Nam hai dòng** (mục 3.3) | ✅ **Đã lấp 03/08/2026** — đo ba engine trên 2.801 biển, cùng tầng bao quanh: PaddleOCR 68,87% · EasyOCR 14,28% · Tesseract 10,28% (mục 3.3.3) |
-| 5 | **Số liệu hiệu năng thường công bố không kèm phần cứng** (mục 2.7.1) | Mọi số liệu hiệu năng kèm: model CPU, số luồng, kích thước ảnh vào, backend suy luận, cỡ mẫu đo |
-| 6 | **Hầu hết kho mã nguồn mở Việt Nam không công bố số liệu và không có kiến trúc phần mềm** (mục 2.7.2) | Công bố đầy đủ giao thức đo, tập kiểm thử, toàn bộ chỉ số; bàn giao hệ thống có API, giao diện, cơ sở dữ liệu, kiểm thử, đóng gói |
+| 5 | **Số liệu hiệu năng thường công bố không kèm phần cứng** (mục 2.5.1) | Mọi số liệu hiệu năng kèm: model CPU, số luồng, kích thước ảnh vào, backend suy luận, cỡ mẫu đo |
+| 6 | **Hầu hết kho mã nguồn mở Việt Nam không công bố số liệu và không có kiến trúc phần mềm** (mục 2.5.2) | Công bố đầy đủ giao thức đo, tập kiểm thử, toàn bộ chỉ số; bàn giao hệ thống có API, giao diện, cơ sở dữ liệu, kiểm thử, đóng gói |
 
-Sáu khoảng trống đều thuộc loại **kỹ nghệ và báo cáo**, không phải thuật toán: đồ án không đặt mục tiêu vượt các con số trên 99% ở Bảng 2.8 — trong đó 99,28% của nhóm Học viện Kỹ thuật Quân sự đo trên tập riêng không công khai — và mọi số liệu hiệu năng của đồ án là **số liệu CPU**, không so trực tiếp với FPS đo trên GPU.
+Sáu khoảng trống đều thuộc loại **kỹ nghệ và báo cáo**, không phải thuật toán: đồ án không đặt mục tiêu vượt các con số trên 99% ở Phụ lục J.1 — trong đó 99,28% của nhóm Học viện Kỹ thuật Quân sự đo trên tập riêng không công khai — và mọi số liệu hiệu năng của đồ án là **số liệu CPU**, không so trực tiếp với FPS đo trên GPU.
 
 > Tuyên bố trung thực đầy đủ về mức đóng góp, cùng bốn điều đồ án **không** tuyên bố, đặt ở **mục 1.6.1 và 1.6.8** (Chương 1) — nơi chính danh để tuyên bố đóng góp.
 
-## 2.8. Kết luận chương
+## 2.6. Kết luận chương
 
 **Thứ nhất, bài toán ALPR chưa được giải quyết xong:** giao thức nghiêm ngặt hơn làm độ chính xác trung bình sụt gần 8 điểm, nặng nhất 28,1 điểm [7]; trên dữ liệu độ phân giải thấp thật, đội vô địch chỉ đạt 82,13% [71]. **Thứ hai, đồ án theo two-stage kết hợp bộ nhận dạng segmentation-free** — hệ quả của ràng buộc thay được bộ OCR mà không huấn luyện lại toàn hệ thống. **Thứ ba, khối phát hiện dùng YOLO11n:** phiên bản duy nhất vừa có số liệu tốc độ CPU chính thức, vừa có cơ chế kiến trúc (C2PSA, đầu anchor-free) phù hợp đối tượng nhỏ và tỷ lệ khung hình dẹt, vừa có bằng chứng thực nghiệm dày trên ALPR; **mAP@0.5 và mAP@0.5:0.95 là hai chỉ số khác nhau, chênh lệch giữa chúng không mang thông tin về độ khó** — đồ án dùng mAP@0.5 làm chỉ tiêu chính, báo cáo mAP@0.5:0.95 kèm theo, không đặt ngưỡng chấp nhận.
 
@@ -375,6 +301,6 @@ Sáu khoảng trống đều thuộc loại **kỹ nghệ và báo cáo**, khôn
 
 **Thứ năm, quy chuẩn biển số Việt Nam đã đặc tả đủ để cài đặt, với ba điểm đính chính.** Căn cứ hiện hành: TT 79/2024/TT-BCA sửa đổi bởi TT 13/2025 và TT 51/2025, cùng QCVN 08:2024/BCA — TT 24/2023 đã hết hiệu lực từ 01/01/2025. 81 mã tỉnh đang dùng, 8 mã không dùng. Quan trọng nhất: **tập chữ cái bị loại trừ chỉ gồm 5 chữ I, J, O, Q, W chứ không phải 6; chữ R hợp lệ ở vị trí thứ hai của seri xe máy** — hậu xử lý phải ràng buộc **theo từng vị trí trong chuỗi**, tập ký tự huấn luyện OCR đủ 36 ký tự. Ba tỷ lệ khung hình (1,357 / 2,000 / 4,727) tạo khoảng trống 2,727 đơn vị — cơ sở ngưỡng phân loại bố cục đồ án đề xuất.
 
-**Thứ sáu, sáu khoảng trống nghiên cứu đã được xác định** (Bảng 2.8), cả sáu có cách lấp cụ thể. Khoảng trống số 4 — *không tồn tại benchmark công khai nào so sánh các engine OCR trên riêng ảnh biển số Việt Nam* — **đã được lấp bằng phép đo của chính đồ án**: ba engine chạy trên 2.801 biển với **cùng một tầng bao quanh**, chỉ khác engine, cho PaddleOCR **68,87%**, EasyOCR 14,28%, Tesseract 10,28% (mục 3.3.3). Nhờ đó, PaddleOCR được giữ **vì có bằng chứng đo được trên đúng miền dữ liệu**, không còn là một baseline để ngỏ như bản khảo sát ban đầu ghi nhận. Kèm theo là tuyên bố trung thực về giới hạn: đồ án không đặt mục tiêu kết quả tốt nhất lĩnh vực, không đề xuất kiến trúc mạng mới, không giải các thách thức mở như biển độ phân giải rất thấp hay tổng quát hoá xuyên tập dữ liệu.
+**Thứ sáu, sáu khoảng trống nghiên cứu đã được xác định** (Bảng 2.7), cả sáu có cách lấp cụ thể. Khoảng trống số 4 — *không tồn tại benchmark công khai nào so sánh các engine OCR trên riêng ảnh biển số Việt Nam* — **đã được lấp bằng phép đo của chính đồ án**: ba engine chạy trên 2.801 biển với **cùng một tầng bao quanh**, chỉ khác engine, cho PaddleOCR **68,87%**, EasyOCR 14,28%, Tesseract 10,28% (mục 3.3.3). Nhờ đó, PaddleOCR được giữ **vì có bằng chứng đo được trên đúng miền dữ liệu**, không còn là một baseline để ngỏ như bản khảo sát ban đầu ghi nhận. Kèm theo là tuyên bố trung thực về giới hạn: đồ án không đặt mục tiêu kết quả tốt nhất lĩnh vực, không đề xuất kiến trúc mạng mới, không giải các thách thức mở như biển độ phân giải rất thấp hay tổng quát hoá xuyên tập dữ liệu.
 
 Ba nguyên tắc phương pháp áp dụng nguyên vẹn cho phần thực nghiệm: **mọi số liệu hiệu năng kèm cấu hình phần cứng và cỡ mẫu đo**; **báo cáo tách bạch theo bố cục biển và điều kiện ảnh**; **không so sánh chéo giữa các chỉ số khác định nghĩa hoặc khác tập dữ liệu**. Chương tiếp theo chuyển sang lựa chọn công nghệ, rồi tới thiết kế hệ thống.

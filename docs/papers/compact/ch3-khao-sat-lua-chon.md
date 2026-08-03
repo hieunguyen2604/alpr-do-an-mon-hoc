@@ -36,20 +36,20 @@ Dòng ❌ còn lại là khoản nợ thực sự, ghi nhận nhất quán ở m
 
 ## 3.2. Mô hình phát hiện: YOLO11
 
-**Các phương án đã xét.** Bảy thế hệ YOLO từ YOLOv8 trở về sau — mốc chuyển sang anchor-free, có ý nghĩa trực tiếp với bài toán biển số (mục 2.5.2): YOLOv8 [49], YOLOv9 [53], YOLOv10 [46], YOLO11 [16], YOLOv12 [54], YOLOv13 [55], YOLO26 [47]. Họ two-stage (Faster R-CNN, Mask R-CNN) loại từ đầu vì chi phí tính toán không hợp ràng buộc CPU.
+**Các phương án đã xét.** Bảy thế hệ YOLO từ YOLOv8 trở về sau — mốc chuyển sang anchor-free, có ý nghĩa trực tiếp với bài toán biển số (mục 2.3.1): YOLOv8 [49], YOLOv9 [53], YOLOv10 [46], YOLO11 [16], YOLOv12 [54], YOLOv13 [55], YOLO26 [47]. Họ two-stage (Faster R-CNN, Mask R-CNN) loại từ đầu vì chi phí tính toán không hợp ràng buộc CPU.
 
 **Tiêu chí**, theo mức chi phối: (1) có số liệu tốc độ CPU chính thức; (2) kiến trúc hợp đối tượng nhỏ và tỷ lệ khung hình dẹt; (3) mật độ bằng chứng thực nghiệm trên bài toán biển số; (4) hệ sinh thái và giấy phép.
 
 **Quá trình loại trừ.** **Chỉ các bản phát hành từ Ultralytics công bố tốc độ CPU**: YOLOv9 không công bố cột tốc độ nào, YOLOv10/YOLOv12/YOLOv13 chỉ công bố tốc độ GPU — bốn phiên bản bị loại vì **không có căn cứ để đánh giá** trên đúng chiều ràng buộc; YOLOv13 còn rủi ro kho mã không được tích hợp chính thức vào Ultralytics [55]. YOLOv8 bị loại vì YOLO11n **vượt trội cả hai chiều**: mAP@0.5:0.95 đạt 39,5 so với 37,3 và tốc độ CPU định dạng ONNX **56,1 ± 0,8 ms so với 80,4 ms**, nhanh hơn khoảng 30% [16], [52] — hai số đo cùng quy trình xuất mô hình nên so sánh được [94]<!-- ultralytics_2026_detecttask -->.
 
-**Kết luận: chọn YOLO11 biến thể n (nano)**, với năm lý do: phiên bản gần đây **duy nhất có số liệu tốc độ CPU chính thức**; khối C2PSA được khẳng định cải thiện phát hiện đối tượng nhỏ và xử lý che khuất [52], đầu anchor-free giải quyết tỷ lệ khung hình ngoài phân bố COCO (mục 2.5.2); **bằng chứng thực nghiệm dày nhất trên bài toán biển số** — ít nhất ba nghiên cứu độc lập dùng YOLO11 cho ALPR đạt mAP@0.5 từ 0,906 đến 0,995 [57], [58], [95]<!-- sutikno_2025_clahe -->; hệ sinh thái trưởng thành — tích hợp chính thức trong `ultralytics`, hơn 20 định dạng xuất [96]<!-- ultralytics_2026_export -->, benchmark tự động trên CPU [97]<!-- ultralytics_2026_benchmark -->; giấy phép AGPL-3.0 miễn phí cho nghiên cứu học thuật [98]<!-- ultralytics_2026_license -->. Một nghiên cứu so sánh trực tiếp bốn bản nano trên cùng tập biển số cũng kết luận YOLO11n tối ưu [99]<!-- sciencedirect_2026_omanplates -->, nhưng **chưa kiểm chứng được toàn văn** nên chỉ là trích dẫn phụ.
+**Kết luận: chọn YOLO11 biến thể n (nano)**, với năm lý do: phiên bản gần đây **duy nhất có số liệu tốc độ CPU chính thức**; khối C2PSA được khẳng định cải thiện phát hiện đối tượng nhỏ và xử lý che khuất [52], đầu anchor-free giải quyết tỷ lệ khung hình ngoài phân bố COCO (mục 2.3.1); **bằng chứng thực nghiệm dày nhất trên bài toán biển số** — ít nhất ba nghiên cứu độc lập dùng YOLO11 cho ALPR đạt mAP@0.5 từ 0,906 đến 0,995 [57], [58], [95]<!-- sutikno_2025_clahe -->; hệ sinh thái trưởng thành — tích hợp chính thức trong `ultralytics`, hơn 20 định dạng xuất [96]<!-- ultralytics_2026_export -->, benchmark tự động trên CPU [97]<!-- ultralytics_2026_benchmark -->; giấy phép AGPL-3.0 miễn phí cho nghiên cứu học thuật [98]<!-- ultralytics_2026_license -->. Một nghiên cứu so sánh trực tiếp bốn bản nano trên cùng tập biển số cũng kết luận YOLO11n tối ưu [99]<!-- sciencedirect_2026_omanplates -->, nhưng **chưa kiểm chứng được toàn văn** nên chỉ là trích dẫn phụ.
 
 **Chọn nano vì bài toán chỉ có một lớp:** số kênh đầu ra nhánh phân loại giảm từ 80 xuống 1, nhẹ đầu dự đoán và giảm chi phí NMS; kết quả mAP 99,3% của YOLOv8-s trên ba benchmark quốc tế ở trên 30 FPS củng cố hướng này [100]<!-- etasr_2025_optimizedyolov8 -->. Biến thể s giữ làm phương án leo thang.
 
 **Đánh đổi phải chấp nhận.**
 
 - **AGPL-3.0 kéo theo nghĩa vụ copyleft:** công bố mã nguồn tương ứng, tệp cấu hình và cả **trọng số mô hình**; điều khoản mạng khiến không né được qua API [98]. Đồ án công bố mã công khai nên chấp nhận được — thương mại hoá phải mua giấy phép; không ứng viên nào tránh được copyleft.
-- **Luận cứ cải thiện đối tượng nhỏ chỉ ở mức định tính**, vì nhà phát hành không công bố AP_small tách riêng (mục 2.5.3); đồ án phải tự đo.
+- **Luận cứ cải thiện đối tượng nhỏ chỉ ở mức định tính**, vì nhà phát hành không công bố AP_small tách riêng (mục 2.3.2); đồ án phải tự đo.
 - **Bỏ qua YOLO26 dù trội trên giấy tờ:** mAP@0.5:0.95 đạt 40,9 (hơn 1,4 điểm), tốc độ CPU 38,9 ± 0,7 ms (nhanh hơn khoảng 30%), bỏ DFL dễ xuất và lượng tử hoá [47] — nhưng phát hành 09/2025, **chưa có tiền lệ trên bài toán biển số**, nên chọn làm phương án duy nhất là rủi ro không cần thiết. Dự kiến huấn luyện YOLO26n **song song làm đối chứng**; **lượt đối chứng này cuối cùng đã không chạy được** vì toàn bộ ngân sách CPU dồn cho lượt huấn luyện `best.pt` — ghi nhận là chưa đo ở mục 5.9.2 và chuyển thành hướng phát triển.
 
 ## 3.3. Engine nhận dạng ký tự
@@ -60,21 +60,9 @@ Dòng ❌ còn lại là khoản nợ thực sự, ghi nhận nhất quán ở m
 
 **Các phương án đã xét:** tám engine — PaddleOCR, EasyOCR, Tesseract, TrOCR, docTR, MMOCR, fast-plate-ocr và RapidOCR/OnnxTR.
 
-**Bảng 3.2.** So sánh các engine OCR ứng viên
+Bảng so sánh tám tiêu chí giữa ba ứng viên hàng đầu — kiến trúc, kích thước mô hình, tốc độ CPU, giấy phép, khả năng xử lý nhiều dòng, khả năng giới hạn tập ký tự, độ khó triển khai — ở **Phụ lục M.2**.
 
-| Tiêu chí | **PaddleOCR** (PP-OCRv5 mobile) | **EasyOCR** | **Tesseract** |
-|---|---|---|---|
-| Kiến trúc | 2 giai đoạn: DB và SVTR-LCNet/CTC [17] | 2 giai đoạn: CRAFT và CRNN/CTC [60] | LSTM theo dòng [101]<!-- tesseract_2026_releasenotes --> |
-| Kích thước mô hình | **4,7 MB det + 16 MB rec ≈ 21 MB** [102]<!-- paddlepaddle_2026_textdetection -->, [103]<!-- paddlepaddle_2026_textrecognition --> | Khoảng 200 MB | Khoảng 30 MB |
-| Thời gian CPU | det 57,77 ms + rec 21,20 ms [102], [103] | Cần đo thực nghiệm | Nhanh nhất trong nhóm |
-| Giấy phép | Apache 2.0 | Apache 2.0 | Apache 2.0 |
-| Hỗ trợ nhiều dòng | Tự nhiên — mỗi dòng một hộp, **cần tự sắp xếp** | Tự nhiên — CRAFT tách vùng | Lý thuyết có, thực tế kém [104]<!-- rosebrock_2021_psm --> |
-| Giới hạn tập ký tự khi suy luận | **Không có** — phải tinh chỉnh [105]<!-- paddleocr_2022_discussion7515 --> | Có, tham số native [106]<!-- jaided_2025_easyocrdocs --> | **Tốt nhất** [107]<!-- rosebrock_2021_whitelist --> |
-| Độ khó triển khai Windows + CPU | Trung bình — framework riêng | **Dễ nhất** — chỉ cần PyTorch | Cần cài binary hệ thống |
-
-*Ghi chú bắt buộc về cột thời gian CPU: số của PaddleOCR đo trên Intel Xeon Gold 6271C, FP32, trên tập nội bộ gồm ảnh tài liệu — **không phải ảnh biển số**.*
-
-Bốn engine loại sớm nên không vào bảng: **TrOCR** — **ảo giác trên văn bản đa dòng** [69], quá nặng cho CPU (334 – 558 triệu tham số [68]), biến dạng tỷ lệ khung hình (mục 2.6.3g); **MMOCR** — chuỗi phụ thuộc bốn tầng, rủi ro cài đặt cao nhất trên Windows không GPU [108]<!-- openmmlab_2023_mmocrrepo -->; **fast-plate-ocr** — không có mô hình cho biển Việt Nam, kiến trúc khe cố định không xử lý được biển hai dòng nếu chưa huấn luyện lại [109]<!-- kandratavicius_2026_fastplateocr -->; **docTR** — tối ưu cho trang tài liệu, không cho ảnh crop nhỏ [110]<!-- mindee_2026_doctrmodels -->.
+Bốn engine loại sớm nên không vào bảng: **TrOCR** — **ảo giác trên văn bản đa dòng** [69], quá nặng cho CPU (334 – 558 triệu tham số [68]), biến dạng tỷ lệ khung hình (mục 2.4.3g); **MMOCR** — chuỗi phụ thuộc bốn tầng, rủi ro cài đặt cao nhất trên Windows không GPU [108]<!-- openmmlab_2023_mmocrrepo -->; **fast-plate-ocr** — không có mô hình cho biển Việt Nam, kiến trúc khe cố định không xử lý được biển hai dòng nếu chưa huấn luyện lại [109]<!-- kandratavicius_2026_fastplateocr -->; **docTR** — tối ưu cho trang tài liệu, không cho ảnh crop nhỏ [110]<!-- mindee_2026_doctrmodels -->.
 
 **Bằng chứng thực sự đứng vững cho PaddleOCR.** Hai số liệu thường được viện dẫn để chứng minh "PaddleOCR tốt cho biển số" đã **bị bác bỏ khi truy ngược nguồn gốc**: cả hai đến từ một bài báo dùng **EasyOCR**, không phải PaddleOCR [111]<!-- scirep_2024_yolov8ocr -->. Còn đứng vững: **nhẹ nhất nhóm khả dụng** — khoảng 21 MB so với khoảng 200 MB của EasyOCR; **thời gian CPU khả thi**, trên giấy có lộ trình nâng cấp — PP-OCRv6 Tiny nhanh hơn v5 mobile khoảng 3,9 lần trên CPU [112]<!-- paddlepaddle_2026_ppocrv6 -->, nhưng **lộ trình này về sau không lấy được** (mục 3.3.2); ràng buộc siêu nhẹ là chủ đích thiết kế xuyên suốt dòng PP-OCR [113]<!-- du_2020_ppocr -->, [114]<!-- du_2021_ppocrv2 -->; có bằng chứng tinh chỉnh trên biển số cho kết quả tốt [67] — tuy nhiên là **biển số Trung Quốc một dòng**; kiến trúc hai giai đoạn trả mỗi dòng một hộp; giấy phép Apache 2.0, không copyleft.
 
@@ -86,7 +74,7 @@ Bốn engine loại sớm nên không vào bảng: **TrOCR** — **ảo giác tr
 >
 > 1. **Tài liệu công khai không ủng hộ PaddleOCR:** hai số liệu mạnh nhất từng được viện dẫn đã bị bác bỏ, và các so sánh engine-với-engine trên ảnh biển số kiểm chứng được lại **nghiêng về EasyOCR** [115]<!-- reddy_2024_yolov8ocr -->. Đây là tình trạng **tại thời điểm chọn công nghệ**; phép đo tự chạy về sau (mục 3.3.3) nói ngược lại.
 > 2. **Lý do giữ PaddleOCR là lý do kỹ thuật và vận hành, không phải độ chính xác:** nhẹ hơn EasyOCR gần 10 lần, có lộ trình tăng tốc, có bằng chứng tinh chỉnh, mạnh trên ảnh xoay.
-> 3. **Không engine nào giải sẵn bài toán hai dòng.** Như đã chứng minh ở mục 2.6.3, chọn engine **không quyết định** thành bại của rủi ro R-04 — module tách và ghép dòng mới quyết định.
+> 3. **Không engine nào giải sẵn bài toán hai dòng.** Như đã chứng minh ở mục 2.4.3, chọn engine **không quyết định** thành bại của rủi ro R-04 — module tách và ghép dòng mới quyết định.
 >
 > Cách xử lý đúng ở thời điểm đó: giữ PaddleOCR làm baseline vì điểm 2, coi **EasyOCR là ứng viên ngang hàng, không phải phương án dự phòng hình thức** (Tesseract làm mốc dưới), và **để một benchmark tự chạy trên chính tập biển số Việt Nam quyết định** — benchmark đó **đã chạy ngày 03/08/2026**, kết quả ở mục 3.3.3.
 
@@ -100,7 +88,7 @@ Mục này chọn **bậc mô hình** bên trong họ đã chọn, dựa trên s
 
 **b) Phải tự đo:** bài báo đo trên Xeon 8350C **có OpenVINO**, trên **văn bản tài liệu** — lệch cả phần cứng lẫn miền dữ liệu. Cách đo: 200 vùng cắt biển số từ tập kiểm định (`val.txt`, không tăng cường, không mảnh vụn), chạy **chỉ nhánh nhận dạng** để cô lập biến so sánh; cùng máy, cùng ảnh, cùng thứ tự.
 
-**Bảng 3.3.** PP-OCRv6_medium_rec so với PP-OCRv5_mobile_rec, đo trên 200 vùng cắt biển số của đồ án
+**Bảng 3.2.** PP-OCRv6_medium_rec so với PP-OCRv5_mobile_rec, đo trên 200 vùng cắt biển số của đồ án
 
 | Mô hình | Đúng chuỗi | Trung vị | p95 |
 |---|---:|---:|---:|
@@ -127,7 +115,7 @@ Mục 3.3.1 kết thúc bằng một khoản nợ: giữ PaddleOCR dựa trên l
 
 *Kiểm chứng harness:* nhánh có-split của PaddleOCR đo được **63,73%**, khớp **chính xác** NFR-A5 = 0,6373 công bố từ trước bằng một đường đo hoàn toàn khác — cùng một số tới bốn chữ số.
 
-**Bảng 3.4.** So sánh ba engine OCR trên 2.801 biển số Việt Nam (567 một dòng, 2.234 hai dòng)
+**Bảng 3.3.** So sánh ba engine OCR trên 2.801 biển số Việt Nam (567 một dòng, 2.234 hai dòng)
 
 | Engine | Nhánh | Toàn bộ | 1 dòng | 2 dòng | CER | Rỗng | p50 |
 |---|---|---:|---:|---:|---:|---:|---:|
@@ -177,7 +165,7 @@ Ba kết luận bổ sung từ cùng nguồn: **OpenVINO không phải luôn nha
 
 Phần lớn quyết định còn lại là **ràng buộc của đề bài**; ghi lại kèm lý do và đánh đổi để Chương 4 tham chiếu.
 
-**Bảng 3.5.** Tổng hợp quyết định công nghệ nền tảng
+**Bảng 3.4.** Tổng hợp quyết định công nghệ nền tảng
 
 | # | Hạng mục | Lựa chọn (phương án thay thế) | Lý do chính | Đánh đổi phải chấp nhận |
 |:--:|---|---|---|---|
@@ -190,45 +178,16 @@ Phần lớn quyết định còn lại là **ràng buộc của đề bài**; g
 
 ---
 
-## 3.6. Khảo sát ảnh hưởng của độ phân giải và chất lượng split
+## 3.6. Độ phân giải đầu vào: 640 thay vì 416
 
-Đồ án có hai mô hình đã huấn luyện: `baseline-416-v1.pt` và `best.pt`. So sánh chúng là tự nhiên nhưng **phải thận trọng về phương pháp luận** (⚠ dưới bảng).
+Đồ án có sẵn hai mô hình để đối chiếu — `baseline-416-v1.pt` và `best.pt` — nhưng **phép so sánh giữa chúng không quy kết được nguyên nhân**: giữa hai lượt huấn luyện có **ba biến thay đổi đồng thời và ngược chiều nhau** (độ phân giải 416 → 640, bộ dữ liệu v1 → v3 đã khử rò rỉ, số epoch), nên chênh lệch chỉ số **không gán được cho riêng biến nào**. Điều này phải nói rõ vì bản nháp trước từng trình bày `best.pt` như mô hình "tệ hơn baseline", trong khi ở tầng phát hiện nó **vượt mọi ngưỡng NFR** (mục 5.4.1).
 
-<!-- {{T3.6}} so sanh baseline 416/v1 voi mo hinh chinh thuc 640/v3 -->
+Lựa chọn **640** vì vậy đứng trên căn cứ khác: đó là độ phân giải mà chỉ tiêu NFR-A1/A2 đặt ra và là độ phân giải mọi số liệu tốc độ CPU chính thức của Ultralytics được đo. Muốn quy kết nguyên nhân cần một ma trận thí nghiệm cô lập từng biến (E1 – E3), ước tính **≈ 33 giờ CPU** — vượt ngân sách còn lại, ghi nhận là **chưa thực hiện** ở mục 5.9.2. Bảng đối chiếu hai mô hình và đặc tả ma trận E1 – E3 ở **Phụ lục M.3**.
 
-Bảng đối chiếu đầy đủ mười tám dòng chỉ số giữa hai mô hình ở **Phụ lục M.1**.
-
-> ⚠ Ba biến thay đổi đồng thời (imgsz, bộ dữ liệu + cách chia, số epoch) và chúng tác động **ngược chiều** nhau — không được quy kết nguyên nhân cho bất kỳ biến nào (xem 3.6.1). Dòng độ trễ E2E dùng con số **client-side đã xác minh** cho **cả hai** mô hình (763,75 ms và 731,15 ms, máy rảnh, qua HTTP); con số 5.857,19 ms từng ghi cho baseline ở báo cáo Phase 7 đã bị **bác bỏ** vì nhiễm tranh chấp CPU và đo sai checkpoint (mục 5.6.1). Đo cùng phương pháp trên máy rảnh, hai mô hình cho độ trễ gần như y hệt.
-
-### 3.6.1. Vì sao so sánh này không quy kết được nguyên nhân
-
-**So sánh này có ít nhất ba biến cùng thay đổi**, và chúng tác động **ngược chiều nhau**:
-
-| Biến thay đổi | Baseline | Chính thức | Hướng ảnh hưởng dự kiến |
-|---|---|---|---|
-| Độ phân giải đầu vào | 416 | 640 | Tăng độ phân giải → dự kiến **cải thiện**, nhất là đối tượng nhỏ |
-| Bộ dữ liệu và cách chia | v1, có rò rỉ | v3, ngưỡng gộp chặt hơn | Khử rò rỉ → dự kiến **làm giảm** chỉ số, vì chỉ số cũ bị thổi phồng |
-| Số epoch | 40 | 20 | Ít epoch hơn → dự kiến **làm giảm**, nếu chưa hội tụ |
-
-Phát biểu duy nhất được phép là mô tả: *"cấu hình A cho X, cấu hình B cho Y, ba biến đổi đồng thời nên không tách được đóng góp từng biến."*
-
-**Kết quả thực tế: `best.pt` cho mAP@0.5:0.95 = 0,7834, thấp hơn baseline 0,8597 đúng 7,63 điểm** (mAP@0.5 thấp hơn 1,04 điểm) — và đây là kết quả *có giá trị*, không phải thụt lùi: baseline đánh giá trên split v1 **có rò rỉ** (619 cặp gần trùng train↔test ở ngưỡng 10) nên mô hình *ghi nhớ* thay vì *tổng quát hoá*, con số 0,8597 **bị thổi phồng**; `best.pt` đánh giá trên split v3 đã khử trùng lặp (0 cặp) nên 0,7834 **trung thực hơn**. Nghịch lý cốt lõi khi bảo vệ: **một con số thấp hơn nhưng đo đúng có giá trị hơn một con số cao hơn đo trên tập bị rò rỉ.** Không được quy toàn bộ 7,63 điểm cho khử rò rỉ (vì `imgsz` và số epoch cũng đổi), và không được trình bày `best.pt` như mô hình "tệ hơn baseline": ở tầng phát hiện nó vẫn **vượt mọi ngưỡng NFR** (mục 5.4.1).
-
-### 3.6.2. Thí nghiệm cô lập biến — đề xuất, chưa thực hiện
-
-Muốn quy kết nguyên nhân cho từng biến, cần một ma trận thí nghiệm cô lập:
-
-| Thí nghiệm | `imgsz` | Bộ dữ liệu | Mục đích | Chi phí ước tính (CPU) | Trạng thái |
-|:---:|:---:|:---:|---|---:|:---:|
-| E1 | 416 | v3 | Cô lập ảnh hưởng của **độ phân giải** (so với `best.pt`) | ≈ 5 giờ | ⬜ chưa chạy |
-| E2 | 640 | v1 | Cô lập ảnh hưởng của **chất lượng bộ dữ liệu** | ≈ 4 giờ | ⬜ chưa chạy |
-| E3 | 640 | v3, 40 epoch | Cô lập ảnh hưởng của **số epoch** | ≈ 24 giờ | ⬜ chưa chạy |
-
-Ba thí nghiệm **không được thực hiện** vì tổng khoảng 33 giờ CPU vượt ngân sách còn lại; ghi nhận kèm chi phí ước tính trung thực hơn là im lặng, đồng thời là hướng phát triển cho Chương 6.
-
+---
 ## 3.7. Kết luận chương
 
-**Bảng 3.6.** Tổng hợp các quyết định công nghệ và căn cứ
+**Bảng 3.5.** Tổng hợp các quyết định công nghệ và căn cứ
 
 | Hạng mục | Quyết định | Căn cứ quyết định | Mức bằng chứng | Đánh đổi đã chấp nhận |
 |---|---|---|:---:|---|
@@ -241,7 +200,7 @@ Ba thí nghiệm **không được thực hiện** vì tổng khoảng 33 giờ 
 
 **Ba điều rút ra từ chương này.**
 
-*Thứ nhất, ràng buộc phần cứng quyết định nhiều hơn chất lượng mô hình.* Ba trong sáu quyết định ở Bảng 3.6 — YOLO11n thay vì YOLO26n, v5 mobile thay vì v6 Medium, ONNX Runtime thay vì PyTorch — đều xoay quanh ràng buộc CPU; ở triển khai có GPU, ít nhất hai trong ba phải xét lại. Đây là ranh giới áp dụng của toàn bộ chương.
+*Thứ nhất, ràng buộc phần cứng quyết định nhiều hơn chất lượng mô hình.* Ba trong sáu quyết định ở Bảng 3.5 — YOLO11n thay vì YOLO26n, v5 mobile thay vì v6 Medium, ONNX Runtime thay vì PyTorch — đều xoay quanh ràng buộc CPU; ở triển khai có GPU, ít nhất hai trong ba phải xét lại. Đây là ranh giới áp dụng của toàn bộ chương.
 
 *Thứ hai, khoản nợ bằng chứng lớn nhất đã được trả, khoản còn lại thì chưa.* Lựa chọn họ engine OCR từng mang dấu ❌ suốt phần lớn thời gian làm đồ án — được nói *"chọn PaddleOCR vì nhẹ"* nhưng **không** được nói *"PaddleOCR chính xác hơn"*. Benchmark ba engine ngày 03/08/2026 đã lật dấu đó sang ✅ và cho phép phát biểu mạnh hơn, kèm đúng một giới hạn: phép đo chạy trên vùng biển đã cắt sẵn. Lựa chọn **runtime** thì vẫn mang dấu ❌ và vẫn là nợ kỹ thuật ghi ở mục 5.9.2.
 
