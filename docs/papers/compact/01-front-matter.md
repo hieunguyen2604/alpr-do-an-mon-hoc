@@ -58,7 +58,15 @@
 
 ---
 
-## B. TÓM TẮT ĐỒ ÁN
+## B. MỤC LỤC
+
+```{=openxml}
+<w:p><w:r><w:fldChar w:fldCharType="begin" w:dirty="true"/></w:r><w:r><w:instrText xml:space="preserve"> TOC \o "1-2" \h \z \u </w:instrText></w:r><w:r><w:fldChar w:fldCharType="separate"/></w:r><w:r><w:t>Mở tệp trong Word rồi bấm Ctrl+A, F9 để cập nhật mục lục.</w:t></w:r><w:r><w:fldChar w:fldCharType="end"/></w:r></w:p>
+```
+
+---
+
+## C. TÓM TẮT ĐỒ ÁN
 
 <div align="center">
 
