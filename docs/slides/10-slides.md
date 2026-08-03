@@ -170,7 +170,7 @@ Chỉ chạy **sau khi đọc hỏng**, chỉ nhận chuỗi **hợp lệ**
 ## Huấn luyện
 
 **YOLO11n**, `imgsz 640`, 20 epoch, seed cố định — huấn luyện **và** suy luận
-đều trên CPU, hết 10,1 giờ
+đều trên CPU, hết **10,05 giờ** *(30,2 phút/epoch)*
 
 ![](figures/fig-training-curve.png)
 
@@ -235,17 +235,17 @@ Chênh lệch 2 dòng còn **25,4 điểm**, cùng bậc mốc quốc tế **48,
 | Cứu dòng trên | 209 biển |
 | Nắn hình chống méo | 34 biển |
 
-## Hiệu năng trên CPU — Phân rã độ trễ 406 ms
+## Hiệu năng trên CPU — phân rã suy luận thuần
 
-Nút thắt nằm ở tầng đọc chữ (73,9%) — **i5-14600K · 20 luồng CPU**
+Nút thắt là OCR (**64,3%**) nhưng **không áp đảo** — detector chiếm 34,0%, nên tăng tốc nó vẫn đáng
 
-| Bước trong pipeline | Độ trễ p50 | Tỉ trọng |
-|---|---:|---:|
-| 1. Phát hiện *(YOLO11n)* | 35 ms | 8.6% |
-| 2. Tách dòng *(split-then-hstack)* | 15 ms | 3.7% |
-| 3. Nhận dạng chữ *(PaddleOCR)* | **300 ms** | **73.9%** |
-| 4. Hậu xử lý & API overhead | 56 ms | 13.8% |
-| **TỔNG CHỜ CHO 1 ẢNH (p50)** | **406 ms** | **100%** |
+| Bước trong pipeline | Ước lượng Phase 0 | **Đo thật** | % tổng |
+|---|---:|---:|---:|
+| Giải mã ảnh + tiền xử lý | 50 ms | **2,83 ms** | 1,7% |
+| Phát hiện *(YOLO11n @ 640, CPU)* | 150 ms | **57,27 ms** | **34,0%** |
+| Nhận dạng chữ *(PaddleOCR, mỗi biển)* | 120 ms | **108,28 ms** | **64,3%** |
+| Hậu xử lý regex + kiểm tra hợp lệ | 5 ms | **0,03 ms** | 0,0% |
+| **Tổng suy luận thuần cho một biển** | **405 ms** | **168,41 ms** | **100%** |
 
 ## Phân bố độ trễ — đuôi mới là chỗ tốn
 
@@ -354,13 +354,16 @@ Mô hình nhận dạng ký tự siêu nhẹ chuyên biệt cho văn bản *(Pad
 
 ## Backup 3 — Phân tích lỗi (Error Analysis)
 
-Top 3 nguyên nhân dẫn đến 24,88% chuỗi đọc chưa đúng
+Sáu loại lỗi **loại trừ lẫn nhau**, mỗi ca sai gán đúng một loại — **697 ca trên 2.801 biển (24,88%)**
 
-| Nhóm lỗi | Tỉ trọng | Ví dụ & Nguyên nhân gốc |
-|---|---:|---|
-| **Cặp ký tự tương đồng** | **46,2%** | Nhầm `8 ↔ B`, `0 ↔ D`, `5 ↔ S` do độ phân giải ảnh crop thấp |
-| **Biển 2 dòng bị mất nét dòng trên** | **31,5%** | Vùng crop dòng 1 mờ/bị đinh ốc che ⇒ PaddleOCR bỏ sót seri |
-| **Biển hiếm & Biển màu đặc thù** | **22,3%** | Biển vàng/xanh/ngoại giao chiếm <2,3% tập nhãn ⇒ thiếu mẫu |
+| Mã | Loại lỗi | Số ca | % tổng ca sai | Một dòng | Hai dòng |
+|:--:|---|---:|---:|---:|---:|
+| E1 | Bỏ sót biển | 335 | — | — | — |
+| E2 | Phát hiện nhầm | *(chưa đo)* | — | — | — |
+| E3 | **Nhầm ký tự** | **445** | **63,85%** | 17 | **428** |
+| E4 | Thiếu ký tự | 73 | 10,47% | 0 | 73 |
+| E5 | Thừa ký tự | 18 | 2,58% | 5 | 13 |
+| E6 | Sai thứ tự | 0 | 0,00% | 0 | 0 |
 
 ## Backup 4 — Bóc tách đóng góp (Ablation)
 
@@ -384,6 +387,7 @@ Trích `runs/final-640-v3/args.yaml` và `results.csv` — bản ghi *đã thự
 | **`batch` / `seed`** | **8** / **42** | `cls_loss` | **0,833 → 0,313** |
 | **`optimizer` / `lr0`** | **AdamW** / **0,001** | `dfl_loss` | **1,154 → 0,987** |
 | **`device` / tham số mô hình** | **cpu** / **2.590.035** | **mAP@0,5** | **0,9684 → 0,9830** |
+| **Thời gian huấn luyện** | **10,05 giờ** *(30,2 phút/epoch)* | | |
 
 ## Backup 6 — Tài liệu tham khảo chính
 
