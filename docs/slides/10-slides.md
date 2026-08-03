@@ -376,14 +376,14 @@ Top 3 nguyên nhân dẫn đến 24,88% chuỗi đọc chưa đúng
 
 ## Backup 5 — Siêu tham số và huấn luyện
 
-Cấu hình huấn luyện mô hình YOLO11n trên CPU *(seed cố định, PyTorch)*
+Trích `runs/final-640-v3/args.yaml` và `results.csv` — bản ghi *đã thực thi*, không phải dự định.
 
-| Siêu tham số | Giá trị | Hàm mất mát (Loss) | Kết quả hội tụ |
+| Siêu tham số | Giá trị | Hàm mất mát | Epoch 1 → 20 |
 |---|---:|---|---:|
-| **Image Size (`imgsz`)** | **640 px** | `box_loss` *(Bounding Box)* | **0,642 → 0,315** |
-| **Epochs / Batch Size** | **20 / 16** | `cls_loss` *(Classification)* | **0,812 → 0,204** |
-| **Learning Rate (`lr0`)** | **0,01** | `dfl_loss` *(Distribution Focal)* | **0,911 → 0,412** |
-| **Optimizer & Momentum** | **SGD · 0.937** | **Tổng thời gian train** | **10,1 giờ (CPU)** |
+| **`imgsz` / `epochs`** | **640 px** / **20** | `box_loss` | **1,252 → 0,809** |
+| **`batch` / `seed`** | **8** / **42** | `cls_loss` | **0,833 → 0,313** |
+| **`optimizer` / `lr0`** | **AdamW** / **0,001** | `dfl_loss` | **1,154 → 0,987** |
+| **`device` / tham số mô hình** | **cpu** / **2.590.035** | **mAP@0,5** | **0,9684 → 0,9830** |
 
 ## Backup 6 — Tài liệu tham khảo chính
 
