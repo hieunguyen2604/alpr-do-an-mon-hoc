@@ -117,8 +117,26 @@ def main() -> None:
     # Muc E KHONG chua muc luc ASCII. Word da co truong TOC tu sinh (pandoc
     # --toc); in them mot ban liet ke tay la quyen co HAI muc luc — loi da xay
     # ra that o ban 231 trang. Ban ASCII chi de doi chieu, nam trong chu thich.
+    # Truong TOC cua Word, chen THANG vao day duoi dang OpenXML tho.
+    #
+    # Truoc day muc luc do `pandoc --toc` sinh, va pandoc luon dat no o DAU tai
+    # lieu — tuc la TRUOC CA TRANG BIA. Ban 171 trang co hai trang muc luc dung
+    # truoc bia, con muc "E. MUC LUC" thi in ra mot muc rong. Chen truong TOC
+    # tai cho nhu duoi day dat muc luc dung vi tri cua no va bo luon `--toc`.
+    #
+    # `\o "1-2"` = lay tieu de cap 1 va 2; `\h` = moi dong la sieu lien ket;
+    # `\z` = an so trang o ban Web Layout; `\u` = dung muc luc theo outline.
+    # scripts/export_thesis_pdf.ps1 goi Fields.Update() nen so trang duoc dien
+    # luc xuat PDF; mo file .docx truc tiep thi bam Ctrl+A roi F9.
     e = [ghi_chu, "",
-         "<!-- Mục lục do Word tự sinh tại đây (trường TOC). Bản đối chiếu:",
+         "```{=openxml}",
+         "<w:p><w:r><w:fldChar w:fldCharType=\"begin\" w:dirty=\"true\"/></w:r>"
+         "<w:r><w:instrText xml:space=\"preserve\"> TOC \\o \"1-2\" \\h \\z \\u </w:instrText></w:r>"
+         "<w:r><w:fldChar w:fldCharType=\"separate\"/></w:r>"
+         "<w:r><w:t>Mở tệp trong Word rồi bấm Ctrl+A, F9 để cập nhật mục lục.</w:t></w:r>"
+         "<w:r><w:fldChar w:fldCharType=\"end\"/></w:r></w:p>",
+         "```", "",
+         "<!-- Bản đối chiếu (không in ra):",
          ] + [("     " + l) if l.strip() else "" for l in muc_luc] + ["-->"]
 
     # Quy uoc danh so cung la chi dan bien soan, khong phai noi dung quyen.

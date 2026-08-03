@@ -151,7 +151,11 @@ Chúng tôi xin chân thành cảm ơn!
      chương. Không sửa tay — chạy lại script sau mỗi lần đổi cấu trúc.
      Số trang do Word điền khi xuất .docx. -->
 
-<!-- Mục lục do Word tự sinh tại đây (trường TOC). Bản đối chiếu:
+```{=openxml}
+<w:p><w:r><w:fldChar w:fldCharType="begin" w:dirty="true"/></w:r><w:r><w:instrText xml:space="preserve"> TOC \o "1-2" \h \z \u </w:instrText></w:r><w:r><w:fldChar w:fldCharType="separate"/></w:r><w:r><w:t>Mở tệp trong Word rồi bấm Ctrl+A, F9 để cập nhật mục lục.</w:t></w:r><w:r><w:fldChar w:fldCharType="end"/></w:r></w:p>
+```
+
+<!-- Bản đối chiếu (không in ra):
 
      CHƯƠNG 1. GIỚI THIỆU
          1.1. Đặt vấn đề
@@ -287,22 +291,18 @@ Chúng tôi xin chân thành cảm ơn!
 
 ## H. DANH MỤC TỪ VIẾT TẮT
 
-> Tổng hợp từ toàn bộ tài liệu Phase 0 và Phase 1. Sắp xếp theo bảng chữ cái A–Z. Mỗi mục gồm ba cột: **từ viết tắt · dạng đầy đủ tiếng Anh · nghĩa tiếng Việt**.
->
-> **Quy ước dùng thuật ngữ trong quyển đồ án:** giữ nguyên thuật ngữ tiếng Anh khi đó là cách dùng thông thường trong chuyên ngành (*bounding box*, *pipeline*, *dataset*, *confidence*, *mAP*, *backbone*, *checkpoint*…). Ở **lần xuất hiện đầu tiên** trong thân bài, viết dạng đầy đủ kèm từ viết tắt trong ngoặc, ví dụ: *"nhận dạng biển số xe tự động (Automatic License Plate Recognition — ALPR)"*; các lần sau chỉ dùng từ viết tắt.
->
-> Một số mục là **từ viết tắt tiếng Việt** (CSDL, QCVN, TT) — với các mục này, cột giữa ghi thuật ngữ tiếng Anh tương đương để đối chiếu.
+> Sắp xếp theo bảng chữ cái. Quyển giữ nguyên thuật ngữ tiếng Anh khi đó là cách
+> dùng thông dụng trong ngành và việc dịch sẽ gây mơ hồ. Một số mục là **từ viết**
+> **tắt tiếng Việt** (CSDL, QCVN, TT); với các mục này cột giữa ghi thuật ngữ gốc.
 
 | Từ viết tắt | Dạng đầy đủ (tiếng Anh) | Nghĩa tiếng Việt |
 |---|---|---|
 | **AGPL** | Affero General Public License | Giấy phép công cộng Affero — giấy phép mã nguồn mở của Ultralytics YOLO |
 | **ALPR** | Automatic License Plate Recognition | Nhận dạng biển số xe tự động |
-| **ANPR** | Automatic Number Plate Recognition | Nhận dạng biển số xe tự động — tên gọi khác của ALPR, phổ biến ở châu Âu |
 | **API** | Application Programming Interface | Giao diện lập trình ứng dụng |
 | **AOLP** | Application-Oriented License Plate (dataset) | Bộ dữ liệu biển số theo hướng ứng dụng (Đài Loan) |
 | **AR** | Aspect Ratio | Tỷ lệ khung hình — tỷ số chiều rộng trên chiều cao |
 | **AVX-512** | Advanced Vector Extensions 512-bit | Tập lệnh vector 512 bit của bộ xử lý Intel |
-| **BiLSTM** | Bidirectional Long Short-Term Memory | Mạng LSTM hai chiều |
 | **BOM** | Byte Order Mark | Dấu thứ tự byte — đặt ở đầu tệp UTF-8 để tránh lỗi hiển thị tiếng Việt |
 | **CCPD** | Chinese City Parking Dataset | Bộ dữ liệu biển số bãi đỗ xe Trung Quốc |
 | **CER** | Character Error Rate | Tỉ lệ lỗi ở mức ký tự |
@@ -313,22 +313,14 @@ Chúng tôi xin chân thành cảm ơn!
 | **CPU** | Central Processing Unit | Bộ xử lý trung tâm |
 | **CRAFT** | Character Region Awareness for Text Detection | Mô hình phát hiện văn bản dựa trên vùng ký tự — dùng trong EasyOCR |
 | **CRNN** | Convolutional Recurrent Neural Network | Mạng tích chập kết hợp hồi quy — kiến trúc nền của nhiều bộ nhận dạng ký tự |
-| **CRUD** | Create, Read, Update, Delete | Tạo, đọc, cập nhật, xoá — bốn thao tác cơ bản trên dữ liệu |
 | **CSDL** | Database | Cơ sở dữ liệu *(viết tắt tiếng Việt)* |
 | **CSV** | Comma-Separated Values | Định dạng tệp văn bản phân tách bằng dấu phẩy |
 | **CTC** | Connectionist Temporal Classification | Hàm mất mát cho bài toán chuỗi không cần căn chỉnh trước giữa đầu vào và nhãn |
 | **CUDA** | Compute Unified Device Architecture | Nền tảng tính toán song song trên GPU của NVIDIA |
-| **DBNet** | Differentiable Binarization Network | Mạng phát hiện văn bản dùng nhị phân hoá khả vi — dùng trong PP-OCR |
-| **DI** | Dependency Injection | Tiêm phụ thuộc — kỹ thuật cấp phát phụ thuộc từ bên ngoài |
-| **DTO** | Data Transfer Object | Đối tượng truyền dữ liệu giữa các tầng |
 | **E2E** | End-to-End | Toàn trình — từ đầu vào đến kết quả cuối cùng |
-| **ER** | Entity–Relationship | Thực thể – liên kết, mô hình thiết kế cơ sở dữ liệu |
 | **F1** | F1-score | Trung bình điều hoà của precision và recall |
-| **FP16 / FP32** | 16-bit / 32-bit Floating Point | Số thực dấu phẩy động 16 bit / 32 bit |
-| **FPN** | Feature Pyramid Network | Mạng kim tự tháp đặc trưng |
 | **FPS** | Frames Per Second | Số khung hình xử lý được trong một giây |
 | **FR** | Functional Requirement | Yêu cầu chức năng |
-| **GFLOPs** | Giga Floating Point Operations | Tỉ phép tính dấu phẩy động — thước đo khối lượng tính toán của mô hình |
 | **GPU** | Graphics Processing Unit | Bộ xử lý đồ hoạ |
 | **HTTP** | HyperText Transfer Protocol | Giao thức truyền siêu văn bản |
 | **INT8** | 8-bit Integer | Số nguyên 8 bit — định dạng lượng tử hoá mô hình |
@@ -349,11 +341,8 @@ Chúng tôi xin chân thành cảm ơn!
 | **QCVN** | National Technical Regulation | Quy chuẩn kỹ thuật quốc gia *(viết tắt tiếng Việt)* |
 | **REST** | Representational State Transfer | Kiến trúc dịch vụ web dựa trên tài nguyên |
 | **RSS** | Resident Set Size | Dung lượng bộ nhớ thường trú của tiến trình |
-| **SOTA** | State of the Art | Kết quả tốt nhất được công bố tại thời điểm hiện tại |
 | **SPA** | Single Page Application | Ứng dụng web một trang |
 | **SPPF** | Spatial Pyramid Pooling – Fast | Khối gộp kim tự tháp không gian phiên bản nhanh, dùng trong YOLO |
-| **SQL** | Structured Query Language | Ngôn ngữ truy vấn có cấu trúc |
-| **SRS** | Software Requirements Specification | Đặc tả yêu cầu phần mềm |
 | **SVTR** | Scene Text Recognition with a Single Visual Model | Mô hình nhận dạng văn bản cảnh dùng một mạng thị giác duy nhất |
 | **TT** | Circular | Thông tư — văn bản quy phạm pháp luật *(viết tắt tiếng Việt)* |
 | **UUID** | Universally Unique Identifier | Định danh duy nhất toàn cục — dùng đặt tên tệp để chống path traversal |
@@ -363,8 +352,6 @@ Chúng tôi xin chân thành cảm ơn!
 | **WER** | Word Error Rate | Tỉ lệ lỗi ở mức từ |
 | **WPOD** | Warped Planar Object Detection (Network) | Mạng phát hiện đối tượng phẳng bị biến dạng, dùng để nắn thẳng biển số |
 | **YOLO** | You Only Look Once | Họ mô hình phát hiện đối tượng một giai đoạn |
-
----
 
 ## I. TÓM TẮT ĐỒ ÁN
 

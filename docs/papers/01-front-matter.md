@@ -151,7 +151,11 @@ Chúng tôi xin chân thành cảm ơn!
      chương. Không sửa tay — chạy lại script sau mỗi lần đổi cấu trúc.
      Số trang do Word điền khi xuất .docx. -->
 
-<!-- Mục lục do Word tự sinh tại đây (trường TOC). Bản đối chiếu:
+```{=openxml}
+<w:p><w:r><w:fldChar w:fldCharType="begin" w:dirty="true"/></w:r><w:r><w:instrText xml:space="preserve"> TOC \o "1-2" \h \z \u </w:instrText></w:r><w:r><w:fldChar w:fldCharType="separate"/></w:r><w:r><w:t>Mở tệp trong Word rồi bấm Ctrl+A, F9 để cập nhật mục lục.</w:t></w:r><w:r><w:fldChar w:fldCharType="end"/></w:r></w:p>
+```
+
+<!-- Bản đối chiếu (không in ra):
 
      CHƯƠNG 1. GIỚI THIỆU
          1.1. Đặt vấn đề
@@ -237,9 +241,9 @@ Chúng tôi xin chân thành cảm ơn!
 | Hình 4.2 | ** Kiến trúc phân tầng năm tầng và chiều phụ thuộc | — |
 | Hình 4.3 | ** Luồng xử lý của pipeline AI, các khối tô đỏ là nhánh biển hai dòng | — |
 | Hình 4.4 | ** Đường ống sáu bước xây dựng bộ dữ liệu | — |
-| Hình 4.7 | * Đường cong huấn luyện theo epoch — ba hàm mất mát và bốn chỉ số trên tập validation (nguồn: runs/final-640-v3/results.csv) | — |
-| Hình 4.5 | ** Thuật toán chuẩn hoá chuỗi biển số theo bộ luật ràng buộc vị trí | — |
-| Hình 4.6 | ** Sơ đồ thực thể — liên kết của cơ sở dữ liệu | — |
+| Hình 4.5 | * Đường cong huấn luyện theo epoch — ba hàm mất mát và bốn chỉ số trên tập validation (nguồn: runs/final-640-v3/results.csv) | — |
+| Hình 4.6 | ** Thuật toán chuẩn hoá chuỗi biển số theo bộ luật ràng buộc vị trí | — |
+| Hình 4.7 | ** Sơ đồ thực thể — liên kết của cơ sở dữ liệu | — |
 | Hình 5.1 | ** Giao thức đo và ràng buộc phụ thuộc giữa các bước đánh giá | — |
 
 ---

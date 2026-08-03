@@ -110,7 +110,8 @@ SLIDES_TEMPLATE_FILENAME: str = "template-uit.pptx"
 # page break instead of being printed as XML. Harmless for the slide export,
 # which contains no raw blocks.
 PANDOC_FROM: str = "gfm+raw_attribute"
-PANDOC_TOC_DEPTH: str = "3"
+# Do sau muc luc khong con o day: truong TOC nam trong 01-front-matter.md
+# (muc E) va tu mang tham so `\o "1-2"`. Xem gen_front_matter_lists.py.
 
 # How many image pixels count as one printed inch.
 #
@@ -279,8 +280,10 @@ def export_docx(pandoc: Path, markdown_path: Path, docx_path: Path) -> None:
             str(markdown_path),
             "--from",
             PANDOC_FROM,
-            "--toc",
-            f"--toc-depth={PANDOC_TOC_DEPTH}",
+            # Khong dung `--toc`: pandoc luon dat muc luc o DAU tai lieu, tuc
+            # la truoc ca trang bia. Truong TOC duoc chen thang vao muc "E. MUC
+            # LUC" cua 01-front-matter.md duoi dang OpenXML tho — xem
+            # scripts/gen_front_matter_lists.py.
             # The chapters reference diagrams as ``figures/fig-chN-MM.png``,
             # relative to themselves. Pandoc resolves image paths against the
             # working directory, so without this the build silently produces a
