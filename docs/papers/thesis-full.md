@@ -832,11 +832,20 @@ Như đã nêu ở mục 1.5.1(a), đây là khoảng trống báo cáo đã xá
 
 Mọi số liệu hiệu năng của đề tài được công bố kèm **model CPU, số luồng, kích thước ảnh đầu vào, backend suy luận và cỡ mẫu đo** (mục 1.4.2c). Đây là phản ứng trực tiếp với một lỗi phổ biến quan sát được trong khảo sát: **số liệu FPS thường được công bố mà không kèm phần cứng**, khiến chúng không thể tái lập và không thể so sánh.
 
-### 1.6.7. Đóng góp (f) — Benchmark các engine OCR trên chính ảnh biển số Việt Nam
+### 1.6.7. Đóng góp (f) — Đo trên chính ảnh biển số Việt Nam, và một khoản nợ được ghi nhận
 
 Khảo sát ở Phase 1 xác định rằng **không tồn tại benchmark công khai nào so sánh các engine OCR trên riêng ảnh biển số xe máy Việt Nam hai dòng**; hơn nữa, hai số liệu thường được viện dẫn để chứng minh ưu thế của một engine cụ thể đã **bị bác bỏ khi truy ngược về nguồn gốc** — chi tiết ở mục 3.3. Đây là lý do lựa chọn engine OCR được để mở một cách có chủ ý ở giai đoạn thiết kế thay vì được khẳng định không căn cứ.
 
-Đồ án lấp khoảng trống này bằng cách tự chạy một ma trận thí nghiệm so sánh các engine ứng viên trên chính tập kiểm thử biển số Việt Nam, với chỉ số chính là **độ chính xác mức chuỗi tách riêng cho biển một dòng và biển hai dòng**, kèm độ trễ p50/p95/p99 đo trên cùng một cấu hình phần cứng. Chương 2 đánh giá đây là **đóng góp khoa học có giá trị nhất mà đồ án có thể tuyên bố** (khoảng trống số 4, Bảng 2.23), vì nó biến một điểm chưa chứng minh được thành một phép đo mà đồ án là bên đầu tiên thực hiện. Kết quả sẽ được trình bày ở **Chương 6**.
+**Phần đã làm được.** Đồ án tự chạy hai phép so sánh trên chính ảnh biển số Việt Nam của mình, cùng máy và cùng ngữ liệu:
+
+- **PP-OCRv5_mobile so với PP-OCRv6_medium** trên 200 vùng cắt biển số — 67,0% ở 23,0 ms so với 72,5% ở 386,9 ms (mục 3.3.2).
+- **Bộ nhận dạng gốc so với bản tinh chỉnh** trên 2.801 biển có nhãn chuỗi, bốn cấu hình (mục 5.4).
+
+Cả hai đều cho kết quả **trái với kỳ vọng ban đầu**, và đó chính là giá trị của việc tự đo: nếu chỉ đọc tài liệu rồi chọn theo con số cao nhất thì cả hai quyết định đều sẽ sai.
+
+> ⚠️ **Phần KHÔNG làm được, phải nói rõ ngay ở đây.** Ma trận thí nghiệm so sánh **PaddleOCR với EasyOCR và Tesseract** — đúng khoảng trống số 4 mà Chương 2 đánh giá là có giá trị khoa học cao nhất — **chưa bao giờ chạy được** trong khuôn khổ đồ án. PaddleOCR được giữ làm engine duy nhất vì các lý do kỹ thuật và vận hành (nhẹ hơn gần 10 lần, kiến trúc trả mỗi dòng một hộp, giấy phép Apache 2.0), **không phải vì đã chứng minh được nó chính xác hơn**. Trên thực tế, các so sánh công khai mà khảo sát kiểm chứng được lại **nghiêng về EasyOCR**.
+>
+> Vì vậy đóng góp (f) phải được đọc ở mức đã đạt: đồ án **đo được điều mình đã đo**, và **ghi nhận sòng phẳng điều mình chưa đo**. Khoản nợ này được nêu nhất quán ở mục 3.1.2, mục 6.9.2 và trong hướng phát triển ở Chương 7 — không chỗ nào trong quyển trình bày nó như việc đã hoàn thành.
 
 ### 1.6.8. Những gì đề tài KHÔNG tuyên bố
 
@@ -1732,7 +1741,7 @@ Ba đặc điểm chung của bức tranh dữ liệu Việt Nam: phần lớn c
 | 1 | **Chưa có nghiên cứu Việt Nam nào công bố bảng so sánh tách riêng độ chính xác biển một dòng và biển hai dòng trên cùng một hệ thống** (mục 2.7.2) | Đồ án báo cáo tách bạch hai con số này. Chỉ cần hai con số riêng biệt là đã lấp được khoảng trống |
 | 2 | **Chưa có nghiên cứu Việt Nam nào mô tả có hệ thống bộ luật hậu xử lý ràng buộc theo VỊ TRÍ trong chuỗi biển số** — các mô tả hiện có đều dừng ở mức danh sách ký tự cho phép dạng phẳng, và phần lớn dùng nhầm con số 20 chữ cái cho toàn chuỗi (mục 2.2.4) | Đồ án thiết kế bộ luật hậu xử lý **theo từng vị trí** và **đo tách bạch độ chính xác trước và sau hậu xử lý**. Hiệu số giữa hai con số là đóng góp định lượng của khối này |
 | 3 | **Hầu hết công trình trong nước chỉ báo cáo mAP của khâu detection**, không báo cáo độ chính xác end-to-end mức chuỗi (mục 2.7.2) | Đồ án báo cáo cả hai, với độ chính xác end-to-end là chỉ tiêu quan trọng nhất |
-| 4 | **Không tồn tại benchmark công khai nào so sánh các engine OCR trên riêng ảnh biển số xe máy Việt Nam hai dòng** (mục 3.3) | Đồ án tự chạy benchmark so sánh trên chính tập kiểm thử biển số Việt Nam. Đây là **đóng góp khoa học có giá trị nhất** mà đồ án có thể tuyên bố |
+| 4 | **Không tồn tại benchmark công khai nào so sánh các engine OCR trên riêng ảnh biển số xe máy Việt Nam hai dòng** (mục 3.3) | ❌ **Chưa lấp được.** Đồ án tự đo được hai phép so sánh hẹp hơn — PP-OCRv5 với v6 (mục 3.3.2) và model gốc với bản tinh chỉnh (mục 5.4) — nhưng ma trận PaddleOCR ↔ EasyOCR ↔ Tesseract **không chạy được**; ghi nhận ở mục 6.9.2 |
 | 5 | **Số liệu hiệu năng thường được công bố mà không kèm phần cứng** (mục 2.7.1) | Mọi số liệu hiệu năng của đồ án bắt buộc kèm: model CPU, số luồng, kích thước ảnh đầu vào, backend suy luận và cỡ mẫu đo |
 | 6 | **Hầu hết kho mã nguồn mở Việt Nam không công bố số liệu và không có kiến trúc phần mềm** (mục 2.7.2) | Đồ án công bố đầy đủ giao thức đo, tập kiểm thử và toàn bộ chỉ số; đồng thời bàn giao một hệ thống có API, giao diện, cơ sở dữ liệu, kiểm thử và đóng gói |
 
@@ -1756,7 +1765,7 @@ Chương 2 đã thiết lập toàn bộ nền lý thuyết và nền tư liệu
 
 **Thứ năm, quy chuẩn biển số Việt Nam đã được đặc tả đủ để cài đặt, với ba điểm được đính chính so với cách hiểu phổ biến.** Căn cứ pháp lý hiện hành là Thông tư 79/2024/TT-BCA sửa đổi bởi TT 13/2025 và TT 51/2025, cùng QCVN 08:2024/BCA về kích thước — Thông tư 24/2023/TT-BCA đã hết hiệu lực từ 01/01/2025 và chỉ được nhắc như bối cảnh lịch sử. Có 81 mã tỉnh đang dùng và 8 mã không dùng. Và điểm quan trọng nhất: **tập chữ cái bị loại trừ khỏi toàn hệ thống chỉ gồm 5 chữ I, J, O, Q, W chứ không phải 6; chữ R hợp lệ ở vị trí chữ cái thứ hai của seri xe máy**. Từ đó rút ra hai hệ quả cứng: bộ luật hậu xử lý phải ràng buộc **theo từng vị trí trong chuỗi** chứ không dùng danh sách phẳng, và tập ký tự huấn luyện OCR phải dùng đủ 36 ký tự A–Z và 0–9. Ba giá trị tỷ lệ khung hình theo quy chuẩn (1,357 / 2,000 / 4,727) tạo ra một khoảng trống rộng 2,727 đơn vị, là cơ sở định lượng cho ngưỡng phân loại bố cục do đồ án đề xuất.
 
-**Thứ sáu, sáu khoảng trống nghiên cứu đã được xác định và mỗi khoảng trống đều có cách lấp cụ thể** (Bảng 2.23). Đóng góp lớn nhất mà đồ án có thể tuyên bố là lấp khoảng trống số 4: **không tồn tại benchmark công khai nào so sánh các engine OCR trên riêng ảnh biển số xe máy Việt Nam hai dòng**. Đi kèm với đó là một tuyên bố trung thực về giới hạn: đồ án không đặt mục tiêu tạo ra kết quả tốt nhất lĩnh vực, không đề xuất kiến trúc mạng mới, và không giải quyết các thách thức mở như biển số độ phân giải rất thấp hay tổng quát hoá xuyên tập dữ liệu.
+**Thứ sáu, sáu khoảng trống nghiên cứu đã được xác định** (Bảng 2.23), và năm trong sáu có cách lấp cụ thể đã thực hiện được. Khoảng trống số 4 — benchmark so sánh các engine OCR trên ảnh biển số Việt Nam — **không lấp được**; đồ án chỉ đo được hai phép so sánh hẹp hơn trong cùng họ PaddleOCR, và điều này được ghi nhận nhất quán ở mục 3.1.2 cùng mục 6.9.2 thay vì trình bày như việc đã hoàn thành. Đi kèm với đó là một tuyên bố trung thực về giới hạn: đồ án không đặt mục tiêu tạo ra kết quả tốt nhất lĩnh vực, không đề xuất kiến trúc mạng mới, và không giải quyết các thách thức mở như biển số độ phân giải rất thấp hay tổng quát hoá xuyên tập dữ liệu.
 
 Về mặt phương pháp, chương này đã thiết lập ba nguyên tắc sẽ được áp dụng nguyên vẹn cho phần thực nghiệm: **mọi số liệu hiệu năng bắt buộc kèm cấu hình phần cứng và cỡ mẫu đo**; **kết quả phải báo cáo tách bạch theo bố cục biển và theo điều kiện ảnh** thay vì chỉ đưa một con số trung bình; và **không so sánh chéo giữa các chỉ số có định nghĩa khác nhau hoặc đo trên các tập dữ liệu khác nhau**.
 

@@ -347,11 +347,20 @@ Như đã nêu ở mục 1.5.1(a), đây là khoảng trống báo cáo đã xá
 
 Mọi số liệu hiệu năng của đề tài được công bố kèm **model CPU, số luồng, kích thước ảnh đầu vào, backend suy luận và cỡ mẫu đo** (mục 1.4.2c). Đây là phản ứng trực tiếp với một lỗi phổ biến quan sát được trong khảo sát: **số liệu FPS thường được công bố mà không kèm phần cứng**, khiến chúng không thể tái lập và không thể so sánh.
 
-### 1.6.7. Đóng góp (f) — Benchmark các engine OCR trên chính ảnh biển số Việt Nam
+### 1.6.7. Đóng góp (f) — Đo trên chính ảnh biển số Việt Nam, và một khoản nợ được ghi nhận
 
 Khảo sát ở Phase 1 xác định rằng **không tồn tại benchmark công khai nào so sánh các engine OCR trên riêng ảnh biển số xe máy Việt Nam hai dòng**; hơn nữa, hai số liệu thường được viện dẫn để chứng minh ưu thế của một engine cụ thể đã **bị bác bỏ khi truy ngược về nguồn gốc** — chi tiết ở mục 3.3. Đây là lý do lựa chọn engine OCR được để mở một cách có chủ ý ở giai đoạn thiết kế thay vì được khẳng định không căn cứ.
 
-Đồ án lấp khoảng trống này bằng cách tự chạy một ma trận thí nghiệm so sánh các engine ứng viên trên chính tập kiểm thử biển số Việt Nam, với chỉ số chính là **độ chính xác mức chuỗi tách riêng cho biển một dòng và biển hai dòng**, kèm độ trễ p50/p95/p99 đo trên cùng một cấu hình phần cứng. Chương 2 đánh giá đây là **đóng góp khoa học có giá trị nhất mà đồ án có thể tuyên bố** (khoảng trống số 4, Bảng 2.23), vì nó biến một điểm chưa chứng minh được thành một phép đo mà đồ án là bên đầu tiên thực hiện. Kết quả sẽ được trình bày ở **Chương 6**.
+**Phần đã làm được.** Đồ án tự chạy hai phép so sánh trên chính ảnh biển số Việt Nam của mình, cùng máy và cùng ngữ liệu:
+
+- **PP-OCRv5_mobile so với PP-OCRv6_medium** trên 200 vùng cắt biển số — 67,0% ở 23,0 ms so với 72,5% ở 386,9 ms (mục 3.3.2).
+- **Bộ nhận dạng gốc so với bản tinh chỉnh** trên 2.801 biển có nhãn chuỗi, bốn cấu hình (mục 5.4).
+
+Cả hai đều cho kết quả **trái với kỳ vọng ban đầu**, và đó chính là giá trị của việc tự đo: nếu chỉ đọc tài liệu rồi chọn theo con số cao nhất thì cả hai quyết định đều sẽ sai.
+
+> ⚠️ **Phần KHÔNG làm được, phải nói rõ ngay ở đây.** Ma trận thí nghiệm so sánh **PaddleOCR với EasyOCR và Tesseract** — đúng khoảng trống số 4 mà Chương 2 đánh giá là có giá trị khoa học cao nhất — **chưa bao giờ chạy được** trong khuôn khổ đồ án. PaddleOCR được giữ làm engine duy nhất vì các lý do kỹ thuật và vận hành (nhẹ hơn gần 10 lần, kiến trúc trả mỗi dòng một hộp, giấy phép Apache 2.0), **không phải vì đã chứng minh được nó chính xác hơn**. Trên thực tế, các so sánh công khai mà khảo sát kiểm chứng được lại **nghiêng về EasyOCR**.
+>
+> Vì vậy đóng góp (f) phải được đọc ở mức đã đạt: đồ án **đo được điều mình đã đo**, và **ghi nhận sòng phẳng điều mình chưa đo**. Khoản nợ này được nêu nhất quán ở mục 3.1.2, mục 6.9.2 và trong hướng phát triển ở Chương 7 — không chỗ nào trong quyển trình bày nó như việc đã hoàn thành.
 
 ### 1.6.8. Những gì đề tài KHÔNG tuyên bố
 
