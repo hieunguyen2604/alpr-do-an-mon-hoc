@@ -118,6 +118,8 @@ Hình hoặc bảng lấy/phỏng theo nguồn khác **bắt buộc** ghi nguồ
 - **Sơ đồ:** dùng `mermaid` (`graph`, `flowchart`, `sequenceDiagram`, `erDiagram`, `gantt`). Các báo cáo Phase 0–1 đã có sẵn nhiều sơ đồ mermaid dùng lại được — xem `ARCH` §2–6, `SCOPE` §4, `FR` §1.
 - **Bảng:** dùng bảng Markdown chuẩn. Bảng quá rộng thì tách cột hoặc chuyển xuống Phụ lục, **không** thu nhỏ chữ.
 
+**Đường kẻ bảng do bản dựng lo, không đặt trong Markdown.** Kiểu bảng mặc định của Pandoc chỉ kẻ **một đường dưới hàng tiêu đề**: không khung, không kẻ dọc, không vạch ngăn giữa các hàng — với bảng số liệu sáu, tám cột thì người đọc phải tự dóng cột bằng mắt. `scripts/build_thesis.py` khắc phục bằng cách lấy chính `reference.docx` mặc định của Pandoc rồi **chỉ vá đúng kiểu `Table`** (xem `STYLE_PATCHES`), nên mọi kiểu khác của quyển giữ nguyên. Ba thay đổi: lưới đầy đủ (khung 1 pt, kẻ trong 0,5 pt), đệm ô dọc 20 dxa, và `cantSplit` để **một hàng không bị cắt đôi qua trang** — trước đó trang 14 mở đầu bằng một ô có viền chỉ chứa chữ *"lệ"*. Giá phải trả đo được: **92 → 93 trang**. Bộ slide có cùng khuyết tật và được vá ở `scripts/make_slide_template.py`.
+
 ### 3.4. Quy ước ngôn ngữ và số
 
 | Hạng mục | Quy ước | Ví dụ |

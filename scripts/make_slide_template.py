@@ -309,6 +309,81 @@ def strip_slide_rels(xml: str) -> str:
     return _SLIDE_REL_RE.sub("", xml)
 
 
+# --- Table borders ----------------------------------------------------------
+# The donor template's default table style, ``Table_0``, defines a font and a
+# text colour and nothing else: no ``a:tcStyle``, so no ``a:tcBdr``, so no rules
+# anywhere. Pandoc marks every table it writes with ``firstRow="1"`` and points
+# it at this style, which means the numeric tables on the deck are columns of
+# figures floating in white space with no header rule and no column separators.
+#
+# The printed book had the same defect from Pandoc's own default DOCX style; see
+# ``STYLE_PATCHES`` in ``build_thesis.py``. Fixed in both places so the deck and
+# the book present a table the same way.
+_LINE_EMU: int = 12700  # 1 pt
+
+# Only ``wholeTbl`` is patched. The book emphasises its header row with a
+# heavier rule (``STYLE_PATCHES`` entry 3 in ``build_thesis.py``), and the same
+# was attempted here through the style's ``a:firstRow`` block -- bold text over
+# a 1.5 pt rule. PowerPoint renders none of it. The block is not merely
+# ignoring those two properties: replacing it with a solid yellow cell fill,
+# which is impossible to miss, also rendered as plain white, so this donor
+# style's conditional formatting does not reach the slide at all even though
+# Pandoc does write ``<a:tblPr firstRow="1">`` on every table. The grid below
+# comes from ``wholeTbl`` and does render; header emphasis is left out rather
+# than shipped as XML that looks like it does something.
+_GRID = "".join(
+    f'<a:{side}><a:ln w="{_LINE_EMU}" cmpd="sng">'
+    f'<a:solidFill><a:srgbClr val="7F7F7F"/></a:solidFill>'
+    f"</a:ln></a:{side}>"
+    # Order is fixed by the CT_TableCellBorderStyle schema.
+    for side in ("left", "right", "top", "bottom", "insideH", "insideV")
+)
+_WHOLE_TBL_BORDERS = f"<a:tcStyle><a:tcBdr>{_GRID}</a:tcBdr></a:tcStyle>"
+
+_DEFAULT_STYLE_RE = re.compile(r'\bdef="(\{[0-9A-Fa-f-]+\})"')
+
+
+def border_table_style(xml: str) -> str:
+    """Give the deck's default table style a visible grid.
+
+    Only the style named by ``a:tblStyleLst/@def`` is touched -- the one Pandoc
+    actually assigns. The donor file carries several other definitions that no
+    slide references; rewriting those would be churn.
+
+    Args:
+        xml: Contents of ``ppt/tableStyles.xml``.
+
+    Returns:
+        The patched XML.
+
+    Raises:
+        ValueError: If the default style cannot be located or does not have the
+            shape this patch assumes, rather than returning a file that merely
+            looks converted.
+    """
+    found = _DEFAULT_STYLE_RE.search(xml)
+    if not found:
+        raise ValueError("tableStyles.xml khong khai bao style mac dinh (def=)")
+
+    opening = f'<a:tblStyle styleId="{found.group(1)}"'
+    start = xml.find(opening)
+    if start < 0:
+        raise ValueError(f"khong thay dinh nghia cua style mac dinh {found.group(1)}")
+    end = xml.index("</a:tblStyle>", start) + len("</a:tblStyle>")
+    block = xml[start:end]
+
+    # ``a:tcStyle`` follows ``a:tcTxStyle`` inside a CT_TablePartStyle.
+    anchor = "</a:tcTxStyle></a:wholeTbl>"
+    if block.count(anchor) != 1:
+        raise ValueError(
+            f"style bang mac dinh khong dung hinh dang mong doi: "
+            f"{anchor!r} khop {block.count(anchor)} lan"
+        )
+    block = block.replace(anchor, f"</a:tcTxStyle>{_WHOLE_TBL_BORDERS}</a:wholeTbl>")
+
+    return xml[:start] + block + xml[end:]
+
+
 def strip_slide_overrides(xml: str) -> str:
     """Drop content-type overrides for removed parts."""
     xml = re.sub(r'<Override\b[^>]*PartName="/ppt/slides/[^"]*"[^>]*/>', "", xml)
@@ -354,6 +429,8 @@ def build(source: Path, output: Path) -> int:
                     data = strip_slide_ids(data.decode("utf-8")).encode("utf-8")
                 elif name == "ppt/_rels/presentation.xml.rels":
                     data = strip_slide_rels(data.decode("utf-8")).encode("utf-8")
+                elif name == "ppt/tableStyles.xml":
+                    data = border_table_style(data.decode("utf-8")).encode("utf-8")
                 elif name == "[Content_Types].xml":
                     data = strip_slide_overrides(data.decode("utf-8")).encode("utf-8")
 

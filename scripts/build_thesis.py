@@ -125,6 +125,167 @@ PANDOC_FROM: str = "gfm+raw_attribute"
 # inside the 15.9 cm text column with margin to spare.
 PANDOC_IMAGE_DPI: str = "285"
 
+# --- Table borders ----------------------------------------------------------
+# Pandoc's built-in ``Table`` style draws exactly one rule -- under the header
+# row -- and nothing else: no outline, no vertical rules, no separators between
+# body rows. On a 43-table thesis where several tables carry five or six numeric
+# columns, that leaves the reader aligning figures by eye across white space.
+#
+# The fix is a reference document. Rather than authoring one by hand (which
+# would silently redefine every other style at the same time), the functions
+# below take Pandoc's *own* default reference.docx and patch the one style that
+# is wrong. Everything else -- headings, body font, list indents, caption style
+# -- stays byte-identical to what the build already produced.
+REFERENCE_DOCX_FILENAME: str = "reference-thesis.docx"
+
+# Border weights are in eighths of a point: sz="8" is 1 pt, sz="4" is 0.5 pt.
+# Heavier outline, lighter interior grid -- the usual convention, and it keeps a
+# dense table from reading as a solid block of lines.
+TABLE_BORDERS_XML: str = (
+    "<w:tblBorders>"
+    '<w:top w:val="single" w:sz="8" w:space="0" w:color="000000"/>'
+    '<w:left w:val="single" w:sz="8" w:space="0" w:color="000000"/>'
+    '<w:bottom w:val="single" w:sz="8" w:space="0" w:color="000000"/>'
+    '<w:right w:val="single" w:sz="8" w:space="0" w:color="000000"/>'
+    '<w:insideH w:val="single" w:sz="4" w:space="0" w:color="000000"/>'
+    '<w:insideV w:val="single" w:sz="4" w:space="0" w:color="000000"/>'
+    "</w:tblBorders>"
+)
+
+# Anchor -> replacement, applied to ``word/styles.xml`` of the default
+# reference document. Each anchor must match exactly once; :func:`patch_styles`
+# raises when one is missing so that a Pandoc upgrade fails loudly instead of
+# quietly restoring borderless tables.
+STYLE_PATCHES: tuple[tuple[str, str], ...] = (
+    # 1. The grid itself. In the CT_TblPrBase schema ``tblBorders`` must sit
+    #    between ``tblInd`` and ``tblCellMar``, so it is inserted there rather
+    #    than appended -- Word rejects the part outright if the order is wrong.
+    #
+    # 2. Vertical cell padding, in the same edit because it shares the anchor.
+    #    The default is 0 dxa top and bottom, which was invisible while there
+    #    were no rules to collide with; with a grid it puts the text directly
+    #    on the line. 20 dxa is 20/1440 in = 0.35 mm per side -- deliberately
+    #    small: at 40 dxa the book grew from 92 printed pages to 95, and 20 dxa
+    #    measured back at 92, so the grid costs no pages at all.
+    (
+        '<w:tblInd w:w="0" w:type="dxa" />\n'
+        "      <w:tblCellMar>\n"
+        '        <w:top w:w="0" w:type="dxa" />',
+        '<w:tblInd w:w="0" w:type="dxa" />\n'
+        f"      {TABLE_BORDERS_XML}\n"
+        "      <w:tblCellMar>\n"
+        '        <w:top w:w="20" w:type="dxa" />',
+    ),
+    (
+        '<w:bottom w:w="0" w:type="dxa" />\n'
+        '        <w:right w:w="108" w:type="dxa" />',
+        '<w:bottom w:w="20" w:type="dxa" />\n'
+        '        <w:right w:w="108" w:type="dxa" />',
+    ),
+    # 3. Header rule, promoted from the inherited 0.5 pt to 1.5 pt so the
+    #    header still separates from the body now that every row has a rule.
+    (
+        '<w:bottom w:val="single"/>',
+        '<w:bottom w:val="single" w:sz="12" w:space="0" w:color="000000"/>',
+    ),
+    # 4. Keep each row whole. Word's default lets a row break mid-way down a
+    #    page, which was merely untidy while tables had no rules: the tail of a
+    #    wrapped cell simply continued overleaf. With a grid it draws an empty
+    #    boxed row -- Bang 2.2 split so that page 14 opened with a bordered cell
+    #    containing the single syllable "le". ``cantSplit`` moves the whole row
+    #    to the next page instead.
+    #
+    #    It goes directly under ``w:style`` rather than inside a
+    #    ``tblStylePr``, because the conditional-formatting slots only cover
+    #    named regions (firstRow, lastRow, bands) and this has to reach every
+    #    row. Schema order for CT_Style puts ``trPr`` after ``tblPr``.
+    (
+        "</w:tblPr>\n"
+        '    <w:tblStylePr w:type="firstRow">',
+        "</w:tblPr>\n"
+        "    <w:trPr><w:cantSplit /></w:trPr>\n"
+        '    <w:tblStylePr w:type="firstRow">',
+    ),
+)
+
+
+def patch_styles(styles_xml: str) -> str:
+    """Apply :data:`STYLE_PATCHES` to the reference document's ``styles.xml``.
+
+    Args:
+        styles_xml: Contents of ``word/styles.xml`` from Pandoc's default
+            reference document.
+
+    Returns:
+        The patched XML.
+
+    Raises:
+        ValueError: If any anchor is absent or appears more than once, which
+            means Pandoc's default styles moved and the patch is no longer
+            describing what it thinks it is.
+    """
+    # Pandoc 3.10 ships this part with CRLF endings; the anchors above are
+    # written with plain "\n" so they stay readable in the source. Detect what
+    # the document actually uses and translate, instead of hard-coding "\r\n"
+    # and breaking the day a Pandoc release switches to LF.
+    eol = "\r\n" if "\r\n" in styles_xml else "\n"
+
+    for anchor, replacement in STYLE_PATCHES:
+        anchor = anchor.replace("\n", eol)
+        replacement = replacement.replace("\n", eol)
+        found = styles_xml.count(anchor)
+        if found != 1:
+            raise ValueError(
+                f"Table-style anchor matched {found} times, expected exactly 1. "
+                f"Pandoc {PANDOC_VERSION}'s default styles may have changed.\n"
+                f"  anchor: {anchor[:60]!r}"
+            )
+        styles_xml = styles_xml.replace(anchor, replacement)
+    return styles_xml
+
+
+def build_reference_docx(pandoc: Path, dest: Path) -> Path | None:
+    """Write a reference document whose ``Table`` style draws full borders.
+
+    Regenerated on every build rather than committed, so it can never drift
+    away from the pinned Pandoc version it is derived from. It is a build
+    artefact in the same sense ``thesis-full.docx`` is.
+
+    Args:
+        pandoc: Path to the Pandoc executable.
+        dest: Destination ``.docx`` path.
+
+    Returns:
+        ``dest`` on success, or ``None`` if the reference document could not be
+        produced -- in which case the caller falls back to Pandoc's defaults
+        and gets the old borderless tables rather than a failed build.
+    """
+    import io
+    import zipfile
+
+    try:
+        default = subprocess.run(
+            [str(pandoc), "--print-default-data-file", "reference.docx"],
+            capture_output=True,
+            check=True,
+        ).stdout
+        source = zipfile.ZipFile(io.BytesIO(default))
+        patched = patch_styles(source.read("word/styles.xml").decode("utf-8"))
+
+        dest.parent.mkdir(parents=True, exist_ok=True)
+        with zipfile.ZipFile(dest, "w", zipfile.ZIP_DEFLATED) as out:
+            for item in source.infolist():
+                data = source.read(item.filename)
+                if item.filename == "word/styles.xml":
+                    data = patched.encode("utf-8")
+                out.writestr(item, data)
+    except (OSError, ValueError, zipfile.BadZipFile,
+            subprocess.CalledProcessError) as error:
+        print(f"[warn] khong dung duoc reference doc ({error}); "
+              "bang se giu dinh dang mac dinh cua Pandoc.", file=sys.stderr)
+        return None
+    return dest
+
 
 def read_section(path: Path) -> str:
     """Read one Markdown source file, preserving its bytes exactly.
@@ -265,21 +426,24 @@ def run_pandoc(pandoc: Path, args: list[str]) -> None:
 def export_docx(pandoc: Path, markdown_path: Path, docx_path: Path) -> None:
     """Export the merged thesis Markdown to a DOCX file.
 
-    Uses the same conversion parameters the project has standardised on:
-    ``--from gfm --toc --toc-depth=3``.
-
     Args:
         pandoc: Path to the Pandoc executable.
         markdown_path: The merged ``thesis-full.md`` to convert.
         docx_path: Destination ``.docx`` path.
     """
     docx_path.parent.mkdir(parents=True, exist_ok=True)
+    reference = build_reference_docx(
+        pandoc, docx_path.parent / REFERENCE_DOCX_FILENAME
+    )
     run_pandoc(
         pandoc,
         [
             str(markdown_path),
             "--from",
             PANDOC_FROM,
+            # Bordered tables; see build_reference_docx. Omitted when the
+            # reference document could not be built.
+            *(["--reference-doc", str(reference)] if reference else []),
             # Khong dung `--toc`: pandoc luon dat muc luc o DAU tai lieu, tuc
             # la truoc ca trang bia. Truong TOC duoc chen thang vao muc "E. MUC
             # LUC" cua 01-front-matter.md duoi dang OpenXML tho — xem

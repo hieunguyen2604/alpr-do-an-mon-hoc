@@ -146,3 +146,9 @@ docs/reports/figures/28b/
 # `scripts/dataset/build_rec_finetune_set.py` roi nen thu muc
 # datasets/processed/rec_finetune. 80 MB anh khong nen duoc, khong theo doi.
 /rec_finetune.zip
+
+# Tai lieu tham chieu cho Pandoc, sinh lai o moi lan chay build_thesis.py tu
+# `pandoc --print-default-data-file reference.docx` roi va rieng kieu bang. La
+# san pham trung gian thuan tuy, khong phai ban giao — xem
+# `build_reference_docx` trong scripts/build_thesis.py.
+docs/papers/reference-thesis.docx
