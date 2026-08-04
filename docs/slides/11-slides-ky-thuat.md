@@ -68,7 +68,7 @@ Khử trùng lặp chéo bộ **loại 44,2%** — một bộ vào 1.005 ảnh, 
 | Hợp nhất 7 bộ có nhãn hộp bao | 27.111 ảnh |
 | Khử trùng lặp, băm tri giác ngưỡng 10 | còn **15.133** ảnh |
 | Chia tập, giữ nhóm trùng cùng một bên | 10.592 / 3.027 / **1.514** |
-| Huấn luyện YOLO11n, `imgsz=640`, 20 epoch | ~12 giờ **CPU** |
+| Huấn luyện YOLO11n, `imgsz=640`, 20 epoch | **10,05 giờ CPU** |
 | Nhánh riêng: nhãn chuỗi để đánh giá OCR | **2.801** biển |
 
 ## Hai đóng góp kỹ thuật lõi
