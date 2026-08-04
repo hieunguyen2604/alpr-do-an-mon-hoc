@@ -332,7 +332,7 @@ Bảng tổng hợp trình bày khi bảo vệ, liệt kê **đầy đủ mọi 
 
 Chương 6 tổng hợp đầy đủ kết quả và hạn chế; mục này chỉ nêu **cách đọc** bộ số liệu vừa trình bày. **Vạch ngăn nằm giữa hai tầng, không rải đều:** bộ phát hiện đạt toàn bộ chỉ tiêu với biên rộng và điểm yếu duy nhất — dải "rất nhỏ" ở 5.4.3 — được phơi bày chứ không giấu; khối hậu xử lý đóng góp **thuần dương, không rủi ro** (+11,39 điểm, 0 ca hồi quy); còn ba chỉ tiêu độ chính xác chuỗi thì không đạt.
 
-### 5.9.2. Sáu hạng mục chưa đo và trạng thái khắc phục
+### 5.9.2. Sáu hạng mục từng để ngỏ — năm chưa đo, một đã hoàn thành
 
 | Hạng mục | Trạng thái | Có làm được trong khuôn khổ đồ án? |
 |---|---|---|
