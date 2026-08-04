@@ -18,15 +18,18 @@ Hệ thống tự động **phát hiện** và **đọc** biển số xe Việt 
 
 **Giao diện gồm 3 trang:** Nhận dạng ảnh *(trang chủ, `/`)* · Nhận dạng video *(`/video`)* · Lịch sử *(`/history`)*.
 
-> ⚠️ **Thu gọn phạm vi giao diện — ngày 2026-07-20, hai lần liên tiếp.**
-> Gỡ trang **Webcam** (FR-3.1, FR-3.4: Must → Won't), rồi gỡ trang **Tổng quan / Dashboard**
-> (**FR-4.1: Must → Won't**, FR-4.2: Should → Won't). Đây là **lần đầu** một yêu cầu mức *Must*
-> bị đưa ra khỏi phạm vi; ghi rõ ở đây thay vì để người đọc tự phát hiện.
+> ⚠️ **Thu gọn phạm vi — ba đợt.**
+> **20/07/2026, hai lần liên tiếp:** gỡ trang **Webcam** (FR-3.1, FR-3.4: Must → Won't), rồi gỡ
+> trang **Tổng quan / Dashboard** (**FR-4.1: Must → Won't**, FR-4.2: Should → Won't).
+> **03/08/2026:** đưa **FR-2.5** (xuất video đã chú thích, Must → Won't) và **FR-2.6** (huỷ tác vụ
+> đang chạy, Should → Won't) ra khỏi phạm vi — cả hai đang dở dang, và nút huỷ đã được **gỡ khỏi
+> giao diện** thay vì để ở trạng thái vô hiệu hoá. Tổng cộng **hai** yêu cầu mức *Must* bị đưa ra
+> khỏi phạm vi (FR-4.1 và FR-2.5); ghi rõ ở đây thay vì để người đọc tự phát hiện.
 > **Không đổi:** `POST /api/detect/frame`, `GET /api/statistics` và `GET /health` vẫn phục vụ,
 > vẫn có kiểm thử tích hợp; FR-4.3–FR-4.8 (trang Lịch sử) giữ nguyên; mã giao diện đã gỡ còn
 > nguyên trong lịch sử git. **Đánh đổi đo được:** gỡ `recharts` ⇒ gói tải về của giao diện giảm
-> từ ~730 KB xuống **328,8 KB (−55%)**. Bảng MoSCoW nay: **34 FR = 21 Must · 6 Should · 3 Could ·
-> 4 Won't**. Chi tiết: [functional-requirements.md](docs/00-requirements/functional-requirements.md).
+> từ ~730 KB xuống **328,8 KB (−55%)**. Bảng MoSCoW nay: **34 FR = 20 Must · 5 Should · 3 Could ·
+> 6 Won't**. Chi tiết: [functional-requirements.md](docs/00-requirements/functional-requirements.md).
 
 Điểm khác biệt so với việc ghép các thư viện có sẵn:
 

@@ -19,7 +19,7 @@
  */
 
 import { useEffect, useState } from 'react';
-import { Ban, RefreshCw } from 'lucide-react';
+import { RefreshCw } from 'lucide-react';
 
 import { Badge, Button, Card, ProgressBar } from '@/components/ui';
 import { cn } from '@/lib/cn';
@@ -218,36 +218,6 @@ export function JobProgressPanel({
       description="Trạng thái được cập nhật tự động trong khi tác vụ chạy"
       actions={
         <>
-          {/* FR-2.6 asks for a cancel control. The backend worker does honour a
-              cancellation — it re-reads the job status every few frames and
-              stops — but no HTTP route exists to set that status: the live
-              OpenAPI document exposes nine paths and none of them cancels a
-              job. The button is therefore present and disabled rather than
-              wired to an invented endpoint, which would 404 and leave the user
-              believing the job had stopped while it kept running.
-
-              Shown only while the job can still be running: a dead "Huỷ tác
-              vụ" beside a finished job is noise with nothing to explain it.
-              The limitation itself is spelled out in the body below rather
-              than left to a hover-only tooltip, which nobody reads and a
-              projector never shows. */}
-          {isPossiblyRunning && (
-            <span
-              title="Chưa hỗ trợ huỷ tác vụ: máy chủ chưa có API dừng một tác vụ đang chạy."
-              className="inline-flex"
-            >
-              <Button
-                type="button"
-                variant="secondary"
-                size="sm"
-                disabled
-                leftIcon={<Ban className="h-4 w-4" aria-hidden="true" />}
-              >
-                Huỷ tác vụ
-              </Button>
-            </span>
-          )}
-
           <Button
             type="button"
             variant="ghost"
@@ -343,18 +313,13 @@ export function JobProgressPanel({
           Thanh tiến độ phản ánh vị trí đang xử lý trong video.
         </p>
 
-        {/* States the limitation in plain sight instead of hiding it behind the
-            disabled button's tooltip. Honest about scope: the worker-side
-            support exists, the HTTP route does not. */}
+        {/* Cancelling a running job is out of scope (FR-2.6 withdrawn). Say so
+            once, plainly, so a user who wants to stop the job is not left
+            hunting for a control that does not exist. */}
         {isPossiblyRunning && (
           <p className="rounded-lg border border-border bg-surface-muted px-4 py-3 text-xs text-content-muted">
-            <span className="font-medium text-content">
-              Về nút “Huỷ tác vụ”:
-            </span>{' '}
-            chức năng dừng tác vụ mới hoàn thiện ở phía xử lý nền — máy chủ chưa
-            mở API để dừng một tác vụ đang chạy, nên nút được để ở trạng thái vô
-            hiệu thay vì gọi một địa chỉ không tồn tại. Bạn có thể rời khỏi
-            trang: tác vụ vẫn chạy tiếp và kết quả được lưu vào trang Lịch sử.
+            Tác vụ chạy đến khi hoàn tất và không dừng giữa chừng được. Bạn có
+            thể rời khỏi trang: kết quả vẫn được lưu vào trang Lịch sử.
           </p>
         )}
 

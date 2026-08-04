@@ -26,8 +26,8 @@ for _l in (sys.stdout, sys.stderr):
         _l.reconfigure(encoding="utf-8", errors="replace")
 
 ROOT = Path(__file__).resolve().parents[1]
-# Tham so tuy chon: thu muc chua cac tep chuong. Mac dinh la ban chinh
-# docs/papers/; truyen "compact" de sinh danh muc cho ban rut gon.
+# Tham so tuy chon: thu muc con chua cac tep chuong, tinh tu docs/papers/.
+# Mac dinh la chinh docs/papers/.
 _BAN = next((a for a in sys.argv[1:] if not a.startswith("-")), "")
 PAPERS = ROOT / "docs" / "papers" / _BAN if _BAN else ROOT / "docs" / "papers"
 FRONT = PAPERS / "01-front-matter.md"
@@ -138,7 +138,9 @@ def main() -> None:
     e = [ghi_chu, "",
          "```{=openxml}",
          "<w:p><w:r><w:fldChar w:fldCharType=\"begin\" w:dirty=\"true\"/></w:r>"
-         "<w:r><w:instrText xml:space=\"preserve\"> TOC \\o \"1-2\" \\h \\z \\u </w:instrText></w:r>"
+         "<w:r><w:instrText xml:space=\"preserve\">"
+         r' TOC \o "1-2" \h \z \u '
+         "</w:instrText></w:r>"
          "<w:r><w:fldChar w:fldCharType=\"separate\"/></w:r>"
          "<w:r><w:t>Mở tệp trong Word rồi bấm Ctrl+A, F9 để cập nhật mục lục.</w:t></w:r>"
          "<w:r><w:fldChar w:fldCharType=\"end\"/></w:r></w:p>",

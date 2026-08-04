@@ -76,8 +76,11 @@ graph TB
 | **FR-2.2** | Hệ thống trích xuất khung hình theo bước nhảy cấu hình được (frame sampling) | **M** | Đặt `frame_stride=5` ⇒ chỉ 1/5 số khung hình được đưa vào mô hình; ghi log số khung đã xử lý |
 | **FR-2.3** | Hệ thống phát hiện và nhận dạng biển số trên các khung hình đã trích | **M** | Video có biển số ⇒ sinh ra ≥ 1 kết quả nhận dạng |
 | **FR-2.4** | Hệ thống **gộp trùng** kết quả của cùng một biển số xuất hiện ở nhiều khung hình, giữ lại kết quả có độ tin cậy cao nhất | **M** | Một xe xuất hiện 40 khung ⇒ lịch sử ghi nhận **1** bản ghi, không phải 40 |
-| **FR-2.5** | Hệ thống xuất video kết quả có vẽ sẵn bounding box và biển số đọc được | **M** | Tải về được tệp video phát bình thường, thấy rõ nhãn |
-| **FR-2.6** | Giao diện hiển thị tiến độ xử lý theo phần trăm và cho phép huỷ tác vụ | **S** | Thanh tiến độ tăng dần; bấm Huỷ ⇒ tác vụ dừng trong ≤ 3 giây |
+| **FR-2.5** | Hệ thống xuất video kết quả có vẽ sẵn bounding box và biển số đọc được | **W** | Tải về được tệp video phát bình thường, thấy rõ nhãn |
+| **FR-2.6** | Giao diện hiển thị tiến độ xử lý theo phần trăm và cho phép huỷ tác vụ | **W** | *(Phần hiển thị tiến độ đã hoàn thành; phần huỷ tác vụ đưa ra khỏi phạm vi — xem ghi chú dưới)* |
+
+
+> **Thay đổi phạm vi 2026-08-03:** **FR-2.5** (xuất video đã chú thích) và **FR-2.6** (huỷ tác vụ đang chạy) được **đưa ra khỏi phạm vi**, chuyển từ *Must* và *Should* sang ***Won't***. Cả hai đều đang ở trạng thái dở dang: phía xử lý nền của FR-2.6 đã hoạt động nhưng không có điểm cuối HTTP nào đặt được trạng thái huỷ, còn FR-2.5 mới chỉ có trường lưu đường dẫn trong lược đồ. Bàn giao một tính năng dở dang gây hiểu nhầm nhiều hơn là không bàn giao, nên nút huỷ đã được **gỡ khỏi giao diện** thay vì để ở trạng thái vô hiệu hoá. Năng lực huỷ ở tầng xử lý nền vẫn còn trong mã nguồn và có thể nối lại khi bổ sung điểm cuối tương ứng.
 
 > **Ghi chú thiết kế:** FR-2.4 (gộp trùng) là điểm dễ bị bỏ sót nhất trong các đồ án ALPR. Không có nó, một video 30 giây sẽ tạo ra hàng nghìn bản ghi rác và làm hỏng toàn bộ phần thống kê ở FR-4.
 
@@ -155,7 +158,7 @@ graph TB
 | FR-5 (Dữ liệu) | Phase 5, 6 | Phase 7 — unit test |
 | FR-6 (Hệ thống) | Phase 5, 8 | Phase 7 — smoke + stress test |
 
-**Tổng cộng:** 34 yêu cầu chức năng — **21 Must**, **6 Should**, **3 Could**, **4 Won't**.
+**Tổng cộng:** 34 yêu cầu chức năng — **20 Must**, **5 Should**, **3 Could**, **6 Won't**.
 
 Bốn yêu cầu mức Won't đều đến từ **hai lần thu gọn phạm vi giao diện trong ngày 2026-07-20**: FR-3.1 và FR-3.4 (gỡ trang Webcam), FR-4.1 và FR-4.2 (gỡ trang Tổng quan). Trong đó **FR-4.1 là yêu cầu mức Must đầu tiên bị đưa ra khỏi phạm vi** — xem ghi chú đầu mục 5.
 

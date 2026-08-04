@@ -289,9 +289,9 @@ def export_docx(pandoc: Path, markdown_path: Path, docx_path: Path) -> None:
             # working directory, so without this the build silently produces a
             # DOCX with broken image placeholders instead of the 25 diagrams.
             #
-            # The parent directory is on the path too: the shortened edition
-            # lives in ``docs/papers/compact`` and shares the one ``figures/``
-            # folder with the full edition rather than duplicating 25 PNGs.
+            # The parent directory is on the path too, so a chapter set kept
+            # in a sub-directory can share the one ``figures/`` folder instead
+            # of duplicating every PNG.
             "--resource-path",
             os.pathsep.join(
                 [str(markdown_path.parent), str(markdown_path.parent.parent)]

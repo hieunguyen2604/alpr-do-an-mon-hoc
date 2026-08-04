@@ -58,8 +58,8 @@ def quet(files: list[Path]) -> tuple[set[str], set[str], set[str]]:
 
 
 def main() -> None:
-    # Tham so tuy chon: thu muc chua cac tep chuong. Mac dinh la ban chinh
-    # docs/papers/; truyen "compact" de kiem ban rut gon.
+    # Tham so tuy chon: thu muc con chua cac tep chuong, tinh tu docs/papers/.
+    # Mac dinh la chinh docs/papers/.
     thu_muc = PAPERS / sys.argv[1] if len(sys.argv) > 1 else PAPERS
     files = sorted(thu_muc.glob("ch*.md"))
     if not files:
