@@ -151,7 +151,10 @@ docs/reports/figures/28b/
 # `pandoc --print-default-data-file reference.docx` roi va rieng kieu bang. La
 # san pham trung gian thuan tuy, khong phai ban giao — xem
 # `build_reference_docx` trong scripts/build_thesis.py.
-docs/papers/reference-thesis.docx
+# Khong dat tien to duong dan: moi thu muc chuong deu sinh mot ban rieng
+# (docs/papers/ va docs/papers/mon-hoc/), va ban dau luat nay chi khop
+# thu muc goc nen ban cua quyen mon hoc da lot vao mot commit.
+reference-thesis.docx
 
 # Thu muc ban nop: BAN SAO cua nhung tep vo da duoc theo doi o docs/papers/ va
 # docs/slides/, dung lai o moi lan chay build_thesis.py hoac export_thesis_pdf.ps1.
