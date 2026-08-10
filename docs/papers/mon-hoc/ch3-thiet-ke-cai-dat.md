@@ -9,7 +9,7 @@
 Đường ống gồm bốn khối nối tiếp, và độ chính xác cuối cùng là **tích** của độ chính xác từng khối — một khối yếu kéo cả chuỗi xuống:
 
 1. **Phát hiện vùng biển** — YOLO11n trên ảnh đầu vào, trả về danh sách hộp bao;
-2. **Xử lý ảnh vùng biển** — cắt, phóng đại, tăng cường tương phản, khử nhiễu, nắn hình, phân loại bố cục, tách và ghép (mục 3.4);
+2. **Xử lý ảnh vùng biển** — cắt, phân loại bố cục theo hình học, tách và ghép, rồi phóng đại, tăng cường tương phản và khử nhiễu (mục 3.4);
 3. **Nhận dạng ký tự** — PaddleOCR trên dải ảnh một dòng đã chuẩn bị;
 4. **Hậu xử lý theo quy chuẩn** — chuẩn hoá chuỗi theo bộ luật ràng buộc vị trí (mục 3.6).
 
@@ -92,7 +92,25 @@ Việc **tắt phép lật ngang** là quyết định xử lý ảnh đáng ch�
 
 Mọi bước trong mục này đều **bật tắt được độc lập** qua biến cấu hình. Đây không phải tiện ích lập trình mà là điều kiện để chương 4 **bóc tách đóng góp của từng bước**: không có công tắc thì không đo được bước nào mua được gì.
 
-Thứ tự: cắt vùng → phóng đại → thang xám → CLAHE → lọc song phương → ước lượng số dòng → *(nếu hai dòng)* tách hai nửa → ghép ngang → nhận dạng.
+Thứ tự trên **đường chạy chính**:
+
+> cắt vùng → ước lượng số dòng → *(nếu hai dòng)* tách hai nửa → ghép ngang → phóng đại → thang xám → CLAHE → lọc song phương → nhận dạng
+
+Hai chi tiết về thứ tự này đáng nêu, vì đảo lại sẽ ra một hệ thống khác.
+
+**Ước lượng số dòng chạy trên vùng cắt thô, trước mọi phép tăng cường.** Điều này an toàn vì các bước tăng cường không đổi tỉ lệ khung hình — phóng đại giữ nguyên tỉ lệ, còn thang xám, CLAHE và lọc song phương chỉ đổi giá trị điểm ảnh. Đại lượng mà bước phân loại dựa vào vì vậy không bị bước nào phía sau làm nhiễu.
+
+**Tiền xử lý chạy sau khi ghép, không phải trước khi tách.** CLAHE vì vậy làm việc trên **dải ảnh đã ghép**, tức trên một hàng ký tự duy nhất, chứ không phải trên từng nửa riêng. Đây là lựa chọn có chủ đích: chạy CLAHE riêng cho từng nửa sẽ cân bằng tương phản của hai nửa **độc lập với nhau**, và nếu một nửa bị chói còn nửa kia không, hai nửa sau khi ghép sẽ có độ sáng lệch nhau ngay giữa dải — đúng chỗ bộ phát hiện văn bản dễ hiểu nhầm là ranh giới giữa hai vùng chữ.
+
+**Bước nắn hình không nằm trên đường chạy chính.** Nó thuộc bậc thang thử lại ở mục 3.4.6, chỉ chạy sau khi lần đọc đầu tiên đã thất bại.
+
+![](figures/fig-pipeline-strip.png)
+
+**Hình 3.3.** Toàn bộ chuỗi xử lý trên một biển thật, ảnh chụp sau từng bước
+
+Hình 3.3 là kết quả chạy **chính các hàm của bản giao hàng**, không phải hình vẽ minh hoạ: mỗi khung là mảng ảnh thật ở đầu ra của bước tương ứng, và chuỗi kết thúc bằng chuỗi ký tự mà hệ thống thực sự đọc được. Hai khung đáng nhìn kỹ là khung 3 và khung 4 — chúng cho thấy trực tiếp thứ mà cả mục này mô tả bằng chữ: **tỉ lệ khung hình nhảy từ 1,12 lên 4,42**, và hai hàng ký tự cao 30 px trở thành một hàng duy nhất nhận trọn 50 px.
+
+Khung 3 cũng cho thấy một chi tiết dễ bị hiểu nhầm: nửa dưới **có chứa phần chân của hàng ký tự trên**. Đó không phải lỗi cắt mà chính là vùng chồng lấn ở mục 3.4.4, và mục 3.4.7 cho thấy nó còn giải quyết thêm một vấn đề nữa.
 
 ### 3.4.2. Tiền xử lý
 
@@ -110,7 +128,9 @@ Số dòng suy từ tỉ lệ chiều rộng trên chiều cao của vùng biể
 
 Ngưỡng này là **đề xuất của đồ án, không phải quy định pháp lý**. Quy chuẩn chỉ cung cấp ba tỉ lệ vật lý 4,727 · 2,000 · 1,357 (mục 2.1.2), để lại khoảng trống rộng giữa 2,000 và 4,727. Giá trị 2,5 được đặt **lệch hẳn về phía nhóm hai dòng** thay vì đặt ở giữa khoảng trống, và lý do là **tính bất đối xứng của chi phí sai sót**: đường xử lý hai dòng **suy giảm êm** khi gặp đầu vào một dòng — nó chỉ tách một ảnh vốn đã một dòng thành hai nửa rồi ghép lại, kết quả gần như không đổi — trong khi chiều ngược lại thì không, một biển hai dòng đi thẳng vào bộ nhận dạng sẽ hỏng theo cơ chế ở mục 2.4.2.
 
-Dải 2,5–3,0 vẫn là **vùng bất định**: một biển một dòng chụp nghiêng lớn có thể cho tỉ lệ rơi vào khoảng này. Đây chính là lý do bước nắn hình ở mục 3.4.6 chạy **trước** bước ước lượng số dòng.
+Dải 2,5–3,0 vẫn là **vùng bất định**, và nó bất định theo cả hai chiều: một biển một dòng chụp nghiêng lớn có thể cho tỉ lệ rơi xuống khoảng này, còn một biển hai dòng nghiêng thì có tỉ lệ **vọt lên trên** ngưỡng và đi nhầm sang nhánh một dòng.
+
+Đường chạy chính **không có cách nào tự phát hiện** mình vừa phân loại nhầm — nó chỉ đo một con số và so với một ngưỡng. Đây chính là lý do bậc thang thử lại ở mục 3.4.6 tồn tại: nó không sửa ngưỡng mà **dùng kết quả đọc hỏng làm tín hiệu** để nắn hình rồi phân loại lại.
 
 ### 3.4.4. Tách hai nửa có chồng lấn
 
@@ -130,9 +150,18 @@ Chi tiết cuối cùng là điểm mấu chốt của toàn bộ thiết kế. 
 
 ### 3.4.6. Nắn hình và bậc thang thử lại
 
-Biển chụp nghiêng gây hai vấn đề cùng lúc: tỉ lệ khung hình đo được sai lệch (ảnh hưởng mục 3.4.3), và ký tự bị biến dạng phối cảnh. Hệ thống áp một bước **nắn hình** — ước lượng góc nghiêng rồi hiệu chỉnh — **trước** bước ước lượng số dòng, kèm một bước giãn theo chiều dọc cho biển bị nén.
+Biển chụp nghiêng gây hai vấn đề cùng lúc, và vấn đề thứ nhất nguy hiểm hơn vấn đề thứ hai.
 
-Các bước này được tổ chức thành một **bậc thang thử lại**: chúng chỉ chạy **sau khi lần đọc đầu tiên đã thất bại**, tức khi chuỗi trả về không qua được kiểm tra định dạng. Cấu trúc này có một tính chất quan trọng: vì cổng chỉ mở khi kết quả đã không hợp lệ, **tập bị can thiệp và tập đang đúng là hai tập rời nhau**, nên bậc thang không thể làm hỏng một biển vốn đã đọc đúng.
+**Vấn đề hiển nhiên** là ký tự bị biến dạng phối cảnh. **Vấn đề thật sự** là biển nghiêng làm **hộp bao nở rộng ra theo chiều ngang**, nên tỉ lệ khung hình đo được **vượt qua ngưỡng 2,5** của mục 3.4.3: vùng biển hai dòng bị phân loại nhầm thành một dòng, **không bao giờ được tách**, và bộ nhận dạng trả về chuỗi rỗng — trong khi đúng biển đó chụp chính diện thì đọc hoàn hảo. Sai sót ở đây không phải "đọc kém đi" mà là **đi nhầm nhánh xử lý**.
+
+Hai phép hiệu chỉnh được cài để kéo vùng biển về đúng nhánh:
+
+- **Nắn hình** — nhị phân hoá bằng Otsu ở cả hai cực, lấy vùng liên thông lớn nhất, khớp một hình chữ nhật xoay, rồi xoay ảnh cho cạnh dài nằm ngang và cắt lại sát. Trả về **phần cắt sát** chứ không phải khung đã xoay, vì tỉ lệ của phần cắt sát mới là hình dạng thật của biển — đúng đại lượng mà bước phân loại cần.
+- **Giãn theo chiều dọc** — cho biển bị nén do chụp chếch từ trên xuống. Trường hợp này **không có góc xoay nào để nắn**: biển vẫn nằm ngang, chỉ bị ép dẹt. Các hàng điểm ảnh nội suy thêm **không mang thông tin mới**; giá trị của phép giãn nằm ở chỗ **định tuyến**, không ở chi tiết ảnh.
+
+Hai phép này **không nằm trên đường chạy chính**. Chúng được tổ chức thành một **bậc thang thử lại**, chỉ kích hoạt **sau khi lần đọc đầu tiên đã thất bại** — tức khi chuỗi trả về không qua được kiểm tra định dạng. Cấu trúc này có một tính chất quan trọng: vì cổng chỉ mở khi kết quả đã không hợp lệ, **tập bị can thiệp và tập đang đúng là hai tập rời nhau**, nên bậc thang **không thể làm hỏng một biển vốn đã đọc đúng**. Chính tính chất đó cho phép để nó bật mặc định mà không cần lo thoái lui về độ chính xác.
+
+Bản thân bước nắn hình cũng có ba cổng an toàn, mỗi cổng đều lùi về "trả nguyên vùng cắt": góc nghiêng dưới 1,5° (không có gì để sửa, giữ nguyên đường chạy chính diện không đổi một bit), góc trên 35° (ước lượng gần như chắc chắn sai), hoặc vùng liên thông lớn nhất chiếm dưới 25% diện tích vùng cắt (nhị phân hoá đã làm vỡ biển thay vì cô lập nó).
 
 Chi phí và lợi ích đo được trình bày ở mục 4.4.2, kèm một quyết định **tắt** một bậc trong đó.
 
@@ -164,7 +193,7 @@ Kết quả hợp nhất giữa hai nguồn bằng chứng tuân một **ràng b
 
 ![](figures/fig-ch5-03.png)
 
-**Hình 3.3.** Thuật toán chuẩn hoá chuỗi biển số theo bộ luật ràng buộc vị trí
+**Hình 3.4.** Thuật toán chuẩn hoá chuỗi biển số theo bộ luật ràng buộc vị trí
 
 Khối này là thành phần do đồ án tự thiết kế hoàn toàn. Nó khai thác ba ràng buộc đặc thù đã trình bày ở mục 2.1.1.
 
@@ -197,7 +226,7 @@ Phần này không phải trọng tâm của môn học nên chỉ nêu những 
 
 ![](figures/fig-ch4-02.png)
 
-**Hình 3.4.** Kiến trúc phân tầng và chiều phụ thuộc
+**Hình 3.5.** Kiến trúc phân tầng và chiều phụ thuộc
 
 Hệ thống gồm **backend FastAPI** phục vụ mười thao tác HTTP trên chín đường dẫn, **cơ sở dữ liệu SQLite** lưu lịch sử nhận dạng, **giao diện web React** ba trang (nhận dạng ảnh, nhận dạng video, tra cứu lịch sử), và **đóng gói Docker Compose** khởi động toàn bộ bằng một lệnh.
 
