@@ -7,7 +7,7 @@ date: "Tháng 9 năm 2026"
 ---
 
 <!--
-BỘ SLIDE ĐỒ ÁN MÔN HỌC — 12 slide (1 bìa + 11 nội dung).
+BỘ SLIDE ĐỒ ÁN MÔN HỌC — 16 slide (1 bìa + 15 nội dung), khoảng 15 phút.
 
 Khác gì hai bộ kia:
   `10-slides.md`         37 slide, bám mạch quyển tốt nghiệp, dùng cho buổi bảo vệ.
@@ -23,6 +23,13 @@ Ba khác biệt nội dung so với bộ 11 slide:
      trình bày cách giải.
   3. THÊM slide bóc tách đóng góp đo được của từng bước xử lý ảnh, và slide
      hình chuỗi xử lý dựng từ chính mã bàn giao.
+
+Bốn slide thêm ở lượt sau (12 -> 16), đều lấp chỗ trống có thật:
+  - Bộ dữ liệu và khử trùng lặp: băm tri giác DCT là nội dung môn học mà
+    bản 12 slide chỉ nhắc trong một dòng bảng.
+  - Hình 4.1 và Hình 4.2 của quyển: con số quan trọng nhất và các ca lỗi
+    thật, trước đó chỉ nằm trong bảng.
+  - Tách Demo ra khỏi Hướng phát triển để có chỗ cho ảnh chụp giao diện.
 
 BỐN QUY ƯỚC BẮT BUỘC — vi phạm là vỡ layout, `check_slides.ps1` sẽ báo:
 
@@ -60,6 +67,19 @@ Hệ thống chạy đầu-cuối, **suy luận hoàn toàn trên CPU**, hỗ tr
 | Đúng cả chuỗi, **trước** hậu xử lý | 0,80 | 0,85 |
 | Đúng cả chuỗi, **sau** hậu xử lý | 0,85 | 0,90 |
 | Độ trễ một ảnh, p95, **trên CPU** | ≤ 1.500 ms | ≤ 800 ms |
+
+## Bộ dữ liệu: khử trùng lặp bằng băm tri giác
+
+Các bộ công khai fork lẫn nhau, nên **44,2% ảnh là bản trùng** — không khử thì đang đo trí nhớ.
+
+| Bước | Kết quả |
+|---|---|
+| Hợp nhất **7 bộ công khai** | 27.111 ảnh |
+| Khử trùng lặp chéo bộ, băm tri giác **DCT 64 bit** | còn **15.133** ảnh · loại **44,2%** |
+| Ca cực đoan | một bộ vào **1.005** ảnh, ra **0** ảnh |
+| Băm đa chỉ mục (nguyên lý chuồng bồ câu) | thuật toán **chính xác**, không xấp xỉ |
+| Chia tập, giữ nhóm trùng cùng một bên | 10.592 / 3.027 / **1.514** |
+| **Giới hạn còn lại** | pHash tóm tắt **khung ảnh**, không tóm tắt **chiếc xe** |
 
 ## Vì sao biển hai dòng làm gãy bộ nhận dạng
 
@@ -112,6 +132,18 @@ Phát hiện **đạt cả bốn chỉ tiêu**; phần thiếu nằm trọn ở 
 | — riêng biển **hai dòng** | **0,6996** | 0,90 | ❌ |
 | Độ trễ p95 · trung vị, CPU | **1.143** · 406 ms | ≤ 800 ms | 🟡 |
 
+## Khoảng cách nằm ở đâu
+
+Đo mức ký tự thì hai bố cục gần bằng nhau; đo cả chuỗi thì cách một trời một vực.
+
+![](figures/fig-ch4-layout.png)
+
+## Lỗi trông như thế nào
+
+Ba ca hậu xử lý cứu được, ba ca vẫn sai — **cả ba ca sai đều hỏng ở dòng trên**.
+
+![](figures/fig-ch4-loi.png)
+
 ## Bóc tách đóng góp của từng bước
 
 Mọi bước bật tắt độc lập, nên đóng góp của từng bước **đo được riêng** — kể cả khi bằng 0.
@@ -130,9 +162,13 @@ Mọi bước bật tắt độc lập, nên đóng góp của từng bước **
 - **Bảng ánh xạ suy từ hình dạng chỉ phủ 2/10 cặp** nhầm phổ biến nhất — trực giác không gợi ra `E → F` hay `4 → L`
 - **Siêu phân giải mua 0 biển, nhưng 0/120 mẫu lọt cổng** ⇒ *chi phí đã đo, lợi ích chưa ai đo được*
 
-## Demo và hướng phát triển
+## Demo: hệ thống chạy thật
 
-Hệ thống chạy thật bằng một lệnh `docker compose up`; giao diện hiện **cả chuỗi thô lẫn chuỗi đã sửa**.
+Khởi động bằng một lệnh `docker compose up`; giao diện hiện **cả chuỗi thô lẫn chuỗi đã sửa**.
+
+![](figures/fig-demo-ui.png)
+
+## Hướng phát triển
 
 | # | Hướng phát triển | Giải hạn chế nào |
 |:--:|---|---|

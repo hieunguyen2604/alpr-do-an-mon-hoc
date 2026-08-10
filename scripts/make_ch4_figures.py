@@ -264,10 +264,15 @@ def main() -> int:
     hinh_layout(tai_lieu["by_line_count"], b)
     print(f"[ok] hinh doi chieu bo cuc -> {b}")
 
-    # Khong chep sang docs/slides/figures/: bo slide 12 khong dung hinh nao
-    # trong hai hinh nay. Mot ban sao khong ai tham chieu chi la rac se cu ky
-    # dan — dung sai lam ma chinh script nay sinh ra de tranh. Neu ve sau deck
-    # co dung, them buoc chep o day cung voi cho tham chieu.
+    # Bo slide mon hoc dung ca hai hinh nay, va deck resolve `figures/` theo
+    # thu muc cua chinh no — mot tep khong phuc vu duoc ca hai cho. Chep o day
+    # thay vi de nguoi dung tu chep: mot deck mang hinh cu la thu khong gi bat
+    # duoc.
+    for tep in (a, b):
+        ban_sao = REPO_ROOT / "docs" / "slides" / "figures" / tep.name
+        ban_sao.parent.mkdir(parents=True, exist_ok=True)
+        ban_sao.write_bytes(tep.read_bytes())
+    print("[ok] ban sao cho slide -> docs/slides/figures/")
     return 0
 
 

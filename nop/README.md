@@ -17,7 +17,7 @@ nào bị đổi đường dẫn.
 | `03-slide-bao-cao-ky-thuat.pptx` | `docs/slides/11-slides-ky-thuat.pptx` | Bản gọn theo khuôn báo cáo kỹ thuật, 11 slide |
 | `04-do-an-mon-hoc.pdf` | `docs/papers/mon-hoc/thesis-full.pdf` | Bản đồ án môn học **Xử lý ảnh và ứng dụng**, **44 trang** |
 | `04-do-an-mon-hoc.docx` | `docs/papers/mon-hoc/thesis-full.docx` | Cùng nội dung, bản Word |
-| `05-slide-mon-hoc.pptx` | `docs/slides/12-slides-mon-hoc.pptx` | Slide báo cáo môn học, **12 slide** |
+| `05-slide-mon-hoc.pptx` | `docs/slides/12-slides-mon-hoc.pptx` | Slide báo cáo môn học, **16 slide** |
 
 Nhóm `01` và nhóm `04` là **hai quyển riêng**, không phải hai phiên bản của cùng
 một quyển: khác bố cục, khác cao độ trình bày, khác danh mục tài liệu tham khảo.
