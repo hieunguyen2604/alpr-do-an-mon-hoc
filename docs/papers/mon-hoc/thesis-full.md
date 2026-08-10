@@ -651,7 +651,13 @@ Phân rã lỗi ký tự cho một manh mối quan trọng: **số ký tự bị
 | **S₁** — đúng cả chuỗi, sau hậu xử lý | **0,9541** | **0,6996** | **25,45** |
 | Cải thiện nhờ hậu xử lý | +1,23 | **+13,97** | — |
 
+![](figures/fig-ch4-layout.png)
+
+**Hình 4.1.** Đối chiếu biển một dòng và hai dòng trên ba chỉ số
+
 Chênh lệch mà tầng phát hiện gần như che khuất (2,09 điểm ở Bảng 4.2) **lộ ra ở tầng nhận dạng với biên độ khác hẳn cấp**: 5,81 điểm ở mức ký tự, **25,45 điểm** ở S₁, **38,18 điểm** ở S₀.
+
+Hình 4.1 còn cho thấy một điều mà bảng số không nói ngay: **cột đo mức ký tự gần như không phân biệt được hai bố cục** (0,9925 so với 0,9344), trong khi cột đo cả chuỗi thì cách nhau một trời một vực. Đây chính là quan hệ phi tuyến ở mục 2.4.3: sai một ký tự trong tám là hỏng cả chuỗi, nên một chênh lệch 5,81 điểm ở mức ký tự **khuếch đại thành 25,45 điểm** ở mức chuỗi. Chọn chỉ số nào để báo cáo vì vậy quyết định kết luận trông ra sao — và mức chuỗi mới là mức phản ánh giá trị sử dụng.
 
 Ba kết luận rút ra:
 
@@ -824,6 +830,16 @@ Bảng này khép lại mạch lập luận của chương. **Nhầm ký tự ch
 **Sai thứ tự bằng 0** là bằng chứng trực tiếp cho thấy thiết kế ghép ngang ở mục 3.4.5 hoạt động đúng: nếu phép ghép đặt nhầm thứ tự hai nửa, hoặc nếu CTC vẫn đọc lộn xộn giữa hai dòng, loại lỗi này phải xuất hiện. Nó không xuất hiện một lần nào.
 
 **Thiếu ký tự tập trung tuyệt đối ở biển hai dòng** (73/73), khớp với hồ sơ lỗi thiên về xoá ở mục 4.3.1 và với chế độ hỏng "mất hẳn dòng trên" mà mục 3.4.7 xử lý.
+
+![](figures/fig-ch4-loi.png)
+
+**Hình 4.2.** Sáu vùng biển thật: ba ca khối hậu xử lý sửa được, ba ca vẫn sai
+
+Hình 4.2 cho thấy các con số ở Bảng 4.12 **trông như thế nào trên ảnh thật**. Hàng trên minh hoạ đúng ba cơ chế mà mục 3.6 mô tả: `2947872 → 29A7872` là mặt nạ vị trí ép chữ số thành chữ cái ở vị trí seri; `52126661 → 52L26661` là cùng cơ chế với cặp `1 / L`; còn `5203 → 78N25203` là bước phục hồi dòng trên ở mục 3.4.7 — chuỗi thô mất trọn dòng trên và được đọc lại riêng nửa trên.
+
+Hàng dưới cho thấy phần còn lại khó ở đâu. Cả ba đều là biển hai dòng, và cả ba đều **hỏng ở dòng trên**: `30A → 37L`, `31F` mất hẳn, `52Z → 52T`. Dòng dưới toàn chữ số nên bộ luật vị trí kiểm được; dòng trên trộn chữ và số ở đúng vị trí mà mặt nạ cho phép cả hai, nên hậu xử lý **không có ràng buộc nào để bám vào**. Đây là lý do hướng phát triển số 1 ở mục 5.3 nhắm vào bộ nhận dạng chứ không nhắm vào bộ luật.
+
+Cần lưu ý về ảnh: ngữ liệu nhãn xuất mọi vùng cắt về khung vuông 640 × 640, **phá tỉ lệ khung hình gốc**. Hình trên đã khôi phục tỉ lệ bằng đúng hàm mà công cụ đo dùng trước khi chạy nhận dạng. Bước khôi phục này không phải chi tiết trình bày: bỏ nó đi thì S₁ rơi từ 0,7512 xuống **0,4988**, vì mọi vùng cắt vuông đều bị phân loại thành hai dòng.
 
 ## 4.7. Các yếu tố ảnh hưởng tới tính hợp lệ của kết quả
 

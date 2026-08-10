@@ -15,7 +15,7 @@ nào bị đổi đường dẫn.
 | `01-do-an-tot-nghiep.docx` | `docs/papers/thesis-full.docx` | Cùng nội dung, bản Word để hội đồng ghi chú |
 | `02-slide-bao-ve.pptx` | `docs/slides/slides.pptx` | Slide bảo vệ đầy đủ — 31 slide chính + 7 slide dự phòng |
 | `03-slide-bao-cao-ky-thuat.pptx` | `docs/slides/11-slides-ky-thuat.pptx` | Bản gọn theo khuôn báo cáo kỹ thuật, 11 slide |
-| `04-do-an-mon-hoc.pdf` | `docs/papers/mon-hoc/thesis-full.pdf` | Bản đồ án môn học **Xử lý ảnh và ứng dụng**, **43 trang** |
+| `04-do-an-mon-hoc.pdf` | `docs/papers/mon-hoc/thesis-full.pdf` | Bản đồ án môn học **Xử lý ảnh và ứng dụng**, **44 trang** |
 | `04-do-an-mon-hoc.docx` | `docs/papers/mon-hoc/thesis-full.docx` | Cùng nội dung, bản Word |
 | `05-slide-mon-hoc.pptx` | `docs/slides/12-slides-mon-hoc.pptx` | Slide báo cáo môn học, **12 slide** |
 

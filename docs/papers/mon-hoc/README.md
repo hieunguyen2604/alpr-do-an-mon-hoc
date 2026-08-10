@@ -11,7 +11,7 @@ Quyển đồ án tốt nghiệp ở `docs/papers/` **không bị thay đổi** 
 | | Tốt nghiệp | Môn học |
 |---|---:|---:|
 | Số chương | 6 | **5** |
-| Số trang | 93 | **41** |
+| Số trang | 93 | **44** |
 | Tài liệu tham khảo | 123 mục | **17 mục** |
 | Phụ lục | 8 mục | **2 mục** |
 
