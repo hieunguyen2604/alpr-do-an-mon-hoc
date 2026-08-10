@@ -134,6 +134,7 @@ BUNDLE_FILES: tuple[tuple[str, str], ...] = (
     # phai mot phien ban khac cua quyen tot nghiep.
     ("docs/papers/mon-hoc/thesis-full.pdf", "04-do-an-mon-hoc.pdf"),
     ("docs/papers/mon-hoc/thesis-full.docx", "04-do-an-mon-hoc.docx"),
+    ("docs/slides/12-slides-mon-hoc.pptx", "05-slide-mon-hoc.pptx"),
 )
 
 # Pandoc arguments shared by every export path.

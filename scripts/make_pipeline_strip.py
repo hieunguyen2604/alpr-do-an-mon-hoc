@@ -33,6 +33,7 @@ from __future__ import annotations
 
 import argparse
 import sys
+import textwrap
 from pathlib import Path
 
 import cv2
@@ -243,36 +244,57 @@ def _xep_doc(tren: np.ndarray, duoi: np.ndarray) -> np.ndarray:
     return np.vstack((dem(tren), khe, dem(duoi)))
 
 
-def ve(panels: list[tuple[str, str, np.ndarray]], dich: Path, ket_qua: str | None) -> None:
+def ve(
+    panels: list[tuple[str, str, np.ndarray]],
+    dich: Path,
+    ket_qua: str | None,
+    cot_det: int = 1,
+) -> None:
     """Compose the panels into one figure and write it to disk.
 
     Args:
         panels: ``(title, caption, image)`` triples in processing order.
         dich: Destination PNG path.
         ket_qua: Final recognised string, or ``None`` when OCR was skipped.
+        cot_det: How many columns the wide strips are laid out in. ``1`` gives a
+            portrait figure that suits a report page; ``2`` roughly halves the
+            height and produces a landscape figure for a 16:9 slide. The
+            portrait version rendered on a slide is unreadable -- PowerPoint
+            scales it to fit the *height* of the content area, and the captions
+            end up a few pixels tall.
     """
-    # Two-part layout, driven by the images themselves. The steps before the
-    # merge are near-square crops and the steps after it are wide strips; giving
-    # every panel a full-width row made the figure 3,586 px tall and printed at
-    # page width it would be unreadable. Squares go side by side in one row,
-    # strips stack below at full width.
+    # Layout is driven by the images themselves. The steps before the merge are
+    # near-square crops and the steps after it are wide strips; giving every
+    # panel a full-width row made the figure 3,586 px tall. Squares go side by
+    # side in one row, strips fill the rows below.
     #
-    # Every panel still keeps its true aspect ratio. That is not cosmetic: the
-    # whole point of the figure is that step 4 turns a 1.12 ratio into a 4.42
-    # one, and normalising the boxes would erase exactly that.
+    # Every panel keeps its true aspect ratio. That is not cosmetic: the whole
+    # point of the figure is that step 4 turns a 1.12 ratio into a 4.42 one, and
+    # normalising the boxes would erase exactly that.
     NGUONG_DET = 2.0
     hep = [p for p in panels if p[2].shape[1] / p[2].shape[0] < NGUONG_DET]
     det = [p for p in panels if p[2].shape[1] / p[2].shape[0] >= NGUONG_DET]
 
     RONG = 7.2
-    NHAN = 0.66  # inches reserved for the title above and caption below
-    so_cot = max(len(hep), 1)
+    # Room for the title above and the caption below. Two-column mode wraps
+    # captions onto a second line -- at half width they otherwise run past
+    # their own column and collide with the neighbour's caption.
+    NHAN = 0.66 if cot_det == 1 else 0.86
+    BE_RONG_CHU = 46
+    so_cot = max(len(hep), cot_det, 1)
 
     cao_hang: list[float] = []
     if hep:
-        rong_o = RONG / so_cot
+        rong_o = RONG / len(hep)
         cao_hang.append(max(rong_o * p[2].shape[0] / p[2].shape[1] for p in hep) + NHAN)
-    cao_hang += [max(0.42, RONG * p[2].shape[0] / p[2].shape[1]) + NHAN for p in det]
+
+    rong_det = RONG / cot_det
+    # Strips are packed cot_det per row; a row is as tall as its tallest member.
+    hang_det = [det[i : i + cot_det] for i in range(0, len(det), cot_det)]
+    cao_hang += [
+        max(0.42, max(rong_det * p[2].shape[0] / p[2].shape[1] for p in nhom)) + NHAN
+        for nhom in hang_det
+    ]
 
     fig = plt.figure(figsize=(RONG + 0.6, sum(cao_hang)))
     luoi = fig.add_gridspec(len(cao_hang), so_cot, height_ratios=cao_hang, wspace=0.18)
@@ -280,9 +302,19 @@ def ve(panels: list[tuple[str, str, np.ndarray]], dich: Path, ket_qua: str | Non
     o: list[plt.Axes] = []
     hang = 0
     if hep:
-        o += [fig.add_subplot(luoi[0, i]) for i in range(len(hep))]
+        # Squares share the row evenly even when there are fewer of them than
+        # `so_cot`; slicing by span keeps them centred rather than left-packed.
+        moi_o = so_cot // len(hep)
+        o += [
+            fig.add_subplot(luoi[0, i * moi_o : (i + 1) * moi_o]) for i in range(len(hep))
+        ]
         hang = 1
-    o += [fig.add_subplot(luoi[hang + i, :]) for i in range(len(det))]
+    for r, nhom in enumerate(hang_det):
+        moi_o = so_cot // cot_det
+        o += [
+            fig.add_subplot(luoi[hang + r, c * moi_o : (c + 1) * moi_o])
+            for c in range(len(nhom))
+        ]
 
     for ax, (tieu_de, chu_thich, anh) in zip(o, hep + det):
         ax.imshow(_to_rgb(anh))
@@ -292,7 +324,11 @@ def ve(panels: list[tuple[str, str, np.ndarray]], dich: Path, ket_qua: str | Non
             canh.set_edgecolor(MUTED)
             canh.set_linewidth(0.8)
         ax.set_title(tieu_de, fontsize=11, fontweight="bold", color=BLUE, loc="left", pad=5)
-        ax.set_xlabel(chu_thich, fontsize=9, color=MUTED, labelpad=4)
+        if cot_det > 1:
+            chu_thich = "\n".join(textwrap.wrap(chu_thich, BE_RONG_CHU))
+        ax.set_xlabel(
+            chu_thich, fontsize=9 if cot_det == 1 else 8, color=MUTED, labelpad=4
+        )
 
     if ket_qua:
         fig.text(
@@ -347,6 +383,7 @@ def main(argv: list[str] | None = None) -> int:
     Returns:
         Process exit code.
     """
+    mac_dinh_dich = REPO_ROOT / "docs" / "papers" / "figures" / "fig-pipeline-strip.png"
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument(
         "--anh",
@@ -357,8 +394,19 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument(
         "--dich",
         type=Path,
-        default=REPO_ROOT / "docs" / "papers" / "figures" / "fig-pipeline-strip.png",
+        default=mac_dinh_dich,
         help="Duong dan PNG dau ra.",
+    )
+    ap.add_argument(
+        "--cot-det",
+        type=int,
+        default=1,
+        dest="cot_det",
+        choices=(1, 2),
+        help=(
+            "So cot xep cac dai anh ngang. 1 = ban doc cho trang bao cao (mac "
+            "dinh); 2 = ban ngang cho slide 16:9, cao bang mot nua."
+        ),
     )
     ap.add_argument(
         "--khong-doc",
@@ -377,8 +425,22 @@ def main(argv: list[str] | None = None) -> int:
     panels = dung_cac_buoc(crop)
     ket_qua = None if args.khong_doc else doc_ket_qua(anh)
 
-    ve(panels, args.dich, ket_qua)
+    ve(panels, args.dich, ket_qua, cot_det=args.cot_det)
     print(f"[ok] {len(panels)} buoc -> {args.dich}")
+
+    # A default run also emits the landscape variant for the deck. Not a copy --
+    # a second render, because the two need different layouts: the portrait
+    # figure dropped into a 16:9 slide gets scaled to fit the content area's
+    # *height* and its captions end up a few pixels tall.
+    #
+    # Both come out of one command on purpose. Two commands means one of them
+    # eventually does not get run, and a deck showing last month's version of
+    # this figure is worse than a deck with no figure -- nothing would catch it.
+    if args.dich == mac_dinh_dich and args.cot_det == 1:
+        ngang = REPO_ROOT / "docs" / "slides" / "figures" / "fig-pipeline-strip-ngang.png"
+        ve(panels, ngang, ket_qua, cot_det=2)
+        print(f"[ok] ban ngang cho slide -> {ngang}")
+
     if ket_qua:
         print(f"[ok] ket qua nhan dang: {ket_qua}")
     return 0

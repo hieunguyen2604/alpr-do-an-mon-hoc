@@ -15,8 +15,9 @@ nào bị đổi đường dẫn.
 | `01-do-an-tot-nghiep.docx` | `docs/papers/thesis-full.docx` | Cùng nội dung, bản Word để hội đồng ghi chú |
 | `02-slide-bao-ve.pptx` | `docs/slides/slides.pptx` | Slide bảo vệ đầy đủ — 31 slide chính + 7 slide dự phòng |
 | `03-slide-bao-cao-ky-thuat.pptx` | `docs/slides/11-slides-ky-thuat.pptx` | Bản gọn theo khuôn báo cáo kỹ thuật, 11 slide |
-| `04-do-an-mon-hoc.pdf` | `docs/papers/mon-hoc/thesis-full.pdf` | Bản đồ án môn học **Xử lý ảnh và ứng dụng**, **41 trang** |
+| `04-do-an-mon-hoc.pdf` | `docs/papers/mon-hoc/thesis-full.pdf` | Bản đồ án môn học **Xử lý ảnh và ứng dụng**, **43 trang** |
 | `04-do-an-mon-hoc.docx` | `docs/papers/mon-hoc/thesis-full.docx` | Cùng nội dung, bản Word |
+| `05-slide-mon-hoc.pptx` | `docs/slides/12-slides-mon-hoc.pptx` | Slide báo cáo môn học, **12 slide** |
 
 Nhóm `01` và nhóm `04` là **hai quyển riêng**, không phải hai phiên bản của cùng
 một quyển: khác bố cục, khác cao độ trình bày, khác danh mục tài liệu tham khảo.
@@ -34,12 +35,13 @@ Thư mục được làm mới ở **mỗi** lần chạy, nên nó không thể
 backend/.venv/Scripts/python.exe scripts/build_thesis.py
 backend/.venv/Scripts/python.exe scripts/build_thesis.py --slides docs/slides/11-slides-ky-thuat.md
 backend/.venv/Scripts/python.exe scripts/build_thesis.py --src docs/papers/mon-hoc
+backend/.venv/Scripts/python.exe scripts/build_thesis.py --slides docs/slides/12-slides-mon-hoc.md
 powershell -File scripts/export_thesis_pdf.ps1
 powershell -File scripts/export_thesis_pdf.ps1 -Nguon docs/papers/mon-hoc/thesis-full.docx -Dich docs/papers/mon-hoc/thesis-full.pdf
 ```
 
-Ba lệnh đầu dựng lần lượt: quyển tốt nghiệp cùng slide bảo vệ, slide báo cáo kỹ
-thuật, và quyển môn học. Hai lệnh sau dựng PDF bằng Word rồi tự chép sang đây.
+Bốn lệnh đầu dựng lần lượt: quyển tốt nghiệp cùng slide bảo vệ, slide báo cáo kỹ
+thuật, quyển môn học, và slide môn học. Hai lệnh sau dựng PDF bằng Word rồi tự chép sang đây.
 Cả `build_thesis.py` lẫn `export_thesis_pdf.ps1` đều cập nhật thư mục này, nên
 chạy lệnh nào cũng không để lại bản lệch.
 
