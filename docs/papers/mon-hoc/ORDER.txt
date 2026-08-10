@@ -1,0 +1,17 @@
+# Thu tu ghep cua BAN DO AN MON HOC (mon Xu ly anh va ung dung).
+#
+# Ban nay CO 5 CHUONG, quyen do an tot nghiep co 6 — day la ly do
+# `CHAPTER_FILENAMES` trong scripts/build_thesis.py khong dung lai duoc va
+# thu muc phai tu khai bao thu tu cua minh. Xem `read_order`.
+#
+# Van la danh sach tuong minh, khong phai glob: mot tep Markdown lac vao thu
+# muc nay khong duoc phep tu dong chui vao quyen.
+
+01-front-matter.md
+ch1-gioi-thieu.md
+ch2-co-so-ly-thuyet.md
+ch3-thiet-ke-cai-dat.md
+ch4-thuc-nghiem.md
+ch5-ket-luan.md
+ch8-tai-lieu-tham-khao.md
+ch9-phu-luc.md

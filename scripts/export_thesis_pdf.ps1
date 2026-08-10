@@ -10,9 +10,16 @@
 #
 # Chay:  powershell -File scripts/export_thesis_pdf.ps1
 
+# Hai ban dung chung script nay:
+#   docs/papers/            -> quyen do an tot nghiep
+#   docs/papers/mon-hoc/    -> ban do an mon hoc
+# Ten trong thu muc nop/ vi vay PHAI suy tu duong dan nguon. Ban dau buoc chep
+# dat ten cung "01-do-an-tot-nghiep.pdf", nen lan xuat ban mon hoc dau tien da
+# chep de len ban tot nghiep trong thu muc nop.
 param(
   [string]$Nguon = "D:\DATN\docs\papers\thesis-full.docx",
-  [string]$Dich  = "D:\DATN\docs\papers\thesis-full.pdf"
+  [string]$Dich  = "D:\DATN\docs\papers\thesis-full.pdf",
+  [string]$TenBanNop = ""
 )
 
 if (-not (Test-Path $Nguon)) {
@@ -42,10 +49,18 @@ try {
   # Dong bo luon vao thu muc nop. build_thesis.py cung chep tep nay, nhung no
   # chi chay khi ai do dung lai quyen; neu chi xuat PDF thi ban nop se giu ban
   # PDF cu — dung cai loi ma thu muc nop sinh ra de tranh.
+  #
+  # Ten dich suy tu duong dan nguon, khong dat cung: hai ban deu chay script
+  # nay va mot ten cung se lam ban nay de len ban kia.
+  $ten = $TenBanNop
+  if (-not $ten) {
+    if ($Nguon -match 'mon-hoc') { $ten = "04-do-an-mon-hoc.pdf" }
+    else                         { $ten = "01-do-an-tot-nghiep.pdf" }
+  }
   $nop = Join-Path (Split-Path -Parent (Split-Path -Parent $PSCommandPath)) "nop"
   if (-not (Test-Path $nop)) { New-Item -ItemType Directory -Force $nop | Out-Null }
-  Copy-Item $Dich (Join-Path $nop "01-do-an-tot-nghiep.pdf") -Force
-  Write-Output ("[ok] ban nop <- {0}" -f (Join-Path $nop "01-do-an-tot-nghiep.pdf"))
+  Copy-Item $Dich (Join-Path $nop $ten) -Force
+  Write-Output ("[ok] ban nop <- {0}" -f (Join-Path $nop $ten))
 }
 finally {
   $word.Quit()

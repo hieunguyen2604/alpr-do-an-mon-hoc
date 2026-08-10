@@ -130,6 +130,10 @@ BUNDLE_FILES: tuple[tuple[str, str], ...] = (
     ("docs/papers/thesis-full.docx", "01-do-an-tot-nghiep.docx"),
     ("docs/slides/slides.pptx", "02-slide-bao-ve.pptx"),
     ("docs/slides/11-slides-ky-thuat.pptx", "03-slide-bao-cao-ky-thuat.pptx"),
+    # Ban rut gon cho do an mon hoc — quyen rieng, dung nguon rieng, khong
+    # phai mot phien ban khac cua quyen tot nghiep.
+    ("docs/papers/mon-hoc/thesis-full.pdf", "04-do-an-mon-hoc.pdf"),
+    ("docs/papers/mon-hoc/thesis-full.docx", "04-do-an-mon-hoc.docx"),
 )
 
 # Pandoc arguments shared by every export path.
@@ -332,6 +336,48 @@ def read_section(path: Path) -> str:
     if not path.is_file():
         raise FileNotFoundError(f"Missing thesis source file: {path}")
     return path.read_text(encoding="utf-8")
+
+
+ORDER_FILENAME: str = "ORDER.txt"
+"""Per-directory override for :data:`CHAPTER_FILENAMES`.
+
+An edition with a different chapter set -- the course-project cut has five
+chapters where the thesis has six -- cannot reuse the tuple above, and naming
+its files to match anyway would leave a chapter called ``ch3-khao-sat-lua-chon``
+that contains system design. A directory may therefore declare its own binding
+order; one filename per line, ``#`` starts a comment.
+
+Still an explicit list, never a glob: the reason for listing files by hand (a
+stray Markdown file must never be swept into the book) applies to every edition.
+"""
+
+
+def read_order(papers_dir: Path) -> tuple[str, ...]:
+    """Return the binding order for ``papers_dir``.
+
+    Args:
+        papers_dir: Directory holding the section Markdown files.
+
+    Returns:
+        Filenames from that directory's ``ORDER.txt`` when present, otherwise
+        :data:`CHAPTER_FILENAMES`.
+
+    Raises:
+        ValueError: If an ``ORDER.txt`` exists but lists nothing, which would
+            otherwise produce an empty book without complaint.
+    """
+    manifest = papers_dir / ORDER_FILENAME
+    if not manifest.is_file():
+        return CHAPTER_FILENAMES
+
+    names = tuple(
+        stripped
+        for line in manifest.read_text(encoding="utf-8").splitlines()
+        if (stripped := line.split("#", 1)[0].strip())
+    )
+    if not names:
+        raise ValueError(f"{manifest} khong liet ke tep nao")
+    return names
 
 
 def merge_sections(papers_dir: Path, filenames: tuple[str, ...]) -> str:
@@ -652,9 +698,10 @@ def main(argv: list[str] | None = None) -> int:
     args = parse_args(argv)
     out_path = args.out or args.src / "thesis-full.md"
 
-    merged = merge_sections(args.src, CHAPTER_FILENAMES)
+    order = read_order(args.src)
+    merged = merge_sections(args.src, order)
     write_text_exact(out_path, merged)
-    print(f"[ok] wrote merged Markdown -> {out_path}")
+    print(f"[ok] wrote merged Markdown -> {out_path}  ({len(order)} phan)")
 
     if not args.docx:
         print("[info] --no-docx: skipping DOCX/PPTX export.")
