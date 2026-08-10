@@ -38,6 +38,14 @@ try {
 
   $mb = (Get-Item $Dich).Length / 1MB
   Write-Output ("[ok] PDF -> {0}  ({1:N1} MB, {2} trang)" -f $Dich, $mb, $so_trang)
+
+  # Dong bo luon vao thu muc nop. build_thesis.py cung chep tep nay, nhung no
+  # chi chay khi ai do dung lai quyen; neu chi xuat PDF thi ban nop se giu ban
+  # PDF cu — dung cai loi ma thu muc nop sinh ra de tranh.
+  $nop = Join-Path (Split-Path -Parent (Split-Path -Parent $PSCommandPath)) "nop"
+  if (-not (Test-Path $nop)) { New-Item -ItemType Directory -Force $nop | Out-Null }
+  Copy-Item $Dich (Join-Path $nop "01-do-an-tot-nghiep.pdf") -Force
+  Write-Output ("[ok] ban nop <- {0}" -f (Join-Path $nop "01-do-an-tot-nghiep.pdf"))
 }
 finally {
   $word.Quit()

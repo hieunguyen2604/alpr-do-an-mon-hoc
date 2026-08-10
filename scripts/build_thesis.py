@@ -105,6 +105,33 @@ questions and only one of them belongs on a projector.
 SLIDES_OUTPUT_FILENAME: str = "slides.pptx"
 SLIDES_TEMPLATE_FILENAME: str = "template-uit.pptx"
 
+# --- Submission bundle ------------------------------------------------------
+# The things actually handed in are scattered across two directories and carry
+# build names -- ``thesis-full.pdf``, ``slides.pptx`` -- that say nothing to
+# someone opening the folder. Collecting copies under one directory with names
+# a reader understands removes the step where the wrong file gets attached.
+#
+# Copies, not moves: the originals stay where every script, README link and
+# cross-reference already expects them.
+#
+# Refreshed on every build so the bundle cannot quietly go stale. That is the
+# whole point -- a hand-copied folder is exactly the thing that ends up holding
+# last week's PDF.
+BUNDLE_DIR: Path = REPO_ROOT / "nop"
+
+# (source path relative to repo root) -> (name inside the bundle)
+#
+# The PDF is produced by ``scripts/export_thesis_pdf.ps1``, not by this script,
+# so it is listed here rather than copied at its own export step: whichever ran
+# most recently, the next build picks the file up. A source that does not exist
+# yet is skipped and reported, never an error.
+BUNDLE_FILES: tuple[tuple[str, str], ...] = (
+    ("docs/papers/thesis-full.pdf", "01-do-an-tot-nghiep.pdf"),
+    ("docs/papers/thesis-full.docx", "01-do-an-tot-nghiep.docx"),
+    ("docs/slides/slides.pptx", "02-slide-bao-ve.pptx"),
+    ("docs/slides/11-slides-ky-thuat.pptx", "03-slide-bao-cao-ky-thuat.pptx"),
+)
+
 # Pandoc arguments shared by every export path.
 # ``raw_attribute`` is what lets :data:`SECTION_SEPARATOR` reach Word as a real
 # page break instead of being printed as XML. Harmless for the slide export,
@@ -588,6 +615,31 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     return parser.parse_args(argv)
 
 
+def copy_bundle(bundle_dir: Path = BUNDLE_DIR) -> tuple[int, list[str]]:
+    """Refresh the submission folder from whatever build outputs exist.
+
+    Args:
+        bundle_dir: Destination directory, created if absent.
+
+    Returns:
+        ``(number copied, names of sources that were missing)``. A missing
+        source is normal -- the PDF only exists after
+        ``scripts/export_thesis_pdf.ps1`` has run, and the technical-report deck
+        only after ``--slides`` was passed -- so it is reported, not raised.
+    """
+    bundle_dir.mkdir(parents=True, exist_ok=True)
+    copied = 0
+    missing: list[str] = []
+    for relative, bundle_name in BUNDLE_FILES:
+        source = REPO_ROOT / relative
+        if not source.is_file():
+            missing.append(relative)
+            continue
+        shutil.copy2(source, bundle_dir / bundle_name)
+        copied += 1
+    return copied, missing
+
+
 def main(argv: list[str] | None = None) -> int:
     """Build the thesis document(s).
 
@@ -633,6 +685,11 @@ def main(argv: list[str] | None = None) -> int:
     export_pptx(pandoc, slides_src, pptx_path)
     if pptx_path.is_file():
         print(f"[ok] wrote PPTX -> {pptx_path}")
+
+    copied, missing = copy_bundle()
+    print(f"[ok] ban nop -> {BUNDLE_DIR}  ({copied}/{len(BUNDLE_FILES)} tep)")
+    for relative in missing:
+        print(f"     (chua co: {relative})")
 
     return 0
 

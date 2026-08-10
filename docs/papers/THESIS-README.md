@@ -211,9 +211,11 @@ backend/.venv/Scripts/python.exe scripts/build_thesis.py
 backend/.venv/Scripts/python.exe scripts/build_thesis.py --out build/thesis-full.md --no-docx
 ```
 
+**Thư mục bản nộp.** Mỗi lần chạy, script còn chép bản thành phẩm sang `nop/` ở thư mục gốc dự án và đặt tên đọc được: `01-do-an-tot-nghiep.pdf` / `.docx`, `02-slide-bao-ve.pptx`, `03-slide-bao-cao-ky-thuat.pptx`. Đây là **bản sao**; bản gốc vẫn nằm nguyên ở `docs/papers/` và `docs/slides/`, không đường dẫn nào đổi. Bảng ánh xạ khai báo ở `BUNDLE_FILES` trong `scripts/build_thesis.py`; `scripts/export_thesis_pdf.ps1` cũng tự chép PDF sang đó, nên chạy lệnh nào cũng không để lại bản lệch. Tệp chưa dựng thì bị bỏ qua kèm dòng `(chưa có: ...)`, không phải lỗi. Git **không theo dõi nội dung** thư mục này — bốn tệp là bản sao đúng từng byte của những tệp đã theo dõi, giữ thêm chỉ nhân đôi 13 MB nhị phân trong lịch sử; xem `nop/README.md`.
+
 Script nối **đúng chín tệp** theo thứ tự ở §5.1 (danh sách khai báo tường minh trong mã, **không** dùng glob nên không nuốt nhầm `00-thesis-outline-v2.md` hay `THESIS-README.md`), chèn dấu ngắt trang giữa các phần, và ghi ra `docs/papers/thesis-full.md`. Chạy lại luôn cho kết quả **byte-identical** (idempotent), nên có thể tái sinh bản ghép bất cứ lúc nào rồi đối chiếu bằng `diff`.
 
-> **Lưu ý về dấu ngắt trang.** Bản ghép hiện tại dùng dấu phân tách `\n\n\newpage\n\n`; do quy tắc escape của chuỗi Python, `\n` là ký tự xuống dòng nên phần `\newpage` để lại **chuỗi chữ `ewpage`** giữa các phần chứ không phải lệnh LaTeX `\newpage`. Script tái tạo **nguyên trạng** hành vi này để bản dựng khớp byte với tệp đã commit. Nếu sau này muốn dấu ngắt trang LaTeX thật, sửa hằng `SECTION_SEPARATOR` thành chuỗi thô `r"\n\n\newpage\n\n"` — đây là một thay đổi nội dung có chủ đích và sẽ làm bản ghép khác đi.
+> **Lưu ý về dấu ngắt trang.** Bản ghép từng dùng dấu phân tách `"\n\n\newpage\n\n"`; do quy tắc escape của chuỗi Python, `\n` là ký tự xuống dòng nên phần còn lại in ra **chuỗi chữ `ewpage`** giữa các phần — tám lần trong quyển đã giao. Lỗi này **đã sửa** khi tái cấu trúc quyển: `SECTION_SEPARATOR` nay là một khối OpenXML thô mà Word hiểu là dấu ngắt trang thật. Chuỗi `r"\newpage"` cũng không phải lời giải, vì Pandoc chỉ hiểu nó khi kết xuất LaTeX, còn bản dựng này nhắm DOCX.
 
 Script chỉ nối tệp và kết xuất. Bốn việc **phải làm sau đó**, chưa tự động hoá:
 
