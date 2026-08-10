@@ -1,6 +1,22 @@
 # PHỤ LỤC
 
-## Phụ lục A. Siêu tham số huấn luyện bộ phát hiện
+## Phụ lục A. Cấu hình và siêu tham số
+
+### A.1. Môi trường thực thi
+
+Chỉ cần khi muốn tái lập **số đo hiệu năng**; số đo độ chính xác không phụ thuộc những giá trị này.
+
+| Hạng mục | Giá trị |
+|---|---|
+| Hệ điều hành | Windows 11 Pro 10.0.26200 |
+| CPU · RAM | Intel Core i5-14600K, 14 nhân / 20 luồng · 31,77 GiB |
+| GPU | **Không có GPU CUDA** |
+| Python | 3.13.12 |
+| Thư viện chính | `ultralytics` 8.4.101 · `torch` 2.13.0+cpu · `paddleocr` 3.7.0 · `paddlepaddle` 3.3.1 · `opencv-python` 4.10.0.84 · `numpy` 2.4.5 |
+
+Phiên bản thư viện trích từ **môi trường đang chạy tại thời điểm đo**, không lấy từ tệp khai báo phụ thuộc — tệp khai báo ghi *ràng buộc phiên bản*, không ghi *phiên bản đã cài*. Riêng phiên bản OpenCV đáng ghi vì quy ước góc của `minAreaRect` từng đổi giữa các phiên bản lớn, và bước nắn hình ở mục 3.4.6 phải xử lý riêng chuyện đó.
+
+### A.2. Siêu tham số huấn luyện bộ phát hiện
 
 Bảng dưới trích từ tệp tham số do thư viện Ultralytics tự sinh sau lượt huấn luyện chính thức — bản ghi **đã thực thi**, không phải cấu hình dự định.
 
@@ -21,7 +37,7 @@ Bảng dưới trích từ tệp tham số do thư viện Ultralytics tự sinh 
 | `mosaic` | 1,0 |
 | **Thời gian huấn luyện** | **30,2 phút/epoch · tổng 36.181 s ≈ 10,05 giờ** |
 
-**Tham số của khối xử lý ảnh**
+### A.3. Tham số của khối xử lý ảnh
 
 | Tham số | Giá trị | Mục |
 |---|---|:--:|

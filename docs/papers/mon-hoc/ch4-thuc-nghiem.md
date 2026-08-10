@@ -2,7 +2,7 @@
 
 ## 4.1. Môi trường, dữ liệu và quy ước
 
-**Môi trường.** Toàn bộ số liệu đo trên **một máy trạm duy nhất**: Windows 11 Pro; Intel Core i5-14600K, **14 nhân vật lý / 20 nhân logic**; RAM 31,77 GiB; **không có GPU CUDA**; Python 3.13.12. Mọi suy luận và huấn luyện chạy trên CPU. Đây là **tiền tố ngầm định của mọi con số hiệu năng ở mục 4.5** — so sánh chúng với FPS đo trên GPU là không hợp lệ.
+**Môi trường.** Mọi số liệu **hiệu năng** ở mục 4.5 đo trên một máy trạm duy nhất, **Intel Core i5-14600K (14 nhân / 20 luồng), không có GPU CUDA**; toàn bộ suy luận và huấn luyện chạy trên CPU. Cần nêu số nhân chứ không chỉ nêu "trên CPU", vì độ trễ tỉ lệ trực tiếp với nó và hệ thống đặt cứng số luồng tính toán. Ngược lại, số liệu **độ chính xác** không phụ thuộc phần cứng: cùng mô hình và cùng dữ liệu thì máy nào cũng cho kết quả đó. Phiên bản hệ điều hành, thư viện và Python ghi ở Phụ lục A.
 
 **Giao thức đo.** Trọng số được **đóng băng trước** mọi phép đo; tập kiểm thử **không được chạm vào** trong huấn luyện lẫn khi chọn epoch. Khi đo độ trễ: kích thước lô bằng 1, bỏ 3 lượt khởi động nóng, báo cáo **p50 / p95 / p99 chứ không báo cáo trung bình** — trung bình che mất đuôi phân bố, mà chỉ tiêu lại phát biểu theo p95.
 
