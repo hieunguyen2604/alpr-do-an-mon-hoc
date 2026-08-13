@@ -831,7 +831,6 @@ Mọi con số nêu trong sổ tay này đều lấy từ mã nguồn hoặc t�
 | Trang Webcam gỡ khỏi giao diện ngày 20/07/2026 | `CLAUDE.md` — Nhật ký quyết định, dòng 2026-07-20 |
 | Trang Tổng quan (Dashboard) gỡ khỏi giao diện ngày 20/07/2026; giao diện còn ba trang | `frontend/src/App.tsx` (bảng route: `/`, `/video`, `/history`, mọi đường dẫn khác chuyển về `/`) |
 | Endpoint `GET /api/statistics` và `GET /health` vẫn phục vụ và vẫn có test | `backend/api/routes/statistics.py`, `backend/api/routes/health.py`; `tests/integration/test_api_statistics.py`, `tests/integration/test_api_health.py` |
-| Mô hình hiện dùng `models/baseline-416-v1.pt` | `README.md` mục 4, giới hạn 1 |
 
 ---
 

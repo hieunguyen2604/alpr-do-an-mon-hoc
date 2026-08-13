@@ -324,7 +324,11 @@ def build_parser() -> argparse.ArgumentParser:
         prog="python -m ai.evaluation.stress_test",
         description="Concurrency, soak and history-query-at-scale tests.",
     )
-    parser.add_argument("--weights", default="models/checkpoints/best-cpu-epoch7.pt")
+    # Mac dinh PHAI la mo hinh cua ban giao hang. Truoc day dong nay tro
+    # `models/checkpoints/best-cpu-epoch7.pt` -- checkpoint giua chung cua luot
+    # baseline imgsz=416, va moi so do tren no da bi bac bo. Ai chay lai cong cu
+    # nay ma khong truyen --weights se do nham mo hinh va khong he duoc canh bao.
+    parser.add_argument("--weights", default="models/best.pt")
     parser.add_argument("--images", default="datasets/processed/yolo/images/test")
     parser.add_argument("--image-pool", type=int, default=20)
     parser.add_argument("--concurrency", type=int, nargs="+", default=list(DEFAULT_CONCURRENCY))

@@ -17,11 +17,21 @@ nhận dạng đầu-cuối đã được kiểm chứng bằng `curl` từ **ng
 **Kết quả:** thành công, sau khi sửa **bốn lỗi thật** phát hiện trong quá trình
 build và chạy (mục 6).
 
-> ⚠️ **Về mô hình đang dùng.** Toàn bộ số đo dưới đây chạy trên
-> `models/checkpoints/best-cpu-epoch7.pt` — **checkpoint giữa chừng** của lần
-> huấn luyện đang diễn ra, **không phải mô hình cuối cùng**. Các số này dùng để
-> chứng minh **đường dây triển khai hoạt động**, không phải để công bố độ chính
-> xác của hệ thống. Chỉ tiêu NFR-A1/A2/A3 phải được đo lại trên `models/best.pt`.
+> ⚠️ **Đây là biên bản của lượt kiểm chứng Phase 8, không phải trạng thái hiện tại.**
+> Toàn bộ số đo dưới đây chạy trên `models/checkpoints/best-cpu-epoch7.pt` —
+> **checkpoint giữa chừng** của lượt baseline `imgsz=416`, **không phải mô hình
+> cuối cùng**. Checkpoint đó nay **đã gỡ khỏi kho** vì mọi số đo trên nó đã bị
+> bác bỏ.
+>
+> Giữ nguyên biên bản này vì nó chứng minh **đường dây triển khai hoạt động** và
+> ghi lại bốn lỗi thật đã gặp — phần đó không phụ thuộc mô hình nào. Nhưng
+> **không dùng số ở đây để nói về độ chính xác hay độ trễ của hệ thống**: số có
+> thẩm quyền nằm ở Chương 5 của quyển.
+>
+> Cấu hình hiện tại của `docker-compose.yml` là `ALPR_MODEL_PATH=/app/models/best.pt`
+> (mặc định của `${ALPR_MODEL_FILE:-best.pt}`). **Chưa chạy lại lượt kiểm chứng
+> container trên cấu hình này** — cần chạy lại trước khi nộp nếu muốn có biên bản
+> khớp bản giao hàng.
 
 ---
 

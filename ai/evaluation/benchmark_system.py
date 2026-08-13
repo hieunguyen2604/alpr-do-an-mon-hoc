@@ -489,7 +489,11 @@ def build_parser() -> argparse.ArgumentParser:
         prog="python -m ai.evaluation.benchmark_system",
         description="Measure end-to-end system performance against the NFR-P targets.",
     )
-    parser.add_argument("--weights", default="models/checkpoints/best-cpu-epoch7.pt")
+    # Mac dinh PHAI la mo hinh cua ban giao hang. Truoc day dong nay tro
+    # `models/checkpoints/best-cpu-epoch7.pt` -- checkpoint giua chung cua luot
+    # baseline imgsz=416, va moi so do tren no da bi bac bo. Ai chay lai cong cu
+    # nay ma khong truyen --weights se do nham mo hinh va khong he duoc canh bao.
+    parser.add_argument("--weights", default="models/best.pt")
     parser.add_argument("--images", default="datasets/processed/yolo/images/test")
     parser.add_argument(
         "--limit", type=int, default=100, help="Images for the E2E run (default: %(default)s)."

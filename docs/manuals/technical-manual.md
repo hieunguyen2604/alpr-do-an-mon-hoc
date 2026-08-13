@@ -421,19 +421,14 @@ Vị trí tệp `.env` được tìm: `<gốc>/.env` rồi `<gốc>/backend/.env
 > **⚠ CẠM BẪY — `backend/.env` THẮNG `<gốc>/.env`.**
 > Khai báo là `env_file=(PROJECT_ROOT / ".env", PROJECT_ROOT / "backend" / ".env")`. Trong `pydantic-settings`, khi truyền nhiều tệp thì **tệp đứng SAU thắng**. Vì vậy một biến khai trong `backend/.env` **ghi đè lặng lẽ** cùng biến đó trong `.env` ở gốc kho.
 >
-> Đây không phải giả thuyết. Tình trạng kho tại thời điểm viết tài liệu:
+> Đây không phải giả thuyết. Đã có lúc `<gốc>/.env` trỏ một bản xuất OpenVINO còn `backend/.env` trỏ mô hình đối chứng `baseline-416-v1.pt`, và **giá trị thực sự có hiệu lực là cái sau** — người sửa `.env` ở gốc để chuyển sang OpenVINO thấy **không có gì thay đổi**, và không một cảnh báo nào được phát ra.
 >
-> | Tệp | `ALPR_MODEL_PATH` |
-> |---|---|
-> | `<gốc>/.env` | `models/checkpoints/exported/openvino-640/best-cpu-epoch7_openvino_model` |
-> | `<gốc>/backend/.env` | `models/baseline-416-v1.pt` ← **giá trị THỰC SỰ có hiệu lực** |
+> Tình trạng kho hiện tại (kiểm chứng 13/08/2026): **cả hai tệp cùng trỏ `models/best.pt`**, nên cạm bẫy đang không lộ ra. Nó vẫn còn nguyên đó — chỉ cần một người sửa đúng một tệp là tái hiện.
 >
-> Kiểm chứng bằng cách chạy thật:
 > ```
 > $ backend/.venv/Scripts/python.exe -c "from backend.core.config import get_settings; print(get_settings().model_path)"
-> D:\DATN\models\baseline-416-v1.pt
+> D:\DATN\models\best.pt
 > ```
-> Người sửa `.env` ở gốc để chuyển sang OpenVINO sẽ thấy **không có gì thay đổi**, và không có cảnh báo nào được phát ra.
 >
 > **Cách xác minh trước khi kết luận** — luôn in ra giá trị hiệu lực thay vì đọc tệp `.env`:
 > ```bash
@@ -1058,7 +1053,7 @@ Sản phẩm mỗi lượt chạy nằm trong `runs/<tên-run>/`:
 
 Ba định dạng hỗ trợ: `onnx` (đích CPU chính, di động), `openvino` (tối ưu cho Intel, **nhanh nhất trên máy này theo đo đạc**), `torchscript` (không cần runtime phụ, dùng làm phương án dự phòng và làm phép đo đối chứng).
 
-**Các bản xuất đã có trong kho** (`models/checkpoints/exported/`): `onnx-416`, `onnx-480`, `onnx-640`, `openvino-416`, `openvino-480`, `openvino-640` — tất cả xuất từ `best-cpu-epoch7.pt`.
+**Các bản xuất đã có trong kho**: `models/best.onnx` và `models/best_openvino_model/`, cả hai xuất từ **`models/best.pt`** — mô hình chính thức. Sáu bản xuất cũ dưới `models/checkpoints/exported/` sinh từ checkpoint giữa chừng `best-cpu-epoch7.pt` đã **bị loại bỏ**: checkpoint đó là của lượt baseline `imgsz=416` split v1, mọi số đo trên nó đã bị bác bỏ.
 
 **Kết quả đo Phase 7** trên i5-14600K (14 nhân vật lý / 20 nhân logic, CPU thuần):
 
@@ -1370,58 +1365,23 @@ Cả hai module cấu hình đều từ chối. Xương sống YOLO hạ mẫu 3
 
 ---
 
-### 13.10. ⚠ `build_pipeline` từ chối thư mục OpenVINO mà detector lại chấp nhận
+### 13.10. Hai tầng phải cùng định nghĩa "trọng số hợp lệ"
 
-> **Đây là một khiếm khuyết thật, tái lập được, chưa sửa.** Nó chặn đúng cấu hình nhanh nhất đã đo được của dự án.
+Bản xuất OpenVINO là một **thư mục** chứa cặp `.xml` + `.bin`, còn checkpoint
+PyTorch và đồ thị ONNX là **tệp đơn**. Đã từng có lúc `backend/main.py` kiểm tra
+bằng `is_file()` trong khi `ai/inference/detector.py` chấp nhận cả thư mục — hai
+tầng bất đồng ý với nhau, và hệ quả là cấu hình nhanh nhất đã đo được của dự án
+**không cấu hình nổi**: dịch vụ khởi động ở chế độ suy giảm và chỉ báo "không tìm
+thấy trọng số", trong khi trọng số nằm ngay đó.
 
-**Hai tầng bất đồng ý với nhau về "trọng số hợp lệ" là gì:**
+**Đã sửa.** `backend/main.py` nay dùng `settings.model_path.exists()`, khớp với
+hợp đồng mà detector thực thi. Kiểm chứng 13/08/2026: `build_pipeline` dựng được
+`ALPRPipeline` từ `models/best_openvino_model` và chạy đo được **6,310 FPS**.
 
-| Vị trí | Kiểm tra | Chấp nhận thư mục OpenVINO? |
-|---|---|---|
-| `ai/inference/detector.py` → `_verify_weights_exist()` | `is_file()` **hoặc** `is_dir()` + `_is_openvino_model_dir()` | ✅ **Có** — cố ý, vì OpenVINO là định dạng duy nhất là *thư mục* chứ không phải một tệp |
-| `backend/main.py:200` → `build_pipeline()` | `if not settings.model_path.is_file():` | ❌ **Không** — thư mục làm `is_file()` trả `False` |
-
-**Hệ quả:** trỏ `ALPR_MODEL_PATH` vào một thư mục OpenVINO thì `build_pipeline` **không bao giờ gọi tới detector**. Nó dừng ở cổng chặn phía trên, ghi log `"detector weights not found"`, trả `UnavailablePipeline`, và `/health` báo `model_loaded=false` — trong khi mô hình hoàn toàn tồn tại và detector hoàn toàn nạp được nó.
-
-**Kiểm chứng đã chạy thật:**
-
-```
-$ backend/.venv/Scripts/python.exe -c "
-  from backend.core.config import Settings
-  from backend.main import build_pipeline
-  s = Settings(model_path='models/checkpoints/exported/openvino-640/best-cpu-epoch7_openvino_model')
-  print('is_file :', s.model_path.is_file())
-  p = build_pipeline(s)
-  print('pipeline:', type(p).__name__, '| is_ready:', p.is_ready)"
-
-is_file : False
-WARNING  detector weights not found; the service will start with recognition disabled
-pipeline: UnavailablePipeline | is_ready: False
-```
-
-Trong khi chính thư mục đó **là** một mô hình OpenVINO hợp lệ:
-
-```
-exists: True | is_file: False | is_dir: True | xml files: ['best-cpu-epoch7.xml']
-```
-
-**Triệu chứng người bảo trì sẽ gặp:** thông điệp lỗi nói "không tìm thấy trọng số" và nêu đúng đường dẫn tới một thư mục **đang tồn tại**. Đó là một thông điệp gây hiểu nhầm, dễ dẫn tới việc đi tìm sai chỗ hàng giờ.
-
-**Cách khắc phục** — sửa cổng chặn trong `backend/main.py` cho khớp với hợp đồng mà detector đã thực thi:
-
-```python
-# backend/main.py, thay dòng 200
-model_path = settings.model_path
-is_usable = model_path.is_file() or (
-    model_path.is_dir() and any(model_path.glob("*.xml"))   # thư mục IR của OpenVINO
-)
-if not is_usable:
-    ...
-```
-
-**Cách đi vòng tạm thời:** dùng bản xuất **ONNX** (`models/checkpoints/exported/onnx-640/best-cpu-epoch7.onnx`) — đó là một *tệp* nên qua được cổng chặn — hoặc dùng lại `.pt`.
-
-**Ghi chú.** Hệ thống chạy bằng tệp `.pt` mô hình chính thức `models/best.pt` (mặc định), nên khiếm khuyết cổng chặn OpenVINO/ONNX này **không biểu hiện ra ngoài** trong vận hành thường. Chỉ cần lưu ý nếu chuyển sang dùng bản xuất OpenVINO/ONNX làm đường chạy chính.
+> **Bất biến cần giữ khi sửa về sau:** mọi cổng chặn trên đường nạp mô hình phải
+> dùng `exists()` chứ không `is_file()`. Thắt chặt lại thành `is_file()` sẽ làm
+> hỏng nhánh OpenVINO mà không có test nào bắt được, vì bản giao hàng mặc định
+> chạy bằng tệp `.pt`.
 
 ## 14. Lộ trình bảo trì và nợ kỹ thuật
 
@@ -1433,72 +1393,62 @@ if not is_usable:
 |---|---|
 | Backend FastAPI | Kiểm chứng bằng HTTP thật vào tiến trình `uvicorn` sống. `/health` trả `model_loaded=true`, `engine = 'yolo:...+paddleocr-PP-OCRv5-mobile'`. 10/10 ảnh test thật nhận dạng được biển số |
 | Chuỗi đọc được thật (ví dụ) | `51G-495.39`, `51F-734.20`, `47A-065.46`, `51A-897.14` — độ tin cậy OCR 0,94–0,9993 |
-| Migration | `alembic upgrade head` chạy xong tới `0002_plate_kind_and_color`: `detection_history` **21 cột**, `detection_job` 11 cột |
+| Migration | `alembic upgrade head` chạy xong tới `0004_upper_char_count`: `detection_history` **23 cột**, `detection_job` 11 cột |
 | Frontend | `typecheck` sạch, `lint` sạch, `build` thành công (2.381 module). 10 endpoint kiểm chứng qua HTTP thật, kiểu TypeScript khớp từng trường |
-| Kiểm thử | **913 test thu thập; 912 pass, 1 `xfail`, 0 fail** (sau khi bổ sung tính năng phân loại loại biển / màu biển ngày 20/07/2026; con số trước đó là 882 thu thập / 881 pass. Xem ghi chú ở mục 11.4 về các con số 862/861 và 199 đã lỗi thời). Bao phủ tầng nghiệp vụ **87,7%** đo 2026-07-20 (`docs/reports/13-refactor-result.json`) — NFR-M2 ≥ 70% — **ĐẠT**; số đo Phase 7 trước đó là 88,1% tầng nghiệp vụ và 42,0% toàn kho (`docs/reports/07-testing-report.md`) |
+| Kiểm thử | **1.002 test thu thập; 1.002 pass, 0 fail, 0 `xfail`** (đo 13/08/2026; `xfail` cuối cùng đã hết sau khi sửa lỗi `_create_job` không commit — xem mục 11.4). Bao phủ tầng nghiệp vụ **87,7%** đo 2026-07-20 (`docs/reports/13-refactor-result.json`) — NFR-M2 ≥ 70% — **ĐẠT**; số đo Phase 7 trước đó là 88,1% tầng nghiệp vụ và 42,0% toàn kho (`docs/reports/07-testing-report.md`) |
 | Docker | `Dockerfile` + `compose` đã có, `docker compose config` hợp lệ |
 | Bộ dữ liệu | 15.133 ảnh, hợp nhất từ 7 bộ, còn 6 nguồn nguyên tố sau khử trùng lặp chéo bộ (9 bộ đã tải về, 2 bộ nhãn ký tự tách riêng cho OCR); khử trùng lặp chéo bộ loại **11.978/27.111 ảnh (44,2%)** trên toàn bộ ảnh của 7 bộ vào hợp nhất (ngưỡng 5, đã xoá thật). 4.019 chuỗi biển tái tạo từ 2 bộ có nhãn ký tự (2.801 hợp lệ) |
 
-### 14.2. Chưa xong — mô hình
+### 14.2. Chưa xong — chỉ tiêu phi chức năng
 
-| Hạng mục | Trạng thái | Việc phải làm |
+> **Nguồn số liệu duy nhất là Chương 5 của quyển đồ án.** Trước đây mục này
+> chép lại bảng đối chiếu chỉ tiêu vào sổ tay, và hai bản đã trôi xa nhau: sổ
+> tay còn ghi A4 = 0,8734 và "NFR-P2 chưa đo" trong khi quyển đã ghi 0,9454 và
+> 5,257 FPS. Nay sổ tay **không chép lại số nữa** — chỉ nêu hạng mục còn hở và
+> trỏ về nơi có số.
+
+| Chỉ tiêu | Trạng thái | Xem số ở |
 |---|---|---|
-| **Mô hình chính thức** | **Đang huấn luyện** (`imgsz=640` trên split v3). **Chưa có kết quả cuối** | Chờ lượt chạy kết thúc, chạy `ai/evaluation/evaluate.py`, xuất bản `models/best.pt` |
-| **Mô hình đang dùng** | `models/baseline-416-v1.pt` (đặt qua `backend/.env`, đã kiểm chứng bằng `get_settings()`) | Đây **chỉ là mô hình đối chứng**, không phải mô hình đưa vào quyển đồ án |
-| **Bản xuất tối ưu CPU** | ✅ Đã có 6 bản: `onnx-{416,480,640}`, `openvino-{416,480,640}` trong `models/checkpoints/exported/`, xuất từ `best-cpu-epoch7.pt` | **Chưa nối được vào hệ thống** — xem mục 13.10. Cần xuất lại từ `best.pt` sau khi huấn luyện xong |
-| Khiếm khuyết 1 của baseline | `imgsz=416` trong khi chỉ tiêu NFR-A1/A2 đặt ở `640` | **Không so sánh trực tiếp được.** Chi tiết: [`docs/reports/03-training-setup.md`](../reports/03-training-setup.md) §9.1 |
-| Khiếm khuyết 2 của baseline | Tập test split v1 **có rò rỉ thật** — 619 cặp gần trùng train/test ở ngưỡng phash 10 | Các chỉ số mAP 0,9933 / mAP@0.5:0.95 0,8597 / P 0,9822 / R 0,9810 **lạc quan hơn hiệu năng thật**. Không được báo cáo là "đạt" |
+| **NFR-A5 · A6 · A7** — đúng cả chuỗi | ❌ **Không đạt**. Toàn bộ khoảng cách nằm ở **biển hai dòng**; biển một dòng đạt 0,9541, vượt mục tiêu | Quyển, mục 5.5 và Bảng 5.13 |
+| **NFR-P1** — độ trễ một ảnh p95 | 🟡 Đạt sàn 1.500 ms, chưa đạt mục tiêu 800 ms. **Thoái lui có chủ ý** đổi lấy 34 biển đọc thêm | Quyển, mục 5.6.1 |
+| **NFR-A9** — độ chính xác theo điều kiện ảnh | ⬜ **Không đo được**, không phải chưa tới lượt: bộ dữ liệu không có nhãn điều kiện chụp | Quyển, mục 5.9.2 |
 
-### 14.3. Chưa xong — chỉ tiêu phi chức năng
+Mọi chỉ tiêu còn lại — phát hiện, thông lượng, tài nguyên, độ tin cậy, chịu
+tải, bảo trì — đều **đạt**. Bảng đối chiếu đầy đủ ở Bảng 5.13 của quyển.
 
-| Chỉ tiêu | Trạng thái | Ghi chú |
-|---|---|---|
-| **NFR-P1** — độ trễ E2E p95 | ✅ **ĐẠT** | Đo trên `models/best.pt`, máy rảnh: **731 ms** (client-side) / **780 ms** (in-process), dưới mục tiêu 800 ms. Con số cũ 5.857 ms **bị bác bỏ** (nhiễm do tải cạnh tranh + sai checkpoint + lỗi crop). Phân rã đúng: OCR **64,3%** / detect **34,2%** |
-| **NFR-P2** — FPS webcam | ⬜ Chưa đo | Chỉ tiêu ≥ 5 FPS, tối thiểu ≥ 3 FPS — chưa có kịch bản đo trên `best.pt` |
-| **NFR-P3** — tốc độ xử lý video | ⬜ Chưa đo | Chỉ tiêu ≥ 0,3× thời gian thực |
-| **NFR-A4** — CER mức ký tự | ❌ **KHÔNG ĐẠT** | Đo được **0,8734** (< 0,92). Toàn bộ khoảng cách ở biển 2 dòng |
-| **NFR-A5** — biển đầy đủ **trước** hậu xử lý | ❌ **KHÔNG ĐẠT** | Đo được **0,6098** (< 0,80) |
-| **NFR-A6** — biển đầy đủ **sau** hậu xử lý | ❌ **KHÔNG ĐẠT** | Đo được **0,6555** (< 0,85). A6 − A5 = +4,57 điểm (128 biển sửa đúng) |
-| **NFR-A7** — độ chính xác E2E | ❌ **KHÔNG ĐẠT** | Đo được **0,5227** (< 0,82) — đo trên ảnh crop, xem cảnh báo hiệu lực ở Chương 5 |
+### 14.3. Chưa xong — chức năng
 
-Kết quả đầy đủ được trình bày ở Chương 5 (`docs/reports/05-tables.md`). Bảng số đo:
+Không còn hạng mục nào dở dang. `FR-2.5` (xuất video đã chú thích) và `FR-2.6`
+(huỷ tác vụ đang chạy) đã **chuyển sang mức _Won't_** ngày 03/08/2026 và nút
+huỷ đã gỡ khỏi giao diện, nên không còn là nợ mà là **quyết định phạm vi** —
+ghi ở `docs/00-requirements/functional-requirements.md` và Bảng 4.10 của quyển.
 
-| Chỉ tiêu | Mục tiêu | Tối thiểu | Đo được | Kết luận |
-|---|---:|---:|---:|---|
-| NFR-A4 (1 − CER) | ≥ 0,95 | ≥ 0,92 | 0,8734 | ❌ không đạt |
-| NFR-A5 (trước hậu xử lý) | ≥ 0,85 | ≥ 0,80 | 0,6098 | ❌ không đạt |
-| NFR-A6 (sau hậu xử lý) | ≥ 0,90 | ≥ 0,85 | 0,6555 | ❌ không đạt |
-| NFR-A7 (E2E) | ≥ 0,88 | ≥ 0,82 | 0,5227 | ❌ không đạt |
-| NFR-P2 (FPS webcam) | ≥ 5 | ≥ 3 | — | ⬜ chưa đo |
-| NFR-P3 (tốc độ video) | ≥ 0,3× | ≥ 0,15× | — | ⬜ chưa đo |
+### 14.4. Nợ kỹ thuật
 
-### 14.4. Chưa xong — chức năng
-
-| Hạng mục | Trạng thái | Việc phải làm |
-|---|---|---|
-| **FR-2.6 — huỷ tác vụ video** | ⚠ **Đạt một phần** | Worker đã tôn trọng lệnh huỷ nhưng **thiếu route HTTP**. Xem mục 13.6 cho lộ trình ba bước |
-
-### 14.5. Nợ kỹ thuật
-
-Xếp theo mức độ ưu tiên đề xuất.
+Xếp theo mức độ ưu tiên đề xuất. Các mục đã giải quyết được **gỡ khỏi bảng**
+thay vì đánh dấu ✅ — một bảng nợ mà quá nửa số dòng đã trả xong thì không còn
+đọc được nữa.
 
 | # | Nợ | Mức | Mô tả và hướng xử lý |
-|---|---|---|---|
-| 1 | **Rò rỉ tồn dư trong bộ dữ liệu** | Cao | Không khử được bằng phash (mục 13.7). Hướng xử lý: khử trùng ở **mức chuỗi biển số** trên phần dữ liệu có nhãn ký tự (4.019 chuỗi tái tạo, 2.801 hợp lệ). Cho phần còn lại, phải nêu rõ giới hạn khi báo cáo |
-| 2 | **NFR-P2 / NFR-P3 chưa đo** | Cao | FPS webcam (≥ 5, tối thiểu ≥ 3) và tốc độ xử lý video (≥ 0,3× thời gian thực) **chưa có kịch bản đo trên `models/best.pt`**. Đây là hai chỉ tiêu phi chức năng duy nhất còn ở trạng thái "chưa biết" — khác với A4–A7 (đã đo, không đạt) và P1 (đã đo, **đạt**). Việc phải làm: viết kịch bản đo webcam và video trên `best.pt`, máy rảnh, rồi cập nhật §14.3. ⚠ **Không lẫn với nợ P1 cũ:** NFR-P1 **đã ĐẠT** (731 ms client-side / 780 ms in-process so với mục tiêu 800 ms) — con số 5.857 ms bị bác bỏ; xem dòng NFR-P1 ở §14.3 |
-| 2b | **Bản xuất ONNX/OpenVINO chưa nối được vào hệ thống** | Trung bình | 6 bản đã có trong `models/checkpoints/exported/` và đã đo: OpenVINO nhanh hơn PyTorch 4,7× khi chạy chung tiến trình với PaddleOCR. **Nhưng chưa dùng được** vì khiếm khuyết ở mục 13.10, và phải xuất lại từ `best.pt`. **Nay là tối ưu tuỳ chọn, không còn là nợ chặn chỉ tiêu** — NFR-P1 đã đạt bằng PyTorch thuần, đúng như `AD-05` dự trù ("chạy đúng trước, tối ưu sau"). ⚠ **Lưu ý định hướng:** phân rã trên `best.pt` cho OCR **64,3%** / detect **34,2%** — OCR vẫn tốn nhất nhưng **không còn áp đảo** (tỷ lệ cũ "93,3% OCR" là tạo tác của lỗi crop), nên tối ưu bộ phát hiện giờ mới có ý nghĩa |
-| 3 | **`build_pipeline` từ chối thư mục OpenVINO** | **Cao** | Khiếm khuyết thật, tái lập được, chặn đúng cấu hình nhanh nhất. Sửa một điều kiện ở `backend/main.py:200`. Chi tiết và bản vá đề xuất: mục 13.10 |
-| 4 | **Hai tệp `.env` chồng nhau** | **Cao** | `backend/.env` ghi đè lặng lẽ `<gốc>/.env` (mục 5). Đang che lấp khiếm khuyết #3, khiến nó chưa biểu hiện. **Sửa #3 mà không sửa #4 sẽ làm hệ thống ngừng nhận dạng.** Hướng xử lý: giữ một tệp `.env` duy nhất ở gốc kho |
-| 5 | **Route huỷ tác vụ** | Trung bình | Ba bước, mục 13.6 |
-| 6 | **Hợp nhất `.venv-ai` và `.venv-ocr`** | Trung bình | Việc tách là **tạm thời**, chỉ để bảo vệ lượt huấn luyện đang chạy khỏi việc `paddleocr` hạ cấp `numpy` và kéo `opencv-contrib-python`. Sau khi huấn luyện xong, hợp nhất và thương lượng lại các ghim `numpy`/`opencv` theo yêu cầu của `paddleocr` tại thời điểm đó |
-| 7 | **`enable_mkldnn=False`** | Thấp | Là workaround cho lỗi thượng nguồn của `paddlepaddle` 3.3.1. Theo dõi bản vá; khi được sửa thì bật lại **và đo lại**. Đây thuần tuý là núm hiệu năng |
-| 8 | **So sánh PaddleOCR với EasyOCR** | Trung bình | Phase 1 **không tìm thấy bằng chứng công khai** nào cho thấy PaddleOCR vượt EasyOCR trên ảnh biển số; phép so sánh tái lập được duy nhất lại nghiêng về EasyOCR. `easyocr` **cố ý chưa được cài**. `BaseRecognizer` tồn tại chính để phép so sánh này rẻ (mục 8.3) |
-| 9 | **`models/README.md` lỗi thời** | ✅ **Đã sửa** | Đã viết lại: nay nêu đúng rằng mô hình chính thức `best.pt` đã huấn luyện xong và đang chạy, `/health` báo `model_loaded: true`, engine `yolo:best.pt`, `StubPipeline` đã ra khỏi đường chạy chính — `baseline-416-v1.pt` chuyển thành mô hình đối chứng, **giữ nguyên** cảnh báo về hai khiếm khuyết của nó |
-| 10 | **`ALPR_MODEL_PATH` mặc định** | ✅ **Đã giải quyết** | Mặc định trong mã là `models/best.pt`, nay **đã tồn tại**. Hệ thống nạp trực tiếp mô hình chính thức, `/health` báo `model_loaded: true`, engine `yolo:best.pt`. Không còn cần trỏ tường minh sang baseline |
-| 11 | **Webcam dùng HTTP thay vì WebSocket** | Thấp | Quyết định `AD-03`: đơn giản, dễ gỡ lỗi, đủ cho ~5 FPS. Nếu NFR-P2 không đạt và nguyên nhân là overhead HTTP, phải chuyển sang WebSocket |
-| 12 | **`AD-04` — gộp trùng biển số theo chuỗi + cửa sổ thời gian** | Thấp | Đơn giản hơn nhiều so với object tracking, đủ cho FR-2.4. Kém chính xác khi hai xe cùng chuỗi biển xuất hiện trong cùng cửa sổ — trên thực tế không xảy ra |
+|---|---|:--:|---|
+| 1 | **Rò rỉ tồn dư trong bộ dữ liệu** | Cao | Không khử được bằng `phash` (mục 13.7). Hướng xử lý: khử trùng ở **mức chuỗi biển số** thay vì mức ảnh — gom nhóm theo chuỗi ký tự, giải đúng loại rò rỉ mà `phash` không thấy |
+| 2 | **Bộ dữ liệu lệch nặng về biển trắng** (97,68%) | Cao | Kết luận độ chính xác OCR **chỉ áp cho biển trắng**. Biển vàng còn n = 20 nên chưa kết luận được gì. Cần thu thập thêm biển vàng, xanh, đỏ, ngoại giao |
+| 3 | **Bảng ánh xạ nhầm lẫn suy từ hình dạng ký tự** | Trung bình | Chỉ phủ 2 trên 10 cặp nhầm phổ biến nhất; 8 cặp còn lại chiếm **32,72%** tổng lỗi thay thế. Rẻ nhất trong danh sách: dữ liệu thay thế đã có sẵn ở Bảng 5.6, chỉ cần đổi hằng số |
+| 4 | **Hợp nhất `.venv-ai` và `.venv-ocr`** | Trung bình | Việc tách là **tạm thời**, chỉ để bảo vệ lượt huấn luyện đang chạy khỏi xung đột phiên bản |
+| 5 | **`enable_mkldnn=False`** | Thấp | Là workaround cho lỗi thượng nguồn của `paddlepaddle` 3.3.1 (mục 5.5.4 của quyển). Theo dõi bản vá; khi được sửa thì bật lại và đo lại |
+| 6 | **Webcam dùng HTTP thay vì WebSocket** | Thấp | Quyết định `AD-03`: đơn giản, dễ gỡ lỗi, và đo được **5,257 FPS** nên đủ dùng. Chỉ xét lại nếu cần vượt xa mức đó |
+| 7 | **`AD-04` — gộp trùng biển số theo chuỗi + cửa sổ thời gian** | Thấp | Đơn giản hơn nhiều so với object tracking, đủ cho phạm vi hiện tại |
 
-### 14.6. Kiểm tra định kỳ nên chạy
+**Bảy mục đã gỡ khỏi bảng vì đã trả xong**, ghi lại ở đây để không ai mở lại
+nhầm: bản xuất ONNX/OpenVINO *đã* nối được vào hệ thống (kiểm chứng 13/08:
+`build_pipeline` dựng `ALPRPipeline` từ thư mục OpenVINO, chạy 6,310 FPS);
+`build_pipeline` **không** còn từ chối thư mục OpenVINO; NFR-P2 và NFR-P3 **đã
+đo**; hai tệp `.env` nay **cùng trỏ** `models/best.pt` nên không còn ghi đè lặng
+lẽ; so sánh PaddleOCR ↔ EasyOCR ↔ Tesseract **đã chạy** trên 2.801 mẫu
+(`docs/reports/36-engine-benchmark.md`); `models/README.md` đã viết lại; và
+`ALPR_MODEL_PATH` mặc định đã trỏ đúng `models/best.pt`.
+
+### 14.5. Kiểm tra định kỳ nên chạy
 
 ```bash
 # Trước mỗi commit

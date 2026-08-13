@@ -14,10 +14,10 @@
 |---|---|---|
 | `pretrained/yolo11n-coco.pt` | YOLO11n gốc của Ultralytics, huấn luyện trên COCO (80 lớp) | **Điểm khởi đầu transfer learning** |
 | `best.pt` | ✅ **Mô hình chính thức** — YOLO11n, `imgsz=640`, split v3 đã khử trùng lặp ở ngưỡng 10, 20 epoch | **Model hệ thống đang chạy và là nguồn mọi số liệu công bố** |
+| `best.onnx` | Bản xuất ONNX Runtime của `best.pt` | Đo được **24,48 ms** (1,35× so PyTorch), mAP không giảm |
+| `best_openvino_model/` | Bản xuất OpenVINO IR của `best.pt` | **Nhanh nhất trên máy này: 21,12 ms (1,57×)**, mAP không giảm. Bật bằng `ALPR_MODEL_PATH` |
 | `baseline-416-v1.pt` | ⚠️ **Baseline đối chứng** — 40 epoch, `imgsz=416`, split v1 | **Chỉ để đối chứng.** **Có hai khiếm khuyết đã biết** — đọc mục dưới |
 | `baseline-416-v1.results.csv` | Log chỉ số theo từng epoch của lượt baseline | Nguồn số liệu cho biểu đồ huấn luyện của baseline |
-| `checkpoints/best-cpu-epoch7.pt` | Checkpoint giữa chừng của lượt baseline | Chỉ để đối chiếu, không dùng nữa |
-| `checkpoints/exported/{onnx,openvino}-{416,480,640}/` | Bản xuất của baseline sang ONNX và OpenVINO ở 3 độ phân giải | Thử nghiệm tăng tốc detector — xem cảnh báo ở mục "Tối ưu hiệu năng" |
 
 **Cấu hình mặc định trỏ tới `best.pt`:**
 
@@ -82,9 +82,16 @@ Kế hoạch ban đầu có cân nhắc việc tải một mô hình phát hiệ
 
 ---
 
-## Tối ưu hiệu năng — đọc trước khi động vào `checkpoints/exported/`
+## Tối ưu hiệu năng — bản xuất nào đáng dùng
 
-Thư mục `checkpoints/exported/` chứa các bản xuất ONNX và OpenVINO của baseline. **Cảnh báo:** trên `best.pt`, NFR-P1 **đã đạt** mà không cần xuất detector.
+Kho có hai bản xuất, **cả hai sinh từ `best.pt`**: `best.onnx` và `best_openvino_model/`.
+Sáu bản xuất cũ dưới `checkpoints/exported/` sinh từ checkpoint giữa chừng của lượt
+baseline **đã bị xoá** — mọi số đo trên chúng đã bị bác bỏ.
+
+Đo ngày 13/08/2026 trên 50 ảnh thật: PyTorch **33,09 ms** · ONNX Runtime **24,48 ms**
+(1,35×) · OpenVINO **21,12 ms** (1,57×), và mAP **không suy giảm** sau khi xuất.
+Bản giao hàng **vẫn giữ `best.pt`** vì NFR-P1 và NFR-P2 đều đạt mà không cần đổi;
+muốn bật thì đổi `ALPR_MODEL_PATH`. Chi tiết: [báo cáo 38](../docs/reports/38-runtime-backend-and-nfr-p2.md).
 
 Đo lại phân rã độ trễ trên `best.pt` (nguồn: [05-tables.md §T5.7b](../docs/reports/05-tables.md)): **PaddleOCR chiếm ~64,3% tổng độ trễ (~112,55 ms/biển)**, detector YOLO11n chiếm **~34,2% (~59,83 ms)**. Độ trễ E2E p95 đo được là **780,36 ms in-process** và **731,15 ms client-side qua HTTP** ([07-benchmark-p1-resolved.json](../docs/reports/07-benchmark-p1-resolved.json)) — **đạt mục tiêu NFR-P1 (≤ 800 ms)** và thoả cả ngưỡng tối thiểu 1.500 ms.
 
