@@ -78,7 +78,7 @@ cho mọi số liệu công bố trong Chương 5. Nguồn: `runs/final-640-v3/a
 | ------------------ | --------------------------- | ------------------: | ------------------------------------------- |
 | Mô hình            | `model`                     |        `yolo11n.pt` | Khởi tạo từ trọng số tiền huấn luyện COCO   |
 |                    | Số tham số                  |           2.590.035 | Biến thể nano — do ràng buộc CPU            |
-| Dữ liệu            | `data`                      | `yolo_v3/data.yaml` | Split v3                                    |
+| Dữ liệu            | `data`                      | `yolo_v3/data.yaml` | Phép chia tập v3                                    |
 |                    | `imgsz`                     |                 640 | Đúng độ phân giải mà NFR-A1/A2 đặt chỉ tiêu |
 |                    | `fraction`                  |                 1,0 | Dùng toàn bộ dữ liệu                        |
 | Lịch huấn luyện    | `epochs`                    |                  20 |                                             |
@@ -127,7 +127,7 @@ tinh chỉnh** — lý do ở cùng mục.
 ghi công tác giả — bảng này chính là phần ghi công đó. Một bộ được người đăng tự
 khai **Public Domain**, nhưng đồ án **không khẳng định** đó là Public Domain thật
 vì ảnh nguồn có dấu hiệu là ảnh báo chí. Một bộ trên HuggingFace **chưa xác nhận
-được giấy phép**; nó đóng góp 28,91% corpus nên đây là rủi ro pháp lý phải nêu
+được giấy phép**; nó đóng góp 28,91% ngữ liệu nên đây là rủi ro pháp lý phải nêu
 chứ không phải chi tiết bỏ qua được.
 
 **Bộ thứ bảy còn lại 0 ảnh** sau khử trùng lặp — toàn bộ 1.005 ảnh của nó trùng
@@ -223,7 +223,7 @@ cố thường gặp và lưu ý dung lượng image — ở `deployment/README.
 
 | Nhóm               | Kiểm chứng điều gì                                                                 |
 | ------------------ | ---------------------------------------------------------------------------------- |
-| Kiểm thử đơn vị    | Bộ luật hậu xử lý theo vị trí, phân loại layout, chuẩn hoá chuỗi, quy tắc hiển thị |
+| Kiểm thử đơn vị    | Bộ luật hậu xử lý theo vị trí, phân loại bố cục, chuẩn hoá chuỗi, quy tắc hiển thị |
 | Kiểm thử tích hợp  | Toàn bộ 10 endpoint qua HTTP thật, kèm cơ sở dữ liệu thật và migration             |
 | Kiểm thử kiến trúc | Ranh giới `ai/` không import `backend/` (NFR-M1) — fail nếu ai đó vi phạm          |
 | Kiểm thử hồi quy   | Các ca lỗi đã từng xảy ra, mỗi ca một test để không tái diễn                       |
@@ -265,7 +265,7 @@ tại `/docs` và `/openapi.json`, nên nó không bao giờ lệch với mã ng
 
 | Thành phần         | Loại    | Vai trò                                                       |
 | ------------------ | ------- | ------------------------------------------------------------- |
-| `backend`          | dịch vụ | FastAPI + uvicorn, chạy pipeline AI trên CPU                  |
+| `backend`          | dịch vụ | FastAPI + uvicorn, chạy đường ống AI trên CPU                  |
 | `frontend`         | dịch vụ | nginx:alpine — phục vụ tệp tĩnh và reverse proxy sang backend |
 | `alpr-net`         | mạng    | Mạng nội bộ giữa hai dịch vụ                                  |
 | `alpr-data`        | volume  | Cơ sở dữ liệu SQLite — dữ liệu sống qua lần khởi động lại     |
@@ -313,7 +313,7 @@ Bảy nhóm: hiệu năng (NFR-P), độ chính xác (NFR-A), tin cậy (NFR-R),
 
 > **Toàn bộ chỉ tiêu hiệu năng của đồ án là chỉ tiêu đo trên CPU.**
 
-Máy thực hiện chạy Windows 11, Python 3.13, **không có GPU CUDA** (Intel UHD 770 tích hợp, PyTorch không dùng được để tăng tốc). Huấn luyện trên GPU miễn phí Colab/Kaggle, nhưng **suy luận và buổi bảo vệ chạy trên CPU máy cá nhân**. Đây là **ràng buộc thiết kế**, không phải hạn chế tạm thời, vì bốn lẽ: nó cố định trong toàn bộ vòng đời và tại chính buổi bảo vệ; nó đổi _bậc độ lớn_ của độ trễ (ở 20 ms/khung, video đồng bộ và webcam xử lý mọi khung là hợp lý — ở mốc thực tế 400 ms cả hai bất khả thi, trực tiếp sinh ra hai quyết định kiến trúc: video bất đồng bộ AD-02 và webcam bỏ khung hàng đợi một khe); nó chi phối chọn biến thể mô hình (n/s/m), biến thể OCR (mobile/server), kích thước ảnh và **backend suy luận** — benchmark chính thức trên CPU i7-13700H cho thấy YOLOv8n qua ONNX Runtime nhanh hơn PyTorch khoảng **3,73 lần** (104,61 → 28,02 ms) [18]<!-- ultralytics_2026_openvinoexport -->, lợi ích lớn nhất đúng ở phân khúc mô hình nhỏ [117]<!-- onnxruntime_2025_threading -->; và nó buộc phương pháp công bố chặt hơn — quy tắc CON-06: **mọi số liệu hiệu năng phải kèm model CPU, số luồng, kích thước ảnh, backend suy luận và cỡ mẫu đo**. Các chỉ tiêu độ trễ vì vậy "rộng rãi" hơn văn liệu quốc tế đo trên GPU — đó là trung thực về điều kiện đo, không phải dễ dãi.
+Máy thực hiện chạy Windows 11, Python 3.13, **không có GPU CUDA** (Intel UHD 770 tích hợp, PyTorch không dùng được để tăng tốc). Huấn luyện trên GPU miễn phí Colab/Kaggle, nhưng **suy luận và buổi bảo vệ chạy trên CPU máy cá nhân**. Đây là **ràng buộc thiết kế**, không phải hạn chế tạm thời, vì bốn lẽ: nó cố định trong toàn bộ vòng đời và tại chính buổi bảo vệ; nó đổi _bậc độ lớn_ của độ trễ (ở 20 ms/khung, video đồng bộ và webcam xử lý mọi khung là hợp lý — ở mốc thực tế 400 ms cả hai bất khả thi, trực tiếp sinh ra hai quyết định kiến trúc: video bất đồng bộ AD-02 và webcam bỏ khung hàng đợi một khe); nó chi phối chọn biến thể mô hình (n/s/m), biến thể OCR (mobile/server), kích thước ảnh và **nền tảng suy luận** — benchmark chính thức trên CPU i7-13700H cho thấy YOLOv8n qua ONNX Runtime nhanh hơn PyTorch khoảng **3,73 lần** (104,61 → 28,02 ms) [18]<!-- ultralytics_2026_openvinoexport -->, lợi ích lớn nhất đúng ở phân khúc mô hình nhỏ [117]<!-- onnxruntime_2025_threading -->; và nó buộc phương pháp công bố chặt hơn — quy tắc CON-06: **mọi số liệu hiệu năng phải kèm model CPU, số luồng, kích thước ảnh, nền tảng suy luận và cỡ mẫu đo**. Các chỉ tiêu độ trễ vì vậy "rộng rãi" hơn văn liệu quốc tế đo trên GPU — đó là trung thực về điều kiện đo, không phải dễ dãi.
 
 > **Cảnh báo trích dẫn.** Bảng benchmark nguồn có cột mAP nhưng đo trên tập `coco8` chỉ **8 ảnh**, không có ý nghĩa thống kê; nhóm thực hiện chỉ dùng cột thời gian và cố ý lược bỏ cột độ chính xác.
 
@@ -331,7 +331,7 @@ Máy thực hiện chạy Windows 11, Python 3.13, **không có GPU CUDA** (Inte
 | **NFR-P4** | Thời gian nạp mô hình khi khởi động                       | ≤ 15 giây             | ≤ 30 giây        |
 | **NFR-P5** | Overhead của tầng API (không tính suy luận)               | ≤ 50 ms               | ≤ 100 ms         |
 | **NFR-P6** | Thời gian truy vấn lịch sử (10.000 bản ghi)               | ≤ 500 ms              | ≤ 1000 ms        |
-| **NFR-P7** | Bộ nhớ thường trú của backend                             | ≤ 2 GB                | ≤ 4 GB           |
+| **NFR-P7** | Bộ nhớ thường trú của máy chủ                             | ≤ 2 GB                | ≤ 4 GB           |
 | **NFR-A1** | mAP@0.5 của bộ phát hiện                                  | ≥ 0,90                | ≥ 0,85           |
 | **NFR-A2** | mAP@0.5:0.95 của bộ phát hiện                             | ≥ 0,65                | ≥ 0,55           |
 | **NFR-A3** | Precision / Recall phát hiện                              | ≥ 0,92 / ≥ 0,90       | ≥ 0,88 / ≥ 0,85  |
@@ -340,11 +340,11 @@ Máy thực hiện chạy Windows 11, Python 3.13, **không có GPU CUDA** (Inte
 | **NFR-A6** | Độ chính xác biển đầy đủ **sau** hậu xử lý                | ≥ 0,90                | ≥ 0,85           |
 | **NFR-A7** | Độ chính xác toàn trình (ảnh vào → biển đúng)             | ≥ 0,88                | ≥ 0,82           |
 
-**Phương pháp đo NFR-P:** P1 trên 100 ảnh test, báo p50/p95/p99; P2 đo liên tục 60 giây; P3 bằng video 60 giây phải xong trong ≤ 200 giây; P4 từ khởi động đến khi `/health` sẵn sàng; P5 là hiệu tổng thời gian request trừ thời gian pipeline; P6 có phân trang và bộ lọc trên 10.000 bản ghi; P7 theo dõi RSS khi chạy tải liên tục.
+**Phương pháp đo NFR-P:** P1 trên 100 ảnh test, báo p50/p95/p99; P2 đo liên tục 60 giây; P3 bằng video 60 giây phải xong trong ≤ 200 giây; P4 từ khởi động đến khi `/health` sẵn sàng; P5 là hiệu tổng thời gian request trừ thời gian đường ống; P6 có phân trang và bộ lọc trên 10.000 bản ghi; P7 theo dõi RSS khi chạy tải liên tục.
 
-NFR-P1 xuất phát từ **phân rã ngân sách độ trễ**: giải mã ~50 ms; phát hiện @640 px ~150 ms; cắt ~30 ms; OCR mỗi biển ~120 ms; hậu xử lý < 5 ms; ghi CSDL ~50 ms — **tổng ~405 ms cho ảnh một biển**; ngân sách 800 ms để dự phòng ảnh nhiều biển và biến động tải. Đây là **ước lượng thiết kế, không phải kết quả đo** (số đo ở Chương 5). Ngân sách lập cho runtime mặc định đã chốt ở mục 3.4 là **ONNX Runtime** — điểm đã đổi so với AD-05 sơ bộ. Nếu vượt ngưỡng, thứ tự giảm tải định trước: (1) INT8 OpenVINO; (2) giảm ảnh xuống 480 px; (3) biến thể OCR nhẹ hơn — chỉ hạ chỉ tiêu **sau khi** thử hết ba phương án.
+NFR-P1 xuất phát từ **phân rã ngân sách độ trễ**: giải mã ~50 ms; phát hiện @640 px ~150 ms; cắt ~30 ms; OCR mỗi biển ~120 ms; hậu xử lý < 5 ms; ghi CSDL ~50 ms — **tổng ~405 ms cho ảnh một biển**; ngân sách 800 ms để dự phòng ảnh nhiều biển và biến động tải. Đây là **ước lượng thiết kế, không phải kết quả đo** (số đo ở Chương 5). Ngân sách lập cho nền tảng suy luận mặc định đã chốt ở mục 3.4 là **ONNX Runtime** — điểm đã đổi so với AD-05 sơ bộ. Nếu vượt ngưỡng, thứ tự giảm tải định trước: (1) INT8 OpenVINO; (2) giảm ảnh xuống 480 px; (3) biến thể OCR nhẹ hơn — chỉ hạ chỉ tiêu **sau khi** thử hết ba phương án.
 
-Cặp NFR-A5/A6 đặt **tách bạch** có chủ đích: hiệu số giữa chúng là đóng góp định lượng của khối hậu xử lý — đo được nhờ quyết định lưu cả chuỗi thô lẫn chuỗi sửa ở tầng dữ liệu (4.7.2b). Bổ sung: **NFR-A8** — báo cáo độ chính xác **tách riêng biển một dòng và hai dòng**, căn cứ số liệu 94,3% / 45,7% **đo trên bộ RodoSol-ALPR (Brazil)** đã dẫn ở 4.1.1, vì một con số tổng thể sẽ che giấu đúng điểm gãy cần phân tích; **NFR-A9** — báo cáo theo điều kiện ảnh nếu bộ dữ liệu có nhãn phù hợp.
+Cặp NFR-A5/A6 đặt **tách bạch** có chủ đích: hiệu số giữa chúng là đóng góp định lượng của khối hậu xử lý — đo được nhờ quyết định lưu cả chuỗi thô lẫn chuỗi sửa ở tầng dữ liệu (4.7.2b). Bổ sung: **NFR-A8** — báo cáo độ chính xác **tách riêng biển một dòng và hai dòng**, căn cứ số liệu 94,3% / 45,7% **đo trên bộ RodoSol-ALPR (Brazil)** đã dẫn ở 4.1.1, vì một con số tổng thể sẽ che giấu đúng chế độ thất bại cần phân tích; **NFR-A9** — báo cáo theo điều kiện ảnh nếu bộ dữ liệu có nhãn phù hợp.
 
 #### c) Các nhóm yêu cầu phi chức năng còn lại
 
@@ -377,17 +377,17 @@ Toàn bộ số liệu công bố trong báo cáo được tổng hợp từ cá
 | `07-leak-check-t10.json`           | Số cặp ảnh gần trùng train↔test theo từng ngưỡng Hamming                        |    5.3.2     |
 | `17-plate-type-audit.json`         | Phân bố màu nền của 2.801 mẫu có nhãn chuỗi — căn cứ cảnh báo 97,68% biển trắng |   5.3, 6.2   |
 | `04-ocr-accuracy.json`             | A4–A7 lượt đo cơ sở                                                             |     5.5      |
-| `16-ocr-accuracy-rescued.json`     | A4–A7 sau khi thêm bước cứu dòng trên                                           |    5.5.6     |
+| `16-ocr-accuracy-rescued.json`     | A4–A7 sau khi thêm bước phục hồi dòng trên                                           |    5.5.6     |
 | `28-ocr-accuracy-finetuned.json`   | A4–A7 của bộ nhận dạng đã tinh chỉnh                                            |    4.5.3     |
-| `29-reconly-ablation.json`         | Bốn cấu hình det+rec ↔ chỉ-rec, hai model                                       | 4.5.3, 5.6.6 |
+| `29-reconly-ablation.json`         | Bốn cấu hình det+rec ↔ chỉ nhận dạng, hai model                                       | 4.5.3, 5.6.6 |
 | `15-two-line-ab.json`              | A/B ghép-rồi-đọc ↔ đọc-từng-nửa, 200 biển hai dòng                              |    5.5.6     |
-| `15-two-line-fallback-700.json`    | A/B bước cứu dòng trên, mẫu 700 biển                                            |    5.5.6     |
-| `15-two-line-fallback.json`        | A/B bước cứu dòng trên, mẫu 200 biển                                            |    5.5.6     |
-| `15-two-line-rescue-ladder.json`   | Chi phí và lợi ích từng bậc của bậc thang thử-lại                               |    5.5.7     |
+| `15-two-line-fallback-700.json`    | A/B bước phục hồi dòng trên, mẫu 700 biển                                            |    5.5.6     |
+| `15-two-line-fallback.json`        | A/B bước phục hồi dòng trên, mẫu 200 biển                                            |    5.5.6     |
+| `15-two-line-rescue-ladder.json`   | Chi phí và lợi ích từng bậc của bậc thang thử lại                               |    5.5.7     |
 | `15-fragment-height-ab.json`       | Ngưỡng lọc mảnh văn bản theo hình học                                           |    4.6.3     |
 | `19-color-accuracy.json`           | Độ chính xác bộ nhận màu nền trên 1.565 ảnh ngoài hiệu chỉnh                    |    4.6.7     |
-| `07-benchmark-p1-resolved.json`    | Độ trễ đầu-cuối p50/p95 và phân rã theo bước                                    | 5.6.1, 5.6.2 |
-| `07-api-overhead.json`             | Overhead của tầng API so với gọi pipeline trực tiếp                             |    5.6.5     |
+| `07-benchmark-p1-resolved.json`    | Độ trễ đầu cuối p50/p95 và phân rã theo bước                                    | 5.6.1, 5.6.2 |
+| `07-api-overhead.json`             | Overhead của tầng API so với gọi đường ống trực tiếp                             |    5.6.5     |
 | `07-stress-load.json`              | Chịu tải đồng thời và tỉ lệ thành công khi chạy liên tục                        |    5.6.5     |
 | `07-stress-db.json`                | Thời gian truy vấn lịch sử trên 10.000 bản ghi                                  |    5.6.5     |
 | `07-benchmark-optimized.json`      | _(chưa chạy)_ So sánh PyTorch ↔ ONNX Runtime ↔ OpenVINO                         |    5.6.3     |
