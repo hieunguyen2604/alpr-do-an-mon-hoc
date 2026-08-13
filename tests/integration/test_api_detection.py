@@ -393,29 +393,19 @@ class TestErrorBodies:
 
         assert db.execute(select(func.count()).select_from(DetectionHistory)).scalar_one() == 0
 
-    @pytest.mark.xfail(
-        reason=(
-            "KNOWN DEFECT. DetectionService._fail_job calls db.rollback() before "
-            "writing the failure record, but _create_job only FLUSHED the job for "
-            "the image and webcam paths -- it never committed. The rollback "
-            "therefore discards the job row itself, db.get() returns None, and no "
-            "failure is recorded at all: a failed image upload leaves ZERO rows. "
-            "Consequence: failed uploads are invisible to the dashboard's usage "
-            "figures, so total_jobs silently under-counts and the system looks "
-            "like it never fails. The video path is unaffected because "
-            "create_video_job commits before processing starts. Fix: commit the "
-            "job in _create_job, or re-insert it in _fail_job after the rollback."
-        ),
-        strict=True,
-    )
     def test_a_failed_image_detection_records_the_failed_job(
         self, client: TestClient, pipeline: FakePipeline, db: Session
     ) -> None:
-        """The intended behaviour, asserted so the defect cannot be forgotten.
+        """A failed image upload must leave a job row marked failed.
 
-        Marked ``strict`` on purpose: when the service is fixed this test starts
-        passing and the ``xfail`` itself fails, which forces the marker to be
-        removed rather than left behind as a stale excuse.
+        This carried a ``strict`` ``xfail`` marker for as long as the defect
+        lived: ``_create_job`` only flushed the job on the image and webcam
+        paths, so ``_fail_job``'s rollback discarded the row before the failure
+        could be written and the upload left **zero** rows -- failures were
+        invisible to the usage figures. ``_create_job`` now commits, matching
+        what the video path always did, and the marker came off because
+        ``strict`` turned the unexpected pass into a failure rather than letting
+        a stale excuse sit here.
         """
         pipeline.raises = RuntimeError("disk on fire")
         response = client.post(IMAGE_URL, files={"file": ("x.jpg", encode_jpeg(), "image/jpeg")})

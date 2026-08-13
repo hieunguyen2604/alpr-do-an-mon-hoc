@@ -321,7 +321,7 @@ Mỗi slide gồm bốn phần:
 ## S25 — Kiểm thử và triển khai
 
 **Nội dung trên slide**
-- **1.001/1.002 kiểm thử tự động** đạt *(1 `xfail` có mô tả)* · Bao phủ tầng nghiệp vụ **87,7%**
+- **1.002/1.002 kiểm thử tự động** đạt · Bao phủ tầng nghiệp vụ **87,7%**
 - Chạy stress test 15 phút: 2.028 requests, **0 lỗi**, 0 rò rỉ bộ nhớ
 - `docker compose up` — **một lệnh** đóng gói hoàn chỉnh
 

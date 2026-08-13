@@ -213,8 +213,8 @@ cố thường gặp và lưu ý dung lượng image — ở `deployment/README.
 | Hạng mục                               | Kết quả    |
 | -------------------------------------- | ---------- |
 | Số test thu thập                       | **1.002**  |
-| Đạt                                    | **1.001**  |
-| `xfail` _(dự kiến hỏng, có ghi lý do)_ | 1          |
+| Đạt                                    | **1.002**  |
+| `xfail` _(dự kiến hỏng)_               | 0          |
 | Fail                                   | **0**      |
 | Skip                                   | 0          |
 | Ngày chạy                              | 02/08/2026 |

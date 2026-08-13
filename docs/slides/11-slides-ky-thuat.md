@@ -89,7 +89,7 @@ Phát hiện **đạt cả bốn chỉ tiêu**; phần thiếu nằm trọn ở 
 | Đúng cả chuỗi, sau hậu xử lý | **0,7512** | 0,90 | ❌ |
 | Độ trễ p95 · trung vị, CPU | **1.143** · 406 ms | ≤ 800 ms | 🟡 |
 | **Đóng góp của hậu xử lý** (A6 − A5) | **+11,39 điểm** · 319 sửa đúng / **0** hỏng | — | ✅ |
-| Kiểm thử · bao phủ nghiệp vụ | **1.001/1.002** · 87,7% | — · 70% | ✅ |
+| Kiểm thử · bao phủ nghiệp vụ | **1.002/1.002** · 87,7% | — · 70% | ✅ |
 
 ## Demo: hệ thống chạy thật
 

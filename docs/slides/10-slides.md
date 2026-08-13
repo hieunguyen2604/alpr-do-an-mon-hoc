@@ -255,7 +255,7 @@ Phần lớn ảnh xong dưới nửa giây; đuôi phải là những ảnh th�
 
 ## Kiểm thử và triển khai
 
-- **1.001/1.002 kiểm thử tự động** đạt *(1 `xfail` có mô tả)* · bao phủ tầng nghiệp vụ **87,7%**
+- **1.002/1.002 kiểm thử tự động** đạt · bao phủ tầng nghiệp vụ **87,7%**
 - Đơn vị · tích hợp · độ chính xác AI · hiệu năng · chịu tải
 - Tầng AI có bộ test **chạy không cần dựng server**
 - Chạy liên tục **15 phút**: 2.028 yêu cầu, **0 lỗi**, không rò rỉ bộ nhớ
@@ -315,7 +315,7 @@ Ba tình huống, chạy trên máy thật — **không phải video quay sẵn*
 - Hệ thống **5 tầng chạy thật**, đóng gói Docker một lệnh
 - Phát hiện đạt **cả 4 chỉ tiêu**: mAP50 **0,983** · mAP50-95 **0,783**
 - Hậu xử lý theo vị trí — **+11,39 điểm**, đo tách bạch
-- **1.001/1.002 kiểm thử** đạt · bao phủ tầng nghiệp vụ **87,7%**
+- **1.002/1.002 kiểm thử** đạt · bao phủ tầng nghiệp vụ **87,7%**
 
 **Đóng góp học thuật**
 
