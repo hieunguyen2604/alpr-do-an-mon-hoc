@@ -101,7 +101,7 @@ là giới hạn phần cứng; `epochs = 20` là con số bị ngân sách th�
 4.5.1 và 3.6.
 
 Cấu hình tinh chỉnh bộ nhận dạng ký tự (30 epoch, 6.672 mẫu, bộ ký tự 36) trình
-bày tại mục 4.5.3 cùng kết quả đo bốn cấu hình. **Bản giao hàng không dùng mô hình
+bày tại mục 4.5.3 cùng kết quả đo bốn cấu hình. **Bản bàn giao không dùng mô hình
 tinh chỉnh** — lý do ở cùng mục.
 
 ---
@@ -266,7 +266,7 @@ tại `/docs` và `/openapi.json`, nên nó không bao giờ lệch với mã ng
 | Thành phần         | Loại    | Vai trò                                                       |
 | ------------------ | ------- | ------------------------------------------------------------- |
 | `backend`          | dịch vụ | FastAPI + uvicorn, chạy đường ống AI trên CPU                  |
-| `frontend`         | dịch vụ | nginx:alpine — phục vụ tệp tĩnh và reverse proxy sang backend |
+| `frontend`         | dịch vụ | nginx:alpine — phục vụ tệp tĩnh và chuyển tiếp yêu cầu sang máy chủ |
 | `alpr-net`         | mạng    | Mạng nội bộ giữa hai dịch vụ                                  |
 | `alpr-data`        | volume  | Cơ sở dữ liệu SQLite — dữ liệu sống qua lần khởi động lại     |
 | `alpr-model-cache` | volume  | Bộ nhớ đệm trọng số PaddleOCR — tránh tải lại mỗi lần dựng    |
@@ -380,7 +380,7 @@ Toàn bộ số liệu công bố trong báo cáo được tổng hợp từ cá
 | `16-ocr-accuracy-rescued.json`     | A4–A7 sau khi thêm bước phục hồi dòng trên                                           |    5.5.6     |
 | `28-ocr-accuracy-finetuned.json`   | A4–A7 của bộ nhận dạng đã tinh chỉnh                                            |    4.5.3     |
 | `29-reconly-ablation.json`         | Bốn cấu hình det+rec ↔ chỉ nhận dạng, hai model                                       | 4.5.3, 5.6.6 |
-| `15-two-line-ab.json`              | A/B ghép-rồi-đọc ↔ đọc-từng-nửa, 200 biển hai dòng                              |    5.5.6     |
+| `15-two-line-ab.json`              | A/B ghép rồi đọc ↔ đọc từng nửa, 200 biển hai dòng                              |    5.5.6     |
 | `15-two-line-fallback-700.json`    | A/B bước phục hồi dòng trên, mẫu 700 biển                                            |    5.5.6     |
 | `15-two-line-fallback.json`        | A/B bước phục hồi dòng trên, mẫu 200 biển                                            |    5.5.6     |
 | `15-two-line-rescue-ladder.json`   | Chi phí và lợi ích từng bậc của bậc thang thử lại                               |    5.5.7     |

@@ -8,7 +8,7 @@ Nhận dạng biển số xe tự động (ALPR) là lõi của bãi đỗ xe th
 
 **Không thể dùng trực tiếp giải pháp nước ngoài**, vì hai lý do đo được và một lý do pháp lý.
 
-**Thứ nhất, biển hai dòng là điểm gãy đã đo được.** Trên tập kiểm thử cân bằng của bộ **RodoSol-ALPR (Brazil)** — 4.000 ảnh ô tô biển một dòng, 4.000 ảnh xe máy biển hai dòng — hệ thống thương mại OpenALPR nhận đúng **94,3% biển một dòng nhưng chỉ 45,7% biển hai dòng**, chênh **48,6 điểm phần trăm**, không biến số nào khác thay đổi ngoài bố cục biển [2]. Cặp số này đo trên **dữ liệu Brazil, không phải dữ liệu Việt Nam**; đồ án dẫn nó như một dẫn chứng định lượng về độ khó của biển hai dòng tại một quốc gia cũng có tỉ lệ xe máy cao, không phải như mốc chuẩn.
+**Thứ nhất, biển hai dòng là điểm suy giảm đã đo được.** Trên tập kiểm thử cân bằng của bộ **RodoSol-ALPR (Brazil)** — 4.000 ảnh ô tô biển một dòng, 4.000 ảnh xe máy biển hai dòng — hệ thống thương mại OpenALPR nhận đúng **94,3% biển một dòng nhưng chỉ 45,7% biển hai dòng**, chênh **48,6 điểm phần trăm**, không biến số nào khác thay đổi ngoài bố cục biển [2]. Cặp số này đo trên **dữ liệu Brazil, không phải dữ liệu Việt Nam**; đồ án dẫn nó như một dẫn chứng định lượng về độ khó của biển hai dòng tại một quốc gia cũng có tỉ lệ xe máy cao, không phải như mốc chuẩn.
 
 **Thứ hai, cấu trúc chuỗi và hình học biển là đặc thù quốc gia.** Biển số Việt Nam theo Thông tư 79/2024/TT-BCA [3], mã tỉnh theo Thông tư 51/2025/TT-BCA [4], kích thước vật lý theo QCVN 08:2024/BCA [5]. Ba đặc thù ở Chương 2 không học được từ dữ liệu nước ngoài, trong đó **tỉ lệ khung hình** là đại lượng thuần hình học mà toàn bộ khối xử lý ảnh của đồ án dựa vào.
 
@@ -18,7 +18,7 @@ Nhận dạng biển số xe tự động (ALPR) là lõi của bãi đỗ xe th
 
 ### 1.2.1. Mục tiêu
 
-Xây dựng một hệ thống nhận dạng biển số xe Việt Nam chạy được đầu-cuối, **suy luận hoàn toàn trên CPU**, hỗ trợ cả biển một dòng và biển hai dòng. Trọng tâm của đồ án môn học đặt ở **khối xử lý ảnh** nằm giữa bộ phát hiện và bộ nhận dạng ký tự: chuẩn hoá, tăng cường tương phản, khử nhiễu bảo toàn biên, nắn hình, phân loại bố cục theo hình học, tách và ghép ảnh, phân tích màu trong không gian HSV.
+Xây dựng một hệ thống nhận dạng biển số xe Việt Nam chạy được đầu cuối, **suy luận hoàn toàn trên CPU**, hỗ trợ cả biển một dòng và biển hai dòng. Trọng tâm của đồ án môn học đặt ở **khối xử lý ảnh** nằm giữa bộ phát hiện và bộ nhận dạng ký tự: chuẩn hoá, tăng cường tương phản, khử nhiễu bảo toàn biên, nắn hình, phân loại bố cục theo hình học, tách và ghép ảnh, phân tích màu trong không gian HSV.
 
 **Bảng 1.1.** Chỉ tiêu đặt ra, mỗi chỉ tiêu có ngưỡng tối thiểu và mục tiêu
 
@@ -51,7 +51,7 @@ Mỗi lựa chọn dưới đây bị chi phối bởi cùng bốn ràng buộc:
 |---|---|---|---|---|
 | Thư viện xử lý ảnh | **OpenCV** [17] | scikit-image, Pillow | Đủ cả CLAHE, lọc song phương, biến đổi phối cảnh, HSV trong một thư viện; ràng buộc thời gian thực | API kiểu C cũ, dễ nhầm thứ tự kênh BGR/RGB |
 | Bộ phát hiện | **YOLO11n** [8] | Faster R-CNN, SSD, YOLOv8 | Họ một giai đoạn, **anchor-free** — hồi quy trực tiếp khoảng cách tâm tới bốn cạnh nên xử lý được cả tỉ lệ 4,7:1 lẫn 1,4:1 bằng một cơ chế; biến thể `n` chỉ 2,59 triệu tham số | Họ hai giai đoạn chính xác hơn nhưng không hợp ràng buộc CPU |
-| Nhận dạng ký tự | **PaddleOCR PP-OCRv5 mobile** [9] | EasyOCR, Tesseract | Cao hơn hẳn hai engine kia trên chính ảnh biển số Việt Nam, trong cấu hình đánh giá của đồ án (mục 4.3.4) | Là đường ống nhiều giai đoạn thiết kế cho ảnh tài liệu, nên trả chi phí cho năng lực mà vùng biển đã cắt không cần |
+| Nhận dạng ký tự | **PaddleOCR PP-OCRv5 mobile** [9] | EasyOCR, Tesseract | Cao hơn hẳn hai bộ nhận dạng kia trên chính ảnh biển số Việt Nam, trong cấu hình đánh giá của đồ án (mục 4.3.4) | Là đường ống nhiều giai đoạn thiết kế cho ảnh tài liệu, nên trả chi phí cho năng lực mà vùng biển đã cắt không cần |
 | Hậu xử lý | **Bộ luật tự thiết kế** | Mô hình ngôn ngữ, từ điển | Biển số không có từ vựng để dựa vào; ràng buộc cú pháp lại rất chặt và kiểm được bằng biểu thức chính quy | Phải cập nhật khi văn bản pháp quy thay đổi |
 | Ứng dụng trình diễn | **FastAPI + React + Docker** | Notebook, ứng dụng desktop | Yêu cầu chạy được bằng một lệnh trên máy sạch | Không phải trọng tâm của môn học |
 

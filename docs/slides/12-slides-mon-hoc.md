@@ -58,7 +58,7 @@ powershell -File scripts/check_slides.ps1 -DeckPath docs/slides/12-slides-mon-ho
 
 ## Mục tiêu và chỉ tiêu
 
-Hệ thống chạy đầu-cuối, **suy luận hoàn toàn trên CPU**, hỗ trợ cả biển một dòng và hai dòng.
+Hệ thống chạy đầu cuối, **suy luận hoàn toàn trên CPU**, hỗ trợ cả biển một dòng và hai dòng.
 
 | Đo cái gì | Sàn | Mục tiêu |
 |---|---:|---:|
@@ -105,7 +105,7 @@ Nếu vấn đề là *ảnh có hai dòng*, thì biến nó thành **ảnh mộ
 
 Mỗi khung là ảnh thật ở đầu ra một bước, dựng từ **chính mã bàn giao**.
 
-![](figures/fig-pipeline-strip-ngang.png)
+![](figures/fig-đường ống-strip-ngang.png)
 
 ## Bộ luật hậu xử lý ràng buộc theo vị trí
 
@@ -136,7 +136,7 @@ Phát hiện **đạt cả bốn chỉ tiêu**; phần thiếu nằm trọn ở 
 
 Đo mức ký tự thì hai bố cục gần bằng nhau; đo cả chuỗi thì cách một trời một vực.
 
-![](figures/fig-ch4-layout.png)
+![](figures/fig-ch4-bố cục.png)
 
 ## Lỗi trông như thế nào
 
@@ -148,7 +148,7 @@ Ba ca hậu xử lý cứu được, ba ca vẫn sai — **cả ba ca sai đều
 
 Mọi bước bật tắt độc lập, nên đóng góp của từng bước **đo được riêng** — kể cả khi bằng 0.
 
-| Bước xử lý ảnh | Mua được | Giá phải trả |
+| Bước xử lý ảnh | cải thiện được | Giá phải trả |
 |---|---:|---|
 | **Tách hai nửa + ghép ngang** | **+34,92 điểm** | ~0 ms |
 | **Bộ luật hậu xử lý** | **+11,39 điểm** · 319 sửa đúng, **0 hỏng** | 0,03 ms |
@@ -156,11 +156,11 @@ Mọi bước bật tắt độc lập, nên đóng góp của từng bước **
 | Siêu phân giải — đã **tắt** | **0 biển**, nhưng **0/120 mẫu lọt cổng** | +319 ms p95 |
 | *Đối chứng:* tách-ghép trên **Tesseract** | **+0,03 điểm** | — |
 
-## Ba kết quả trái kỳ vọng
+## Ba kết quả khác với dự đoán ban đầu
 
-- **Tách-ghép không độc lập engine** — 34,92 điểm cho PaddleOCR, **0,03** cho Tesseract ⇒ điều kiện cần, không đủ
+- **Tách-ghép không độc lập bộ nhận dạng** — 34,92 điểm cho PaddleOCR, **0,03** cho Tesseract ⇒ điều kiện cần, không đủ
 - **Bảng ánh xạ suy từ hình dạng chỉ phủ 2/10 cặp** nhầm phổ biến nhất — trực giác không gợi ra `E → F` hay `4 → L`
-- **Siêu phân giải mua 0 biển, nhưng 0/120 mẫu lọt cổng** ⇒ *chi phí đã đo, lợi ích chưa ai đo được*
+- **Siêu phân giải cải thiện 0 biển, nhưng 0/120 mẫu lọt cổng** ⇒ *chi phí đã đo, lợi ích chưa ai đo được*
 
 ## Demo: hệ thống chạy thật
 
@@ -172,15 +172,15 @@ Khởi động bằng một lệnh `docker compose up`; giao diện hiện **c�
 
 | # | Hướng phát triển | Giải hạn chế nào |
 |:--:|---|---|
-| 1 | **Huấn luyện lại bộ nhận dạng ký tự cho biển số Việt Nam** | Nút thắt lớn nhất — biển hai dòng |
+| 1 | **Huấn luyện lại bộ nhận dạng ký tự cho biển số Việt Nam** | điểm nghẽn lớn nhất — biển hai dòng |
 | 2 | **Thay bảng ánh xạ bằng bảng trích từ ma trận đo được** | Rẻ nhất: dữ liệu đã có sẵn |
 | 3 | Khử rò rỉ theo **chuỗi biển số** thay vì theo băm tri giác | Băm tri giác tóm tắt khung ảnh, không tóm tắt chiếc xe |
 | 4 | Thu thập dữ liệu biển vàng, xanh, đỏ | 97,68% mẫu là biển trắng |
 
 ## Cảm ơn — và mời đặt câu hỏi
 
-- Chạy đầu-cuối trên máy **không có GPU**: bộ phát hiện đạt **mAP@0,5 = 0,9829**
-- Bài toán biển hai dòng giải bằng **phép biến đổi ảnh**, không bằng mô hình mạnh hơn — mua **34,92 điểm**
+- Chạy đầu cuối trên máy **không có GPU**: bộ phát hiện đạt **mAP@0,5 = 0,9829**
+- Bài toán biển hai dòng giải bằng **phép biến đổi ảnh**, không bằng mô hình mạnh hơn — đóng góp **34,92 điểm**
 - Hậu xử lý theo vị trí đóng góp **+11,39 điểm**, **0 ca làm hỏng** trên 2.801 biển
 - Phần chưa đạt: đọc đúng cả chuỗi **0,7512** so với ngưỡng 0,85, khoảng cách nằm trọn ở biển hai dòng
 

@@ -144,7 +144,7 @@ Với ALPR, **recall quan trọng hơn precision**: một biển bị bỏ sót 
 
 Khoảng cách giữa hai chỉ số này với biển số thường rất lớn, do hộp bao dẹt khiến một sai lệch nhỏ theo chiều cao làm IoU tụt nhanh. Đây là lý do đồ án lấy `mAP@0,5` làm chỉ tiêu chính nhưng vẫn báo cáo `mAP@0,5:0,95`: chỉ số thứ hai mới phản ánh **độ khít của vùng cắt** đưa sang bước nhận dạng.
 
-## 2.4. Nhận dạng ký tự và điểm gãy trên văn bản hai dòng
+## 2.4. Nhận dạng ký tự và điểm suy giảm trên văn bản hai dòng
 
 ### 2.4.1. Kiến trúc CRNN và hàm mất mát CTC
 
@@ -156,7 +156,7 @@ $$p(\mathbf{l} \mid \mathbf{x}) = \sum_{\boldsymbol{\pi} \in \mathcal{B}^{-1}(\m
 
 <div align="right">(2.5)</div>
 
-Ưu điểm quyết định: **không cần nhãn vị trí từng ký tự**, lý do CTC là mặc định của hầu hết engine OCR mã nguồn mở.
+Ưu điểm quyết định: **không cần nhãn vị trí từng ký tự**, lý do CTC là mặc định của hầu hết bộ nhận dạng ký tự mã nguồn mở.
 
 ### 2.4.2. Vì sao CTC gãy trên biển hai dòng
 
@@ -180,4 +180,4 @@ $$\mathrm{CER} = \frac{S + D + I}{N}$$
 
 CER **có thể vượt 1** khi chuỗi dự đoán dài hơn nhãn thật rất nhiều — đúng tình huống CTC gặp ảnh hai dòng.
 
-**Độ chính xác mức chuỗi** đếm số biển có **toàn bộ** chuỗi khớp chính xác. Đây là chỉ số phản ánh đúng giá trị sử dụng, và quan hệ của nó với CER **bất lợi một cách không tuyến tính**: với biển 8 ký tự, nếu xác suất đọc đúng mỗi ký tự là $p$ thì xác suất đúng cả chuỗi là $p^{8}$. Với $p = 0{,}99$ con số này chỉ còn khoảng $0{,}923$; với $p = 0{,}95$ nó tụt xuống khoảng $0{,}663$. Đây là lý do một engine có CER rất tốt trên văn bản tài liệu vẫn có thể thất bại trên biển số.
+**Độ chính xác mức chuỗi** đếm số biển có **toàn bộ** chuỗi khớp chính xác. Đây là chỉ số phản ánh đúng giá trị sử dụng, và quan hệ của nó với CER **bất lợi một cách không tuyến tính**: với biển 8 ký tự, nếu xác suất đọc đúng mỗi ký tự là $p$ thì xác suất đúng cả chuỗi là $p^{8}$. Với $p = 0{,}99$ con số này chỉ còn khoảng $0{,}923$; với $p = 0{,}95$ nó tụt xuống khoảng $0{,}663$. Đây là lý do một bộ nhận dạng có CER rất tốt trên văn bản tài liệu vẫn có thể thất bại trên biển số.

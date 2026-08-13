@@ -65,7 +65,7 @@ Nhận dạng biển số xe tự động (ALPR) là lõi của bãi đỗ xe th
 
 **Không thể dùng trực tiếp giải pháp nước ngoài**, vì hai lý do đo được và một lý do pháp lý.
 
-**Thứ nhất, biển hai dòng là điểm gãy đã đo được.** Trên tập kiểm thử cân bằng của bộ **RodoSol-ALPR (Brazil)** — 4.000 ảnh ô tô biển một dòng, 4.000 ảnh xe máy biển hai dòng — hệ thống thương mại OpenALPR nhận đúng **94,3% biển một dòng nhưng chỉ 45,7% biển hai dòng**, chênh **48,6 điểm phần trăm**, không biến số nào khác thay đổi ngoài bố cục biển [2]. Cặp số này đo trên **dữ liệu Brazil, không phải dữ liệu Việt Nam**; đồ án dẫn nó như một dẫn chứng định lượng về độ khó của biển hai dòng tại một quốc gia cũng có tỉ lệ xe máy cao, không phải như mốc chuẩn.
+**Thứ nhất, biển hai dòng là điểm suy giảm đã đo được.** Trên tập kiểm thử cân bằng của bộ **RodoSol-ALPR (Brazil)** — 4.000 ảnh ô tô biển một dòng, 4.000 ảnh xe máy biển hai dòng — hệ thống thương mại OpenALPR nhận đúng **94,3% biển một dòng nhưng chỉ 45,7% biển hai dòng**, chênh **48,6 điểm phần trăm**, không biến số nào khác thay đổi ngoài bố cục biển [2]. Cặp số này đo trên **dữ liệu Brazil, không phải dữ liệu Việt Nam**; đồ án dẫn nó như một dẫn chứng định lượng về độ khó của biển hai dòng tại một quốc gia cũng có tỉ lệ xe máy cao, không phải như mốc chuẩn.
 
 **Thứ hai, cấu trúc chuỗi và hình học biển là đặc thù quốc gia.** Biển số Việt Nam theo Thông tư 79/2024/TT-BCA [3], mã tỉnh theo Thông tư 51/2025/TT-BCA [4], kích thước vật lý theo QCVN 08:2024/BCA [5]. Ba đặc thù ở Chương 2 không học được từ dữ liệu nước ngoài, trong đó **tỉ lệ khung hình** là đại lượng thuần hình học mà toàn bộ khối xử lý ảnh của đồ án dựa vào.
 
@@ -75,7 +75,7 @@ Nhận dạng biển số xe tự động (ALPR) là lõi của bãi đỗ xe th
 
 ### 1.2.1. Mục tiêu
 
-Xây dựng một hệ thống nhận dạng biển số xe Việt Nam chạy được đầu-cuối, **suy luận hoàn toàn trên CPU**, hỗ trợ cả biển một dòng và biển hai dòng. Trọng tâm của đồ án môn học đặt ở **khối xử lý ảnh** nằm giữa bộ phát hiện và bộ nhận dạng ký tự: chuẩn hoá, tăng cường tương phản, khử nhiễu bảo toàn biên, nắn hình, phân loại bố cục theo hình học, tách và ghép ảnh, phân tích màu trong không gian HSV.
+Xây dựng một hệ thống nhận dạng biển số xe Việt Nam chạy được đầu cuối, **suy luận hoàn toàn trên CPU**, hỗ trợ cả biển một dòng và biển hai dòng. Trọng tâm của đồ án môn học đặt ở **khối xử lý ảnh** nằm giữa bộ phát hiện và bộ nhận dạng ký tự: chuẩn hoá, tăng cường tương phản, khử nhiễu bảo toàn biên, nắn hình, phân loại bố cục theo hình học, tách và ghép ảnh, phân tích màu trong không gian HSV.
 
 **Bảng 1.1.** Chỉ tiêu đặt ra, mỗi chỉ tiêu có ngưỡng tối thiểu và mục tiêu
 
@@ -108,7 +108,7 @@ Mỗi lựa chọn dưới đây bị chi phối bởi cùng bốn ràng buộc:
 |---|---|---|---|---|
 | Thư viện xử lý ảnh | **OpenCV** [17] | scikit-image, Pillow | Đủ cả CLAHE, lọc song phương, biến đổi phối cảnh, HSV trong một thư viện; ràng buộc thời gian thực | API kiểu C cũ, dễ nhầm thứ tự kênh BGR/RGB |
 | Bộ phát hiện | **YOLO11n** [8] | Faster R-CNN, SSD, YOLOv8 | Họ một giai đoạn, **anchor-free** — hồi quy trực tiếp khoảng cách tâm tới bốn cạnh nên xử lý được cả tỉ lệ 4,7:1 lẫn 1,4:1 bằng một cơ chế; biến thể `n` chỉ 2,59 triệu tham số | Họ hai giai đoạn chính xác hơn nhưng không hợp ràng buộc CPU |
-| Nhận dạng ký tự | **PaddleOCR PP-OCRv5 mobile** [9] | EasyOCR, Tesseract | Cao hơn hẳn hai engine kia trên chính ảnh biển số Việt Nam, trong cấu hình đánh giá của đồ án (mục 4.3.4) | Là đường ống nhiều giai đoạn thiết kế cho ảnh tài liệu, nên trả chi phí cho năng lực mà vùng biển đã cắt không cần |
+| Nhận dạng ký tự | **PaddleOCR PP-OCRv5 mobile** [9] | EasyOCR, Tesseract | Cao hơn hẳn hai bộ nhận dạng kia trên chính ảnh biển số Việt Nam, trong cấu hình đánh giá của đồ án (mục 4.3.4) | Là đường ống nhiều giai đoạn thiết kế cho ảnh tài liệu, nên trả chi phí cho năng lực mà vùng biển đã cắt không cần |
 | Hậu xử lý | **Bộ luật tự thiết kế** | Mô hình ngôn ngữ, từ điển | Biển số không có từ vựng để dựa vào; ràng buộc cú pháp lại rất chặt và kiểm được bằng biểu thức chính quy | Phải cập nhật khi văn bản pháp quy thay đổi |
 | Ứng dụng trình diễn | **FastAPI + React + Docker** | Notebook, ứng dụng desktop | Yêu cầu chạy được bằng một lệnh trên máy sạch | Không phải trọng tâm của môn học |
 
@@ -265,7 +265,7 @@ Với ALPR, **recall quan trọng hơn precision**: một biển bị bỏ sót 
 
 Khoảng cách giữa hai chỉ số này với biển số thường rất lớn, do hộp bao dẹt khiến một sai lệch nhỏ theo chiều cao làm IoU tụt nhanh. Đây là lý do đồ án lấy `mAP@0,5` làm chỉ tiêu chính nhưng vẫn báo cáo `mAP@0,5:0,95`: chỉ số thứ hai mới phản ánh **độ khít của vùng cắt** đưa sang bước nhận dạng.
 
-## 2.4. Nhận dạng ký tự và điểm gãy trên văn bản hai dòng
+## 2.4. Nhận dạng ký tự và điểm suy giảm trên văn bản hai dòng
 
 ### 2.4.1. Kiến trúc CRNN và hàm mất mát CTC
 
@@ -277,7 +277,7 @@ $$p(\mathbf{l} \mid \mathbf{x}) = \sum_{\boldsymbol{\pi} \in \mathcal{B}^{-1}(\m
 
 <div align="right">(2.5)</div>
 
-Ưu điểm quyết định: **không cần nhãn vị trí từng ký tự**, lý do CTC là mặc định của hầu hết engine OCR mã nguồn mở.
+Ưu điểm quyết định: **không cần nhãn vị trí từng ký tự**, lý do CTC là mặc định của hầu hết bộ nhận dạng ký tự mã nguồn mở.
 
 ### 2.4.2. Vì sao CTC gãy trên biển hai dòng
 
@@ -301,7 +301,7 @@ $$\mathrm{CER} = \frac{S + D + I}{N}$$
 
 CER **có thể vượt 1** khi chuỗi dự đoán dài hơn nhãn thật rất nhiều — đúng tình huống CTC gặp ảnh hai dòng.
 
-**Độ chính xác mức chuỗi** đếm số biển có **toàn bộ** chuỗi khớp chính xác. Đây là chỉ số phản ánh đúng giá trị sử dụng, và quan hệ của nó với CER **bất lợi một cách không tuyến tính**: với biển 8 ký tự, nếu xác suất đọc đúng mỗi ký tự là $p$ thì xác suất đúng cả chuỗi là $p^{8}$. Với $p = 0{,}99$ con số này chỉ còn khoảng $0{,}923$; với $p = 0{,}95$ nó tụt xuống khoảng $0{,}663$. Đây là lý do một engine có CER rất tốt trên văn bản tài liệu vẫn có thể thất bại trên biển số.
+**Độ chính xác mức chuỗi** đếm số biển có **toàn bộ** chuỗi khớp chính xác. Đây là chỉ số phản ánh đúng giá trị sử dụng, và quan hệ của nó với CER **bất lợi một cách không tuyến tính**: với biển 8 ký tự, nếu xác suất đọc đúng mỗi ký tự là $p$ thì xác suất đúng cả chuỗi là $p^{8}$. Với $p = 0{,}99$ con số này chỉ còn khoảng $0{,}923$; với $p = 0{,}95$ nó tụt xuống khoảng $0{,}663$. Đây là lý do một bộ nhận dạng có CER rất tốt trên văn bản tài liệu vẫn có thể thất bại trên biển số.
 
 
 ```{=openxml}
@@ -325,7 +325,7 @@ CER **có thể vượt 1** khi chuỗi dự đoán dài hơn nhãn thật rất
 
 Khối 2 và khối 4 là phần do đồ án tự thiết kế; khối 1 và khối 3 dùng mô hình có sẵn.
 
-Toàn bộ đường ống được đóng gói thành một **gói Python độc lập không phụ thuộc tầng web**. Ràng buộc này không phải hình thức: nó cho phép cùng một mã chạy được trong sổ tay thử nghiệm, trong kịch bản đo đạc và trong dịch vụ đang vận hành. Bài học ngược lại đã xảy ra thật trong đồ án — một kịch bản đo **chép lại** các bước của đường ống thay vì **gọi** nó, nên mỗi bước mới thêm vào đường ống đều rơi ra ngoài phép đo, và số liệu công bố mô tả một hệ thống ngắn hơn hệ thống thực tế.
+Toàn bộ đường ống được đóng gói thành một **gói Python độc lập không phụ thuộc tầng web**. Ràng buộc này không phải hình thức: nó cho phép cùng một mã chạy được trong sổ tay thử nghiệm, trong kịch bản đo đạc và trong dịch vụ đang vận hành. Bài học ngược lại đã xảy ra trong quá trình thực hiện đồ án: một kịch bản đo **chép lại** các bước của đường ống thay vì **gọi** nó, nên mỗi bước mới thêm vào đường ống đều rơi ra ngoài phép đo, và số liệu công bố mô tả một hệ thống ngắn hơn hệ thống thực tế.
 
 Ba lớp trừu tượng có hợp đồng thống nhất: lớp phát hiện trả danh sách vùng biển đã lọc ngưỡng và khử chồng lấn, **danh sách rỗng là kết quả hợp lệ chứ không phải lỗi**; lớp nhận dạng trả chuỗi thô kèm độ tin cậy, **không** tự sửa lỗi ký tự; lớp chuẩn hoá trả về cả chuỗi không hợp lệ kèm cờ đánh dấu. Chính việc lớp nhận dạng không được phép tự sửa lỗi là điều kiện để **đo tách bạch** đóng góp của khối hậu xử lý ở mục 4.3.2.
 
@@ -362,7 +362,7 @@ Bước chia tập giữ **mọi thành viên của một nhóm trùng lặp tro
 
 ### 3.2.3. Giới hạn của băm tri giác: nó tóm tắt khung ảnh, không tóm tắt chiếc xe
 
-Đây là **giới hạn không khắc phục được** bằng công cụ hiện có, và đồ án ghi nhận thẳng thắn thay vì bỏ qua.
+Đây là **giới hạn không khắc phục được** bằng công cụ hiện có, và đồ án ghi nhận thay vì bỏ qua.
 
 Một lần kiểm tra độc lập ở ngưỡng Hamming 10 trên phiên bản đầu của bộ dữ liệu tìm thấy **619 cặp gần trùng giữa tập huấn luyện và tập kiểm thử**; kiểm bằng mắt cho thấy đó là **cùng một chiếc xe, cùng chuỗi biển số, xuất hiện ở cả hai tập**. Đường ống không bắt được vì bước chia tập gom nhóm ở ngưỡng 5 và lần kiểm tra đầu cũng đo lại ở đúng ngưỡng 5 — một **lập luận vòng tròn**: đo ở ngưỡng đã dùng để gộp thì chỉ chứng minh bước gộp đã chạy đúng đặc tả, không chứng minh thêm điều gì.
 
@@ -400,7 +400,7 @@ Việc **tắt phép lật ngang** là quyết định xử lý ảnh đáng ch�
 
 ### 3.4.1. Chuỗi bước và nguyên tắc bật tắt độc lập
 
-Mọi bước trong mục này đều **bật tắt được độc lập** qua biến cấu hình. Đây không phải tiện ích lập trình mà là điều kiện để chương 4 **bóc tách đóng góp của từng bước**: không có công tắc thì không đo được bước nào mua được gì.
+Mọi bước trong mục này đều **bật tắt được độc lập** qua biến cấu hình. Đây không phải tiện ích lập trình mà là điều kiện để chương 4 **bóc tách đóng góp của từng bước**: không có công tắc thì không đo được bước nào cải thiện được gì.
 
 Thứ tự trên **đường chạy chính**:
 
@@ -414,11 +414,11 @@ Hai chi tiết về thứ tự này đáng nêu, vì đảo lại sẽ ra một 
 
 **Bước nắn hình không nằm trên đường chạy chính.** Nó thuộc bậc thang thử lại ở mục 3.4.6, chỉ chạy sau khi lần đọc đầu tiên đã thất bại.
 
-![](figures/fig-pipeline-strip.png)
+![](figures/fig-đường ống-strip.png)
 
 **Hình 3.3.** Toàn bộ chuỗi xử lý trên một biển thật, ảnh chụp sau từng bước
 
-Hình 3.3 là kết quả chạy **chính các hàm của bản giao hàng**, không phải hình vẽ minh hoạ: mỗi khung là mảng ảnh thật ở đầu ra của bước tương ứng, và chuỗi kết thúc bằng chuỗi ký tự mà hệ thống thực sự đọc được. Hai khung đáng nhìn kỹ là khung 3 và khung 4 — chúng cho thấy trực tiếp thứ mà cả mục này mô tả bằng chữ: **tỉ lệ khung hình nhảy từ 1,12 lên 4,42**, và hai hàng ký tự cao 30 px trở thành một hàng duy nhất nhận trọn 50 px.
+Hình 3.3 là kết quả chạy **chính các hàm của bản bàn giao**, không phải hình vẽ minh hoạ: mỗi khung là mảng ảnh thật ở đầu ra của bước tương ứng, và chuỗi kết thúc bằng chuỗi ký tự mà hệ thống thực sự đọc được. Hai khung đáng nhìn kỹ là khung 3 và khung 4 — chúng cho thấy trực tiếp thứ mà cả mục này mô tả bằng chữ: **tỉ lệ khung hình nhảy từ 1,12 lên 4,42**, và hai hàng ký tự cao 30 px trở thành một hàng duy nhất nhận trọn 50 px.
 
 Khung 3 cũng cho thấy một chi tiết dễ bị hiểu nhầm: nửa dưới **có chứa phần chân của hàng ký tự trên**. Đó không phải lỗi cắt mà chính là vùng chồng lấn ở mục 3.4.4, và mục 3.4.7 cho thấy nó còn giải quyết thêm một vấn đề nữa.
 
@@ -471,7 +471,7 @@ Hai phép hiệu chỉnh được cài để kéo vùng biển về đúng nhán
 
 Hai phép này **không nằm trên đường chạy chính**. Chúng được tổ chức thành một **bậc thang thử lại**, chỉ kích hoạt **sau khi lần đọc đầu tiên đã thất bại** — tức khi chuỗi trả về không qua được kiểm tra định dạng. Cấu trúc này có một tính chất quan trọng: vì cổng chỉ mở khi kết quả đã không hợp lệ, **tập bị can thiệp và tập đang đúng là hai tập rời nhau**, nên bậc thang **không thể làm hỏng một biển vốn đã đọc đúng**. Chính tính chất đó cho phép để nó bật mặc định mà không cần lo thoái lui về độ chính xác.
 
-Bản thân bước nắn hình cũng có ba cổng an toàn, mỗi cổng đều lùi về "trả nguyên vùng cắt": góc nghiêng dưới 1,5° (không có gì để sửa, giữ nguyên đường chạy chính diện không đổi một bit), góc trên 35° (ước lượng gần như chắc chắn sai), hoặc vùng liên thông lớn nhất chiếm dưới 25% diện tích vùng cắt (nhị phân hoá đã làm vỡ biển thay vì cô lập nó).
+Bản thân bước nắn hình cũng có ba cổng an toàn, mỗi cổng đều lùi về "trả nguyên vùng cắt": góc nghiêng dưới 1,5° (không có gì để sửa, giữ nguyên đường chạy chính diện không đổi một bit), góc trên 35° (ước lượng gần như chắc chắn sai), hoặc vùng liên thông lớn nhất chiếm dưới 25% diện tích vùng cắt (nhị phân hoá đã làm hỏng biển thay vì cô lập nó).
 
 Chi phí và lợi ích đo được trình bày ở mục 4.4.2, kèm một quyết định **tắt** một bậc trong đó.
 
@@ -538,7 +538,7 @@ Phần này không phải trọng tâm của môn học nên chỉ nêu những 
 
 **Hình 3.5.** Kiến trúc phân tầng và chiều phụ thuộc
 
-Hệ thống gồm **backend FastAPI** phục vụ mười thao tác HTTP trên chín đường dẫn, **cơ sở dữ liệu SQLite** lưu lịch sử nhận dạng, **giao diện web React** ba trang (nhận dạng ảnh, nhận dạng video, tra cứu lịch sử), và **đóng gói Docker Compose** khởi động toàn bộ bằng một lệnh.
+Hệ thống gồm **máy chủ FastAPI** phục vụ mười thao tác HTTP trên chín đường dẫn, **cơ sở dữ liệu SQLite** lưu lịch sử nhận dạng, **giao diện web React** ba trang (nhận dạng ảnh, nhận dạng video, tra cứu lịch sử), và **đóng gói Docker Compose** khởi động toàn bộ bằng một lệnh.
 
 Ba chi tiết đáng ghi nhận:
 
@@ -561,7 +561,7 @@ Ba chi tiết đáng ghi nhận:
 
 **Giao thức đo.** Trọng số được **đóng băng trước** mọi phép đo; tập kiểm thử **không được chạm vào** trong huấn luyện lẫn khi chọn epoch. Khi đo độ trễ: kích thước lô bằng 1, bỏ 3 lượt khởi động nóng, báo cáo **p50 / p95 / p99 chứ không báo cáo trung bình** — trung bình che mất đuôi phân bố, mà chỉ tiêu lại phát biểu theo p95.
 
-**Hai tập đánh giá, hai mẫu số khác nhau.** Chỉ số của bộ phát hiện đo trên **tập kiểm thử 1.514 ảnh / 1.611 đối tượng**. Chỉ số nhận dạng chỉ đo được trên **tập con có nhãn chuỗi ký tự — 2.801 biển**, vì phần lớn corpus chỉ có nhãn hộp bao. Mẫu số nhỏ này là một hạn chế thật, ghi ở mục 4.7.
+**Hai tập đánh giá, hai mẫu số khác nhau.** Chỉ số của bộ phát hiện đo trên **tập kiểm thử 1.514 ảnh / 1.611 đối tượng**. Chỉ số nhận dạng chỉ đo được trên **tập con có nhãn chuỗi ký tự — 2.801 biển**, vì phần lớn ngữ liệu chỉ có nhãn hộp bao. Mẫu số nhỏ này là một hạn chế thật, ghi ở mục 4.7.
 
 **Quy ước viết tắt.** Bốn đại lượng dùng lại nhiều lần:
 
@@ -570,7 +570,7 @@ Ba chi tiết đáng ghi nhận:
 | **C** | Đúng ở mức ký tự, tức $1 - \mathrm{CER}$ |
 | **S₀** | Đúng **cả chuỗi**, đo trên chuỗi thô — **trước** hậu xử lý |
 | **S₁** | Đúng **cả chuỗi**, **sau** hậu xử lý |
-| **E** | Đúng đầu-cuối: ảnh vào → chuỗi ra, tính cả sai sót của bước phát hiện |
+| **E** | Đúng đầu cuối: ảnh vào → chuỗi ra, tính cả sai sót của bước phát hiện |
 
 ## 4.2. Kết quả phát hiện vùng biển
 
@@ -651,7 +651,7 @@ Phân rã lỗi ký tự cho một manh mối quan trọng: **số ký tự bị
 | **S₁** — đúng cả chuỗi, sau hậu xử lý | **0,9541** | **0,6996** | **25,45** |
 | Cải thiện nhờ hậu xử lý | +1,23 | **+13,97** | — |
 
-![](figures/fig-ch4-layout.png)
+![](figures/fig-ch4-bố cục.png)
 
 **Hình 4.1.** Đối chiếu biển một dòng và hai dòng trên ba chỉ số
 
@@ -690,15 +690,15 @@ Kết quả này là một **phát hiện âm có giá trị**: bảng luật su
 
 Hướng cải thiện rõ ràng: **thay bảng suy đoán bằng bảng trích trực tiếp từ ma trận nhầm lẫn đo được**. Đây là ví dụ điển hình cho việc đo đạc thay thế trực giác.
 
-### 4.3.4. So sánh ba engine nhận dạng trên cùng một tầng bao quanh
+### 4.3.4. So sánh ba bộ nhận dạng nhận dạng trên cùng một tầng bao quanh
 
 Câu hỏi: chọn PaddleOCR có đúng không, khi một số tài liệu công khai lại nghiêng về EasyOCR?
 
-**Thiết kế thí nghiệm.** Cả ba engine chạy trong **đúng một tầng bao quanh** — sao đúng chuỗi bước xử lý ảnh của bản giao hàng — trên **cùng một mảng ảnh đã chuẩn bị xong**; khác biệt duy nhất còn lại là engine. Điều này quan trọng, vì bốn lượt chạy đầu đều cho số vô nghĩa và mỗi lượt hỏng lộ ra một điều kiện bắt buộc. Bài học chung: **phần lớn năng lực đọc biển số không nằm trong engine mà ở tầng xử lý ảnh bao quanh nó** — so sánh ba engine với ba tầng bao quanh khác nhau là đo tầng bao quanh chứ không đo engine.
+**Thiết kế thí nghiệm.** Cả ba bộ nhận dạng chạy trong **đúng một tầng bao quanh** — sao đúng chuỗi bước xử lý ảnh của bản bàn giao — trên **cùng một mảng ảnh đã chuẩn bị xong**; khác biệt duy nhất còn lại là bộ nhận dạng. Điều này quan trọng, vì bốn lượt chạy đầu đều cho số vô nghĩa và mỗi lượt hỏng lộ ra một điều kiện bắt buộc. Bài học chung: **phần lớn năng lực đọc biển số không nằm trong bộ nhận dạng mà ở tầng xử lý ảnh bao quanh nó** — so sánh ba bộ nhận dạng với ba tầng bao quanh khác nhau là đo tầng bao quanh chứ không đo bộ nhận dạng.
 
-**Bảng 4.7.** So sánh ba engine trên 2.801 biển số Việt Nam
+**Bảng 4.7.** So sánh ba bộ nhận dạng trên 2.801 biển số Việt Nam
 
-| Engine | Tắt bước tách-ghép | Có tách-ghép | + hậu xử lý | Riêng biển 2 dòng |
+| bộ nhận dạng | Tắt bước tách-ghép | Có tách-ghép | + hậu xử lý | Riêng biển 2 dòng |
 |---|---:|---:|---:|---:|
 | **PaddleOCR** | 28,81% | **63,73%** | **68,87%** | **62,3%** |
 | EasyOCR | 6,53% | 10,35% | 14,28% | 10,7% |
@@ -708,17 +708,17 @@ Câu hỏi: chọn PaddleOCR có đúng không, khi một số tài liệu công
 
 **Tesseract không đọc được biển hai dòng**: **0,1% trên 2.234 mẫu**, kể cả sau khi đã ghép thành một dòng, trong khi đọc được 50,4% biển một dòng. Đã kiểm bằng mắt để loại khả năng lỗi công cụ — nó **có** đọc ra chữ nhưng luôn kèm ký tự rác, và 700/2.801 lần trả chuỗi rỗng.
 
-**Kết quả bất ngờ nhất — bước tách-ghép KHÔNG độc lập engine:**
+**kết quả ngoài dự đoán nhất — bước tách-ghép KHÔNG độc lập bộ nhận dạng:**
 
-| Engine | Mức tăng nhờ tách-ghép |
+| bộ nhận dạng | Mức tăng nhờ tách-ghép |
 |---|---:|
 | PaddleOCR | **+34,92 điểm** |
 | EasyOCR | +3,82 điểm |
 | Tesseract | **+0,03 điểm** |
 
-Nếu cả ba cùng tăng mạnh, đóng góp kỹ thuật ở mục 3.4.5 sẽ là một kỹ thuật độc lập engine — một khẳng định mạnh hơn nhiều. **Dữ liệu không cho phép nói thế.** Phát biểu đúng là: tách-rồi-ghép-ngang là **điều kiện cần** để đọc biển hai dòng — nó biến bài toán đa dòng thành bài toán một dòng — nhưng **không đủ**; engine vẫn phải đủ mạnh để tận dụng dải ảnh đã ghép.
+Nếu cả ba cùng tăng mạnh, đóng góp kỹ thuật ở mục 3.4.5 sẽ là một kỹ thuật độc lập bộ nhận dạng — một khẳng định mạnh hơn nhiều. **Dữ liệu không cho phép nói thế.** Phát biểu đúng là: tách rồi ghép ngang là **điều kiện cần** để đọc biển hai dòng — nó biến bài toán đa dòng thành bài toán một dòng — nhưng **không đủ**; bộ nhận dạng vẫn phải đủ mạnh để tận dụng dải ảnh đã ghép.
 
-Ngược lại, **bộ luật hậu xử lý giúp cả ba** (+5,14 · +3,93 · +0,68 điểm), nên riêng nó **là** một đóng góp độc lập engine.
+Ngược lại, **bộ luật hậu xử lý giúp cả ba** (+5,14 · +3,93 · +0,68 điểm), nên riêng nó **là** một đóng góp độc lập bộ nhận dạng.
 
 ## 4.4. Bóc tách đóng góp của từng bước xử lý ảnh
 
@@ -735,7 +735,7 @@ Thí nghiệm A/B trên **200 biển hai dòng** với hạt giống ngẫu nhi�
 | **A — ghép ngang rồi đọc một lần** *(đang dùng)* | **129/200 = 64,50%** | 2 | 340,11 ms |
 | B — đọc riêng từng nửa rồi nối chuỗi | **7/200 = 3,50%** | 9 | 391,35 ms |
 
-**B kém A 61,00 điểm phần trăm và còn đắt hơn 51,24 ms.** Trong 200 ca, **122 ca A thắng B và 0 ca B thắng A** — giả thuyết "đọc riêng từng dòng thì chính xác hơn" bị **bác bỏ dứt khoát**.
+**B kém A 61,00 điểm phần trăm và còn tốn thêm 51,24 ms.** Trong 200 ca, **122 ca A thắng B và 0 ca B thắng A** — giả thuyết "đọc riêng từng dòng thì chính xác hơn" bị **bác bỏ dứt khoát**.
 
 Nguyên nhân đọc được ngay trong dữ liệu, và nó chính là hệ quả của vùng chồng lấn ở mục 3.4.4: khi hai nửa được đọc riêng, dải chồng lấn bị nhận dạng **hai lần** và ký tự bị nhân đôi — `84G122593` đọc ra thành `84-G124E009.01225.93`. Trên dải liền mạch đã ghép, vùng lặp nằm **giữa** hai cụm ký tự và bị bộ phát hiện văn bản loại bỏ như mảnh nhiễu.
 
@@ -743,11 +743,11 @@ Nguyên nhân đọc được ngay trong dữ liệu, và nó chính là hệ qu
 
 ### 4.4.2. Bậc thang thử lại: cái giá của 34 biển đọc thêm
 
-Bậc thang nắn hình và giãn dọc ở mục 3.4.6 mua thêm **34 biển đọc đúng**. Cái giá đo được:
+Bậc thang nắn hình và giãn dọc ở mục 3.4.6 cải thiện thêm **34 biển đọc đúng**. Cái giá đo được:
 
 **Bảng 4.9.** Ảnh hưởng của bậc thang thử lại lên độ trễ
 
-| Chỉ số | Tắt bậc thang | Bật bậc thang *(bản giao hàng)* | Chênh |
+| Chỉ số | Tắt bậc thang | Bật bậc thang *(bản bàn giao)* | Chênh |
 |---|---:|---:|---:|
 | p50 | 414,67 ms | **405,77 ms** | **−8,90** |
 | p95 | 866,3 ms | **1.143,10 ms** | +276,80 |
@@ -787,13 +787,13 @@ Phân biệt này quan trọng: một số 0 do *thiếu điều kiện quan sá
 | Hậu xử lý và kiểm tra hợp lệ | 0,03 | 0,0% |
 | **Tổng suy luận thuần** | **168,41** | **100%** |
 
-Ba nhận xét. **Một, nút thắt là khối nhận dạng ký tự** (64,3%) chứ không phải bộ phát hiện (34,0%). Nguyên nhân: PaddleOCR là một **đường ống nhiều giai đoạn** — phát hiện văn bản, phân loại hướng, rồi mới nhận dạng — thiết kế cho ảnh tài liệu tổng quát, nên hệ thống trả chi phí cho những năng lực mà một vùng biển đã cắt sẵn không cần.
+Ba nhận xét. **Một, điểm nghẽn là khối nhận dạng ký tự** (64,3%) chứ không phải bộ phát hiện (34,0%). Nguyên nhân: PaddleOCR là một **đường ống nhiều giai đoạn** — phát hiện văn bản, phân loại hướng, rồi mới nhận dạng — thiết kế cho ảnh tài liệu tổng quát, nên hệ thống trả chi phí cho những năng lực mà một vùng biển đã cắt sẵn không cần.
 
 **Hai, toàn bộ khối xử lý ảnh của đồ án gần như miễn phí**: bước cắt và tiền xử lý vùng biển đo được xấp xỉ 0 ms, hậu xử lý 0,03 ms. Đóng góp +11,39 điểm ở mục 4.3.1 vì vậy đến với chi phí tính toán không đáng kể — một tỉ lệ lợi ích trên chi phí rất hiếm.
 
 **Ba, chiến lược tối ưu suy ra trực tiếp từ bảng này.** Theo định luật Amdahl, tăng tốc bộ phát hiện gấp 2–3 lần chỉ kéo tổng xuống khoảng 15–23%; muốn giảm mạnh hơn thì khối nhận dạng (64,3%) mới là mục tiêu.
 
-### 4.5.2. Độ trễ đầu-cuối và các chỉ tiêu tài nguyên
+### 4.5.2. Độ trễ đầu cuối và các chỉ tiêu tài nguyên
 
 Độ trễ một ảnh: **p50 = 405,77 ms · p95 = 1.143,10 ms · p99 = 1.420,07 ms**. Chỉ tiêu p95 phát biểu ở mức ≤ 1.500 ms (tối thiểu) và ≤ 800 ms (mục tiêu), nên kết luận chính thức là **đạt ngưỡng tối thiểu, không đạt mục tiêu** — với nguyên nhân đã định lượng ở mục 4.4.2.
 
@@ -865,7 +865,7 @@ Nguyên tắc: nêu mối đe doạ, đánh giá mức nghiêm trọng, và nói
 
 ## 5.1. Kết quả đạt được
 
-Đồ án đã xây dựng một hệ thống nhận dạng biển số xe Việt Nam chạy đầu-cuối trên máy **không có GPU**, gồm bộ phát hiện tự huấn luyện, khối xử lý ảnh vùng biển, khối nhận dạng ký tự và bộ luật hậu xử lý theo quy chuẩn Việt Nam, kèm một ứng dụng web để trình diễn.
+Đồ án đã xây dựng một hệ thống nhận dạng biển số xe Việt Nam chạy đầu cuối trên máy **không có GPU**, gồm bộ phát hiện tự huấn luyện, khối xử lý ảnh vùng biển, khối nhận dạng ký tự và bộ luật hậu xử lý theo quy chuẩn Việt Nam, kèm một ứng dụng web để trình diễn.
 
 **Bảng 5.1.** Đối chiếu chỉ tiêu đặt ra với kết quả đo được
 
@@ -883,11 +883,11 @@ Ba đại lượng đo được đáng ghi nhận, đều liên quan trực ti�
 
 **Một — đóng góp thuần của khối hậu xử lý: +11,39 điểm**, sửa đúng 319 biển và làm hỏng 0 biển trên 2.801 mẫu, với chi phí tính toán 0,03 ms mỗi biển. Con số này chỉ đo được nhờ một quyết định thiết kế dữ liệu từ đầu: **lưu song song chuỗi thô và chuỗi đã chuẩn hoá**.
 
-**Hai — bước tách-rồi-ghép-ngang mua 34,92 điểm cho PaddleOCR nhưng chỉ 0,03 điểm cho Tesseract.** Đây là kết quả trái kỳ vọng và làm **yếu đi** khẳng định ban đầu: phép biến đổi ảnh này là **điều kiện cần, không đủ**. Nó biến bài toán đa dòng thành bài toán một dòng, nhưng engine vẫn phải đủ mạnh để tận dụng.
+**Hai — bước tách rồi ghép ngang đóng góp 34,92 điểm cho PaddleOCR nhưng chỉ 0,03 điểm cho Tesseract.** Đây là kết quả khác với dự đoán ban đầu và làm **yếu đi** khẳng định ban đầu: phép biến đổi ảnh này là **điều kiện cần, không đủ**. Nó biến bài toán đa dòng thành bài toán một dòng, nhưng bộ nhận dạng vẫn phải đủ mạnh để tận dụng.
 
 **Ba — bảng ánh xạ nhầm lẫn suy từ hình dạng ký tự chỉ phủ 2 trên 10 cặp nhầm phổ biến nhất**, dù cả hai đều đúng chiều. Trực giác hình dạng không gợi ra `E → F` hay `4 → L`, những cặp thực tế lại rất phổ biến.
 
-Ngoài các con số, đồ án để lại **một quy trình đánh giá có kiểm chứng**: mọi bước xử lý ảnh bật tắt được độc lập nên đóng góp của từng bước đo được riêng, và các kết quả âm — phương án đọc riêng từng nửa thua 61 điểm, bậc siêu phân giải mua 0 biển — được ghi lại thay vì bỏ đi.
+Ngoài các con số, đồ án để lại **một quy trình đánh giá có kiểm chứng**: mọi bước xử lý ảnh bật tắt được độc lập nên đóng góp của từng bước đo được riêng, và các kết quả âm — phương án đọc riêng từng nửa thua 61 điểm, bậc siêu phân giải không cải thiện được biển nào — được ghi lại thay vì bỏ đi.
 
 ## 5.2. Hạn chế
 
@@ -895,7 +895,7 @@ Ngoài các con số, đồ án để lại **một quy trình đánh giá có k
 
 | # | Hạn chế | Mức | Hệ quả |
 |:--:|---|:--:|---|
-| 1 | **Nhận dạng biển hai dòng còn yếu** | Cao | S₁ = 0,6996 so với 0,9541 của biển một dòng — nút thắt lớn nhất |
+| 1 | **Nhận dạng biển hai dòng còn yếu** | Cao | S₁ = 0,6996 so với 0,9541 của biển một dòng — điểm nghẽn lớn nhất |
 | 2 | **Bộ dữ liệu lệch nặng về biển trắng** (97,68%) | Cao | Kết luận về độ chính xác nhận dạng **chỉ áp cho biển trắng** |
 | 3 | **Rò rỉ dữ liệu tồn dư** không khử được bằng băm tri giác | Cao | Băm tri giác tóm tắt bố cục khung ảnh, không tóm tắt chiếc xe (mục 3.2.3) |
 | 4 | Tập kiểm thử **không xuyên bộ dữ liệu** | Trung bình | mAP 0,9829 lạc quan hơn mức gặp khi triển khai với nguồn ảnh mới |
@@ -907,7 +907,7 @@ Ngoài các con số, đồ án để lại **một quy trình đánh giá có k
 
 | # | Hướng | Giải hạn chế | Ghi chú |
 |:--:|---|:--:|---|
-| 1 | **Huấn luyện lại bộ nhận dạng ký tự riêng cho biển số Việt Nam** | 1 | Hướng quan trọng nhất. Phân tích ở mục 4.3.2 đã định vị nút thắt nằm ở năng lực mô hình ký tự, không ở khâu xử lý ảnh |
+| 1 | **Huấn luyện lại bộ nhận dạng ký tự riêng cho biển số Việt Nam** | 1 | Hướng quan trọng nhất. Phân tích ở mục 4.3.2 đã định vị điểm nghẽn nằm ở năng lực mô hình ký tự, không ở khâu xử lý ảnh |
 | 2 | **Thay bảng ánh xạ nhầm lẫn bằng bảng trích từ ma trận đo được** | 1 | Rẻ nhất trong danh sách: dữ liệu đã có sẵn ở Bảng 4.6, chỉ cần thay hằng số |
 | 3 | Thu thập dữ liệu biển vàng, xanh, đỏ và ngoại giao | 2 | Điều kiện để mở rộng kết luận ra ngoài biển trắng |
 | 4 | **Khử rò rỉ theo chuỗi biển số thay vì theo băm tri giác** | 3, 4 | Gom nhóm theo chuỗi ký tự thay vì theo tương đồng ảnh; giải đúng loại rò rỉ mà pHash không thấy |
@@ -918,9 +918,9 @@ Ngoài các con số, đồ án để lại **một quy trình đánh giá có k
 
 Đề tài đặt ra một bài toán có ràng buộc rõ: nhận dạng biển số xe Việt Nam, hỗ trợ **cả biển một dòng và biển hai dòng**, suy luận hoàn toàn trên CPU. Hệ thống đáp ứng ràng buộc vận hành và đạt toàn bộ chỉ tiêu ở tầng phát hiện với biên rộng, nhưng chưa đạt chỉ tiêu độ chính xác ở tầng nhận dạng ký tự.
 
-Xét từ góc độ môn học, kết quả đáng chú ý nhất không phải một con số cao mà là **quan hệ giữa phép biến đổi ảnh và giả định của mô hình**. Bài toán biển hai dòng không được giải bằng cách thay một mô hình mạnh hơn, mà bằng cách **biến đổi ảnh đầu vào cho khớp giả định của mô hình sẵn có**: hạ một ảnh hai dòng thành một dải một dòng, và trong lúc đó tăng gấp đôi số điểm ảnh dành cho mỗi hàng ký tự. Phép biến đổi đó mua **34,92 điểm** — nhiều hơn bất kỳ thay đổi nào khác trong đồ án.
+Xét từ góc độ môn học, kết quả đáng chú ý nhất không phải một con số cao mà là **quan hệ giữa phép biến đổi ảnh và giả định của mô hình**. Bài toán biển hai dòng không được giải bằng cách thay một mô hình mạnh hơn, mà bằng cách **biến đổi ảnh đầu vào cho khớp giả định của mô hình sẵn có**: hạ một ảnh hai dòng thành một dải một dòng, và trong lúc đó tăng gấp đôi số điểm ảnh dành cho mỗi hàng ký tự. Phép biến đổi đó đóng góp **34,92 điểm** — nhiều hơn bất kỳ thay đổi nào khác trong đồ án.
 
-Đồng thời, chính phép đo đó cũng chỉ ra giới hạn của cách tiếp cận: nó mua **0,03 điểm** cho Tesseract. Xử lý ảnh dọn đường cho mô hình, nhưng không thay được năng lực của mô hình.
+Đồng thời, chính phép đo đó cũng chỉ ra giới hạn của cách tiếp cận: nó đóng góp **0,03 điểm** cho Tesseract. Xử lý ảnh dọn đường cho mô hình, nhưng không thay được năng lực của mô hình.
 
 
 ```{=openxml}

@@ -40,7 +40,7 @@ Dòng ❌ còn lại được ghi nhận ở mục 6.3:
 
 ## 3.3. Bộ nhận dạng ký tự
 
-Đây là lựa chọn trình bày **trung thực nhất về mức độ chắc chắn**: chọn _họ engine_ theo khảo sát tài liệu (3.3.1), rồi chọn _bậc mô hình_ theo phép đo tự chạy (3.3.2).
+Đây là lựa chọn trình bày **trung thực nhất về mức độ chắc chắn**: chọn _họ bộ nhận dạng_ theo khảo sát tài liệu (3.3.1), rồi chọn _bậc mô hình_ theo phép đo tự chạy (3.3.2).
 
 ### 3.3.1. PaddleOCR, EasyOCR, Tesseract — khảo sát tài liệu
 
@@ -63,7 +63,7 @@ Mục này chọn **bậc mô hình** bên trong họ đã chọn, dựa trên s
 
 ### 3.3.3. Benchmark ba bộ nhận dạng trên 2.801 biển số Việt Nam — đo 03/08/2026
 
-Mục 3.3.1 kết thúc bằng một khoản nợ: giữ PaddleOCR dựa trên lý do kỹ thuật, **không** dựa trên bằng chứng độ chính xác, trong khi tài liệu công khai nghiêng về EasyOCR. Mục này trả nợ đó.
+Mục 3.3.1 kết thúc bằng một hạng mục chưa giải quyết: giữ PaddleOCR dựa trên lý do kỹ thuật, **không** dựa trên bằng chứng độ chính xác, trong khi tài liệu công khai nghiêng về EasyOCR. Mục này trả nợ đó.
 
 **a) Thiết lập phép đo.** Bốn lượt chạy đầu không hợp lệ do thiếu điều kiện cần: truyền tên mô hình tường minh, tắt thư viện tăng tốc oneDNN (mục 4.6.3), khôi phục tỷ lệ khung hình và lọc mảnh nhiễu ở mép dải ghép. Hiệu năng phụ thuộc vào cả bộ nhận dạng ký tự lẫn tiền xử lý, hậu xử lý; vì vậy, so sánh các bộ nhận dạng phải dùng cùng một tầng bao quanh.
 
@@ -87,7 +87,7 @@ _Kiểm chứng công cụ đo:_ nhánh có tách đôi của PaddleOCR đạt *
 
 **c) Kết quả so sánh trong cấu hình của đồ án.** Ở cấu hình bản bàn giao, PaddleOCR đạt **68,87%**, cao hơn EasyOCR **54,59 điểm** và Tesseract **58,59 điểm**. Kết luận _"tài liệu công khai không cho thấy PaddleOCR vượt EasyOCR trên ảnh biển số"_ ở mục 3.3.1 vẫn đúng đối với các tài liệu đã khảo sát. Tuy nhiên, phép đo trên biển số Việt Nam trong cùng tầng bao quanh của đồ án cho kết quả khác; do đó, quyết định giữ PaddleOCR có thêm căn cứ thực nghiệm **trong phạm vi cấu hình đánh giá này**.
 
-**d) Tách-rồi-ghép-ngang không độc lập bộ nhận dạng.**
+**d) Bước tách rồi ghép ngang không độc lập với bộ nhận dạng.**
 
 | Bộ nhận dạng    | tắt tách đôi → có tách đôi |        Mức tăng |
 | --------- | -------------------- | --------------: |
@@ -126,6 +126,6 @@ Phần lớn quyết định còn lại là **ràng buộc của đề bài**; g
 
 ## 3.6. Độ phân giải đầu vào: 640 thay vì 416
 
-Đồ án có sẵn hai mô hình để đối chiếu — baseline-416-v1.pt và best.pt — nhưng **phép so sánh giữa chúng không quy kết được nguyên nhân**: giữa hai lượt huấn luyện có **ba biến thay đổi đồng thời và ngược chiều nhau** (độ phân giải 416 → 640, bộ dữ liệu v1 → v3 đã khử rò rỉ, số epoch), nên chênh lệch chỉ số **không gán được cho riêng biến nào**. Cần nêu rõ điều này để tránh kết luận sai: ở tầng phát hiện, best.pt **vượt mọi ngưỡng đã đặt ra** (mục 5.4.1).
+Đồ án có sẵn hai mô hình để đối chiếu — `baseline-416-v1.pt` và `best.pt` — nhưng **phép so sánh giữa chúng không quy kết được nguyên nhân**: giữa hai lượt huấn luyện có **ba biến thay đổi đồng thời và ngược chiều nhau** (độ phân giải 416 → 640, bộ dữ liệu v1 → v3 đã khử rò rỉ, số epoch), nên chênh lệch chỉ số **không gán được cho riêng biến nào**. Cần nêu rõ điều này để tránh kết luận sai: ở tầng phát hiện, best.pt **vượt mọi ngưỡng đã đặt ra** (mục 5.4.1).
 
 Lựa chọn **640** vì vậy đứng trên căn cứ khác: đó là độ phân giải mà chỉ tiêu NFR-A1/A2 đặt ra và là độ phân giải mọi số liệu tốc độ CPU chính thức của Ultralytics được đo. Muốn quy kết nguyên nhân cần một ma trận thí nghiệm cô lập từng biến (E1 – E3), ước tính **≈ 33 giờ CPU** — vượt ngân sách còn lại, ghi nhận là **chưa thực hiện** ở mục 6.3.

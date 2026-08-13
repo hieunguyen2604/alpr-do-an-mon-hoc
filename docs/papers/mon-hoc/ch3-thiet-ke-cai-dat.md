@@ -15,7 +15,7 @@
 
 Khối 2 và khối 4 là phần do đồ án tự thiết kế; khối 1 và khối 3 dùng mô hình có sẵn.
 
-Toàn bộ đường ống được đóng gói thành một **gói Python độc lập không phụ thuộc tầng web**. Ràng buộc này không phải hình thức: nó cho phép cùng một mã chạy được trong sổ tay thử nghiệm, trong kịch bản đo đạc và trong dịch vụ đang vận hành. Bài học ngược lại đã xảy ra thật trong đồ án — một kịch bản đo **chép lại** các bước của đường ống thay vì **gọi** nó, nên mỗi bước mới thêm vào đường ống đều rơi ra ngoài phép đo, và số liệu công bố mô tả một hệ thống ngắn hơn hệ thống thực tế.
+Toàn bộ đường ống được đóng gói thành một **gói Python độc lập không phụ thuộc tầng web**. Ràng buộc này không phải hình thức: nó cho phép cùng một mã chạy được trong sổ tay thử nghiệm, trong kịch bản đo đạc và trong dịch vụ đang vận hành. Bài học ngược lại đã xảy ra trong quá trình thực hiện đồ án: một kịch bản đo **chép lại** các bước của đường ống thay vì **gọi** nó, nên mỗi bước mới thêm vào đường ống đều rơi ra ngoài phép đo, và số liệu công bố mô tả một hệ thống ngắn hơn hệ thống thực tế.
 
 Ba lớp trừu tượng có hợp đồng thống nhất: lớp phát hiện trả danh sách vùng biển đã lọc ngưỡng và khử chồng lấn, **danh sách rỗng là kết quả hợp lệ chứ không phải lỗi**; lớp nhận dạng trả chuỗi thô kèm độ tin cậy, **không** tự sửa lỗi ký tự; lớp chuẩn hoá trả về cả chuỗi không hợp lệ kèm cờ đánh dấu. Chính việc lớp nhận dạng không được phép tự sửa lỗi là điều kiện để **đo tách bạch** đóng góp của khối hậu xử lý ở mục 4.3.2.
 
@@ -52,7 +52,7 @@ Bước chia tập giữ **mọi thành viên của một nhóm trùng lặp tro
 
 ### 3.2.3. Giới hạn của băm tri giác: nó tóm tắt khung ảnh, không tóm tắt chiếc xe
 
-Đây là **giới hạn không khắc phục được** bằng công cụ hiện có, và đồ án ghi nhận thẳng thắn thay vì bỏ qua.
+Đây là **giới hạn không khắc phục được** bằng công cụ hiện có, và đồ án ghi nhận thay vì bỏ qua.
 
 Một lần kiểm tra độc lập ở ngưỡng Hamming 10 trên phiên bản đầu của bộ dữ liệu tìm thấy **619 cặp gần trùng giữa tập huấn luyện và tập kiểm thử**; kiểm bằng mắt cho thấy đó là **cùng một chiếc xe, cùng chuỗi biển số, xuất hiện ở cả hai tập**. Đường ống không bắt được vì bước chia tập gom nhóm ở ngưỡng 5 và lần kiểm tra đầu cũng đo lại ở đúng ngưỡng 5 — một **lập luận vòng tròn**: đo ở ngưỡng đã dùng để gộp thì chỉ chứng minh bước gộp đã chạy đúng đặc tả, không chứng minh thêm điều gì.
 
@@ -90,7 +90,7 @@ Việc **tắt phép lật ngang** là quyết định xử lý ảnh đáng ch�
 
 ### 3.4.1. Chuỗi bước và nguyên tắc bật tắt độc lập
 
-Mọi bước trong mục này đều **bật tắt được độc lập** qua biến cấu hình. Đây không phải tiện ích lập trình mà là điều kiện để chương 4 **bóc tách đóng góp của từng bước**: không có công tắc thì không đo được bước nào mua được gì.
+Mọi bước trong mục này đều **bật tắt được độc lập** qua biến cấu hình. Đây không phải tiện ích lập trình mà là điều kiện để chương 4 **bóc tách đóng góp của từng bước**: không có công tắc thì không đo được bước nào cải thiện được gì.
 
 Thứ tự trên **đường chạy chính**:
 
@@ -104,11 +104,11 @@ Hai chi tiết về thứ tự này đáng nêu, vì đảo lại sẽ ra một 
 
 **Bước nắn hình không nằm trên đường chạy chính.** Nó thuộc bậc thang thử lại ở mục 3.4.6, chỉ chạy sau khi lần đọc đầu tiên đã thất bại.
 
-![](figures/fig-pipeline-strip.png)
+![](figures/fig-đường ống-strip.png)
 
 **Hình 3.3.** Toàn bộ chuỗi xử lý trên một biển thật, ảnh chụp sau từng bước
 
-Hình 3.3 là kết quả chạy **chính các hàm của bản giao hàng**, không phải hình vẽ minh hoạ: mỗi khung là mảng ảnh thật ở đầu ra của bước tương ứng, và chuỗi kết thúc bằng chuỗi ký tự mà hệ thống thực sự đọc được. Hai khung đáng nhìn kỹ là khung 3 và khung 4 — chúng cho thấy trực tiếp thứ mà cả mục này mô tả bằng chữ: **tỉ lệ khung hình nhảy từ 1,12 lên 4,42**, và hai hàng ký tự cao 30 px trở thành một hàng duy nhất nhận trọn 50 px.
+Hình 3.3 là kết quả chạy **chính các hàm của bản bàn giao**, không phải hình vẽ minh hoạ: mỗi khung là mảng ảnh thật ở đầu ra của bước tương ứng, và chuỗi kết thúc bằng chuỗi ký tự mà hệ thống thực sự đọc được. Hai khung đáng nhìn kỹ là khung 3 và khung 4 — chúng cho thấy trực tiếp thứ mà cả mục này mô tả bằng chữ: **tỉ lệ khung hình nhảy từ 1,12 lên 4,42**, và hai hàng ký tự cao 30 px trở thành một hàng duy nhất nhận trọn 50 px.
 
 Khung 3 cũng cho thấy một chi tiết dễ bị hiểu nhầm: nửa dưới **có chứa phần chân của hàng ký tự trên**. Đó không phải lỗi cắt mà chính là vùng chồng lấn ở mục 3.4.4, và mục 3.4.7 cho thấy nó còn giải quyết thêm một vấn đề nữa.
 
@@ -161,7 +161,7 @@ Hai phép hiệu chỉnh được cài để kéo vùng biển về đúng nhán
 
 Hai phép này **không nằm trên đường chạy chính**. Chúng được tổ chức thành một **bậc thang thử lại**, chỉ kích hoạt **sau khi lần đọc đầu tiên đã thất bại** — tức khi chuỗi trả về không qua được kiểm tra định dạng. Cấu trúc này có một tính chất quan trọng: vì cổng chỉ mở khi kết quả đã không hợp lệ, **tập bị can thiệp và tập đang đúng là hai tập rời nhau**, nên bậc thang **không thể làm hỏng một biển vốn đã đọc đúng**. Chính tính chất đó cho phép để nó bật mặc định mà không cần lo thoái lui về độ chính xác.
 
-Bản thân bước nắn hình cũng có ba cổng an toàn, mỗi cổng đều lùi về "trả nguyên vùng cắt": góc nghiêng dưới 1,5° (không có gì để sửa, giữ nguyên đường chạy chính diện không đổi một bit), góc trên 35° (ước lượng gần như chắc chắn sai), hoặc vùng liên thông lớn nhất chiếm dưới 25% diện tích vùng cắt (nhị phân hoá đã làm vỡ biển thay vì cô lập nó).
+Bản thân bước nắn hình cũng có ba cổng an toàn, mỗi cổng đều lùi về "trả nguyên vùng cắt": góc nghiêng dưới 1,5° (không có gì để sửa, giữ nguyên đường chạy chính diện không đổi một bit), góc trên 35° (ước lượng gần như chắc chắn sai), hoặc vùng liên thông lớn nhất chiếm dưới 25% diện tích vùng cắt (nhị phân hoá đã làm hỏng biển thay vì cô lập nó).
 
 Chi phí và lợi ích đo được trình bày ở mục 4.4.2, kèm một quyết định **tắt** một bậc trong đó.
 
@@ -228,7 +228,7 @@ Phần này không phải trọng tâm của môn học nên chỉ nêu những 
 
 **Hình 3.5.** Kiến trúc phân tầng và chiều phụ thuộc
 
-Hệ thống gồm **backend FastAPI** phục vụ mười thao tác HTTP trên chín đường dẫn, **cơ sở dữ liệu SQLite** lưu lịch sử nhận dạng, **giao diện web React** ba trang (nhận dạng ảnh, nhận dạng video, tra cứu lịch sử), và **đóng gói Docker Compose** khởi động toàn bộ bằng một lệnh.
+Hệ thống gồm **máy chủ FastAPI** phục vụ mười thao tác HTTP trên chín đường dẫn, **cơ sở dữ liệu SQLite** lưu lịch sử nhận dạng, **giao diện web React** ba trang (nhận dạng ảnh, nhận dạng video, tra cứu lịch sử), và **đóng gói Docker Compose** khởi động toàn bộ bằng một lệnh.
 
 Ba chi tiết đáng ghi nhận:
 

@@ -6,7 +6,7 @@
 
 **Giao thức đo.** Trọng số được **đóng băng trước** mọi phép đo; tập kiểm thử **không được chạm vào** trong huấn luyện lẫn khi chọn epoch. Khi đo độ trễ: kích thước lô bằng 1, bỏ 3 lượt khởi động nóng, báo cáo **p50 / p95 / p99 chứ không báo cáo trung bình** — trung bình che mất đuôi phân bố, mà chỉ tiêu lại phát biểu theo p95.
 
-**Hai tập đánh giá, hai mẫu số khác nhau.** Chỉ số của bộ phát hiện đo trên **tập kiểm thử 1.514 ảnh / 1.611 đối tượng**. Chỉ số nhận dạng chỉ đo được trên **tập con có nhãn chuỗi ký tự — 2.801 biển**, vì phần lớn corpus chỉ có nhãn hộp bao. Mẫu số nhỏ này là một hạn chế thật, ghi ở mục 4.7.
+**Hai tập đánh giá, hai mẫu số khác nhau.** Chỉ số của bộ phát hiện đo trên **tập kiểm thử 1.514 ảnh / 1.611 đối tượng**. Chỉ số nhận dạng chỉ đo được trên **tập con có nhãn chuỗi ký tự — 2.801 biển**, vì phần lớn ngữ liệu chỉ có nhãn hộp bao. Mẫu số nhỏ này là một hạn chế thật, ghi ở mục 4.7.
 
 **Quy ước viết tắt.** Bốn đại lượng dùng lại nhiều lần:
 
@@ -15,7 +15,7 @@
 | **C** | Đúng ở mức ký tự, tức $1 - \mathrm{CER}$ |
 | **S₀** | Đúng **cả chuỗi**, đo trên chuỗi thô — **trước** hậu xử lý |
 | **S₁** | Đúng **cả chuỗi**, **sau** hậu xử lý |
-| **E** | Đúng đầu-cuối: ảnh vào → chuỗi ra, tính cả sai sót của bước phát hiện |
+| **E** | Đúng đầu cuối: ảnh vào → chuỗi ra, tính cả sai sót của bước phát hiện |
 
 ## 4.2. Kết quả phát hiện vùng biển
 
@@ -96,7 +96,7 @@ Phân rã lỗi ký tự cho một manh mối quan trọng: **số ký tự bị
 | **S₁** — đúng cả chuỗi, sau hậu xử lý | **0,9541** | **0,6996** | **25,45** |
 | Cải thiện nhờ hậu xử lý | +1,23 | **+13,97** | — |
 
-![](figures/fig-ch4-layout.png)
+![](figures/fig-ch4-bố cục.png)
 
 **Hình 4.1.** Đối chiếu biển một dòng và hai dòng trên ba chỉ số
 
@@ -135,15 +135,15 @@ Kết quả này là một **phát hiện âm có giá trị**: bảng luật su
 
 Hướng cải thiện rõ ràng: **thay bảng suy đoán bằng bảng trích trực tiếp từ ma trận nhầm lẫn đo được**. Đây là ví dụ điển hình cho việc đo đạc thay thế trực giác.
 
-### 4.3.4. So sánh ba engine nhận dạng trên cùng một tầng bao quanh
+### 4.3.4. So sánh ba bộ nhận dạng nhận dạng trên cùng một tầng bao quanh
 
 Câu hỏi: chọn PaddleOCR có đúng không, khi một số tài liệu công khai lại nghiêng về EasyOCR?
 
-**Thiết kế thí nghiệm.** Cả ba engine chạy trong **đúng một tầng bao quanh** — sao đúng chuỗi bước xử lý ảnh của bản giao hàng — trên **cùng một mảng ảnh đã chuẩn bị xong**; khác biệt duy nhất còn lại là engine. Điều này quan trọng, vì bốn lượt chạy đầu đều cho số vô nghĩa và mỗi lượt hỏng lộ ra một điều kiện bắt buộc. Bài học chung: **phần lớn năng lực đọc biển số không nằm trong engine mà ở tầng xử lý ảnh bao quanh nó** — so sánh ba engine với ba tầng bao quanh khác nhau là đo tầng bao quanh chứ không đo engine.
+**Thiết kế thí nghiệm.** Cả ba bộ nhận dạng chạy trong **đúng một tầng bao quanh** — sao đúng chuỗi bước xử lý ảnh của bản bàn giao — trên **cùng một mảng ảnh đã chuẩn bị xong**; khác biệt duy nhất còn lại là bộ nhận dạng. Điều này quan trọng, vì bốn lượt chạy đầu đều cho số vô nghĩa và mỗi lượt hỏng lộ ra một điều kiện bắt buộc. Bài học chung: **phần lớn năng lực đọc biển số không nằm trong bộ nhận dạng mà ở tầng xử lý ảnh bao quanh nó** — so sánh ba bộ nhận dạng với ba tầng bao quanh khác nhau là đo tầng bao quanh chứ không đo bộ nhận dạng.
 
-**Bảng 4.7.** So sánh ba engine trên 2.801 biển số Việt Nam
+**Bảng 4.7.** So sánh ba bộ nhận dạng trên 2.801 biển số Việt Nam
 
-| Engine | Tắt bước tách-ghép | Có tách-ghép | + hậu xử lý | Riêng biển 2 dòng |
+| bộ nhận dạng | Tắt bước tách-ghép | Có tách-ghép | + hậu xử lý | Riêng biển 2 dòng |
 |---|---:|---:|---:|---:|
 | **PaddleOCR** | 28,81% | **63,73%** | **68,87%** | **62,3%** |
 | EasyOCR | 6,53% | 10,35% | 14,28% | 10,7% |
@@ -153,17 +153,17 @@ Câu hỏi: chọn PaddleOCR có đúng không, khi một số tài liệu công
 
 **Tesseract không đọc được biển hai dòng**: **0,1% trên 2.234 mẫu**, kể cả sau khi đã ghép thành một dòng, trong khi đọc được 50,4% biển một dòng. Đã kiểm bằng mắt để loại khả năng lỗi công cụ — nó **có** đọc ra chữ nhưng luôn kèm ký tự rác, và 700/2.801 lần trả chuỗi rỗng.
 
-**Kết quả bất ngờ nhất — bước tách-ghép KHÔNG độc lập engine:**
+**kết quả ngoài dự đoán nhất — bước tách-ghép KHÔNG độc lập bộ nhận dạng:**
 
-| Engine | Mức tăng nhờ tách-ghép |
+| bộ nhận dạng | Mức tăng nhờ tách-ghép |
 |---|---:|
 | PaddleOCR | **+34,92 điểm** |
 | EasyOCR | +3,82 điểm |
 | Tesseract | **+0,03 điểm** |
 
-Nếu cả ba cùng tăng mạnh, đóng góp kỹ thuật ở mục 3.4.5 sẽ là một kỹ thuật độc lập engine — một khẳng định mạnh hơn nhiều. **Dữ liệu không cho phép nói thế.** Phát biểu đúng là: tách-rồi-ghép-ngang là **điều kiện cần** để đọc biển hai dòng — nó biến bài toán đa dòng thành bài toán một dòng — nhưng **không đủ**; engine vẫn phải đủ mạnh để tận dụng dải ảnh đã ghép.
+Nếu cả ba cùng tăng mạnh, đóng góp kỹ thuật ở mục 3.4.5 sẽ là một kỹ thuật độc lập bộ nhận dạng — một khẳng định mạnh hơn nhiều. **Dữ liệu không cho phép nói thế.** Phát biểu đúng là: tách rồi ghép ngang là **điều kiện cần** để đọc biển hai dòng — nó biến bài toán đa dòng thành bài toán một dòng — nhưng **không đủ**; bộ nhận dạng vẫn phải đủ mạnh để tận dụng dải ảnh đã ghép.
 
-Ngược lại, **bộ luật hậu xử lý giúp cả ba** (+5,14 · +3,93 · +0,68 điểm), nên riêng nó **là** một đóng góp độc lập engine.
+Ngược lại, **bộ luật hậu xử lý giúp cả ba** (+5,14 · +3,93 · +0,68 điểm), nên riêng nó **là** một đóng góp độc lập bộ nhận dạng.
 
 ## 4.4. Bóc tách đóng góp của từng bước xử lý ảnh
 
@@ -180,7 +180,7 @@ Thí nghiệm A/B trên **200 biển hai dòng** với hạt giống ngẫu nhi�
 | **A — ghép ngang rồi đọc một lần** *(đang dùng)* | **129/200 = 64,50%** | 2 | 340,11 ms |
 | B — đọc riêng từng nửa rồi nối chuỗi | **7/200 = 3,50%** | 9 | 391,35 ms |
 
-**B kém A 61,00 điểm phần trăm và còn đắt hơn 51,24 ms.** Trong 200 ca, **122 ca A thắng B và 0 ca B thắng A** — giả thuyết "đọc riêng từng dòng thì chính xác hơn" bị **bác bỏ dứt khoát**.
+**B kém A 61,00 điểm phần trăm và còn tốn thêm 51,24 ms.** Trong 200 ca, **122 ca A thắng B và 0 ca B thắng A** — giả thuyết "đọc riêng từng dòng thì chính xác hơn" bị **bác bỏ dứt khoát**.
 
 Nguyên nhân đọc được ngay trong dữ liệu, và nó chính là hệ quả của vùng chồng lấn ở mục 3.4.4: khi hai nửa được đọc riêng, dải chồng lấn bị nhận dạng **hai lần** và ký tự bị nhân đôi — `84G122593` đọc ra thành `84-G124E009.01225.93`. Trên dải liền mạch đã ghép, vùng lặp nằm **giữa** hai cụm ký tự và bị bộ phát hiện văn bản loại bỏ như mảnh nhiễu.
 
@@ -188,11 +188,11 @@ Nguyên nhân đọc được ngay trong dữ liệu, và nó chính là hệ qu
 
 ### 4.4.2. Bậc thang thử lại: cái giá của 34 biển đọc thêm
 
-Bậc thang nắn hình và giãn dọc ở mục 3.4.6 mua thêm **34 biển đọc đúng**. Cái giá đo được:
+Bậc thang nắn hình và giãn dọc ở mục 3.4.6 cải thiện thêm **34 biển đọc đúng**. Cái giá đo được:
 
 **Bảng 4.9.** Ảnh hưởng của bậc thang thử lại lên độ trễ
 
-| Chỉ số | Tắt bậc thang | Bật bậc thang *(bản giao hàng)* | Chênh |
+| Chỉ số | Tắt bậc thang | Bật bậc thang *(bản bàn giao)* | Chênh |
 |---|---:|---:|---:|
 | p50 | 414,67 ms | **405,77 ms** | **−8,90** |
 | p95 | 866,3 ms | **1.143,10 ms** | +276,80 |
@@ -232,13 +232,13 @@ Phân biệt này quan trọng: một số 0 do *thiếu điều kiện quan sá
 | Hậu xử lý và kiểm tra hợp lệ | 0,03 | 0,0% |
 | **Tổng suy luận thuần** | **168,41** | **100%** |
 
-Ba nhận xét. **Một, nút thắt là khối nhận dạng ký tự** (64,3%) chứ không phải bộ phát hiện (34,0%). Nguyên nhân: PaddleOCR là một **đường ống nhiều giai đoạn** — phát hiện văn bản, phân loại hướng, rồi mới nhận dạng — thiết kế cho ảnh tài liệu tổng quát, nên hệ thống trả chi phí cho những năng lực mà một vùng biển đã cắt sẵn không cần.
+Ba nhận xét. **Một, điểm nghẽn là khối nhận dạng ký tự** (64,3%) chứ không phải bộ phát hiện (34,0%). Nguyên nhân: PaddleOCR là một **đường ống nhiều giai đoạn** — phát hiện văn bản, phân loại hướng, rồi mới nhận dạng — thiết kế cho ảnh tài liệu tổng quát, nên hệ thống trả chi phí cho những năng lực mà một vùng biển đã cắt sẵn không cần.
 
 **Hai, toàn bộ khối xử lý ảnh của đồ án gần như miễn phí**: bước cắt và tiền xử lý vùng biển đo được xấp xỉ 0 ms, hậu xử lý 0,03 ms. Đóng góp +11,39 điểm ở mục 4.3.1 vì vậy đến với chi phí tính toán không đáng kể — một tỉ lệ lợi ích trên chi phí rất hiếm.
 
 **Ba, chiến lược tối ưu suy ra trực tiếp từ bảng này.** Theo định luật Amdahl, tăng tốc bộ phát hiện gấp 2–3 lần chỉ kéo tổng xuống khoảng 15–23%; muốn giảm mạnh hơn thì khối nhận dạng (64,3%) mới là mục tiêu.
 
-### 4.5.2. Độ trễ đầu-cuối và các chỉ tiêu tài nguyên
+### 4.5.2. Độ trễ đầu cuối và các chỉ tiêu tài nguyên
 
 Độ trễ một ảnh: **p50 = 405,77 ms · p95 = 1.143,10 ms · p99 = 1.420,07 ms**. Chỉ tiêu p95 phát biểu ở mức ≤ 1.500 ms (tối thiểu) và ≤ 800 ms (mục tiêu), nên kết luận chính thức là **đạt ngưỡng tối thiểu, không đạt mục tiêu** — với nguyên nhân đã định lượng ở mục 4.4.2.
 
