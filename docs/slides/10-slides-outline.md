@@ -197,7 +197,7 @@ Mỗi slide gồm bốn phần:
 **Nội dung trên slide**
 - **15.133 ảnh · 15.977 khung** (chia 10.592 / 3.027 / 1.514)
 - Hợp nhất 7 bộ công khai, loại 44,2% bản sao
-- **Chống rò rỉ 100%:** Băm tri giác (pHash) lọc ảnh trùng giữa Train–Test (9.126 cặp $\rightarrow$ 0)
+- **Giảm rò rỉ theo pHash:** gom nhóm ảnh gần trùng ở ngưỡng Hamming 10; kiểm tra lại cùng ngưỡng cho 0 cặp Train–Test
 
 **Speaker notes** *(40 s)*
 > Tập dữ liệu gồm hơn 15.000 ảnh từ 7 nguồn công khai. Nhóm đã áp dụng thuật toán Băm tri giác (Perceptual Hashing) để triệt hạ hoàn toàn 9.126 cặp ảnh trùng lặp gần đúng giữa tập Train và Test, đảm bảo kết quả đánh giá là 100% khách quan, không bị mAP ảo.
@@ -251,7 +251,7 @@ Mỗi slide gồm bốn phần:
 
 ---
 
-## S19 — Kết quả OCR — nói thẳng phần chưa đạt
+## S19 — Kết quả OCR
 
 **Nội dung trên slide**
 - Đúng từng ký tự: **0,9454** (🟡 Đạt ngưỡng tối thiểu)
@@ -321,7 +321,7 @@ Mỗi slide gồm bốn phần:
 ## S25 — Kiểm thử và triển khai
 
 **Nội dung trên slide**
-- **1.000 kiểm thử tự động** đạt · Bao phủ tầng nghiệp vụ **87,7%**
+- **1.001/1.002 kiểm thử tự động** đạt *(1 `xfail` có mô tả)* · Bao phủ tầng nghiệp vụ **87,7%**
 - Chạy stress test 15 phút: 2.028 requests, **0 lỗi**, 0 rò rỉ bộ nhớ
 - `docker compose up` — **một lệnh** đóng gói hoàn chỉnh
 
@@ -352,7 +352,7 @@ Mỗi slide gồm bốn phần:
 
 ---
 
-## S28 — Hạn chế — nói thẳng
+## S28 — Hạn chế
 
 **Nội dung trên slide**
 - Bảng phân tích 5 hạn chế và nguyên nhân gốc (Biển 2 dòng chưa đạt, số đầu-cuối 0,5552 chưa đại diện, 97,7% là biển trắng)

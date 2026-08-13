@@ -75,7 +75,7 @@ Hệ thống chạy **pipeline thật**: `ALPRPipeline` với mô hình chính t
 
 Trước đó (Phase 5–7) hệ thống chạy **`StubPipeline`** — một cài đặt giả lập tuân đúng giao diện trừu tượng của tầng AI, cho phép phát triển và kiểm thử backend, cơ sở dữ liệu và giao diện trước khi có mô hình thật. Stub **đã bị đưa ra khỏi đường chạy chính**; nó chỉ chạy khi đặt tường minh `ALPR_USE_STUB=true`, còn phương án lùi khi thiếu trọng số là `UnavailablePipeline` (ném lỗi thay vì bịa kết quả).
 
-Chương 5 và 6 đã viết được vì số liệu thực nghiệm đã đầy đủ: `models/best.pt` (`imgsz=640`, split v3) đã huấn luyện xong — detection đạt cả bốn chỉ tiêu (mAP@0.5 0,9829), NFR-P1 đạt (731/780 ms), và NFR-A4/A5/A6/A7 đã đo (OCR biển hai dòng không đạt — kết quả thật).
+Chương 5 và 6 đã viết được vì số liệu thực nghiệm đã đầy đủ: `models/best.pt` (`imgsz=640`, split v3) đã huấn luyện xong — detection đạt cả bốn chỉ tiêu (mAP@0.5 0,9829), NFR-P1 đạt ngưỡng tối thiểu với p95 1.143,10 ms (mục tiêu 800 ms), và NFR-A4/A5/A6/A7 đã đo (OCR biển hai dòng không đạt — kết quả thật). Cặp 731/780 ms là phép đo trước khi bật bậc thử lại, chỉ dùng để phân tích đánh đổi.
 
 > **Ranh giới không được vượt qua.** Không một con số nào do `StubPipeline` sinh ra được phép xuất hiện trong Chương 5, trong hai bản abstract, hay trong slide bảo vệ dưới danh nghĩa kết quả thực nghiệm. Số của `baseline-416-v1.pt` (mô hình đối chứng) được phép nêu **nhưng phải kèm cả hai khiếm khuyết ngay trong câu** (imgsz=416; split v1 có rò rỉ), và không được trình bày như kết quả đạt chỉ tiêu — số công bố lấy từ `models/best.pt`.
 

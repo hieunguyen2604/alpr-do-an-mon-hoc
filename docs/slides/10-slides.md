@@ -109,7 +109,7 @@ Tỉ lệ đo thật lệch khỏi chuẩn nhưng vẫn đúng phía ngưỡng *
 | Tầng | Model được chọn | So sánh với các phương án khác |
 |---|---|---|
 | **Phát hiện** *(Detection)* | **YOLO11n** *(2,6M params)* | • **Vs YOLOv8n / v5n:** mAP50 cao hơn, số tham số nhỏ hơn (2,6M vs 3,2M)<br>• **Vs Faster R-CNN / Transformer:** Nhanh gấp 10–20× trên CPU (~35 ms/khung)<br>• **Lý do:** Đáp ứng chỉ tiêu p95 độ trễ CPU không cần GPU |
-| **Nhận dạng** *(OCR)* | **PP-OCRv5 mobile** *(4,5 MB)* | • **Vs EasyOCR / Tesseract:** Tesseract vỡ khi crop nhỏ; EasyOCR cực chậm trên CPU (2–3s/ảnh)<br>• **Vs PP-OCRv5 Server:** Bản Server nặng (~100 MB), trễ gấp 4× trên CPU<br>• **Lý do chọn v5 mobile:** Dung lượng siêu nhẹ (4,5 MB), đúng ký tự 94,5% |
+| **Nhận dạng** *(OCR)* | **PP-OCRv5 mobile** *(4,5 MB)* | • **So với EasyOCR / Tesseract:** phép đo trên 2.801 biển trong cùng tầng bao quanh cho kết quả PaddleOCR cao hơn; kết luận chỉ áp dụng cho cấu hình này<br>• **So với PP-OCRv5 Server:** bản Server nặng hơn, không phù hợp ràng buộc CPU<br>• **Lý do chọn v5 mobile:** dung lượng nhỏ, độ chính xác mức ký tự 94,5% trên tập đánh giá |
 
 ## Mục tiêu
 
@@ -161,9 +161,9 @@ Chỉ chạy **sau khi đọc hỏng**, chỉ nhận chuỗi **hợp lệ**
 
 - **15.133 ảnh · 15.977 khung** · chia **10.592 / 3.027 / 1.514**
 - Hợp nhất **7 bộ công khai**, loại **44,2%** là bản sao — hai bộ mất **98%** và **100%**
-- **Chống rò rỉ 100%:** Băm tri giác (pHash) lọc ảnh trùng lặp gần đúng giữa Train–Test — **9.126 cặp → 0**
+- **Khử trùng lặp bằng pHash** ở ngưỡng Hamming 10 — đo lại ở **chính ngưỡng đó** cho **0 cặp** Train–Test
 
-⇒ Đảm bảo đánh giá độc lập hoàn toàn, không bị mAP ảo do rò rỉ dữ liệu
+⇒ Số 0 đó chỉ chứng minh **bước gộp chạy đúng**, không chứng minh tập test sạch: ở Hamming 12 vẫn còn **791 cặp**
 
 ⚠️ Hai bộ chiếm **74,3%** — đa dạng giấy phép, **chưa** đa dạng nội dung
 
@@ -202,7 +202,7 @@ Mọi vùng dữ liệu xử lý đủ **4 trạng thái**: chờ · rỗng · l
 | **TẤT CẢ** | **1.611** | **0,984** | **0,971** | **0,983** | **0,783** |
 | *Chỉ tiêu* | | *≥0,92* | *≥0,90* | *≥0,90* | *≥0,65* |
 
-## Kết quả OCR — nói thẳng phần chưa đạt
+## Kết quả OCR
 
 Toàn bộ khoảng cách nằm ở **biển 2 dòng**: 0,6996 so với **0,9541** của biển 1 dòng
 
@@ -255,7 +255,7 @@ Phần lớn ảnh xong dưới nửa giây; đuôi phải là những ảnh th�
 
 ## Kiểm thử và triển khai
 
-- **1.000 kiểm thử tự động** đạt · bao phủ tầng nghiệp vụ **87,7%**
+- **1.001/1.002 kiểm thử tự động** đạt *(1 `xfail` có mô tả)* · bao phủ tầng nghiệp vụ **87,7%**
 - Đơn vị · tích hợp · độ chính xác AI · hiệu năng · chịu tải
 - Tầng AI có bộ test **chạy không cần dựng server**
 - Chạy liên tục **15 phút**: 2.028 yêu cầu, **0 lỗi**, không rò rỉ bộ nhớ
@@ -286,7 +286,7 @@ Ba tình huống, chạy trên máy thật — **không phải video quay sẵn*
 | Ảnh xe máy — biển 2 dòng | Chính chỗ khó nhất, split-then-hstack chạy thật |
 | Video + Lịch sử | Xử lý bất đồng bộ, tra cứu lại kết quả |
 
-## Hạn chế — nói thẳng
+## Hạn chế
 
 | Hạn chế | Nguyên nhân gốc |
 |---|---|
@@ -315,7 +315,7 @@ Ba tình huống, chạy trên máy thật — **không phải video quay sẵn*
 - Hệ thống **5 tầng chạy thật**, đóng gói Docker một lệnh
 - Phát hiện đạt **cả 4 chỉ tiêu**: mAP50 **0,983** · mAP50-95 **0,783**
 - Hậu xử lý theo vị trí — **+11,39 điểm**, đo tách bạch
-- **1.000 kiểm thử** đạt · bao phủ tầng nghiệp vụ 87,7%
+- **1.001/1.002 kiểm thử** đạt · bao phủ tầng nghiệp vụ **87,7%**
 
 **Đóng góp học thuật**
 
@@ -338,7 +338,7 @@ Cải tiến mạng trích xuất đặc trưng & head phát hiện đa tỉ l�
 |---|---|---|
 | **Backbone** | Block **C3k2** & **C2PSA** *(Attention)* | Trích xuất đặc trưng vùng biển số sắc nét ở nhiều góc nghiêng |
 | **Neck** | **SPPF** *(Spatial Pyramid Pooling - Fast)* | Tăng cường thông tin ngữ cảnh đa tỉ lệ mà không tăng độ trễ |
-| **Head** | Anchor-free Decoupled Head | Dự đoán bounding box và lớp biển số (1 dòng / 2 dòng) |
+| **Head** | Anchor-free Decoupled Head | Dự đoán bounding box của lớp `license_plate`; bố cục một/hai dòng được suy ra ở bước hậu xử lý theo tỷ lệ khung hình |
 | **Quy mô** | **YOLO11n** · **2,6M params** · **6,5 GFLOPs** | Đạt **mAP50 0,983** trên CPU với tốc độ ~35 ms/khung hình |
 
 ## Backup 2 — Kiến trúc mô hình PP-OCRv5

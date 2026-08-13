@@ -119,7 +119,7 @@ Giao diện hiện **cả chuỗi OCR thô lẫn chuỗi đã sửa** khi hai ch
 
 - Chạy đầu-cuối trên máy **không có GPU**: bộ phát hiện **mAP@0,5 = 0,9829**
 - Hậu xử lý đóng góp **+11,39 điểm**, **0 ca làm hỏng** trên 2.801 biển
-- Benchmark ba engine OCR trên biển Việt Nam: PaddleOCR **68,87%** — bác bỏ tài liệu công khai vốn nghiêng về EasyOCR
-- Nói thẳng phần chưa đạt: đọc đúng cả chuỗi **0,7512** so với ngưỡng 0,85
+- Benchmark ba engine OCR trên biển Việt Nam: PaddleOCR **68,87%** trong cấu hình đánh giá của đồ án; kết quả khác với khuynh hướng của một số tài liệu công khai
+- Đọc đúng cả chuỗi **0,7512**, dưới ngưỡng 0,85
 
 **Xin cảm ơn thầy cô và các bạn đã lắng nghe.**

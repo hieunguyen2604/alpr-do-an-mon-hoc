@@ -24,7 +24,7 @@
 
 <br/>
 
-*<!-- chèn logo Trường Đại học Công nghệ Thông tin khi kết xuất bản in -->*
+_<!-- chèn logo Trường Đại học Công nghệ Thông tin khi kết xuất bản in -->_
 
 <br/><br/>
 
@@ -36,19 +36,19 @@
 
 # XÂY DỰNG HỆ THỐNG NHẬN DIỆN BIỂN SỐ XE BẰNG TRÍ TUỆ NHÂN TẠO
 
-*Developing an AI-based vehicle license plate recognition system*
+_Developing an AI-based vehicle license plate recognition system_
 
 <br/><br/>
 
-| | |
-|---:|:---|
-| **Ngành:** | Trí tuệ nhân tạo |
-| **Chuyên ngành:** | Trí tuệ nhân tạo |
-| **Sinh viên thực hiện:** | **Phạm Công Thành** — MSSV **25410013** |
-| | **Nguyễn Minh Hiếu** — MSSV **25410007** |
-| **Lớp:** | AI503.F3.LT.TTNT |
-| **Khoá:** | 2025 |
-| **Giảng viên hướng dẫn:** | ThS. Cáp Phạm Đình Thăng |
+|                           |                                          |
+| ------------------------: | :--------------------------------------- |
+|                **Ngành:** | Trí tuệ nhân tạo                         |
+|         **Chuyên ngành:** | Trí tuệ nhân tạo                         |
+|  **Sinh viên thực hiện:** | **Phạm Công Thành** — MSSV **25410013**  |
+|                           | **Nguyễn Minh Hiếu** — MSSV **25410007** |
+|                  **Lớp:** | AI503.F3.LT.TTNT                         |
+|                 **Khoá:** | 2025                                     |
+| **Giảng viên hướng dẫn:** | ThS. Cáp Phạm Đình Thăng                 |
 
 <br/><br/>
 
