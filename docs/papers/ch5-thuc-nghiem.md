@@ -88,7 +88,7 @@ Toàn bộ 5.4 đo trên **tập test v3: 1.514 ảnh, 1.611 đối tượng nh�
 
 <!-- {{T5.4a}} ket qua detection tong the tren tap test v3 (1.514 anh) — chuyen thanh van xuoi, doi chieu nguong o T5.7 -->
 
-**Cả bốn chỉ tiêu bắt buộc đều đạt mục tiêu**, đo bằng công cụ đánh giá chuẩn của thư viện: **mAP@0.5 = 0,9829** (NFR-A1; sàn 0,85, mục tiêu 0,90 ✅), **mAP@0.5:0.95 = 0,7834** (NFR-A2; sàn 0,55, mục tiêu 0,65 ✅), **Precision = 0,9837** và **Recall = 0,9714** (NFR-A3; sàn 0,88 / 0,85, mục tiêu 0,92 / 0,90 ✅), **F1 = 0,9775** tại ngưỡng confidence 0,25; đối chiếu ở Bảng 5.10. Ba lưu ý: (1) **bài toán chỉ có một lớp**, mAP một lớp không so trực tiếp được với mAP nhiều lớp trên COCO nên giá trị cao là bình thường, **không phải bằng chứng về độ khó đã vượt qua**; (2) chỉ số quyết định là **mAP@0.5:0.95** vì độ khớp box ảnh hưởng trực tiếp đến chất lượng vùng cắt đưa sang OCR; (3) **chỉ số tổng thể che giấu phân bố**.
+**Cả bốn chỉ tiêu bắt buộc đều đạt mục tiêu**, đo bằng công cụ đánh giá chuẩn của thư viện: **mAP@0.5 = 0,9829** (NFR-A1; sàn 0,85, mục tiêu 0,90 ✅), **mAP@0.5:0.95 = 0,7834** (NFR-A2; sàn 0,55, mục tiêu 0,65 ✅), **Precision = 0,9837** và **Recall = 0,9714** (NFR-A3; sàn 0,88 / 0,85, mục tiêu 0,92 / 0,90 ✅), **F1 = 0,9775** tại ngưỡng confidence 0,25; đối chiếu ở Bảng 5.11. Ba lưu ý: (1) **bài toán chỉ có một lớp**, mAP một lớp không so trực tiếp được với mAP nhiều lớp trên COCO nên giá trị cao là bình thường, **không phải bằng chứng về độ khó đã vượt qua**; (2) chỉ số quyết định là **mAP@0.5:0.95** vì độ khớp box ảnh hưởng trực tiếp đến chất lượng vùng cắt đưa sang OCR; (3) **chỉ số tổng thể che giấu phân bố**.
 
 ### 5.4.2. Tách theo biển một dòng và biển hai dòng (NFR-A8)
 
@@ -263,7 +263,22 @@ Bốn hướng tấn công khối OCR theo chi phí tăng dần (chi tiết ở 
 
 <!-- {{T5.6e}} chiu tai, bo nho, do tin cay — gop vao T5.7 -->
 
-**Mọi chỉ tiêu hiệu năng _ngoài đường xử lý ảnh_ đều đạt với biên rất rộng** (chi tiết ở Bảng 5.10): nạp mô hình **6,41 s**, khởi động tới khi `/health` sẵn sàng **8,36 s** (sàn 30 s); overhead API p95 **19,01 ms**; truy vấn lịch sử 10.000 bản ghi p95 **18,71 ms** — nhanh hơn mục tiêu **~27 lần**; RSS pipeline / máy chủ backend **0,759 / 0,806 GB** so với sàn 4 GB, tức phẳng ở khoảng **0,8 GB**; **10 yêu cầu đồng thời** ổn định so với ngưỡng 5; soak 15 phút **100,0% thành công trên 2.028 yêu cầu**, RSS chỉ tăng **+0,094 GB** (0,726 → 0,820) — **không rò rỉ**; cơ sở dữ liệu sống sót qua khởi động lại với **0/9.031 bản ghi mất**. Hình đường cong thông lượng và tỉ lệ lỗi theo mức đồng thời 1 / 2 / 5 / 10 (`07-concurrency.png`) **đã có nhưng cần vẽ lại**.
+**Mọi chỉ tiêu hiệu năng _ngoài đường xử lý ảnh_ đều đạt với biên rất rộng.**
+
+**Bảng 5.9.** Các chỉ tiêu hiệu năng ngoài đường xử lý ảnh
+
+| Chỉ tiêu | Đo được | Ngưỡng | Biên |
+|---|---:|---:|---:|
+| Nạp mô hình | **6,41 s** | ≤ 30 s | 4,7× |
+| Khởi động tới khi `/health` sẵn sàng | **8,36 s** | ≤ 30 s | 3,6× |
+| Overhead tầng API (p95) | **19,01 ms** | ≤ 100 ms | 5,3× |
+| Truy vấn lịch sử 10.000 bản ghi (p95) | **18,71 ms** | ≤ 500 ms | **~27×** |
+| Bộ nhớ thường trú — pipeline · máy chủ | **0,759 · 0,806 GB** | ≤ 4 GB | ~5× |
+| Yêu cầu đồng thời ổn định | **10** | ≥ 5 | 2× |
+| Chạy liên tục 15 phút | **100,0% / 2.028 yêu cầu**, bộ nhớ chỉ tăng 0,094 GB | ≥ 99% | — |
+| Khởi động lại cơ sở dữ liệu | **0/9.031 bản ghi mất** | 0 mất | — |
+
+Hai dòng cuối là bằng chứng **không rò rỉ bộ nhớ** và **không mất dữ liệu**; đối chiếu đầy đủ từng mã chỉ tiêu ở Bảng 5.11.
 
 **Nhưng hai chỉ tiêu trên chính đường xử lý ảnh thì không:** NFR-P1 chỉ đạt sàn và **NFR-P2 trượt cả sàn**, cùng nguyên nhân là đuôi độ trễ do bậc thang thử-lại. **Kiến trúc phần mềm không còn là vấn đề** — tầng API, tầng dữ liệu, bộ nhớ, độ ổn định đều dư biên; **nhưng _độ trễ suy luận_ thì vẫn là vấn đề**. Hai nhánh đi tiếp: nâng _độ chính xác_ OCR biển hai dòng (5.5), và cắt _đuôi độ trễ_ — đặt trần thời gian cho bậc thang, hoặc chỉ chạy nó ở chế độ ảnh tĩnh.
 
@@ -273,7 +288,7 @@ Mục 4.5.3 để ngỏ một câu hỏi: chế độ **chỉ nhận dạng** ch
 
 <!-- {{T5.6f}} bo buoc phat hien chu: hai ngu lieu, hai ket luan nguoc nhau -->
 
-**Bảng 5.9.** Bỏ bước phát hiện chữ — ba ngữ liệu, hai kết luận ngược nhau
+**Bảng 5.10.** Bỏ bước phát hiện chữ — ba ngữ liệu, hai kết luận ngược nhau
 
 | Cấu hình                               | A6 trên 2.801 ảnh **cắt sẵn** | Bộ demo **ảnh toàn cảnh** | Tầng dễ _(n=372)_ | Tầng khó _(n=236)_ | **A7 hiện trường** |    KTC 95%    |
 | -------------------------------------- | ----------------------------: | ------------------------: | ----------------: | -----------------: | -----------------: | :-----------: |
@@ -288,7 +303,7 @@ Bảng tổng hợp trình bày khi bảo vệ, liệt kê **đầy đủ mọi 
 
 <!-- {{T5.7}} doi chieu toan bo chi tieu NFR -->
 
-**Bảng 5.10.** Đối chiếu chỉ tiêu phi chức năng, gom theo nhóm
+**Bảng 5.11.** Đối chiếu chỉ tiêu phi chức năng, gom theo nhóm
 
 | Nhóm                                                   | Số chỉ tiêu | Kết quả                     | Con số quyết định                                                                                                                                          |
 | ------------------------------------------------------ | :---------: | --------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -303,7 +318,7 @@ Bảng tổng hợp trình bày khi bảo vệ, liệt kê **đầy đủ mọi 
 
 ## 5.8. Phân tích lỗi
 
-**Bảng 5.11.** Tần suất từng loại lỗi
+**Bảng 5.12.** Tần suất từng loại lỗi
 
 | Mã  | Loại lỗi                      |       Số ca | Tỉ lệ trong tổng ca sai | Tỉ lệ toàn tập đánh giá | Một dòng | Hai dòng |
 | :-: | ----------------------------- | ----------: | ----------------------: | ----------------------: | -------: | -------: |
@@ -334,7 +349,7 @@ Cần phân biệt **"chưa đo vì chưa tới lượt"** với **"không đo �
 
 Nguyên tắc: **nêu mối đe doạ, đánh giá mức nghiêm trọng, nói rõ đã làm gì để giảm thiểu — kể cả khi biện pháp giảm thiểu là "không có".**
 
-**Bảng 5.12.** Tám mối đe doạ đến tính hợp lệ của kết quả
+**Bảng 5.13.** Tám mối đe doạ đến tính hợp lệ của kết quả
 
 |  #  | Mối đe doạ                                                               |    Mức     | Biện pháp giảm thiểu đã áp dụng                                                                                                                                                                                                                   |
 | :-: | ------------------------------------------------------------------------ | :--------: | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -355,7 +370,7 @@ Ba khác biệt khiến việc đặt cạnh nhau hai con số độ chính xác
 
 <!-- {{T5.10}} doi chieu ket qua voi cac cong trinh da cong bo -->
 
-**Bảng 5.13.** Đối chiếu với các công trình đã công bố — mọi dòng kèm bộ dữ liệu và quốc gia
+**Bảng 5.14.** Đối chiếu với các công trình đã công bố — mọi dòng kèm bộ dữ liệu và quốc gia
 
 | Khối      | Công trình                                   | Bộ dữ liệu · quốc gia                        | Chỉ số công bố                   |             Giá trị |
 | --------- | -------------------------------------------- | -------------------------------------------- | -------------------------------- | ------------------: |
