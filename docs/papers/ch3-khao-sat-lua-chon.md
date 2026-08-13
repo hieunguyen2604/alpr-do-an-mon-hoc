@@ -36,7 +36,7 @@ Dòng ❌ còn lại được ghi nhận ở mục 6.3:
 
 ## 3.2. Mô hình phát hiện: YOLO11
 
-**Các phương án đã xét.** Bảy thế hệ YOLO từ YOLOv8 trở về sau — mốc chuyển sang anchor-free, có ý nghĩa trực tiếp với bài toán biển số (mục 2.3.1): YOLOv8 [14], YOLOv9 [28]<!-- wang_2024_yolov9 -->, YOLOv10 [29]<!-- wang_2024_yolov10paper -->, YOLO11 [10], YOLOv12 [30]<!-- tian_2025_yolov12 -->, YOLOv13 [31]<!-- lei_2025_yolov13 -->, YOLO26 [32]<!-- jocher_2025_yolo26 -->. Họ two-stage (Faster R-CNN, Mask R-CNN) loại từ đầu vì chi phí tính toán không hợp ràng buộc CPU.
+**Các phương án đã xét.** Bảy thế hệ YOLO từ YOLOv8 trở về sau — mốc chuyển sang anchor-free, có ý nghĩa trực tiếp với bài toán biển số (mục 2.3.1): YOLOv8 [14], YOLOv9 [24]<!-- wang_2024_yolov9 -->, YOLOv10 [25]<!-- wang_2024_yolov10paper -->, YOLO11 [10], YOLOv12 [26]<!-- tian_2025_yolov12 -->, YOLOv13 [27]<!-- lei_2025_yolov13 -->, YOLO26 [28]<!-- jocher_2025_yolo26 -->. Họ two-stage (Faster R-CNN, Mask R-CNN) loại từ đầu vì chi phí tính toán không hợp ràng buộc CPU.
 
 ## 3.3. Bộ nhận dạng ký tự
 
