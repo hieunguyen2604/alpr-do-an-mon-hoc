@@ -108,11 +108,11 @@ Mỗi lựa chọn dưới đây bị chi phối bởi cùng bốn ràng buộc:
 |---|---|---|---|---|
 | Thư viện xử lý ảnh | **OpenCV** [17] | scikit-image, Pillow | Đủ cả CLAHE, lọc song phương, biến đổi phối cảnh, HSV trong một thư viện; ràng buộc thời gian thực | API kiểu C cũ, dễ nhầm thứ tự kênh BGR/RGB |
 | Bộ phát hiện | **YOLO11n** [8] | Faster R-CNN, SSD, YOLOv8 | Họ một giai đoạn, **anchor-free** — hồi quy trực tiếp khoảng cách tâm tới bốn cạnh nên xử lý được cả tỉ lệ 4,7:1 lẫn 1,4:1 bằng một cơ chế; biến thể `n` chỉ 2,59 triệu tham số | Họ hai giai đoạn chính xác hơn nhưng không hợp ràng buộc CPU |
-| Nhận dạng ký tự | **PaddleOCR PP-OCRv5 mobile** [9] | EasyOCR, Tesseract | Thắng dứt khoát trên chính ảnh biển số Việt Nam (mục 4.3.4) | Là đường ống nhiều giai đoạn thiết kế cho ảnh tài liệu, nên trả chi phí cho năng lực mà vùng biển đã cắt không cần |
+| Nhận dạng ký tự | **PaddleOCR PP-OCRv5 mobile** [9] | EasyOCR, Tesseract | Cao hơn hẳn hai engine kia trên chính ảnh biển số Việt Nam, trong cấu hình đánh giá của đồ án (mục 4.3.4) | Là đường ống nhiều giai đoạn thiết kế cho ảnh tài liệu, nên trả chi phí cho năng lực mà vùng biển đã cắt không cần |
 | Hậu xử lý | **Bộ luật tự thiết kế** | Mô hình ngôn ngữ, từ điển | Biển số không có từ vựng để dựa vào; ràng buộc cú pháp lại rất chặt và kiểm được bằng biểu thức chính quy | Phải cập nhật khi văn bản pháp quy thay đổi |
 | Ứng dụng trình diễn | **FastAPI + React + Docker** | Notebook, ứng dụng desktop | Yêu cầu chạy được bằng một lệnh trên máy sạch | Không phải trọng tâm của môn học |
 
-Việc chọn **PaddleOCR** là kết quả của một phép đo do đồ án tự chạy chứ không phải suy đoán từ tài liệu: tài liệu công khai thực tế nghiêng về EasyOCR, và phép đo trên 2.801 biển số Việt Nam ở mục 4.3.4 nói ngược lại.
+Việc chọn **PaddleOCR** là kết quả của một phép đo do đồ án tự chạy chứ không phải suy đoán từ tài liệu: một số tài liệu công khai nghiêng về EasyOCR, còn phép đo trên 2.801 biển số Việt Nam ở mục 4.3.4 cho kết quả ngược lại **trong cấu hình đánh giá của đồ án**.
 
 
 ```{=openxml}
@@ -692,7 +692,7 @@ Hướng cải thiện rõ ràng: **thay bảng suy đoán bằng bảng trích 
 
 ### 4.3.4. So sánh ba engine nhận dạng trên cùng một tầng bao quanh
 
-Câu hỏi: chọn PaddleOCR có đúng không, khi tài liệu công khai thực tế nghiêng về EasyOCR?
+Câu hỏi: chọn PaddleOCR có đúng không, khi một số tài liệu công khai lại nghiêng về EasyOCR?
 
 **Thiết kế thí nghiệm.** Cả ba engine chạy trong **đúng một tầng bao quanh** — sao đúng chuỗi bước xử lý ảnh của bản giao hàng — trên **cùng một mảng ảnh đã chuẩn bị xong**; khác biệt duy nhất còn lại là engine. Điều này quan trọng, vì bốn lượt chạy đầu đều cho số vô nghĩa và mỗi lượt hỏng lộ ra một điều kiện bắt buộc. Bài học chung: **phần lớn năng lực đọc biển số không nằm trong engine mà ở tầng xử lý ảnh bao quanh nó** — so sánh ba engine với ba tầng bao quanh khác nhau là đo tầng bao quanh chứ không đo engine.
 
@@ -704,7 +704,7 @@ Câu hỏi: chọn PaddleOCR có đúng không, khi tài liệu công khai thự
 | EasyOCR | 6,53% | 10,35% | 14,28% | 10,7% |
 | Tesseract | 9,57% | 9,60% | 10,28% | **0,1%** |
 
-**PaddleOCR thắng dứt khoát** — 68,87%, hơn EasyOCR 54,59 điểm và hơn Tesseract 58,59 điểm, khoảng cách quá lớn để quy cho nhiễu.
+**PaddleOCR cao hơn hẳn trong phép đo này** — 68,87%, hơn EasyOCR 54,59 điểm và hơn Tesseract 58,59 điểm; khoảng cách quá lớn để quy cho nhiễu, nhưng kết luận chỉ áp cho cấu hình đánh giá ở mục b.
 
 **Tesseract không đọc được biển hai dòng**: **0,1% trên 2.234 mẫu**, kể cả sau khi đã ghép thành một dòng, trong khi đọc được 50,4% biển một dòng. Đã kiểm bằng mắt để loại khả năng lỗi công cụ — nó **có** đọc ra chữ nhưng luôn kèm ký tự rác, và 700/2.801 lần trả chuỗi rỗng.
 

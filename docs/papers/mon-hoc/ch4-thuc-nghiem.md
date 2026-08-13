@@ -137,7 +137,7 @@ Hướng cải thiện rõ ràng: **thay bảng suy đoán bằng bảng trích 
 
 ### 4.3.4. So sánh ba engine nhận dạng trên cùng một tầng bao quanh
 
-Câu hỏi: chọn PaddleOCR có đúng không, khi tài liệu công khai thực tế nghiêng về EasyOCR?
+Câu hỏi: chọn PaddleOCR có đúng không, khi một số tài liệu công khai lại nghiêng về EasyOCR?
 
 **Thiết kế thí nghiệm.** Cả ba engine chạy trong **đúng một tầng bao quanh** — sao đúng chuỗi bước xử lý ảnh của bản giao hàng — trên **cùng một mảng ảnh đã chuẩn bị xong**; khác biệt duy nhất còn lại là engine. Điều này quan trọng, vì bốn lượt chạy đầu đều cho số vô nghĩa và mỗi lượt hỏng lộ ra một điều kiện bắt buộc. Bài học chung: **phần lớn năng lực đọc biển số không nằm trong engine mà ở tầng xử lý ảnh bao quanh nó** — so sánh ba engine với ba tầng bao quanh khác nhau là đo tầng bao quanh chứ không đo engine.
 
@@ -149,7 +149,7 @@ Câu hỏi: chọn PaddleOCR có đúng không, khi tài liệu công khai thự
 | EasyOCR | 6,53% | 10,35% | 14,28% | 10,7% |
 | Tesseract | 9,57% | 9,60% | 10,28% | **0,1%** |
 
-**PaddleOCR thắng dứt khoát** — 68,87%, hơn EasyOCR 54,59 điểm và hơn Tesseract 58,59 điểm, khoảng cách quá lớn để quy cho nhiễu.
+**PaddleOCR cao hơn hẳn trong phép đo này** — 68,87%, hơn EasyOCR 54,59 điểm và hơn Tesseract 58,59 điểm; khoảng cách quá lớn để quy cho nhiễu, nhưng kết luận chỉ áp cho cấu hình đánh giá ở mục b.
 
 **Tesseract không đọc được biển hai dòng**: **0,1% trên 2.234 mẫu**, kể cả sau khi đã ghép thành một dòng, trong khi đọc được 50,4% biển một dòng. Đã kiểm bằng mắt để loại khả năng lỗi công cụ — nó **có** đọc ra chữ nhưng luôn kèm ký tự rác, và 700/2.801 lần trả chuỗi rỗng.
 

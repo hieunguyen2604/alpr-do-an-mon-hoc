@@ -182,6 +182,6 @@ Khởi động bằng một lệnh `docker compose up`; giao diện hiện **c�
 - Chạy đầu-cuối trên máy **không có GPU**: bộ phát hiện đạt **mAP@0,5 = 0,9829**
 - Bài toán biển hai dòng giải bằng **phép biến đổi ảnh**, không bằng mô hình mạnh hơn — mua **34,92 điểm**
 - Hậu xử lý theo vị trí đóng góp **+11,39 điểm**, **0 ca làm hỏng** trên 2.801 biển
-- Nói thẳng phần chưa đạt: đọc đúng cả chuỗi **0,7512** so với ngưỡng 0,85, và khoảng cách nằm trọn ở biển hai dòng
+- Phần chưa đạt: đọc đúng cả chuỗi **0,7512** so với ngưỡng 0,85, khoảng cách nằm trọn ở biển hai dòng
 
 **Xin cảm ơn thầy cô và các bạn đã lắng nghe.**
