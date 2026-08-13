@@ -110,7 +110,9 @@ def chon_vi_du(mau: list[dict]) -> tuple[list[dict], list[dict]]:
         elif cuoi != that:
             hong.append(x)
 
-    hai_dong = lambda ds: sorted(ds, key=lambda x: (x["line_count"] != 2, len(x["truth"])))
+    def hai_dong(ds):
+        """Xếp biển hai dòng lên trước, trong mỗi nhóm thì chuỗi ngắn trước."""
+        return sorted(ds, key=lambda x: (x["line_count"] != 2, len(x["truth"])))
 
     # One of each failure shape, so the panel is not three copies of the same
     # story. Length tells them apart: shorter than the label means characters
@@ -195,7 +197,11 @@ def hinh_layout(theo_dong: dict, dich: Path) -> None:
     """
     mot, hai = theo_dong["one_line"], theo_dong["two_line"]
     nhom = [
-        ("Đúng mức ký tự\n(1 − CER)", mot["char_accuracy_post_norm"], hai["char_accuracy_post_norm"]),
+        (
+            "Đúng mức ký tự\n(1 − CER)",
+            mot["char_accuracy_post_norm"],
+            hai["char_accuracy_post_norm"],
+        ),
         ("Đúng cả chuỗi\nTRƯỚC hậu xử lý", mot["exact_pre_norm"], hai["exact_pre_norm"]),
         ("Đúng cả chuỗi\nSAU hậu xử lý", mot["exact_post_norm"], hai["exact_post_norm"]),
     ]

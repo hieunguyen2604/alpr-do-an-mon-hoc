@@ -388,7 +388,9 @@ class VietnamesePlateNormalizer(BaseNormalizer):
         printed_dot = bool(raw_text and _FIVE_DIGIT_DOT_GROUP_RE.search(raw_text))
         car_truck_van_serial = bool(re.match(r"^\d{2}[CDHF]\d{5}$", text))
 
-        if is_ambiguous and car_or_old_moto and (line_count == 1 or printed_dot or car_truck_van_serial):
+        if is_ambiguous and car_or_old_moto and (
+            line_count == 1 or printed_dot or car_truck_van_serial
+        ):
             # Two independent proofs collapse to the same verdict: a one-line
             # plate cannot be a motorcycle plate (section 7.1), a printed
             # DDD.DD group means a five-digit number, or a C/D/H/F series with

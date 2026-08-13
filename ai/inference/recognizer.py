@@ -492,7 +492,11 @@ class PaddleOcrRecognizer(BaseRecognizer):
             }
             selection = f"det={TEXT_DETECTION_MODEL}, rec={recognition_model}"
             rec_dir = self._config.ocr_rec_model_dir
-            if rec_dir is not None and rec_dir.is_dir() and (rec_dir / "inference.pdiparams").exists():
+            if (
+                rec_dir is not None
+                and rec_dir.is_dir()
+                and (rec_dir / "inference.pdiparams").exists()
+            ):
                 # A fine-tuned recognition model (ai/training). The model NAME
                 # stays pinned so PaddleOCR resolves the right architecture and
                 # pre/post-processing; the DIR overrides where the weights and

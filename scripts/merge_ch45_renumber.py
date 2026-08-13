@@ -100,11 +100,10 @@ def main() -> None:
                     gop[cu_ch + sm.group(1)[len(moi_ch):]] = sm.group(1)
 
     # --- quet toan quyen ----------------------------------------------------
-    DAN = r"(?i:xem|ở|tại|theo|nêu ở|trình bày ở|hạn chế|đóng góp|mục|Mục)\s+"
     QUET = re.compile(
         r"(?P<chuong>\bChương\s+(?P<cs>\d+)\b)"
         r"|(?P<muc>\b[Mm]ục\s+(?P<ms>\d+(?:\.\d+){1,2})\b)"
-        rf"|(?P<tran>(?<![\w.\-])(?P<ts>\d\.\d{{1,2}}(?:\.\d{{1,2}})?)(?![\d.]))"
+        r"|(?P<tran>(?<![\w.\-])(?P<ts>\d\.\d{1,2}(?:\.\d{1,2})?)(?![\d.]))"
     )
     dem = {"chuong": 0, "muc": 0, "tran": 0}
     chua_tra: list[str] = []
@@ -140,7 +139,8 @@ def main() -> None:
         sm = SO.match(m.group(2))
         if not sm:
             return ln
-        return f"{m.group(1)} {sm.group(1)}. {QUET.sub(lambda x: thay(x, sm.group(2)), sm.group(2))}"
+        than = QUET.sub(lambda x: thay(x, sm.group(2)), sm.group(2))
+        return f"{m.group(1)} {sm.group(1)}. {than}"
 
     # Chinh tep chuong gop KHONG duoc ap bang anh xa 4.x/5.x.
     #
@@ -174,9 +174,9 @@ def main() -> None:
         if p.name in DOI_TEN:
             continue
         ham = chi_lui_chuong if p.name == "ch4-phan-tich-thiet-ke.md" else quet_dong
-        ket[p] = [ham(l) for l in p.read_text(encoding="utf-8").splitlines()]
+        ket[p] = [ham(ln) for ln in p.read_text(encoding="utf-8").splitlines()]
     for p, dong in noi_dung.items():
-        ket[p] = [quet_dong(l) for l in dong]
+        ket[p] = [quet_dong(ln) for ln in dong]
 
     print("Đã thay: " + ", ".join(f"{k}={v}" for k, v in dem.items()))
     if chua_tra:

@@ -97,7 +97,7 @@ def thay_muc(goc: str, tieu_de: str, than: list[str]) -> str:
     chúng thì mỗi lần chạy script lại làm sống lại phần vừa gỡ.
     """
     dong = goc.splitlines()
-    dau = next((i for i, l in enumerate(dong) if l.startswith(tieu_de)), None)
+    dau = next((i for i, ln in enumerate(dong) if ln.startswith(tieu_de)), None)
     if dau is None:
         return goc
     cuoi = next((i for i in range(dau + 1, len(dong)) if dong[i].startswith("## ")), len(dong))
@@ -146,7 +146,7 @@ def main() -> None:
          "<w:r><w:fldChar w:fldCharType=\"end\"/></w:r></w:p>",
          "```", "",
          "<!-- Bản đối chiếu (không in ra):",
-         ] + [("     " + l) if l.strip() else "" for l in muc_luc] + ["-->"]
+         ] + [("     " + ln) if ln.strip() else "" for ln in muc_luc] + ["-->"]
 
     # Quy uoc danh so cung la chi dan bien soan, khong phai noi dung quyen.
     f = [ghi_chu,
@@ -159,7 +159,7 @@ def main() -> None:
          "     Bảng tổng hợp từ nguồn khác bắt buộc ghi nguồn kèm [n]. -->", ""
          ] + bang_md(bang, "bảng")
 
-    print(f"Mục lục : {sum(1 for l in muc_luc if l.strip())} dòng")
+    print(f"Mục lục : {sum(1 for ln in muc_luc if ln.strip())} dòng")
     print(f"Hình    : {len(hinh)}")
     print(f"Bảng    : {len(bang)}")
     thieu = [f"ch{c}" for c in "123456"

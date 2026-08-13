@@ -42,14 +42,12 @@ import numpy as np
 
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt  # noqa: E402
-from matplotlib import patches  # noqa: E402
 
 REPO_ROOT: Path = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT))
 
 from ai.inference.two_line import (  # noqa: E402
     LOWER_HALF_START_RATIO,
-    MIN_MERGE_HEIGHT,
     UPPER_HALF_END_RATIO,
     estimate_line_count,
     merge_two_line,

@@ -114,7 +114,7 @@ def theo_moc(path: Path, moc: list[tuple[str, str]], ap: bool) -> None:
     dong = path.read_text(encoding="utf-8").splitlines()
     chuong = path.name[2]
     for i, (mo, ten) in enumerate(moc, 1):
-        vt = next((k for k, l in enumerate(dong) if l.startswith(mo)), None)
+        vt = next((k for k, ln in enumerate(dong) if ln.startswith(mo)), None)
         if vt is None:
             print(f"  ⚠ {path.name}: không thấy mốc {mo[:44]!r}")
             continue

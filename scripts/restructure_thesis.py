@@ -371,7 +371,6 @@ def main() -> None:
     bo_qua: list[str] = []
 
     def thay(m: re.Match[str], dong: str) -> str:
-        g = m.lastgroup
         if m.group("chuong"):
             moi = CHUONG_MAP.get(m.group("cs"))
             if moi:
@@ -416,7 +415,8 @@ def main() -> None:
                 return m.group(0).replace(m.group("tms"), moi)
         elif m.group("tran3"):
             if m.group("t3s") in KHONG_PHAI_SO_MUC:
-                bi_chan.append(f"  {m.group('t3s')}  …{dong[max(0, m.start() - 46):m.end() + 22].strip()}…")
+                trich = dong[max(0, m.start() - 46):m.end() + 22].strip()
+                bi_chan.append(f"  {m.group('t3s')}  …{trich}…")
                 return m.group(0)
             moi = muc_map.get(m.group("t3s"))
             if moi:

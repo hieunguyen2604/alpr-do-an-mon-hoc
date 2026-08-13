@@ -2,18 +2,21 @@
 
 import json
 import time
-import requests
 from pathlib import Path
+
+import requests
 
 BASE_URL = "http://localhost:8000/api"
 REPO_ROOT = Path(__file__).resolve().parents[1]
 DEMO_DIR = REPO_ROOT / "demo"
+ANH_HOP_LE = (".jpg", ".jpeg", ".png", ".webp")
+VIDEO_HOP_LE = (".mp4", ".avi", ".mov", ".mkv")
 
 
 def test_images(img_dir: Path, expected_file: Path | None = None):
-    print(f"\n=======================================================")
+    print("\n=======================================================")
     print(f"TEST HÌNH ẢNH TRONG: {img_dir.relative_to(REPO_ROOT)}")
-    print(f"=======================================================")
+    print("=======================================================")
 
     expected_map = {}
     if expected_file and expected_file.exists():
@@ -26,19 +29,24 @@ def test_images(img_dir: Path, expected_file: Path | None = None):
                 for k, v in data.items():
                     expected_map[k] = v
 
-    image_files = sorted([f for f in img_dir.iterdir() if f.suffix.lower() in [".jpg", ".jpeg", ".png", ".webp"]])
-    
+    image_files = sorted(
+        f for f in img_dir.iterdir() if f.suffix.lower() in ANH_HOP_LE
+    )
+
     total_imgs = len(image_files)
     total_detected_plates = 0
     total_time = 0.0
 
-    print(f"{'STT':<4} {'File':<28} {'Thời gian':<10} {'Số biển':<8} {'Chi tiết biển số (Nhận dạng | Kỳ vọng)'}")
+    print(
+        f"{'STT':<4} {'File':<28} {'Thời gian':<10} {'Số biển':<8} "
+        f"{'Chi tiết biển số (Nhận dạng | Kỳ vọng)'}"
+    )
     print("-" * 90)
 
     for idx, img_path in enumerate(image_files, 1):
         rel_path = img_path.name
         start_t = time.perf_counter()
-        
+
         try:
             with open(img_path, "rb") as f:
                 res = requests.post(f"{BASE_URL}/detect/image", files={"file": f}, timeout=60)
@@ -63,25 +71,36 @@ def test_images(img_dir: Path, expected_file: Path | None = None):
                     exp_strings.append(item.get("display") or item.get("plate") or "(null)")
             exp_text = f" [Kỳ vọng: {', '.join(exp_strings)}]" if exp_strings else ""
 
-            print(f"{idx:<4} {rel_path:<28} {elapsed:<9.2f}s {len(plates):<8} {pred_text}{exp_text}")
+            print(
+                f"{idx:<4} {rel_path:<28} {elapsed:<9.2f}s "
+                f"{len(plates):<8} {pred_text}{exp_text}"
+            )
 
         except Exception as err:
             print(f"{idx:<4} {rel_path:<28} EXCEPTION: {err}")
 
     avg_time = total_time / total_imgs if total_imgs > 0 else 0
     print("-" * 90)
-    print(f"Tổng kết {img_dir.name}: {total_imgs} ảnh | {total_detected_plates} biển phát hiện | TB {avg_time:.3f}s/ảnh")
+    print(
+        f"Tổng kết {img_dir.name}: {total_imgs} ảnh | "
+        f"{total_detected_plates} biển phát hiện | TB {avg_time:.3f}s/ảnh"
+    )
 
 
 def test_videos():
-    print(f"\n=======================================================")
-    print(f"TEST VIDEO TRONG: demo/")
-    print(f"=======================================================")
+    print("\n=======================================================")
+    print("TEST VIDEO TRONG: demo/")
+    print("=======================================================")
 
-    video_files = sorted([f for f in DEMO_DIR.iterdir() if f.suffix.lower() in [".mp4", ".avi", ".mov", ".mkv"]])
+    video_files = sorted(
+        f for f in DEMO_DIR.iterdir() if f.suffix.lower() in VIDEO_HOP_LE
+    )
 
     for idx, vid_path in enumerate(video_files, 1):
-        print(f"\n[{idx}/{len(video_files)}] Đang gửi video: {vid_path.name} ({vid_path.stat().st_size / 1e6:.1f} MB)...")
+        print(
+            f"\n[{idx}/{len(video_files)}] Đang gửi video: {vid_path.name} "
+            f"({vid_path.stat().st_size / 1e6:.1f} MB)..."
+        )
         start_t = time.perf_counter()
 
         try:
@@ -96,7 +115,10 @@ def test_videos():
             resp_json = res.json()
             job_id = resp_json.get("job_id") or resp_json.get("id")
             status = resp_json.get("status")
-            print(f"  --> Đã khởi tạo Video Job: ID={job_id}, Status={status} (Thời gian gửi: {elapsed:.2f}s)")
+            print(
+                f"  --> Đã khởi tạo Video Job: ID={job_id}, Status={status} "
+                f"(Thời gian gửi: {elapsed:.2f}s)"
+            )
 
 
 
@@ -113,7 +135,11 @@ def test_videos():
                     # phai `progress_percent`. Ban truoc doc sai ten truong nen
                     # luon in ra 0,0%.
                     progress = float(job_data.get("progress") or 0.0) * 100.0
-                    print(f"      Polling ({poll_count * 2}s): status={job_status}, progress={progress:.1f}%", end="\r")
+                    print(
+                        f"      Polling ({poll_count * 2}s): "
+                        f"status={job_status}, progress={progress:.1f}%",
+                        end="\r",
+                    )
 
                     if job_status == "completed":
                         total_vid_time = time.perf_counter() - start_t
@@ -162,11 +188,21 @@ def test_videos():
                         print(f"\n  [HOÀN TẤT VIDEO] {vid_path.name}:")
                         print(f"    - Tổng thời gian xử lý  : {total_vid_time:.2f}s")
                         print(f"    - Số frame đã quét      : {processed_frames}/{total_frames}")
-                        print(f"    - Số biển phát hiện     : {len(results)} bản ghi ({len(unique_plates)} biển duy nhất)")
-                        print(f"    - Các biển số duy nhất  : {', '.join(unique_plates[:10])}{'...' if len(unique_plates) > 10 else ''}")
+                        print(
+                            f"    - Số biển phát hiện     : {len(results)} "
+                            f"bản ghi ({len(unique_plates)} biển duy nhất)"
+                        )
+                        con_nua = "..." if len(unique_plates) > 10 else ""
+                        print(
+                            f"    - Các biển số duy nhất  : "
+                            f"{', '.join(unique_plates[:10])}{con_nua}"
+                        )
                         break
                     elif job_status == "failed":
-                        print(f"\n  [THẤT BẠI] Job {job_id} bị lỗi: {job_data.get('error_message')}")
+                        print(
+                            f"\n  [THẤT BẠI] Job {job_id} bị lỗi: "
+                            f"{job_data.get('error_message')}"
+                        )
                         break
 
         except Exception as err:

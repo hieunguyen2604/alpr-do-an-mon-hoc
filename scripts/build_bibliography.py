@@ -216,7 +216,10 @@ def main() -> None:
     if khong_tra:
         print(f"⚠ KHÔNG tra được {len(khong_tra)}: {khong_tra[:12]}")
     if thieu_bib:
-        print(f"⚠ Khoá được trích nhưng KHÔNG có trong .bib ({len(thieu_bib)}): {sorted(thieu_bib)}")
+        print(
+            f"⚠ Khoá được trích nhưng KHÔNG có trong .bib "
+            f"({len(thieu_bib)}): {sorted(thieu_bib)}"
+        )
 
     # Ghi chu quy trinh la chu thich HTML, khong phai chu in ra: mot ban nop
     # co dong "Khong go tay, chay lai script..." ngay duoi tieu de Tai lieu

@@ -48,6 +48,17 @@ select = ["E", "F", "W", "I"]
 "ai/evaluation/evaluate.py" = ["E501"]      # 1 dòng tiêu đề căn cột của bảng số
 "scripts/labeling/label_tool.py" = ["E501"] # 4 quy tắc CSS trong mẫu HTML nhúng
 
+# Notebook Colab bàn giao cho người dùng tự chạy. Hai mã được tắt vì chúng đo sai
+# đối tượng khi áp lên notebook, không phải vì tệp này được miễn chuẩn:
+#   E501 — một dòng là **lệnh shell IPython** (`!python -c "…"`), phải nằm trọn
+#          trên một dòng mới chạy được; ngắt xuống là làm hỏng lệnh, không phải
+#          làm đẹp mã.
+#   E402 — import đặt giữa notebook là **quy ước bình thường** của định dạng này:
+#          mỗi ô chạy độc lập theo thứ tự người dùng bấm, không có "đầu tệp".
+# Đây cũng là tệp người dùng mở ra đọc và chạy trên Colab, nên sửa cho vừa mắt
+# công cụ lint mà làm ô mã khó đọc hơn là đánh đổi sai chiều.
+"ai/training/*.ipynb" = ["E501", "E402"]
+
 [tool.ruff.lint.isort]
 known-first-party = ["ai", "backend", "scripts", "tests", "tools"]
 

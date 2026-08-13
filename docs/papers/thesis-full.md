@@ -520,7 +520,7 @@ Các lựa chọn có mức độ kiểm chứng khác nhau: một số được
 
 Dòng ❌ còn lại được ghi nhận ở mục 6.3:
 
-- **So sánh nền tảng suy luận chưa chạy** ⇒ chọn ONNX Runtime đứng vững nhờ **lý do vận hành** (một nền tảng suy luận duy nhất cho cả hai mô hình, tránh xung đột hai framework học sâu), không nhờ số liệu tốc độ tự đo.
+- **So sánh nền tảng suy luận đã chạy** (5.6.3, đo ngày 13/08): PyTorch 33,09 ms · ONNX Runtime 24,48 ms (1,35×) · **OpenVINO 21,12 ms (1,57×)**, mAP không suy giảm. Lựa chọn ban đầu nghiêng về ONNX Runtime vì **lý do vận hành** — một nền tảng suy luận duy nhất cho cả hai mô hình, tránh xung đột hai framework học sâu — và số liệu tự đo về sau cho thấy OpenVINO còn nhanh hơn. Bản giao hàng vẫn giữ PyTorch làm mặc định; lý do ở 5.6.3.
 
 ## 3.2. Mô hình phát hiện: YOLO11
 
@@ -1323,7 +1323,7 @@ Bảng tổng hợp trình bày khi bảo vệ, liệt kê **đầy đủ mọi 
 | **Hiệu năng — độ trễ** (P1, P2, P3)                    |      3      | 🟡 P1, ✅ P2, ✅ P3         | p95 một ảnh **1.143,10 ms** (sàn 1.500, mục tiêu 800; p50 chỉ 405,77 ms). FPS thời gian thực **5,257** — vượt cả mục tiêu 5; xấu nhất đo được dưới tải nặng **4,057**, vẫn trên sàn 3. Video **0,785×** — vượt mục tiêu 0,3× |
 | **Hiệu năng — tài nguyên** (P4 – P7)                   |      5      | ✅ **đạt cả năm**           | Nạp mô hình **6,41 s**; overhead API **19,01 ms**; truy vấn 10.000 bản ghi **18,71 ms**; RSS **0,806 GB**                                                  |
 | **Độ tin cậy và chịu tải** (R1 – R5, SC1 – SC3)        |      8      | ✅ **đạt cả tám**           | **100,0%** thành công qua 2.028 yêu cầu soak 15 phút; **0/9.031** bản ghi mất sau khởi động lại; **10** yêu cầu đồng thời ổn định                          |
-| **Bảo trì, bảo mật, khả dụng, ràng buộc** (M, S, U, C) |     14      | ✅ **13**, 🟡 **1**         | Bao phủ kiểm thử tầng nghiệp vụ **87,7%** (sàn 70%); chạy không cần GPU; riêng M6 còn **83 cảnh báo `E501`** của `ruff`                                    |
+| **Bảo trì, bảo mật, khả dụng, ràng buộc** (M, S, U, C) |     14      | ✅ **đạt cả mười bốn**      | Bao phủ kiểm thử tầng nghiệp vụ **87,7%** (sàn 70%); chạy không cần GPU; M6 đã sạch — `ruff check` trả về **0 cảnh báo** trên toàn kho                     |
 
 ## 5.8. Phân tích lỗi
 
@@ -1940,7 +1940,7 @@ Toàn bộ số liệu công bố trong báo cáo được tổng hợp từ cá
 | `07-api-overhead.json`             | Overhead của tầng API so với gọi đường ống trực tiếp                             |    5.6.5     |
 | `07-stress-load.json`              | Chịu tải đồng thời và tỉ lệ thành công khi chạy liên tục                        |    5.6.5     |
 | `07-stress-db.json`                | Thời gian truy vấn lịch sử trên 10.000 bản ghi                                  |    5.6.5     |
-| `07-benchmark-optimized.json`      | _(chưa chạy)_ So sánh PyTorch ↔ ONNX Runtime ↔ OpenVINO                         |    5.6.3     |
+| `03-cpu-benchmark.json`            | So sánh PyTorch ↔ ONNX Runtime ↔ OpenVINO trên CPU                              |    5.6.3     |
 
 Thư mục còn **23 tệp JSON khác** thuộc các lượt đo trung gian đã bị lượt sau
 thay thế; chúng được giữ lại trong kho để đối chiếu lịch sử chứ không được trích

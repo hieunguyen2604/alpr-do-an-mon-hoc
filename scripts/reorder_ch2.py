@@ -92,7 +92,7 @@ def main() -> None:
             moi.append((k, dong))
     print("Thứ tự mới:", " ".join(k for k, _ in moi if k))
 
-    ra = [l for _, d in moi for l in d]
+    ra = [ln for _, d in moi for ln in d]
 
     # --- danh so lai chu thich bang / hinh theo VI TRI ---------------------
     dem_b = dem_h = 0
@@ -154,13 +154,14 @@ def main() -> None:
         sm = SO.match(m.group(2))
         if not sm:
             return ln
-        return f"{m.group(1)} {sm.group(1)}. {QUET.sub(lambda x: thay(x, sm.group(2)), sm.group(2))}"
+        than = QUET.sub(lambda x: thay(x, sm.group(2)), sm.group(2))
+        return f"{m.group(1)} {sm.group(1)}. {than}"
 
-    ket: dict[Path, list[str]] = {CH2: [quet_dong(l) for l in ra]}
+    ket: dict[Path, list[str]] = {CH2: [quet_dong(ln) for ln in ra]}
     for f in sorted(PAPERS.glob("ch*.md")):
         if f == CH2:
             continue
-        ket[f] = [quet_dong(l) for l in f.read_text(encoding="utf-8").splitlines()]
+        ket[f] = [quet_dong(ln) for ln in f.read_text(encoding="utf-8").splitlines()]
 
     print("Đã thay: " + ", ".join(f"{k}={v}" for k, v in dem.items()))
 

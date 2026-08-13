@@ -124,7 +124,12 @@ def main() -> None:
                 src.unlink(missing_ok=True)
                 if not (HINH / ten).is_file():
                     loi += 1
-                    print(f"   ✗ {ten}: {r.stderr.strip().splitlines()[-1][:90] if r.stderr.strip() else 'khong ro'}")
+                    ly_do = (
+                        r.stderr.strip().splitlines()[-1][:90]
+                        if r.stderr.strip()
+                        else "khong ro"
+                    )
+                    print(f"   ✗ {ten}: {ly_do}")
                     continue
                 kb = (HINH / ten).stat().st_size // 1024
                 print(f"   ✓ {ten}  {kb} KB  ({b - a - 1} dòng mã → 1 ảnh)")

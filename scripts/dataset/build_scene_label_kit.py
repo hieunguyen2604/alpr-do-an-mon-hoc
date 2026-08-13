@@ -327,7 +327,8 @@ Những dòng này <b>không bỏ đi</b>: ở đó cấu hình trả chuỗi r�
 đúng, còn cấu hình bịa ra một biển số là sai.</p>
 <div id="bar">
   <button onclick="dl()">Tải CSV</button>
-  <button onclick="if(confirm('Xoá hết nhãn đã gõ?')){{localStorage.clear();location.reload()}}">Xoá hết</button>
+  <button onclick="if(confirm('Xoá hết nhãn đã gõ?'))
+{{localStorage.clear();location.reload()}}">Xoá hết</button>
   <span id="dem"></span>
 </div>
 {"".join(blocks)}

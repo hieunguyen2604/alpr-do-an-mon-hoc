@@ -32,7 +32,7 @@ Các lựa chọn có mức độ kiểm chứng khác nhau: một số được
 
 Dòng ❌ còn lại được ghi nhận ở mục 6.3:
 
-- **So sánh nền tảng suy luận chưa chạy** ⇒ chọn ONNX Runtime đứng vững nhờ **lý do vận hành** (một nền tảng suy luận duy nhất cho cả hai mô hình, tránh xung đột hai framework học sâu), không nhờ số liệu tốc độ tự đo.
+- **So sánh nền tảng suy luận đã chạy** (5.6.3, đo ngày 13/08): PyTorch 33,09 ms · ONNX Runtime 24,48 ms (1,35×) · **OpenVINO 21,12 ms (1,57×)**, mAP không suy giảm. Lựa chọn ban đầu nghiêng về ONNX Runtime vì **lý do vận hành** — một nền tảng suy luận duy nhất cho cả hai mô hình, tránh xung đột hai framework học sâu — và số liệu tự đo về sau cho thấy OpenVINO còn nhanh hơn. Bản giao hàng vẫn giữ PyTorch làm mặc định; lý do ở 5.6.3.
 
 ## 3.2. Mô hình phát hiện: YOLO11
 

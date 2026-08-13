@@ -391,7 +391,7 @@ Toàn bộ số liệu công bố trong báo cáo được tổng hợp từ cá
 | `07-api-overhead.json`             | Overhead của tầng API so với gọi đường ống trực tiếp                             |    5.6.5     |
 | `07-stress-load.json`              | Chịu tải đồng thời và tỉ lệ thành công khi chạy liên tục                        |    5.6.5     |
 | `07-stress-db.json`                | Thời gian truy vấn lịch sử trên 10.000 bản ghi                                  |    5.6.5     |
-| `07-benchmark-optimized.json`      | _(chưa chạy)_ So sánh PyTorch ↔ ONNX Runtime ↔ OpenVINO                         |    5.6.3     |
+| `03-cpu-benchmark.json`            | So sánh PyTorch ↔ ONNX Runtime ↔ OpenVINO trên CPU                              |    5.6.3     |
 
 Thư mục còn **23 tệp JSON khác** thuộc các lượt đo trung gian đã bị lượt sau
 thay thế; chúng được giữ lại trong kho để đối chiếu lịch sử chứ không được trích
