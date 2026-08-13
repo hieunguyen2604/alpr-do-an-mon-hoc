@@ -271,8 +271,8 @@ Phần lớn ảnh xong dưới nửa giây; đuôi phải là những ảnh th�
 | Phát hiện | mAP50 **0,9829** · mAP50-95 **0,7834** · P **0,9837** · R **0,9714** | ✅ |
 | Đọc ký tự | Đúng từng ký tự **0,9454** | 🟡 |
 | Đọc chuỗi | Đúng cả chuỗi **0,7512** · đầu-cuối **0,5552** | ❌ |
-| Hiệu năng | p95 **1.143 ms** *(sàn 1.500)* · video **0,746×** · truy vấn **18,7 ms** | 🟡 |
-| Thời gian thực | Webcam **2,379 FPS** *(sàn 3)* | ❌ |
+| Hiệu năng | p95 **1.143 ms** *(sàn 1.500)* · video **0,785×** · truy vấn **18,7 ms** | 🟡 |
+| Thời gian thực | Webcam **5,257 FPS** *(sàn 3, mục tiêu 5)* | ✅ |
 | Độ tin cậy | Chạy liên tục **100%** · CSDL sống sót khởi động lại **0 mất** | ✅ |
 | Phần mềm | **1.000 test** · bao phủ 87,7% · `docker compose up` | ✅ |
 

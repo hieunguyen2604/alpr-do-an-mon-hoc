@@ -617,7 +617,7 @@ Vì mục tiêu triển khai là một lệnh `docker compose up`, và SQLite kh
 - **Hệ thống xuống cấp nhã nhặn**: ở mức đồng thời 10, độ trễ tăng tuyến tính nhưng **0 lỗi** — không timeout, không HTTP 5xx.
 - **Video được thiết kế để không chặn**: xử lý bất đồng bộ, trả `202 Accepted` kèm `job_id` ngay. Bắt buộc bởi NFR-SC3.
 
-**Cảnh báo.** NFR-P2 (FPS webcam) và NFR-P3 (video) **chưa đo trên `best.pt`** — nếu bị hỏi FPS webcam thì nói thẳng là chưa đo chế độ đó.
+**Số liệu thời gian thực.** NFR-P2 = **5,257 FPS** (sàn 3, mục tiêu 5) và NFR-P3 = **0,785×** thời gian thực, đo trên `best.pt` qua HTTP thật ngày 13/08. Dưới tải cạnh tranh nặng, xấu nhất đo được là 4,057 FPS — vẫn trên sàn. Nếu bị hỏi vì sao khác con số 2,379 từng ghi: xem mục 5.6.4, phép đo cũ chạy khi máy đang tải nặng và harness đã tự dán nhãn *bi quan*.
 
 ---
 
@@ -716,8 +716,8 @@ Sáu việc, theo thứ tự ưu tiên: thêm xác thực và phân quyền, chu
 |---|---|---|
 | 1 | Xác thực + phân quyền | Không có thì bất kỳ ai truy cập được mạng đều xem được toàn bộ lịch sử biển số — đây là dữ liệu có thể truy vết cá nhân |
 | 2 | SQLite → PostgreSQL | Một tiến trình ghi tại một thời điểm là giới hạn cứng |
-| 3 | Đo NFR-P2/P3 (webcam/video) | SC1 đồng thời đã đo (10, đạt); còn thiếu FPS webcam và tốc độ video |
-| 4 | ONNX Runtime | Đường tối ưu độ trễ đầu tiên, trước khi nghĩ tới giảm `imgsz` |
+| 3 | Chuyển bộ phát hiện sang OpenVINO | Đã đo: nhanh **1,57×**, mAP không giảm, đầu cuối +20% FPS — chỉ còn là quyết định bật |
+| 4 | Trần thời gian cho bậc thang thử-lại | Đường cắt đuôi độ trễ NFR-P1 mà không mất 34 biển đã mua được |
 | 5 | Giấy phép dữ liệu | Bộ dữ liệu hiện không ghi rõ giấy phép |
 | 6 | Giám sát | Cần biết mô hình xuống cấp khi phân phối dữ liệu thật lệch khỏi tập huấn luyện |
 

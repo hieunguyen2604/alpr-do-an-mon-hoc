@@ -229,8 +229,9 @@ cố thường gặp và lưu ý dung lượng image — ở `deployment/README.
 | Kiểm thử hồi quy   | Các ca lỗi đã từng xảy ra, mỗi ca một test để không tái diễn                       |
 
 **Lưu ý về kết quả kiểm thử.** Kết quả 0 thất bại thể hiện hệ thống đã vượt qua các kịch bản kiểm thử tự động được thiết lập, nhưng **không** đồng nghĩa với việc hoàn thành tất cả chỉ tiêu phi chức năng. Ba
-chỉ tiêu phi chức năng hiện không đạt (NFR-A5, A6, A7) và một chỉ tiêu trượt sàn
-(NFR-P2) — bảng đối chiếu đầy đủ ở mục 5.7 và phân tích ở mục 5.9.2.
+chỉ tiêu phi chức năng hiện không đạt (NFR-A5, A6, A7) và một chỉ tiêu chỉ đạt
+sàn chứ chưa đạt mục tiêu (NFR-P1) — bảng đối chiếu đầy đủ ở mục 5.7 và phân tích
+ở mục 5.9.2.
 
 Báo cáo kiểm thử chi tiết theo từng nhóm: `docs/reports/07-testing-report.md`.
 

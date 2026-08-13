@@ -1,0 +1,122 @@
+{
+  "generated_at": "2026-08-13T15:59:55",
+  "hardware": {
+    "cpu_name": "Intel(R) Core(TM) i5-14600K",
+    "physical_cores": 14,
+    "logical_cores": 20,
+    "ram_total_gb": 31.77,
+    "platform": "Windows 11",
+    "python_version": "3.13.12",
+    "competing_processes": [
+      "pid=2200 cpu=99% C:\\Users\\hieun\\AppData\\Local\\Programs\\Python\\Python313\\python.exe -c from multiprocessing.spawn import spawn_main; spawn",
+      "pid=7812 cpu=57% C:\\Program Files\\WindowsApps\\Claude_1.28929.0.0_x64__pzs8sxrjxfjjc\\app\\Claude.exe --type=renderer --user-data-dir=C:\\Use",
+      "pid=9096 cpu=98% C:\\Users\\hieun\\AppData\\Local\\Programs\\Python\\Python313\\python.exe -c from multiprocessing.spawn import spawn_main; spawn",
+      "pid=27520 cpu=100% C:\\Users\\hieun\\AppData\\Local\\Programs\\Python\\Python313\\python.exe -c from multiprocessing.spawn import spawn_main; spawn",
+      "pid=29336 cpu=100% C:\\Users\\hieun\\AppData\\Local\\Programs\\Python\\Python313\\python.exe -c from multiprocessing.spawn import spawn_main; spawn",
+      "pid=30216 cpu=100% C:\\Users\\hieun\\AppData\\Local\\Programs\\Python\\Python313\\python.exe -c from multiprocessing.spawn import spawn_main; spawn",
+      "pid=30228 cpu=100% C:\\Users\\hieun\\AppData\\Local\\Programs\\Python\\Python313\\python.exe -c from multiprocessing.spawn import spawn_main; spawn",
+      "pid=30444 cpu=100% C:\\Users\\hieun\\AppData\\Local\\Programs\\Python\\Python313\\python.exe -c from multiprocessing.spawn import spawn_main; spawn",
+      "pid=31496 cpu=98% C:\\Users\\hieun\\AppData\\Local\\Programs\\Python\\Python313\\python.exe -c from multiprocessing.spawn import spawn_main; spawn",
+      "pid=34008 cpu=97% C:\\Users\\hieun\\AppData\\Local\\Programs\\Python\\Python313\\python.exe -c from multiprocessing.spawn import spawn_main; spawn",
+      "pid=34316 cpu=100% C:\\Users\\hieun\\AppData\\Local\\Programs\\Python\\Python313\\python.exe -c from multiprocessing.spawn import spawn_main; spawn",
+      "pid=34820 cpu=99% C:\\Users\\hieun\\AppData\\Local\\Programs\\Python\\Python313\\python.exe -c from multiprocessing.spawn import spawn_main; spawn",
+      "pid=36320 cpu=99% C:\\Users\\hieun\\AppData\\Local\\Programs\\Python\\Python313\\python.exe -c from multiprocessing.spawn import spawn_main; spawn"
+    ]
+  },
+  "configuration": {
+    "model_path_effective": "models/best.pt",
+    "model_path_override": "models/best.pt",
+    "model_path_from_env_files": "D:\\DATN\\models\\best.pt",
+    "imgsz": 640,
+    "device": "cpu",
+    "conf_threshold": 0.25,
+    "frame_stride": 5,
+    "database_url": "sqlite:///D:/DATN/data/alpr.db",
+    "use_stub": false
+  },
+  "images_root": "D:\\DATN\\datasets\\processed\\yolo\\images\\test",
+  "server_log": "D:\\DATN\\docs\\reports\\37-nfr-p2-tai-nang.server.log",
+  "server_run_1": {
+    "ready_after_s": 7.35,
+    "health": {
+      "status": "ok",
+      "app_name": "Vietnamese ALPR API",
+      "version": "0.1.0",
+      "database_connected": true,
+      "model_loaded": true,
+      "uptime_seconds": 6.6026505999980145,
+      "timestamp": "2026-08-13T09:00:02.685354Z"
+    }
+  },
+  "nfr_p2_webcam_fps": {
+    "window_seconds": 60.15,
+    "virtual_capture_fps": 30.0,
+    "frames_offered_by_camera": 1804,
+    "frames_sent": 244,
+    "frames_succeeded": 244,
+    "frames_dropped_by_single_slot_queue": 1560,
+    "failure_count": 0,
+    "failures": [],
+    "plates_returned_total": 244,
+    "per_frame_latency_ms": {
+      "samples": 244,
+      "mean_ms": 228.88,
+      "p50_ms": 215.69,
+      "p95_ms": 268.4,
+      "p99_ms": 657.6,
+      "min_ms": 183.56,
+      "max_ms": 679.77
+    },
+    "effective_fps": 4.057,
+    "target_fps": 5.0,
+    "floor_fps": 3.0,
+    "status": "MARGINAL",
+    "measurement_note": "Measured over HTTP on the loopback interface. Excludes real camera capture, browser-side JPEG encoding and canvas draw time; a real webcam session would be slower. Upper bound, not a field figure."
+  },
+  "nfr_p3_video_throughput": {
+    "video": {
+      "path": "D:\\DATN\\demo\\demo-video.mp4",
+      "frame_count": 171,
+      "fps": 12.0,
+      "duration_s": 14.25,
+      "width": 960,
+      "height": 540
+    },
+    "frame_stride": 5,
+    "accepted_after_s": 0.04,
+    "total_wall_s": 25.446,
+    "poll_interval_s": 0.25,
+    "total_frames_reported": 171,
+    "processed_frames": 35,
+    "detection_count": 15,
+    "seconds_per_processed_frame": 0.727,
+    "realtime_ratio": 0.56,
+    "target_ratio": 0.3,
+    "floor_ratio": 0.15,
+    "status": "PASS",
+    "measurement_note": "Stopwatch spans upload -> terminal job state, including a 0.25 s polling granularity that is not subtracted. Only every 5th frame is analysed (ALPR_FRAME_STRIDE)."
+  },
+  "nfr_r4_soak": {
+    "status": "NOT_MEASURED",
+    "reason": "--skip-soak"
+  },
+  "nfr_r5_restart_durability": {
+    "status": "NOT_MEASURED",
+    "reason": "--skip-restart"
+  },
+  "summary": {
+    "requirements_checked": 4,
+    "passed": 1,
+    "not_passed": [
+      "NFR-P2",
+      "NFR-R4",
+      "NFR-R5"
+    ],
+    "verdicts": [
+      "NFR-P2 FPS webcam hiệu dụng: 4.057 -- MARGINAL",
+      "NFR-P3 Tỉ lệ so với thời gian thực: 0.56 -- PASS",
+      "NFR-R4 Tỉ lệ thành công khi chạy liên tục: None -- NOT_MEASURED",
+      "NFR-R5 Bản ghi mất sau khởi động lại: None -- NOT_MEASURED"
+    ]
+  }
+}

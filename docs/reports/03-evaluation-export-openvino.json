@@ -1,0 +1,95 @@
+{
+  "generated_at": "2026-08-13T08:49:43+00:00",
+  "model": {
+    "weights": "D:\\DATN\\models\\best_openvino_model",
+    "size_mb": 10.25
+  },
+  "dataset": {
+    "data_yaml": "D:\\DATN\\datasets\\processed\\yolo_v3\\data.yaml",
+    "split": "test",
+    "num_images": 1514,
+    "num_ground_truth_boxes": 1611,
+    "classes": {
+      "0": "license_plate"
+    },
+    "label_stats": {
+      "images_without_labels": 0,
+      "malformed_lines": 0,
+      "grouped_by_label": 0,
+      "grouped_by_class": 0,
+      "grouped_by_aspect_ratio": 1611
+    }
+  },
+  "settings": {
+    "imgsz": 640,
+    "conf": 0.25,
+    "iou": 0.45,
+    "device": "cpu",
+    "aspect_ratio_threshold": 2.5
+  },
+  "environment": {
+    "python": "3.13.12",
+    "platform": "Windows 11",
+    "processor": "Intel64 Family 6 Model 183 Stepping 1, GenuineIntel"
+  },
+  "metrics_reference_ultralytics": {
+    "mAP@0.5": 0.98286,
+    "mAP@0.5:0.95": 0.78141,
+    "precision": 0.98918,
+    "recall": 0.96463,
+    "f1": 0.97675
+  },
+  "metrics_overall": {
+    "group": "ALL",
+    "num_ground_truth": 1611,
+    "num_predictions": 1610,
+    "true_positives": 1568,
+    "false_positives": 42,
+    "false_negatives": 43,
+    "precision": 0.97391,
+    "recall": 0.97331,
+    "f1": 0.97361,
+    "mAP@0.5": 0.9718,
+    "mAP@0.5:0.95": 0.77454
+  },
+  "metrics_by_line_count": {
+    "single_line": {
+      "group": "single_line",
+      "num_ground_truth": 286,
+      "num_predictions": 285,
+      "true_positives": 283,
+      "false_positives": 2,
+      "false_negatives": 3,
+      "precision": 0.99298,
+      "recall": 0.98951,
+      "f1": 0.99124,
+      "mAP@0.5": 0.98846,
+      "mAP@0.5:0.95": 0.76942
+    },
+    "two_line": {
+      "group": "two_line",
+      "num_ground_truth": 1325,
+      "num_predictions": 1325,
+      "true_positives": 1285,
+      "false_positives": 40,
+      "false_negatives": 40,
+      "precision": 0.96981,
+      "recall": 0.96981,
+      "f1": 0.96981,
+      "mAP@0.5": 0.96823,
+      "mAP@0.5:0.95": 0.776
+    }
+  },
+  "nfr_a8_gap_ap50": 0.02023,
+  "inference_latency": {
+    "samples": 200,
+    "mean_ms": 34.21,
+    "p50_ms": 22.23,
+    "p95_ms": 41.75,
+    "p99_ms": 101.69,
+    "min_ms": 17.96,
+    "max_ms": 1730.68,
+    "fps_p50": 44.99
+  },
+  "plots": {}
+}
