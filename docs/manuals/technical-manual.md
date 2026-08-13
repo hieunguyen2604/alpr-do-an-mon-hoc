@@ -1160,9 +1160,13 @@ Tệp `.coveragerc` bật `branch = True`, đo `source = ai, backend`.
 > một phạm vi** (`ai` + `backend`) ở **hai thời điểm khác nhau**. Phải trích kèm mốc
 > và nguồn; không được trộn lẫn, và cũng không được chọn một con số rồi xoá con số kia.
 
-Số liệu kiểm thử (đã chạy lại và xác minh ngày 2026-07-20, lệnh
-`backend/.venv/Scripts/python.exe -m pytest -q` chạy từ gốc kho): **thu thập 882**
-test; lần chạy đầy đủ cho **881 pass, 1 `xfail` (lỗi đã biết, có mô tả), 0 fail,
+**Số liệu hiện hành (13/08/2026): thu thập 1.002 test, 1.002 pass, 0 fail, 0
+`xfail`, 17 cảnh báo.** `xfail` cuối cùng đã hết sau khi sửa lỗi `_create_job`
+không commit — một lần tải ảnh thất bại từng để lại 0 dòng trong cơ sở dữ liệu.
+
+Mốc cũ giữ lại để đối chiếu khi đọc tài liệu đời trước — đã chạy lại và xác minh
+ngày 2026-07-20, lệnh `backend/.venv/Scripts/python.exe -m pytest -q` chạy từ gốc
+kho: **thu thập 882** test; lần chạy đầy đủ cho **881 pass, 1 `xfail`, 0 fail,
 0 skip, 0 error, 17 cảnh báo**
 ([`docs/reports/13-refactor-result.json`](../reports/13-refactor-result.json)).
 Khi báo cáo phải nói rõ đang trích con số nào: **882 = số test *thu thập***,
