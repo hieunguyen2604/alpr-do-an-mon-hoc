@@ -109,8 +109,29 @@ def main() -> None:
                     tong += 1
                     hong[f.name].append(f"  {i:>5}  (trần) {m.group(0).strip()}")
 
+    # --- Duong dan anh -------------------------------------------------------
+    # Cong cu nay von chi kiem tham chieu MUC va BANG, khong kiem anh. Hau qua:
+    # mot dot chuan hoa tu ngu tung thay ca ten TEP anh -- "pipeline" thanh
+    # "duong ong", "layout" thanh "bo cuc" -- lam hong hai hinh trong ban mon
+    # hoc, va khong ai thay vi khong ai mo lai PDF ban do. Mot tham chieu anh
+    # chet khong bao loi luc dung: Pandoc van chay, PDF van ra, chi la thieu hinh.
+    so_anh = 0
+    for f in files:
+        for i, dong in enumerate(f.read_text(encoding="utf-8").splitlines(), 1):
+            for m in re.finditer(r"!\[[^\]]*\]\(([^)]+)\)", dong):
+                duong = m.group(1).split("#")[0].strip()
+                if duong.startswith(("http://", "https://", "data:")):
+                    continue
+                so_anh += 1
+                # Ban mon hoc nam o docs/papers/mon-hoc/ nhung dung chung thu
+                # muc anh voi ban chinh, va Pandoc phan giai theo docs/papers/.
+                # Vi vay phai thu CA HAI goc, khong chi thu muc cua tep chuong.
+                if not ((f.parent / duong).is_file() or (PAPERS / duong).is_file()):
+                    hong[f.name].append(f"  {i:>5}  (ảnh) {duong}")
+
     so_hong = sum(len(v) for v in hong.values())
     print(f"Tham chiếu kiểm được: {tong}")
+    print(f"Đường dẫn ảnh kiểm được: {so_anh}")
     print(f"Tham chiếu CHẾT     : {so_hong}\n")
 
     for ten in sorted(hong):

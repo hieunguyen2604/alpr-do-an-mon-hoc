@@ -71,7 +71,7 @@ Trọng số mô hình **không nằm trong ảnh Docker** mà được gắn t�
 
 ### B.2. Chạy trực tiếp trên máy, không dùng Docker
 
-Cần Python 3.12 trở lên và Node.js 18 trở lên. Đồ án dùng **ba môi trường ảo tách biệt**, và việc tách là bắt buộc: bộ phụ thuộc của thư viện nhận dạng ký tự hạ cấp NumPy và thay thư viện thị giác máy tính bằng một biến thể lùi một phiên bản lớn so với nhánh huấn luyện. Cài chung thì mỗi lần cài lại một nhánh sẽ âm thầm đổi phiên bản nhánh kia — lỗi không làm sập chương trình mà làm **kết quả đo không tái lập được**.
+Cần Python 3.12 trở lên và Node.js 18 trở lên. Đồ án dùng **một môi trường ảo duy nhất**; bản đầu từng tách làm ba vì: bộ phụ thuộc của thư viện nhận dạng ký tự hạ cấp NumPy và thay thư viện thị giác máy tính bằng một biến thể lùi một phiên bản lớn so với nhánh huấn luyện. Cài chung thì mỗi lần cài lại một nhánh sẽ âm thầm đổi phiên bản nhánh kia — lỗi không làm sập chương trình mà làm **kết quả đo không tái lập được**.
 
 ```
 python -m venv backend/.venv

@@ -414,7 +414,7 @@ Hai chi tiết về thứ tự này đáng nêu, vì đảo lại sẽ ra một 
 
 **Bước nắn hình không nằm trên đường chạy chính.** Nó thuộc bậc thang thử lại ở mục 3.4.6, chỉ chạy sau khi lần đọc đầu tiên đã thất bại.
 
-![](figures/fig-đường ống-strip.png)
+![](figures/fig-pipeline-strip.png)
 
 **Hình 3.3.** Toàn bộ chuỗi xử lý trên một biển thật, ảnh chụp sau từng bước
 
@@ -651,7 +651,7 @@ Phân rã lỗi ký tự cho một manh mối quan trọng: **số ký tự bị
 | **S₁** — đúng cả chuỗi, sau hậu xử lý | **0,9541** | **0,7234** | **23,07** |
 | Cải thiện nhờ hậu xử lý | +1,23 | **+16,34** | — |
 
-![](figures/fig-ch4-bố cục.png)
+![](figures/fig-ch4-layout.png)
 
 **Hình 4.1.** Đối chiếu biển một dòng và hai dòng trên ba chỉ số
 
@@ -910,7 +910,7 @@ Ngoài các con số, đồ án để lại **một quy trình đánh giá có k
 |:--:|---|:--:|---|
 | 1 | **Huấn luyện lại bộ nhận dạng ký tự riêng cho biển số Việt Nam** | 1 | Hướng quan trọng nhất. Phân tích ở mục 4.3.2 đã định vị điểm nghẽn nằm ở năng lực mô hình ký tự, không ở khâu xử lý ảnh |
 | 2 | **Mở rộng bảng ánh xạ nhầm lẫn khi ngữ liệu lớn hơn** | 1 | Vòng đầu **đã làm** và mua được 53 biển; năm mục còn lại chưa đủ bằng chứng (thắng dưới 10 lần) nên vẫn giữ phỏng đoán theo hình dạng — ngữ liệu lớn hơn sẽ quyết được |
-| 3 | Thu thập dữ liệu biển vàng, xanh, đỏ và ngoại giao | 2 | Điều kiện để mở rộng kết luận ra ngoài biển trắng |
+| 3 | Thu thập dữ liệu biển vàng, xanh, đỏ và ngoại giao | 2, 6 | Điều kiện để mở rộng kết luận ra ngoài biển trắng, và để hai nhánh biển đỏ · ngoại giao có số liệu đánh giá |
 | 4 | **Khử rò rỉ theo chuỗi biển số thay vì theo băm tri giác** | 3, 4 | Gom nhóm theo chuỗi ký tự thay vì theo tương đồng ảnh; giải đúng loại rò rỉ mà pHash không thấy |
 | 5 | Đo lại bậc siêu phân giải trên ngữ liệu có biển thật sự nhỏ | — | Mục 4.4.3: số 0 hiện tại do **thiếu điều kiện quan sát**, không phải do đã quan sát thấy vô dụng |
 | 6 | Tăng tốc khối nhận dạng: lượng tử hoá, đóng gói ONNX hoặc OpenVINO | 5 | Khối nhận dạng chiếm 64,3% ngân sách độ trễ (Bảng 4.10). Riêng bộ phát hiện đã đo: OpenVINO nhanh **1,57×** mà không giảm mAP |
@@ -1047,7 +1047,7 @@ Trọng số mô hình **không nằm trong ảnh Docker** mà được gắn t�
 
 ### B.2. Chạy trực tiếp trên máy, không dùng Docker
 
-Cần Python 3.12 trở lên và Node.js 18 trở lên. Đồ án dùng **ba môi trường ảo tách biệt**, và việc tách là bắt buộc: bộ phụ thuộc của thư viện nhận dạng ký tự hạ cấp NumPy và thay thư viện thị giác máy tính bằng một biến thể lùi một phiên bản lớn so với nhánh huấn luyện. Cài chung thì mỗi lần cài lại một nhánh sẽ âm thầm đổi phiên bản nhánh kia — lỗi không làm sập chương trình mà làm **kết quả đo không tái lập được**.
+Cần Python 3.12 trở lên và Node.js 18 trở lên. Đồ án dùng **một môi trường ảo duy nhất**; bản đầu từng tách làm ba vì: bộ phụ thuộc của thư viện nhận dạng ký tự hạ cấp NumPy và thay thư viện thị giác máy tính bằng một biến thể lùi một phiên bản lớn so với nhánh huấn luyện. Cài chung thì mỗi lần cài lại một nhánh sẽ âm thầm đổi phiên bản nhánh kia — lỗi không làm sập chương trình mà làm **kết quả đo không tái lập được**.
 
 ```
 python -m venv backend/.venv

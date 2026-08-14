@@ -96,7 +96,7 @@ Phân rã lỗi ký tự cho một manh mối quan trọng: **số ký tự bị
 | **S₁** — đúng cả chuỗi, sau hậu xử lý | **0,9541** | **0,7234** | **23,07** |
 | Cải thiện nhờ hậu xử lý | +1,23 | **+16,34** | — |
 
-![](figures/fig-ch4-bố cục.png)
+![](figures/fig-ch4-layout.png)
 
 **Hình 4.1.** Đối chiếu biển một dòng và hai dòng trên ba chỉ số
 
