@@ -1162,7 +1162,14 @@ def build_parser() -> argparse.ArgumentParser:
         default="runs/cpu-finetune-416/weights/best.pt",
         help="Detector weights for the NFR-A7 pass. Empty string skips E2E.",
     )
-    parser.add_argument("--detector-imgsz", type=int, default=416)
+    # Mac dinh PHAI lay tu cau hinh cua ban giao hang, khong duoc gan cung.
+    # Truoc day dong nay ghi cung 416 trong khi `best.pt` huan luyen o 640 va
+    # `.env` dat ALPR_IMGSZ=640. Ai chay lai NFR-A7 ma khong truyen tay tham so
+    # nay se do detector o sai do phan giai: ty le phat hien tut tu 0,8804 xuong
+    # 0,6109 va con so A7 thu duoc mo ta mot he thong khong ai giao.
+    parser.add_argument(
+        "--detector-imgsz", type=int, default=InferenceConfig.from_env().imgsz
+    )
     parser.add_argument(
         "--e2e-limit",
         type=int,
