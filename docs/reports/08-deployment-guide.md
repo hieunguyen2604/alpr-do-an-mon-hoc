@@ -17,21 +17,16 @@ nhận dạng đầu-cuối đã được kiểm chứng bằng `curl` từ **ng
 **Kết quả:** thành công, sau khi sửa **bốn lỗi thật** phát hiện trong quá trình
 build và chạy (mục 6).
 
-> ⚠️ **Đây là biên bản của lượt kiểm chứng Phase 8, không phải trạng thái hiện tại.**
-> Toàn bộ số đo dưới đây chạy trên `models/checkpoints/best-cpu-epoch7.pt` —
-> **checkpoint giữa chừng** của lượt baseline `imgsz=416`, **không phải mô hình
-> cuối cùng**. Checkpoint đó nay **đã gỡ khỏi kho** vì mọi số đo trên nó đã bị
-> bác bỏ.
+> **Đã chạy lại ngày 14/08/2026 trên bản giao hàng.** Image dựng lại từ mã hiện
+> tại (gồm cả bản sửa `_create_job`), container nạp đúng `/app/models/best.pt`.
+> Kết quả tóm tắt ở mục 5.3 và 6.1; số liệu thô:
+> [39-docker-e2e.json](39-docker-e2e.json).
 >
-> Giữ nguyên biên bản này vì nó chứng minh **đường dây triển khai hoạt động** và
-> ghi lại bốn lỗi thật đã gặp — phần đó không phụ thuộc mô hình nào. Nhưng
-> **không dùng số ở đây để nói về độ chính xác hay độ trễ của hệ thống**: số có
-> thẩm quyền nằm ở Chương 5 của quyển.
->
-> Cấu hình hiện tại của `docker-compose.yml` là `ALPR_MODEL_PATH=/app/models/best.pt`
-> (mặc định của `${ALPR_MODEL_FILE:-best.pt}`). **Chưa chạy lại lượt kiểm chứng
-> container trên cấu hình này** — cần chạy lại trước khi nộp nếu muốn có biên bản
-> khớp bản giao hàng.
+> Các mục **3 (thời gian build)** và **7 (bốn lỗi thật đã gặp)** giữ nguyên từ
+> lượt Phase 8 — chúng ghi lại quá trình dựng và gỡ lỗi, không phụ thuộc mô hình.
+> Riêng những số đo **độ chính xác** trong bản Phase 8 chạy trên checkpoint giữa
+> chừng `best-cpu-epoch7.pt` (nay đã xoá khỏi kho) nên **không dùng để nói về độ
+> chính xác của hệ thống** — số có thẩm quyền nằm ở Chương 5 của quyển.
 
 ---
 
@@ -195,13 +190,38 @@ Hai điểm đáng ghi nhận về **tính trung thực** của đường dây:
 
 ### 5.3. Kiểm chứng cấu hình bên trong container
 
+**Chạy lại 14/08/2026:**
+
 ```
 $ docker exec alpr-backend sh -c 'echo $ALPR_MODEL_PATH'
-/app/models/checkpoints/best-cpu-epoch7.pt
+/app/models/best.pt
+
+$ curl -s http://127.0.0.1:8000/health
+{"status":"ok","database_connected":true,"model_loaded":true, ...}
 
 $ docker exec alpr-backend touch /app/models/x
 touch: cannot touch '/app/models/x': Read-only file system    # ✅ mount :ro có hiệu lực
 ```
+
+---
+
+### 5.4. ⚠ Cạm bẫy đo lường: `localhost` trên Windows cộng thêm ~2,1 giây
+
+Khi chạy lại lượt đo này, mọi yêu cầu qua `http://localhost:8000` mất **~2.300 ms**
+trong khi máy chủ tự báo `processing_time` chỉ **~200 ms**. Khoảng chênh **không
+phụ thuộc kích thước ảnh** — ảnh 33 KB và ảnh 516 KB đều cộng đúng ~2.100 ms —
+nên nó không thể là băng thông.
+
+Nguyên nhân: máy khách phân giải `localhost` ra IPv6 `::1` trước, chờ hết giờ rồi
+mới lùi về IPv4. Đổi sang `127.0.0.1` thì overhead rơi từ **2.083 ms xuống 58 ms**.
+
+| Địa chỉ | Tương tác (trung vị) | Máy chủ tự báo | Overhead |
+|---|---:|---:|---:|
+| `localhost` | 2.286 ms | 201 ms | **2.083 ms** |
+| `127.0.0.1` | **372 ms** | 314 ms | **58 ms** |
+
+**Ai đo container qua `localhost` trên Windows sẽ công bố một con số cao gấp bảy
+lần sự thật.** Luôn dùng `127.0.0.1` khi đo.
 
 ---
 
@@ -212,24 +232,32 @@ touch: cannot touch '/app/models/x': Read-only file system    # ✅ mount :ro c�
 
 ### 6.1. Độ trễ đầu-cuối một ảnh (NFR-P1)
 
-10 lần gọi liên tiếp `POST /api/detect/image` với `1dong-1.png` (380×285):
+**Đo lại 14/08/2026** trên bản giao hàng: **30 ảnh khác nhau** lấy từ tập test,
+mỗi ảnh gọi `POST /api/detect/image` một lần qua `127.0.0.1` (xem cạm bẫy 5.4):
 
 | Chỉ số | Giá trị |
-|---|---|
-| min | 683 ms |
-| trung vị | 718 ms |
-| **p95** | **823 ms** |
-| max | 823 ms |
+|---|---:|
+| min | 163 ms |
+| trung vị | 288 ms |
+| **p95** | **319 ms** |
+| max | 333 ms |
+| Suy luận thuần (máy chủ tự báo), trung vị | 253 ms |
 
 | Chỉ tiêu | Ngưỡng | Đo được | Kết luận |
-|---|---|---|---|
-| NFR-P1 mục tiêu | p95 ≤ 800 ms | 823 ms | ⚠️ **vượt 23 ms** |
-| NFR-P1 ngưỡng tối thiểu | p95 ≤ 1500 ms | 823 ms | ✅ đạt |
+|---|---|---:|---|
+| NFR-P1 mục tiêu | p95 ≤ 800 ms | **319 ms** | ✅ đạt, biên 2,5× |
+| NFR-P1 ngưỡng tối thiểu | p95 ≤ 1500 ms | **319 ms** | ✅ đạt |
 
-**Chưa nên kết luận là "không đạt".** Cỡ mẫu chỉ 10 lần, p95 trên 10 mẫu thực
-chất là giá trị lớn nhất — thống kê rất yếu. Ngoài ra container mới chỉ được
-cấp 4 nhân trong khi máy chủ có 20 luồng. Cần đo lại với ≥ 100 mẫu, trên mô
-hình cuối, trước khi chốt kết luận cho luận văn.
+**Không được đọc con số này như "NFR-P1 trong Docker tốt hơn khi chạy trực tiếp".**
+Chỉ tiêu NFR-P1 công bố ở Chương 5 là **1.143,10 ms p95**, đo trên ngữ liệu khác
+và **có bậc thang thử-lại nổ** — bậc thang chỉ chạy sau khi đọc hỏng, nên ngữ liệu
+nào nhiều biển khó thì đuôi dài ra. 30 ảnh ở đây không đủ để chạm vào đuôi đó.
+Điều lượt đo này chứng minh là **đóng gói container không thêm chi phí đáng kể**,
+không phải là một con số NFR-P1 mới.
+
+Lượt Phase 8 trước đó cho p95 = 823 ms trên **10 lần gọi cùng một ảnh**, chạy trên
+checkpoint giữa chừng; chính bản báo cáo khi đó đã tự ghi *"chưa nên kết luận"* vì
+cỡ mẫu quá nhỏ. Lượt này thay thế nó.
 
 Ảnh nhiều biển tốn nhiều hơn hẳn: `nhieu-bien-1.png` (3 biển, 600×450) mất
 **2,50 s**, vì OCR chạy một lần cho mỗi biển.
