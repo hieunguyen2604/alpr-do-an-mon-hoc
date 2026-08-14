@@ -163,3 +163,8 @@ reference-thesis.docx
 # la gi va chay lenh nao de co no.
 /nop/*
 !/nop/README.md
+
+# sentrux — cong cu phan tich kien truc CHAY NGOAI, khong phai phu thuoc
+# cua do an: khong tai lieu, ma nguon hay kich ban dung nao nhac toi no.
+# Giu tep tren may de dung lai, nhung khong dua vao ban nop.
+.sentrux/
