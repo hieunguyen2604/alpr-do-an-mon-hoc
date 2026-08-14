@@ -74,9 +74,9 @@ Ghi chú: AD-03 không đổi sau khi gỡ trang Webcam vì ở ~5 FPS trên CPU
 
 Toàn bộ cài đặt, kiểm thử và đo đạc chạy trên một máy trạm duy nhất: Windows 11 Pro; Intel Core i5-14600K, 14 nhân / 20 luồng; RAM 31,77 GiB; Intel UHD 770 — **không có GPU CUDA**; Python 3.13.12; Node.js 18.20.8; Docker 29.4.3. Cấu hình này **mâu thuẫn với mô tả môi trường ban đầu** (macOS Apple Silicon, Python 3.12); ghi nhận sai lệch thành văn bản là bước đầu của giai đoạn phân tích yêu cầu. Ràng buộc CPU để lại dấu vết cụ thể: NFR-P1 phát biểu thẳng cho CPU; AD-06 kéo theo `yolo11n` và PP-OCRv5 mobile; và vì huấn luyện trên CPU mất 1–3 ngày mỗi lượt, quy trình huấn luyện chạy được cả trên máy cá nhân lẫn nền tảng đám mây, với toàn bộ siêu tham số đặt trong một tệp cấu hình duy nhất. Trước khi bật bậc thử lại, p95 đầu cuối trên `models/best.pt` là **731 ms** (client-side) / **780 ms** (in-process); phép đo này dùng để định lượng đánh đổi. Ở cấu hình giao hàng, p95 chính thức là **1.143,10 ms**, đạt ngưỡng tối thiểu 1.500 ms nhưng chưa đạt mục tiêu 800 ms. Phân rã suy luận thuần cho thấy OCR chiếm **~64,3%**, phát hiện **~34,2%** (đối chiếu NFR-P1 ở 4.10).
 
-### 4.3.2. Ba môi trường ảo Python tách biệt và bộ công cụ
+### 4.3.2. Môi trường Python và bộ công cụ
 
-Nhóm thực hiện dùng **ba môi trường ảo tách biệt**: một môi trường cho huấn luyện và xuất mô hình, một môi trường cho thử nghiệm nhận dạng ký tự, và một môi trường cho dịch vụ đang vận hành. Việc tách là bắt buộc vì thư viện nhận dạng ký tự kéo theo một bộ phụ thuộc **hạ cấp NumPy và thay thư viện thị giác máy tính bằng một biến thể lùi một phiên bản lớn** so với nhánh huấn luyện; nếu cài chung thì mỗi lần cài lại một nhánh âm thầm đổi phiên bản nhánh kia — lỗi không làm sập chương trình mà làm **kết quả đo không tái lập được**. Phân tách phản ánh ở `requirements.txt` và `requirements-inference.txt`, được `Dockerfile.backend` cài theo hai lớp riêng (4.9).
+Trong giai đoạn huấn luyện, nhóm thực hiện dùng **ba môi trường ảo tách biệt** — một cho huấn luyện và xuất mô hình, một cho tầng nhận dạng ký tự, một cho máy chủ — vì cài `paddleocr` vào môi trường đang huấn luyện sẽ hạ cấp `numpy` và kéo theo một gói thứ hai cùng ghi vào không gian tên `cv2`. Không được để điều đó xảy ra giữa một lượt huấn luyện kéo dài mười giờ. **Việc tách là tạm thời và nay đã kết thúc:** bản giao hàng chỉ còn một môi trường, và xung đột được hoá giải bằng cách ghim mọi gói cùng ghi vào `cv2` về **cùng một phiên bản**.
 
 **Bộ công cụ:** FastAPI + Uvicorn; SQLAlchemy 2.x + Alembic; Pydantic v2; Ultralytics 8.4.101 chạy YOLO11 [9]<!-- jocher_2024_yolo11 -->; PaddleOCR 3.7.0 cho PP-OCRv5 [10]<!-- cui_2026_ppocrv5 -->; Vite + React + TypeScript; pytest + pytest-cov; Docker Compose. Docker dùng Python 3.12 trong khi local dùng 3.13 là **chủ ý**: container là nơi lấy lại phiên bản mục tiêu (NFR-C1).
 
@@ -280,6 +280,37 @@ Cần lưu ý rằng phần lớn sự cố gặp phải trong quá trình cài 
 
 **a) Lược đồ.** Cơ sở dữ liệu gồm hai bảng có quan hệ một–nhiều: bảng tác vụ ghi nhận mỗi lần sử dụng hệ thống, và bảng lịch sử ghi nhận mỗi biển số được phát hiện. Việc tách thành hai bảng là điều kiện để thống kê đếm đúng, bởi _lượt nhận dạng_ và _biển số phát hiện được_ là hai đại lượng khác nhau: một ảnh chứa ba phương tiện tạo ra một lượt và ba bản ghi. Gộp hai khái niệm sẽ làm số lượt sử dụng bị đánh giá cao hơn thực tế đúng bằng số biển số trung bình trên mỗi ảnh.
 
+<!-- {{T4.7}} luoc do hai bang cua co so du lieu -->
+
+**Bảng 4.5.** Lược đồ cơ sở dữ liệu — hai bảng, quan hệ một–nhiều
+
+| Bảng | Cột | Kiểu | Ghi chú |
+|---|---|---|---|
+| **`detection_job`** _(11 cột)_ | `id` | `VARCHAR(36)` | Khoá chính, UUID |
+| | `input_type` · `status` | `VARCHAR(16)` | `image`\|`video`\|`webcam`; `pending`\|`processing`\|`completed`\|`failed`\|`cancelled` |
+| | `progress` | `FLOAT` | 0,0 – 1,0 |
+| | `source_path` · `output_path` | `VARCHAR(512)` | Cho phép rỗng |
+| | `error_message` | `TEXT` | Chỉ phía máy chủ, không trả ra API |
+| | `total_frames` · `processed_frames` | `INTEGER` | Dùng cho tác vụ video |
+| | `created_at` · `completed_at` | `DATETIME` | |
+| **`detection_history`** _(23 cột)_ | `id` | `INTEGER` | Khoá chính |
+| | `plate_number` · `raw_ocr_text` | `VARCHAR(32)` | **Lưu song song** chuỗi đã chuẩn hoá và chuỗi thô |
+| | `confidence` · `ocr_confidence` | `FLOAT` | Của **bộ phát hiện** và của **bộ nhận dạng** — hai đại lượng khác nhau |
+| | `image_path` · `plate_image_path` | `VARCHAR(512)` | Ảnh gốc và vùng biển đã cắt |
+| | `bbox_x` · `bbox_y` · `bbox_w` · `bbox_h` | `INTEGER` | Hộp giới hạn |
+| | `is_valid_format` | `BOOLEAN` | Có khớp quy chuẩn Việt Nam không |
+| | `plate_line_count` · `upper_char_count` | `INTEGER` | 1 hoặc 2 dòng; số ký tự dòng trên (3 hoặc 4) |
+| | `plate_kind` · `plate_color` · `plate_color_confidence` | `VARCHAR(16)` · `FLOAT` | Họ biển và màu nền, cho phép rỗng |
+| | `video_time_seconds` | `FLOAT` | Mốc thời gian trong video, rỗng với ảnh tĩnh |
+| | `processing_time` · `detected_time` · `created_at` | `FLOAT` · `DATETIME` | |
+| | `source_job_id` | `VARCHAR(36)` | **Khoá ngoại** trỏ `detection_job.id` |
+
+Ba cột đáng chú ý vì chúng là **hệ quả trực tiếp của các quyết định đã nêu**:
+`raw_ocr_text` cho phép đo đóng góp thuần của khối hậu xử lý (mục 5.5.2);
+`source_job_id` gom nhiều biển của cùng một lần tải lên về một nhóm, nếu thiếu
+thì thống kê đếm sai; và `upper_char_count` lưu *bằng chứng* để suy ra cách trình
+bày biển hai dòng lúc đọc, thay vì đoán từ chuỗi phẳng vốn nhập nhằng.
+
 **b) Hai quyết định thiết kế dữ liệu đáng chú ý.** Thứ nhất, chuỗi ký tự thô do bộ nhận dạng trả về và chuỗi đã qua chuẩn hoá được lưu song song trong hai cột riêng biệt. Đây là điều kiện cần để định lượng đóng góp của khối hậu xử lý: hiệu số giữa độ chính xác tính trên hai cột này chính là chỉ số NFR-A6 trừ NFR-A5 báo cáo ở mục 5.5.2. Thứ hai, hệ thống lưu số ký tự thuộc dòng trên của biển hai dòng, nhằm giải quyết một trường hợp nhập nhằng về nguyên tắc: chuỗi tám ký tự của biển hai dòng có thể được nhóm theo hai cách đều hợp lệ, và ranh giới giữa hai dòng — thông tin duy nhất phân định được — bị chính bước ghép ngang loại bỏ. Giá trị này thu được không tốn thêm chi phí tính toán vì bộ nhận dạng trả về một mảnh kết quả cho mỗi nửa ảnh.
 
 ### 4.7.3. Giao diện lập trình
@@ -326,7 +357,7 @@ Nguyên tắc: **mọi điểm lệch đều được nêu, kể cả những đ
 
 <!-- {{T4.10a}} tong hop cac diem lech giua thiet ke va cai dat -->
 
-**Bảng 4.5.** Tổng hợp chín điểm lệch giữa thiết kế và cài đặt
+**Bảng 4.6.** Tổng hợp chín điểm lệch giữa thiết kế và cài đặt
 
 |  #  | Thiết kế                                          | Cài đặt thực tế                                                             | Loại lệch                       | Trạng thái             |
 | :-: | ------------------------------------------------- | --------------------------------------------------------------------------- | ------------------------------- | ---------------------- |
