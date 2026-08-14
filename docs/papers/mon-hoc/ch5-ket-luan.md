@@ -10,15 +10,15 @@
 |---|:--:|:--:|---:|:--:|
 | mAP@0,5 · mAP@0,5:0,95 của bộ phát hiện | 0,85 · 0,55 | 0,90 · 0,65 | **0,9829 · 0,7834** | ✅ |
 | Precision · Recall | 0,88 · 0,85 | 0,92 · 0,90 | **0,9837 · 0,9714** | ✅ |
-| **C** — đúng mức ký tự | 0,92 | 0,95 | **0,9454** | 🟡 |
-| **S₀ → S₁** — đúng cả chuỗi | 0,80 → 0,85 | 0,85 → 0,90 | **0,6373 → 0,7512** | ❌ |
+| **C** — đúng mức ký tự | 0,92 | 0,95 | **0,9483** | 🟡 |
+| **S₀ → S₁** — đúng cả chuỗi | 0,80 → 0,85 | 0,85 → 0,90 | **0,6373 → 0,7701** | ❌ |
 | Độ trễ một ảnh, p95, trên CPU | ≤ 1.500 ms | ≤ 800 ms | **1.143,10 ms** | 🟡 |
 
 **Vạch ngăn giữa "đạt" và "không đạt" trùng khít vạch ngăn giữa hai tầng:** mọi chỉ tiêu của bộ phát hiện đều đạt với biên rộng, còn chỉ tiêu độ chính xác chuỗi đầy đủ thì không. Và phần thiếu hụt đó **nằm gần như trọn ở biển hai dòng** — biển một dòng đạt S₁ = 0,9541, vượt cả mục tiêu.
 
 Ba đại lượng đo được đáng ghi nhận, đều liên quan trực tiếp tới nội dung môn học:
 
-**Một — đóng góp thuần của khối hậu xử lý: +11,39 điểm**, sửa đúng 319 biển và làm hỏng 0 biển trên 2.801 mẫu, với chi phí tính toán 0,03 ms mỗi biển. Con số này chỉ đo được nhờ một quyết định thiết kế dữ liệu từ đầu: **lưu song song chuỗi thô và chuỗi đã chuẩn hoá**.
+**Một — đóng góp thuần của khối hậu xử lý: +13,28 điểm**, sửa đúng 372 biển và làm hỏng 0 biển trên 2.801 mẫu, với chi phí tính toán 0,03 ms mỗi biển. Con số này chỉ đo được nhờ một quyết định thiết kế dữ liệu từ đầu: **lưu song song chuỗi thô và chuỗi đã chuẩn hoá**.
 
 **Hai — bước tách rồi ghép ngang đóng góp 34,92 điểm cho PaddleOCR nhưng chỉ 0,03 điểm cho Tesseract.** Đây là kết quả khác với dự đoán ban đầu và làm **yếu đi** khẳng định ban đầu: phép biến đổi ảnh này là **điều kiện cần, không đủ**. Nó biến bài toán đa dòng thành bài toán một dòng, nhưng bộ nhận dạng vẫn phải đủ mạnh để tận dụng.
 
@@ -32,7 +32,7 @@ Ngoài các con số, đồ án để lại **một quy trình đánh giá có k
 
 | # | Hạn chế | Mức | Hệ quả |
 |:--:|---|:--:|---|
-| 1 | **Nhận dạng biển hai dòng còn yếu** | Cao | S₁ = 0,6996 so với 0,9541 của biển một dòng — điểm nghẽn lớn nhất |
+| 1 | **Nhận dạng biển hai dòng còn yếu** | Cao | S₁ = 0,7234 so với 0,9541 của biển một dòng — điểm nghẽn lớn nhất |
 | 2 | **Bộ dữ liệu lệch nặng về biển trắng** (97,68%) | Cao | Kết luận về độ chính xác nhận dạng **chỉ áp cho biển trắng** |
 | 3 | **Rò rỉ dữ liệu tồn dư** không khử được bằng băm tri giác | Cao | Băm tri giác tóm tắt bố cục khung ảnh, không tóm tắt chiếc xe (mục 3.2.3) |
 | 4 | Tập kiểm thử **không xuyên bộ dữ liệu** | Trung bình | mAP 0,9829 lạc quan hơn mức gặp khi triển khai với nguồn ảnh mới |

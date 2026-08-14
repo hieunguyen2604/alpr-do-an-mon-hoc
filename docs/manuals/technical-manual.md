@@ -1402,7 +1402,7 @@ hợp đồng mà detector thực thi. Kiểm chứng 13/08/2026: `build_pipelin
 
 > **Nguồn số liệu duy nhất là Chương 5 của quyển đồ án.** Trước đây mục này
 > chép lại bảng đối chiếu chỉ tiêu vào sổ tay, và hai bản đã trôi xa nhau: sổ
-> tay còn ghi A4 = 0,8734 và "NFR-P2 chưa đo" trong khi quyển đã ghi 0,9454 và
+> tay còn ghi A4 = 0,8734 và "NFR-P2 chưa đo" trong khi quyển đã ghi 0,9483 và
 > 5,257 FPS. Nay sổ tay **không chép lại số nữa** — chỉ nêu hạng mục còn hở và
 > trỏ về nơi có số.
 

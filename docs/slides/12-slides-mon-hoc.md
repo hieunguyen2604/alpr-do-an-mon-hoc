@@ -126,10 +126,10 @@ Phát hiện **đạt cả bốn chỉ tiêu**; phần thiếu nằm trọn ở 
 |---|---:|---:|:--:|
 | mAP@0,5 · mAP@0,5:0,95 | **0,9829** · 0,7834 | 0,90 · 0,65 | ✅ |
 | Precision · Recall | 0,9837 · 0,9714 | 0,92 · 0,90 | ✅ |
-| Đúng mức ký tự (1 − CER) | **0,9454** | 0,95 | 🟡 |
-| Đúng cả chuỗi, sau hậu xử lý | **0,7512** | 0,90 | ❌ |
+| Đúng mức ký tự (1 − CER) | **0,9483** | 0,95 | 🟡 |
+| Đúng cả chuỗi, sau hậu xử lý | **0,7701** | 0,90 | ❌ |
 | — riêng biển **một dòng** | **0,9541** | 0,90 | ✅ |
-| — riêng biển **hai dòng** | **0,6996** | 0,90 | ❌ |
+| — riêng biển **hai dòng** | **0,7234** | 0,90 | ❌ |
 | Độ trễ p95 · trung vị, CPU | **1.143** · 406 ms | ≤ 800 ms | 🟡 |
 
 ## Khoảng cách nằm ở đâu
@@ -151,7 +151,7 @@ Mọi bước bật tắt độc lập, nên đóng góp của từng bước **
 | Bước xử lý ảnh | cải thiện được | Giá phải trả |
 |---|---:|---|
 | **Tách hai nửa + ghép ngang** | **+34,92 điểm** | ~0 ms |
-| **Bộ luật hậu xử lý** | **+11,39 điểm** · 319 sửa đúng, **0 hỏng** | 0,03 ms |
+| **Bộ luật hậu xử lý** | **+13,28 điểm** · 372 sửa đúng, **0 hỏng** | 0,03 ms |
 | Nắn hình + giãn dọc | **+34 biển** | +244 ms ở p95 |
 | Siêu phân giải — đã **tắt** | **0 biển**, nhưng **0/120 mẫu lọt cổng** | +319 ms p95 |
 | *Đối chứng:* tách-ghép trên **Tesseract** | **+0,03 điểm** | — |
@@ -181,7 +181,7 @@ Khởi động bằng một lệnh `docker compose up`; giao diện hiện **c�
 
 - Chạy đầu cuối trên máy **không có GPU**: bộ phát hiện đạt **mAP@0,5 = 0,9829**
 - Bài toán biển hai dòng giải bằng **phép biến đổi ảnh**, không bằng mô hình mạnh hơn — đóng góp **34,92 điểm**
-- Hậu xử lý theo vị trí đóng góp **+11,39 điểm**, **0 ca làm hỏng** trên 2.801 biển
-- Phần chưa đạt: đọc đúng cả chuỗi **0,7512** so với ngưỡng 0,85, khoảng cách nằm trọn ở biển hai dòng
+- Hậu xử lý theo vị trí đóng góp **+13,28 điểm**, **0 ca làm hỏng** trên 2.801 biển
+- Phần chưa đạt: đọc đúng cả chuỗi **0,7701** so với ngưỡng 0,85, khoảng cách nằm trọn ở biển hai dòng
 
 **Xin cảm ơn thầy cô và các bạn đã lắng nghe.**

@@ -175,7 +175,7 @@ Mỗi slide gồm bốn phần:
 - Sơ đồ quy tắc vị trí tỉnh (2 số đầu), seri (chữ cái), và dãy số cuối
 
 **Speaker notes** *(40 s)*
-> Bộ luật hậu xử lý áp dụng quy tắc định dạng theo đúng vị trí pháp lý Việt Nam: 2 vị trí đầu bắt buộc là mã tỉnh (chỉ sửa số nhầm thành chữ, ví dụ `B` $\rightarrow$ `8`), vị trí seri bắt buộc là chữ cái, và các vị trí cuối là chữ số. Việc sửa theo vị trí giúp tăng +11,39 điểm mà không làm hỏng biển đang đúng.
+> Bộ luật hậu xử lý áp dụng quy tắc định dạng theo đúng vị trí pháp lý Việt Nam: 2 vị trí đầu bắt buộc là mã tỉnh (chỉ sửa số nhầm thành chữ, ví dụ `B` $\rightarrow$ `8`), vị trí seri bắt buộc là chữ cái, và các vị trí cuối là chữ số. Việc sửa theo vị trí giúp tăng +13,28 điểm mà không làm hỏng biển đang đúng.
 
 ---
 
@@ -254,9 +254,9 @@ Mỗi slide gồm bốn phần:
 ## S19 — Kết quả OCR
 
 **Nội dung trên slide**
-- Đúng từng ký tự: **0,9454** (🟡 Đạt ngưỡng tối thiểu)
-- Đúng cả chuỗi sau hậu xử lý: **0,7512** (❌ Chưa đạt mục tiêu 0,85)
-- Toàn bộ khoảng cách nằm ở biển 2 dòng: 0,6996 so với 0,9541 của biển 1 dòng
+- Đúng từng ký tự: **0,9483** (🟡 Đạt ngưỡng tối thiểu)
+- Đúng cả chuỗi sau hậu xử lý: **0,7701** (❌ Chưa đạt mục tiêu 0,85)
+- Toàn bộ khoảng cách nằm ở biển 2 dòng: 0,7234 so với 0,9541 của biển 1 dòng
 
 **Speaker notes** *(50 s)*
 > Ở tầng nhận dạng OCR, nhóm công khai trung thực: Độ chính xác đúng từng ký tự đạt 94,54%, nhưng đúng cả chuỗi chỉ đạt 75,12% — chưa đạt mục tiêu 0,85. Phân tích sâu cho thấy toàn bộ khoảng cách này dồn vào biển 2 dòng xe máy (chỉ đạt 69,96%), trong khi biển 1 dòng ô tô đạt tới 95,41%.
@@ -277,11 +277,11 @@ Mỗi slide gồm bốn phần:
 ## S21 — Đóng góp của hậu xử lý — đo được bằng số
 
 **Nội dung trên slide**
-- Sửa đúng **319 biển**, làm hỏng **0 biển**
+- Sửa đúng **372 biển**, làm hỏng **0 biển**
 - Biểu đồ minh hoạ mức tăng độ chính xác trước và sau hậu xử lý
 
 **Speaker notes** *(40 s)*
-> Nhờ lưu vết cột `raw_ocr_text`, nhóm đo được đóng góp thực tế của Bộ luật hậu xử lý theo vị trí: sửa đúng 319 biển số từ sai thành đúng và không làm hỏng bất kỳ biển nào đang đúng, đưa độ chính xác từ 63,73% lên 75,12%.
+> Nhờ lưu vết cột `raw_ocr_text`, nhóm đo được đóng góp thực tế của Bộ luật hậu xử lý theo vị trí: sửa đúng 372 biển số từ sai thành đúng và không làm hỏng bất kỳ biển nào đang đúng, đưa độ chính xác từ 63,73% lên 75,12%.
 
 ---
 
@@ -289,7 +289,7 @@ Mỗi slide gồm bốn phần:
 
 **Nội dung trên slide**
 - Thu hẹp khoảng cách 2 dòng từ **48,6 điểm** *(Laroca 2022)* xuống **25,4 điểm**
-- Bảng thu hoạch từ 3 can thiệp kỹ thuật (+11,39 pt, rescue 209 biển, nắn hình 34 biển)
+- Bảng thu hoạch từ 3 can thiệp kỹ thuật (+13,28 pt, rescue 209 biển, nắn hình 34 biển)
 
 **Speaker notes** *(45 s)*
 > Ba can thiệp bên ngoài mô hình nhận dạng đã giúp nâng độ chính xác từ 60,98% lên 75,12%, thu hẹp khoảng cách bố cục từ 48,6 điểm xuống 25,4 điểm. Phân tích cho thấy dư địa xử lý bên ngoài đã cạn, các lỗi còn lại do ký tự mờ chưa từng được OCR đọc ra.
@@ -355,10 +355,10 @@ Mỗi slide gồm bốn phần:
 ## S28 — Hạn chế
 
 **Nội dung trên slide**
-- Bảng phân tích 5 hạn chế và nguyên nhân gốc (Biển 2 dòng chưa đạt, số đầu-cuối 0,5552 chưa đại diện, 97,7% là biển trắng)
+- Bảng phân tích 5 hạn chế và nguyên nhân gốc (Biển 2 dòng chưa đạt, số đầu-cuối không đo được một cách có ý nghĩa, 97,7% là biển trắng)
 
 **Speaker notes** *(40 s)*
-> Nhóm nhìn nhận thẳng thắn các hạn chế: Biển 2 dòng chưa đạt do bộ đọc OCR dòng đơn; chỉ số đầu-cuối 0,5552 chưa đại diện do thiếu tập nhãn toàn cảnh; và tập dữ liệu chủ yếu là biển trắng, chưa đủ mẫu biển vàng, xanh hay ngoại giao.
+> Nhóm nhìn nhận thẳng thắn các hạn chế: Biển 2 dòng chưa đạt do bộ đọc OCR dòng đơn; chỉ số đầu-cuối không đo được có ý nghĩa do thiếu tập nhãn toàn cảnh — con số đại diện là 17 trên 22 biển ở ảnh toàn cảnh; và tập dữ liệu chủ yếu là biển trắng, chưa đủ mẫu biển vàng, xanh hay ngoại giao.
 
 ---
 
@@ -376,7 +376,7 @@ Mỗi slide gồm bốn phần:
 ## S30 — Kết luận
 
 **Nội dung trên slide**
-- Đã làm được: Hệ thống 5 tầng chạy thật, Docker 1 lệnh, mAP 0,983, +11,39 pt hậu xử lý
+- Đã làm được: Hệ thống 5 tầng chạy thật, Docker 1 lệnh, mAP 0,983, +13,28 pt hậu xử lý
 - Đóng góp học thuật: Tách bạch con số 1 dòng/2 dòng, quy trình đo tự phát hiện lỗi
 
 **Speaker notes** *(40 s)*
@@ -430,10 +430,10 @@ Mỗi slide gồm bốn phần:
 ## S35 — Backup 4 — Bóc tách đóng góp kỹ thuật (Ablation Study)
 
 **Nội dung trên slide**
-- Bảng bóc tách đóng góp độc lập: Baseline 0,6373 $\rightarrow$ Pos-rules +11,39 pt $\rightarrow$ Rescue dòng trên 209 biển $\rightarrow$ Nắn góc 34 biển
+- Bảng bóc tách đóng góp độc lập: Baseline 0,6373 $\rightarrow$ Pos-rules +13,28 pt $\rightarrow$ Rescue dòng trên 209 biển $\rightarrow$ Nắn góc 34 biển
 
 **Speaker notes (Dùng khi Hội đồng hỏi về Ablation Study / Đóng góp từng phần)**
-> Kết quả bóc tách chứng minh: Bộ luật hậu xử lý theo vị trí đóng góp +11,39 điểm; cơ chế Rescue dòng trên cứu 209 biển và nắn hình cứu 34 biển. Thử nghiệm fine-tune OCR trực tiếp bị sụt -7,5 điểm do lệch phân phối với bước dò chữ.
+> Kết quả bóc tách chứng minh: Bộ luật hậu xử lý theo vị trí đóng góp +13,28 điểm; cơ chế Rescue dòng trên cứu 209 biển và nắn hình cứu 34 biển. Thử nghiệm fine-tune OCR trực tiếp bị sụt -7,5 điểm do lệch phân phối với bước dò chữ.
 
 ---
 

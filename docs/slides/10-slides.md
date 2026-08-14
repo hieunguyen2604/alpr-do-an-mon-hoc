@@ -204,14 +204,14 @@ Mọi vùng dữ liệu xử lý đủ **4 trạng thái**: chờ · rỗng · l
 
 ## Kết quả OCR
 
-Toàn bộ khoảng cách nằm ở **biển 2 dòng**: 0,6996 so với **0,9541** của biển 1 dòng
+Toàn bộ khoảng cách nằm ở **biển 2 dòng**: 0,7234 so với **0,9541** của biển 1 dòng
 
 | Đo cái gì | Đo được | Ngưỡng | |
 |---|---:|---:|:--:|
-| Đúng từng **ký tự** | **0,9454** | 0,92 | 🟡 |
+| Đúng từng **ký tự** | **0,9483** | 0,92 | 🟡 |
 | Đúng **cả chuỗi** — chưa hậu xử lý | 0,6373 | 0,80 | ❌ |
-| Đúng **cả chuỗi** — sau hậu xử lý | **0,7512** | 0,85 | ❌ |
-| Đúng **đầu-cuối** — ảnh vào, chuỗi ra | 0,5552 | 0,82 | ❌ |
+| Đúng **cả chuỗi** — sau hậu xử lý | **0,7701** | 0,85 | ❌ |
+| Đúng **đầu-cuối** — ảnh vào, chuỗi ra | *không đo được* | 0,82 | ⬜ |
 
 ## Khoảng cách nằm trọn ở biển 2 dòng
 
@@ -221,7 +221,7 @@ Cùng một hệ thống, cùng một phép đo — tách theo bố cục biển
 
 ## Đóng góp của hậu xử lý — đo được bằng số
 
-Sửa đúng **319 biển**, làm hỏng **0** — dồn gần trọn vào biển 2 dòng
+Sửa đúng **372 biển**, làm hỏng **0** — dồn gần trọn vào biển 2 dòng
 
 ![](figures/fig-postprocess-gain.png)
 
@@ -231,7 +231,7 @@ Chênh lệch 2 dòng còn **25,4 điểm**, cùng bậc mốc quốc tế **48,
 
 | Can thiệp | Thu được |
 |---|---:|
-| Bộ luật hậu xử lý theo vị trí | **+11,39 điểm** *(0,6373 → 0,7512)* |
+| Bộ luật hậu xử lý theo vị trí | **+13,28 điểm** *(0,6373 → 0,7701)* |
 | Cứu dòng trên | 209 biển |
 | Nắn hình chống méo | 34 biển |
 
@@ -269,8 +269,8 @@ Phần lớn ảnh xong dưới nửa giây; đuôi phải là những ảnh th�
 | Nhóm | Chỉ tiêu | Kết quả |
 |---|---|:--:|
 | Phát hiện | mAP50 **0,9829** · mAP50-95 **0,7834** · P **0,9837** · R **0,9714** | ✅ |
-| Đọc ký tự | Đúng từng ký tự **0,9454** | 🟡 |
-| Đọc chuỗi | Đúng cả chuỗi **0,7512** · đầu-cuối **0,5552** | ❌ |
+| Đọc ký tự | Đúng từng ký tự **0,9483** | 🟡 |
+| Đọc chuỗi | Đúng cả chuỗi **0,7701** · đầu-cuối **17/22 ảnh toàn cảnh** | ❌ |
 | Hiệu năng | p95 **1.143 ms** *(sàn 1.500)* · video **0,785×** · truy vấn **18,7 ms** | 🟡 |
 | Thời gian thực | Webcam **5,257 FPS** *(sàn 3, mục tiêu 5)* | ✅ |
 | Độ tin cậy | Chạy liên tục **100%** · CSDL sống sót khởi động lại **0 mất** | ✅ |
@@ -290,9 +290,9 @@ Ba tình huống, chạy trên máy thật — **không phải video quay sẵn*
 
 | Hạn chế | Nguyên nhân gốc |
 |---|---|
-| **Biển 2 dòng chưa đạt** — đọc đúng cả chuỗi 0,6996 so với 0,9541 của biển 1 dòng | Bộ đọc dòng đơn; xe máy chiếm 79,8% tập nhãn |
-| **Số đầu-cuối 0,5552 không đại diện** | Không bộ dữ liệu nào vừa có ảnh toàn cảnh vừa có chuỗi biển ⇒ đo trên ảnh cắt sẵn, ngoài phân bố bộ phát hiện |
-| **Số OCR là số trên biển TRẮNG** — tập nhãn có 97,7% biển trắng, 20 vàng, 4 xanh, **0 đỏ, 0 ngoại giao** | Không nguồn công khai nào đủ biển hiếm; nói "0,9454 trên biển số Việt Nam" là **nói quá** |
+| **Biển 2 dòng chưa đạt** — đọc đúng cả chuỗi 0,7234 so với 0,9541 của biển 1 dòng | Bộ đọc dòng đơn; xe máy chiếm 79,8% tập nhãn |
+| **Số đầu-cuối không đo được** | Không bộ dữ liệu nào vừa có ảnh toàn cảnh vừa có chuỗi biển ⇒ đo trên ảnh cắt sẵn, ngoài phân bố bộ phát hiện |
+| **Số OCR là số trên biển TRẮNG** — tập nhãn có 97,7% biển trắng, 20 vàng, 4 xanh, **0 đỏ, 0 ngoại giao** | Không nguồn công khai nào đủ biển hiếm; nói "0,9483 trên biển số Việt Nam" là **nói quá** |
 | Tập test **không xuyên bộ dữ liệu** | Chỉ đo tổng quát hoá *trong* phân bố ⇒ mAP lạc quan hơn thực tế |
 | Một yêu cầu mức **Must** đã đưa ra khỏi phạm vi | Thu gọn cho demo; API thống kê vẫn phục vụ và vẫn có kiểm thử |
 
@@ -314,7 +314,7 @@ Ba tình huống, chạy trên máy thật — **không phải video quay sẵn*
 
 - Hệ thống **5 tầng chạy thật**, đóng gói Docker một lệnh
 - Phát hiện đạt **cả 4 chỉ tiêu**: mAP50 **0,983** · mAP50-95 **0,783**
-- Hậu xử lý theo vị trí — **+11,39 điểm**, đo tách bạch
+- Hậu xử lý theo vị trí — **+13,28 điểm**, đo tách bạch
 - **1.002/1.002 kiểm thử** đạt · bao phủ tầng nghiệp vụ **87,7%**
 
 **Đóng góp học thuật**
@@ -372,7 +372,7 @@ Sáu loại lỗi **loại trừ lẫn nhau**, mỗi ca sai gán đúng một lo
 | Cấu hình / Thử nghiệm | Đúng cả chuỗi | Đóng góp đo được |
 |---|---:|---:|
 | **Baseline** *(Model gốc PaddleOCR raw)* | 0,6373 | Mức cơ sở |
-| **+ Bộ luật hậu xử lý theo vị trí** | **0,7512** | **+11,39 điểm** *(Sửa đúng 319 biển)* |
+| **+ Bộ luật hậu xử lý theo vị trí** | **0,7701** | **+13,28 điểm** *(Sửa đúng 372 biển)* |
 | **+ Bậc thang cứu dòng trên biển 2 dòng** | — | **+209 biển** được cứu hợp lệ |
 | **+ Bậc thang nắn hình chống nghiêng/méo** | — | **+34 biển** được cứu hợp lệ |
 | **Fine-tune OCR (giữ detector)** | 0,6762 | ❌ Sụt -7,5 điểm do lệch phân phối |
@@ -411,7 +411,7 @@ những khẳng định chính của bài
 | Dữ liệu | **15.133** ảnh · **15.977** khung · 6 nguồn |
 | Mô hình | YOLO11n · `imgsz 640` · 20 epoch · CPU |
 | Phát hiện | mAP50 **0,983** · mAP50-95 **0,783** |
-| Đúng từng ký tự | **0,9454** |
-| Đúng cả chuỗi | **0,7512** *(1 dòng 0,954 · 2 dòng 0,700)* |
+| Đúng từng ký tự | **0,9483** |
+| Đúng cả chuỗi | **0,7701** *(1 dòng 0,954 · 2 dòng 0,700)* |
 | Độ trễ | p50 **406 ms** · p95 **1.143 ms** |
 | Kiểm thử | **1.000** đạt · bao phủ **87,7%** |

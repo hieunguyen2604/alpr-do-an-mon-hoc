@@ -79,16 +79,16 @@ Khử trùng lặp chéo bộ **loại 44,2%** — một bộ vào 1.005 ảnh, 
 
 ## Kết quả đo được
 
-Phát hiện **đạt cả bốn chỉ tiêu**; phần thiếu nằm trọn ở **biển hai dòng** — chênh **25,45 điểm**.
+Phát hiện **đạt cả bốn chỉ tiêu**; phần thiếu nằm trọn ở **biển hai dòng** — chênh **23,07 điểm**.
 
 | Đo cái gì | Đo được | Ngưỡng | |
 |---|---:|---:|:--:|
 | mAP@0,5 · mAP@0,5:0,95 | **0,9829** · 0,7834 | 0,90 · 0,65 | ✅ |
 | Precision · Recall | 0,9837 · 0,9714 | 0,92 · 0,90 | ✅ |
-| Đúng từng ký tự (1 − CER) | **0,9454** | 0,95 | 🟡 |
-| Đúng cả chuỗi, sau hậu xử lý | **0,7512** | 0,90 | ❌ |
+| Đúng từng ký tự (1 − CER) | **0,9483** | 0,95 | 🟡 |
+| Đúng cả chuỗi, sau hậu xử lý | **0,7701** | 0,90 | ❌ |
 | Độ trễ p95 · trung vị, CPU | **1.143** · 406 ms | ≤ 800 ms | 🟡 |
-| **Đóng góp của hậu xử lý** (A6 − A5) | **+11,39 điểm** · 319 sửa đúng / **0** hỏng | — | ✅ |
+| **Đóng góp của hậu xử lý** (A6 − A5) | **+13,28 điểm** · 372 sửa đúng / **0** hỏng | — | ✅ |
 | Kiểm thử · bao phủ nghiệp vụ | **1.002/1.002** · 87,7% | — · 70% | ✅ |
 
 ## Demo: hệ thống chạy thật
@@ -118,8 +118,8 @@ Giao diện hiện **cả chuỗi OCR thô lẫn chuỗi đã sửa** khi hai ch
 ## Cảm ơn — và mời đặt câu hỏi
 
 - Chạy đầu-cuối trên máy **không có GPU**: bộ phát hiện **mAP@0,5 = 0,9829**
-- Hậu xử lý đóng góp **+11,39 điểm**, **0 ca làm hỏng** trên 2.801 biển
+- Hậu xử lý đóng góp **+13,28 điểm**, **0 ca làm hỏng** trên 2.801 biển
 - Benchmark ba engine OCR trên biển Việt Nam: PaddleOCR **68,87%** trong cấu hình đánh giá của đồ án; kết quả khác với khuynh hướng của một số tài liệu công khai
-- Đọc đúng cả chuỗi **0,7512**, dưới ngưỡng 0,85
+- Đọc đúng cả chuỗi **0,7701**, dưới ngưỡng 0,85
 
 **Xin cảm ơn thầy cô và các bạn đã lắng nghe.**

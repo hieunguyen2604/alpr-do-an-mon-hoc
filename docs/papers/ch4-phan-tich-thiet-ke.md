@@ -107,7 +107,7 @@ Mỗi bước là một kịch bản độc lập có giao diện dòng lệnh r
 | 7   | roboflow_tran_ngoc_xuan_tin |      1.005 |              **0** |  **100%** |
 |     | **Tổng**                    | **27.113** |         **15.133** | **44,2%** |
 
-> **Ghi chú về phạm vi của mọi số liệu OCR.** Phân loại màu nền trên 2.801 ảnh cho: **2.736 biển trắng (97,68%)**, 20 vàng, 4 xanh, **0 đỏ, 0 ngoại giao**. Phát biểu đúng là _"1 − CER = 0,9454 trên một tập gồm 97,7% biển trắng"_, **không phải** _"trên biển số Việt Nam"_.
+> **Ghi chú về phạm vi của mọi số liệu OCR.** Phân loại màu nền trên 2.801 ảnh cho: **2.736 biển trắng (97,68%)**, 20 vàng, 4 xanh, **0 đỏ, 0 ngoại giao**. Phát biểu đúng là _"1 − CER = 0,9483 trên một tập gồm 97,7% biển trắng"_, **không phải** _"trên biển số Việt Nam"_.
 
 ### 4.4.2. Khử trùng lặp chéo bộ và con số 44,2%
 
@@ -160,7 +160,7 @@ PP-OCRv5 mobile huấn luyện trên chữ cảnh tổng quát; mục này trả
 
 | Cấu hình                                   | A5 (chuỗi thô) | A6 (sau hậu xử lý) | Đúng định dạng | ms/ảnh |
 | ------------------------------------------ | -------------: | -----------------: | -------------: | -----: |
-| **Model gốc, det + rec** — _bản bàn giao_ |         0,6373 |         **0,7512** |         0,9443 |  328,8 |
+| **Model gốc, det + rec** — _bản bàn giao_ |         0,6373 |         **0,7701** |         0,9443 |  328,8 |
 | Model fine-tune, det + rec                 |         0,5998 |             0,6762 |         0,9018 |      — |
 | Model gốc, chỉ rec                         |         0,6776 |             0,7508 |         0,9568 |   35,7 |
 | Model fine-tune, chỉ rec                   |     **0,8618** |         **0,8758** |     **0,9886** |   38,5 |

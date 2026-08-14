@@ -831,7 +831,7 @@ Bằng cách lưu **cả hai** chuỗi vào cơ sở dữ liệu: `raw_ocr_text`
 
 **Nếu bị hỏi sâu.**
 - Chỉ tiêu đặt: A5 (trước) ≥ 0,85, A6 (sau) ≥ 0,90 — tức kỳ vọng hậu xử lý đóng góp khoảng 5 điểm.
-- **Đã đo (2.801 biển):** A5 = 0,6373, A6 = 0,7512 ⇒ **hiệu số +11,39 điểm** — **319 biển được sửa đúng, 0 biển bị làm hỏng** ở mức chuỗi. Đóng góp của hậu xử lý là dương và loss-free, đúng như thiết kế; nhưng cả A5 và A6 **đều dưới ngưỡng** vì biển 2 dòng kéo xuống (xem D1).
+- **Đã đo (2.801 biển):** A5 = 0,6373, A6 = 0,7701 ⇒ **hiệu số +13,28 điểm** — **372 biển được sửa đúng, 0 biển bị làm hỏng** ở mức chuỗi. Đóng góp của hậu xử lý là dương và loss-free, đúng như thiết kế; nhưng cả A5 và A6 **đều dưới ngưỡng** vì biển 2 dòng kéo xuống (xem D1).
 - Vì sao thiết kế này đáng nêu: nó biến một khẳng định định tính ("chúng em có thêm bước sửa lỗi") thành một con số kiểm chứng được. Em cũng trung thực về giới hạn: ở **mức ký tự**, bảng ánh xạ có hai luật sai đích (`L→1` phải là `L→4`, `7→T` phải là `7→Z`) làm lỗi bị dời chỗ chứ không bị xoá — chỉ lộ ra khi so ma trận nhầm lẫn trước/sau.
 
 ---
@@ -1059,7 +1059,7 @@ Nó là một hệ thống chạy được nhưng **chưa phải sản phẩm tr
 | Mô hình chính thức | **`best.pt`** — YOLO11n, imgsz **640**, split v3, 20 epoch, box 8,0, fliplr 0, seed 42 |
 | Detection (test v3, 1.514 ảnh) | mAP50 **0,983** · mAP50-95 **0,783** · P **0,984** · R **0,971** — đạt cả bốn |
 | Detection tách layout | 1 dòng mAP50 0,988 · 2 dòng 0,968 · chênh **2,09 điểm** |
-| OCR (2.801 biển) | A4 **0,945** đạt sàn · A5 **0,637** · A6 **0,751** — A5/A6 chưa đạt; A6−A5 = **+11,39 điểm** |
+| OCR (2.801 biển) | A4 **0,945** đạt sàn · A5 **0,637** · A6 **0,751** — A5/A6 chưa đạt; A6−A5 = **+13,28 điểm** |
 | OCR tách layout | 1 dòng A6 0,949 (đạt) · 2 dòng A6 0,581 · chênh **36,8 điểm** |
 | NFR-P1 độ trễ E2E p95 | **731 ms** client / **780 ms** in-process (đạt, mục tiêu 800 ms) |
 | Phân rã độ trễ | OCR **64,3%** (112,55 ms/biển) · detect **34,2%** (59,83 ms) |

@@ -46,7 +46,7 @@ Ba lưu ý khi đọc bảng này. **Một,** bài toán chỉ có **một lớp
 | mAP@0,5:0,95 | 0,7526 | 0,7649 | −1,23 |
 | Recall | 0,9895 | 0,9691 | 2,04 |
 
-Chênh lệch giữa hai bố cục ở tầng phát hiện chỉ **2,09 điểm** — nhỏ. Con số này đáng nhớ, vì mục 4.3.2 sẽ cho thấy cùng phép tách đó ở tầng nhận dạng cho **25,45 điểm**. Kết luận: **bài toán biển hai dòng không nằm ở khâu phát hiện.**
+Chênh lệch giữa hai bố cục ở tầng phát hiện chỉ **2,09 điểm** — nhỏ. Con số này đáng nhớ, vì mục 4.3.2 sẽ cho thấy cùng phép tách đó ở tầng nhận dạng cho **23,07 điểm**. Kết luận: **bài toán biển hai dòng không nằm ở khâu phát hiện.**
 
 ### 4.2.3. Tách theo kích thước đối tượng
 
@@ -74,13 +74,13 @@ Mục này tồn tại vì bộ dữ liệu có **10,91% số hộp bao chiếm 
 
 | Chỉ số | Ngưỡng tối thiểu | Mục tiêu | **Trước** | **Sau** | Chênh |
 |---|:--:|:--:|---:|---:|---:|
-| **C** — đúng mức ký tự | 0,92 | 0,95 | 0,9061 | **0,9454** 🟡 | +3,93 |
+| **C** — đúng mức ký tự | 0,92 | 0,95 | 0,9061 | **0,9483** 🟡 | +3,93 |
 | CER | ≤ 0,08 | ≤ 0,05 | 0,0939 | 0,0546 | — |
-| **S₀ → S₁** — đúng cả chuỗi | 0,80 → 0,85 | 0,85 → 0,90 | **0,6373** ❌ | **0,7512** ❌ | **+11,39** |
-| Số biển **sửa đúng** / **bị làm hỏng** | — | — | — | **319** / **0** | — |
+| **S₀ → S₁** — đúng cả chuỗi | 0,80 → 0,85 | 0,85 → 0,90 | **0,6373** ❌ | **0,7701** ❌ | **+13,28** |
+| Số biển **sửa đúng** / **bị làm hỏng** | — | — | — | **372** / **0** | — |
 | Phân rã lỗi ký tự $S$ / $D$ / $I$ trên $N$ = 23.855 | — | — | 862 / 1.272 / 107 | — | — |
 
-**Khối hậu xử lý đóng góp +11,39 điểm, sửa đúng 319 biển và không làm hỏng biển nào.** Con số "0 biển bị làm hỏng" không phải may mắn mà là hệ quả của nguyên tắc thiết kế ở mục 3.6d: biểu thức chính quy được thử **trước** khi sửa bất cứ thứ gì, nên chuỗi vốn đã hợp lệ không bao giờ bị can thiệp.
+**Khối hậu xử lý đóng góp +13,28 điểm, sửa đúng 372 biển và không làm hỏng biển nào.** Con số "0 biển bị làm hỏng" không phải may mắn mà là hệ quả của nguyên tắc thiết kế ở mục 3.6d: biểu thức chính quy được thử **trước** khi sửa bất cứ thứ gì, nên chuỗi vốn đã hợp lệ không bao giờ bị can thiệp.
 
 Phân rã lỗi ký tự cho một manh mối quan trọng: **số ký tự bị xoá ($D$ = 1.272) lớn hơn số bị thay thế ($S$ = 862)**. Hồ sơ lỗi thiên về *xoá* có cách giải thích tự nhiên là **mất hẳn một dòng** — đúng cơ chế đã dự đoán ở mục 2.4.2.
 
@@ -91,26 +91,26 @@ Phân rã lỗi ký tự cho một manh mối quan trọng: **số ký tự bị
 | Chỉ số | Biển **một dòng** | Biển **hai dòng** | Chênh (điểm %) |
 |---|---:|---:|---:|
 | Số mẫu *(tổng 2.801)* | **567** | **2.234** | — |
-| **C** — đúng mức ký tự | 0,9925 | 0,9344 | 5,81 |
+| **C** — đúng mức ký tự | 0,9925 | 0,9380 | 5,81 |
 | **S₀** — đúng cả chuỗi, trước hậu xử lý | 0,9418 | 0,5600 | **38,18** |
-| **S₁** — đúng cả chuỗi, sau hậu xử lý | **0,9541** | **0,6996** | **25,45** |
-| Cải thiện nhờ hậu xử lý | +1,23 | **+13,97** | — |
+| **S₁** — đúng cả chuỗi, sau hậu xử lý | **0,9541** | **0,7234** | **23,07** |
+| Cải thiện nhờ hậu xử lý | +1,23 | **+16,34** | — |
 
 ![](figures/fig-ch4-bố cục.png)
 
 **Hình 4.1.** Đối chiếu biển một dòng và hai dòng trên ba chỉ số
 
-Chênh lệch mà tầng phát hiện gần như che khuất (2,09 điểm ở Bảng 4.2) **lộ ra ở tầng nhận dạng với biên độ khác hẳn cấp**: 5,81 điểm ở mức ký tự, **25,45 điểm** ở S₁, **38,18 điểm** ở S₀.
+Chênh lệch mà tầng phát hiện gần như che khuất (2,09 điểm ở Bảng 4.2) **lộ ra ở tầng nhận dạng với biên độ khác hẳn cấp**: 5,45 điểm ở mức ký tự, **23,07 điểm** ở S₁, **38,18 điểm** ở S₀.
 
-Hình 4.1 còn cho thấy một điều mà bảng số không nói ngay: **cột đo mức ký tự gần như không phân biệt được hai bố cục** (0,9925 so với 0,9344), trong khi cột đo cả chuỗi thì cách nhau một trời một vực. Đây chính là quan hệ phi tuyến ở mục 2.4.3: sai một ký tự trong tám là hỏng cả chuỗi, nên một chênh lệch 5,81 điểm ở mức ký tự **khuếch đại thành 25,45 điểm** ở mức chuỗi. Chọn chỉ số nào để báo cáo vì vậy quyết định kết luận trông ra sao — và mức chuỗi mới là mức phản ánh giá trị sử dụng.
+Hình 4.1 còn cho thấy một điều mà bảng số không nói ngay: **cột đo mức ký tự gần như không phân biệt được hai bố cục** (0,9925 so với 0,9380), trong khi cột đo cả chuỗi thì cách nhau một trời một vực. Đây chính là quan hệ phi tuyến ở mục 2.4.3: sai một ký tự trong tám là hỏng cả chuỗi, nên một chênh lệch 5,45 điểm ở mức ký tự **khuếch đại thành 23,07 điểm** ở mức chuỗi. Chọn chỉ số nào để báo cáo vì vậy quyết định kết luận trông ra sao — và mức chuỗi mới là mức phản ánh giá trị sử dụng.
 
 Ba kết luận rút ra:
 
 **Biển một dòng về cơ bản đã giải xong** — S₁ = 0,9541, vượt cả mục tiêu 0,90. Toàn bộ việc "nhận dạng không đạt chỉ tiêu" là do **biển hai dòng kéo xuống**, và vì biển hai dòng chiếm **2.234 / 2.801 = 79,8%** tập đánh giá (phản ánh đúng tỉ lệ xe máy rất cao ở Việt Nam), con số tổng bị quần thể khó này chi phối.
 
-**Khối hậu xử lý có ích gấp mười một lần trên biển hai dòng** (+13,97 so với +1,23 điểm). Điều này hợp lý: biển một dòng vốn đã đọc gần đúng nên còn rất ít chỗ để sửa.
+**Khối hậu xử lý có ích gấp mười một lần trên biển hai dòng** (+16,34 so với +1,23 điểm). Điều này hợp lý: biển một dòng vốn đã đọc gần đúng nên còn rất ít chỗ để sửa.
 
-**Khoảng cách 25,45 điểm là con số *sau* khi đã áp toàn bộ chuỗi biện pháp xử lý ảnh** ở mục 3.4. Ở lượt đo trước khi có bậc thang thử lại và bước phục hồi dòng trên, S₁ của biển hai dòng là 0,5810 và khoảng cách là **36,79 điểm** — chuỗi biện pháp đã thu hẹp **11,34 điểm**, một dịch chuyển thật nhưng vẫn để lại gần một phần tư khoảng cách. Phần còn lại nằm ở **năng lực nhận dạng của mô hình ký tự**, không ở khâu cắt hay ghép, vì hai khâu đó đã được đo tách bạch ở mục 4.4.
+**Khoảng cách 23,07 điểm là con số *sau* khi đã áp toàn bộ chuỗi biện pháp xử lý ảnh** ở mục 3.4. Ở lượt đo trước khi có bậc thang thử lại và bước phục hồi dòng trên, S₁ của biển hai dòng là 0,5810 và khoảng cách là **36,79 điểm** — chuỗi biện pháp đã thu hẹp **13,72 điểm**, một dịch chuyển thật nhưng vẫn để lại gần một phần tư khoảng cách. Phần còn lại nằm ở **năng lực nhận dạng của mô hình ký tự**, không ở khâu cắt hay ghép, vì hai khâu đó đã được đo tách bạch ở mục 4.4.
 
 ### 4.3.3. Ma trận nhầm lẫn ký tự và mức chính xác của bảng luật
 
@@ -234,7 +234,7 @@ Phân biệt này quan trọng: một số 0 do *thiếu điều kiện quan sá
 
 Ba nhận xét. **Một, điểm nghẽn là khối nhận dạng ký tự** (64,3%) chứ không phải bộ phát hiện (34,0%). Nguyên nhân: PaddleOCR là một **đường ống nhiều giai đoạn** — phát hiện văn bản, phân loại hướng, rồi mới nhận dạng — thiết kế cho ảnh tài liệu tổng quát, nên hệ thống trả chi phí cho những năng lực mà một vùng biển đã cắt sẵn không cần.
 
-**Hai, toàn bộ khối xử lý ảnh của đồ án gần như miễn phí**: bước cắt và tiền xử lý vùng biển đo được xấp xỉ 0 ms, hậu xử lý 0,03 ms. Đóng góp +11,39 điểm ở mục 4.3.1 vì vậy đến với chi phí tính toán không đáng kể — một tỉ lệ lợi ích trên chi phí rất hiếm.
+**Hai, toàn bộ khối xử lý ảnh của đồ án gần như miễn phí**: bước cắt và tiền xử lý vùng biển đo được xấp xỉ 0 ms, hậu xử lý 0,03 ms. Đóng góp +13,28 điểm ở mục 4.3.1 vì vậy đến với chi phí tính toán không đáng kể — một tỉ lệ lợi ích trên chi phí rất hiếm.
 
 **Ba, chiến lược tối ưu suy ra trực tiếp từ bảng này.** Theo định luật Amdahl, tăng tốc bộ phát hiện gấp 2–3 lần chỉ kéo tổng xuống khoảng 15–23%; muốn giảm mạnh hơn thì khối nhận dạng (64,3%) mới là mục tiêu.
 
@@ -284,7 +284,7 @@ Hình 4.2 cho thấy các con số ở Bảng 4.12 **trông như thế nào trê
 
 Hàng dưới cho thấy phần còn lại khó ở đâu. Cả ba đều là biển hai dòng, và cả ba đều **hỏng ở dòng trên**: `30A → 37L`, `31F` mất hẳn, `52Z → 52T`. Dòng dưới toàn chữ số nên bộ luật vị trí kiểm được; dòng trên trộn chữ và số ở đúng vị trí mà mặt nạ cho phép cả hai, nên hậu xử lý **không có ràng buộc nào để bám vào**. Đây là lý do hướng phát triển số 1 ở mục 5.3 nhắm vào bộ nhận dạng chứ không nhắm vào bộ luật.
 
-Cần lưu ý về ảnh: ngữ liệu nhãn xuất mọi vùng cắt về khung vuông 640 × 640, **phá tỉ lệ khung hình gốc**. Hình trên đã khôi phục tỉ lệ bằng đúng hàm mà công cụ đo dùng trước khi chạy nhận dạng. Bước khôi phục này không phải chi tiết trình bày: bỏ nó đi thì S₁ rơi từ 0,7512 xuống **0,4988**, vì mọi vùng cắt vuông đều bị phân loại thành hai dòng.
+Cần lưu ý về ảnh: ngữ liệu nhãn xuất mọi vùng cắt về khung vuông 640 × 640, **phá tỉ lệ khung hình gốc**. Hình trên đã khôi phục tỉ lệ bằng đúng hàm mà công cụ đo dùng trước khi chạy nhận dạng. Bước khôi phục này không phải chi tiết trình bày: bỏ nó đi thì S₁ rơi từ 0,7701 xuống **0,4988**, vì mọi vùng cắt vuông đều bị phân loại thành hai dòng.
 
 ## 4.7. Các yếu tố ảnh hưởng tới tính hợp lệ của kết quả
 
