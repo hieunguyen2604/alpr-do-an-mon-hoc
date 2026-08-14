@@ -30,7 +30,7 @@ Chương này trả lời sáu câu hỏi từ đặc tả phi chức năng: **R
 
 Toàn bộ số liệu đo trên **một máy trạm cá nhân duy nhất**: **Windows 11 Pro 10.0.26200**, **Python 3.13.12**, CPU **Intel Raptor Lake** (Family 6, Model 183) — **14 nhân vật lý / 20 nhân logic**, **không có GPU CUDA** nên mọi suy luận và huấn luyện chạy trên CPU; chế độ đo **lô = 1, bỏ 3 lượt khởi động nóng**. Đây là **tiền tố ngầm định của mọi con số hiệu năng ở 5.6**.
 
-Phiên bản thư viện được trích từ môi trường thực thi đúng thời điểm chạy phép đo cuối cùng (20/07/2026) chứ không lấy từ tệp khai báo phụ thuộc, vì tệp khai báo ghi _ràng buộc phiên bản_ chứ không ghi _phiên bản đã cài đặt_: `ultralytics` 8.4.101 · `torch` 2.13.0+cpu · `torchvision` 0.28.0+cpu · `paddleocr` 3.7.0 (PP-OCRv5 mobile) · `paddlepaddle` 3.3.1 · `onnxruntime` 1.27.0 · `openvino` 2026.2.1 (nền tảng suy luận thay thế, 5.6.3) · `opencv-python` 4.10.0.84 · `numpy` 2.4.5 · `fastapi` 0.139.2 · `uvicorn` 0.51.0 · `sqlalchemy` 2.0.51 · `imagehash` 4.7.2 · `pytest` 9.1.1.
+Phiên bản thư viện được trích từ môi trường thực thi đúng thời điểm chạy phép đo cuối cùng chứ không lấy từ tệp khai báo phụ thuộc, vì tệp khai báo ghi _ràng buộc phiên bản_ chứ không ghi _phiên bản đã cài đặt_: `ultralytics` 8.4.101 · `torch` 2.13.0+cpu · `torchvision` 0.28.0+cpu · `paddleocr` 3.7.0 (PP-OCRv5 mobile) · `paddlepaddle` 3.3.1 · `onnxruntime` 1.27.0 · `openvino` 2026.2.1 (nền tảng suy luận thay thế, 5.6.3) · `opencv-python` 4.10.0.84 · `numpy` 2.4.5 · `fastapi` 0.139.2 · `uvicorn` 0.51.0 · `sqlalchemy` 2.0.51 · `imagehash` 4.7.2 · `pytest` 9.1.1.
 
 ### 5.2.1. Ràng buộc CPU-only: Quyết định thiết kế cốt lõi
 
@@ -188,11 +188,11 @@ Chênh lệch 2,09 điểm ở tầng phát hiện tăng lên ở tầng OCR: 5,
 
 <!-- {{T5.5e}} do chinh xac E2E toan trinh NFR-A7 — chuyen thanh van xuoi -->
 
-NFR-A7 đo **ảnh đầu vào → phát hiện → cắt → OCR → hậu xử lý → chuỗi cuối**; khác A6 ở chỗ A6 đo trên **vùng biển cắt chuẩn theo nhãn thật** còn A7 đo trên vùng biển do **chính bộ phát hiện** tìm ra, nên A7 tích luỹ cả hai nguồn sai số và theo lý thuyết luôn ≤ A6. Trên 2.801 mẫu, lượt đo ngày 28/07 cho **A7 = 0,5552**; **E2E với điều kiện đã phát hiện được biển = 0,6306**; tỉ lệ biển **bỏ sót** ở tầng phát hiện **0,1196**; phát hiện đúng nhưng **đọc sai chuỗi 0,3694**; chênh **A6 − A7 = 19,60 điểm**.
+NFR-A7 đo **ảnh đầu vào → phát hiện → cắt → OCR → hậu xử lý → chuỗi cuối**; khác A6 ở chỗ A6 đo trên **vùng biển cắt chuẩn theo nhãn thật** còn A7 đo trên vùng biển do **chính bộ phát hiện** tìm ra, nên A7 tích luỹ cả hai nguồn sai số và theo lý thuyết luôn ≤ A6. Trên 2.801 mẫu, một lượt đo trước cho **A7 = 0,5552**; **E2E với điều kiện đã phát hiện được biển = 0,6306**; tỉ lệ biển **bỏ sót** ở tầng phát hiện **0,1196**; phát hiện đúng nhưng **đọc sai chuỗi 0,3694**; chênh **A6 − A7 = 19,60 điểm**.
 
 > **E2 không áp dụng cho ngữ liệu này, và đó là kết luận chứ không phải khoảng trống.** Cả 2.801 mẫu đều là **vùng biển đã cắt sẵn**, nên không có bước phát hiện nào chạy và một ca *phát hiện nhầm* về nguyên tắc không thể xuất hiện. Tỉ lệ phát hiện nhầm thật được đo ở **tầng bộ phát hiện**, trên 1.514 ảnh toàn cảnh của tập kiểm tra: **39 dương tính giả trên 1.606 phát hiện**, tương ứng precision **0,9757** (mục 5.4).
 
-> **NFR-A7 chuyển sang ⬜ _không đo được một cách có ý nghĩa_.** Chạy lại ngày 14/08/2026 trên **cùng 2.801 mẫu, cùng bộ phát hiện, cùng `imgsz = 640`** cho **A7 = 0,0000** — con số 0,5552 công bố ngày 28/07 **không tái lập được**. Đây không phải hệ thống tệ đi: đường ống bản giao hàng chạy trên **ảnh toàn cảnh thật** đọc đúng **17/22 biển**, gồm cả biển đỏ quân đội, hai biển ngoại giao, biển vàng kinh doanh và hai biển xanh nhà nước. Nguyên nhân nằm ở **thiết kế của phép đo**, và lập luận đầy đủ ở [báo cáo 41](../reports/41-measured-confusion-tables.md).
+> **NFR-A7 chuyển sang ⬜ _không đo được một cách có ý nghĩa_.** Chạy lại trên **cùng 2.801 mẫu, cùng bộ phát hiện, cùng `imgsz = 640`** cho **A7 = 0,0000** — con số 0,5552 đã công bố **không tái lập được**. Đây không phải hệ thống tệ đi: đường ống bản giao hàng chạy trên **ảnh toàn cảnh thật** đọc đúng **17/22 biển**, gồm cả biển đỏ quân đội, hai biển ngoại giao, biển vàng kinh doanh và hai biển xanh nhà nước. Nguyên nhân nằm ở **thiết kế của phép đo**, và lập luận đầy đủ ở [báo cáo 41](../reports/41-measured-confusion-tables.md).
 >
 > Cần lưu ý rằng con số 0,5552 được đo trên **ảnh vùng biển đã cắt**, không phải ảnh hiện trường, vì không bộ dữ liệu nào trong đồ án có đồng thời ảnh toàn cảnh _và_ chuỗi biển số nhãn thật. Bộ phát hiện được huấn luyện trên ảnh giao thông đầy đủ nên ảnh chỉ có biển số chiếm gần hết khung là **ngoài phân bố huấn luyện**: phần lớn thất bại ở đây do bộ phát hiện không bắt được box trên ảnh vùng biển đã cắt (bỏ sót 11,96%), **không** phải do OCR đọc sai. Bằng chứng: trên ảnh hiện trường thật, phép đo ở giai đoạn kiểm thử cho mAP@0.5 = 0,9829, tương thích với 5.4.1. Muốn đo NFR-A7 đúng cách cần gán nhãn chuỗi cho một phân bố test có ảnh hiện trường; đây là **hướng phát triển số 3** ở mục 6.3, không phải một phép đo bị bỏ quên.
 
@@ -206,7 +206,7 @@ NFR-A7 đo **ảnh đầu vào → phát hiện → cắt → OCR → hậu xử
 
 Hồ sơ lỗi thiên về _xoá_ ($D$ = 1.272 > $S$ = 862) trên biển hai dòng có cách giải thích tự nhiên: **mất hẳn một dòng**. Hệ thống đọc biển hai dòng bằng **ghép rồi đọc** (_split-then-hstack_): cắt vùng biển thành hai nửa chồng lấn, xếp cạnh nhau thành dải ngang, chạy OCR **một lần**. Phương án thay thế — đọc riêng từng nửa rồi nối chuỗi — đã được đo A/B chứ không bị loại bằng lập luận, trên 200 biển hai dòng với hạt giống ngẫu nhiên cố định: **A, ghép rồi OCR một lần** _(đang dùng)_ đúng **129/200 = 64,50%**, 2 ca OCR trả chuỗi rỗng, 340,11 ms; **B, OCR từng nửa rồi nối** đúng **7/200 = 3,50%**, 9 ca chuỗi rỗng, 391,35 ms — B kém A **61,00 điểm phần trăm** và tốn thêm **51,24 ms**; **122** ca A thắng B, **0** ca B thắng A. **Giả thuyết "đọc riêng từng dòng thì chính xác hơn" bị bác bỏ dứt khoát.** Nguyên nhân đọc được ngay trong dữ liệu: hai nửa **cố ý chồng lấn** để không cắt cụt ký tự, nên đọc riêng thì dải chồng lấn bị đọc **hai lần** và ký tự bị nhân đôi — `84G122593` thành `84-G124E009.01225.93`. Một kết quả âm có giá trị: lựa chọn kiến trúc ở Chương 5 không tuỳ tiện.
 
-> **Ghi chú về mốc thời gian.** Số liệu toàn tập của riêng bước phục hồi dòng trên thuộc lượt đo ngày 20/07 và được giữ nguyên mốc. Trên 2.801 ảnh có nhãn chuỗi (cùng mô hình và cùng độ phân giải đầu vào; cột "trước" là lượt đo trước đó trên đúng cùng tập mẫu và cùng mô hình): A4 0,8734 → **0,8848** (**+1,14**; sàn 0,92 ❌); A5 0,6098 → **0,6098** (**0,00**; sàn 0,80 ❌); A6 0,6555 → **0,6730** (**+1,75**; sàn 0,85 ❌); A7 0,5227 → **0,5295** (**+0,68**; sàn 0,82 ❌); A6 riêng biển **một dòng** 0,9489 → **0,9489** (**0,00**); A6 riêng biển **hai dòng** 0,5810 → **0,6030** (**+2,20**); biển bị can thiệp / thành đúng hoàn toàn / bị làm hỏng = **89 / 2.801** · **49** · **0**. Bảng số này trả lời đúng một câu hỏi — _riêng bước phục hồi dòng trên đóng góp bao nhiêu_ — và câu trả lời ấy không đổi theo thời gian; nhưng **các giá trị tuyệt đối đã bị vượt qua** (A6 hiện là 0,7701 chứ không phải 0,6730) nên **không được trích cột "sau bước cứu" như số hiện hành**. Trên lượt 28/07, bước phục hồi dòng trên cho câu trả lời cuối ở **209 biển**.
+> **Ghi chú về mốc thời gian.** Số liệu toàn tập của riêng bước phục hồi dòng trên thuộc một lượt đo trước và được giữ nguyên mốc. Trên 2.801 ảnh có nhãn chuỗi (cùng mô hình và cùng độ phân giải đầu vào; cột "trước" là lượt đo trước đó trên đúng cùng tập mẫu và cùng mô hình): A4 0,8734 → **0,8848** (**+1,14**; sàn 0,92 ❌); A5 0,6098 → **0,6098** (**0,00**; sàn 0,80 ❌); A6 0,6555 → **0,6730** (**+1,75**; sàn 0,85 ❌); A7 0,5227 → **0,5295** (**+0,68**; sàn 0,82 ❌); A6 riêng biển **một dòng** 0,9489 → **0,9489** (**0,00**); A6 riêng biển **hai dòng** 0,5810 → **0,6030** (**+2,20**); biển bị can thiệp / thành đúng hoàn toàn / bị làm hỏng = **89 / 2.801** · **49** · **0**. Bảng số này trả lời đúng một câu hỏi — _riêng bước phục hồi dòng trên đóng góp bao nhiêu_ — và câu trả lời ấy không đổi theo thời gian; nhưng **các giá trị tuyệt đối đã bị vượt qua** (A6 hiện là 0,7701 chứ không phải 0,6730) nên **không được trích cột "sau bước cứu" như số hiện hành**. Trên lượt đo đó, bước phục hồi dòng trên cho câu trả lời cuối ở **209 biển**.
 
 ### 5.5.7. Bậc thang thử lại cho biển nghiêng/méo — chi phí, lợi ích và một quyết định tắt tính năng
 
@@ -220,7 +220,7 @@ Hồ sơ lỗi thiên về _xoá_ ($D$ = 1.272 > $S$ = 862) trên biển hai dò
 
 **Bảng 5.7.** Độ trễ đầu cuối một ảnh, đối chiếu NFR-P1
 
-| Chỉ số                       |        Sàn |  Mục tiêu | **Trước bậc thang (20/07)** | **Cấu hình giao hàng (28/07)** | Kết quả |
+| Chỉ số                       |        Sàn |  Mục tiêu | **Trước bậc thang** | **Cấu hình giao hàng** | Kết quả |
 | ---------------------------- | ---------: | --------: | --------------------------: | -----------------------------: | :-----: |
 | p50 (ms)                     |          — |         — |                      414,67 |                         405,77 |   n/a   |
 | **p95 (ms)**                 | **≤ 1500** | **≤ 800** |                  **731,15** |                   **1.143,10** | **🟡**  |
@@ -283,7 +283,7 @@ Bốn hướng tấn công khối OCR theo chi phí tăng dần (chi tiết ở 
 
 **NFR-P2 đạt: 5,257 FPS** (sàn 3, mục tiêu 5) — vượt cả mục tiêu, không chỉ sàn. Giao diện thời gian thực dùng **hàng đợi một khe**: chỉ một yêu cầu bay tại một thời điểm, khung sinh ra trong lúc chờ bị bỏ thay vì xếp hàng; ở kỷ luật đó thông lượng bị chi phối bởi những lần chậm nhất, nên phân vị đuôi mới là đại lượng quyết định. Đo được p50 = **164,08 ms**, p95 = **204,52 ms** — đuôi chỉ rộng gấp 1,25 lần trung vị. NFR-P3 cũng **đạt**: video 14,25 giây xử lý hết **18,2 giây** (sàn ≤ 95 s, mục tiêu ≤ 47,5 s), tức **0,785×** thời gian thực, `vid_stride = 5`.
 
-**Con số này thay thế một số liệu cũ đã công bố, và lý do phải kể ra.** Lượt đo ngày 02/08 cho **2,379 FPS — trượt sàn**, và quyển từng quy nguyên nhân cho bậc thang thử-lại. Đo lại ngày 13/08 trên **mã nguồn giống hệt từng byte** (`git diff` trên `ai/` giữa hai thời điểm chỉ trả về một công cụ đo mới thêm), cùng cấu hình, cùng dãy ảnh phát lại, cho 5,257 rồi 5,213 FPS ở hai lần chạy độc lập.
+**Con số này thay thế một số liệu cũ đã công bố, và lý do phải kể ra.** Một lượt đo trước cho **2,379 FPS — trượt sàn**, và quyển từng quy nguyên nhân cho bậc thang thử-lại. Đo lại trên **mã nguồn giống hệt từng byte** (`git diff` trên `ai/` giữa hai thời điểm chỉ trả về một công cụ đo mới thêm), cùng cấu hình, cùng dãy ảnh phát lại, cho 5,257 rồi 5,213 FPS ở hai lần chạy độc lập.
 
 <!-- {{T5.9b}} sau lan do NFR-P2 trong cac dieu kien may khac nhau -->
 
@@ -291,14 +291,14 @@ Bốn hướng tấn công khối OCR theo chi phí tăng dần (chi tiết ở 
 
 | Điều kiện | FPS hiệu dụng | p50 | p95 | p95/p50 | Kết luận |
 |---|---:|---:|---:|---:|:--:|
-| 02/08 — máy đang tải nặng | 2,379 | 180,05 | **1.247,70** | **6,93** | ❌ |
+| Lượt đo cũ — máy đang tải nặng | 2,379 | 180,05 | **1.247,70** | **6,93** | ❌ |
 | Máy rảnh, lần 1 | **5,257** | 164,08 | 204,52 | 1,25 | ✅ |
 | Máy rảnh, lần 2 | **5,213** | 165,13 | 199,33 | 1,21 | ✅ |
 | Ép tải 6 lõi | 4,367 | 201,76 | 238,97 | 1,18 | 🟡 |
 | Ép tải 12 lõi | 4,057 | 215,69 | 268,40 | 1,24 | 🟡 |
 | OpenVINO, máy rảnh | **6,310** | 129,60 | 148,50 | 1,15 | ✅ |
 
-Log lần đo cũ cho thấy máy khi đó đang cõng khoảng **560% CPU** của tiến trình khác (Explorer, VS Code, Visual Studio, một bản dựng đang chạy), và harness **đã in cảnh báo** rằng mọi số liệu bên dưới là *bi quan*. Giả thuyết đầu tiên vì thế là tải cạnh tranh. Nhóm thực hiện **kiểm chứng thay vì tin**: dựng tải tổng hợp 6 rồi 12 lõi và đo lại — và **thí nghiệm bác bỏ chính giả thuyết đó**. Tải cạnh tranh nâng *cả* phân bố một cách đều tay, giữ tỉ lệ p95/p50 quanh 1,2; còn lần 02/08 có trung vị gần như của máy rảnh (180 ms) nhưng đuôi **gấp 6,93 lần trung vị**. Hai chữ ký khác hẳn nhau.
+Log lần đo cũ cho thấy máy khi đó đang cõng khoảng **560% CPU** của tiến trình khác (Explorer, VS Code, Visual Studio, một bản dựng đang chạy), và harness **đã in cảnh báo** rằng mọi số liệu bên dưới là *bi quan*. Giả thuyết đầu tiên vì thế là tải cạnh tranh. Nhóm thực hiện **kiểm chứng thay vì tin**: dựng tải tổng hợp 6 rồi 12 lõi và đo lại — và **thí nghiệm bác bỏ chính giả thuyết đó**. Tải cạnh tranh nâng *cả* phân bố một cách đều tay, giữ tỉ lệ p95/p50 quanh 1,2; còn lượt đo cũ có trung vị gần như của máy rảnh (180 ms) nhưng đuôi **gấp 6,93 lần trung vị**. Hai chữ ký khác hẳn nhau.
 
 **Quy kết cũ cho bậc thang thử-lại cũng không đứng vững:** log máy chủ lần đó cho thấy bậc thang chỉ nổ **6 lần trên 144 khung**, và với giá trị chậm nhất đo được là 1.484,91 ms thì 6 lần nổ chỉ giải thích khoảng **52 ms** trong khoảng chênh 225 ms của trung bình. Nguyên nhân *chính xác* của đuôi hôm đó **không xác định được** — ứng viên còn lại là tranh chấp đĩa (tiến trình `System` chiếm 136% là thời gian nhân, thường đi kèm quét đĩa) mà tải tổng hợp thuần CPU ở đây không mô phỏng. Đây là **suy đoán có cơ sở, không phải kết luận đã đo**, và được ghi đúng như vậy.
 
@@ -306,7 +306,7 @@ Log lần đo cũ cho thấy máy khi đó đang cõng khoảng **560% CPU** c�
 
 ![](figures/fig-ch5-nfr-p2.png)
 
-**Hình 5.3.** Sáu lần đo NFR-P2. Bên trái: trung vị của lần 02/08 nằm ngang với các lần đo trên máy rảnh, nhưng đuôi p95 cao gấp sáu lần. Bên phải: cùng dữ liệu, biểu diễn bằng tỉ lệ p95/p50 — **ép tải tới 12 lõi cũng chỉ đẩy tỉ lệ này lên 1,24× trong khi lần 02/08 là 6,93×**. Tải cạnh tranh nâng cả phân bố đều tay; thứ xảy ra hôm 02/08 thì không.
+**Hình 5.3.** Sáu lần đo NFR-P2. Bên trái: trung vị của lượt đo cũ nằm ngang với các lần đo trên máy rảnh, nhưng đuôi p95 cao gấp sáu lần. Bên phải: cùng dữ liệu, biểu diễn bằng tỉ lệ p95/p50 — **ép tải tới 12 lõi cũng chỉ đẩy tỉ lệ này lên 1,24× trong khi lượt đo cũ là 6,93×**. Tải cạnh tranh nâng cả phân bố đều tay; thứ xảy ra ở lượt đo cũ thì không.
 
 ### 5.6.5. Chịu tải, bộ nhớ và độ tin cậy (NFR-SC1, NFR-P4…P7, NFR-R4)
 
@@ -392,7 +392,7 @@ Cần phân biệt **"chưa đo vì chưa tới lượt"** với **"không đo �
 
 **NFR-A9 — độ chính xác theo điều kiện ảnh.** Chỉ tiêu này được phát biểu có điều kiện ngay từ giai đoạn phân tích: _báo cáo độ chính xác theo điều kiện chụp, nếu bộ dữ liệu có nhãn phù hợp_. Điều kiện đó không thoả — không bộ dữ liệu nguồn nào gán nhãn ban ngày, ban đêm, chụp nghiêng hay ảnh mờ. Đây là lý do bảng đối chiếu ghi ⬜ _không đo được_ thay vì ❌ _không đạt_: một chỉ tiêu chưa có dữ liệu để đo khác hẳn một chỉ tiêu đã đo và trượt.
 
-**NFR-A7 — giao thức đo bị giới hạn tới mức không dùng được.** Con số 0,5552 (28/07) **không tái lập được**: chạy lại 14/08 trên cùng ngữ liệu, cùng cấu hình cho **0,0000**. Trên đầu vào nằm ngoài phân bố huấn luyện, một thay đổi nhỏ ở tầng suy luận đủ lật hoàn toàn kết quả — đó là dấu hiệu phép đo **không đo cái nó tưởng đang đo**, nên chỉ tiêu này ghi ⬜ chứ không ghi ❌. Con số đại diện cho năng lực đầu-cuối là **17/22 biển trên ảnh toàn cảnh thật**. Con số 0,5552 đo trên ảnh biển đã cắt sẵn chứ không phải ảnh hiện trường, vì ở thời điểm đo không bộ dữ liệu nào có đồng thời ảnh toàn cảnh và nhãn chuỗi ký tự. Bộ phát hiện được huấn luyện trên ảnh giao thông đầy đủ, nên ảnh mà biển số chiếm gần hết khung nằm ngoài phân bố huấn luyện và tỉ lệ bỏ sót bị đánh giá cao hơn thực tế. Giá trị này vì vậy phải đọc như **cận dưới bi quan**, không phải ước lượng trung tâm.
+**NFR-A7 — giao thức đo bị giới hạn tới mức không dùng được.** Con số 0,5552 đã công bố **không tái lập được**: chạy lại trên cùng ngữ liệu, cùng cấu hình cho **0,0000**. Trên đầu vào nằm ngoài phân bố huấn luyện, một thay đổi nhỏ ở tầng suy luận đủ lật hoàn toàn kết quả — đó là dấu hiệu phép đo **không đo cái nó tưởng đang đo**, nên chỉ tiêu này ghi ⬜ chứ không ghi ❌. Con số đại diện cho năng lực đầu-cuối là **17/22 biển trên ảnh toàn cảnh thật**. Con số 0,5552 đo trên ảnh biển đã cắt sẵn chứ không phải ảnh hiện trường, vì ở thời điểm đo không bộ dữ liệu nào có đồng thời ảnh toàn cảnh và nhãn chuỗi ký tự. Bộ phát hiện được huấn luyện trên ảnh giao thông đầy đủ, nên ảnh mà biển số chiếm gần hết khung nằm ngoài phân bố huấn luyện và tỉ lệ bỏ sót bị đánh giá cao hơn thực tế. Giá trị này vì vậy phải đọc như **cận dưới bi quan**, không phải ước lượng trung tâm.
 
 ### 5.9.3. Các mối đe doạ đến tính hợp lệ của kết quả
 

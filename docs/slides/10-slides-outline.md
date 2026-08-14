@@ -1,7 +1,7 @@
 # Khung slide và kịch bản bảo vệ đồ án tốt nghiệp (38 Slide)
 
 **Đề tài:** Xây dựng hệ thống nhận dạng biển số xe Việt Nam ứng dụng Trí tuệ nhân tạo  
-**Thuộc:** Phase 10 — chuẩn bị bảo vệ · **Ngày cập nhật:** 02/08/2026  
+**Thuộc:** Phase 10 — chuẩn bị bảo vệ  
 **Thời lượng trình bày chính:** 15 phút (S1–S31) + Phần Hỏi đáp Q&A (S32–S38)
 
 ---

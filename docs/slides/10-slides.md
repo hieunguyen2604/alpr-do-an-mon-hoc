@@ -53,8 +53,7 @@ Script thứ hai bắt cả tràn đáy lẫn **đè nhau giữa các khối**. 
 loại lỗi thứ hai đã từng lọt: một câu dẫn hai dòng in đè lên bảng ở slide 9,
 trong khi phép đo chiều cao báo "0 lỗi".
 
-Mọi con số lấy từ lượt đo 28/07/2026 (`docs/reports/05-results.json`) và
-02/08/2026 (`docs/reports/33-runtime-nfr.json`).
+Mọi con số lấy từ `docs/reports/05-results.json` và `docs/reports/33-runtime-nfr.json`.
 -->
 
 ## NỘI DUNG

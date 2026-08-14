@@ -78,7 +78,7 @@ Trường cần đọc và ý nghĩa:
 **Bước 2 — mở <http://localhost:5173>**, ứng dụng vào thẳng trang **Nhận dạng ảnh** (trang chủ).
 Kiểm ba mục sidebar hiện đủ: Nhận dạng ảnh · Nhận dạng video · Lịch sử.
 
-> ⚠️ **Đổi so với bản trước.** Trang **Tổng quan** đã gỡ khỏi giao diện ngày 2026-07-20, nên **thẻ
+> ⚠️ **Đổi so với bản trước.** Trang **Tổng quan** đã gỡ khỏi giao diện, nên **thẻ
 > Trạng thái hệ thống không còn hiển thị trên màn hình**. Từ nay `curl /health` ở Bước 1 là chỗ
 > **duy nhất** đọc được `model_loaded`. Mặt tốt: không còn nguy cơ một cảnh báo mô phỏng tự bật lên
 > giữa lúc trình bày. Mặt phải trả giá: quên chạy Bước 1 thì vào phòng mới biết mô hình chưa nạp —
@@ -120,7 +120,7 @@ Suy luận chạy **trên CPU**. Theo `06-ui-documentation.md`, video **60 giây
 
 ### 1.7. Chế độ thời gian thực qua API *(tuỳ chọn — chỉ demo nếu còn giờ)*
 
-> **Thay đổi phạm vi 2026-07-20:** trang Webcam đã được **gỡ khỏi giao diện web**; chế độ thời
+> **Thay đổi phạm vi:** trang Webcam đã được **gỡ khỏi giao diện web**; chế độ thời
 > gian thực chỉ còn ở **tầng API** (`POST /api/detect/frame`). Không còn bước xin quyền camera,
 > không còn ứng dụng nào tranh chiếm thiết bị — đây là một nguồn sự cố demo đã biến mất.
 
@@ -159,7 +159,7 @@ Suy luận chạy **trên CPU**. Theo `06-ui-documentation.md`, video **60 giây
 **Tổng bắt buộc: 320 giây = 5 phút 20 giây.**
 **Tổng kể cả bước tuỳ chọn: 360 giây = 6 phút 00 giây.**
 
-> **Đổi so với bản trước (2026-07-20).** Bước mở màn "Tổng quan (Dashboard)" **45 giây đã bị xoá**
+> **Đổi so với bản trước.** Bước mở màn "Tổng quan (Dashboard)" **45 giây đã bị xoá**
 > cùng với trang Tổng quan. Các bước còn lại được **đánh số lại liên tục**, ngân sách giảm từ
 > 365 s xuống **320 s**. Ý "khoe số liệu tổng hợp" không mất — nó chuyển vào Bước 3 dưới dạng
 > một lời gọi `GET /api/statistics`.
@@ -226,7 +226,7 @@ Nói câu này **trước**, chủ động. Để hội đồng tự phát hiệ
 
 ### Bước 3 — Ảnh nhiều biển số + `GET /api/statistics` · 50 giây
 
-> **Thay cho bước Tổng quan cũ.** Trang Tổng quan đã gỡ khỏi giao diện 2026-07-20, nên hai bộ đếm
+> **Thay cho bước Tổng quan cũ.** Trang Tổng quan đã gỡ khỏi giao diện, nên hai bộ đếm
 > không còn màn hình để chiếu. Chúng vẫn phục vụ nguyên vẹn ở tầng API — bước này đọc thẳng từ đó.
 
 | Thao tác | Chọn `demo/03-nhieu-bien.jpg` → **Nhận dạng** → sau khi có kết quả, chuyển sang terminal gọi `GET /api/statistics` |
@@ -260,7 +260,7 @@ curl http://localhost:8000/api/statistics
 
 ### Bước 5 — Thời gian thực qua API · 40 giây · **TUỲ CHỌN, bỏ trước nếu thiếu giờ**
 
-> Trang Webcam đã được gỡ khỏi giao diện web ngày 2026-07-20 để thu gọn phạm vi demo. Năng lực
+> Trang Webcam đã được gỡ khỏi giao diện web để thu gọn phạm vi demo. Năng lực
 > thời gian thực **vẫn còn nguyên ở tầng API** và bước này trình diễn đúng điều đó.
 
 | Thao tác | Chuyển sang cửa sổ terminal đã mở sẵn (mục 1.7) và gửi một khung hình vào endpoint thời gian thực |
@@ -419,7 +419,7 @@ Bỏ hết phần còn lại không tiếc.
 **Chuẩn bị cho bản rút gọn:** mở sẵn **hai tab trình duyệt** trước khi vào phòng — `/` (Nhận dạng ảnh,
 trang chủ) và `/history` (Lịch sử) — cộng **một cửa sổ terminal** đã `cd` về thư mục gốc để gọi
 `curl http://localhost:8000/api/statistics` ở Bước 2. Không còn tab `/dashboard`: trang Tổng quan
-đã gỡ khỏi giao diện 2026-07-20.
+đã gỡ khỏi giao diện.
 
 **Nếu bị cắt còn 1 phút:** giữ **Bước 1** (biển 2 dòng). Đó là đóng góp kỹ thuật khó thay thế nhất.
 

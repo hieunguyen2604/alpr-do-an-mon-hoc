@@ -26,13 +26,13 @@ Các lựa chọn có mức độ kiểm chứng khác nhau: một số được
 | PP-OCRv5_mobile ↔ PP-OCRv6_medium         | ✅ **Tự đo** — 200 vùng cắt biển số, cùng máy, cùng thứ tự ảnh                                      |    3.3.2    |
 | Bộ nhận dạng gốc ↔ bản tinh chỉnh         | ✅ **Tự đo** — 2.801 biển có nhãn chuỗi, bốn cấu hình                                               |     5.4     |
 | YOLO11n ↔ YOLOv8n và năm thế hệ YOLO khác | 📄 **Khảo sát tài liệu** — theo benchmark chính thức của nhà phát hành, đồ án **không tự chạy lại** |     3.2     |
-| PaddleOCR ↔ EasyOCR ↔ Tesseract           | ✅ **Tự đo 03/08/2026** — 2.801 biển có nhãn chuỗi, ba nhánh, cùng tầng bao quanh                   |    3.3.3    |
-| PyTorch ↔ ONNX Runtime ↔ OpenVINO         | ✅ **Tự đo 13/08/2026** — 50 ảnh thật, 50 lượt mỗi nền tảng, kèm mAP sau khi xuất                                   | 3.4 · 5.6.3 |
+| PaddleOCR ↔ EasyOCR ↔ Tesseract           | ✅ **Tự đo** — 2.801 biển có nhãn chuỗi, ba nhánh, cùng tầng bao quanh                   |    3.3.3    |
+| PyTorch ↔ ONNX Runtime ↔ OpenVINO         | ✅ **Tự đo** — 50 ảnh thật, 50 lượt mỗi nền tảng, kèm mAP sau khi xuất                                   | 3.4 · 5.6.3 |
 | Độ phân giải 416 ↔ 640                    | 🟡 **Có số đo nhưng không quy kết được** — ba biến đổi đồng thời và ngược chiều nhau                |     3.6     |
 
 Dòng ❌ còn lại được ghi nhận ở mục 6.3:
 
-- **So sánh nền tảng suy luận đã chạy** (5.6.3, đo ngày 13/08): PyTorch 33,09 ms · ONNX Runtime 24,48 ms (1,35×) · **OpenVINO 21,12 ms (1,57×)**, mAP không suy giảm. Lựa chọn ban đầu nghiêng về ONNX Runtime vì **lý do vận hành** — một nền tảng suy luận duy nhất cho cả hai mô hình, tránh xung đột hai framework học sâu — và số liệu tự đo về sau cho thấy OpenVINO còn nhanh hơn. Bản giao hàng vẫn giữ PyTorch làm mặc định; lý do ở 5.6.3.
+- **So sánh nền tảng suy luận đã chạy** (5.6.3): PyTorch 33,09 ms · ONNX Runtime 24,48 ms (1,35×) · **OpenVINO 21,12 ms (1,57×)**, mAP không suy giảm. Lựa chọn ban đầu nghiêng về ONNX Runtime vì **lý do vận hành** — một nền tảng suy luận duy nhất cho cả hai mô hình, tránh xung đột hai framework học sâu — và số liệu tự đo về sau cho thấy OpenVINO còn nhanh hơn. Bản giao hàng vẫn giữ PyTorch làm mặc định; lý do ở 5.6.3.
 
 ## 3.2. Mô hình phát hiện: YOLO11
 
@@ -61,7 +61,7 @@ Mục này chọn **bậc mô hình** bên trong họ đã chọn, dựa trên s
 
 > **Lưu ý bắt buộc khi trích bài PP-OCRv6.** Cặp _"+5,1 / +4,6 điểm"_ mà bài v6 công bố được tính trên **mốc so sánh của chính nó** (v5_server 78,1% / 81,6%), không phải trên mốc so sánh trong tài liệu PaddleX (86,38% / 83,8%). Ghép hai nguồn sẽ **đảo chiều kết luận**. Trích thì phải trích kèm mốc so sánh gốc.
 
-### 3.3.3. Benchmark ba bộ nhận dạng trên 2.801 biển số Việt Nam — đo 03/08/2026
+### 3.3.3. Benchmark ba bộ nhận dạng trên 2.801 biển số Việt Nam
 
 Mục 3.3.1 kết thúc bằng một hạng mục chưa giải quyết: giữ PaddleOCR dựa trên lý do kỹ thuật, **không** dựa trên bằng chứng độ chính xác, trong khi tài liệu công khai nghiêng về EasyOCR. Mục này trả nợ đó.
 

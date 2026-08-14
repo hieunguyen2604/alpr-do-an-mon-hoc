@@ -1,7 +1,7 @@
 # Bộ câu hỏi phản biện và câu trả lời — Bảo vệ đồ án tốt nghiệp
 
 **Đề tài:** Xây dựng hệ thống nhận dạng biển số xe Việt Nam ứng dụng Trí tuệ nhân tạo
-**Thuộc:** Phase 10 — chuẩn bị bảo vệ · **Ngày lập:** 19/07/2026
+**Thuộc:** Phase 10 — chuẩn bị bảo vệ
 
 ---
 
@@ -31,7 +31,7 @@ Mỗi câu gồm ba phần:
 | Kết quả detection (test v3) | ✅ mAP50 **0,983** / mAP50-95 **0,783** / P **0,984** / R **0,971** — đạt cả bốn | `05-tables.md §T5.5a` |
 | Backend FastAPI | ✅ Chạy được — **10 endpoint** phản hồi đúng qua HTTP thật, Alembic migrate xong | `detection_history` 18 cột, `detection_job` 11 cột |
 | Frontend React | ✅ Chạy được — typecheck sạch, lint sạch, build thành công, 10 endpoint kiểm chứng | **3 trang**: Nhận dạng ảnh *(trang chủ)* · Nhận dạng video · Lịch sử |
-| Phạm vi giao diện | ⚠️ Thu gọn **2 lần** ngày 2026-07-20 — gỡ trang Webcam, rồi gỡ trang Tổng quan | MoSCoW nay: **21 Must · 6 Should · 3 Could · 4 Won't** (FR-3.1, FR-3.4, **FR-4.1**, FR-4.2). Xem **E4b, E4c** |
+| Phạm vi giao diện | ⚠️ Thu gọn **2 lần** — gỡ trang Webcam, rồi gỡ trang Tổng quan | MoSCoW nay: **21 Must · 6 Should · 3 Could · 4 Won't** (FR-3.1, FR-3.4, **FR-4.1**, FR-4.2). Xem **E4b, E4c** |
 | Module OCR + tách 2 dòng + regex | ✅ Đã viết, 104 unit test | `ai/inference/`, `tests/` |
 | Độ chính xác OCR (2.801 biển) | ⚠️ **Đã đo — KHÔNG đạt** (A4 0,873 / A5 0,610 / A6 0,656; biển 2 dòng yếu) | `05-tables.md §T5.6` |
 | Docker | ⚠️ Có Dockerfile + compose, `docker compose config` hợp lệ, **chưa build thật** | `deployment/docker/` |
@@ -122,7 +122,7 @@ Em cố ý loại ba nhóm: nhận dạng loại xe / màu xe, tích hợp barri
 ### A7. Ai là người dùng của hệ thống này? Bài toán có thật không?
 
 **Trả lời ngắn.**
-Người dùng mục tiêu là bãi giữ xe, cổng ra vào cơ quan, và người vận hành cần tra cứu lịch sử ra vào. Đó là lý do hệ thống có ba chế độ đầu vào — ảnh, video, và khung hình thời gian thực qua API — cộng một trang lịch sử có bộ lọc. Phần số liệu tổng hợp phục vụ qua `GET /api/statistics`; màn hình hiển thị sẵn cho nó đã được gỡ khỏi giao diện ngày 2026-07-20 (xem câu E4c).
+Người dùng mục tiêu là bãi giữ xe, cổng ra vào cơ quan, và người vận hành cần tra cứu lịch sử ra vào. Đó là lý do hệ thống có ba chế độ đầu vào — ảnh, video, và khung hình thời gian thực qua API — cộng một trang lịch sử có bộ lọc. Phần số liệu tổng hợp phục vụ qua `GET /api/statistics`; màn hình hiển thị sẵn cho nó đã được gỡ khỏi giao diện (xem câu E4c).
 
 **Nếu bị hỏi sâu.**
 Điểm cần trung thực: bộ dữ liệu em có **không phải** ảnh camera giao thông toàn cảnh. 90,8% ảnh chỉ chứa một biển số, và heatmap vị trí cho thấy biển tập trung mạnh ở giữa khung — dấu hiệu ảnh đã được cắt hoặc chụp có chủ đích lấy xe làm trung tâm. Nghĩa là mô hình **chưa được kiểm chứng ở chế độ đa đối tượng**; toàn bộ dataset chỉ có 9 ảnh chứa từ 5 biển trở lên.
@@ -617,7 +617,7 @@ Vì mục tiêu triển khai là một lệnh `docker compose up`, và SQLite kh
 - **Hệ thống xuống cấp nhã nhặn**: ở mức đồng thời 10, độ trễ tăng tuyến tính nhưng **0 lỗi** — không timeout, không HTTP 5xx.
 - **Video được thiết kế để không chặn**: xử lý bất đồng bộ, trả `202 Accepted` kèm `job_id` ngay. Bắt buộc bởi NFR-SC3.
 
-**Số liệu thời gian thực.** NFR-P2 = **5,257 FPS** (sàn 3, mục tiêu 5) và NFR-P3 = **0,785×** thời gian thực, đo trên `best.pt` qua HTTP thật ngày 13/08. Dưới tải cạnh tranh nặng, xấu nhất đo được là 4,057 FPS — vẫn trên sàn. Nếu bị hỏi vì sao khác con số 2,379 từng ghi: xem mục 5.6.4, phép đo cũ chạy khi máy đang tải nặng và harness đã tự dán nhãn *bi quan*.
+**Số liệu thời gian thực.** NFR-P2 = **5,257 FPS** (sàn 3, mục tiêu 5) và NFR-P3 = **0,785×** thời gian thực, đo trên `best.pt` qua HTTP thật. Dưới tải cạnh tranh nặng, xấu nhất đo được là 4,057 FPS — vẫn trên sàn. Nếu bị hỏi vì sao khác con số 2,379 từng ghi: xem mục 5.6.4, phép đo cũ chạy khi máy đang tải nặng và harness đã tự dán nhãn *bi quan*.
 
 ---
 
@@ -636,7 +636,7 @@ Vì WebSocket không giải quyết được nút thắt thật. Với chỉ ti�
 ### E4b. Vì sao giao diện không còn trang Webcam? Có phải làm không được?
 
 **Trả lời ngắn.**
-Không. Đây là **quyết định thu gọn phạm vi giao diện** ngày 2026-07-20, không phải một chức năng thất bại. Trang Webcam đã từng được cài đặt đầy đủ và chạy được; em gỡ nó khỏi giao diện để phần demo gọn lại quanh nghiệp vụ chính. **Năng lực thời gian thực vẫn còn nguyên ở tầng API**: endpoint `POST /api/detect/frame` không thay đổi một dòng nào, vẫn có kiểm thử tự động và vẫn nằm trong kế hoạch đo NFR-P2.
+Không. Đây là **quyết định thu gọn phạm vi giao diện**, không phải một chức năng thất bại. Trang Webcam đã từng được cài đặt đầy đủ và chạy được; em gỡ nó khỏi giao diện để phần demo gọn lại quanh nghiệp vụ chính. **Năng lực thời gian thực vẫn còn nguyên ở tầng API**: endpoint `POST /api/detect/frame` không thay đổi một dòng nào, vẫn có kiểm thử tự động và vẫn nằm trong kế hoạch đo NFR-P2.
 
 **Nếu bị hỏi sâu.**
 - **Về yêu cầu:** trong sáu nhóm yêu cầu chức năng, nhóm FR-3 có 5 yêu cầu. Hai yêu cầu **thuần giao diện** — FR-3.1 (xin quyền và hiển thị luồng camera) và FR-3.4 (vẽ chồng bounding box lên khung hình trực tiếp) — chuyển mức ưu tiên từ *Must* sang *Won't* cho bản này. Ba yêu cầu còn lại — FR-3.2 (nhận và xử lý từng khung), FR-3.3 (nhận dạng trên khung trực tiếp), FR-3.5 (lưu lịch sử phiên có gộp trùng theo `job_id`) — **vẫn là Must và vẫn được đáp ứng**, chỉ là kiểm chứng ở mức API thay vì qua giao diện.
@@ -654,7 +654,7 @@ Không. Đây là **quyết định thu gọn phạm vi giao diện** ngày 2026
 > bảng yêu cầu chức năng với giao diện đang chiếu. Chuẩn bị để nói TRƯỚC, đừng đợi bị hỏi.**
 
 **Trả lời ngắn.**
-Em xác nhận: ngày 2026-07-20 em gỡ trang **Tổng quan (Dashboard)** khỏi giao diện, và điều đó đưa **FR-4.1 từ *Must* xuống *Won't*** — **lần đầu tiên** trong đồ án một yêu cầu mức bắt buộc bị đưa ra khỏi phạm vi (FR-4.2 mức *Should* cũng chuyển sang *Won't* theo). Đây là **quyết định thu gọn phạm vi demo do em chủ động đưa ra**, không phải một chức năng làm không được: trang đã được cài đặt đầy đủ, đã chạy thật, và toàn bộ mã của nó — `pages/Dashboard.tsx`, thư mục `components/dashboard/` (10 tệp), hook `useApi.ts` — **còn nguyên trong lịch sử git**.
+Em xác nhận: em gỡ trang **Tổng quan (Dashboard)** khỏi giao diện, và điều đó đưa **FR-4.1 từ *Must* xuống *Won't*** — **lần đầu tiên** trong đồ án một yêu cầu mức bắt buộc bị đưa ra khỏi phạm vi (FR-4.2 mức *Should* cũng chuyển sang *Won't* theo). Đây là **quyết định thu gọn phạm vi demo do em chủ động đưa ra**, không phải một chức năng làm không được: trang đã được cài đặt đầy đủ, đã chạy thật, và toàn bộ mã của nó — `pages/Dashboard.tsx`, thư mục `components/dashboard/` (10 tệp), hook `useApi.ts` — **còn nguyên trong lịch sử git**.
 
 **Nếu bị hỏi sâu — bốn điều, theo thứ tự.**
 
@@ -965,7 +965,7 @@ Em có ảnh chụp màn hình **cả 3 trang** giao diện trong `docs/screensh
 
 **Cảnh báo.** Chuẩn bị trước: mở sẵn backend và frontend **trước khi vào phòng**, có sẵn 2–3 ảnh test đã biết chắc chạy được, và có sẵn tab Swagger. Đừng để lần chạy đầu tiên của buổi bảo vệ là lần khởi động server.
 
-⚠️ **Chụp lại 3 ảnh này trước khi nộp.** Bản đang có chụp lúc sidebar còn **5 mục** và trang chủ còn là **Tổng quan**. Nếu phải dùng ảnh cũ làm phương án dự phòng mà hội đồng để ý thấy khác giao diện đang mô tả, hãy nói thẳng: *"Ảnh này chụp trước khi em thu gọn giao diện ngày 20/7, hiện giao diện còn 3 trang — nhận dạng ảnh, nhận dạng video và lịch sử."*
+⚠️ **Chụp lại 3 ảnh này trước khi nộp.** Bản đang có chụp lúc sidebar còn **5 mục** và trang chủ còn là **Tổng quan**. Nếu phải dùng ảnh cũ làm phương án dự phòng mà hội đồng để ý thấy khác giao diện đang mô tả, hãy nói thẳng: *"Ảnh này chụp trước khi em thu gọn giao diện, hiện giao diện còn 3 trang — nhận dạng ảnh, nhận dạng video và lịch sử."*
 
 ---
 
