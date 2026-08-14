@@ -255,7 +255,7 @@ Mọi chỉ tiêu **ngoài đường xử lý ảnh** đều đạt với biên 
 | Biển xanh | 63 | 61 | **96,83%** |
 | **Tổng** | **1.565** | **1.532** | **97,89%** |
 
-Ba giới hạn phải nêu kèm. **Một,** 542 ảnh đã bị loại khỏi phép đo — toàn bộ lớp không xác định, cùng các ảnh chụp ban đêm hoặc hồng ngoại mà chính người gán nhãn cũng không xác định được màu. **Hai,** dạng lỗi chủ đạo là **biển trắng bị phân loại thành biển xanh** — 21 trong 33 ca sai — do một số điểm ảnh ám lạnh vượt ngưỡng bão hoà. **Ba,** bộ dữ liệu không chứa biển đỏ và biển ngoại giao nên hai nhánh này chưa có số liệu.
+Ba giới hạn phải nêu kèm. **Một,** 542 ảnh đã bị loại khỏi phép đo — toàn bộ lớp không xác định, cùng các ảnh chụp ban đêm hoặc hồng ngoại mà chính người gán nhãn cũng không xác định được màu. **Hai,** dạng lỗi chủ đạo là **biển trắng bị phân loại thành biển xanh** — 21 trong 33 ca sai — do một số điểm ảnh ám lạnh vượt ngưỡng bão hoà. **Ba,** bộ dữ liệu không chứa biển đỏ và biển ngoại giao nên hai nhánh này chưa có số liệu — ghi thành **hạn chế số 6** ở mục 5.2.
 
 ## 4.6. Phân tích lỗi
 

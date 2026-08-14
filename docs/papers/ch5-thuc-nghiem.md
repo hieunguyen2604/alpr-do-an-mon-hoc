@@ -190,7 +190,9 @@ Chênh lệch 2,09 điểm ở tầng phát hiện tăng lên ở tầng OCR: 5,
 
 NFR-A7 đo **ảnh đầu vào → phát hiện → cắt → OCR → hậu xử lý → chuỗi cuối**; khác A6 ở chỗ A6 đo trên **vùng biển cắt chuẩn theo nhãn thật** còn A7 đo trên vùng biển do **chính bộ phát hiện** tìm ra, nên A7 tích luỹ cả hai nguồn sai số và theo lý thuyết luôn ≤ A6. Trên 2.801 mẫu: **A7 = 0,5552** (sàn 0,82, mục tiêu 0,88 — ❌); **E2E với điều kiện đã phát hiện được biển = 0,6306**; tỉ lệ biển **bỏ sót** ở tầng phát hiện **0,1196**; phát hiện đúng nhưng **đọc sai chuỗi 0,3694**; chênh **A6 − A7 = 19,60 điểm**.
 
-> **Ghi chú về phạm vi hiệu lực của chỉ số A7.** Cần lưu ý rằng con số 0,5552 được đo trên **ảnh vùng biển đã cắt**, không phải ảnh hiện trường, vì không bộ dữ liệu nào trong đồ án có đồng thời ảnh toàn cảnh _và_ chuỗi biển số nhãn thật. Bộ phát hiện được huấn luyện trên ảnh giao thông đầy đủ nên ảnh chỉ có biển số chiếm gần hết khung là **ngoài phân bố huấn luyện**: phần lớn thất bại ở đây do bộ phát hiện không bắt được box trên ảnh vùng biển đã cắt (bỏ sót 11,96%), **không** phải do OCR đọc sai. Bằng chứng: trên ảnh hiện trường thật, phép đo ở giai đoạn kiểm thử cho mAP@0.5 = 0,9829, tương thích với 5.4.1. Muốn đo NFR-A7 đúng cách cần gán nhãn chuỗi cho một phân bố test có ảnh hiện trường — việc này chưa thực hiện.
+> **E2 không áp dụng cho ngữ liệu này, và đó là kết luận chứ không phải khoảng trống.** Cả 2.801 mẫu đều là **vùng biển đã cắt sẵn**, nên không có bước phát hiện nào chạy và một ca *phát hiện nhầm* về nguyên tắc không thể xuất hiện. Tỉ lệ phát hiện nhầm thật được đo ở **tầng bộ phát hiện**, trên 1.514 ảnh toàn cảnh của tập kiểm tra: **39 dương tính giả trên 1.606 phát hiện**, tương ứng precision **0,9757** (mục 5.4).
+
+> **Ghi chú về phạm vi hiệu lực của chỉ số A7.** Cần lưu ý rằng con số 0,5552 được đo trên **ảnh vùng biển đã cắt**, không phải ảnh hiện trường, vì không bộ dữ liệu nào trong đồ án có đồng thời ảnh toàn cảnh _và_ chuỗi biển số nhãn thật. Bộ phát hiện được huấn luyện trên ảnh giao thông đầy đủ nên ảnh chỉ có biển số chiếm gần hết khung là **ngoài phân bố huấn luyện**: phần lớn thất bại ở đây do bộ phát hiện không bắt được box trên ảnh vùng biển đã cắt (bỏ sót 11,96%), **không** phải do OCR đọc sai. Bằng chứng: trên ảnh hiện trường thật, phép đo ở giai đoạn kiểm thử cho mAP@0.5 = 0,9829, tương thích với 5.4.1. Muốn đo NFR-A7 đúng cách cần gán nhãn chuỗi cho một phân bố test có ảnh hiện trường; đây là **hướng phát triển số 3** ở mục 6.3, không phải một phép đo bị bỏ quên.
 
 ### 5.5.6. Bước "phục hồi dòng trên" cho biển hai dòng — thiết kế, kiểm chứng A/B và kết quả trên toàn tập
 
@@ -360,7 +362,7 @@ Bảng tổng hợp trình bày khi bảo vệ, liệt kê **đầy đủ mọi 
 | Mã  | Loại lỗi                      |       Số ca | Tỉ lệ trong tổng ca sai | Tỉ lệ toàn tập đánh giá | Một dòng | Hai dòng |
 | :-: | ----------------------------- | ----------: | ----------------------: | ----------------------: | -------: | -------: |
 | E1  | Bỏ sót biển                   |         335 |                       — |                       — |        — |        — |
-| E2  | Phát hiện nhầm                | _(chưa đo)_ |                       — |                       — |        — |        — |
+| E2  | Phát hiện nhầm                |          ➖ |                       — |                       — |        — |        — |
 | E3  | Nhầm ký tự                    |         445 |                  63,85% |                  15,89% |       17 |      428 |
 | E4  | Thiếu ký tự                   |          73 |                  10,47% |                   2,61% |        0 |       73 |
 | E5  | Thừa ký tự                    |          18 |                   2,58% |                   0,64% |        5 |       13 |

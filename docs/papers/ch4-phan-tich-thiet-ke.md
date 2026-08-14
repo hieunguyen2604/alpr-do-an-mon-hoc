@@ -260,7 +260,7 @@ Chính sách xử lý lỗi phân tầng theo mức ảnh hưởng: ảnh không
 | Biển xanh          |        63 |        61 |   **96,83%** |
 | **Tổng**           | **1.565** | **1.532** |   **97,89%** |
 
-Ba giới hạn cần nêu kèm kết quả trên. Thứ nhất, 542 ảnh đã bị loại khỏi phép đo, gồm toàn bộ lớp không xác định và các ảnh chụp ban đêm hoặc hồng ngoại mà chính người gán nhãn cũng không xác định được màu. Thứ hai, dạng lỗi chủ đạo là biển trắng bị phân loại thành biển xanh — 21 trong tổng số 33 trường hợp sai — do một số điểm ảnh ám lạnh vượt ngưỡng bão hoà. Thứ ba, phạm vi phép đo hẹp hơn phạm vi mô-đun: bộ dữ liệu không chứa biển đỏ và biển ngoại giao nên hai nhánh này chưa có số liệu đánh giá.
+Ba giới hạn cần nêu kèm kết quả trên. Thứ nhất, 542 ảnh đã bị loại khỏi phép đo, gồm toàn bộ lớp không xác định và các ảnh chụp ban đêm hoặc hồng ngoại mà chính người gán nhãn cũng không xác định được màu. Thứ hai, dạng lỗi chủ đạo là biển trắng bị phân loại thành biển xanh — 21 trong tổng số 33 trường hợp sai — do một số điểm ảnh ám lạnh vượt ngưỡng bão hoà. Thứ ba, phạm vi phép đo hẹp hơn phạm vi mô-đun: bộ dữ liệu không chứa biển đỏ và biển ngoại giao nên hai nhánh này chưa có số liệu đánh giá — ghi thành **hạn chế số 10** ở mục 6.2.
 
 Cần lưu ý thêm rằng toàn bộ ảnh của bộ dữ liệu này đã bị biến đổi tỉ lệ về khung vuông trước khi công bố, nên bộ không dùng được để đánh giá độ chính xác nhận dạng ký tự — phép biến đổi phá huỷ tỉ lệ khung hình mà thuật toán ước lượng số dòng dựa vào. Màu nền không chịu ảnh hưởng, do đó bộ dữ liệu chỉ được dùng cho đúng câu hỏi về màu sắc.
 

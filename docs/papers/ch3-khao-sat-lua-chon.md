@@ -27,7 +27,7 @@ Các lựa chọn có mức độ kiểm chứng khác nhau: một số được
 | Bộ nhận dạng gốc ↔ bản tinh chỉnh         | ✅ **Tự đo** — 2.801 biển có nhãn chuỗi, bốn cấu hình                                               |     5.4     |
 | YOLO11n ↔ YOLOv8n và năm thế hệ YOLO khác | 📄 **Khảo sát tài liệu** — theo benchmark chính thức của nhà phát hành, đồ án **không tự chạy lại** |     3.2     |
 | PaddleOCR ↔ EasyOCR ↔ Tesseract           | ✅ **Tự đo 03/08/2026** — 2.801 biển có nhãn chuỗi, ba nhánh, cùng tầng bao quanh                   |    3.3.3    |
-| PyTorch ↔ ONNX Runtime ↔ OpenVINO         | ❌ **Chưa đo** — chọn theo benchmark bên thứ ba, chưa có số tự đo                                   | 3.4 · 5.6.3 |
+| PyTorch ↔ ONNX Runtime ↔ OpenVINO         | ✅ **Tự đo 13/08/2026** — 50 ảnh thật, 50 lượt mỗi nền tảng, kèm mAP sau khi xuất                                   | 3.4 · 5.6.3 |
 | Độ phân giải 416 ↔ 640                    | 🟡 **Có số đo nhưng không quy kết được** — ba biến đổi đồng thời và ngược chiều nhau                |     3.6     |
 
 Dòng ❌ còn lại được ghi nhận ở mục 6.3:

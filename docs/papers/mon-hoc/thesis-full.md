@@ -810,7 +810,7 @@ Mọi chỉ tiêu **ngoài đường xử lý ảnh** đều đạt với biên 
 | Biển xanh | 63 | 61 | **96,83%** |
 | **Tổng** | **1.565** | **1.532** | **97,89%** |
 
-Ba giới hạn phải nêu kèm. **Một,** 542 ảnh đã bị loại khỏi phép đo — toàn bộ lớp không xác định, cùng các ảnh chụp ban đêm hoặc hồng ngoại mà chính người gán nhãn cũng không xác định được màu. **Hai,** dạng lỗi chủ đạo là **biển trắng bị phân loại thành biển xanh** — 21 trong 33 ca sai — do một số điểm ảnh ám lạnh vượt ngưỡng bão hoà. **Ba,** bộ dữ liệu không chứa biển đỏ và biển ngoại giao nên hai nhánh này chưa có số liệu.
+Ba giới hạn phải nêu kèm. **Một,** 542 ảnh đã bị loại khỏi phép đo — toàn bộ lớp không xác định, cùng các ảnh chụp ban đêm hoặc hồng ngoại mà chính người gán nhãn cũng không xác định được màu. **Hai,** dạng lỗi chủ đạo là **biển trắng bị phân loại thành biển xanh** — 21 trong 33 ca sai — do một số điểm ảnh ám lạnh vượt ngưỡng bão hoà. **Ba,** bộ dữ liệu không chứa biển đỏ và biển ngoại giao nên hai nhánh này chưa có số liệu — ghi thành **hạn chế số 6** ở mục 5.2.
 
 ## 4.6. Phân tích lỗi
 
@@ -891,7 +891,7 @@ Ngoài các con số, đồ án để lại **một quy trình đánh giá có k
 
 ## 5.2. Hạn chế
 
-**Bảng 5.2.** Năm hạn chế của đồ án
+**Bảng 5.2.** Sáu hạn chế của đồ án
 
 | # | Hạn chế | Mức | Hệ quả |
 |:--:|---|:--:|---|
@@ -900,6 +900,7 @@ Ngoài các con số, đồ án để lại **một quy trình đánh giá có k
 | 3 | **Rò rỉ dữ liệu tồn dư** không khử được bằng băm tri giác | Cao | Băm tri giác tóm tắt bố cục khung ảnh, không tóm tắt chiếc xe (mục 3.2.3) |
 | 4 | Tập kiểm thử **không xuyên bộ dữ liệu** | Trung bình | mAP 0,9829 lạc quan hơn mức gặp khi triển khai với nguồn ảnh mới |
 | 5 | Độ trễ p95 **chỉ đạt ngưỡng tối thiểu** | Trung bình | 1.143,10 ms — thoái lui có chủ ý, đổi lấy 34 biển đọc thêm |
+| 6 | **Biển đỏ quân đội và biển ngoại giao không có mẫu đánh giá** | Trung bình | Bộ dữ liệu không chứa hai loại này, nên hai nhánh phân loại tuy đã cài đặt và chạy đúng trên ảnh demo vẫn **chưa có số liệu định lượng** |
 
 ## 5.3. Hướng phát triển
 

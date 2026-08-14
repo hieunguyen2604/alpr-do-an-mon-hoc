@@ -515,7 +515,7 @@ Các lựa chọn có mức độ kiểm chứng khác nhau: một số được
 | Bộ nhận dạng gốc ↔ bản tinh chỉnh         | ✅ **Tự đo** — 2.801 biển có nhãn chuỗi, bốn cấu hình                                               |     5.4     |
 | YOLO11n ↔ YOLOv8n và năm thế hệ YOLO khác | 📄 **Khảo sát tài liệu** — theo benchmark chính thức của nhà phát hành, đồ án **không tự chạy lại** |     3.2     |
 | PaddleOCR ↔ EasyOCR ↔ Tesseract           | ✅ **Tự đo 03/08/2026** — 2.801 biển có nhãn chuỗi, ba nhánh, cùng tầng bao quanh                   |    3.3.3    |
-| PyTorch ↔ ONNX Runtime ↔ OpenVINO         | ❌ **Chưa đo** — chọn theo benchmark bên thứ ba, chưa có số tự đo                                   | 3.4 · 5.6.3 |
+| PyTorch ↔ ONNX Runtime ↔ OpenVINO         | ✅ **Tự đo 13/08/2026** — 50 ảnh thật, 50 lượt mỗi nền tảng, kèm mAP sau khi xuất                                   | 3.4 · 5.6.3 |
 | Độ phân giải 416 ↔ 640                    | 🟡 **Có số đo nhưng không quy kết được** — ba biến đổi đồng thời và ngược chiều nhau                |     3.6     |
 
 Dòng ❌ còn lại được ghi nhận ở mục 6.3:
@@ -885,7 +885,7 @@ Chính sách xử lý lỗi phân tầng theo mức ảnh hưởng: ảnh không
 | Biển xanh          |        63 |        61 |   **96,83%** |
 | **Tổng**           | **1.565** | **1.532** |   **97,89%** |
 
-Ba giới hạn cần nêu kèm kết quả trên. Thứ nhất, 542 ảnh đã bị loại khỏi phép đo, gồm toàn bộ lớp không xác định và các ảnh chụp ban đêm hoặc hồng ngoại mà chính người gán nhãn cũng không xác định được màu. Thứ hai, dạng lỗi chủ đạo là biển trắng bị phân loại thành biển xanh — 21 trong tổng số 33 trường hợp sai — do một số điểm ảnh ám lạnh vượt ngưỡng bão hoà. Thứ ba, phạm vi phép đo hẹp hơn phạm vi mô-đun: bộ dữ liệu không chứa biển đỏ và biển ngoại giao nên hai nhánh này chưa có số liệu đánh giá.
+Ba giới hạn cần nêu kèm kết quả trên. Thứ nhất, 542 ảnh đã bị loại khỏi phép đo, gồm toàn bộ lớp không xác định và các ảnh chụp ban đêm hoặc hồng ngoại mà chính người gán nhãn cũng không xác định được màu. Thứ hai, dạng lỗi chủ đạo là biển trắng bị phân loại thành biển xanh — 21 trong tổng số 33 trường hợp sai — do một số điểm ảnh ám lạnh vượt ngưỡng bão hoà. Thứ ba, phạm vi phép đo hẹp hơn phạm vi mô-đun: bộ dữ liệu không chứa biển đỏ và biển ngoại giao nên hai nhánh này chưa có số liệu đánh giá — ghi thành **hạn chế số 10** ở mục 6.2.
 
 Cần lưu ý thêm rằng toàn bộ ảnh của bộ dữ liệu này đã bị biến đổi tỉ lệ về khung vuông trước khi công bố, nên bộ không dùng được để đánh giá độ chính xác nhận dạng ký tự — phép biến đổi phá huỷ tỉ lệ khung hình mà thuật toán ước lượng số dòng dựa vào. Màu nền không chịu ảnh hưởng, do đó bộ dữ liệu chỉ được dùng cho đúng câu hỏi về màu sắc.
 
@@ -1162,7 +1162,9 @@ Chênh lệch 2,09 điểm ở tầng phát hiện tăng lên ở tầng OCR: 5,
 
 NFR-A7 đo **ảnh đầu vào → phát hiện → cắt → OCR → hậu xử lý → chuỗi cuối**; khác A6 ở chỗ A6 đo trên **vùng biển cắt chuẩn theo nhãn thật** còn A7 đo trên vùng biển do **chính bộ phát hiện** tìm ra, nên A7 tích luỹ cả hai nguồn sai số và theo lý thuyết luôn ≤ A6. Trên 2.801 mẫu: **A7 = 0,5552** (sàn 0,82, mục tiêu 0,88 — ❌); **E2E với điều kiện đã phát hiện được biển = 0,6306**; tỉ lệ biển **bỏ sót** ở tầng phát hiện **0,1196**; phát hiện đúng nhưng **đọc sai chuỗi 0,3694**; chênh **A6 − A7 = 19,60 điểm**.
 
-> **Ghi chú về phạm vi hiệu lực của chỉ số A7.** Cần lưu ý rằng con số 0,5552 được đo trên **ảnh vùng biển đã cắt**, không phải ảnh hiện trường, vì không bộ dữ liệu nào trong đồ án có đồng thời ảnh toàn cảnh _và_ chuỗi biển số nhãn thật. Bộ phát hiện được huấn luyện trên ảnh giao thông đầy đủ nên ảnh chỉ có biển số chiếm gần hết khung là **ngoài phân bố huấn luyện**: phần lớn thất bại ở đây do bộ phát hiện không bắt được box trên ảnh vùng biển đã cắt (bỏ sót 11,96%), **không** phải do OCR đọc sai. Bằng chứng: trên ảnh hiện trường thật, phép đo ở giai đoạn kiểm thử cho mAP@0.5 = 0,9829, tương thích với 5.4.1. Muốn đo NFR-A7 đúng cách cần gán nhãn chuỗi cho một phân bố test có ảnh hiện trường — việc này chưa thực hiện.
+> **E2 không áp dụng cho ngữ liệu này, và đó là kết luận chứ không phải khoảng trống.** Cả 2.801 mẫu đều là **vùng biển đã cắt sẵn**, nên không có bước phát hiện nào chạy và một ca *phát hiện nhầm* về nguyên tắc không thể xuất hiện. Tỉ lệ phát hiện nhầm thật được đo ở **tầng bộ phát hiện**, trên 1.514 ảnh toàn cảnh của tập kiểm tra: **39 dương tính giả trên 1.606 phát hiện**, tương ứng precision **0,9757** (mục 5.4).
+
+> **Ghi chú về phạm vi hiệu lực của chỉ số A7.** Cần lưu ý rằng con số 0,5552 được đo trên **ảnh vùng biển đã cắt**, không phải ảnh hiện trường, vì không bộ dữ liệu nào trong đồ án có đồng thời ảnh toàn cảnh _và_ chuỗi biển số nhãn thật. Bộ phát hiện được huấn luyện trên ảnh giao thông đầy đủ nên ảnh chỉ có biển số chiếm gần hết khung là **ngoài phân bố huấn luyện**: phần lớn thất bại ở đây do bộ phát hiện không bắt được box trên ảnh vùng biển đã cắt (bỏ sót 11,96%), **không** phải do OCR đọc sai. Bằng chứng: trên ảnh hiện trường thật, phép đo ở giai đoạn kiểm thử cho mAP@0.5 = 0,9829, tương thích với 5.4.1. Muốn đo NFR-A7 đúng cách cần gán nhãn chuỗi cho một phân bố test có ảnh hiện trường; đây là **hướng phát triển số 3** ở mục 6.3, không phải một phép đo bị bỏ quên.
 
 ### 5.5.6. Bước "phục hồi dòng trên" cho biển hai dòng — thiết kế, kiểm chứng A/B và kết quả trên toàn tập
 
@@ -1332,7 +1334,7 @@ Bảng tổng hợp trình bày khi bảo vệ, liệt kê **đầy đủ mọi 
 | Mã  | Loại lỗi                      |       Số ca | Tỉ lệ trong tổng ca sai | Tỉ lệ toàn tập đánh giá | Một dòng | Hai dòng |
 | :-: | ----------------------------- | ----------: | ----------------------: | ----------------------: | -------: | -------: |
 | E1  | Bỏ sót biển                   |         335 |                       — |                       — |        — |        — |
-| E2  | Phát hiện nhầm                | _(chưa đo)_ |                       — |                       — |        — |        — |
+| E2  | Phát hiện nhầm                |          ➖ |                       — |                       — |        — |        — |
 | E3  | Nhầm ký tự                    |         445 |                  63,85% |                  15,89% |       17 |      428 |
 | E4  | Thiếu ký tự                   |          73 |                  10,47% |                   2,61% |        0 |       73 |
 | E5  | Thừa ký tự                    |          18 |                   2,58% |                   0,64% |        5 |       13 |
@@ -1432,7 +1434,7 @@ Ngoài các con số, đồ án để lại **một quy trình đánh giá có k
 
 ## 6.2. Hạn chế
 
-**Bảng 6.2.** Tám hạn chế của đồ án
+**Bảng 6.2.** Mười hạn chế của đồ án
 
 |  #  | Hạn chế                                                             |    Mức     | Hệ quả cần lưu ý                                                                                       |
 | :-: | ------------------------------------------------------------------- | :--------: | ------------------------------------------------------------------------------------------------------ |
@@ -1444,6 +1446,8 @@ Ngoài các con số, đồ án để lại **một quy trình đánh giá có k
 |  6  | **Hai** yêu cầu mức _Must_ (FR-4.1, FR-2.5) bị đưa ra khỏi phạm vi  | Trung bình | Trang Tổng quan gỡ 20/07/2026; xuất video đã chú thích và huỷ tác vụ gỡ 03/08/2026 — nêu rõ khi bảo vệ |
 |  7  | SQLite chỉ cho phép một tiến trình ghi tại một thời điểm            |    Thấp    | Đủ cho quy mô đồ án, chặn ở triển khai đa người dùng                                                   |
 |  8  | Xem trực tiếp và xử lý nền tranh chấp CPU với nhau                  |    Thấp    | Chạy video nền làm chậm luồng nhận dạng ảnh                                                            |
+|  9  | **NFR-A9 không đo được** — độ chính xác theo điều kiện ảnh           | Trung bình | Không bộ dữ liệu nguồn nào gán nhãn ban ngày, ban đêm, chụp nghiêng hay ảnh mờ. Đây là **thiếu điều kiện quan sát**, không phải phép đo bị bỏ quên: chỉ tiêu ghi ⬜ chứ không ghi ❌ (mục 5.9.2) |
+| 10  | **Biển đỏ quân đội và biển ngoại giao không có mẫu đánh giá**        | Trung bình | Bộ dữ liệu không chứa hai loại này, nên hai nhánh phân loại tuy đã cài đặt và chạy đúng trên ảnh demo vẫn **chưa có số liệu định lượng** |
 
 ## 6.3. Hướng phát triển
 
