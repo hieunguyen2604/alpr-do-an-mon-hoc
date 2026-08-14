@@ -4,7 +4,7 @@ Toàn bộ mã nguồn chuẩn bị dữ liệu cho hệ thống nhận dạng b
 tải về → kiểm tra nhãn → khử trùng lặp → gộp → chia tập → tăng cường → thống kê.
 
 > **Ngôn ngữ:** mã nguồn và comment bằng tiếng Anh, tài liệu bằng tiếng Việt.
-> **Môi trường:** dùng venv `d:/DATN/.venv-ai` (Python 3.13, chạy CPU).
+> **Môi trường:** dùng venv `d:/DATN/backend/.venv` (Python 3.13, chạy CPU).
 
 ---
 
@@ -12,7 +12,7 @@ tải về → kiểm tra nhãn → khử trùng lặp → gộp → chia tập 
 
 ```powershell
 cd d:\DATN
-.\.venv-ai\Scripts\Activate.ps1
+.\backend\.venv\Scripts\Activate.ps1
 python scripts\dataset\run_pipeline.py --help
 ```
 

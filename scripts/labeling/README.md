@@ -18,13 +18,12 @@ script dưới đây tồn tại để việc đó nhanh và ít sai nhất có 
 
 ## 2. Chạy như thế nào
 
-Hai script này dùng venv **`.venv-ocr`**, không dùng `.venv-ai`
-(`.venv-ai` đang có tiến trình huấn luyện chạy nền, không được đụng vào).
+Hai script này chạy bằng **`backend/.venv`**.
 
 ### Bước 1 — Cắt ảnh biển số
 
 ```powershell
-.\.venv-ocr\Scripts\python.exe scripts\labeling\extract_plates.py
+.\backend\.venv\Scripts\python.exe scripts\labeling\extract_plates.py
 ```
 
 Script đọc `datasets/processed/yolo/images/test` cùng nhãn tương ứng trong
@@ -55,7 +54,7 @@ Vài tuỳ chọn hay dùng:
 ### Bước 2 — Mở công cụ gán nhãn
 
 ```powershell
-.\.venv-ocr\Scripts\python.exe scripts\labeling\label_tool.py
+.\backend\.venv\Scripts\python.exe scripts\labeling\label_tool.py
 ```
 
 Script mở một máy chủ HTTP nhỏ ở `http://127.0.0.1:8765/` và tự bật trình duyệt.

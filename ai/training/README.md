@@ -45,11 +45,11 @@ rồi chạy lần lượt các ô từ 1 đến 10. Hướng dẫn chi tiết n
 
 ```bash
 # Kiểm tra cấu hình mà không huấn luyện
-D:/DATN/.venv-ai/Scripts/python.exe -m ai.training.train \
+D:/DATN/backend/.venv/Scripts/python.exe -m ai.training.train \
     --config yolo11n_finetune.yaml --print-config
 
 # Chạy thử đường ống (vài phút, kết quả vô nghĩa nhưng chứng minh mọi thứ chạy được)
-D:/DATN/.venv-ai/Scripts/python.exe -m ai.training.train \
+D:/DATN/backend/.venv/Scripts/python.exe -m ai.training.train \
     --config yolo11n_finetune.yaml \
     --device cpu --epochs 1 --fraction 0.01 --batch 2 --name smoke_test
 ```

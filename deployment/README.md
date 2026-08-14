@@ -481,7 +481,7 @@ docker compose up -d
 
 **Nguyên nhân.** Ba tệp `.dockerignore` đều có dòng `.venv/`. Mẫu này **được
 neo vào thư mục gốc**, nên nó chỉ khớp đúng `d:/DATN/.venv`. Các venv thật của
-dự án tên là `.venv-ai`, `.venv-ocr` và `backend/.venv` — **không cái nào bị
+dự án khi đó tên là `.venv-ai`, `.venv-ocr` và `backend/.venv` — **không cái nào bị
 loại trừ**. Riêng `backend/.venv` nặng 2,0 GB và chứa wheel **Windows**, tức là
 2 GB nhị phân hoàn toàn vô dụng được nướng vào một image **Linux**.
 

@@ -220,7 +220,7 @@ d:/DATN/
 └── CLAUDE.md · README.md
 ```
 
-**Ba thư mục ảo Python** (`.venv-ai`, `.venv-ocr`, `backend/.venv`) nằm ngay trong kho mã và bị `.gitignore` loại trừ. Lý do phải tách làm ba được trình bày ở mục [4.1](#41-ba-môi-trường-ảo-và-lý-do-phải-tách).
+**Một thư mục ảo Python** (`backend/.venv`) nằm ngay trong kho mã và bị `.gitignore` loại trừ. Dự án từng tách làm ba; lý do và cách hợp nhất trình bày ở mục [4.1](#41-một-môi-trường-ảo-và-xung-đột-phụ-thuộc-từng-buộc-phải-tách-làm-ba).
 
 ---
 
@@ -256,7 +256,7 @@ pytest tests/test_architecture.py -v
 
 **Ngoại lệ duy nhất, và điều kiện của nó.** `ai/evaluation/stress_test.py` *phải* import `backend` và `sqlalchemy`, vì nó đo chính lược đồ đó (NFR-P6, truy vấn lịch sử trên 10.000 bản ghi). Điều giữ cho ngoại lệ này không thành vi phạm là các import nằm **bên trong hàm**, nên chỉ import module thì không kéo theo gì. Test `test_the_evaluation_harness_keeps_its_backend_imports_function_local` ghim đúng điều kiện đó: dời một import lên đầu tệp sẽ làm test đỏ.
 
-> **Lưu ý về `pip freeze`.** `pydantic` vẫn xuất hiện trong `.venv-ai` như phụ thuộc **bắc cầu** của `albumentations`, và trong `.venv-ocr` như phụ thuộc bắc cầu của `paddlex`. Điều đó không vi phạm gì: quy tắc là *không module nào dưới `ai/` được `import pydantic`*, chứ không phải *bánh xe đó phải vắng mặt*.
+> **Lưu ý về `pip freeze`.** `pydantic` vẫn xuất hiện trong `backend/.venv` như phụ thuộc **bắc cầu** của `albumentations` và của `paddlex`. Điều đó không vi phạm gì: quy tắc là *không module nào dưới `ai/` được `import pydantic`*, chứ không phải *bánh xe đó phải vắng mặt*.
 
 ### 3.2. Không hard-code đường dẫn
 
@@ -317,46 +317,47 @@ Mọi hiện thực của ba giao diện trên chỉ được ném `ALPRError` h
 
 ## 4. Thiết lập môi trường phát triển
 
-### 4.1. Ba môi trường ảo và lý do phải tách
+### 4.1. Một môi trường ảo, và xung đột phụ thuộc từng buộc phải tách làm ba
 
-Dự án dùng **ba** môi trường ảo Python. Đây không phải sự lộn xộn tích tụ mà là hệ quả trực tiếp của một xung đột phụ thuộc thật.
+Dự án dùng **một** môi trường ảo Python: `backend/.venv`. Nó gánh cả ba tầng —
+huấn luyện và đánh giá, tầng OCR, và API cùng bộ kiểm thử.
 
-| Môi trường | Dùng cho | Gói then chốt |
-|---|---|---|
-| `.venv-ai` | Huấn luyện, đánh giá, xử lý bộ dữ liệu | `torch==2.13.0+cpu`, `torchvision==0.28.0+cpu`, `ultralytics==8.4.101`, `opencv-python==5.0.0.93`, `numpy==2.4.4`, `albumentations`, `imagehash` |
-| `.venv-ocr` | Chạy và benchmark tầng OCR | `paddlepaddle==3.3.1`, `paddleocr==3.7.0`, `paddlex==3.7.2`, `opencv-python==4.10.0.84`, `opencv-contrib-python==4.10.0.84`, `numpy==2.3.5` |
-| `backend/.venv` | Chạy API, chạy **đường ống suy luận thật** và bộ kiểm thử | `fastapi`, `uvicorn[standard]`, `pydantic`, `pydantic-settings`, `sqlalchemy`, `alembic`, cộng toàn bộ ngăn xếp ML: `torch==2.13.0+cpu`, `ultralytics==8.4.101`, `paddleocr==3.7.0`, `opencv-python==4.10.0.84`, `opencv-contrib-python==4.10.0.84`, `numpy==2.3.5` |
+Trước đây có **ba** (`.venv-ai`, `.venv-ocr`, `backend/.venv`). Việc tách không
+phải sự lộn xộn tích tụ mà là hệ quả trực tiếp của một xung đột phụ thuộc thật,
+và nó **tạm thời** ngay từ đầu: chỉ để một lượt huấn luyện YOLO11n đang chạy
+không bị hỏng giữa chừng.
 
-**Lý do tách `.venv-ocr` khỏi `.venv-ai`.** Cài `paddleocr` vào `.venv-ai` gây **hai tác dụng phụ không chấp nhận được**:
+**Xung đột đó là gì.** Cài `paddleocr` vào môi trường đang huấn luyện gây hai
+tác dụng phụ:
 
-1. **Nó hạ cấp `numpy`** từ `2.4.4` xuống `2.3.5`.
-2. **Nó kéo theo `opencv-contrib-python`**, gói này dùng chung không gian tên `cv2` với `opencv-python` đã ghim ở trên.
+1. **Hạ cấp `numpy`** từ `2.4.4` xuống `2.3.5`.
+2. **Kéo theo `opencv-contrib-python`**, gói này dùng chung không gian tên `cv2`
+   với `opencv-python`. Hai gói khác phiên bản cùng ghi vào `cv2` thì `import cv2`
+   trả về cái nào là chuyện của thứ tự cài đặt — một lớp lỗi im lặng và rất khó
+   truy.
 
-Không được phép để một trong hai điều đó xảy ra trong khi một lượt huấn luyện YOLO11n đang dùng `.venv-ai`. Vì vậy tầng OCR có môi trường riêng.
+Không được để điều đó xảy ra giữa một lượt huấn luyện kéo dài 10 giờ. Nên tầng
+OCR có môi trường riêng cho tới khi lượt huấn luyện kết thúc.
 
-> **CẢNH BÁO — xung đột `cv2`.**
-> Đây là cạm bẫy tốn thời gian nhất khi dựng lại môi trường. Có tới **ba** gói cùng cài vào không gian tên `cv2`: `opencv-python`, `opencv-python-headless` (do `ultralytics` kéo theo bắc cầu) và `opencv-contrib-python` (do `paddleocr` kéo theo).
->
-> **Cách khắc phục đã áp dụng:** ghim **cùng một phiên bản** cho các gói cùng tồn tại, để `import cv2` luôn phân giải nhất quán. Trong `.venv-ai`, `opencv-python` và `opencv-python-headless` cùng ở `5.0.0.93`. Trong `.venv-ocr`, `opencv-contrib-python` được ghim ở `4.10.0.84` — **cố ý trùng phiên bản** với `opencv-python==4.10.0.84`.
->
-> **Nếu `import cv2` vẫn giở chứng** (thiếu hàm, `AttributeError`, lỗi symbol khi nạp), hãy **gỡ TẤT CẢ các gói opencv rồi cài lại đúng một gói**:
-> ```bash
-> python -m pip uninstall -y opencv-python opencv-python-headless opencv-contrib-python
-> python -m pip install --force-reinstall opencv-python==5.0.0.93
-> ```
-> Trong `.venv-ocr`, nếu buộc phải có `opencv-contrib-python` thì cài **cả hai gói ở cùng số phiên bản** bằng `--force-reinstall`, đừng để pip tự chọn.
+**Cách hoá giải đã áp dụng, và nay là trạng thái thật của kho:** ghim **cùng một
+phiên bản** cho mọi gói cùng ghi vào `cv2`. Kiểm chứng 14/08/2026 trong
+`backend/.venv`:
 
-> **CẢNH BÁO — `paddlepaddle 3.3.1` bắt buộc `enable_mkldnn=False`.**
-> Với `paddlepaddle==3.3.1` trên Windows/CPU, chạy mô hình phát hiện văn bản PP-OCRv5 qua đường oneDNN (MKL-DNN) **làm sập tiến trình**:
-> ```
-> NotImplementedError: (Unimplemented) ConvertPirAttribute2RuntimeAttribute
-> not support [pir::ArrayAttribute<pir::DoubleAttribute>]
-> (at ..\paddle\fluid\framework\new_executor\instruction\onednn\onednn_instruction.cc:118)
-> ```
-> Đây là lỗi của Paddle ở khâu chuyển đổi thuộc tính PIR sang oneDNN, không phải lỗi mô hình hay lỗi ảnh đầu vào. Mã nguồn đã xử lý bằng hằng số `DEFAULT_ENABLE_MKLDNN = False` trong [`ai/inference/recognizer.py`](../../ai/inference/recognizer.py), truyền vào `PaddleOCR(..., enable_mkldnn=self._enable_mkldnn)`.
-> **Cờ này không phải tuỳ chọn.** Nếu bật lại, tiến trình sẽ sập ngay lần gọi OCR đầu tiên. Chỉ bật lại sau khi lỗi thượng nguồn được sửa, và phải đo lại — đây thuần tuý là núm hiệu năng, không ảnh hưởng độ chính xác.
+| Gói | Phiên bản |
+|---|---|
+| `opencv-python` · `opencv-contrib-python` · `opencv-python-headless` | **cả ba đều `4.10.0.84`** |
+| `numpy` | `2.3.5` |
+| `torch` · `ultralytics` | `2.13.0+cpu` · `8.4.101` |
+| `paddlepaddle` · `paddleocr` | `3.3.1` · `3.7.0` |
+| `fastapi` · `pytest` | `0.139.2` · `9.1.1` |
 
-**Lý do `torch` phải là bản `+cpu`.** Máy đích không có GPU CUDA (quyết định `AD-06`). Nếu để pip tự chọn, nó lấy bánh xe CUDA từ PyPI: vài gigabyte và hoàn toàn vô dụng. Hậu tố phiên bản cục bộ `+cpu` trong `ai/requirements.txt` là thứ *bảo đảm* điều đó — phiên bản `2.13.0+cpu` không tồn tại trên PyPI, nên pip buộc phải phân giải qua chỉ mục CPU khai báo bằng `--extra-index-url`. **Không được bỏ hậu tố `+cpu`.** Cũng không được đổi `--extra-index-url` thành `--index-url`: dạng số ít **thay thế** PyPI hoàn toàn, mà chỉ mục PyTorch không chứa `ultralytics`, `albumentations`…
+`numpy` ở `2.3.5` chứ không phải `2.4.4` — đó chính là mức `paddleocr` cần, và vì
+không còn môi trường huấn luyện riêng đòi bản cao hơn nên không còn gì để xung đột.
+
+> **Bài học giữ lại.** Khi hai gói dùng chung một không gian tên (`cv2` là ví dụ
+> kinh điển), đừng để trình giải phụ thuộc tự chọn. Ghim tất cả về **cùng một số
+> phiên bản**, và nếu buộc phải cài lại thì dùng `--force-reinstall` cho cả nhóm
+> chứ không cho từng gói.
 
 ### 4.2. Trình tự cài đặt
 
@@ -365,20 +366,14 @@ Không được phép để một trong hai điều đó xảy ra trong khi mộ
 python --version            # 3.13.x
 node --version              # >= 18.0.0  (bắt buộc, khai trong frontend/package.json engines)
 
-# --- 1. Môi trường AI (huấn luyện + đánh giá + dữ liệu) ---
-python -m venv d:/DATN/.venv-ai
-d:/DATN/.venv-ai/Scripts/python.exe -m pip install --upgrade pip setuptools wheel
-d:/DATN/.venv-ai/Scripts/python.exe -m pip install -r d:/DATN/ai/requirements.txt
-# Kiểm tra nhanh — cuda=False LÀ ĐÚNG trên máy này:
-d:/DATN/.venv-ai/Scripts/python.exe -c "import torch; print(torch.__version__, torch.cuda.is_available())"
-# Kỳ vọng: 2.13.0+cpu False
-# Dung lượng: venv này khoảng 1,25 GB (riêng torch ~1 GB kể cả bản CPU trên Windows)
-
-# --- 2. Môi trường OCR (TÁCH RIÊNG — xem cảnh báo mục 4.1) ---
-python -m venv d:/DATN/.venv-ocr
-d:/DATN/.venv-ocr/Scripts/python.exe -m pip install --upgrade pip setuptools wheel
-d:/DATN/.venv-ocr/Scripts/python.exe -m pip install \
-    paddlepaddle==3.3.1 paddleocr==3.7.0 opencv-python==4.10.0.84 pytest==9.1.1
+# --- Môi trường Python (một venv gánh cả ba tầng) ---
+python -m venv d:/DATN/backend/.venv
+d:/DATN/backend/.venv/Scripts/python.exe -m pip install --upgrade pip setuptools wheel
+d:/DATN/backend/.venv/Scripts/python.exe -m pip install -r d:/DATN/backend/requirements.txt
+d:/DATN/backend/.venv/Scripts/python.exe -m pip install -r d:/DATN/ai/requirements.txt
+# Kiem tra nhanh — cuda=False LA DUNG tren may nay:
+d:/DATN/backend/.venv/Scripts/python.exe -c "import torch; print(torch.__version__, torch.cuda.is_available())"
+# Ky vong: 2.13.0+cpu False
 
 # --- 3. Môi trường backend ---
 python -m venv d:/DATN/backend/.venv
@@ -406,7 +401,7 @@ cd frontend && npm install && npm run dev
 
 **Ghi chú về Node.** `frontend/package.json` khai `"engines": { "node": ">=18" }`. Vite 5 và bộ công cụ TypeScript 5.6 không hỗ trợ Node cũ hơn. Kịch bản `npm run build` chạy `tsc --noEmit && vite build`, nghĩa là **lỗi kiểu TypeScript làm hỏng bản dựng** — đó là chủ ý.
 
-**Tách môi trường là tạm thời.** Ghi chú trong `ai/requirements.txt` nêu rõ: sau khi huấn luyện xong, `.venv-ai` và `.venv-ocr` nên được hợp nhất, và các ghim `numpy`/`opencv` thương lượng lại theo yêu cầu của `paddleocr` tại thời điểm đó. Việc này nằm trong danh sách nợ kỹ thuật (mục [14](#14-lộ-trình-bảo-trì-và-nợ-kỹ-thuật)).
+**Việc tách môi trường đã kết thúc.** Ghi chú trong `ai/requirements.txt` từng nêu rằng sau khi huấn luyện xong thì `.venv-ai` và `.venv-ocr` nên được hợp nhất và các ghim `numpy`/`opencv` thương lượng lại. Việc đó **đã làm**: nay chỉ còn `backend/.venv`, ba gói `opencv` cùng ghim `4.10.0.84` (mục 4.1).
 
 ---
 
@@ -939,13 +934,13 @@ Gỡ một trường hợp nhập nhằng ở mức chuỗi bằng **màu nền*
 
 ```bash
 # Xem kế hoạch, không đụng vào mạng hay đĩa
-.venv-ai/Scripts/python.exe scripts/dataset/run_pipeline.py --dry-run
+backend/.venv/Scripts/python.exe scripts/dataset/run_pipeline.py --dry-run
 
 # Chạy đầy đủ (mặc định: download → verify → dedup → merge → split → stats)
-.venv-ai/Scripts/python.exe scripts/dataset/run_pipeline.py
+backend/.venv/Scripts/python.exe scripts/dataset/run_pipeline.py
 
 # Chạy một tập con
-.venv-ai/Scripts/python.exe scripts/dataset/run_pipeline.py --steps dedup merge split stats
+backend/.venv/Scripts/python.exe scripts/dataset/run_pipeline.py --steps dedup merge split stats
 ```
 
 **Các bước luôn chạy theo thứ tự chính tắc** bất kể thứ tự gõ trên dòng lệnh, nên `--steps stats merge` vẫn gộp trước rồi mới thống kê. **Một bước lỗi làm dừng cả lượt chạy** theo mặc định: mọi bước sau đều tiêu thụ đầu ra của bước trước, tiếp tục sẽ sinh ra kết quả tính từ đầu vào hỏng mà không nói ra. Cờ `--continue-on-error` ghi đè điều này, chỉ dùng khi gỡ lỗi.
@@ -996,13 +991,13 @@ Bộ dữ liệu hiện có **15.133 ảnh**, hợp nhất từ **7 bộ dữ li
 
 ```bash
 # Tinh chỉnh trên phần cứng có sẵn
-.venv-ai/Scripts/python.exe -m ai.training.train --config yolo11n_finetune.yaml
+backend/.venv/Scripts/python.exe -m ai.training.train --config yolo11n_finetune.yaml
 
 # Tiếp tục sau khi phiên Colab rớt
-.venv-ai/Scripts/python.exe -m ai.training.train --config yolo11n_finetune.yaml --resume
+backend/.venv/Scripts/python.exe -m ai.training.train --config yolo11n_finetune.yaml --resume
 
 # Kiểm tra nhanh đường ống chạy được (cố ý tí hon)
-.venv-ai/Scripts/python.exe -m ai.training.train --config yolo11n_finetune.yaml \
+backend/.venv/Scripts/python.exe -m ai.training.train --config yolo11n_finetune.yaml \
     --device cpu --epochs 1 --fraction 0.01 --name smoke_test
 ```
 
@@ -1047,8 +1042,8 @@ Sản phẩm mỗi lượt chạy nằm trong `runs/<tên-run>/`:
 ### 10.5. Xuất mô hình
 
 ```bash
-.venv-ai/Scripts/python.exe -m ai.training.export --weights models/best.pt --format all
-.venv-ai/Scripts/python.exe -m ai.training.export --weights models/best.pt --format onnx --imgsz 480
+backend/.venv/Scripts/python.exe -m ai.training.export --weights models/best.pt --format all
+backend/.venv/Scripts/python.exe -m ai.training.export --weights models/best.pt --format onnx --imgsz 480
 ```
 
 Ba định dạng hỗ trợ: `onnx` (đích CPU chính, di động), `openvino` (tối ưu cho Intel, **nhanh nhất trên máy này theo đo đạc**), `torchscript` (không cần runtime phụ, dùng làm phương án dự phòng và làm phép đo đối chứng).
@@ -1438,10 +1433,9 @@ thay vì đánh dấu ✅ — một bảng nợ mà quá nửa số dòng đã t
 | 1 | **Rò rỉ tồn dư trong bộ dữ liệu** | Cao | Không khử được bằng `phash` (mục 13.7). Hướng xử lý: khử trùng ở **mức chuỗi biển số** thay vì mức ảnh — gom nhóm theo chuỗi ký tự, giải đúng loại rò rỉ mà `phash` không thấy |
 | 2 | **Bộ dữ liệu lệch nặng về biển trắng** (97,68%) | Cao | Kết luận độ chính xác OCR **chỉ áp cho biển trắng**. Biển vàng còn n = 20 nên chưa kết luận được gì. Cần thu thập thêm biển vàng, xanh, đỏ, ngoại giao |
 | 3 | **Bảng ánh xạ nhầm lẫn suy từ hình dạng ký tự** | Trung bình | Chỉ phủ 2 trên 10 cặp nhầm phổ biến nhất; 8 cặp còn lại chiếm **32,72%** tổng lỗi thay thế. Rẻ nhất trong danh sách: dữ liệu thay thế đã có sẵn ở Bảng 5.6, chỉ cần đổi hằng số |
-| 4 | **Hợp nhất `.venv-ai` và `.venv-ocr`** | Trung bình | Việc tách là **tạm thời**, chỉ để bảo vệ lượt huấn luyện đang chạy khỏi xung đột phiên bản |
-| 5 | **`enable_mkldnn=False`** | Thấp | Là workaround cho lỗi thượng nguồn của `paddlepaddle` 3.3.1 (mục 5.5.4 của quyển). Theo dõi bản vá; khi được sửa thì bật lại và đo lại |
-| 6 | **Webcam dùng HTTP thay vì WebSocket** | Thấp | Quyết định `AD-03`: đơn giản, dễ gỡ lỗi, và đo được **5,257 FPS** nên đủ dùng. Chỉ xét lại nếu cần vượt xa mức đó |
-| 7 | **`AD-04` — gộp trùng biển số theo chuỗi + cửa sổ thời gian** | Thấp | Đơn giản hơn nhiều so với object tracking, đủ cho phạm vi hiện tại |
+| 4 | **`enable_mkldnn=False`** | Thấp | Là workaround cho lỗi thượng nguồn của `paddlepaddle` 3.3.1 (mục 5.5.4 của quyển). Theo dõi bản vá; khi được sửa thì bật lại và đo lại |
+| 5 | **Webcam dùng HTTP thay vì WebSocket** | Thấp | Quyết định `AD-03`: đơn giản, dễ gỡ lỗi, và đo được **5,257 FPS** nên đủ dùng. Chỉ xét lại nếu cần vượt xa mức đó |
+| 6 | **`AD-04` — gộp trùng biển số theo chuỗi + cửa sổ thời gian** | Thấp | Đơn giản hơn nhiều so với object tracking, đủ cho phạm vi hiện tại |
 
 **Bảy mục đã gỡ khỏi bảng vì đã trả xong**, ghi lại ở đây để không ai mở lại
 nhầm: bản xuất ONNX/OpenVINO *đã* nối được vào hệ thống (kiểm chứng 13/08:
@@ -1462,7 +1456,7 @@ cd frontend && npm run typecheck && npm run lint
 # Trước mỗi mốc bàn giao
 backend/.venv/Scripts/python.exe -m pytest --cov=ai --cov=backend --cov-report=term
 docker compose config
-.venv-ai/Scripts/python.exe -m ai.evaluation.leak_check --threshold 10   # KHÔNG dùng ngưỡng 5
+backend/.venv/Scripts/python.exe -m ai.evaluation.leak_check --threshold 10   # KHÔNG dùng ngưỡng 5
 ```
 
 > **Ghi chú cuối.** Lệnh `leak_check` phải chạy ở **ngưỡng cao hơn** ngưỡng dùng để gom nhóm lúc chia dữ liệu. Chạy ở đúng ngưỡng gom nhóm sẽ luôn trả về 0 và không chứng minh được điều gì (mục 13.7).

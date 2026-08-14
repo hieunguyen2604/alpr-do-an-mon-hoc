@@ -69,8 +69,8 @@ Example:
         --labels datasets/annotations/plate_labels.csv \\
         --output-dir docs/reports/04-ocr-benchmark
 
-Run it with the OCR virtual environment (``.venv-ocr``), which is the only one
-carrying PaddleOCR.
+Run it with ``backend/.venv``, which carries PaddleOCR. The project briefly
+kept a separate ``.venv-ocr``; that split was temporary and is gone.
 """
 
 from __future__ import annotations
@@ -1135,9 +1135,8 @@ def build_parser() -> argparse.ArgumentParser:
             "two-line plates."
         ),
         epilog=(
-            "Run with the OCR virtual environment (.venv-ocr), the only one that "
-            "carries PaddleOCR:\n"
-            "  .venv-ocr/Scripts/python -m ai.evaluation.benchmark_ocr\n"
+            "Run with backend/.venv, which carries PaddleOCR:\n"
+            "  backend/.venv/Scripts/python -m ai.evaluation.benchmark_ocr\n"
         ),
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )

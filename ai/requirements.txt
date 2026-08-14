@@ -1,7 +1,7 @@
 # =============================================================================
 # AI dependencies - Vietnamese License Plate Recognition (Phase 2/3)
 # Target: Windows 11, Python 3.13, CPU-only inference (Intel UHD 770, no CUDA).
-# Virtual environment: d:/DATN/.venv-ai
+# Virtual environment: d:/DATN/backend/.venv (one venv carries all three layers)
 # =============================================================================
 #
 # !!! IMPORTANT - READ BEFORE INSTALLING !!!
@@ -17,9 +17,9 @@
 #
 # --- Recommended: one-command install (the --extra-index-url below applies) ---
 #
-#   python -m venv d:/DATN/.venv-ai
-#   d:/DATN/.venv-ai/Scripts/python.exe -m pip install --upgrade pip setuptools wheel
-#   d:/DATN/.venv-ai/Scripts/python.exe -m pip install -r d:/DATN/ai/requirements.txt
+#   python -m venv d:/DATN/backend/.venv
+#   d:/DATN/backend/.venv/Scripts/python.exe -m pip install --upgrade pip setuptools wheel
+#   d:/DATN/backend/.venv/Scripts/python.exe -m pip install -r d:/DATN/ai/requirements.txt
 #
 # --- Alternative: two-step install (torch first, explicitly from the CPU index) ---
 #
@@ -78,20 +78,25 @@ albumentations==2.0.8
 
 # --- OCR: PaddleOCR PP-OCRv5_mobile baseline (Phase 4) ------------------------
 #
-# INSTALL THESE INTO d:/DATN/.venv-ocr, NOT .venv-ai.
+# INSTALL THESE INTO d:/DATN/backend/.venv, alongside everything above.
 #
-# Why a separate environment. These two lines were deferred out of Phase 2/3 on
-# the grounds that Paddle has its own Python-version and CPU/GPU wheel
-# constraints. That caution turned out to be justified but not fatal: the
-# wheels resolve cleanly on Python 3.13 / Windows, yet installing paddleocr
-# downgrades numpy (2.4.4 -> 2.3.5) and pulls in opencv-contrib-python, which
-# shares the `cv2` namespace with the opencv-python pinned above. Neither change
-# is acceptable in .venv-ai while a YOLO11n training run is using it, so Phase 4
-# gets its own venv:
+# These two lines were deferred out of Phase 2/3 because Paddle has its own
+# Python-version and CPU/GPU wheel constraints. That caution proved justified
+# but not fatal: the wheels resolve cleanly on Python 3.13 / Windows, yet
+# installing paddleocr downgrades numpy (2.4.4 -> 2.3.5) and pulls in
+# opencv-contrib-python, which shares the `cv2` namespace with opencv-python.
 #
-#   python -m venv d:/DATN/.venv-ocr
-#   d:/DATN/.venv-ocr/Scripts/python.exe -m pip install --upgrade pip setuptools wheel
-#   d:/DATN/.venv-ocr/Scripts/python.exe -m pip install paddlepaddle==3.3.1 paddleocr==3.7.0 opencv-python==4.10.0.84 pytest==9.1.1
+# Neither change was acceptable while a 10-hour YOLO11n training run was using
+# the environment, so Phase 4 ran in a separate `.venv-ocr` until that run
+# finished. THAT SPLIT IS OVER -- there is one venv now, and the conflict is
+# resolved the way it should be: every package that writes into `cv2` is
+# pinned to the SAME version.
+#
+#   opencv-python == opencv-contrib-python == opencv-python-headless == 4.10.0.84
+#   numpy == 2.3.5   (what paddleocr wants; nothing else now demands 2.4.4)
+#
+#   d:/DATN/backend/.venv/Scripts/python.exe -m pip install \
+#       paddlepaddle==3.3.1 paddleocr==3.7.0 opencv-python==4.10.0.84
 #
 # The split is TEMPORARY. Once training is finished the two environments should
 # be reconciled into one, and the numpy/opencv pins above renegotiated against
@@ -136,16 +141,14 @@ paddlex==3.7.2
 # fastapi / pydantic       : the ai/ package must never import web-framework
 #   code (Clean Architecture: AI layer stays independent of the API layer).
 #   NOTE: pydantic still appears in `pip freeze` as a TRANSITIVE dependency of
-#   albumentations, and in .venv-ocr as a transitive dependency of paddlex
-#   (2.13.4). That is unavoidable and acceptable - the rule is that no module
-#   under ai/ may `import pydantic`, not that the wheel must be absent.
+#   albumentations and of paddlex (2.13.4). That is unavoidable and acceptable
+#   - the rule is that no module under ai/ may `import pydantic`, not that the
+#   wheel must be absent.
 #
 # opencv-python-headless   : not requested here, but ultralytics pulls it in as
 #   a transitive dependency. Both packages install into the same `cv2` namespace.
-#   They currently resolve to the identical version (5.0.0.93) so the import is
-#   consistent, but if `import cv2` ever misbehaves, uninstall BOTH and
-#   reinstall only opencv-python.
-#   The same clash exists in .venv-ocr, where paddleocr pulls in
-#   opencv-contrib-python. It is pinned there to 4.10.0.84, deliberately the
-#   same version as opencv-python, so `import cv2` stays consistent.
+#   paddleocr pulls in a third one, opencv-contrib-python. All three are pinned
+#   to the SAME version (4.10.0.84 as of 2026-08-14), which is what keeps
+#   `import cv2` deterministic. If it ever misbehaves, uninstall all three and
+#   reinstall them together at one version -- never one at a time.
 # =============================================================================
