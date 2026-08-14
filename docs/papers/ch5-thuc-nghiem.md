@@ -28,26 +28,35 @@ Chương này trả lời sáu câu hỏi từ đặc tả phi chức năng: **R
 
 **Bảng 5.1.** Các lượt đo độ chính xác nhận dạng, và lý do phải đo lại
 
-| Lượt | Hệ thống hoặc phép đo thay đổi gì |     A4 |     A6 | Vì sao con số bị thay thế |
-| :--: | --------------------------------- | -----: | -----: | ------------------------- |
-|  1   | Bản đầu tiên đo được | 0,8734 | 0,6555 | Ảnh ngữ liệu xuất ở khung vuông nên tỷ lệ biển bị bóp méo; chưa có bước phục hồi |
-|  2   | Thêm bước phục hồi tỷ lệ khung và cứu dòng trên | 0,8848 | 0,6730 | Bốn đợt sửa độ chính xác sau đó làm mọi con số cũ mô tả một hệ thống không còn tồn tại |
-|  3   | Sau bốn đợt sửa độ chính xác | 0,9416 | 0,7437 | **Lỗi công cụ đo:** harness chép lại các bước của đường ống nên **chưa bao giờ gọi** bậc thang thử-lại — nó đo một pipeline *ngắn hơn* bản giao hàng |
-|  4   | Nối bậc thang thử-lại vào harness | 0,9454 | 0,7512 | Bảng ánh xạ nhầm lẫn vẫn suy từ hình dạng ký tự, chưa dùng ma trận đo được |
-| **5** | **Bảng ánh xạ nhầm lẫn trích từ ma trận đo được** | **0,9483** | **0,7701** | — **cấu hình bản giao hàng, mọi số ở chương này** |
-|  ✗   | _(nhánh đối chứng)_ Bộ nhận dạng tinh chỉnh | 0,9252 | 0,6762 | Thua bản gốc ở chế độ production; bị bác bỏ, không vào bản giao hàng (4.5.3) |
+| Lượt | Lượt này thêm gì so với lượt trước |     A4 |     A6 | Vì sao con số không còn dùng |
+| :--: | ---------------------------------- | -----: | -----: | ---------------------------- |
+|  1   | Lượt đo đầu tiên | 0,8734 | 0,6555 | Ảnh trong bộ dữ liệu được xuất ra ở **khung vuông**, làm biển số bị kéo méo; hệ thống lúc đó chưa trả lại tỷ lệ đúng trước khi đọc |
+|  2   | Trả lại **tỷ lệ đúng** cho ảnh biển trước khi đọc, và đọc lại dòng trên của biển hai dòng khi lần đầu thất bại _(5.5.6)_ | 0,8848 | 0,6730 | Bốn đợt sửa độ chính xác sau đó làm mọi con số cũ mô tả **một hệ thống không còn tồn tại** |
+|  3   | Bốn đợt sửa độ chính xác ở khối đọc ký tự | 0,9416 | 0,7437 | **Công cụ đo bị sai.** Nó tự dựng lại các bước xử lý thay vì gọi đúng đường mà hệ thống thật chạy, nên **bỏ sót hẳn** bước đọc lại khi thất bại — tức là đo một hệ thống *thiếu bước* so với bản giao hàng |
+|  4   | Cho công cụ đo chạy **đúng đường xử lý** của bản giao hàng _(5.5.7)_ | 0,9454 | 0,7512 | Bảng sửa ký tự đọc nhầm vẫn dựa trên **hình dạng chữ giống nhau**, chưa dùng số liệu nhầm lẫn thật đã đo được |
+| **5** | **Bảng sửa ký tự dựng từ số liệu nhầm lẫn đo được** _(5.5.4)_ | **0,9483** | **0,7701** | — **đây là cấu hình bản giao hàng; mọi con số trong chương này thuộc lượt 5** |
+|  ✗   | _(nhánh đối chứng)_ Thử dùng bộ đọc ký tự đã huấn luyện thêm trên biển số Việt Nam | 0,9252 | 0,6762 | **Kém hơn bản gốc** khi chạy đầy đủ như hệ thống thật; đã bác bỏ, không đưa vào bản giao hàng _(4.5.3)_ |
 
-**Vì sao có nhiều lượt, và ba nguyên nhân không giống nhau.** Lượt 2 và 4 là
-**loại chính đáng**: hệ thống thay đổi thì số cũ mô tả một hệ thống không còn
-tồn tại, không đo lại mới là sai. Lượt 3 thuộc **loại đáng lo** — công cụ đo và
-mã chạy thật là hai đường mã riêng, nên harness trôi khỏi bản giao hàng mà không
-ai thấy; đây là lỗi cùng loại đã lặp bốn lần trong đồ án và được ghi thành mối
-đe doạ tính hợp lệ ở mục 5.9.3. Loại thứ ba là **điều kiện đo sai**, gặp một lần
-ở NFR-P2 (5.6.4).
+**Vì sao phải đo nhiều lần?** Ba lý do, và chúng khác hẳn nhau về tính chất.
 
-Nguyên tắc rút ra và áp dụng từ đó: **một lượt đo chỉ được trích khi công cụ đo
-đi qua đúng đường mã mà bản giao hàng đi**, và mọi công tắc cấu hình phải đọc từ
-cùng một nguồn với máy chủ thật.
+**Lý do thứ nhất — hệ thống thật sự thay đổi.** Đây là các lượt 2, 3 và 5. Mỗi
+lần cải tiến một khâu xử lý là mọi con số cũ trở thành mô tả của một hệ thống
+**không còn tồn tại**. Trong trường hợp này, *không* đo lại mới là sai.
+
+**Lý do thứ hai — công cụ đo bị sai.** Đây là lượt 4, và là lý do đáng lo nhất.
+Công cụ đo được viết riêng, tự dựng lại các bước xử lý thay vì gọi đúng đường mà
+hệ thống thật chạy. Hai bên vì thế trôi xa nhau mà không ai thấy: công cụ vẫn
+chạy trơn tru, vẫn in ra số đẹp, chỉ có điều nó đang đo **một hệ thống khác**.
+Lỗi cùng loại này lặp lại **bốn lần** trong đồ án và được ghi thành một mối đe
+doạ tính hợp lệ ở mục 5.9.3.
+
+**Lý do thứ ba — điều kiện đo sai.** Gặp một lần, ở phép đo tốc độ khung hình:
+máy lúc đo đang chạy nhiều chương trình nặng khác nên con số thu được phản ánh
+tình trạng máy nhiều hơn phản ánh hệ thống (mục 5.6.4).
+
+Từ đó đồ án rút ra và áp dụng một nguyên tắc: **một con số chỉ được đưa vào
+quyển khi công cụ đo đi qua đúng đường xử lý mà bản giao hàng đi**, và mọi tuỳ
+chọn cấu hình phải đọc từ cùng một nguồn với hệ thống đang chạy thật.
 
 ---
 
