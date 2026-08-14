@@ -669,7 +669,7 @@ Ba kết luận rút ra:
 
 ### 4.3.3. Ma trận nhầm lẫn ký tự và mức chính xác của bảng luật
 
-Mục 3.6c đã nêu một giới hạn: bảng ánh xạ nhầm lẫn **suy từ hình dạng ký tự chứ không từ đo đạc**. Mục này kiểm chứng nó bằng ma trận nhầm lẫn 36 × 36 đo được.
+Mục 3.6c đã nêu một giới hạn: bảng ánh xạ nhầm lẫn ban đầu **suy từ hình dạng ký tự chứ không từ đo đạc**. Mục này kiểm chứng nó bằng ma trận nhầm lẫn 36 × 36 đo được, và kết quả đã được dùng để **sửa lại chính bảng đó**.
 
 **Bảng 4.6.** Mười cặp ký tự bị nhầm nhiều nhất, đối chiếu bảng luật hiện hành
 
@@ -885,7 +885,7 @@ Ba đại lượng đo được đáng ghi nhận, đều liên quan trực ti�
 
 **Hai — bước tách rồi ghép ngang đóng góp 34,92 điểm cho PaddleOCR nhưng chỉ 0,03 điểm cho Tesseract.** Đây là kết quả khác với dự đoán ban đầu và làm **yếu đi** khẳng định ban đầu: phép biến đổi ảnh này là **điều kiện cần, không đủ**. Nó biến bài toán đa dòng thành bài toán một dòng, nhưng bộ nhận dạng vẫn phải đủ mạnh để tận dụng.
 
-**Ba — bảng ánh xạ nhầm lẫn suy từ hình dạng ký tự chỉ phủ 2 trên 10 cặp nhầm phổ biến nhất**, dù cả hai đều đúng chiều. Trực giác hình dạng không gợi ra `E → F` hay `4 → L`, những cặp thực tế lại rất phổ biến.
+**Ba — trực giác hình dạng ký tự ghép đúng cặp nhưng sai chiều.** Bảng ánh xạ ban đầu suy từ hình dạng chỉ phủ 2 trên 10 cặp nhầm phổ biến nhất, và cặp `L` thì suy **ngược**: khi một vị trí bắt buộc là số mà bộ nhận dạng đọc ra `L`, sự thật là `4` **53 lần** và là `1` **đúng một lần**. Thay hai mục bằng bảng trích từ ma trận nhầm lẫn đo được — chỉ những cặp vượt ngưỡng thống kê — mua thêm **53 biển đọc đúng và làm hỏng 0 biển**, toàn bộ nằm ở biển hai dòng.
 
 Ngoài các con số, đồ án để lại **một quy trình đánh giá có kiểm chứng**: mọi bước xử lý ảnh bật tắt được độc lập nên đóng góp của từng bước đo được riêng, và các kết quả âm — phương án đọc riêng từng nửa thua 61 điểm, bậc siêu phân giải không cải thiện được biển nào — được ghi lại thay vì bỏ đi.
 
@@ -909,7 +909,7 @@ Ngoài các con số, đồ án để lại **một quy trình đánh giá có k
 | # | Hướng | Giải hạn chế | Ghi chú |
 |:--:|---|:--:|---|
 | 1 | **Huấn luyện lại bộ nhận dạng ký tự riêng cho biển số Việt Nam** | 1 | Hướng quan trọng nhất. Phân tích ở mục 4.3.2 đã định vị điểm nghẽn nằm ở năng lực mô hình ký tự, không ở khâu xử lý ảnh |
-| 2 | **Thay bảng ánh xạ nhầm lẫn bằng bảng trích từ ma trận đo được** | 1 | Rẻ nhất trong danh sách: dữ liệu đã có sẵn ở Bảng 4.6, chỉ cần thay hằng số |
+| 2 | **Mở rộng bảng ánh xạ nhầm lẫn khi ngữ liệu lớn hơn** | 1 | Vòng đầu **đã làm** và mua được 53 biển; năm mục còn lại chưa đủ bằng chứng (thắng dưới 10 lần) nên vẫn giữ phỏng đoán theo hình dạng — ngữ liệu lớn hơn sẽ quyết được |
 | 3 | Thu thập dữ liệu biển vàng, xanh, đỏ và ngoại giao | 2 | Điều kiện để mở rộng kết luận ra ngoài biển trắng |
 | 4 | **Khử rò rỉ theo chuỗi biển số thay vì theo băm tri giác** | 3, 4 | Gom nhóm theo chuỗi ký tự thay vì theo tương đồng ảnh; giải đúng loại rò rỉ mà pHash không thấy |
 | 5 | Đo lại bậc siêu phân giải trên ngữ liệu có biển thật sự nhỏ | — | Mục 4.4.3: số 0 hiện tại do **thiếu điều kiện quan sát**, không phải do đã quan sát thấy vô dụng |

@@ -159,7 +159,7 @@ Mọi bước bật tắt độc lập, nên đóng góp của từng bước **
 ## Ba kết quả khác với dự đoán ban đầu
 
 - **Tách-ghép không độc lập bộ nhận dạng** — 34,92 điểm cho PaddleOCR, **0,03** cho Tesseract ⇒ điều kiện cần, không đủ
-- **Bảng ánh xạ suy từ hình dạng chỉ phủ 2/10 cặp** nhầm phổ biến nhất — trực giác không gợi ra `E → F` hay `4 → L`
+- **Bảng ánh xạ suy từ hình dạng chỉ phủ 2/10 cặp** — và một trong hai suy **sai chiều**. Thay bằng bảng trích từ ma trận đo được: phủ **4/10**, thêm **53 biển đúng, 0 hỏng**
 - **Siêu phân giải cải thiện 0 biển, nhưng 0/120 mẫu lọt cổng** ⇒ *chi phí đã đo, lợi ích chưa ai đo được*
 
 ## Demo: hệ thống chạy thật

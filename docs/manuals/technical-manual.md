@@ -1408,12 +1408,12 @@ hợp đồng mà detector thực thi. Kiểm chứng 13/08/2026: `build_pipelin
 
 | Chỉ tiêu | Trạng thái | Xem số ở |
 |---|---|---|
-| **NFR-A5 · A6 · A7** — đúng cả chuỗi | ❌ **Không đạt**. Toàn bộ khoảng cách nằm ở **biển hai dòng**; biển một dòng đạt 0,9541, vượt mục tiêu | Quyển, mục 5.5 và Bảng 5.13 |
+| **NFR-A5 · A6 · A7** — đúng cả chuỗi | ❌ **Không đạt**. Toàn bộ khoảng cách nằm ở **biển hai dòng**; biển một dòng đạt 0,9541, vượt mục tiêu | Quyển, mục 5.5 và Bảng 5.14 |
 | **NFR-P1** — độ trễ một ảnh p95 | 🟡 Đạt sàn 1.500 ms, chưa đạt mục tiêu 800 ms. **Thoái lui có chủ ý** đổi lấy 34 biển đọc thêm | Quyển, mục 5.6.1 |
 | **NFR-A9** — độ chính xác theo điều kiện ảnh | ⬜ **Không đo được**, không phải chưa tới lượt: bộ dữ liệu không có nhãn điều kiện chụp | Quyển, mục 5.9.2 |
 
 Mọi chỉ tiêu còn lại — phát hiện, thông lượng, tài nguyên, độ tin cậy, chịu
-tải, bảo trì — đều **đạt**. Bảng đối chiếu đầy đủ ở Bảng 5.13 của quyển.
+tải, bảo trì — đều **đạt**. Bảng đối chiếu đầy đủ ở Bảng 5.14 của quyển.
 
 ### 14.3. Chưa xong — chức năng
 
@@ -1432,10 +1432,9 @@ thay vì đánh dấu ✅ — một bảng nợ mà quá nửa số dòng đã t
 |---|---|:--:|---|
 | 1 | **Rò rỉ tồn dư trong bộ dữ liệu** | Cao | Không khử được bằng `phash` (mục 13.7). Hướng xử lý: khử trùng ở **mức chuỗi biển số** thay vì mức ảnh — gom nhóm theo chuỗi ký tự, giải đúng loại rò rỉ mà `phash` không thấy |
 | 2 | **Bộ dữ liệu lệch nặng về biển trắng** (97,68%) | Cao | Kết luận độ chính xác OCR **chỉ áp cho biển trắng**. Biển vàng còn n = 20 nên chưa kết luận được gì. Cần thu thập thêm biển vàng, xanh, đỏ, ngoại giao |
-| 3 | **Bảng ánh xạ nhầm lẫn suy từ hình dạng ký tự** | Trung bình | Chỉ phủ 2 trên 10 cặp nhầm phổ biến nhất; 8 cặp còn lại chiếm **32,72%** tổng lỗi thay thế. Rẻ nhất trong danh sách: dữ liệu thay thế đã có sẵn ở Bảng 5.6, chỉ cần đổi hằng số |
-| 4 | **`enable_mkldnn=False`** | Thấp | Là workaround cho lỗi thượng nguồn của `paddlepaddle` 3.3.1 (mục 5.5.4 của quyển). Theo dõi bản vá; khi được sửa thì bật lại và đo lại |
-| 5 | **Webcam dùng HTTP thay vì WebSocket** | Thấp | Quyết định `AD-03`: đơn giản, dễ gỡ lỗi, và đo được **5,257 FPS** nên đủ dùng. Chỉ xét lại nếu cần vượt xa mức đó |
-| 6 | **`AD-04` — gộp trùng biển số theo chuỗi + cửa sổ thời gian** | Thấp | Đơn giản hơn nhiều so với object tracking, đủ cho phạm vi hiện tại |
+| 3 | **`enable_mkldnn=False`** | Thấp | Là workaround cho lỗi thượng nguồn của `paddlepaddle` 3.3.1 (mục 5.5.4 của quyển). Theo dõi bản vá; khi được sửa thì bật lại và đo lại |
+| 4 | **Webcam dùng HTTP thay vì WebSocket** | Thấp | Quyết định `AD-03`: đơn giản, dễ gỡ lỗi, và đo được **5,257 FPS** nên đủ dùng. Chỉ xét lại nếu cần vượt xa mức đó |
+| 5 | **`AD-04` — gộp trùng biển số theo chuỗi + cửa sổ thời gian** | Thấp | Đơn giản hơn nhiều so với object tracking, đủ cho phạm vi hiện tại |
 
 **Bảy mục đã gỡ khỏi bảng vì đã trả xong**, ghi lại ở đây để không ai mở lại
 nhầm: bản xuất ONNX/OpenVINO *đã* nối được vào hệ thống (kiểm chứng 13/08:
