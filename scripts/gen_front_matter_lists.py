@@ -171,12 +171,28 @@ def main() -> None:
         print("\n(chạy khô — thêm --apply để ghi)")
         return
 
-    goc = FRONT.read_text(encoding="utf-8")
-    goc = thay_muc(goc, "## E. MỤC LỤC", e)
-    goc = thay_muc(goc, "## F. DANH MỤC HÌNH VẼ", f)
-    goc = thay_muc(goc, "## G. DANH MỤC BẢNG BIỂU", g)
+    truoc = FRONT.read_text(encoding="utf-8")
+    goc = truoc
+    da_ghi: list[str] = []
+    for tieu_de, than in (
+        ("## E. MỤC LỤC", e),
+        ("## F. DANH MỤC HÌNH VẼ", f),
+        ("## G. DANH MỤC BẢNG BIỂU", g),
+    ):
+        moi = thay_muc(goc, tieu_de, than)
+        if moi != goc:
+            da_ghi.append(tieu_de.split(". ", 1)[1])
+        goc = moi
+
+    if goc == truoc:
+        # Ba mục E/F/G đã bị gỡ có chủ ý ở đợt rút trang, nên không có gì để
+        # ghi. Trước đây chỗ này luôn in "đã ghi lại ba mục" kể cả khi không
+        # dòng nào đổi — một thông điệp đánh lừa đúng người chạy nó để kiểm tra.
+        print("\nKhông mục nào để ghi — E/F/G không có trong 01-front-matter.md")
+        return
+
     FRONT.write_text(goc.rstrip() + "\n", encoding="utf-8")
-    print("\nĐã ghi lại ba mục E, F, G của 01-front-matter.md")
+    print("\nĐã ghi lại: " + ", ".join(da_ghi))
 
 
 if __name__ == "__main__":
