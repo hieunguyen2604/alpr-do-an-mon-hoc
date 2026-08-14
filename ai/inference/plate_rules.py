@@ -576,7 +576,7 @@ TO_DIGIT: Final[dict[str, str]] = {
     "D": "0",
     "I": "1",
     "J": "1",
-    "L": "1",
+    "L": "4",
     "Z": "2",
     "A": "4",
     "S": "5",
@@ -586,14 +586,19 @@ TO_DIGIT: Final[dict[str, str]] = {
 }
 """Table A: letter -> digit, applied only at positions the mask marks ``D``.
 
-.. warning::
-   **This table is derived from glyph-shape reasoning, not from measurement.**
-   The one-star pairs of section 9.2 (notably ``L -> 1``) are weak conjectures.
-   Phase 7 replaces this table with one extracted from a measured 36x36
-   character-level confusion matrix, keeping only pairs whose confusion
-   frequency clears a statistical threshold. Presenting the current table as a
-   hypothesis to be tested is both honest and stronger than presenting it as a
-   settled result.
+Checked against the measured 36x36 confusion matrix on 2,801 labelled plates
+(``docs/reports/27-ocr-accuracy-with-ladder.json``) on 2026-08-14. An entry is
+changed only when the measured winner appears **at least 10 times** and **at
+least twice as often** as the runner-up; anything thinner is noise and the
+glyph-shape guess stands.
+
+One entry failed that check badly enough to be worth naming. ``L`` was mapped
+to ``1`` on shape grounds. Measurement says the opposite: when a digit position
+reads ``L`` the truth was ``4`` **53 times** and ``1`` **once**. The shape
+intuition had the pair right and the direction wrong.
+
+Entries left untouched for want of evidence: ``O`` (winner 5), ``C`` (5),
+``U`` (8), ``S`` (all candidates tied at 1), ``R`` (3).
 """
 
 TO_LETTER: Final[dict[str, str]] = {
@@ -604,7 +609,7 @@ TO_LETTER: Final[dict[str, str]] = {
     "4": "A",
     "5": "S",
     "6": "G",
-    "7": "T",
+    "7": "Z",
     "8": "B",
 }
 """Table B: digit -> letter, applied only at positions the mask marks ``L``.
