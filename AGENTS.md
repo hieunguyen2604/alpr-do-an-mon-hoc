@@ -92,5 +92,6 @@ Sáu điều cốt lõi:
 
 Trước khi commit và push mã nguồn / tài liệu:
 1. **Chạy test tự động:** Đảm bảo toàn bộ 530 unit tests AI vượt qua (`pytest tests/test_*.py`).
-2. **Kiểm tra tham chiếu:** `python scripts/check_thesis_refs.py` phải đạt **0 tham chiếu chết, 0 đường dẫn ảnh hỏng**.
-3. **Bảo mật & Dữ liệu:** Không commit file `.env` chứa bí mật, file nén dataset nặng hoặc dữ liệu nhạy cảm vào Git.
+2. **Kiểm tra tham chiếu — CẢ HAI bản:** `python scripts/check_thesis_refs.py` và `python scripts/check_thesis_refs.py mon-hoc` đều phải đạt **0 tham chiếu chết, 0 đường dẫn ảnh hỏng**. Bản môn học từng thiếu hai hình suốt nhiều ngày vì chỉ bản chính được kiểm.
+3. **Sửa slide thì dựng lại rồi mới kiểm:** sau khi sửa `docs/slides/*.md`, chạy `python scripts/build_thesis.py` (kèm `--slides ...` cho bộ tương ứng) **trước**, rồi `powershell -File scripts/check_slides.ps1` (0 lỗi). `check_slides.ps1` kiểm **bản dựng PPTX** — kiểm trước khi dựng là kiểm nhầm bản cũ và từng cho 0 lỗi trong khi thật ra có ba slide tràn.
+4. **Bảo mật & Dữ liệu:** Không commit file `.env` chứa bí mật, file nén dataset nặng hoặc dữ liệu nhạy cảm vào Git.

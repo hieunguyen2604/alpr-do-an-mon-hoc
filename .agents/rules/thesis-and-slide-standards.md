@@ -166,3 +166,29 @@ Tài liệu này quy định các tiêu chuẩn kỹ thuật khi chỉnh sửa c
 1. **Thừa nhận thẳng thắn:** Không ngụy biện khi được hỏi về các điểm hạn chế.
 2. **Chứng minh bằng số liệu đo thật:** Dẫn xuất số liệu từ `docs/reports/*.json`.
 3. **Chốt bằng Hướng phát triển:** Chuyển sang giải pháp kỹ thuật cụ thể đã vạch ra trong lộ trình.
+
+## 6. Đánh Số Lại & Tham Chiếu Chéo Tài Liệu
+
+1. **Chèn hoặc xoá một bảng/hình là đánh số lại toàn chương:**
+   - Đánh theo **thứ tự xuất hiện**, không chèn số lẻ. Sau khi đánh, kiểm bằng
+     script ba điều: dãy số **liên tục 1..N**, **đúng thứ tự xuất hiện**, và
+     **không tham chiếu mồ côi** (trỏ tới số không tồn tại).
+   - Thay số bằng vòng lặp **giảm dần** (N→N+1 từ số lớn nhất xuống) để các
+     phép thay không giẫm lên nhau — đã có lần `t.replace` no-op lặng lẽ vì
+     chuỗi đích đã bị lượt thay trước đổi mất.
+
+2. **Tham chiếu CHÉO TÀI LIỆU phải kiểm tay khi đánh số lại:**
+   - `check_thesis_refs.py` **chỉ quét `docs/papers/`**. Nhưng sổ tay kỹ thuật,
+     slide và README vẫn trỏ kiểu *"Bảng 4.9 của quyển"*, *"mục 5.6.3"*.
+   - Đã vấp **hai lần trong một ngày**: đánh số lại bảng ch4 làm sổ tay trỏ
+     sai (4.9 → phải thành 4.11), và một lần sổ tay trỏ tới **Bảng 4.10 chưa
+     bao giờ tồn tại**.
+   - Sau mỗi lần đánh số lại, chạy:
+     `grep -rn "Bảng <chương>\." docs/manuals/ docs/slides/ README.md`
+     và đối chiếu từng kết quả với danh sách bảng thật.
+
+3. **Hai bản quyển phải cùng nhịp:**
+   - Sửa số liệu, thuật ngữ hay hình ở bản tốt nghiệp thì **kiểm bản môn học
+     cùng lượt** (`docs/papers/mon-hoc/`), và ngược lại. Chúng chia sẻ số liệu
+     nhưng đánh số chương–bảng–hình **độc lập** — đừng chép số hiệu từ bản này
+     sang bản kia.

@@ -55,12 +55,14 @@ Skill này quy định chuẩn mực, văn phong, cấu trúc và quy trình vi�
 2. **Hình ảnh & Sơ đồ:**
    - Mọi hình ảnh phải đặt trong `docs/papers/figures/` hoặc `docs/slides/figures/`.
    - Cú pháp chuẩn: `![](figures/fig-ten-hinh.png)` rồi dòng chú thích `**Hình N.M.** Mô tả` ngay dưới hình.
-   - Sơ đồ kỹ thuật ưu tiên render từ mã nguồn hoặc Mermaid script (`scripts/render_mermaid.py`).
+   - Sơ đồ kỹ thuật **sinh từ mã nguồn bằng matplotlib** (xem các script `scripts/make_*_figures.py`, `scripts/make_ch4_diagrams.py`). Máy này **không cài `mermaid-cli`** — `scripts/render_mermaid.py` chỉ chạy được sau khi cài thêm, đừng mặc định nó có.
 3. **Bảng biểu:**
    - Định dạng bảng Markdown chuẩn có căn lề rõ ràng (`|:---|:---:|---:|`).
    - Chú thích đặt **trên** bảng: `**Bảng N.M.** Tên bảng`, kèm một dòng neo máy đọc `<!-- {{TN.M}} mô tả ngắn -->` phía trên nữa.
 4. **Trích dẫn khoa học:**
-   - Đặt khóa trích dẫn dạng `[@author2024]` tương ứng với file BibTeX hoặc danh mục tài liệu tham khảo.
+   - Dạng **duy nhất** kho dùng: `[N]<!-- khoa_bibtex -->` — số toàn cục đứng trước, khoá máy đọc nằm trong chú thích HTML. Ví dụ: `[2]<!-- laroca_2022_crossdataset -->`.
+   - **Cấm** dạng `[@author2024]` của pandoc-citeproc: `scripts/build_bibliography.py` chỉ nhận dạng `[N]<!-- key -->` (regex `TRICH_KHOA`), nên trích dẫn kiểu `[@...]` sẽ **vô hình** với công cụ — danh mục tham khảo thiếu mục mà không ai biết.
+   - Sau khi thêm/sửa trích dẫn, chạy `python scripts/build_bibliography.py` để dựng lại danh mục tham khảo.
 
 ---
 
