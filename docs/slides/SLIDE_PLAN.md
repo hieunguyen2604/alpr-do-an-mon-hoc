@@ -15,8 +15,8 @@
 | **Tệp xuất PowerPoint** | [`slides.pptx`](slides.pptx) | [`12-slides-mon-hoc.pptx`](12-slides-mon-hoc.pptx) |
 | **Tài liệu tham chiếu** | Quyển tốt nghiệp (`docs/papers/thesis-full.pdf`) | Báo cáo môn học (`docs/papers/mon-hoc/thesis-full.pdf`) |
 | **Thời lượng trình bày** | **15 – 20 phút** (+ 10–15 phút Q&A) | **7 – 10 phút** (+ 3–5 phút Q&A) |
-| **Quy mô slide** | **31 slide chính + 7 slide backup** | **16 slide** |
-| **Trọng tâm nội dung** | • Tính mới & cơ sở pháp lý (TT 79/2024, TT 51/2025)<br>• Kiến trúc 5 tầng chuẩn Clean Architecture<br>• Tối ưu CPU inference & benchmark toàn diện<br>• Xử lý triệt để bài toán biển 2 dòng | • Đặt vấn đề & yêu cầu bài toán môn học<br>• Pipeline xử lý ảnh cốt lõi (YOLO11n + PP-OCRv5)<br>• Kết quả thử nghiệm & demo ứng dụng<br>• Đánh giá hoàn thành mục tiêu môn học |
+| **Quy mô slide** | **37 slide** `##` _(gồm khối backup)_ | **15 slide** `##` |
+| **Trọng tâm nội dung** | • Tính mới & cơ sở pháp lý (TT 79/2024, TT 13/2025, TT 51/2025)<br>• Kiến trúc 5 tầng chuẩn Clean Architecture<br>• Tối ưu CPU inference & benchmark toàn diện<br>• Xử lý triệt để bài toán biển 2 dòng | • Đặt vấn đề & yêu cầu bài toán môn học<br>• Pipeline xử lý ảnh cốt lõi (YOLO11n + PP-OCRv5)<br>• Kết quả thử nghiệm & demo ứng dụng<br>• Đánh giá hoàn thành mục tiêu môn học |
 
 ---
 
@@ -24,7 +24,7 @@
 
 > Cấu trúc chi tiết được biên soạn tại [`10-slides.md`](10-slides.md) và kịch bản thuyết trình có sẵn tại [`10-slides-outline.md`](10-slides-outline.md).
 
-### Ngân Sách Thời Gian (31 Slide Chính + 7 Slide Backup)
+### Ngân Sách Thời Gian (37 slide, gồm khối backup)
 
 ```mermaid
 gantt
@@ -49,7 +49,7 @@ gantt
 - **S1 — Bìa:** Thông tin đề tài, sinh viên thực hiện, GVHD, đơn vị.
 - **S2 — Nội dung:** 5 phần chính theo chuẩn bảo vệ.
 - **S3 — Động lực đề tài:** Xe máy chiếm 85–90% lưu lượng VN; độ chính xác đọc biển 2 dòng sụt giảm 48.6 điểm so với 1 dòng.
-- **S4 — Căn cứ pháp lý:** Cập nhật TT 79/2024/TT-BCA, TT 51/2025/TT-BCA (34 tỉnh thành), QCVN 08:2024/BCA.
+- **S4 — Căn cứ pháp lý:** Cập nhật TT 79/2024/TT-BCA, TT 13/2025/TT-BCA, TT 51/2025/TT-BCA (34 tỉnh thành), QCVN 08:2024/BCA.
 - **S5 — Đặc thù biển số VN:** Phân loại cấu trúc theo tỉ lệ khung hình (ngưỡng AR = 2.5).
 - **S6 — Lựa chọn hướng tiếp cận:** So sánh 4 thế hệ $\rightarrow$ chọn pipeline 2-Stage (Detection $\rightarrow$ OCR).
 - **S7 — Lựa chọn mô hình:** YOLO11n (2.6M params) & PP-OCRv5 mobile (4.5 MB) tối ưu cho CPU.
@@ -101,7 +101,7 @@ gantt
 
 > Cấu trúc chi tiết được biên soạn tại [`12-slides-mon-hoc.md`](12-slides-mon-hoc.md).
 
-### Ngân Sách Thời Gian (16 Slide)
+### Ngân Sách Thời Gian (15 slide)
 
 | STT | Tiêu đề Slide | Nội dung trọng tâm | Thời lượng |
 |:---:|---|---|:---:|

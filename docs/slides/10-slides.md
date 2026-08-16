@@ -175,8 +175,7 @@ Chỉ kích hoạt **sau khi nhận dạng hỏng**, chỉ nhận chuỗi **hợ
 
 ## Cơ sở dữ liệu — lưu vết đánh giá
 
-Lưu **cả hai** chuỗi trên **cùng một bản ghi** — không có `raw_ocr_text` thì
-**không đo được** đóng góp độc lập của hậu xử lý
+Không có `raw_ocr_text` thì **không đo được** đóng góp của hậu xử lý
 
 | Cột | Nội dung |
 |---|---|
@@ -308,17 +307,11 @@ Ba tình huống minh họa trên môi trường thực tế:
 
 ## Kết luận
 
-**Kết quả đạt được**
-
-- Hệ thống **5 tầng hoạt động hoàn chỉnh**, đóng gói Docker một lệnh
-- Phát hiện đạt **cả 4 chỉ tiêu**: mAP50 **0,983** · mAP50-95 **0,783**
-- Hậu xử lý theo vị trí giúp tăng **+13,28 điểm**, đo đạc độc lập
-- **1.002/1.002 kiểm thử** đạt · bao phủ tầng nghiệp vụ **87,7%**
-
-**Giá trị học thuật và thực tiễn**
-
-- Định lượng độc lập hiệu năng biển 1 dòng / 2 dòng trên cùng một hệ thống
-- Chuẩn hóa theo căn cứ pháp lý mới nhất (**TT 79/2024**, **TT 51/2025**, **QCVN 08:2024**)
+- Hệ thống **5 tầng**, đóng gói Docker một lệnh
+- Phát hiện đạt **cả 4 chỉ tiêu** — mAP50 **0,983**
+- Hậu xử lý **+13,28 điểm**, đo tách bạch
+- **1.002/1.002 kiểm thử** đạt · bao phủ **87,7%**
+- Định lượng riêng biển **1 dòng** và **2 dòng** trên cùng hệ thống
 
 ## Cảm ơn
 
