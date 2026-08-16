@@ -68,7 +68,27 @@ Khi trả lời câu hỏi phản biện của Hội đồng:
 
 ---
 
-## 🔒 7. Kiểm Soát Chất Lượng & Bảo Mật (Quality Gate & Privacy)
+## 🔬 7. Bảo Toàn Tính Hợp Lệ Của Số Liệu
+
+Đây là nhóm quy tắc đồ án trả giá nhiều nhất, tách riêng ra
+[`.agents/rules/measurement-validity.md`](.agents/rules/measurement-validity.md).
+Sáu điều cốt lõi:
+
+1. **Công cụ đo phải đi qua đúng đường mã bản giao hàng đi** — lỗi này đã lặp
+   **bốn lần**. Mọi mặc định của công cụ đo phải đọc từ cùng nguồn cấu hình với
+   máy chủ thật, không gán cứng.
+2. **Lượt đo có cảnh báo tải cạnh tranh thì bỏ, chạy lại trên máy rảnh.**
+3. **Lật một kết luận thì phải có phép đối chứng**, không chỉ một lần đo mới.
+   Nguyên nhân không xác định được thì ghi đúng là không xác định được.
+4. **So sánh chỉ có nghĩa khi hai vế cùng đường đo** — cùng ngữ liệu, cấu hình,
+   phiên bản mã.
+5. **Đổi hằng số cũng phải đo lại**, và chỉ ra trước một **chỉ số phải đứng yên**
+   làm chứng cho tính hợp lệ của phép so.
+6. **Sửa nguồn → dựng lại → mới kiểm.** Kiểm trước khi dựng là kiểm nhầm bản cũ.
+
+---
+
+## 🔒 8. Kiểm Soát Chất Lượng & Bảo Mật (Quality Gate & Privacy)
 
 Trước khi commit và push mã nguồn / tài liệu:
 1. **Chạy test tự động:** Đảm bảo toàn bộ 530 unit tests AI vượt qua (`pytest tests/test_*.py`).
