@@ -81,7 +81,7 @@ Các bộ công khai fork lẫn nhau, nên **44,2% ảnh là bản trùng** — 
 | Chia tập, giữ nhóm trùng cùng một bên | 10.592 / 3.027 / **1.514** |
 | **Giới hạn còn lại** | pHash tóm tắt **khung ảnh**, không tóm tắt **chiếc xe** |
 
-## Vì sao biển hai dòng làm gãy bộ nhận dạng
+## Vì sao biển hai dòng làm suy giảm hiệu năng OCR
 
 - **CRNN hạ chiều cao bản đồ đặc trưng về 1** — đó chính là chỗ giả định "một dòng" nằm
 - Ảnh hai dòng: ký tự hai hàng **bị chiếu chồng lên nhau** vào cùng một cột đặc trưng
@@ -105,7 +105,7 @@ Nếu vấn đề là *ảnh có hai dòng*, thì biến nó thành **ảnh mộ
 
 Mỗi khung là ảnh thật ở đầu ra một bước, dựng từ **chính mã bàn giao**.
 
-![](figures/fig-đường ống-strip-ngang.png)
+![](figures/fig-pipeline-strip-ngang.png)
 
 ## Bộ luật hậu xử lý ràng buộc theo vị trí
 
@@ -123,7 +123,7 @@ Ba ràng buộc đặc thù biển số Việt Nam, khai thác **theo từng v�
 Phát hiện **đạt cả bốn chỉ tiêu**; phần thiếu nằm trọn ở **biển hai dòng**.
 
 | Đo cái gì | Đo được | Ngưỡng | |
-|---|---:|---:|:--:|
+|---|---|---|:--:|
 | mAP@0,5 · mAP@0,5:0,95 | **0,9829** · 0,7834 | 0,90 · 0,65 | ✅ |
 | Precision · Recall | 0,9837 · 0,9714 | 0,92 · 0,90 | ✅ |
 | Đúng mức ký tự (1 − CER) | **0,9483** | 0,95 | 🟡 |
@@ -136,11 +136,11 @@ Phát hiện **đạt cả bốn chỉ tiêu**; phần thiếu nằm trọn ở 
 
 Đo mức ký tự thì hai bố cục gần bằng nhau; đo cả chuỗi thì cách một trời một vực.
 
-![](figures/fig-ch4-bố cục.png)
+![](figures/fig-ch4-layout.png)
 
 ## Lỗi trông như thế nào
 
-Ba ca hậu xử lý cứu được, ba ca vẫn sai — **cả ba ca sai đều hỏng ở dòng trên**.
+Ba ca được chuẩn hóa đúng nhờ hậu xử lý, ba ca vẫn sai — **cả ba ca sai đều hỏng ở dòng trên**.
 
 ![](figures/fig-ch4-loi.png)
 
@@ -148,8 +148,8 @@ Ba ca hậu xử lý cứu được, ba ca vẫn sai — **cả ba ca sai đều
 
 Mọi bước bật tắt độc lập, nên đóng góp của từng bước **đo được riêng** — kể cả khi bằng 0.
 
-| Bước xử lý ảnh | cải thiện được | Giá phải trả |
-|---|---:|---|
+| Bước xử lý ảnh | Cải thiện được | Chi phí tính toán |
+|---|---|---|
 | **Tách hai nửa + ghép ngang** | **+34,92 điểm** | ~0 ms |
 | **Bộ luật hậu xử lý** | **+13,28 điểm** · 372 sửa đúng, **0 hỏng** | 0,03 ms |
 | Nắn hình + giãn dọc | **+34 biển** | +244 ms ở p95 |
@@ -172,16 +172,16 @@ Khởi động bằng một lệnh `docker compose up`; giao diện hiện **c�
 
 | # | Hướng phát triển | Giải hạn chế nào |
 |:--:|---|---|
-| 1 | **Huấn luyện lại bộ nhận dạng ký tự cho biển số Việt Nam** | điểm nghẽn lớn nhất — biển hai dòng |
-| 2 | **Thay bảng ánh xạ bằng bảng trích từ ma trận đo được** | Rẻ nhất: dữ liệu đã có sẵn |
+| 1 | **Huấn luyện lại bộ nhận dạng ký tự cho biển số Việt Nam** | Điểm nghẽn lớn nhất — biển hai dòng |
+| 2 | **Thay bảng ánh xạ bằng bảng trích từ ma trận đo được** | Tối ưu hóa: dữ liệu đã có sẵn |
 | 3 | Khử rò rỉ theo **chuỗi biển số** thay vì theo băm tri giác | Băm tri giác tóm tắt khung ảnh, không tóm tắt chiếc xe |
 | 4 | Thu thập dữ liệu biển vàng, xanh, đỏ | 97,68% mẫu là biển trắng |
 
-## Cảm ơn — và mời đặt câu hỏi
+## Cảm ơn
 
 - Chạy đầu cuối trên máy **không có GPU**: bộ phát hiện đạt **mAP@0,5 = 0,9829**
-- Bài toán biển hai dòng giải bằng **phép biến đổi ảnh**, không bằng mô hình mạnh hơn — đóng góp **34,92 điểm**
+- Bài toán biển hai dòng giải bằng **phép biến đổi ảnh**, không bằng mô hình nặng hơn — đóng góp **34,92 điểm**
 - Hậu xử lý theo vị trí đóng góp **+13,28 điểm**, **0 ca làm hỏng** trên 2.801 biển
 - Phần chưa đạt: đọc đúng cả chuỗi **0,7701** so với ngưỡng 0,85, khoảng cách nằm trọn ở biển hai dòng
 
-**Xin cảm ơn thầy cô và các bạn đã lắng nghe.**
+**Nhóm thực hiện xin trân trọng cảm ơn Quý Thầy/Cô và các bạn đã lắng nghe.**

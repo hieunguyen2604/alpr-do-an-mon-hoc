@@ -145,15 +145,15 @@ Sửa theo **VỊ TRÍ**, không sửa toàn cục — đóng góp kỹ thuật 
 
 ![](figures/fig-position-rules.png)
 
-## Bậc thang cứu chữa khi đọc hỏng
+## Bậc thang phục hồi khi nhận dạng hỏng
 
-Chỉ chạy **sau khi đọc hỏng**, chỉ nhận chuỗi **hợp lệ**
+Chỉ kích hoạt **sau khi nhận dạng hỏng**, chỉ nhận chuỗi **hợp lệ**
 
-⇒ không thể làm hỏng kết quả đang đúng
+⇒ Không làm thay đổi kết quả đang đúng
 
-| Bậc | Cứu được |
+| Cơ chế | Số biển phục hồi |
 |---|---:|
-| Cứu dòng trên của biển 2 dòng | **209 biển** |
+| Phục hồi dòng trên của biển 2 dòng | **209 biển** |
 | Nắn hình / giãn dọc chống méo | **34 biển** |
 
 ## Bộ dữ liệu
@@ -162,7 +162,7 @@ Chỉ chạy **sau khi đọc hỏng**, chỉ nhận chuỗi **hợp lệ**
 - Hợp nhất **7 bộ công khai**, loại **44,2%** là bản sao — hai bộ mất **98%** và **100%**
 - **Khử trùng lặp bằng pHash** ở ngưỡng Hamming 10 — đo lại ở **chính ngưỡng đó** cho **0 cặp** Train–Test
 
-⇒ Số 0 đó chỉ chứng minh **bước gộp chạy đúng**, không chứng minh tập test sạch: ở Hamming 12 vẫn còn **791 cặp**
+⇒ Số 0 đó chứng minh **bước gộp chạy đúng**, không chứng minh tập test hoàn toàn độc lập: ở Hamming 12 vẫn còn **791 cặp**
 
 ⚠️ Hai bộ chiếm **74,3%** — đa dạng giấy phép, **chưa** đa dạng nội dung
 
@@ -173,10 +173,10 @@ Chỉ chạy **sau khi đọc hỏng**, chỉ nhận chuỗi **hợp lệ**
 
 ![](figures/fig-training-curve.png)
 
-## Cơ sở dữ liệu — một cột làm nên đóng góp
+## Cơ sở dữ liệu — lưu vết đánh giá
 
 Lưu **cả hai** chuỗi trên **cùng một bản ghi** — không có `raw_ocr_text` thì
-**không đo được** đóng góp của hậu xử lý
+**không đo được** đóng góp độc lập của hậu xử lý
 
 | Cột | Nội dung |
 |---|---|
@@ -192,10 +192,10 @@ Mọi vùng dữ liệu xử lý đủ **4 trạng thái**: chờ · rỗng · l
 
 ## Kết quả phát hiện — đạt cả 4 chỉ tiêu
 
-**Chênh giữa hai bố cục chỉ 2,09 điểm** ⇒ điểm yếu nằm ở tầng đọc chữ, không phải tầng phát hiện
+**Chênh giữa hai bố cục chỉ 2,09 điểm** ⇒ Điểm nghẽn nằm ở tầng đọc chữ, không phải tầng phát hiện
 
 | Nhóm | N | P | R | mAP50 | mAP50-95 |
-|---|---:|---:|---:|---:|---:|
+|---|---|---|---|---|---|
 | Biển 1 dòng | 286 | 0,986 | 0,990 | **0,988** | 0,753 |
 | Biển 2 dòng | 1.325 | 0,973 | 0,969 | **0,968** | 0,765 |
 | **TẤT CẢ** | **1.611** | **0,984** | **0,971** | **0,983** | **0,783** |
@@ -206,11 +206,11 @@ Mọi vùng dữ liệu xử lý đủ **4 trạng thái**: chờ · rỗng · l
 Toàn bộ khoảng cách nằm ở **biển 2 dòng**: 0,7234 so với **0,9541** của biển 1 dòng
 
 | Đo cái gì | Đo được | Ngưỡng | |
-|---|---:|---:|:--:|
+|---|---|---|:--:|
 | Đúng từng **ký tự** | **0,9483** | 0,92 | 🟡 |
 | Đúng **cả chuỗi** — chưa hậu xử lý | 0,6373 | 0,80 | ❌ |
 | Đúng **cả chuỗi** — sau hậu xử lý | **0,7701** | 0,85 | ❌ |
-| Đúng **đầu-cuối** — ảnh vào, chuỗi ra | *không đo được* | 0,82 | ⬜ |
+| Đúng **đầu cuối** — ảnh vào, chuỗi ra | *không đo được* | 0,82 | ⬜ |
 
 ## Khoảng cách nằm trọn ở biển 2 dòng
 
@@ -224,31 +224,31 @@ Sửa đúng **372 biển**, làm hỏng **0** — dồn gần trọn vào biể
 
 ![](figures/fig-postprocess-gain.png)
 
-## Ba can thiệp, một kết luận
+## Ba can thiệp thực nghiệm
 
-Chênh lệch 2 dòng còn **25,4 điểm**, cùng bậc mốc quốc tế **48,6** *(Laroca 2022 — RodoSol, Brazil)* — **dư địa đã cạn**
+Chênh lệch 2 dòng còn **25,4 điểm**, cùng bậc mốc quốc tế **48,6** *(Laroca 2022 — RodoSol, Brazil)*
 
 | Can thiệp | Thu được |
-|---|---:|
+|---|---|
 | Bộ luật hậu xử lý theo vị trí | **+13,28 điểm** *(0,6373 → 0,7701)* |
-| Cứu dòng trên | 209 biển |
+| Phục hồi dòng trên | 209 biển |
 | Nắn hình chống méo | 34 biển |
 
 ## Hiệu năng trên CPU — phân rã suy luận thuần
 
-Nút thắt là OCR (**64,3%**) nhưng **không áp đảo** — detector chiếm 34,0%, nên tăng tốc nó vẫn đáng
+Điểm nghẽn thời gian là OCR (**64,3%**); tầng phát hiện chiếm **34,0%**
 
-| Bước trong pipeline | Ước lượng Phase 0 | **Đo thật** | % tổng |
-|---|---:|---:|---:|
+| Bước trong pipeline | Ước lượng ban đầu | **Đo thật** | % tổng |
+|---|---|---|---|
 | Giải mã ảnh + tiền xử lý | 50 ms | **2,83 ms** | 1,7% |
 | Phát hiện *(YOLO11n @ 640, CPU)* | 150 ms | **57,27 ms** | **34,0%** |
 | Nhận dạng chữ *(PaddleOCR, mỗi biển)* | 120 ms | **108,28 ms** | **64,3%** |
 | Hậu xử lý regex + kiểm tra hợp lệ | 5 ms | **0,03 ms** | 0,0% |
 | **Tổng suy luận thuần cho một biển** | **405 ms** | **168,41 ms** | **100%** |
 
-## Phân bố độ trễ — đuôi mới là chỗ tốn
+## Phân bố độ trễ suy luận
 
-Phần lớn ảnh xong dưới nửa giây; đuôi phải là những ảnh thử lại nhiều lượt
+Phần lớn ảnh hoàn tất dưới 500 ms; độ trễ tập trung ở các ca thử lại nhiều lượt
 
 ![](../reports/figures/07-latency-distribution.png)
 
@@ -256,12 +256,12 @@ Phần lớn ảnh xong dưới nửa giây; đuôi phải là những ảnh th�
 
 - **1.002/1.002 kiểm thử tự động** đạt · bao phủ tầng nghiệp vụ **87,7%**
 - Đơn vị · tích hợp · độ chính xác AI · hiệu năng · chịu tải
-- Tầng AI có bộ test **chạy không cần dựng server**
+- Tầng AI có bộ test **chạy độc lập không cần dựng server**
 - Chạy liên tục **15 phút**: 2.028 yêu cầu, **0 lỗi**, không rò rỉ bộ nhớ
-- Cơ sở dữ liệu **sống sót qua khởi động lại**: 9.031 bản ghi, **0 mất**
-- `docker compose up` — **một lệnh**, đã dựng và xác minh chạy được
+- Cơ sở dữ liệu **bền vững qua khởi động lại**: 9.031 bản ghi, **0 mất**
+- `docker compose up` — **một lệnh**, đã đóng gói và xác minh hoàn chỉnh
 
-## Đối chiếu chỉ tiêu — bảng chốt hạ
+## Đối chiếu chỉ tiêu — bảng tổng hợp
 
 ✅ đạt mục tiêu · 🟡 đạt ngưỡng tối thiểu · ❌ chưa đạt
 
@@ -269,7 +269,7 @@ Phần lớn ảnh xong dưới nửa giây; đuôi phải là những ảnh th�
 |---|---|:--:|
 | Phát hiện | mAP50 **0,9829** · mAP50-95 **0,7834** · P **0,9837** · R **0,9714** | ✅ |
 | Đọc ký tự | Đúng từng ký tự **0,9483** | 🟡 |
-| Đọc chuỗi | Đúng cả chuỗi **0,7701** · đầu-cuối **17/22 ảnh toàn cảnh** | ❌ |
+| Đọc chuỗi | Đúng cả chuỗi **0,7701** · đầu cuối **17/22 ảnh toàn cảnh** | ❌ |
 | Hiệu năng | p95 **1.143 ms** *(sàn 1.500)* · video **0,785×** · truy vấn **18,7 ms** | 🟡 |
 | Thời gian thực | Webcam **5,257 FPS** *(sàn 3, mục tiêu 5)* | ✅ |
 | Độ tin cậy | Chạy liên tục **100%** · CSDL sống sót khởi động lại **0 mất** | ✅ |
@@ -277,57 +277,56 @@ Phần lớn ảnh xong dưới nửa giây; đuôi phải là những ảnh th�
 
 ## Demo trực tiếp
 
-Ba tình huống, chạy trên máy thật — **không phải video quay sẵn**
+Ba tình huống minh họa trên môi trường thực tế:
 
-| Bước | Cho thấy điều gì |
+| Tình huống | Mục tiêu kiểm chứng |
 |---|---|
-| Ảnh ô tô — biển 1 dòng | Đường đi cơ bản, đọc đúng, dưới 1 giây |
-| Ảnh xe máy — biển 2 dòng | Chính chỗ khó nhất, split-then-hstack chạy thật |
-| Video + Lịch sử | Xử lý bất đồng bộ, tra cứu lại kết quả |
+| Ảnh ô tô — biển 1 dòng | Luồng cơ bản, nhận dạng chính xác dưới 1 giây |
+| Ảnh xe máy — biển 2 dòng | Luồng phân tách hai nửa và ghép ngang chạy thực tế |
+| Video + Lịch sử | Xử lý bất đồng bộ, tra cứu và hiển thị lịch sử |
 
 ## Hạn chế
 
 | Hạn chế | Nguyên nhân gốc |
 |---|---|
 | **Biển 2 dòng chưa đạt** — đọc đúng cả chuỗi 0,7234 so với 0,9541 của biển 1 dòng | Bộ đọc dòng đơn; xe máy chiếm 79,8% tập nhãn |
-| **Số đầu-cuối không đo được** | Không bộ dữ liệu nào vừa có ảnh toàn cảnh vừa có chuỗi biển ⇒ đo trên ảnh cắt sẵn, ngoài phân bố bộ phát hiện |
-| **Số OCR là số trên biển TRẮNG** — tập nhãn có 97,7% biển trắng, 20 vàng, 4 xanh, **0 đỏ, 0 ngoại giao** | Không nguồn công khai nào đủ biển hiếm; nói "0,9483 trên biển số Việt Nam" là **nói quá** |
-| Tập test **không xuyên bộ dữ liệu** | Chỉ đo tổng quát hoá *trong* phân bố ⇒ mAP lạc quan hơn thực tế |
-| Một yêu cầu mức **Must** đã đưa ra khỏi phạm vi | Thu gọn cho demo; API thống kê vẫn phục vụ và vẫn có kiểm thử |
+| **Độ chính xác đầu cuối chưa đo trên tập lớn** | Thiếu bộ dữ liệu đồng thời có ảnh toàn cảnh và nhãn chuỗi biển |
+| **Dữ liệu chủ yếu là biển trắng** — tập nhãn có 97,7% biển trắng, 20 vàng, 4 xanh, **0 đỏ, 0 ngoại giao** | Nguồn công khai chưa đa dạng các loại biển hiếm |
+| Tập test **chưa mở rộng xuyên bộ dữ liệu** | Đánh giá tổng quát hóa chủ yếu trong cùng phân phối thu thập |
 
 ## Hướng phát triển
 
-**Ngắn hạn** — gỡ đúng nút thắt đã định vị
+**Ngắn hạn** — Tập trung vào các điểm nghẽn đã xác định
 
-1. **Fine-tune bộ nhận dạng** trên vùng cắt biển Việt Nam
-2. **Gán nhãn chuỗi cho ảnh hiện trường** ⇒ đo được số đầu-cuối đúng cách
+1. **Fine-tune bộ nhận dạng** trên vùng cắt biển số Việt Nam
+2. **Xây dựng tập nhãn chuỗi cho ảnh hiện trường** để đo đạc độ chính xác đầu cuối hoàn chỉnh
 
 **Trung hạn**
 
-3. Tập test **xuyên bộ dữ liệu** — đo tổng quát hoá ngoài phân bố
-4. Xuất ONNX / OpenVINO để hạ độ trễ đuôi
+3. Đánh giá kiểm thử **xuyên bộ dữ liệu** để đo tổng quát hóa ngoài phân phối
+4. Xuất mô hình sang OpenVINO / ONNX Runtime để tối ưu hóa độ trễ đuôi
 
 ## Kết luận
 
-**Đã làm được**
+**Kết quả đạt được**
 
-- Hệ thống **5 tầng chạy thật**, đóng gói Docker một lệnh
+- Hệ thống **5 tầng hoạt động hoàn chỉnh**, đóng gói Docker một lệnh
 - Phát hiện đạt **cả 4 chỉ tiêu**: mAP50 **0,983** · mAP50-95 **0,783**
-- Hậu xử lý theo vị trí — **+13,28 điểm**, đo tách bạch
+- Hậu xử lý theo vị trí giúp tăng **+13,28 điểm**, đo đạc độc lập
 - **1.002/1.002 kiểm thử** đạt · bao phủ tầng nghiệp vụ **87,7%**
 
-**Đóng góp học thuật**
+**Giá trị học thuật và thực tiễn**
 
-- Hai con số 1 dòng / 2 dòng **tách bạch trên cùng một hệ thống**
-- Quy trình đo **tự bắt được lỗi của chính nó**
+- Định lượng độc lập hiệu năng biển 1 dòng / 2 dòng trên cùng một hệ thống
+- Chuẩn hóa theo căn cứ pháp lý mới nhất (**TT 79/2024**, **TT 51/2025**, **QCVN 08:2024**)
 
 ## Cảm ơn
 
 <br>
 
-**Em xin cảm ơn thầy cô đã lắng nghe.**
+**Nhóm thực hiện xin trân trọng cảm ơn Quý Thầy/Cô và Hội đồng.**
 
-**Em sẵn sàng nhận câu hỏi.**
+**Trân trọng kính mời Hội đồng đặt câu hỏi phản biện.**
 
 ## Backup 1 — Kiến trúc mô hình YOLO11
 
