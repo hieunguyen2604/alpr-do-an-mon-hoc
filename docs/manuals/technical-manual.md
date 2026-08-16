@@ -1420,7 +1420,7 @@ tải, bảo trì — đều **đạt**. Bảng đối chiếu đầy đủ ở 
 Không còn hạng mục nào dở dang. `FR-2.5` (xuất video đã chú thích) và `FR-2.6`
 (huỷ tác vụ đang chạy) đã **chuyển sang mức _Won't_** ngày 03/08/2026 và nút
 huỷ đã gỡ khỏi giao diện, nên không còn là nợ mà là **quyết định phạm vi** —
-ghi ở `docs/00-requirements/functional-requirements.md` và Bảng 4.9 của quyển.
+ghi ở `docs/00-requirements/functional-requirements.md` và Bảng 4.11 của quyển.
 
 ### 14.4. Nợ kỹ thuật
 

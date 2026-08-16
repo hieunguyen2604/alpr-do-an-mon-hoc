@@ -10,7 +10,20 @@ Trạng thái bản này: hệ thống chạy ALPRPipeline với mô hình chín
 
 ### 4.1.1. Khảo sát nhu cầu và các tác nhân
 
-Nhận dạng biển số là bài toán nền tảng của bãi đỗ tự động, thu phí không dừng, kiểm soát ra vào và giám sát giao thông. Áp mô hình ALPR huấn luyện trên dữ liệu nước ngoài vào Việt Nam gặp bốn trở ngại. **Thứ nhất, biển hai dòng chiếm tỉ trọng lớn** (toàn bộ xe máy và một phần ô tô) trong khi đa số bộ dữ liệu quốc tế giả định biển một dòng; mức suy giảm này đã đo được: trên **bộ RodoSol-ALPR của Brazil**, OpenALPR nhận đúng 3.772/4.000 ô tô biển một dòng (94,3%) nhưng chỉ 1.827/4.000 xe máy biển hai dòng (45,7%), chênh **48,6 điểm phần trăm** [2]<!-- laroca_2022_crossdataset -->. **Thứ hai, quy chuẩn biển số có tính pháp lý và cấu trúc chặt**: Thông tư 79/2024/TT-BCA [3]<!-- bocongan_2024_tt79 -->, sửa đổi bởi TT 13/2025 [4]<!-- bocongan_2025_tt13 --> và TT 51/2025 [5]<!-- bocongan_2025_tt51 -->, thông số vật lý theo QCVN 08:2024/BCA [6]<!-- bocongan_2024_qcvn08 --> — cấu trúc chặt vừa là ràng buộc vừa là cơ hội thiết kế cho khối hậu xử lý dựa trên luật. **Thứ ba, điều kiện thu nhận ảnh khắc nghiệt**: che khuất, bụi bẩn, nghiêng, ngược sáng, ban đêm. **Thứ tư, không có phần cứng tăng tốc**: máy thực hiện không có GPU CUDA, mọi suy luận và trình diễn chạy trên CPU (mục 4.1.4a, 4.3.1).
+Nhận dạng biển số là bài toán nền tảng của bãi đỗ tự động, thu phí không dừng,
+kiểm soát ra vào và giám sát giao thông. Áp một mô hình ALPR huấn luyện trên dữ
+liệu nước ngoài vào Việt Nam gặp bốn trở ngại.
+
+<!-- {{T4.0}} bon tro ngai khi ap mo hinh nuoc ngoai vao Viet Nam -->
+
+**Bảng 4.1.** Bốn trở ngại khi áp mô hình ALPR nước ngoài vào bối cảnh Việt Nam
+
+| # | Trở ngại | Biểu hiện định lượng hoặc căn cứ |
+|:--:|---|---|
+| 1 | **Biển hai dòng chiếm tỉ trọng lớn** — toàn bộ xe máy và một phần ô tô — trong khi đa số bộ dữ liệu quốc tế giả định biển một dòng | Mức suy giảm **đã đo được**: trên **bộ RodoSol-ALPR của Brazil**, OpenALPR đọc đúng 3.772/4.000 ô tô biển một dòng (**94,3%**) nhưng chỉ 1.827/4.000 xe máy biển hai dòng (**45,7%**) — chênh **48,6 điểm phần trăm** [2]<!-- laroca_2022_crossdataset --> |
+| 2 | **Quy chuẩn biển số có tính pháp lý và cấu trúc chặt** | TT 79/2024/TT-BCA [3]<!-- bocongan_2024_tt79 -->, sửa đổi bởi TT 13/2025 [4]<!-- bocongan_2025_tt13 --> và TT 51/2025 [5]<!-- bocongan_2025_tt51 -->; thông số vật lý theo QCVN 08:2024/BCA [6]<!-- bocongan_2024_qcvn08 -->. Cấu trúc chặt vừa là ràng buộc, vừa là **cơ hội thiết kế** cho khối hậu xử lý dựa trên luật |
+| 3 | **Điều kiện thu nhận ảnh khắc nghiệt** | Che khuất, bụi bẩn, chụp nghiêng, ngược sáng, ban đêm |
+| 4 | **Không có phần cứng tăng tốc** | Máy thực hiện không có GPU CUDA; mọi suy luận và trình diễn chạy trên CPU (mục 4.1.4a, 4.3.1) |
 
 > **Lưu ý phạm vi số liệu.** Cặp 94,3% / 45,7% đo trên **bộ RodoSol-ALPR của Brazil**, **không phải dữ liệu Việt Nam**; nhóm thực hiện chỉ dùng nó làm dẫn chứng định lượng rằng "biển hai dòng khó hơn" là sự kiện đo được, không phải cảm nhận.
 
@@ -44,7 +57,7 @@ Bốn ràng buộc kiến trúc: (1) **không trộn mã AI với mã API** (NFR
 
 <!-- {{T4.1a}} bon rang buoc kien truc va cach kiem chung -->
 
-**Bảng 4.1.** Bốn ràng buộc kiến trúc và cách kiểm chứng từng ràng buộc
+**Bảng 4.2.** Bốn ràng buộc kiến trúc và cách kiểm chứng từng ràng buộc
 
 | # | Ràng buộc | Mã chỉ tiêu | Cách hiện thực | Kiểm chứng bằng gì |
 |:--:|---|:--:|---|---|
@@ -83,7 +96,7 @@ Mỗi quyết định ghi kèm lý do và **đánh đổi phải chấp nhận**
 
 <!-- {{T4.2}} cac quyet dinh kien truc AD-01 den AD-08 -->
 
-**Bảng 4.2.** Tám quyết định kiến trúc — mỗi dòng kèm đánh đổi phải chấp nhận
+**Bảng 4.3.** Tám quyết định kiến trúc — mỗi dòng kèm đánh đổi phải chấp nhận
 
 | Mã | Quyết định | Lựa chọn | Đánh đổi phải chấp nhận |
 |:--:|---|---|---|
@@ -128,7 +141,7 @@ Mỗi bước là một kịch bản độc lập có giao diện dòng lệnh r
 
 <!-- {{T4.4}} dong gop cua tung bo du lieu truoc va sau khu trung lap -->
 
-**Bảng 4.3.** Đóng góp của từng bộ dữ liệu trước và sau khử trùng lặp
+**Bảng 4.4.** Đóng góp của từng bộ dữ liệu trước và sau khử trùng lặp
 
 | #   | Bộ (slug)                   |    Vào gộp |        **Còn lại** |   Bị loại |
 | --- | --------------------------- | ---------: | -----------------: | --------: |
@@ -171,7 +184,7 @@ Ba hàm mất mát giảm đơn điệu và **không có dấu hiệu quá khớ
 
 <!-- {{T4.5a}} tien trien chi so tren tap validation theo epoch -->
 
-**Bảng 4.4.** Tiến triển chỉ số trên tập validation theo mốc epoch
+**Bảng 4.5.** Tiến triển chỉ số trên tập validation theo mốc epoch
 
 |           Epoch           | Mất mát hộp bao | Mất mát phân lớp | Mất mát phân phối |    mAP@0.5 | mAP@0.5:0.95 |  Precision |     Recall |
 | :-----------------------: | --------------: | ---------------: | ----------------: | ---------: | -----------: | ---------: | ---------: |
@@ -190,7 +203,7 @@ PP-OCRv5 mobile huấn luyện trên chữ cảnh tổng quát; mục này trả
 
 <!-- {{T4.5b}} so sanh fine-tune va model goc -->
 
-**Bảng 4.5.** So sánh bộ nhận dạng gốc và bản tinh chỉnh trên cùng ngữ liệu
+**Bảng 4.6.** So sánh bộ nhận dạng gốc và bản tinh chỉnh trên cùng ngữ liệu
 
 | Cấu hình                                   | A5 (chuỗi thô) | A6 (sau hậu xử lý) | Đúng định dạng | ms/ảnh |
 | ------------------------------------------ | -------------: | -----------------: | -------------: | -----: |
@@ -291,7 +304,7 @@ Chính sách xử lý lỗi phân tầng theo mức ảnh hưởng: ảnh không
 
 <!-- {{T4.6}} do chinh xac bo nhan mau nen bien so -->
 
-**Bảng 4.6.** Độ chính xác bộ nhận màu nền trên bộ dữ liệu ngoài hiệu chỉnh
+**Bảng 4.7.** Độ chính xác bộ nhận màu nền trên bộ dữ liệu ngoài hiệu chỉnh
 
 | Lớp nhãn người gán |    Số ảnh |      Đúng | Độ chính xác |
 | ------------------ | --------: | --------: | -----------: |
@@ -300,7 +313,17 @@ Chính sách xử lý lỗi phân tầng theo mức ảnh hưởng: ảnh không
 | Biển xanh          |        63 |        61 |   **96,83%** |
 | **Tổng**           | **1.565** | **1.532** |   **97,89%** |
 
-Ba giới hạn cần nêu kèm kết quả trên. Thứ nhất, 542 ảnh đã bị loại khỏi phép đo, gồm toàn bộ lớp không xác định và các ảnh chụp ban đêm hoặc hồng ngoại mà chính người gán nhãn cũng không xác định được màu. Thứ hai, dạng lỗi chủ đạo là biển trắng bị phân loại thành biển xanh — 21 trong tổng số 33 trường hợp sai — do một số điểm ảnh ám lạnh vượt ngưỡng bão hoà. Thứ ba, phạm vi phép đo hẹp hơn phạm vi mô-đun: bộ dữ liệu không chứa biển đỏ và biển ngoại giao nên hai nhánh này chưa có số liệu đánh giá — ghi thành **hạn chế số 10** ở mục 6.2.
+Ba giới hạn cần nêu kèm kết quả trên.
+
+<!-- {{T4.6a}} ba gioi han cua phep do mau nen -->
+
+**Bảng 4.8.** Ba giới hạn của phép đo bộ nhận màu nền
+
+| # | Giới hạn | Chi tiết |
+|:--:|---|---|
+| 1 | **542 ảnh bị loại khỏi phép đo** | Toàn bộ lớp không xác định, cùng các ảnh chụp ban đêm hoặc hồng ngoại mà chính người gán nhãn cũng không xác định được màu |
+| 2 | **Dạng lỗi chủ đạo: biển trắng bị xếp thành biển xanh** | **21 trên 33** trường hợp sai, do một số điểm ảnh ám lạnh vượt ngưỡng bão hoà |
+| 3 | **Phạm vi phép đo hẹp hơn phạm vi mô-đun** | Bộ dữ liệu không chứa biển đỏ và biển ngoại giao nên hai nhánh này chưa có số liệu đánh giá — ghi thành **hạn chế số 10** ở mục 6.2 |
 
 Cần lưu ý thêm rằng toàn bộ ảnh của bộ dữ liệu này đã bị biến đổi tỉ lệ về khung vuông trước khi công bố, nên bộ không dùng được để đánh giá độ chính xác nhận dạng ký tự — phép biến đổi phá huỷ tỉ lệ khung hình mà thuật toán ước lượng số dòng dựa vào. Màu nền không chịu ảnh hưởng, do đó bộ dữ liệu chỉ được dùng cho đúng câu hỏi về màu sắc.
 
@@ -308,27 +331,26 @@ Cần lưu ý thêm rằng toàn bộ ảnh của bộ dữ liệu này đã b�
 
 ### 4.7.1. Kiến trúc phân tầng và tầng nghiệp vụ
 
-Máy chủ được tổ chức thành năm tầng với luồng phụ thuộc một chiều nghiêm ngặt, trong đó tầng lõi được mọi tầng khác sử dụng nhưng không phụ thuộc tầng nào. Ba quy tắc chi phối toàn bộ tầng nghiệp vụ.
-
-Thứ nhất, tầng định tuyến không chứa truy vấn: mọi truy cập dữ liệu đi qua tầng kho dữ liệu, nhờ đó một thay đổi lược đồ chỉ có bán kính ảnh hưởng trong phạm vi một mô-đun. Thứ hai, tầng kho dữ liệu chỉ đẩy thay đổi xuống phiên làm việc mà không bao giờ tự xác nhận giao dịch: việc lưu một lượt nhận dạng cùng toàn bộ biển số thuộc lượt đó là một thao tác logic duy nhất, và xác nhận giao dịch giữa chừng sẽ để lại trạng thái không nhất quán mà từng bản ghi riêng lẻ vẫn hợp lệ; ranh giới giao dịch vì vậy thuộc về tầng dịch vụ. Thứ ba, khoá sắp xếp trong truy vấn được ánh xạ qua danh sách cho phép tường minh thay vì truy xuất thuộc tính động, bởi cách thứ hai biến một tham số không hợp lệ thành lỗi máy chủ thay vì lỗi yêu cầu.
-
-Về xử lý lỗi, mỗi ngoại lệ mang hai mô tả cho hai đối tượng đọc khác nhau: một thông điệp tiếng Việt ngắn gọn kèm hành động khắc phục, đi vào thân phản hồi HTTP; và một mô tả kỹ thuật chỉ đi vào nhật ký hệ thống. Cây ngoại lệ được ánh xạ trực tiếp sang mã trạng thái HTTP, kèm một bộ xử lý bắt tất cả nhằm bảo đảm ngoại lệ ngoài dự kiến không làm lộ vết ngăn xếp ra phía người dùng (NFR-S4). Nhật ký được ghi theo định dạng có cấu trúc, mỗi bản ghi là một đối tượng dữ liệu kèm định danh yêu cầu truyền ngầm qua ngữ cảnh thực thi; điều này là bắt buộc vì nhật ký của tác vụ video xen kẽ với nhật ký của các yêu cầu đồng thời, và văn bản thuần không cho phép tách lại chuỗi sự kiện của một yêu cầu cụ thể.
-
-Cần lưu ý rằng phần lớn sự cố gặp phải trong quá trình cài đặt nằm ở ranh giới giữa mã nguồn và môi trường thực thi — nguồn cấu hình, tầng lưu trữ và bảng mã đầu ra — và đều vượt qua được kiểm thử đơn vị. Đây là lập luận thực nghiệm cho yêu cầu bộ kiểm thử phải bao gồm kiểm thử tích hợp chạy trên đường dẫn thật, chứ không chỉ kiểm thử đơn vị với thành phần giả lập.
-
-Kiến trúc năm tầng và các thành phần cụ thể của từng tầng đã trình bày ở
-**Hình 4.2**; mục này chỉ nêu ba quy tắc riêng khiến tầng nghiệp vụ tách biệt
-được khỏi hai tầng kề nó.
+Máy chủ tổ chức thành năm tầng với luồng phụ thuộc một chiều nghiêm ngặt: tầng
+lõi được mọi tầng khác dùng nhưng không phụ thuộc tầng nào. Kiến trúc và các
+thành phần cụ thể của từng tầng đã trình bày ở **Hình 4.2**; mục này nêu ba quy
+tắc riêng khiến tầng nghiệp vụ tách biệt được khỏi hai tầng kề nó.
 
 <!-- {{T4.7a}} ba quy tac cua tang nghiep vu -->
 
-**Bảng 4.7.** Ba quy tắc giữ cho tầng nghiệp vụ tách biệt
+**Bảng 4.9.** Ba quy tắc giữ cho tầng nghiệp vụ tách biệt
 
-| Quy tắc | Nội dung | Vì sao |
+| Quy tắc | Nội dung | Hệ quả |
 |---|---|---|
-| Định tuyến **không chứa truy vấn** | Mọi truy cập dữ liệu đi qua tầng kho dữ liệu | Một thay đổi lược đồ chỉ có bán kính ảnh hưởng trong tầng kho, không lan ra route |
-| Ngoại lệ mang **hai mô tả** | Một thông điệp tiếng Việt kèm hành động khắc phục cho người dùng, một thông điệp kỹ thuật cho nhật ký | Hai đối tượng đọc khác nhau cần hai mức chi tiết khác nhau |
-| Phần lớn sự cố nằm ở **ranh giới mã ↔ môi trường** | Nguồn cấu hình, đường dẫn, phiên bản thư viện | Ghi lại để người bảo trì tìm đúng chỗ trước, thay vì đọc lại logic nghiệp vụ |
+| Tầng định tuyến **không chứa truy vấn** | Mọi truy cập dữ liệu đi qua tầng kho dữ liệu | Một thay đổi lược đồ có **bán kính ảnh hưởng gói trong một mô-đun**, không lan ra tầng định tuyến |
+| Tầng kho **không tự xác nhận giao dịch** | Chỉ đẩy thay đổi xuống phiên làm việc; việc xác nhận thuộc về tầng gọi | Lưu một lượt nhận dạng cùng toàn bộ biển số thuộc lượt đó là **một thao tác logic duy nhất** — xác nhận giữa chừng sẽ để lại bản ghi nửa vời |
+| Mỗi ngoại lệ mang **hai mô tả** | Thông điệp tiếng Việt kèm hành động khắc phục đi vào thân phản hồi HTTP; mô tả kỹ thuật chỉ đi vào nhật ký | Cây ngoại lệ ánh xạ thẳng sang mã trạng thái HTTP, kèm bộ xử lý bắt tất cả để ngoại lệ ngoài dự kiến **không làm lộ vết ngăn xếp** ra người dùng (NFR-S4) |
+
+Phần lớn sự cố gặp trong quá trình cài đặt nằm ở **ranh giới giữa mã nguồn và
+môi trường thực thi** — nguồn cấu hình, tầng lưu trữ, bảng mã đầu ra — và đều
+vượt qua được kiểm thử đơn vị. Đây là lập luận thực nghiệm cho việc bộ kiểm thử
+phải có kiểm thử tích hợp chạy trên đường dẫn thật, không chỉ kiểm thử đơn vị
+với thành phần giả lập.
 
 ### 4.7.2. Thiết kế cơ sở dữ liệu
 
@@ -336,7 +358,7 @@ Kiến trúc năm tầng và các thành phần cụ thể của từng tầng �
 
 <!-- {{T4.7}} luoc do hai bang cua co so du lieu -->
 
-**Bảng 4.8.** Lược đồ cơ sở dữ liệu — hai bảng, quan hệ một–nhiều
+**Bảng 4.10.** Lược đồ cơ sở dữ liệu — hai bảng, quan hệ một–nhiều
 
 | Bảng | Cột | Kiểu | Ghi chú |
 |---|---|---|---|
@@ -411,7 +433,7 @@ Nguyên tắc: **mọi điểm lệch đều được nêu, kể cả những đ
 
 <!-- {{T4.10a}} tong hop cac diem lech giua thiet ke va cai dat -->
 
-**Bảng 4.9.** Tổng hợp chín điểm lệch giữa thiết kế và cài đặt
+**Bảng 4.11.** Tổng hợp chín điểm lệch giữa thiết kế và cài đặt
 
 |  #  | Thiết kế                                          | Cài đặt thực tế                                                             | Loại lệch                       | Trạng thái             |
 | :-: | ------------------------------------------------- | --------------------------------------------------------------------------- | ------------------------------- | ---------------------- |
