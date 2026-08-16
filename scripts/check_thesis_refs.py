@@ -129,9 +129,48 @@ def main() -> None:
                 if not ((f.parent / duong).is_file() or (PAPERS / duong).is_file()):
                     hong[f.name].append(f"  {i:>5}  (ảnh) {duong}")
 
+    # --- Tieu de hua gi thi phai co cai do ------------------------------------
+    # Mot muc ten chua "so do" / "luoc do" / "kien truc" / "luong xu ly" ma ben
+    # trong khong co hinh lan bang la loi. Da tung co muc ten "So do use case va
+    # ba use case chinh" nhung khong mot so do nao -- khong cong cu nao bat duoc
+    # vi ve mat cu phap chang co gi sai. Quy tac o .agents/rules muc 1.5.
+    HUA = re.compile(r"^#{2,4}\s+[\d.]+\.\s+.*\b(sơ đồ|lược đồ|kiến trúc|luồng xử lý)\b",
+                     re.I)
+    # "luoc do xam" la histogram, khong phai luoc do CSDL -- loai truoc khi khop.
+    LOAI = re.compile(r"lược đồ (xám|mức xám)", re.I)
+    so_hua = 0
+    nhac: list[str] = []
+    for f in files:
+        dong = f.read_text(encoding="utf-8").splitlines()
+        moc = [i for i, ln in enumerate(dong) if re.match(r"^#{2,4}\s+[\d.]+\.", ln)]
+        for k, i in enumerate(moc):
+            if not HUA.match(dong[i]) or LOAI.search(dong[i]):
+                continue
+            # Chi kiem muc LA. Muc CHA (## 4.2) khong co than rieng -- hinh nam o
+            # muc con cua no, bat loi o day la bao nham.
+            cap = len(dong[i]) - len(dong[i].lstrip("#"))
+            con = k + 1 < len(moc) and (
+                len(dong[moc[k + 1]]) - len(dong[moc[k + 1]].lstrip("#"))
+            ) > cap
+            if con:
+                continue
+            so_hua += 1
+            het = moc[k + 1] if k + 1 < len(moc) else len(dong)
+            than = "\n".join(dong[i + 1 : het])
+            if "![" not in than and not re.search(r"^\s*\|", than, re.M):
+                # CANH BAO, khong phai loi: mot muc kien truc viet bang van
+                # xuoi la "nen tot hon", khac han mot tham chieu chet. Neu de no
+                # chan cong kiem thi cong kiem se bi tat, va mat luon phan bat
+                # tham chieu chet -- thu that su quan trong.
+                nhac.append(
+                    f"  {f.name} : {dong[i].strip()[:64]}"
+                )
+
     so_hong = sum(len(v) for v in hong.values())
     print(f"Tham chiếu kiểm được: {tong}")
     print(f"Đường dẫn ảnh kiểm được: {so_anh}")
+    them = f"  ({len(nhac)} mục nên bổ sung hình/bảng)" if nhac else ""
+    print(f"Mục hứa sơ đồ kiểm được: {so_hua}{them}")
     print(f"Tham chiếu CHẾT     : {so_hong}\n")
 
     for ten in sorted(hong):
@@ -140,6 +179,12 @@ def main() -> None:
             print(d)
         if len(hong[ten]) > 25:
             print(f"  ... còn {len(hong[ten]) - 25} chỗ nữa")
+        print()
+
+    if nhac:
+        print("-- NHẮC (không tính là lỗi): mục mô tả cấu trúc bằng văn xuôi thuần --")
+        for d in nhac:
+            print(d)
         print()
 
     sys.exit(1 if so_hong else 0)

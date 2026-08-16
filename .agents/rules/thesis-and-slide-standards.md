@@ -14,7 +14,35 @@ Tài liệu này quy định các tiêu chuẩn kỹ thuật khi chỉnh sửa c
    - Biểu đồ phân bố độ trễ (Latency distribution), đường cong huấn luyện Loss/mAP, ma trận nhầm lẫn Confusion Matrix $\rightarrow$ dùng biểu đồ ảnh trực quan, không mô tả chay bằng lời.
 4. **Bóc tách đóng góp (Ablation Study):**
    - Bắt buộc dùng bảng với 2 cột: **Mức cải thiện (+Δ metric)** và **Chi phí tính toán (+ms trễ)**.
-5. **Phân tích ca lỗi (Error Analysis):**
+5. **Không mục nào chỉ toàn chữ khi nó đang mô tả một CẤU TRÚC:**
+   - Mục mô tả **kiến trúc, phân tầng, giao diện lớp, luồng xử lý, lược đồ CSDL,
+     hay quan hệ giữa các thành phần** thì bắt buộc kèm **một sơ đồ hoặc một bảng**.
+     Người đọc không dựng được hình trong đầu từ ba đoạn văn.
+   - **Tiêu đề hứa gì thì phải có cái đó.** Mục tên chứa *"sơ đồ"*, *"lược đồ"*,
+     *"kiến trúc"*, *"luồng"* mà không có hình hoặc bảng là lỗi — đã từng có mục
+     tên *"Sơ đồ use case và ba use case chính"* nhưng bên trong không một sơ đồ nào.
+   - **Mật độ tối thiểu cho chương kết quả:** trung bình **dưới 60 dòng cho mỗi
+     hình hoặc bảng**. Chương thực nghiệm từng dài 423 dòng mà chỉ có đúng một
+     hình, và hình đó là sơ đồ giao thức chứ không phải số liệu.
+
+6. **Chú thích phải mô tả đúng hình ĐƯỢC VẼ RA, không phải hình đã hình dung:**
+   - Trước khi nhúng, **mở ảnh ra nhìn**. Ba lỗi từng lọt qua vì chỉ đọc chữ:
+     chú thích ghi *"mũi tên rỗng"* trong khi hình vẽ mũi tên đặc; ghi *"mũi tên
+     thể hiện tác nhân khởi tạo"* trong khi hình vẽ đường nối không đầu; và một
+     nhãn đè lên viền khung.
+   - Đây là loại lỗi **không công cụ nào bắt được**: `check_thesis_refs.py` xác
+     nhận tệp ảnh tồn tại, Pandoc dựng ra PDF bình thường, chỉ có người nhìn mới
+     thấy chữ và hình nói hai chuyện khác nhau.
+
+7. **Sơ đồ nên sinh từ mã nguồn, đừng vẽ tay:**
+   - Ưu tiên đọc tên lớp, tên phương thức, tên cột trực tiếp từ mã hoặc từ lược
+     đồ thật (ví dụ `scripts/make_ch4_diagrams.py` đọc `ai/inference/interfaces.py`;
+     bảng lược đồ CSDL lấy từ `PRAGMA table_info`). Sơ đồ vẽ tay sẽ trôi khỏi mã
+     mà không ai biết.
+   - Máy này **không cài `mermaid-cli`**. Dùng `matplotlib` cho sơ đồ và biểu đồ
+     mới; đừng thêm một hệ thị giác thứ hai vào quyển chỉ để vẽ một hình.
+
+8. **Phân tích ca lỗi (Error Analysis):**
    - Bắt buộc có **ảnh cắt thực tế** kèm bảng đối chiếu: *Chuỗi nhãn thật (Ground Truth)* vs *Chuỗi nhận dạng được (Predicted)* vs *Nguyên nhân gốc*.
 
 ---
