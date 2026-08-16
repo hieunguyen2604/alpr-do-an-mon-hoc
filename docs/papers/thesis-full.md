@@ -1871,75 +1871,18 @@ chứ không phải chi tiết bỏ qua được.
 với ảnh đã có ở các bộ khác. Con số "hợp nhất từ 7 bộ" vì vậy phải đọc là **6
 nguồn nguyên tố**, và điều này được nêu nhất quán ở mục 4.4.2 và 6.3.1.
 
-## Phụ lục D. Hướng dẫn cài đặt và chạy
+## Phụ lục D. Cài đặt và chạy hệ thống
 
-### D.1. Yêu cầu
+Quy trình cài đặt, lệnh chạy bằng Docker Compose, cách chạy trực tiếp không
+dùng Docker và danh sách biến môi trường được trình bày đầy đủ ở hai tài liệu
+vận hành đi kèm, nên không lặp lại ở đây:
 
-| Hạng mục     | Yêu cầu                                     |
-| ------------ | ------------------------------------------- |
-| Hệ điều hành | Windows 10/11, macOS hoặc Linux             |
-| Docker       | Docker Engine 24+ và Docker Compose v2      |
-| Bộ nhớ       | Tối thiểu 4 GB RAM trống                    |
-| Đĩa          | Khoảng 6 GB cho image và dữ liệu            |
-| GPU          | **Không cần** — toàn hệ thống chạy trên CPU |
+| Nội dung | Tài liệu |
+|---|---|
+| Yêu cầu hệ thống, cài đặt từng bước, biến môi trường | `docs/manuals/installation-guide.md` |
+| Dựng ảnh Docker, kiểm chứng container, bốn lỗi thật đã gặp | `docs/reports/08-deployment-guide.md` |
 
-### D.2. Chạy bằng Docker Compose (khuyến nghị)
-
-```bash
-git clone <địa chỉ kho mã>
-cd vn-license-plate-recognition
-docker compose up -d --build
-```
-
-Sau khi các container khởi động, mở trình duyệt tại:
-
-| Địa chỉ                        | Nội dung                           |
-| ------------------------------ | ---------------------------------- |
-| `http://localhost:5173`        | Giao diện người dùng               |
-| `http://localhost:8000/docs`   | Tài liệu API (Swagger UI, tự sinh) |
-| `http://localhost:8000/health` | Trạng thái hệ thống                |
-
-Kiểm tra hệ thống đã nạp được mô hình:
-
-```bash
-curl http://localhost:8000/health
-```
-
-Trường `model_loaded` phải trả về `true`. Nếu trả về `false`, hệ thống vẫn chạy
-nhưng mọi yêu cầu nhận dạng sẽ trả lỗi thay vì trả kết quả giả lập — cơ chế
-`UnavailablePipeline`, trình bày ở mục 4.7.4.
-
-### D.3. Chạy trực tiếp không dùng Docker
-
-```bash
-# Tầng AI và backend
-python -m venv backend/.venv
-backend/.venv/Scripts/pip install -r backend/requirements.txt
-backend/.venv/Scripts/alembic upgrade head
-backend/.venv/Scripts/uvicorn backend.main:app --port 8000
-
-# Giao diện, ở một cửa sổ lệnh khác
-cd frontend && npm install && npm run dev
-```
-
-> **Lưu ý về môi trường ảo.** Nhóm thực hiện dùng **ba môi trường ảo Python tách biệt**,
-> không phải một. Lý do bắt buộc phải tách — xung đột phiên bản giữa hai framework
-> học sâu — trình bày ở mục 4.3.2. Gộp chúng lại sẽ hỏng.
-
-### D.4. Biến môi trường đáng chú ý
-
-| Biến                      | Mặc định         | Tác dụng                                                          |
-| ------------------------- | ---------------- | ----------------------------------------------------------------- |
-| `ALPR_MODEL_PATH`         | `models/best.pt` | Đường dẫn trọng số bộ phát hiện                                   |
-| `ALPR_RECTIFY_ENABLED`    | `true`           | Bật bước nắn hình biển nghiêng                                    |
-| `ALPR_SR_RETRY_ENABLED`   | `false`          | Bậc siêu phân giải — **tắt mặc định**, xem mục 5.5.7              |
-| `ALPR_OCR_SKIP_DETECTION` | `false`          | Bỏ bước phát hiện chữ — **tắt mặc định**, xem mục 5.6.6           |
-| `ALPR_OCR_REC_MODEL_DIR`  | _(rỗng)_         | Thư mục mô hình nhận dạng tinh chỉnh; để rỗng là dùng mô hình gốc |
-
-Chi tiết đầy đủ về triển khai — kiến trúc mạng Docker, các volume, cách xử lý sự
-cố thường gặp và lưu ý dung lượng image — ở `deployment/README.md`.
-
----
+Kiến trúc triển khai và lý do chọn Docker trình bày ở **mục 4.9**.
 
 ## Phụ lục E. Kết quả kiểm thử
 
@@ -2096,9 +2039,9 @@ Cặp NFR-A5/A6 đặt **tách bạch** có chủ đích: hiệu số giữa ch�
 ## Phụ lục O. Tệp cấu hình gốc, báo cáo đo và mã nguồn
 
 Phụ lục này giữ **hiện vật thô** — thứ cần để tái lập chứ không cần để đọc hiểu.
-Phụ lục B trình bày siêu tham số dưới dạng bảng đã biên tập; mục O.1 dưới đây là
-**nguyên văn tệp máy sinh**, vì một bảng biên tập lại không thay được tệp gốc khi
-có người muốn chạy lại đúng lượt huấn luyện ấy.
+Phụ lục B trình bày siêu tham số dưới dạng bảng đã biên tập. Tệp tham số nguyên
+văn do thư viện sinh ra nằm trong kho mã tại `runs/`, vì một bảng biên tập lại
+không thay được tệp gốc khi có người muốn chạy lại đúng lượt huấn luyện ấy.
 
 ---
 
