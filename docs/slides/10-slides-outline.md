@@ -348,7 +348,7 @@ Mỗi slide gồm bốn phần:
 - Bảng 3 bước demo trực tiếp trên máy thật: Ảnh ô tô 1 dòng $\rightarrow$ Ảnh xe máy 2 dòng $\rightarrow$ Video & Lịch sử
 
 **Speaker notes** *(30 s)*
-> Sau đây em xin thực hiện Live Demo trực tiếp 3 tình huống trên hệ thống thật: Nhận dạng ảnh ô tô 1 dòng, ảnh xe máy 2 dòng và luồng xử lý video bất đồng bộ.
+> Sau đây nhóm xin thực hiện Live Demo trực tiếp 3 tình huống trên hệ thống thật: Nhận dạng ảnh ô tô 1 dòng, ảnh xe máy 2 dòng và luồng xử lý video bất đồng bộ.
 
 ---
 
@@ -391,7 +391,7 @@ Mỗi slide gồm bốn phần:
 - **Em sẵn sàng nhận câu hỏi.**
 
 **Speaker notes** *(15 s)*
-> Em xin chân thành cảm ơn Thầy/Cô trong Hội đồng đã chú ý lắng nghe. Nhóm em xin sẵn sàng nhận các câu hỏi phản biện từ Thầy/Cô.
+> Em xin chân thành cảm ơn Thầy/Cô trong Hội đồng đã chú ý lắng nghe. Nhóm xin sẵn sàng nhận các câu hỏi phản biện từ Thầy/Cô.
 
 ---
 

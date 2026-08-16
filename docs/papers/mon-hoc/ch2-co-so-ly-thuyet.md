@@ -160,7 +160,7 @@ $$p(\mathbf{l} \mid \mathbf{x}) = \sum_{\boldsymbol{\pi} \in \mathcal{B}^{-1}(\m
 
 ![](figures/fig-ch2-crnn-ctc.png)
 
-**Hình 2.3.** Kiến trúc CRNN và cách CTC gộp chuỗi thô. Điểm mấu chốt nằm ở
+**Hình 2.2.** Kiến trúc CRNN và cách CTC gộp chuỗi thô. Điểm mấu chốt nằm ở
 tầng tích chập: nó hạ **chiều cao về 1**, biến bản đồ đặc trưng hai chiều thành
 một chuỗi vector — nhờ đó bài toán đọc ảnh trở thành bài toán đọc chuỗi.
 
@@ -168,7 +168,7 @@ một chuỗi vector — nhờ đó bài toán đọc ảnh trở thành bài to
 
 ![](figures/fig-ch2-07.png)
 
-**Hình 2.2.** Cơ chế sụp đổ của CTC trên ảnh văn bản hai dòng
+**Hình 2.3.** Cơ chế sụp đổ của CTC trên ảnh văn bản hai dòng
 
 Phép hạ chiều cao về 1 ở mục 2.4.1 **giả định toàn bộ văn bản nằm trên một dòng ngang**. Với ảnh hai dòng, mọi ký tự của dòng trên và dòng dưới bị **chiếu chồng lên nhau** vào cùng một cột đặc trưng, và giả định căn chỉnh đơn điệu giữa cột ảnh và chuỗi ký tự — nền tảng của CTC — không còn đúng. Hệ quả quan sát được là mô hình đọc theo thứ tự không xác định, ghép lẫn hai dòng, hoặc bỏ sót hẳn một dòng.
 

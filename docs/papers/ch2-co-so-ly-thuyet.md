@@ -177,7 +177,7 @@ Tổng ở (2.3) tính hiệu quả bằng quy hoạch động tiến–lùi. Ư
 
 ![](figures/fig-ch2-crnn-ctc.png)
 
-**Hình 2.3.** Kiến trúc CRNN và cách CTC gộp chuỗi thô. Điểm mấu chốt nằm ở
+**Hình 2.2.** Kiến trúc CRNN và cách CTC gộp chuỗi thô. Điểm mấu chốt nằm ở
 tầng tích chập: nó hạ **chiều cao về 1**, biến bản đồ đặc trưng hai chiều thành
 một chuỗi vector — nhờ đó bài toán đọc ảnh trở thành bài toán đọc chuỗi.
 
@@ -187,7 +187,7 @@ Mục kỹ thuật quan trọng nhất của chương: nền tảng lý thuyết
 
 ![](figures/fig-ch2-07.png)
 
-**Hình 2.2.** Cơ chế sụp đổ của CTC trên ảnh văn bản hai dòng
+**Hình 2.3.** Cơ chế sụp đổ của CTC trên ảnh văn bản hai dòng
 
 > **Ghi chú về phạm vi áp dụng.** Cặp số liệu 94,3% / 45,7% được đo trên bộ **RodoSol-ALPR của Brazil**, **không phải trên dữ liệu Việt Nam**. Nó được dẫn ở đây như một *analogue* định lượng về độ khó vượt trội của biển hai dòng xe máy tại một quốc gia cũng có tỷ lệ xe máy cao. Trích dẫn nhầm cặp số này thành số liệu Việt Nam là lỗi trích dẫn nghiêm trọng.
 

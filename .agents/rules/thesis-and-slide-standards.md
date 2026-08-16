@@ -127,7 +127,7 @@ Tài liệu này quy định các tiêu chuẩn kỹ thuật khi chỉnh sửa c
    - Cấm trích dẫn blog cá nhân không kiểm chứng.
 10. **Khai báo và định dạng:**
    - Mỗi chương bắt đầu bằng `#` (Heading 1).
-   - **Bảng:** một dòng neo máy đọc `<!-- {{TN.M}} mô tả ngắn -->`, rồi chú thích `**Bảng N.M.** Tên bảng` ngay trên bảng.
+   - **Bảng:** chú thích `**Bảng N.M.** Tên bảng` ngay trên bảng — **luôn bắt buộc**. Dòng neo máy đọc `<!-- {{TN.M}} mô tả ngắn -->` đặt trên chú thích khi bảng được tài liệu khác trỏ tới bằng mã T (hiện là các bảng ch4–ch5 mà `docs/reports/` tham chiếu); đừng thêm neo hàng loạt cho bảng không ai trỏ — sửa hàng loạt từng làm hỏng tên tệp ảnh.
    - **Hình:** `![](figures/ten-hinh.png)` rồi chú thích `**Hình N.M.** Mô tả` ngay dưới.
    - Không dùng cú pháp `Table: … {#tbl:}` hay `{#fig:}` của pandoc-crossref: kho hiện dùng 50 chú thích `**Bảng N.M.**` và 11 chú thích `**Hình N.M.**`, trộn hai hệ sẽ làm hỏng đánh số và danh mục.
 11. **Hạng mục chưa hoàn thành:**
