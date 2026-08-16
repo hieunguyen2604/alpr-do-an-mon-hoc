@@ -42,6 +42,21 @@ Các chỉ tiêu phi chức năng chia bảy nhóm — độ chính xác (NFR-A)
 
 Bốn ràng buộc kiến trúc: (1) **không trộn mã AI với mã API** (NFR-M1) ⇒ đường ống AI là package Python độc lập, không import framework web; (2) **mọi thành phần AI thay thế được** (NFR-M5) ⇒ đều đứng sau lớp trừu tượng; (3) **không hard-code đường dẫn** (NFR-M4) ⇒ mọi đường dẫn qua đối tượng cấu hình đọc từ biến môi trường; (4) **chạy được không cần GPU** (CON-02, NFR-C2) ⇒ thiết bị suy luận là tham số cấu hình, mặc định `cpu` — phát biểu là _cấu hình mặc định_ chứ không phải "chế độ dự phòng", nên đường chạy CPU là đường được kiểm thử thường xuyên nhất.
 
+<!-- {{T4.1a}} bon rang buoc kien truc va cach kiem chung -->
+
+**Bảng 4.1.** Bốn ràng buộc kiến trúc và cách kiểm chứng từng ràng buộc
+
+| # | Ràng buộc | Mã chỉ tiêu | Cách hiện thực | Kiểm chứng bằng gì |
+|:--:|---|:--:|---|---|
+| 1 | Không trộn mã AI với mã API | NFR-M1 | `ai/` là gói Python độc lập, không import framework web | Kiểm thử tự động quét `sys.modules` lúc chạy |
+| 2 | Mọi thành phần AI thay thế được | NFR-M5 | Ba lớp trừu tượng, đường ống chỉ giữ tham chiếu tới lớp cha (Hình 4.6) | Đổi bộ nhận dạng không phải sửa nơi khác |
+| 3 | Không gán cứng đường dẫn | NFR-M4 | Mọi đường dẫn qua đối tượng cấu hình đọc từ biến môi trường | Đổi `ALPR_MODEL_PATH` là đổi được mô hình |
+| 4 | Chạy được không cần GPU | CON-02 · NFR-C2 | Thiết bị suy luận là tham số, **mặc định `cpu`** | Toàn bộ số liệu Chương 5 đo trên CPU |
+
+Ràng buộc thứ tư phát biểu là **cấu hình mặc định**, không phải "chế độ dự
+phòng" — nên đường chạy CPU là đường được kiểm thử thường xuyên nhất, chứ không
+phải nhánh ít ai đụng tới.
+
 ### 4.2.2. Kiến trúc phân tầng
 
 ![](figures/fig-ch4-02.png)
@@ -113,7 +128,7 @@ Mỗi bước là một kịch bản độc lập có giao diện dòng lệnh r
 
 <!-- {{T4.4}} dong gop cua tung bo du lieu truoc va sau khu trung lap -->
 
-**Bảng 4.1.** Đóng góp của từng bộ dữ liệu trước và sau khử trùng lặp
+**Bảng 4.3.** Đóng góp của từng bộ dữ liệu trước và sau khử trùng lặp
 
 | #   | Bộ (slug)                   |    Vào gộp |        **Còn lại** |   Bị loại |
 | --- | --------------------------- | ---------: | -----------------: | --------: |
@@ -156,7 +171,7 @@ Ba hàm mất mát giảm đơn điệu và **không có dấu hiệu quá khớ
 
 <!-- {{T4.5a}} tien trien chi so tren tap validation theo epoch -->
 
-**Bảng 4.2.** Tiến triển chỉ số trên tập validation theo mốc epoch
+**Bảng 4.4.** Tiến triển chỉ số trên tập validation theo mốc epoch
 
 |           Epoch           | Mất mát hộp bao | Mất mát phân lớp | Mất mát phân phối |    mAP@0.5 | mAP@0.5:0.95 |  Precision |     Recall |
 | :-----------------------: | --------------: | ---------------: | ----------------: | ---------: | -----------: | ---------: | ---------: |
@@ -175,7 +190,7 @@ PP-OCRv5 mobile huấn luyện trên chữ cảnh tổng quát; mục này trả
 
 <!-- {{T4.5b}} so sanh fine-tune va model goc -->
 
-**Bảng 4.3.** So sánh bộ nhận dạng gốc và bản tinh chỉnh trên cùng ngữ liệu
+**Bảng 4.5.** So sánh bộ nhận dạng gốc và bản tinh chỉnh trên cùng ngữ liệu
 
 | Cấu hình                                   | A5 (chuỗi thô) | A6 (sau hậu xử lý) | Đúng định dạng | ms/ảnh |
 | ------------------------------------------ | -------------: | -----------------: | -------------: | -----: |
@@ -276,7 +291,7 @@ Chính sách xử lý lỗi phân tầng theo mức ảnh hưởng: ảnh không
 
 <!-- {{T4.6}} do chinh xac bo nhan mau nen bien so -->
 
-**Bảng 4.4.** Độ chính xác bộ nhận màu nền trên bộ dữ liệu ngoài hiệu chỉnh
+**Bảng 4.6.** Độ chính xác bộ nhận màu nền trên bộ dữ liệu ngoài hiệu chỉnh
 
 | Lớp nhãn người gán |    Số ảnh |      Đúng | Độ chính xác |
 | ------------------ | --------: | --------: | -----------: |
@@ -301,13 +316,27 @@ Về xử lý lỗi, mỗi ngoại lệ mang hai mô tả cho hai đối tượn
 
 Cần lưu ý rằng phần lớn sự cố gặp phải trong quá trình cài đặt nằm ở ranh giới giữa mã nguồn và môi trường thực thi — nguồn cấu hình, tầng lưu trữ và bảng mã đầu ra — và đều vượt qua được kiểm thử đơn vị. Đây là lập luận thực nghiệm cho yêu cầu bộ kiểm thử phải bao gồm kiểm thử tích hợp chạy trên đường dẫn thật, chứ không chỉ kiểm thử đơn vị với thành phần giả lập.
 
+Kiến trúc năm tầng và các thành phần cụ thể của từng tầng đã trình bày ở
+**Hình 4.2**; mục này chỉ nêu ba quy tắc riêng khiến tầng nghiệp vụ tách biệt
+được khỏi hai tầng kề nó.
+
+<!-- {{T4.7a}} ba quy tac cua tang nghiep vu -->
+
+**Bảng 4.7.** Ba quy tắc giữ cho tầng nghiệp vụ tách biệt
+
+| Quy tắc | Nội dung | Vì sao |
+|---|---|---|
+| Định tuyến **không chứa truy vấn** | Mọi truy cập dữ liệu đi qua tầng kho dữ liệu | Một thay đổi lược đồ chỉ có bán kính ảnh hưởng trong tầng kho, không lan ra route |
+| Ngoại lệ mang **hai mô tả** | Một thông điệp tiếng Việt kèm hành động khắc phục cho người dùng, một thông điệp kỹ thuật cho nhật ký | Hai đối tượng đọc khác nhau cần hai mức chi tiết khác nhau |
+| Phần lớn sự cố nằm ở **ranh giới mã ↔ môi trường** | Nguồn cấu hình, đường dẫn, phiên bản thư viện | Ghi lại để người bảo trì tìm đúng chỗ trước, thay vì đọc lại logic nghiệp vụ |
+
 ### 4.7.2. Thiết kế cơ sở dữ liệu
 
 **a) Lược đồ.** Cơ sở dữ liệu gồm hai bảng có quan hệ một–nhiều: bảng tác vụ ghi nhận mỗi lần sử dụng hệ thống, và bảng lịch sử ghi nhận mỗi biển số được phát hiện. Việc tách thành hai bảng là điều kiện để thống kê đếm đúng, bởi _lượt nhận dạng_ và _biển số phát hiện được_ là hai đại lượng khác nhau: một ảnh chứa ba phương tiện tạo ra một lượt và ba bản ghi. Gộp hai khái niệm sẽ làm số lượt sử dụng bị đánh giá cao hơn thực tế đúng bằng số biển số trung bình trên mỗi ảnh.
 
 <!-- {{T4.7}} luoc do hai bang cua co so du lieu -->
 
-**Bảng 4.5.** Lược đồ cơ sở dữ liệu — hai bảng, quan hệ một–nhiều
+**Bảng 4.8.** Lược đồ cơ sở dữ liệu — hai bảng, quan hệ một–nhiều
 
 | Bảng | Cột | Kiểu | Ghi chú |
 |---|---|---|---|
@@ -382,7 +411,7 @@ Nguyên tắc: **mọi điểm lệch đều được nêu, kể cả những đ
 
 <!-- {{T4.10a}} tong hop cac diem lech giua thiet ke va cai dat -->
 
-**Bảng 4.6.** Tổng hợp chín điểm lệch giữa thiết kế và cài đặt
+**Bảng 4.9.** Tổng hợp chín điểm lệch giữa thiết kế và cài đặt
 
 |  #  | Thiết kế                                          | Cài đặt thực tế                                                             | Loại lệch                       | Trạng thái             |
 | :-: | ------------------------------------------------- | --------------------------------------------------------------------------- | ------------------------------- | ---------------------- |

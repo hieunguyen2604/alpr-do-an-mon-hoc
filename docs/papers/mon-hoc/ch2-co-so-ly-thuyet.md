@@ -158,6 +158,12 @@ $$p(\mathbf{l} \mid \mathbf{x}) = \sum_{\boldsymbol{\pi} \in \mathcal{B}^{-1}(\m
 
 Ưu điểm quyết định: **không cần nhãn vị trí từng ký tự**, lý do CTC là mặc định của hầu hết bộ nhận dạng ký tự mã nguồn mở.
 
+![](figures/fig-ch2-crnn-ctc.png)
+
+**Hình 2.3.** Kiến trúc CRNN và cách CTC gộp chuỗi thô. Điểm mấu chốt nằm ở
+tầng tích chập: nó hạ **chiều cao về 1**, biến bản đồ đặc trưng hai chiều thành
+một chuỗi vector — nhờ đó bài toán đọc ảnh trở thành bài toán đọc chuỗi.
+
 ### 2.4.2. Vì sao CTC gãy trên biển hai dòng
 
 ![](figures/fig-ch2-07.png)
