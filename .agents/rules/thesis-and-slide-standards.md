@@ -25,7 +25,17 @@ Tài liệu này quy định các tiêu chuẩn kỹ thuật khi chỉnh sửa c
      hình hoặc bảng**. Chương thực nghiệm từng dài 423 dòng mà chỉ có đúng một
      hình, và hình đó là sơ đồ giao thức chứ không phải số liệu.
 
-6. **Chú thích phải mô tả đúng hình ĐƯỢC VẼ RA, không phải hình đã hình dung:**
+6. **Chuyển văn xuôi sang bảng là THAY, không phải THÊM:**
+   - Sau khi dựng bảng, **xoá đoạn văn xuôi mà nó thay thế**. Lỗi này đã mắc
+     **hai lần** trong cùng một đợt: §4.7.1 và §4.2.1 đều nói cùng một chuyện
+     hai lần — một lần bằng văn xuôi, một lần bằng bảng ngay dưới.
+   - **Trước khi xoá, đối chiếu bảng có giữ đủ ý không.** Lần đầu ở §4.7.1 bảng
+     còn *nghèo hơn* văn xuôi: nó bỏ mất quy tắc giao dịch, phần ánh xạ cây
+     ngoại lệ sang mã HTTP, và NFR-S4. Xoá văn xuôi lúc đó là mất nội dung thật.
+   - Cách bắt: đoạn văn xuôi ngay trước một bảng mà chứa `(1)`, `Thứ nhất`,
+     hoặc `Ba/Bốn/Tám …` **và dài trên 60 từ** là dấu hiệu lặp.
+
+7. **Chú thích phải mô tả đúng hình ĐƯỢC VẼ RA, không phải hình đã hình dung:**
    - Trước khi nhúng, **mở ảnh ra nhìn**. Ba lỗi từng lọt qua vì chỉ đọc chữ:
      chú thích ghi *"mũi tên rỗng"* trong khi hình vẽ mũi tên đặc; ghi *"mũi tên
      thể hiện tác nhân khởi tạo"* trong khi hình vẽ đường nối không đầu; và một
@@ -34,7 +44,7 @@ Tài liệu này quy định các tiêu chuẩn kỹ thuật khi chỉnh sửa c
      nhận tệp ảnh tồn tại, Pandoc dựng ra PDF bình thường, chỉ có người nhìn mới
      thấy chữ và hình nói hai chuyện khác nhau.
 
-7. **Sơ đồ nên sinh từ mã nguồn, đừng vẽ tay:**
+8. **Sơ đồ nên sinh từ mã nguồn, đừng vẽ tay:**
    - Ưu tiên đọc tên lớp, tên phương thức, tên cột trực tiếp từ mã hoặc từ lược
      đồ thật (ví dụ `scripts/make_ch4_diagrams.py` đọc `ai/inference/interfaces.py`;
      bảng lược đồ CSDL lấy từ `PRAGMA table_info`). Sơ đồ vẽ tay sẽ trôi khỏi mã
@@ -42,7 +52,7 @@ Tài liệu này quy định các tiêu chuẩn kỹ thuật khi chỉnh sửa c
    - Máy này **không cài `mermaid-cli`**. Dùng `matplotlib` cho sơ đồ và biểu đồ
      mới; đừng thêm một hệ thị giác thứ hai vào quyển chỉ để vẽ một hình.
 
-8. **Phân tích ca lỗi (Error Analysis):**
+9. **Phân tích ca lỗi (Error Analysis):**
    - Bắt buộc có **ảnh cắt thực tế** kèm bảng đối chiếu: *Chuỗi nhãn thật (Ground Truth)* vs *Chuỗi nhận dạng được (Predicted)* vs *Nguyên nhân gốc*.
 
 ---
