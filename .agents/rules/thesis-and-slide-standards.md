@@ -32,11 +32,12 @@ Tài liệu này quy định các tiêu chuẩn kỹ thuật khi chỉnh sửa c
    - Cấm trích dẫn blog cá nhân không kiểm chứng.
 4. **Khai báo và định dạng:**
    - Mỗi chương bắt đầu bằng `#` (Heading 1).
-   - Các bảng phải có chú thích nhãn: `Table: [Tên bảng] {#tbl:nhan-bang}`.
-   - Các hình ảnh phải có chú thích nhãn: `![Mô tả hình](figures/[ten-hinh].png){#fig:nhan-hinh}`.
+   - **Bảng:** một dòng neo máy đọc `<!-- {{TN.M}} mô tả ngắn -->`, rồi chú thích `**Bảng N.M.** Tên bảng` ngay trên bảng.
+   - **Hình:** `![](figures/ten-hinh.png)` rồi chú thích `**Hình N.M.** Mô tả` ngay dưới.
+   - Không dùng cú pháp `Table: … {#tbl:}` hay `{#fig:}` của pandoc-crossref: kho hiện dùng 50 chú thích `**Bảng N.M.**` và 11 chú thích `**Hình N.M.**`, trộn hai hệ sẽ làm hỏng đánh số và danh mục.
 5. **Hạng mục chưa hoàn thành:**
-   - Tuyệt đối không đưa vào Chương 3 (Thiết kế) hoặc Chương 4 (Thực nghiệm).
-   - Phải đưa trọn vẹn vào Chương 5/6 (Hạn chế & Hướng phát triển).
+   - Tuyệt đối không đưa vào **Chương 4** (Thiết kế và cài đặt) hoặc **Chương 5** (Thực nghiệm và đánh giá).
+   - Phải đưa trọn vẹn vào **Chương 6** — mục 6.2 Hạn chế và mục 6.3 Hướng phát triển.
 6. **Kiểm tra chéo (Cross-references):**
    - Sau khi sửa tài liệu, luôn chạy: `python scripts/check_thesis_refs.py` (phải đạt 0 tham chiếu chết và 0 đường dẫn ảnh hỏng).
 

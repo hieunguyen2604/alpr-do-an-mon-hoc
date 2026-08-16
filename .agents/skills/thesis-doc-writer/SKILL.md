@@ -25,18 +25,19 @@ Skill này quy định chuẩn mực, văn phong, cấu trúc và quy trình vi�
    - Tránh câu cảm thán, ngôn từ quảng cáo hoặc khẳng định tuyệt đối thiếu chứng cứ (*"hoàn hảo nhất"*, *"tốt nhất"*).
 4. **Quy tắc hạng mục chưa hoàn thành (Unfinished Work):**
    - Mọi tính năng, mô hình hoặc thử nghiệm chưa hoàn thành hoặc kết quả chưa đạt $\rightarrow$ **tuyệt đối không đưa vào thân bài / nội dung chính**.
-   - Bắt buộc phải đưa trọn vẹn vào phần **Hạn chế** và **Hướng phát triển** ở Chương Kết luận. Thân bài chỉ viết những gì đã làm thật và có dữ liệu đo đạc thực tế.
+   - Bắt buộc phải đưa trọn vẹn vào phần **Hạn chế** (mục 6.2) và **Hướng phát triển** (mục 6.3) của **Chương 6**. Mỗi hạn chế phải có ít nhất một hướng phát triển nhắm tới nó — hạn chế không kèm đường đi thì chỉ là lời than phiền. Thân bài chỉ viết những gì đã làm thật và có dữ liệu đo đạc thực tế.
 
 ---
 
 ## 2. Cấu Trúc Tài Liệu Chuẩn
 
-### A. Đồ Án Tốt Nghiệp (Quyển 5-6 Chương)
+### A. Đồ Án Tốt Nghiệp (6 chương đánh số + Tài liệu tham khảo + Phụ lục)
 - **Chương 1: Tổng quan và Đặt vấn đề** (Bối cảnh ALPR tại VN, thực trạng biển 2 dòng, mục tiêu & phạm vi).
 - **Chương 2: Cơ sở Lý thuyết & Căn cứ Pháp lý** (Thị giác máy tính, YOLO11, OCR, quy chuẩn biển số VN).
-- **Chương 3: Phân tích & Thiết kế Hệ thống** (Kiến trúc 5 tầng Clean Architecture, AI Engine Python thuần, thiết kế API & CSDL).
-- **Chương 4: Thực nghiệm & Đánh giá** (Tập dữ liệu, quy trình huấn luyện, benchmark phát hiện & nhận dạng, đo đạc độ trễ CPU, kiểm thử tải NFR).
-- **Chương 5: Kết luận & Hướng phát triển** (Các đóng góp chính, hạn chế còn lại, lộ trình mở rộng Edge AI / camera RTSP).
+- **Chương 3: Khảo sát công nghệ và lựa chọn** (So sánh YOLO, so sánh bộ nhận dạng ký tự, so sánh nền tảng suy luận CPU — mỗi lựa chọn kèm số tự đo).
+- **Chương 4: Thiết kế và cài đặt hệ thống** (Kiến trúc 5 tầng Clean Architecture, AI Engine Python thuần, lược đồ CSDL, thiết kế API, giao diện tải NFR).
+- **Chương 5: Thực nghiệm và đánh giá** (Bộ dữ liệu, huấn luyện, benchmark phát hiện và nhận dạng, độ trễ CPU, đối chiếu toàn bộ chỉ tiêu phi chức năng).
+- **Chương 6: Kết luận và hướng phát triển** (Đóng góp chính, **Hạn chế**, **Hướng phát triển** — mọi hạng mục chưa hoàn thành thuộc về đây).
 - **Tài liệu tham khảo & Phụ lục** (Mã tỉnh thành, ma trận nhầm lẫn, cấu hình Docker).
 
 ### B. Đồ Án Môn Học (Xử lý ảnh và ứng dụng - 40–50 trang)
@@ -53,11 +54,11 @@ Skill này quy định chuẩn mực, văn phong, cấu trúc và quy trình vi�
    - `####` : Mục cấp 3 (Heading 4)
 2. **Hình ảnh & Sơ đồ:**
    - Mọi hình ảnh phải đặt trong `docs/papers/figures/` hoặc `docs/slides/figures/`.
-   - Cú pháp chuẩn có chú thích: `![Mô tả hình](figures/fig-ten-hinh.png){#fig:ten-hinh}`.
+   - Cú pháp chuẩn: `![](figures/fig-ten-hinh.png)` rồi dòng chú thích `**Hình N.M.** Mô tả` ngay dưới hình.
    - Sơ đồ kỹ thuật ưu tiên render từ mã nguồn hoặc Mermaid script (`scripts/render_mermaid.py`).
 3. **Bảng biểu:**
    - Định dạng bảng Markdown chuẩn có căn lề rõ ràng (`|:---|:---:|---:|`).
-   - Có tiêu đề bảng và nhãn tham chiếu: `Table: Bảng so sánh hiệu năng {#tbl:so-sanh}`.
+   - Chú thích đặt **trên** bảng: `**Bảng N.M.** Tên bảng`, kèm một dòng neo máy đọc `<!-- {{TN.M}} mô tả ngắn -->` phía trên nữa.
 4. **Trích dẫn khoa học:**
    - Đặt khóa trích dẫn dạng `[@author2024]` tương ứng với file BibTeX hoặc danh mục tài liệu tham khảo.
 

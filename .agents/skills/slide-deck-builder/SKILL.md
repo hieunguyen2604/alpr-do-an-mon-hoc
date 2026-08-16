@@ -31,7 +31,7 @@ Skill này cung cấp các nguyên tắc vàng, cấu trúc chuẩn, quy tắc k
 ## 2. Cấu Trúc Các Bộ Slide Có Sẵn
 
 ### A. Slide Đồ Án Tốt Nghiệp (15–20 phút)
-- **Tệp nguồn:** `docs/slides/10-slides.md` (31 slide chính + 7 slide backup)
+- **Tệp nguồn:** `docs/slides/10-slides.md` (**37 slide** `##`, gồm cả khối backup; `check_slides.ps1` báo 38 vì tính thêm trang tiêu đề)
 - **Kịch bản:** `docs/slides/10-slides-outline.md`
 - **Phân bổ thời gian (900s):**
   - Khối 1: Tổng quan & Đặc thù biển số VN (S1–S8 · 240s)
@@ -42,7 +42,7 @@ Skill này cung cấp các nguyên tắc vàng, cấu trúc chuẩn, quy tắc k
   - Khối Backup: 7 slide trả lời phản biện (S32–S38)
 
 ### B. Slide Đồ Án Môn Học (7–10 phút)
-- **Tệp nguồn:** `docs/slides/12-slides-mon-hoc.md` (16 slide)
+- **Tệp nguồn:** `docs/slides/12-slides-mon-hoc.md` (**15 slide** `##`)
 - **Trọng tâm:** Pipeline thị giác máy tính (YOLO11n + PP-OCRv5), thử nghiệm độ trễ CPU và demo sản phẩm.
 
 ### C. Slide Báo Cáo Kỹ Thuật (5–7 phút)

@@ -49,7 +49,8 @@ Tài liệu này là quy chuẩn bắt buộc cho mọi hoạt động tạo mã
 
 Mọi tài liệu, thuật toán và phân tích liên quan đến biển số Việt Nam phải tuân thủ đúng 3 văn bản:
 1. **Thông tư 79/2024/TT-BCA** (Quy định cấu trúc biển số, seri, màu sắc).
-2. **Thông tư 51/2025/TT-BCA** (Quy định danh mục 34 mã tỉnh thành mới sau sáp nhập).
-3. **QCVN 08:2024/BCA** (Quy chuẩn kỹ thuật kích thước và tỉ lệ biển số xe).
+2. **Thông tư 13/2025/TT-BCA** (Sửa đổi, bổ sung TT 79/2024).
+3. **Thông tư 51/2025/TT-BCA** (Quy định danh mục 34 mã tỉnh thành mới sau sáp nhập).
+4. **QCVN 08:2024/BCA** (Quy chuẩn kỹ thuật kích thước và tỉ lệ biển số xe).
 
 > ⚠️ **Cấm tuyệt đối:** Không viện dẫn **Thông tư 24/2023/TT-BCA** vì đã hết hiệu lực từ ngày 01/01/2025.

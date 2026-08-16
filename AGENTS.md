@@ -10,7 +10,7 @@ Tài liệu này định hình cách làm việc của Agent khi tương tác v�
 - **Ranh giới đề tài (Scope):** Tôn trọng ranh giới ngoài phạm vi (không tracking, không barie, không multi-GPU, không microservices). Tập trung 100% vào **nhận diện biển 1 dòng & 2 dòng chạy tối ưu trên CPU**.
 - **Không viết dông dài (Zero-fluff):** Đi thẳng vào kết quả và giải pháp. Bỏ qua các đoạn lý thuyết giáo khoa chung chung không phục vụ trực tiếp cho mô hình.
 - **Hạng mục chưa hoàn thành (Unfinished Work):** Mọi tính năng, thử nghiệm dở dang hoặc chưa hoàn thành **tuyệt đối không đưa vào thân bài / nội dung chính** của báo cáo và slide. Phải chuyển trọn vẹn sang phần **Hạn chế** và **Hướng phát triển**.
-- **Căn cứ pháp lý đúng:** Sử dụng **TT 79/2024**, **TT 51/2025** (34 tỉnh thành), **QCVN 08:2024**. Tuyệt đối không dùng TT 24/2023.
+- **Căn cứ pháp lý đúng:** Sử dụng **TT 79/2024**, **TT 13/2025**, **TT 51/2025** (34 tỉnh thành), **QCVN 08:2024**. Tuyệt đối không dùng TT 24/2023.
 
 ---
 
