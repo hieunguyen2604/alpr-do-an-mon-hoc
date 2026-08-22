@@ -1,5 +1,13 @@
 # Mục lục — cấu trúc 7 chương
 
+> ⚠️ **Bản thực thi cuối đã GỘP về 6 chương** — khác đề cương 7 chương dưới đây:
+> nội dung "xây dựng & huấn luyện" của Chương 5 (cũ) nhập vào Chương 4 (thiết kế
+> và cài đặt), "thực nghiệm" giữ Chương 5, "kết luận" thành Chương 6. Nguồn sự
+> thật: `CHAPTER_FILENAMES` trong `scripts/build_thesis.py` và cây tệp trong
+> [`THESIS-README.md`](THESIS-README.md). Toàn bộ đánh số mục/hình/bảng trong
+> các tệp chương đã theo cấu trúc 6 chương; phần thân tài liệu này giữ nguyên
+> như bản ghi lịch sử của lần đề xuất 02/08/2026.
+
 **Ngày lập:** 2026-08-02 · **Trạng thái:** ✅ **ĐÃ ÁP DỤNG 02/08/2026**
 **Thay cho:** [00-thesis-outline.md](00-thesis-outline.md) (cấu trúc 6 chương, nay đã lỗi thời)
 

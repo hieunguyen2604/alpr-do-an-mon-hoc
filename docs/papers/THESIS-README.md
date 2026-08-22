@@ -18,21 +18,21 @@ Tài liệu này trả lời bốn câu hỏi: **quyển đồ án nằm ở đ�
 ```
 docs/papers/
 ├── THESIS-README.md            ← tài liệu này — quy ước biên soạn
-├── 00-thesis-outline-v2.md     ← đề cương ĐANG DÙNG (7 chương, áp dụng 02/08/2026)
+├── 00-thesis-outline-v2.md     ← đề cương 7 chương (02/08/2026) — bản thực thi cuối đã gộp về 6 chương, xem banner đầu file
 ├── 00-thesis-outline.md        ← đề cương cũ (6 chương) — giữ để tra lịch sử, KHÔNG dùng
 ├── 01-front-matter.md          ← bìa, cam đoan, cảm ơn, mục lục, danh mục, abstract
 ├── ch1-gioi-thieu.md           ← ✅ Chương 1
 ├── ch2-co-so-ly-thuyet.md      ← ✅ Chương 2
 ├── ch3-khao-sat-lua-chon.md    ← ✅ Chương 3
-├── ch4-phan-tich-thiet-ke.md   ← ✅ Chương 4
-├── ch5-xay-dung-huan-luyen.md  ← ✅ Chương 5
-├── ch6-thuc-nghiem.md          ← ✅ Chương 6
-├── ch7-ket-luan.md             ← ✅ Chương 7
-├── ch8-tai-lieu-tham-khao.md   ← ✅ SINH TỰ ĐỘNG bằng scripts/build_bibliography.py
+├── ch4-phan-tich-thiet-ke.md   ← ✅ Chương 4 (gồm bộ dữ liệu và huấn luyện)
+├── ch5-thuc-nghiem.md          ← ✅ Chương 5
+├── ch6-ket-luan.md             ← ✅ Chương 6
+├── ch8-tai-lieu-tham-khao.md   ← ✅ SINH TỰ ĐỘNG bằng scripts/build_bibliography.py (tiền tố ch8 giữ từ lần đánh số cũ)
+├── ch9-phu-luc.md              ← ✅ Phụ lục (A–E)
 └── thesis-full.md / .docx / .pdf  ← đầu ra khi ghép — KHÔNG sửa tay
 ```
 
-Phần **Tài liệu tham khảo** sinh ra thành tệp `ch8-tai-lieu-tham-khao.md` bằng `scripts/build_bibliography.py` (đọc `docs/references.bib`) — **không sửa tay tệp đó**. Phần **Phụ lục** trích từ các tài liệu nguồn và chưa tồn tại dưới dạng tệp riêng.
+Phần **Tài liệu tham khảo** sinh ra thành tệp `ch8-tai-lieu-tham-khao.md` bằng `scripts/build_bibliography.py` (đọc `docs/references.bib`) — **không sửa tay tệp đó**. Phần **Phụ lục** nằm ở tệp `ch9-phu-luc.md`.
 
 **Quy tắc đặt tên tệp:** các tệp chương dùng tiền tố `ch<số chương>-<slug không dấu, gạch nối>.md`; các tệp không phải chương giữ tiền tố số (`00-`, `01-`) và đứng trước khi ghép. Thứ tự ghép khai báo tường minh ở `CHAPTER_FILENAMES` trong `scripts/build_thesis.py`.
 
@@ -63,19 +63,18 @@ Phần **Tài liệu tham khảo** sinh ra thành tệp `ch8-tai-lieu-tham-khao.
 | `ch2-co-so-ly-thuyet.md` | 2. Cơ sở lý thuyết | 🟢 **ĐÃ VIẾT** | — |
 | `ch3-khao-sat-lua-chon.md` | 3. Khảo sát công nghệ và lựa chọn mô hình | 🟢 **ĐÃ VIẾT** | — |
 | `ch4-phan-tich-thiet-ke.md` | 4. Phân tích và thiết kế hệ thống | 🟢 **ĐÃ VIẾT** | — |
-| `ch5-xay-dung-huan-luyen.md` | 5. Xây dựng hệ thống và huấn luyện mô hình | 🟢 **ĐÃ VIẾT** | — |
-| `ch6-thuc-nghiem.md` | 6. Thực nghiệm và đánh giá | 🟢 **ĐÃ VIẾT** | Số liệu đã đầy đủ (`docs/reports/05-results.json`) |
-| `ch7-ket-luan.md` | 7. Kết luận và hướng phát triển | 🟢 **ĐÃ VIẾT** | — |
-| `ch8-tai-lieu-tham-khao.md` | Tài liệu tham khảo | 🟢 **SINH TỰ ĐỘNG** — 123 mục, đánh số theo thứ tự xuất hiện lần đầu trong quyển (kiểu IEEE) | — |
-| — | Phụ lục | 🟢 Nguyên liệu đã sẵn (A, B, C, D, E) | — |
+| `ch5-thuc-nghiem.md` | 5. Thực nghiệm và đánh giá | 🟢 **ĐÃ VIẾT** | Số liệu đồng bộ vòng đo 14/08 (`41-measured-confusion-tables.md`) |
+| `ch6-ket-luan.md` | 6. Kết luận và hướng phát triển | 🟢 **ĐÃ VIẾT** | — |
+| `ch8-tai-lieu-tham-khao.md` | Tài liệu tham khảo | 🟢 **SINH TỰ ĐỘNG** — đánh số theo thứ tự xuất hiện lần đầu trong quyển (kiểu IEEE) | — |
+| `ch9-phu-luc.md` | Phụ lục | 🟢 Nguyên liệu A, B, C, D, E đã ghép | — |
 
-### Nền tảng kỹ thuật của Chương 5 và Chương 6
+### Nền tảng kỹ thuật của Chương 4–6 (cài đặt, thực nghiệm, kết luận)
 
 Hệ thống chạy **pipeline thật**: `ALPRPipeline` với mô hình chính thức `models/best.pt`, `/health` báo `model_loaded: true`, engine `yolo:best.pt+paddleocr-PP-OCRv5-mobile`.
 
 Trước đó (Phase 5–7) hệ thống chạy **`StubPipeline`** — một cài đặt giả lập tuân đúng giao diện trừu tượng của tầng AI, cho phép phát triển và kiểm thử backend, cơ sở dữ liệu và giao diện trước khi có mô hình thật. Stub **đã bị đưa ra khỏi đường chạy chính**; nó chỉ chạy khi đặt tường minh `ALPR_USE_STUB=true`, còn phương án lùi khi thiếu trọng số là `UnavailablePipeline` (ném lỗi thay vì bịa kết quả).
 
-Chương 5 và 6 đã viết được vì số liệu thực nghiệm đã đầy đủ: `models/best.pt` (`imgsz=640`, split v3) đã huấn luyện xong — detection đạt cả bốn chỉ tiêu (mAP@0.5 0,9829), NFR-P1 đạt ngưỡng tối thiểu với p95 1.143,10 ms (mục tiêu 800 ms), và NFR-A4/A5/A6/A7 đã đo (OCR biển hai dòng không đạt — kết quả thật). Cặp 731/780 ms là phép đo trước khi bật bậc thử lại, chỉ dùng để phân tích đánh đổi.
+Chương 4–6 đã viết được vì số liệu thực nghiệm đã đầy đủ: `models/best.pt` (`imgsz=640`, split v3) đã huấn luyện xong — detection đạt cả bốn chỉ tiêu (mAP@0.5 0,9829), NFR-P1 đạt ngưỡng tối thiểu với p95 1.143,10 ms (mục tiêu 800 ms), và NFR-A4/A5/A6/A7 đã đo (OCR biển hai dòng không đạt — kết quả thật). Cặp 731/780 ms là phép đo trước khi bật bậc thử lại, chỉ dùng để phân tích đánh đổi.
 
 > **Ranh giới không được vượt qua.** Không một con số nào do `StubPipeline` sinh ra được phép xuất hiện trong Chương 5, trong hai bản abstract, hay trong slide bảo vệ dưới danh nghĩa kết quả thực nghiệm. Số của `baseline-416-v1.pt` (mô hình đối chứng) được phép nêu **nhưng phải kèm cả hai khiếm khuyết ngay trong câu** (imgsz=416; split v1 có rò rỉ), và không được trình bày như kết quả đạt chỉ tiêu — số công bố lấy từ `models/best.pt`.
 
@@ -192,7 +191,7 @@ Bất biến phải kiểm tra sau khi ghép: **mọi khoá xuất hiện trong 
 
 ### 5.1. Thứ tự ghép
 
-Theo đúng thứ tự: `01-front-matter.md` → `ch1-gioi-thieu.md` → `ch2-co-so-ly-thuyet.md` → `ch3-khao-sat-lua-chon.md` → `ch4-phan-tich-thiet-ke.md` → `ch5-xay-dung-huan-luyen.md` → `ch6-thuc-nghiem.md` → `ch7-ket-luan.md` → Tài liệu tham khảo (sinh từ `references.bib`) → Phụ lục. Tệp `00-thesis-outline.md` và `THESIS-README.md` là **tài liệu công cụ, KHÔNG ghép vào quyển**.
+Theo đúng thứ tự khai báo ở `CHAPTER_FILENAMES`: `01-front-matter.md` → `ch1-gioi-thieu.md` → `ch2-co-so-ly-thuyet.md` → `ch3-khao-sat-lua-chon.md` → `ch4-phan-tich-thiet-ke.md` → `ch5-thuc-nghiem.md` → `ch6-ket-luan.md` → Tài liệu tham khảo (sinh từ `references.bib`) → Phụ lục. Tệp `00-thesis-outline*.md` và `THESIS-README.md` là **tài liệu công cụ, KHÔNG ghép vào quyển**.
 
 ### 5.2. Ghép bằng script
 
