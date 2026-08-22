@@ -141,7 +141,7 @@ Thiếu bốn thứ, theo thứ tự ưu tiên: xác thực và phân quyền ng
 ### B1. Dữ liệu lấy ở đâu? Có bản quyền không?
 
 **Trả lời ngắn.**
-Bộ chính là `hoanglvuit/Vietnam_License_Plate_Segment_Datasets` trên HuggingFace, 4.578 ảnh, tải công khai không cần token. Em phải nói thẳng một rủi ro còn treo: **trang nguồn không ghi rõ giấy phép**. Trường `license` trong cấu hình của em hiện ghi là "cần kiểm tra trước khi dùng cho mục đích xuất bản" — đây là điều em ghi nhận chứ không giấu.
+Nguồn khởi đầu là `hoanglvuit/Vietnam_License_Plate_Segment_Datasets` trên HuggingFace, 4.578 ảnh, tải công khai không cần token — đó là bộ **v1**, một nguồn duy nhất. Vì nó quá nhỏ, nhóm tải thêm **tám bộ nữa (tổng chín bộ)**; sau khử trùng lặp còn **15.133 ảnh** — đó là bộ **v3** dùng cho bản giao hàng. Em phải nói thẳng một rủi ro còn treo: **trang nguồn không ghi rõ giấy phép**. Trường `license` trong cấu hình của em hiện ghi là "cần kiểm tra trước khi dùng cho mục đích xuất bản" — đây là điều em ghi nhận chứ không giấu.
 
 **Nếu bị hỏi sâu.**
 - Bộ chính đã chốt ở Phase 1 là VNLP (~37.300 ảnh) nhưng **tải không được** — kho `fict-labs/vnlp` trả HTTP 401, đã chuyển sang chế độ gated. Đó là lý do quy mô thực tế chỉ còn 12,3% so với kế hoạch.
@@ -159,7 +159,7 @@ Bộ dữ liệu cuối cùng có **15.133 ảnh**, chia **10.592 / 3.027 / 1.51
 
 **Nếu bị hỏi sâu.**
 - Bộ dữ liệu không đồng nhất mà là ghép của **5 tiểu tập**, mỗi tiểu tập gần như thuần một loại biển: `greenpack` 100% biển 2 dòng, `carlong` 99,4% biển 1 dòng. Cấu trúc này gợi ý mỗi tiểu tập thu từ một buổi / một bối cảnh riêng, tức là các ảnh **không độc lập với nhau** như giả định thống kê thông thường.
-- Tỷ lệ biển 2 dòng: 3.559 / 5.200 box = 68,44% theo nhãn thật. Vượt xa ngưỡng tối thiểu 30% em đặt ra, nên biển 2 dòng không bị coi là ngoại lệ hiếm.
+- Tỷ lệ biển 2 dòng ở bộ v1: 3.559 / 5.200 box = 68,44% theo nhãn thật; trên **tập test v3** tỷ lệ còn cao hơn — **1.325 / 1.611 = 82,2%**. Vượt xa ngưỡng tối thiểu 30% em đặt ra, nên biển 2 dòng không bị coi là ngoại lệ hiếm.
 - Đang mở rộng lên ~21.000 ảnh từ 8 bộ Roboflow. Khi gộp, phép đo trùng lặp **chéo bộ** mới thực sự có ý nghĩa — hiện tại nó bằng 0 chỉ vì có đúng một bộ.
 
 ---
@@ -241,7 +241,7 @@ Vì em cần **ba** tập chứ không phải hai. Tập val tham gia vào việ
 ### B8. Có dùng dữ liệu tổng hợp (synthetic) không?
 
 **Trả lời ngắn.**
-Không. Toàn bộ 4.578 ảnh là ảnh thật. Script tăng cường dữ liệu ngoại tuyến (`augment.py`) đã viết xong và chạy được nhưng **chưa chạy** — kiểm chứng được: thư mục train có 3.203 file, 0 file mang hậu tố `_aug`. Augmentation trong đồ án này chỉ có loại trực tuyến do Ultralytics thực hiện trong lúc huấn luyện.
+Không. Toàn bộ ảnh trong bộ dữ liệu là ảnh thật (v1: 4.578 ảnh; v3: 15.133 ảnh). Script tăng cường dữ liệu ngoại tuyến (`augment.py`) đã viết xong và chạy được nhưng **chưa chạy** — kiểm chứng được: thư mục train có 3.203 file, 0 file mang hậu tố `_aug`. Augmentation trong đồ án này chỉ có loại trực tuyến do Ultralytics thực hiện trong lúc huấn luyện.
 
 ---
 
@@ -484,7 +484,7 @@ Kích thước danh nghĩa theo QCVN 08:2024/BCA:
 
 Hai nhóm tách nhau rất rõ (2,000 so với 4,727) nên ngưỡng 2,5 ổn định.
 
-**Xác nhận thực nghiệm:** biểu đồ phân bố AR của 5.200 box cho **phân bố lưỡng đỉnh rõ** — một đỉnh nhọn quanh AR ≈ 1,1–1,3 và một cụm rộng quanh AR ≈ 3,0–4,0, giữa hai cụm là **vùng trũng gần bằng 0 ở khoảng 2,2–2,6**. Ngưỡng 2,5 rơi đúng đáy vùng trũng đó.
+**Xác nhận thực nghiệm:** biểu đồ phân bố AR của 5.200 box (bộ v1) cho **phân bố lưỡng đỉnh rõ** — một đỉnh nhọn quanh AR ≈ 1,1–1,3 và một cụm rộng quanh AR ≈ 3,0–4,0, giữa hai cụm là **vùng trũng gần bằng 0 ở khoảng 2,2–2,6**. Ngưỡng 2,5 rơi đúng đáy vùng trũng đó.
 
 **Và em đo được độ chính xác của chính heuristic này** — bộ dữ liệu có cả nhãn thật lẫn AR nên đối chiếu trực tiếp được:
 
@@ -727,11 +727,11 @@ Sáu việc, theo thứ tự ưu tiên: thêm xác thực và phân quyền, chu
 ### E7. Docker đã chạy được chưa?
 
 **Trả lời ngắn.**
-Chưa build thật. Em có Dockerfile cho cả backend và frontend, có `docker-compose.yml`, có cấu hình nginx, và `docker compose config` xác nhận cấu hình hợp lệ. Nhưng **chưa chạy `docker build` lần nào**, nên em không thể khẳng định `docker compose up` chạy được.
+Rồi — đã dựng ảnh thật và **đo đầu-cuối qua container**, không chỉ kiểm cú pháp cấu hình. Có Dockerfile cho cả tầng máy chủ lẫn giao diện, có `docker-compose.yml` và cấu hình nginx. Phép đo qua container trên **30 mẫu**: p50 = **288,33 ms**, p95 = **318,54 ms**, nhỏ nhất 163,2 ms, lớn nhất 332,72 ms; riêng phía máy chủ p50 = 253,49 ms. Bằng chứng: [`39-docker-e2e.json`](../reports/39-docker-e2e.json).
 
-**Cảnh báo.** Đây là điểm yếu thật, đừng tô hồng. Cách thừa nhận: *"Cấu hình hợp lệ về cú pháp nhưng chưa kiểm chứng bằng build thật. Em không dám nói nó chạy được. Bù lại, cả backend lẫn frontend đều đã chạy và kiểm chứng bằng HTTP thật ở môi trường phát triển — 10 endpoint phản hồi đúng, frontend build thành công."*
-
-Nếu hội đồng hỏi "vì sao chưa build?" — trả lời trung thực: ưu tiên còn lại dồn vào việc hoàn thành huấn luyện và tích hợp OCR, vì đó là phần lõi. Docker là phần đóng gói, làm sau được.
+**Nếu bị hỏi sâu.**
+- Con số qua container **thấp hơn** p95 = 1.143,10 ms của NFR-P1 vì hai phép đo **không cùng ngữ liệu**: NFR-P1 đo trên ảnh hiện trường nhiều biển và có bậc thang thử-lại nổ ở ca khó, còn phép đo Docker chạy trên ảnh của bộ trình diễn. **Không được trích chéo hai con số này như thể cùng một đại lượng.**
+- Điều còn lại chưa làm là **triển khai lên máy chủ thật ngoài mạng nội bộ** — phép đo trên chạy ở `127.0.0.1`. Nếu hội đồng hỏi về vận hành thật, thừa nhận đúng phạm vi đó thay vì nói rộng hơn.
 
 ---
 
@@ -853,7 +853,7 @@ Vì một con số mAP tổng **che giấu đúng thất bại cần nhìn**. Tr
 ### F6. Đánh giá trên tập nào? Vì sao không phải tập validation?
 
 **Trả lời ngắn.**
-Trên tập **test**, 458 ảnh. Tập val đã tham gia chọn checkpoint `best.pt` theo fitness từng epoch, nên báo cáo con số val là báo cáo một ước lượng lạc quan có thiên lệch. `--split` của script đánh giá mặc định là `test` đúng vì lý do này.
+Trên tập **test** của bộ v3: **1.514 ảnh / 1.611 đối tượng nhãn thật**. Tập val đã tham gia chọn checkpoint `best.pt` theo fitness từng epoch, nên báo cáo con số val là báo cáo một ước lượng lạc quan có thiên lệch. `--split` của script đánh giá mặc định là `test` đúng vì lý do này.
 
 **Nếu bị hỏi sâu.**
 Có một lớp kiểm chứng chéo: script chạy pass validation chính thức của Ultralytics để lấy mAP, đồng thời có bộ so khớp riêng của em để tính bảng tách nhóm. Hai nguồn kiểm chứng lẫn nhau — nếu chúng lệch nhau nhiều thì có lỗi ở một trong hai.
@@ -973,7 +973,7 @@ Em có ảnh chụp màn hình **cả 3 trang** giao diện trong `docs/screensh
 ### G8. Đây có phải là hệ thống thật sự dùng được không, hay chỉ là bài tập?
 
 **Trả lời ngắn.**
-Nó là một hệ thống chạy được nhưng **chưa phải sản phẩm triển khai được**. Chạy được: backend 10 endpoint đã kiểm chứng bằng HTTP thật, frontend build thành công và gọi được cả 10 endpoint, cơ sở dữ liệu migrate xong. Chưa triển khai được: chưa có xác thực, chưa kiểm thử chịu tải, Docker chưa build thật, và giấy phép dữ liệu chưa rõ.
+Nó là một hệ thống chạy được nhưng **chưa phải sản phẩm triển khai được**. Chạy được: backend 10 endpoint đã kiểm chứng bằng HTTP thật, frontend build thành công và gọi được cả 10 endpoint, cơ sở dữ liệu migrate xong. Chưa triển khai được: **chưa có xác thực người dùng**, **giấy phép dữ liệu chưa rõ**, và **chưa từng chạy trên máy chủ thật ngoài mạng nội bộ**. Hai việc từng nằm trong danh sách này nay đã xong: **chịu tải đã kiểm** (soak 15 phút, 2.028 yêu cầu, 0 lỗi; đồng thời tới 10 không lỗi) và **Docker đã dựng ảnh thật, đo đầu-cuối qua container** (p50 288,33 ms trên 30 mẫu).
 
 **Cảnh báo.** Đây là câu hỏi thử độ trung thực. Trả lời "dùng được ngay ạ" là hỏng. Trả lời "chỉ là bài tập thôi ạ" là tự hạ thấp. Câu trả lời đúng nằm ở giữa và phải **cụ thể về ranh giới**.
 

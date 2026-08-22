@@ -2,7 +2,7 @@
 
 ## 5.1. Kết quả đạt được
 
-Đồ án đã xây dựng một hệ thống nhận dạng biển số xe Việt Nam chạy đầu cuối trên máy **không có GPU**, gồm bộ phát hiện tự huấn luyện, khối xử lý ảnh vùng biển, khối nhận dạng ký tự và bộ luật hậu xử lý theo quy chuẩn Việt Nam, kèm một ứng dụng web để trình diễn.
+Nhóm thực hiện đã xây dựng một hệ thống nhận dạng biển số xe Việt Nam chạy đầu cuối trên máy **không có GPU**, gồm bộ phát hiện tự huấn luyện, khối xử lý ảnh vùng biển, khối nhận dạng ký tự và bộ luật hậu xử lý theo quy chuẩn Việt Nam, kèm một ứng dụng web để trình diễn.
 
 **Bảng 5.1.** Đối chiếu chỉ tiêu đặt ra với kết quả đo được
 
@@ -24,7 +24,7 @@ Ba đại lượng đo được đáng ghi nhận, đều liên quan trực ti�
 
 **Ba — trực giác hình dạng ký tự ghép đúng cặp nhưng sai chiều.** Bảng ánh xạ ban đầu suy từ hình dạng chỉ phủ 2 trên 10 cặp nhầm phổ biến nhất, và cặp `L` thì suy **ngược**: khi một vị trí bắt buộc là số mà bộ nhận dạng đọc ra `L`, sự thật là `4` **53 lần** và là `1` **đúng một lần**. Thay hai mục bằng bảng trích từ ma trận nhầm lẫn đo được — chỉ những cặp vượt ngưỡng thống kê — mua thêm **53 biển đọc đúng và làm hỏng 0 biển**, toàn bộ nằm ở biển hai dòng.
 
-Ngoài các con số, đồ án để lại **một quy trình đánh giá có kiểm chứng**: mọi bước xử lý ảnh bật tắt được độc lập nên đóng góp của từng bước đo được riêng, và các kết quả âm — phương án đọc riêng từng nửa thua 61 điểm, bậc siêu phân giải không cải thiện được biển nào — được ghi lại thay vì bỏ đi.
+Ngoài các con số, nhóm thực hiện để lại **một quy trình đánh giá có kiểm chứng**: mọi bước xử lý ảnh bật tắt được độc lập nên đóng góp của từng bước đo được riêng, và các kết quả âm — phương án đọc riêng từng nửa thua 61 điểm, bậc siêu phân giải không cải thiện được biển nào — được ghi lại thay vì bỏ đi.
 
 ## 5.2. Hạn chế
 

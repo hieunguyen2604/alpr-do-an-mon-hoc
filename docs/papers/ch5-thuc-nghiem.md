@@ -412,6 +412,8 @@ Mục 4.5.3 để ngỏ một câu hỏi: chế độ **chỉ nhận dạng** ch
 
 **Bảng 5.14.** Bỏ bước phát hiện chữ — ba ngữ liệu, hai kết luận ngược nhau
 
+_Ba cột cuối dùng **cùng phép đo phân tầng và cùng tập nhãn** với Bảng 5.8; dòng **bản bàn giao** ở đây chính là con số A7 = 56,3% đã công bố ở mục 5.5.5, nên hai bảng không phải hai phép đo độc lập. Hạn chế về nguồn nhãn nêu ở 5.5.5 áp cho cả bảng này._
+
 | Cấu hình                               | A6 trên 2.801 ảnh **cắt sẵn** | Bộ demo **ảnh toàn cảnh** | Tầng dễ _(n=372)_ | Tầng khó _(n=236)_ | **A7 hiện trường** |    KTC 95%    |
 | -------------------------------------- | ----------------------------: | ------------------------: | ----------------: | -----------------: | -----------------: | :-----------: |
 | Model gốc, det + rec — _bản bàn giao_ |                        0,7701 |               **17 / 22** |             96,8% |              44,1% |          **56,3%** | [52,0 ; 60,7] |
@@ -459,9 +461,9 @@ Bảng tổng hợp trình bày khi bảo vệ, liệt kê **đầy đủ mọi 
 
 Chương 6 tổng hợp đầy đủ kết quả và hạn chế; mục này chỉ nêu **cách đọc** bộ số liệu vừa trình bày. **Vạch ngăn nằm giữa hai tầng, không rải đều:** bộ phát hiện đạt toàn bộ chỉ tiêu với biên rộng và điểm yếu duy nhất — dải "rất nhỏ" ở 5.4.3 — được phơi bày chứ không giấu; khối hậu xử lý đóng góp **thuần dương, không rủi ro** (+13,28 điểm, 0 ca hồi quy); còn ba chỉ tiêu độ chính xác chuỗi thì không đạt.
 
-### 5.9.2. Hạng mục không đo được, và vì sao
+### 5.9.2. Một hạng mục không đo được, và một giao thức đo phải thay
 
-Cần phân biệt **"chưa đo vì chưa tới lượt"** với **"không đo được vì thiếu điều kiện"**. Nhóm thứ nhất — so sánh nền tảng suy luận, huấn luyện mô hình đối chứng, phân rã đóng góp theo từng nhóm luật — đều có phương pháp và công cụ sẵn sàng, chỉ thiếu thời gian máy, và được ghi thành hướng phát triển ở mục 6.3. Chỉ hai hạng mục dưới đây là hạn chế thật của công trình.
+Cần phân biệt **"chưa đo vì chưa tới lượt"** với **"không đo được vì thiếu điều kiện"**. Nhóm thứ nhất — so sánh nền tảng suy luận, huấn luyện mô hình đối chứng, phân rã đóng góp theo từng nhóm luật — đều có phương pháp và công cụ sẵn sàng, chỉ thiếu thời gian máy, và được ghi thành hướng phát triển ở mục 6.3. Hai hạng mục dưới đây thuộc loại khác hẳn nhau và không được trộn: **NFR-A9 thiếu điều kiện quan sát nên không đo được**, còn **NFR-A7 thì đo được — chỉ là giao thức đo đầu tiên hỏng và phải thay bằng giao thức khác**. Chỉ hai hạng mục dưới đây là hạn chế thật của công trình.
 
 **NFR-A9 — độ chính xác theo điều kiện ảnh.** Chỉ tiêu này được phát biểu có điều kiện ngay từ giai đoạn phân tích: _báo cáo độ chính xác theo điều kiện chụp, nếu bộ dữ liệu có nhãn phù hợp_. Điều kiện đó không thoả — không bộ dữ liệu nguồn nào gán nhãn ban ngày, ban đêm, chụp nghiêng hay ảnh mờ. Đây là lý do bảng đối chiếu ghi ⬜ _không đo được_ thay vì ❌ _không đạt_: một chỉ tiêu chưa có dữ liệu để đo khác hẳn một chỉ tiêu đã đo và trượt.
 

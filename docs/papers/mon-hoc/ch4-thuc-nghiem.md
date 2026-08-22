@@ -8,14 +8,13 @@
 
 **Hai tập đánh giá, hai mẫu số khác nhau.** Chỉ số của bộ phát hiện đo trên **tập kiểm thử 1.514 ảnh / 1.611 đối tượng**. Chỉ số nhận dạng chỉ đo được trên **tập con có nhãn chuỗi ký tự — 2.801 biển**, vì phần lớn ngữ liệu chỉ có nhãn hộp bao. Mẫu số nhỏ này là một hạn chế thật, ghi ở mục 4.7.
 
-**Quy ước viết tắt.** Bốn đại lượng dùng lại nhiều lần:
+**Quy ước viết tắt.** Ba đại lượng dùng lại nhiều lần. *(Lưu ý: các mã **E1–E6** ở mục 4.6 là **mã loại lỗi**, không liên quan tới ba ký hiệu này.)*
 
 | Ký hiệu | Nghĩa |
 |:--:|---|
 | **C** | Đúng ở mức ký tự, tức $1 - \mathrm{CER}$ |
 | **S₀** | Đúng **cả chuỗi**, đo trên chuỗi thô — **trước** hậu xử lý |
 | **S₁** | Đúng **cả chuỗi**, **sau** hậu xử lý |
-| **E** | Đúng đầu cuối: ảnh vào → chuỗi ra, tính cả sai sót của bước phát hiện |
 
 ## 4.2. Kết quả phát hiện vùng biển
 
