@@ -106,7 +106,7 @@ graph TB
 
 > ⚠️ **Thay đổi phạm vi 2026-07-20 (lần thứ hai trong ngày).** Trang **Tổng quan (Dashboard)** đã được **gỡ khỏi giao diện web**; ứng dụng còn ba trang: Nhận dạng ảnh (trang chủ), Nhận dạng video, Lịch sử.
 >
-> **Đây là lần đầu một yêu cầu mức Must bị đưa ra khỏi phạm vi** — FR-4.1 chuyển **M → W**, FR-4.2 chuyển **S → W**. Phải nêu thẳng điều này khi bảo vệ thay vì để hội đồng tự phát hiện.
+> **Đợt này đưa thêm một yêu cầu mức Must ra khỏi phạm vi** — FR-4.1 chuyển **M → W**, FR-4.2 chuyển **S → W**. *(Không phải lần đầu: đợt gỡ trang Webcam trước đó đã chuyển **FR-3.1 và FR-3.4** từ M sang W. Tính cả FR-2.5 ở đợt thứ ba, tổng cộng **bốn** yêu cầu Must đã chuyển mức.)* Phải nêu thẳng điều này khi bảo vệ thay vì để hội đồng tự phát hiện.
 >
 > Điều **không** thay đổi: endpoint `GET /api/statistics` và `GET /health` vẫn phục vụ, vẫn có kiểm thử tích hợp, nên dữ liệu thống kê vẫn truy vấn được — chỉ là không còn màn hình hiển thị sẵn. FR-4.3 đến FR-4.8 thuộc trang Lịch sử và **không đổi**.
 >
