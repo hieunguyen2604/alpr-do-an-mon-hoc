@@ -336,7 +336,7 @@ Mỗi slide gồm bốn phần:
 - Bảng ma trận đối chiếu 7 nhóm chỉ tiêu chính (✅ Đạt mục tiêu · 🟡 Đạt ngưỡng tối thiểu · ❌ Chưa đạt)
 
 **Speaker notes** *(45 s)*
-> Bảng tổng kết đối chiếu 7 chỉ tiêu chính: Đạt mục tiêu ở Phát hiện (mAP 0,983), Thời gian thực (5,257 FPS — đo trước khi gỡ trang Webcam khỏi phạm vi), Độ tin cậy (100%) và Phần mềm; Đạt ngưỡng ở Đọc từng ký tự (94,83%) và Độ trễ p95 (1.143ms); Chưa đạt ở Đọc cả chuỗi biển 2 dòng.
+> Bảng tổng kết đối chiếu 7 chỉ tiêu chính: Đạt mục tiêu ở Phát hiện (mAP 0,983), Thời gian thực (5,257 FPS — đo ở tầng API, không qua trang web), Độ tin cậy (100%) và Phần mềm; Đạt ngưỡng ở Đọc từng ký tự (94,83%) và Độ trễ p95 (1.143ms); Chưa đạt ở Đọc cả chuỗi biển 2 dòng.
 
 ---
 

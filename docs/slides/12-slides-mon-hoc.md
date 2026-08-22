@@ -81,7 +81,7 @@ Các bộ công khai fork lẫn nhau, nên **44,2% ảnh là bản trùng** — 
 | Chia tập, giữ nhóm trùng cùng một bên | 10.592 / 3.027 / **1.514** |
 | **Giới hạn còn lại** | pHash tóm tắt **khung ảnh**, không tóm tắt **chiếc xe** |
 
-## Vì sao biển hai dòng làm suy giảm hiệu năng OCR
+## Vì sao biển hai dòng làm OCR đọc sai
 
 - **CRNN hạ chiều cao bản đồ đặc trưng về 1** — đó chính là chỗ giả định "một dòng" nằm
 - Ảnh hai dòng: ký tự hai hàng **bị chiếu chồng lên nhau** vào cùng một cột đặc trưng
@@ -179,9 +179,9 @@ Khởi động bằng một lệnh `docker compose up`; giao diện hiện **c�
 
 ## Cảm ơn
 
-- Chạy đầu cuối trên máy **không có GPU**: bộ phát hiện đạt **mAP@0,5 = 0,9829**
-- Bài toán biển hai dòng giải bằng **phép biến đổi ảnh**, không bằng mô hình nặng hơn — đóng góp **34,92 điểm**
-- Hậu xử lý theo vị trí đóng góp **+13,28 điểm**, **0 ca làm hỏng** trên 2.801 biển
-- Phần chưa đạt: đọc đúng cả chuỗi **0,7701** so với ngưỡng 0,85, khoảng cách nằm trọn ở biển hai dòng
+- Chạy đầu cuối trên CPU: phát hiện **mAP@0,5 = 0,9829**
+- Biển hai dòng giải bằng **phép biến đổi ảnh**, không bằng mô hình nặng hơn — **34,92 điểm**
+- Hậu xử lý theo vị trí **+13,28 điểm**, **0 ca làm hỏng** / 2.801 biển
+- Chưa đạt: đọc đúng cả chuỗi **0,7701** so với ngưỡng 0,85
 
 **Nhóm thực hiện xin trân trọng cảm ơn Quý Thầy/Cô và các bạn đã lắng nghe.**

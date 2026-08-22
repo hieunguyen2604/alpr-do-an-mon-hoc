@@ -270,7 +270,7 @@ Phần lớn ảnh hoàn tất dưới 500 ms; độ trễ tập trung ở các 
 | Đọc ký tự | Đúng từng ký tự **0,9483** | 🟡 |
 | Đọc chuỗi | Đúng cả chuỗi **0,7701** · đầu cuối **0,563** *(1.606 khung toàn cảnh, nhãn máy sinh)* | ❌ |
 | Hiệu năng | p95 **1.143 ms** *(sàn 1.500)* · video **0,785×** · truy vấn **18,7 ms** | 🟡 |
-| Thời gian thực | Luồng khung hình **5,257 FPS** *(sàn 3, mục tiêu 5 — đo trước khi gỡ trang Webcam)* | ✅ |
+| Thời gian thực | Luồng khung hình **5,257 FPS** *(sàn 3, mục tiêu 5 — đo ở tầng API `POST /api/detect/frame`, không qua trang web)* | ✅ |
 | Độ tin cậy | Chạy liên tục **100%** · CSDL sống sót khởi động lại **0 mất** | ✅ |
 | Phần mềm | **1.002 test** · bao phủ 87,7% · `docker compose up` | ✅ |
 

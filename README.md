@@ -87,9 +87,9 @@ Sơ đồ chi tiết, sơ đồ tuần tự và các quyết định kiến trú
 | **6** | Frontend | ✅ **Hoàn thành** — build sạch, 10 endpoint khớp; **3 trang** sau thu gọn phạm vi 2026-07-20, gói tải về **328,8 KB** (−55%) |
 | **7** | Testing | 🟠 **Đã đo xong** — **1.002 test thu thập / 1.002 pass / 0 fail** (13/08/2026), bao phủ tầng nghiệp vụ **87,7%**; 🟡 **NFR-P1 chỉ đạt sàn** (p95 **1.143 ms**, sàn 1.500, mục tiêu 800) và ✅ **NFR-P2 đạt** (5,257 FPS; sàn 3, mục tiêu 5 — đo lại 13/08) — riêng NFR-P1 là đánh đổi có chủ ý lấy 34 biển; chốt M7 vẫn bị chặn bởi **NFR-A5/A6** (độ chính xác OCR biển 2 dòng) |
 | **8** | Deployment | ✅ **Kiểm chứng lại 14/08/2026 trên bản giao hàng** — 2 image dựng từ mã hiện tại, container nạp đúng `/app/models/best.pt`, `Healthy`, nhận dạng thật qua HTTP, p95 **319 ms** |
-| **9** | Documentation | 🟡 Chương 1–4, sổ tay kỹ thuật, tài liệu API xong — **chờ chương 5–6** |
-| **10** | Presentation | 🟡 58 câu Q&A, demo, 21 slide, poster — chờ số liệu cuối |
-| 11 | Final Package | ⚪ Chưa bắt đầu |
+| **9** | Documentation | ✅ **Hoàn thành** — quyển 6 chương + tham khảo + phụ lục (94 trang), 4 sổ tay, tài liệu API |
+| **10** | Presentation | ✅ **Hoàn thành** — 56 câu Hỏi–Đáp, kịch bản demo, deck bảo vệ **37 slide**, deck kỹ thuật 11, deck môn học 16, poster |
+| **11** | Final Package | ✅ **Hoàn thành** — `nop/` đủ **7 tệp**: quyển (docx + pdf 94 tr.), deck bảo vệ, deck kỹ thuật, đồ án môn học (docx + pdf 44 tr.), deck môn học |
 
 **Đã chạy được thật:**
 

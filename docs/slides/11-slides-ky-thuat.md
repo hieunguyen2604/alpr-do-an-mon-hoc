@@ -117,9 +117,9 @@ Giao diện hiện **cả chuỗi OCR thô lẫn chuỗi đã sửa** khi hai ch
 
 ## Cảm ơn — và mời đặt câu hỏi
 
-- Chạy đầu-cuối trên máy **không có GPU**: bộ phát hiện **mAP@0,5 = 0,9829**
-- Hậu xử lý đóng góp **+13,28 điểm**, **0 ca làm hỏng** trên 2.801 biển
-- Benchmark ba engine OCR trên bộ đo riêng của đồ án *(chi tiết: `36-engine-benchmark`)*: PaddleOCR **68,87%**, hơn EasyOCR 54,59 điểm; kết quả khác với khuynh hướng của một số tài liệu công khai
-- Đọc đúng cả chuỗi **0,7701**, dưới ngưỡng 0,85
+- Chạy đầu-cuối trên CPU: phát hiện **mAP@0,5 = 0,9829**
+- Hậu xử lý **+13,28 điểm**, **0 ca làm hỏng** / 2.801 biển
+- Ba engine OCR đo trên cùng một tầng *(`36-engine-benchmark`)*: PaddleOCR **68,87%**, hơn EasyOCR 54,59 điểm; kết quả khác với khuynh hướng của một số tài liệu công khai
+- Chưa đạt: đọc đúng cả chuỗi **0,7701** so với ngưỡng 0,85
 
 **Xin cảm ơn thầy cô và các bạn đã lắng nghe.**
