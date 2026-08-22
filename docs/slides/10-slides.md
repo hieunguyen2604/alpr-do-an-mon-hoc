@@ -209,7 +209,7 @@ Toàn bộ khoảng cách nằm ở **biển 2 dòng**: 0,7234 so với **0,9541
 | Đúng từng **ký tự** | **0,9483** | 0,92 | 🟡 |
 | Đúng **cả chuỗi** — chưa hậu xử lý | 0,6373 | 0,80 | ❌ |
 | Đúng **cả chuỗi** — sau hậu xử lý | **0,7701** | 0,85 | ❌ |
-| Đúng **đầu cuối** — ảnh vào, chuỗi ra | *không đo được* | 0,82 | ⬜ |
+| Đúng **đầu cuối** — ảnh vào, chuỗi ra | **0,563** *(nhãn máy sinh)* | 0,82 | ❌ |
 
 ## Khoảng cách nằm trọn ở biển 2 dòng
 
@@ -268,7 +268,7 @@ Phần lớn ảnh hoàn tất dưới 500 ms; độ trễ tập trung ở các 
 |---|---|:--:|
 | Phát hiện | mAP50 **0,9829** · mAP50-95 **0,7834** · P **0,9837** · R **0,9714** | ✅ |
 | Đọc ký tự | Đúng từng ký tự **0,9483** | 🟡 |
-| Đọc chuỗi | Đúng cả chuỗi **0,7701** · đầu cuối **17/22 ảnh toàn cảnh** | ❌ |
+| Đọc chuỗi | Đúng cả chuỗi **0,7701** · đầu cuối **0,563** *(1.606 khung toàn cảnh, nhãn máy sinh)* | ❌ |
 | Hiệu năng | p95 **1.143 ms** *(sàn 1.500)* · video **0,785×** · truy vấn **18,7 ms** | 🟡 |
 | Thời gian thực | Webcam **5,257 FPS** *(sàn 3, mục tiêu 5)* | ✅ |
 | Độ tin cậy | Chạy liên tục **100%** · CSDL sống sót khởi động lại **0 mất** | ✅ |

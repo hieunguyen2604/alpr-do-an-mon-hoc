@@ -155,7 +155,7 @@ Ký hiệu ⭐ = bảng cốt lõi, cần đọc trước khi bảo vệ.
 | 2.5 | Các model docTR | Tham số, FUNSD, CORD, tốc độ (bs=64) |
 | 2.8 | RapidOCR / OnnxTR runtime | Mức tăng tốc theo runtime |
 | ⭐ 3.1 | **Bảng so sánh chính 7 engine** | PaddleOCR · EasyOCR · Tesseract · TrOCR · docTR · MMOCR · fast-plate-ocr |
-| ⭐ 4.1.1a | **OpenALPR: 1 dòng ↔ 2 dòng** | 94,3% ↔ 45,7% — bằng chứng định lượng của rủi ro R-04 |
+| ⭐ 4.1.1a | **OpenALPR: 1 dòng ↔ 2 dòng** *(RodoSol-ALPR, Brazil — không phải số liệu Việt Nam)* | 94,3% ↔ 45,7% — bằng chứng định lượng của rủi ro R-04 |
 | 4.1.1b | Ảnh hưởng kích thước đầu vào | Biển 1 dòng ↔ 2 dòng ↔ tổng thể |
 | 4.1.4 | PaddleOCR pretrained ↔ fine-tuned | Pretrained gần như vô dụng trên biển số |
 | 4.3.1 | Kỹ thuật rectify | Perspective transform ↔ STN ↔ khác |
@@ -222,7 +222,7 @@ Mỗi khuyến nghị dưới đây trỏ tới **file và mục** chứa luận
 
 1. **YOLO11n** — phiên bản duy nhất trong nhóm gần đây vừa có **số liệu tốc độ CPU chính thức**, vừa có cơ chế kiến trúc phù hợp trực tiếp với đối tượng nhỏ và tỷ lệ khung hình dẹt, vừa có bằng chứng thực nghiệm dày trên đúng bài toán ALPR.
 2. **PaddleOCR là baseline, không phải kết luận.** Hai bằng chứng từng dùng để biện minh cho PaddleOCR đã **bị bác bỏ** ở vòng kiểm chứng ([01-ocr-comparison.md](01-ocr-comparison.md) mục 5.1). Quyết định cuối cùng thuộc về **benchmark của Phase 4**, không thuộc Phase 1.
-3. **Biển 2 dòng là điểm gãy đã được đo, không phải rủi ro giả định** — OpenALPR đạt 94,3% trên biển 1 dòng nhưng chỉ **45,7%** trên biển 2 dòng. Đây là lý do tồn tại của toàn bộ mục 4 trong báo cáo OCR.
+3. **Biển 2 dòng là điểm gãy đã được đo, không phải rủi ro giả định** — OpenALPR **trên bộ RodoSol-ALPR của Brazil** đạt 94,3% trên biển 1 dòng nhưng chỉ **45,7%** trên biển 2 dòng. Đây là lý do tồn tại của toàn bộ mục 4 trong báo cáo OCR.
 
 ---
 

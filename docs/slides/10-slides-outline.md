@@ -355,10 +355,10 @@ Mỗi slide gồm bốn phần:
 ## S28 — Hạn chế
 
 **Nội dung trên slide**
-- Bảng phân tích 5 hạn chế và nguyên nhân gốc (Biển 2 dòng chưa đạt, số đầu-cuối không đo được một cách có ý nghĩa, 97,7% là biển trắng)
+- Bảng phân tích 5 hạn chế và nguyên nhân gốc (Biển 2 dòng chưa đạt, số đầu-cuối 0,563 chưa đạt ngưỡng, 97,7% là biển trắng)
 
 **Speaker notes** *(40 s)*
-> Nhóm nhìn nhận thẳng thắn các hạn chế: Biển 2 dòng chưa đạt do bộ đọc OCR dòng đơn; chỉ số đầu-cuối không đo được có ý nghĩa do thiếu tập nhãn toàn cảnh — con số đại diện là 17 trên 22 biển ở ảnh toàn cảnh; và tập dữ liệu chủ yếu là biển trắng, chưa đủ mẫu biển vàng, xanh hay ngoại giao.
+> Nhóm nhìn nhận thẳng thắn các hạn chế: Biển 2 dòng chưa đạt do bộ đọc OCR dòng đơn; chỉ số đầu-cuối đo trên ảnh toàn cảnh chỉ đạt 0,563, chưa đạt ngưỡng 0,82 — và nhãn của phép đo ấy do mô hình sinh chứ không phải người gán, nhóm nêu rõ chỗ đó; và tập dữ liệu chủ yếu là biển trắng, chưa đủ mẫu biển vàng, xanh hay ngoại giao.
 
 ---
 

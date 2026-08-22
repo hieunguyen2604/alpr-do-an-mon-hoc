@@ -8,8 +8,8 @@
 > dưới là ảnh chụp trước đợt đo lại bằng bảng sửa ký tự dựng từ số liệu nhầm
 > lẫn đo được. **Số hiện hành:** A4 0,9483 · A5 0,6373 · A6 0,7701 *(hậu xử lý
 > sửa đúng 372 biển, làm hỏng 0)* · biển hai dòng 0,7234, chênh 23,07 điểm ·
-> **NFR-A7 ⬜ không đo được một cách có ý nghĩa** *(đại diện: 17/22 ảnh toàn
-> cảnh)*. Nguồn chuẩn: **Chương 5 mục 5.5.2–5.5.3**.
+> **NFR-A7 ❌ 0,563** *(đo ở mức ảnh toàn cảnh, ước lượng phân tầng trên 1.606
+> khung; nhãn do mô hình ngôn ngữ-thị giác sinh)*. Nguồn chuẩn: **Chương 5 mục 5.5.2–5.5.3**.
 
 **Đề tài:** Xây dựng hệ thống nhận diện biển số xe bằng trí tuệ nhân tạo
 *(Developing an AI-based Vietnamese License Plate Recognition System)*

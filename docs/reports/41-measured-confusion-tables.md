@@ -95,8 +95,22 @@ phân bố, một thay đổi nhỏ ở tầng suy luận đủ để lật hoà
 **Kết luận: con số A7 = 0,5552 công bố ngày 28/07 không tái lập được bằng mã hôm
 nay, và cách đọc đúng không phải "hệ thống tệ đi" mà là "phép đo này không đo cái
 nó tưởng đang đo".** Số liệu đại diện cho năng lực đầu-cuối là **17/22 trên ảnh
-toàn cảnh**; muốn có A7 đúng nghĩa thì phải gán nhãn chuỗi cho một phân bố test
-ảnh hiện trường — hướng phát triển số 3, mục 6.3.
+toàn cảnh**.
+
+> ### ⚠ Đính chính — phép đo A7 ở mức ảnh toàn cảnh **đã tồn tại từ trước báo cáo này**
+>
+> Đoạn trên viết *“muốn có A7 đúng nghĩa thì phải gán nhãn chuỗi cho một phân bố
+> test ảnh hiện trường”* — câu đó **sai ở thì**: việc ấy đã làm rồi. Báo cáo
+> [34](34-scene-level-a7.md) (02/08) dựng `datasets/annotations/scene_labels.csv`
+> với **608 khung biển có nhãn** trong 1.606 khung của 1.514 ảnh hiện trường, và
+> ước lượng phân tầng cho **A7 = 56,3%** (KTC 95% [52,0 ; 60,7]).
+>
+> Vì vậy kết luận đúng **không phải** “A7 không đo được”, mà là: giao thức đo cũ
+> (trên ảnh cắt sẵn) hỏng và con số 0,5552 bị rút, **còn A7 thật thì đã đo được ở
+> mức ảnh toàn cảnh và bằng 56,3% — không đạt ngưỡng 0,82 (❌)**. Hạn chế phải nói
+> kèm: nhãn do một mô hình ngôn ngữ-thị giác đọc chứ không phải người. Quyển đã
+> sửa theo hướng này ở **mục 5.5.5 và Bảng 5.8**; gán nhãn thủ công cho cùng tập
+> vẫn là hướng phát triển số 3, mục 6.3.
 
 ---
 

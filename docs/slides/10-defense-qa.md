@@ -155,7 +155,7 @@ Bộ chính là `hoanglvuit/Vietnam_License_Plate_Segment_Datasets` trên Huggin
 ### B2. Bao nhiêu ảnh? Có đủ không?
 
 **Trả lời ngắn.**
-Hiện có 4.578 ảnh với 5.200 box, chia 3.203 / 917 / 458 theo tỷ lệ 70/20/10. So với kế hoạch ban đầu 37.300 ảnh thì đây chỉ là 12,3%. Với bài toán phát hiện một lớp thì lượng này đủ để hội tụ — kết quả huấn luyện đang chạy xác nhận điều đó. Nhưng nó **không đủ** để mô hình tổng quát hoá sang các bối cảnh chưa gặp.
+Bộ dữ liệu cuối cùng có **15.133 ảnh**, chia **10.592 / 3.027 / 1.514** đúng tỷ lệ 70/20/10 (bộ v3, đã khử trùng lặp xuyên tập). So với kế hoạch ban đầu 37.300 ảnh thì đây là 40,6%. Với bài toán phát hiện **một lớp** thì lượng này đủ để hội tụ, và kết quả đã xác nhận: mAP@0.5 = **0,9829** trên tập test v3. Nhưng nó **không đủ** để mô hình tổng quát hoá sang các bối cảnh chưa gặp.
 
 **Nếu bị hỏi sâu.**
 - Bộ dữ liệu không đồng nhất mà là ghép của **5 tiểu tập**, mỗi tiểu tập gần như thuần một loại biển: `greenpack` 100% biển 2 dòng, `carlong` 99,4% biển 1 dòng. Cấu trúc này gợi ý mỗi tiểu tập thu từ một buổi / một bối cảnh riêng, tức là các ảnh **không độc lập với nhau** như giả định thống kê thông thường.
@@ -502,11 +502,12 @@ Một chi tiết phương pháp luận: ngưỡng 2,5 dùng trong `evaluate.py` 
 ### D4. Vì sao không huấn luyện OCR riêng cho biển số Việt Nam?
 
 **Trả lời ngắn.**
-Vì **không có dữ liệu**. Bộ dữ liệu chính của em chỉ có nhãn vùng biển, **không có một nhãn chuỗi biển số nào** — kiểm chứng bằng số: `plate_text.annotated_boxes = 0`, `character_frequency = {}`. Không có nhãn chuỗi thì không huấn luyện được OCR, và cũng không đo được độ chính xác OCR.
+**Nhóm đã fine-tune, đã đo, và quyết định không dùng nó.** Bộ dữ liệu *phát hiện* chỉ có nhãn vùng biển — không một nhãn chuỗi nào — kiểm chứng bằng số: `plate_text.annotated_boxes = 0`, `character_frequency = {}`. Không có nhãn chuỗi thì không huấn luyện được OCR, và cũng không đo được độ chính xác OCR.
 
 **Nếu bị hỏi sâu.**
 - Đây là **khoảng trống lớn nhất của đồ án** và em ghi nó ngay trong báo cáo dữ liệu chứ không giấu.
-- Đang xử lý bằng cách gộp thêm 8 bộ Roboflow, trong đó **2 bộ có nhãn ký tự**. Khi có nhãn chuỗi, hai việc mở khoá cùng lúc: đo được NFR-A5/A6 (trước và sau hậu xử lý), và có căn cứ để cân nhắc fine-tune.
+- Khoảng trống ấy **đã được lấp**: gộp thêm các bộ Roboflow cho **2.801 biển có nhãn chuỗi**, nhờ đó đo được NFR-A5/A6 (**0,6373** trước và **0,7701** sau hậu xử lý) và có căn cứ để chạy fine-tune thật.
+- **Kết quả fine-tune, đo đủ bốn cấu hình (mục 5.6.4):** ở đúng chế độ production (phát hiện chữ + nhận dạng) model fine-tune **thua 7,50 điểm** A6 (0,6762 so với 0,7701). Nó chỉ thắng **+12,46 điểm** ở chế độ *chỉ nhận dạng* — nhưng chế độ đó đo trên **ảnh cắt sẵn**, và trên ảnh toàn cảnh thật thứ tự **đảo ngược** (13/22 so với 17/22). Vì vậy bản giao hàng dùng **model gốc**.
 - Bằng chứng rằng fine-tune sẽ có tác dụng: ứng dụng biển số của chính PaddleOCR cho thấy fine-tune nâng recognition từ 90,97% lên 94,54% và detection Hmean từ 76,12% lên 99,00% — nhưng trên biển Trung Quốc 1 dòng.
 - Nếu fine-tune, **charset phải là đủ A–Z + 0–9 (36 ký tự)** — lý do ở câu D6.
 
@@ -610,7 +611,7 @@ Vì mục tiêu triển khai là một lệnh `docker compose up`, và SQLite kh
 ### E3. Hệ thống chịu được bao nhiêu người dùng đồng thời?
 
 **Trả lời ngắn.**
-**Đã đo — NFR-SC1 đạt.** Chỉ tiêu ≥ 5 yêu cầu đồng thời; đo được **10** yêu cầu đồng thời không lỗi (0 lỗi ở mọi mức 1/2/5/10). Soak 300 giây: 100% thành công (1.684 request), không rò rỉ bộ nhớ.
+**Đã đo — NFR-SC1 đạt.** Chỉ tiêu ≥ 5 yêu cầu đồng thời; đo được **10** yêu cầu đồng thời không lỗi (0 lỗi ở mọi mức 1/2/5/10). Soak 300 giây: 100% thành công (**1.660/1.660** request, `05-stress-test.json`), không rò rỉ bộ nhớ. Lượt soak hiện hành cho NFR-R4 là **15 phút / 2.028 request**, cũng 100% (`33-runtime-nfr.json`).
 
 **Nếu bị hỏi sâu.**
 - **Nút thắt là suy luận CPU, không phải tầng web.** Một ảnh mất ~180 ms suy luận thuần (detect 60 ms + OCR 112 ms/biển). Với CPU 14 nhân, số yêu cầu song song bị chặn bởi số luồng dành cho suy luận — thêm worker uvicorn không giúp gì, chỉ tranh nhau cùng nhân CPU.
@@ -798,7 +799,7 @@ Số liệu thật minh hoạ khoảng cách: trên tập test v3, mAP50 = 0,983
 > **Bắt buộc nhắc phần cứng. Công bố FPS mà không kèm cấu hình là lỗi phương pháp luận.**
 
 **Trả lời ngắn.**
-**NFR-P1 đạt.** Độ trễ đầu-cuối một ảnh, đo trên `models/best.pt`, máy rảnh: **p95 = 731 ms** (client-side qua HTTP) và **780 ms** (in-process) — dưới mục tiêu 800 ms. Phần cứng: Intel Core i5-14600K, 14 nhân / 20 luồng, không GPU, torch CPU, imgsz 640, một ảnh mỗi lần gọi.
+**NFR-P1 đạt ngưỡng tối thiểu, không đạt mục tiêu (🟡).** Độ trễ đầu-cuối một ảnh ở cấu hình giao hàng: **p95 = 1.143,10 ms** — dưới ngưỡng tối thiểu 1.500 ms nhưng trên mục tiêu 800 ms; **trung vị chỉ 405,77 ms**. Mốc **731 ms** (client-side) / **780 ms** (in-process) là lần đo **trước khi nối bậc thang thử-lại**; bậc thang đó mua thêm **34 biển** đọc đúng và trả bằng đuôi độ trễ — thoái lui **có chủ ý**, và nó chỉ chạy sau khi đọc hỏng nên trung vị không đổi. Phần cứng: Intel Core i5-14600K, 14 nhân / 20 luồng, không GPU, torch CPU, imgsz 640, một ảnh mỗi lần gọi.
 
 **Nếu bị hỏi "sao báo cáo đầu ghi 5.857 ms?" — đây là câu chuyện phương pháp luận đáng kể.**
 
@@ -807,7 +808,7 @@ Con số cũ 5.857 ms **sai**, và em đã truy ra ba nguyên nhân cộng dồn
 2. **Sai mô hình:** đo trên checkpoint epoch 7, không phải `best.pt`.
 3. **Lỗi crop:** ảnh crop quá lớn khiến PaddleOCR chạy cả khối text-detection, đẩy OCR lên ~1322 ms/ảnh.
 
-Đo lại trên máy rảnh với mô hình đúng: p95 về 731 ms. Giả thuyết "oneDNN/cold-start" bị bác bỏ (`enable_mkldnn=false`, cold-start p95 chỉ 176 ms vì pipeline warmup lúc khởi động). Giả thuyết "baseline vốn chậm" cũng bị bác bỏ (baseline đo client-side ra 763,75 ms, gần y hệt best.pt).
+Đo lại trên máy rảnh với mô hình đúng: p95 về 731 ms — **và đó chưa phải số cuối**: bậc thang thử-lại nối vào sau đó đưa p95 giao hàng lên **1.143,10 ms**. Giả thuyết "oneDNN/cold-start" bị bác bỏ (`enable_mkldnn=false`, cold-start p95 chỉ 176 ms vì pipeline warmup lúc khởi động). Giả thuyết "baseline vốn chậm" cũng bị bác bỏ (baseline đo client-side ra 763,75 ms, gần y hệt best.pt).
 
 **Phân rã độ trễ đúng trên `best.pt` (T5.7b):**
 
@@ -1027,7 +1028,7 @@ Nó là một hệ thống chạy được nhưng **chưa phải sản phẩm tr
 
 ### 🥉 Câu 3 — "Tốc độ xử lý bao nhiêu?" (F3)
 
-> ✅ **NFR-P1 ĐẠT.** Độ trễ E2E một ảnh trên `models/best.pt`, máy rảnh: **p95 = 731 ms** (client-side qua HTTP) / **780 ms** (in-process) — dưới mục tiêu 800 ms. Cấu hình: Intel i5-14600K, 14 nhân / 20 luồng, CPU-only, imgsz 640, một ảnh/lần, 100 mẫu. Nguồn: [07-benchmark-p1-resolved.json](../reports/07-benchmark-p1-resolved.json).
+> 🟡 **NFR-P1 ĐẠT SÀN, KHÔNG ĐẠT MỤC TIÊU.** Độ trễ E2E một ảnh ở cấu hình giao hàng: **p95 = 1.143,10 ms** (sàn 1.500 ms, mục tiêu 800 ms), **trung vị 405,77 ms**. Mốc **731 ms** / **780 ms** là lần đo trước khi nối bậc thang thử-lại. Cấu hình: Intel i5-14600K, 14 nhân / 20 luồng, CPU-only, imgsz 640, một ảnh/lần, 100 mẫu. Nguồn: [07-benchmark-p1-resolved.json](../reports/07-benchmark-p1-resolved.json).
 
 **Vì sao dễ hỏng.** Vì câu chuyện đúng ở đây là một câu chuyện phương pháp luận, và dễ trả lời hụt. Bản báo cáo đầu ghi **5.857 ms** (trượt) — nếu em nhắc con số đó mà không giải thích thì tự bắn vào chân.
 
@@ -1036,13 +1037,13 @@ Nó là một hệ thống chạy được nhưng **chưa phải sản phẩm tr
 2. **Sai mô hình:** checkpoint epoch 7, không phải `best.pt`.
 3. **Lỗi crop:** ảnh crop quá lớn khiến PaddleOCR đọc ~1322 ms/ảnh, thổi phồng tỷ trọng OCR lên "93,3%".
 
-Đo lại trên máy rảnh với mô hình đúng: p95 731 ms. Phân rã đúng (T5.7b): **OCR 64,3% (112,55 ms/biển) / detect 34,2% (59,83 ms)**.
+Đo lại trên máy rảnh với mô hình đúng: p95 731 ms *(trước bậc thang thử-lại; số giao hàng là 1.143,10 ms)*. Phân rã đúng (T5.7b): **OCR 64,3% (112,55 ms/biển) / detect 34,2% (59,83 ms)**.
 
 **Cái bẫy: công bố con số mà không kèm cấu hình phần cứng.** Mọi con số hiệu năng phải kèm: **model CPU, số luồng, kích thước ảnh, backend, cỡ mẫu**.
 
 **Bài học phương pháp luận đáng nêu:** một phép đo lấy trên hệ thống đang có lỗi chưa biết trông y hệt một phép đo hợp lệ — vẫn có cỡ mẫu, phân vị. Thứ duy nhất phát hiện ra là đo lại sau khi sửa lỗi.
 
-**Câu chốt:** *"NFR-P1 đạt — p95 731 mili-giây. Bản báo cáo đầu ghi 5.857 nhưng con số đó là tạo tác của tải cạnh tranh, sai checkpoint và một lỗi crop; đo lại trên máy rảnh với mô hình chính thức thì về 731. Bài học của em là: một phép đo trên hệ thống có lỗi trông y hệt một phép đo đúng."*
+**Câu chốt:** *"NFR-P1 đạt sàn, không đạt mục tiêu — p95 1.143 mili-giây, trung vị 406. Bản báo cáo đầu ghi 5.857 nhưng con số đó là tạo tác của tải cạnh tranh, sai checkpoint và một lỗi crop; đo lại trên máy rảnh với mô hình chính thức thì về 731. Bài học của em là: một phép đo trên hệ thống có lỗi trông y hệt một phép đo đúng."*
 
 ---
 
@@ -1061,7 +1062,7 @@ Nó là một hệ thống chạy được nhưng **chưa phải sản phẩm tr
 | Detection tách layout | 1 dòng mAP50 0,988 · 2 dòng 0,968 · chênh **2,09 điểm** |
 | OCR (2.801 biển) | A4 **0,945** đạt sàn · A5 **0,637** · A6 **0,751** — A5/A6 chưa đạt; A6−A5 = **+13,28 điểm** |
 | OCR tách layout | 1 dòng A6 0,949 (đạt) · 2 dòng A6 0,581 · chênh **36,8 điểm** |
-| NFR-P1 độ trễ E2E p95 | **731 ms** client / **780 ms** in-process (đạt, mục tiêu 800 ms) |
+| NFR-P1 độ trễ E2E p95 | 🟡 **1.143,10 ms** ở cấu hình giao hàng (đạt sàn 1.500 ms, trên mục tiêu 800 ms; trung vị 405,77 ms). Mốc 731/780 ms là trước bậc thang thử-lại |
 | Phân rã độ trễ | OCR **64,3%** (112,55 ms/biển) · detect **34,2%** (59,83 ms) |
 | Đồng thời (SC1) | **10** yêu cầu, 0 lỗi · soak 300 s 100% |
 | Phần cứng | Intel Core i5-14600K, 14 nhân / 20 luồng, **không có GPU CUDA** |
