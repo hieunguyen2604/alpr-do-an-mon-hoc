@@ -225,7 +225,7 @@ Sửa đúng **372 biển**, làm hỏng **0** — dồn gần trọn vào biể
 
 ## Ba can thiệp thực nghiệm
 
-Chênh lệch 2 dòng còn **25,4 điểm**, cùng bậc mốc quốc tế **48,6** *(Laroca 2022 — RodoSol, Brazil)*
+Chênh lệch 2 dòng còn **23,07 điểm**, cùng bậc mốc quốc tế **48,6** *(Laroca 2022 — RodoSol, Brazil)*
 
 | Can thiệp | Thu được |
 |---|---|

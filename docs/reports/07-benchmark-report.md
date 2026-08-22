@@ -2,6 +2,22 @@
 
 **Ngày đo:** 19/07/2026 · **Cập nhật:** 20/07/2026 (đo lại NFR-P1 trên mô hình chính thức `models/best.pt`, giải quyết mâu thuẫn 5.857 ms ↔ ~780 ms)
 
+> ### ⚠ Kết luận NFR-P1 trong báo cáo này **đã bị thay thế**
+>
+> Báo cáo chốt **NFR-P1 ĐẠT, p95 = 731,15 ms** ở nhiều mục dưới đây. Con số ấy
+> **đúng tại thời điểm đo** (19–20/07/2026), nhưng sau đó **bậc thang thử-lại**
+> được nối vào đường xử lý và đẩy đuôi độ trễ lên:
+>
+> | | Báo cáo này | Hiện hành |
+> |---|---:|---:|
+> | NFR-P1 p95 (client-side) | 731,15 ms ✅ *(đạt mục tiêu 800 ms)* | **1.143,10 ms** 🟡 *(chỉ đạt sàn 1.500 ms)* |
+>
+> Thoái lui **có chủ ý**: bậc thang mua thêm **34 biển** đọc đúng và trả bằng
+> đuôi độ trễ; trung vị không đổi vì bậc thang chỉ chạy sau khi đọc hỏng. Số
+> hiện hành và lập luận đầy đủ ở **Chương 5 mục 5.6.1** và
+> [báo cáo 27](27-retry-ladder-cost-benefit.md). Mọi số 731,15 ms bên dưới
+> **giữ nguyên để ghi lịch sử phép đo — không trích dẫn như trạng thái hiện tại**.
+
 > ### ✅ ĐỌC TRƯỚC: số liệu NFR-P1 chính thức đã được xác minh trên `models/best.pt`
 >
 > Toàn bộ số độ trễ ở các mục 3, 4, 5, 5bis dưới đây đo trên **checkpoint giữa
@@ -30,8 +46,8 @@
 > Các mục 4.1–4.4, 5, 9.2, 9.3 và bảng ở 5bis được **giữ nguyên văn** để ghi lịch
 > sử; **không trích dẫn số của chúng**. Số dùng được: bảng tóm tắt mục 2 (đã cập nhật).
 
-**Kết quả một dòng (chính thức):** **NFR-P1 ĐẠT** — p95 = 731,15 ms client-side /
-780,36 ms in-process, dưới mục tiêu 800 ms và ngưỡng tối thiểu 1.500 ms. Detection
+**Kết quả một dòng (tại thời điểm đo 20/07/2026, nay đã bị thay thế — xem banner trên):**
+NFR-P1 p95 = 731,15 ms client-side / 780,36 ms in-process. **Số hiện hành là 1.143,10 ms 🟡** sau khi nối bậc thang thử-lại. Detection
 trên `best.pt` đạt cả bốn chỉ tiêu (mAP@0.5 0,9829 / mAP@0.5:0.95 0,7834 / P 0,9837
 / R 0,9714). NFR-P2 (FPS webcam) và NFR-P3 (video) **chưa đo** trên `best.pt` — ghi
 nhận là món nợ, không phải "không áp dụng".
@@ -98,7 +114,7 @@ Mục 3.3 định lượng chính xác ảnh hưởng này bằng dữ liệu th
 | NFR-P7b | RSS server uvicorn dưới tải | ≤ 2 GB | ≤ 4 GB | **0,806 GB** | ✅ | dùng 40% hạn mức |
 | **NFR-R5** | CSDL sống qua khởi động lại | 100% | — | **—** *(chưa chạy kịch bản khởi động lại)* | ⬜ | |
 | NFR-SC1 | Đồng thời cao nhất không lỗi | ≥ 5 | — | **10** | ✅ | gấp 2× |
-| NFR-R4 | Tỉ lệ thành công soak 300 s | ≥ 99% | — | **100%** (soak, 1.684 request) | ✅ | |
+| NFR-R4 | Tỉ lệ thành công soak 300 s | ≥ 99% | — | **100%** (**185/185** request) | ✅ | [`07-stress-load.json`](07-stress-load.json) |
 | NFR-A1 | mAP@0.5 | ≥ 0,90 | ≥ 0,85 | **0,9829** | ✅ | trên `best.pt`, split v3 |
 | NFR-A2 | mAP@0.5:0.95 | ≥ 0,65 | ≥ 0,55 | **0,7834** | ✅ | trên `best.pt`, split v3 |
 | NFR-A3a | Precision | ≥ 0,92 | ≥ 0,88 | **0,9837** | ✅ | trên `best.pt`, split v3 |

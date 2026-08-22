@@ -11,9 +11,9 @@
 >
 > | Trong báo cáo này | Hiện tại | Nguồn |
 > |---|---|---|
-> | 882 test thu thập / 881 đạt | **1.001 thu thập / 1.000 đạt**, 1 `xfail` | chạy 02/08/2026 |
+> | 882 test thu thập / 881 đạt | **1.002 thu thập / 1.002 đạt**, 0 `xfail` | lượt chạy mới nhất |
 > | **NFR-P1 ĐẠT**, p95 731 ms | 🟡 **chỉ đạt sàn**, p95 **1.143 ms** | [27](27-retry-ladder-cost-benefit.md) |
-> | NFR-P2/P3/R4/R5 chưa đo | **P2 ❌ 2,379 FPS** · P3 ✅ 0,746× · R4 ✅ 100% · R5 ✅ 0 mất | [33-runtime-nfr.json](33-runtime-nfr.json) |
+> | NFR-P2/P3/R4/R5 chưa đo | **P2 ✅ 5,257 FPS** · P3 ✅ 0,746× · R4 ✅ 100% · R5 ✅ 0 mất | [33-runtime-nfr.json](33-runtime-nfr.json) |
 >
 > NFR-P1 thoái lui **có chủ ý**: bậc thang thử-lại mua thêm 34 biển đọc đúng và
 > trả bằng đuôi độ trễ. Cùng nguyên nhân đó làm NFR-P2 trượt sàn.
@@ -823,7 +823,7 @@ Ký hiệu: ✅ đạt mục tiêu · ⚠️ chỉ đạt ngưỡng tối thiể
 | NFR-R1 | Không sập với đầu vào hỏng/độc hại | 100% | 52 test tại `test_api_detection.py` đều pass | ✅ |
 | NFR-R2 | Ảnh không có biển ⇒ HTTP 200, danh sách rỗng | 200 + rỗng | pass (test tích hợp) | ✅ |
 | NFR-R3 | Tác vụ video hỏng không để lại rác | nguyên tử | pass cho nhánh video | ⚠️ |
-| **NFR-R4** | Tỉ lệ thành công khi chạy liên tục | ≥ 99% | **100%** (**3.928/3.928** request, soak **15 phút**) | ⚠️ |
+| **NFR-R4** | Tỉ lệ thành công khi chạy liên tục | ≥ 99% | **100%** (**3.928/3.928** request, soak **15 phút**) | ⚠️ |<!-- nguon: 07-benchmark-data-v2.json -->
 | **NFR-R5** | CSDL sống qua khởi động lại | 100% | **0 bản ghi mất** (4.470 → 4.470), khởi động lại sau **TerminateProcess** | ✅ |
 
 > **NFR-R3 gắn ⚠️:** nhánh **ảnh tĩnh** có lỗi nguyên tử đã biết — xem mục 8.1.
@@ -831,6 +831,7 @@ Ký hiệu: ✅ đạt mục tiêu · ⚠️ chỉ đạt ngưỡng tối thiể
 >
 > **NFR-R4 gắn ⚠️ — đã cải thiện nhưng vẫn chưa khép.** Bản trước đo 5 phút /
 > 185 request; nay đã đo **15 phút / 3.928 request, 0 lỗi, RSS chỉ tăng 0,015 GB**
+> *(nguồn: [`07-benchmark-data-v2.json`](07-benchmark-data-v2.json), đo 19/07. Lượt soak **mới nhất** là [`33-runtime-nfr.json`](33-runtime-nfr.json): 15 phút / **2.028** request, cũng 100% — dùng con số đó khi trích trạng thái hiện tại.)*
 > (p50 = 227,28 ms, p95 = 263,27 ms, 4,364 req/s). Nhưng đặc tả yêu cầu **60
 > phút**, nên 15 phút vẫn chỉ là **bằng chứng một phần**. Không được ghi ✅.
 >

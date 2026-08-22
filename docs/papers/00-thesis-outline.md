@@ -1,5 +1,16 @@
 # Đề cương chi tiết quyển đồ án tốt nghiệp
 
+> ### ⚠ Tài liệu lập kế hoạch — **số liệu bên dưới đã bị thay thế**
+>
+> Đây là **đề cương v1**, giữ lại để ghi quá trình. Cấu trúc quyển hiện hành là
+> [`00-thesis-outline-v2.md`](00-thesis-outline-v2.md) (7 chương), và tệp này
+> **không** nằm trong `scripts/build_thesis.py`. Mọi chỉ số độ chính xác bên
+> dưới là ảnh chụp trước đợt đo lại bằng bảng sửa ký tự dựng từ số liệu nhầm
+> lẫn đo được. **Số hiện hành:** A4 0,9483 · A5 0,6373 · A6 0,7701 *(hậu xử lý
+> sửa đúng 372 biển, làm hỏng 0)* · biển hai dòng 0,7234, chênh 23,07 điểm ·
+> **NFR-A7 ⬜ không đo được một cách có ý nghĩa** *(đại diện: 17/22 ảnh toàn
+> cảnh)*. Nguồn chuẩn: **Chương 5 mục 5.5.2–5.5.3**.
+
 **Đề tài:** Xây dựng hệ thống nhận diện biển số xe bằng trí tuệ nhân tạo
 *(Developing an AI-based Vietnamese License Plate Recognition System)*
 
@@ -419,7 +430,7 @@ Mô hình chính thức `models/best.pt` (YOLO11n, `imgsz=640`, split v3, 20 epo
 | NFR-A5 (trước hậu xử lý) | 0,6098 | 0,80 | ❌ Chưa đạt |
 | NFR-A6 (sau hậu xử lý) | 0,7512 (+11,39 điểm; 319 biển sửa đúng, 0 biển hỏng) | 0,85 | ❌ Chưa đạt |
 | NFR-A7 (end-to-end) | 0,5552 | 0,82 | ❌ Chưa đạt |
-| NFR-A8 (tách theo layout) | 1 dòng A6 0,9541 (567 mẫu) ↔ 2 dòng A6 0,6996 (2.234 mẫu); chênh 25,45 điểm | — | ✅ Đã đo |
+| NFR-A8 (tách theo layout) | 1 dòng A6 0,9541 (567 mẫu) ↔ 2 dòng A6 0,7234 (2.234 mẫu); chênh 23,07 điểm | — | ✅ Đã đo |
 | NFR-P1 (độ trễ ảnh p95) | 1.143,10 ms in-process (trung vị 405,77 ms) | 800 ms | 🟡 Đạt ngưỡng tối thiểu 1.500 ms |
 
 > **Ranh giới liêm chính học thuật.** Bốn chỉ tiêu A4–A7 **chưa đạt ngưỡng** và chương đã ghi đúng như vậy. Không được làm tròn lên, không được đổi ngưỡng cho khớp kết quả. Một quyển trung thực về chỉ tiêu chưa đạt vẫn bảo vệ được; một quyển sửa số thì không.
@@ -447,7 +458,7 @@ Mô hình chính thức `models/best.pt` (YOLO11n, `imgsz=640`, split v3, 20 epo
 **Hai nội dung là đóng góp học thuật cốt lõi, không được bỏ:**
 
 - **Hiệu số A6 − A5 = +11,39 điểm** (0,6373 → 0,7512; 319 biển sửa đúng, 0 biển hỏng) chính là đóng góp định lượng của khối hậu xử lý (mục 1.5.2).
-- **Bảng tách theo layout** (1 dòng A6 0,9541 ↔ 2 dòng A6 0,6996, chênh 25,45 điểm) lấp đúng khoảng trống đã xác định: chưa nghiên cứu Việt Nam nào công bố hai con số này tách bạch trên cùng một hệ thống (`RESEARCH` §2.8.2, §2.11.3).
+- **Bảng tách theo layout** (1 dòng A6 0,9541 ↔ 2 dòng A6 0,7234, chênh 23,07 điểm) lấp đúng khoảng trống đã xác định: chưa nghiên cứu Việt Nam nào công bố hai con số này tách bạch trên cùng một hệ thống (`RESEARCH` §2.8.2, §2.11.3).
 
 ---
 

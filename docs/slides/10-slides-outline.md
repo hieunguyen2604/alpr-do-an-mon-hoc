@@ -259,7 +259,7 @@ Mỗi slide gồm bốn phần:
 - Toàn bộ khoảng cách nằm ở biển 2 dòng: 0,7234 so với 0,9541 của biển 1 dòng
 
 **Speaker notes** *(50 s)*
-> Ở tầng nhận dạng OCR, nhóm công khai trung thực: Độ chính xác đúng từng ký tự đạt 94,54%, nhưng đúng cả chuỗi chỉ đạt 75,12% — chưa đạt mục tiêu 0,85. Phân tích sâu cho thấy toàn bộ khoảng cách này dồn vào biển 2 dòng xe máy (chỉ đạt 69,96%), trong khi biển 1 dòng ô tô đạt tới 95,41%.
+> Ở tầng nhận dạng OCR, nhóm công khai trung thực: Độ chính xác đúng từng ký tự đạt 94,83%, nhưng đúng cả chuỗi chỉ đạt 77,01% — chưa đạt mục tiêu 0,85. Phân tích sâu cho thấy toàn bộ khoảng cách này dồn vào biển 2 dòng xe máy (chỉ đạt 72,34%), trong khi biển 1 dòng ô tô đạt tới 95,41%.
 
 ---
 
@@ -281,18 +281,18 @@ Mỗi slide gồm bốn phần:
 - Biểu đồ minh hoạ mức tăng độ chính xác trước và sau hậu xử lý
 
 **Speaker notes** *(40 s)*
-> Nhờ lưu vết cột `raw_ocr_text`, nhóm đo được đóng góp thực tế của Bộ luật hậu xử lý theo vị trí: sửa đúng 372 biển số từ sai thành đúng và không làm hỏng bất kỳ biển nào đang đúng, đưa độ chính xác từ 63,73% lên 75,12%.
+> Nhờ lưu vết cột `raw_ocr_text`, nhóm đo được đóng góp thực tế của Bộ luật hậu xử lý theo vị trí: sửa đúng 372 biển số từ sai thành đúng và không làm hỏng bất kỳ biển nào đang đúng, đưa độ chính xác từ 63,73% lên 77,01%.
 
 ---
 
 ## S22 — Ba can thiệp, một kết luận
 
 **Nội dung trên slide**
-- Thu hẹp khoảng cách 2 dòng từ **48,6 điểm** *(Laroca 2022)* xuống **25,4 điểm**
+- Thu hẹp khoảng cách 2 dòng từ **48,6 điểm** *(Laroca 2022)* xuống **23,07 điểm**
 - Bảng thu hoạch từ 3 can thiệp kỹ thuật (+13,28 pt, rescue 209 biển, nắn hình 34 biển)
 
 **Speaker notes** *(45 s)*
-> Ba can thiệp bên ngoài mô hình nhận dạng đã giúp nâng độ chính xác từ 60,98% lên 75,12%, thu hẹp khoảng cách bố cục từ 48,6 điểm xuống 25,4 điểm. Phân tích cho thấy dư địa xử lý bên ngoài đã cạn, các lỗi còn lại do ký tự mờ chưa từng được OCR đọc ra.
+> Ba can thiệp bên ngoài mô hình nhận dạng đã giúp nâng độ chính xác từ 63,73% lên 77,01%, thu hẹp khoảng cách bố cục từ 48,6 điểm xuống 23,07 điểm. Dư địa xử lý bên ngoài đã mỏng đi rõ rệt, các lỗi còn lại do ký tự mờ chưa từng được OCR đọc ra.
 
 ---
 
@@ -440,10 +440,10 @@ Mỗi slide gồm bốn phần:
 ## S36 — Backup 5 — Siêu tham số & Biểu đồ huấn luyện
 
 **Nội dung trên slide**
-- Bảng siêu tham số (`imgsz 640`, `batch 16`, `epochs 20`, `lr0 0,01`, SGD) và sự hội tụ của 3 hàm mất mát `box_loss`, `cls_loss`, `dfl_loss`
+- Bảng siêu tham số (`imgsz 640`, `batch 8`, `epochs 20`, `lr0 0,001`, AdamW) và sự hội tụ của 3 hàm mất mát `box_loss`, `cls_loss`, `dfl_loss`
 
 **Speaker notes (Dùng khi Hội đồng hỏi về siêu tham số & quá trình huấn luyện)**
-> YOLO11n được huấn luyện với `imgsz 640`, `batch 16`, `lr0 0,01` dùng SGD momentum 0.937. Cả 3 hàm loss `box_loss` (giảm từ 0,642 xuống 0,315), `cls_loss` (0,812 $\rightarrow$ 0,204) và `dfl_loss` (0,911 $\rightarrow$ 0,412) đều hội tụ ổn định.
+> YOLO11n được huấn luyện với `imgsz 640`, `batch 8`, `lr0 0,001` dùng AdamW, momentum 0,937. Cả 3 hàm loss `box_loss` (giảm từ 0,642 xuống 0,315), `cls_loss` (0,812 $\rightarrow$ 0,204) và `dfl_loss` (0,911 $\rightarrow$ 0,412) đều hội tụ ổn định.
 
 ---
 

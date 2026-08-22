@@ -1,5 +1,24 @@
 # Bảng số liệu Chương 5 — sinh tự động
 
+> ### ⚠ Ảnh chụp ngày 28/07/2026 — **một số ô đã bị thay thế**
+>
+> Tệp này do `scripts/fill_chapter5.py` sinh ra từ `05-results.json`, và cả hai
+> đều dừng ở lượt đo 28/07. Sau đó bảng sửa ký tự được dựng lại từ **số liệu
+> nhầm lẫn đo được**, làm đổi các ô sau — **không sửa tay ở đây** để giữ bảo
+> đảm "sinh từ nguồn":
+>
+> | Ô | Trong tệp này | Hiện hành |
+> |---|---:|---:|
+> | NFR-A4 (1 − CER) | 0,9454 | **0,9483** |
+> | NFR-A6 (sau hậu xử lý) | 0,7512 | **0,7701** |
+> | A6 biển hai dòng | 0,6996 | **0,7234** |
+> | Chênh theo bố cục | 25,45 điểm | **23,07 điểm** |
+> | NFR-A7 | 0,5552 ❌ | **⬜ không đo được một cách có ý nghĩa** *(17/22 ảnh toàn cảnh)* |
+>
+> NFR-A5 = 0,6373 **không đổi** — A5 đo *trước* hậu xử lý nên nó đứng yên chính
+> là bằng chứng mọi chênh lệch trên quy được về đúng hai hằng số đã sửa. Nguồn
+> chuẩn: **Chương 5 mục 5.5.2–5.5.3** và [báo cáo 41](41-measured-confusion-tables.md).
+
 *Sinh lúc 2026-07-28T17:43:40 bằng `scripts/fill_chapter5.py`.*
 
 > **Điều kiện đo — bắt buộc đọc kèm mọi bảng bên dưới.** CPU Intel(R) Core(TM) i5-14600K, 14 nhân vật lý / 20 nhân logic, RAM 31,77 GB, Windows 11, Python 3.13.12, torch 2.13.0+cpu, ultralytics 8.4.101, `device=cpu`, kích thước lô = 1. Mô hình: `D:\DATN\models\best.pt`. Bộ dữ liệu: `D:\DATN\datasets\processed\yolo_v3\data.yaml`, split `test`, 1.514 ảnh.
