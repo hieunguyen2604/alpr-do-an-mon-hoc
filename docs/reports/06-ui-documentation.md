@@ -155,7 +155,7 @@ Việc huỷ giữa chừng (chọn tệp khác, xoá form, rời trang) sẽ **
 ![Màn hình Nhận dạng video](../screenshots/video-detection.png)
 
 **Chức năng:** tải video lên, xử lý ở chế độ nền, theo dõi tiến độ, xem kết quả đã gộp trùng
-(FR-2.1, FR-2.6, FR-2.5).
+(FR-2.1, FR-2.4; phần huỷ của FR-2.6 đã ra khỏi phạm vi 2026-08-03).
 
 **Thành phần:**
 
@@ -166,7 +166,8 @@ Việc huỷ giữa chừng (chọn tệp khác, xoá form, rời trang) sẽ **
 * **Bảng kết quả** — danh sách biển số của tác vụ, đọc từ `GET /api/history?job_id=…`
   chứ không từ đối tượng tác vụ (đối tượng này chỉ mang số đếm). Nhờ vậy trang video và trang
   Lịch sử **không thể mâu thuẫn** về những gì một tác vụ đã tạo ra.
-* **Tải video kết quả** — khi `output_url` có giá trị (FR-2.5).
+* **Tải video kết quả** — khi `output_url` có giá trị. FR-2.5 đã ra khỏi phạm vi 2026-08-03 và
+  backend chưa từng sinh `output_url`, nên nút này thực tế không hiển thị.
 * **Ghi chú gộp trùng** — luôn hiển thị dưới danh sách, giải thích rằng một xe xuất hiện
   trong hàng chục khung chỉ tính **một** bản ghi. Thiếu ghi chú này, người dùng đọc con số
   thấp và tưởng hệ thống bỏ sót (FR-2.4).
@@ -341,14 +342,19 @@ khi gỡ trang Tổng quan.
 
 ### FR-2 — Nhận dạng từ video
 
+> ⚠️ **Cập nhật phạm vi 2026-08-03:** **FR-2.5** chuyển **M → W** và **FR-2.6** chuyển **S → W**
+> — cả hai đang dở dang khi được đưa ra khỏi phạm vi. Nút **Huỷ tác vụ** đã bị gỡ khỏi giao diện
+> thay vì để vô hiệu hoá; nút **Tải video kết quả** chỉ hiện khi `output_url` có giá trị mà
+> backend chưa từng sinh nên thực tế không xuất hiện. Hai dòng dưới đây giữ như bản ghi lần kiểm trước.
+
 | Mã | Yêu cầu (rút gọn) | Mức | Màn hình đáp ứng | Trạng thái |
 |---|---|---|---|---|
 | FR-2.1 | Tải lên MP4/AVI/MOV ≤ 200 MB, trả mã tác vụ | M | Nhận dạng video — khung kéo–thả (thêm cả MKV) | ✅ |
 | FR-2.2 | Trích khung hình theo bước nhảy cấu hình được | M | — (thuần backend) | ➖ ngoài phạm vi giao diện |
 | FR-2.3 | Phát hiện và nhận dạng trên khung đã trích | M | Nhận dạng video — bảng kết quả | ✅ (hiển thị) |
 | FR-2.4 | Gộp trùng cùng một biển qua nhiều khung | M | Nhận dạng video — kết quả đã gộp + ghi chú giải thích cách đếm | ✅ (hiển thị + giải thích) |
-| FR-2.5 | Xuất video kết quả có vẽ sẵn nhãn | M | Nhận dạng video — nút **Tải video kết quả** khi `output_url` có giá trị | ✅ |
-| FR-2.6 | Hiện tiến độ % và **cho phép huỷ** tác vụ | S | Nhận dạng video — bảng tiến độ ✅; nút **Huỷ tác vụ** hiện diện nhưng **bị vô hiệu hoá** | ⚠️ một phần |
+| FR-2.5 | Xuất video kết quả có vẽ sẵn nhãn | W *(trước đây M)* | Nhận dạng video — nút **Tải video kết quả** khi `output_url` có giá trị | ➖ ra khỏi phạm vi 2026-08-03 |
+| FR-2.6 | Hiện tiến độ % và **cho phép huỷ** tác vụ | W *(trước đây S)* | Nhận dạng video — bảng tiến độ vẫn còn; nút **Huỷ tác vụ** đã **gỡ khỏi giao diện** 2026-08-03 | ➖ ra khỏi phạm vi 2026-08-03 |
 
 ### FR-3 — Nhận dạng thời gian thực (Webcam)
 
@@ -406,25 +412,26 @@ trừ đi hai nhóm không thuộc phạm vi đánh giá của giao diện:
 | Nhóm | Các mã | Số lượng |
 |---|---|:---:|
 | **Ngoài phạm vi giao diện** — vẫn được đáp ứng và kiểm thử, nhưng ở tầng khác | FR-2.2 (trích khung hình), FR-5.3 (script dọn tệp mồ côi), FR-3.2 / FR-3.3 / FR-3.5 (tầng API `POST /api/detect/frame`), FR-6.1 (tầng API `GET /health`) | **6** |
-| **Đã gỡ khỏi giao diện — mức W** theo hai thay đổi phạm vi 2026-07-20 | FR-3.1, FR-3.4 (gỡ trang Webcam) · FR-4.1, FR-4.2 (gỡ trang Tổng quan) | **4** |
+| **Đã gỡ khỏi phạm vi — mức W** theo ba thay đổi phạm vi 2026-07-20 và 2026-08-03 | FR-3.1, FR-3.4 (gỡ trang Webcam) · FR-4.1, FR-4.2 (gỡ trang Tổng quan) · FR-2.5 (xuất video chú thích) · FR-2.6 (huỷ tác vụ) | **6** |
 
-⇒ Còn lại **34 − 6 − 4 = 24** yêu cầu thuộc phạm vi đánh giá của giao diện. Trong 24 yêu cầu đó:
+⇒ Còn lại **34 − 6 − 6 = 22** yêu cầu thuộc phạm vi đánh giá của giao diện. Trong 22 yêu cầu đó:
 
-* **22 đã đáp ứng đầy đủ**;
-* **1 đáp ứng một phần** — FR-2.6 (có tiến độ, thiếu chức năng huỷ);
+* **21 đã đáp ứng đầy đủ**;
 * **1 chưa làm** — FR-5.4 (xoá hàng loạt, mức Could).
 
-*(22 + 1 + 1 = 24 ✓)*
+*(21 + 0 + 1 = 22 ✓)*
 
-**So với bản trước hai thay đổi phạm vi:** con số từng là 5 ngoài phạm vi / 2 đã gỡ /
-27 còn lại với 25 đáp ứng đầy đủ. Chênh lệch đến từ đúng ba mã: FR-4.1 và FR-4.2 chuyển sang
-nhóm "đã gỡ", FR-6.1 chuyển sang nhóm "ngoài phạm vi giao diện" (endpoint `GET /health` không
-đổi gì, chỉ là không còn màn hình nào hiển thị nó).
+**So với bản trước ba thay đổi phạm vi:** con số từng là 5 ngoài phạm vi / 2 đã gỡ /
+27 còn lại với 25 đáp ứng đầy đủ, rồi 6 ngoài phạm vi / 4 đã gỡ / 24 còn lại với 22 đầy đủ.
+Chênh lệch đợt 2026-08-03 đến từ đúng hai mã: FR-2.5 và FR-2.6 chuyển sang nhóm "đã gỡ" — cả hai
+đều đang dở dang, nên việc đưa ra khỏi phạm vi là khai báo trung thực thay vì để tồn dưới dạng
+tính năng bán thành phẩm.
 
 **Về mức Must.** Toàn bộ yêu cầu mức **M (Must)** còn nằm trong phạm vi giao diện đều đã đáp ứng
-đầy đủ. Cần nói rõ điều đã đổi: **FR-4.1 là yêu cầu mức Must đầu tiên của dự án bị gỡ khỏi
-phạm vi**, chứ không phải một yêu cầu Must chưa làm xong. Đây là quyết định thu hẹp phạm vi có
-chủ đích, và dữ liệu để đáp ứng lại nó bất cứ lúc nào vẫn còn nguyên ở `GET /api/statistics`.
+đầy đủ. Cần nói rõ điều đã đổi: **FR-4.1 và FR-2.5 là hai yêu cầu mức Must của dự án bị đưa ra
+khỏi phạm vi** (20/07 và 03/08/2026), chứ không phải những yêu cầu Must chưa làm xong. Đây là
+quyết định thu hẹp phạm vi có chủ đích; dữ liệu để đáp ứng lại FR-4.1 vẫn còn nguyên ở
+`GET /api/statistics`.
 
 ---
 
@@ -547,15 +554,17 @@ với `message` **tiếng Việt sẵn sàng hiển thị**. Thông báo do back
 Mỗi request mang một `X-Request-ID`. Khi lỗi, mã này được hiện cho người dùng trích dẫn — đủ để đối chiếu
 ngược với log máy chủ mà **không** phơi bày bất kỳ chi tiết nội bộ nào.
 
-### 6.7. Nút "Huỷ tác vụ" hiện diện nhưng vô hiệu hoá
+### 6.7. Nút "Huỷ tác vụ" — đã gỡ khỏi giao diện cùng phạm vi FR-2.6
 
 FR-2.6 yêu cầu chức năng huỷ. Worker phía backend **có** tôn trọng việc huỷ — nó đọc lại trạng thái tác vụ
 sau mỗi vài khung và dừng — nhưng **không có route HTTP nào đặt được trạng thái đó**: tài liệu OpenAPI
 đang chạy chỉ phơi bày 9 đường dẫn (mang 10 thao tác), không đường nào huỷ tác vụ.
 
-Nút vì vậy được để **hiện diện và vô hiệu hoá**, kèm tooltip "Chức năng đang được phát triển",
-thay vì nối vào một endpoint tự bịa. Gọi một endpoint không tồn tại sẽ nhận 404 và để người dùng
-**tin rằng tác vụ đã dừng trong khi nó vẫn chạy** — một lời nói dối tệ hơn hẳn một nút xám.
+Nút từng được để **hiện diện và vô hiệu hoá**, kèm tooltip "Chức năng đang được phát triển",
+thay vì nối vào một endpoint tự bịa — gọi một endpoint không tồn tại sẽ nhận 404 và để người dùng
+**tin rằng tác vụ đã dừng trong khi nó vẫn chạy**. Từ **2026-08-03**, FR-2.6 chuyển mức **S → W**:
+nút đã bị **gỡ hẳn khỏi giao diện** thay vì giữ trạng thái xám. Gỡ sạch là cách nói thật duy nhất
+khi tính năng không còn nằm trong phạm vi bàn giao.
 
 ---
 
@@ -577,10 +586,10 @@ thay vì nối vào một endpoint tự bịa. Gọi một endpoint không tồn
 
 | # | Hạn chế | Ảnh hưởng | Hướng xử lý |
 |---|---|---|---|
-| 1 | **Không huỷ được tác vụ video** (FR-2.6, mức S). API không có endpoint huỷ; nút hiện diện nhưng vô hiệu hoá | Người dùng lỡ tải nhầm video 200 MB phải chờ hết | Backend bổ sung `POST /api/jobs/{id}/cancel`; giao diện chỉ cần bỏ `disabled` và nối hàm — phần còn lại đã sẵn sàng |
+| 1 | **Không huỷ được tác vụ video** — FR-2.6 đã chuyển **S → W**, ra khỏi phạm vi 2026-08-03; nút Huỷ đã gỡ khỏi giao diện | Người dùng lỡ tải nhầm video 200 MB phải chờ hết | Nếu mở lại phạm vi: backend thêm `POST /api/jobs/{id}/cancel` (worker đã tôn trọng trạng thái huỷ), giao diện nối lại nút |
 | 2 | **Không xoá được nhiều bản ghi cùng lúc** (FR-5.4, mức C) | Dọn dữ liệu thử nghiệm phải xoá từng dòng | Thêm cột checkbox + gọi `DELETE` tuần tự, hoặc backend bổ sung endpoint xoá theo lô |
 | 3 | **Xuất chỉ có CSV, chưa có JSON** (FR-5.2 nêu "CSV hoặc JSON") | Nhỏ — CSV đã đáp ứng yêu cầu chấp nhận (mở được bằng Excel, UTF-8 có BOM) | Thêm tuỳ chọn định dạng khi backend hỗ trợ |
-| 4 | **Trang video chưa xem trước video kết quả ngay trong giao diện** — chỉ có nút tải về | Người dùng phải tải xuống mới xem được nhãn đã vẽ | Nhúng thẻ `<video>` trỏ tới `output_url` |
+| 4 | **Không có video kết quả để xem hoặc tải** — FR-2.5 đã chuyển **M → W**, ra khỏi phạm vi 2026-08-03; backend chưa render bản ghi nhãn lên video | Người dùng không xem lại được nhãn đã vẽ trên video gốc | Nếu mở lại phạm vi: render video chú thích, rồi nhúng thẻ `<video>` trỏ tới `output_url` |
 | 5 | **Danh sách kết quả một tác vụ video giới hạn 100 dòng** (trần `MAX_PAGE_SIZE` của backend) | Video sinh > 100 biển số khác nhau sẽ bị cắt bớt ở trang này | Đã có lối thoát: toàn bộ dữ liệu vẫn tra cứu được ở trang Lịch sử bằng bộ lọc. Có thể thêm phân trang cho bảng này |
 
 ### 8.2. Hạn chế về kiểm chứng

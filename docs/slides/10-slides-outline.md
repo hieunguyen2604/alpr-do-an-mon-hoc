@@ -200,7 +200,7 @@ Mỗi slide gồm bốn phần:
 - **Giảm rò rỉ theo pHash:** gom nhóm ảnh gần trùng ở ngưỡng Hamming 10; kiểm tra lại cùng ngưỡng cho 0 cặp Train–Test
 
 **Speaker notes** *(40 s)*
-> Tập dữ liệu gồm hơn 15.000 ảnh từ 7 nguồn công khai. Nhóm đã áp dụng thuật toán Băm tri giác (Perceptual Hashing) để triệt hạ hoàn toàn 9.126 cặp ảnh trùng lặp gần đúng giữa tập Train và Test, đảm bảo kết quả đánh giá là 100% khách quan, không bị mAP ảo.
+> Tập dữ liệu gồm hơn 15.000 ảnh từ 7 nguồn công khai. Nhóm gom nhóm ảnh gần trùng bằng Perceptual Hashing ở ngưỡng Hamming 10 trước khi chia tập; phép kiểm tra rò rỉ chạy đúng tại chính ngưỡng đó nên cho 0 cặp Train–Test — kết quả này tất yếu theo cấu tạo, nhóm nói rõ điều đó thay vì lấy làm bằng chứng độc lập. Kiểm ngoài vùng bảo vệ (khoảng cách Hamming 12) còn 791 cặp vắt qua ranh giới train–test; món nợ khép kín duy nhất là đánh giá xuyên bộ dữ liệu.
 
 ---
 
@@ -270,7 +270,7 @@ Mỗi slide gồm bốn phần:
 - Cùng một hệ thống, cùng một phép đo
 
 **Speaker notes** *(35 s)*
-> Biểu đồ này thể hiện rõ bản chất bài toán: Trên cùng một hệ thống và phép đo, biển 1 dòng đạt 95,41% nhưng biển 2 dòng sụt xuống 69,96%. Việc tách bạch con số này giúp định vị chính xác điểm gãy nằm ở bộ đọc dòng đơn của PaddleOCR khi xử lý biển 2 dòng.
+> Biểu đồ này thể hiện rõ bản chất bài toán: Trên cùng một hệ thống và phép đo, biển 1 dòng đạt 95,41% nhưng biển 2 dòng sụt xuống 72,34%. Việc tách bạch con số này giúp định vị chính xác điểm gãy nằm ở bộ đọc dòng đơn của PaddleOCR khi xử lý biển 2 dòng.
 
 ---
 
@@ -296,14 +296,14 @@ Mỗi slide gồm bốn phần:
 
 ---
 
-## S23 — Hiệu năng trên CPU — Phân rã độ trễ 406 ms
+## S23 — Hiệu năng trên CPU — Phân rã độ trễ
 
 **Nội dung trên slide**
-- Nút thắt nằm ở tầng đọc chữ PaddleOCR (73,9%)
-- Bảng phân rã độ trễ: Detect 35ms (8,6%), Split 15ms (3,7%), OCR 300ms (73,9%), API 56ms (13,8%) $\Rightarrow$ Tổng p50 = 406 ms
+- Nút thắt nằm ở tầng đọc chữ PaddleOCR (**64,3%**)
+- Bảng phân rã suy luận thuần: Detect **59,83 ms** (34,2%), OCR **112,55 ms** (64,3%), còn lại tiền/hậu xử lý ⇒ Tổng **175,24 ms** mỗi biển; E2E p50 = 406 ms
 
 **Speaker notes** *(45 s)*
-> Về hiệu năng trên CPU (i5-14600K 20 luồng), độ trễ p50 đạt 406 ms. Phân rã độ trễ cho thấy tầng OCR chiếm tới 73,9% thời gian (300 ms), trong khi YOLO11n chỉ tốn 35 ms. Điều này chỉ ra hướng tối ưu hiệu năng tương lai là xuất mô hình OCR sang ONNX/OpenVINO.
+> Về hiệu năng trên CPU (i5-14600K), phân rã suy luận thuần cho thấy tầng OCR chiếm tới 64,3% thời gian (112,55 ms mỗi biển), trong khi YOLO11n chỉ tốn khoảng 60 ms. Độ trễ đầu-cuối p50 đạt 406 ms. Điều này chỉ ra hướng tối ưu hiệu năng tương lai là xuất mô hình OCR sang ONNX/OpenVINO để cắt đuôi độ trễ.
 
 ---
 
@@ -326,7 +326,7 @@ Mỗi slide gồm bốn phần:
 - `docker compose up` — **một lệnh** đóng gói hoàn chỉnh
 
 **Speaker notes** *(40 s)*
-> Hệ thống đạt 1.000 test cases tự động với độ bao phủ tầng nghiệp vụ 87,7%. Chạy thử nghiệm chịu tải 15 phút với 2.028 yêu cầu đạt tỉ lệ thành công 100%, không rò rỉ bộ nhớ, và đóng gói Docker chạy thật chỉ với 1 lệnh.
+> Hệ thống đạt 1.002 test cases tự động với độ bao phủ tầng nghiệp vụ 87,7%. Chạy thử nghiệm chịu tải 15 phút với 2.028 yêu cầu đạt tỉ lệ thành công 100%, không rò rỉ bộ nhớ, và đóng gói Docker chạy thật chỉ với 1 lệnh.
 
 ---
 
@@ -336,7 +336,7 @@ Mỗi slide gồm bốn phần:
 - Bảng ma trận đối chiếu 7 nhóm chỉ tiêu chính (✅ Đạt mục tiêu · 🟡 Đạt ngưỡng tối thiểu · ❌ Chưa đạt)
 
 **Speaker notes** *(45 s)*
-> Bảng tổng kết đối chiếu 7 chỉ tiêu chính: Đạt mục tiêu ở Phát hiện (mAP 0,983), Độ tin cậy (100%) và Phần mềm; Đạt ngưỡng ở Đọc từng ký tự (94,54%) và Độ trễ p95 (1.143ms); Chưa đạt ở Đọc cả chuỗi biển 2 dòng và FPS Webcam.
+> Bảng tổng kết đối chiếu 7 chỉ tiêu chính: Đạt mục tiêu ở Phát hiện (mAP 0,983), Thời gian thực (5,257 FPS — đo trước khi gỡ trang Webcam khỏi phạm vi), Độ tin cậy (100%) và Phần mềm; Đạt ngưỡng ở Đọc từng ký tự (94,83%) và Độ trễ p95 (1.143ms); Chưa đạt ở Đọc cả chuỗi biển 2 dòng.
 
 ---
 
@@ -420,10 +420,10 @@ Mỗi slide gồm bốn phần:
 ## S34 — Backup 3 — Phân tích lỗi (Error Analysis)
 
 **Nội dung trên slide**
-- Bảng Top 3 nguyên nhân đọc sai: Cặp ký tự tương đồng `8/B`, `0/D` (46,2%), Mất nét dòng trên (31,5%), Biển màu hiếm (22,3%)
+- Bảng 6 loại lỗi loại trừ lẫn nhau trên 697 ca sai / 2.801 biển (24,88%): Nhầm ký tự E3 chiếm **63,85%**, Thiếu ký tự E4 **10,47%**, Thừa ký tự E5 **2,58%**, Sai thứ tự E6 = 0
 
 **Speaker notes (Dùng khi Hội đồng hỏi về các case nhận dạng sai)**
-> 46,2% lỗi OCR đến từ các cặp ký tự có hình dạng tương đồng như `8/B` hay `0/D` khi ảnh crop bị mờ; 31,5% lỗi do dòng 1 biển xe máy bị đinh ốc che hoặc bóng râm làm PaddleOCR bỏ sót seri.
+> Trong 697 ca sai trên 2.801 biển, nhóm phân loại được 6 kiểu lỗi loại trừ lẫn nhau. Chiếm đa số là nhầm ký tự do hình dạng tương đồng (445 ca, 63,85%), kế đến là mất trọn nét một dòng của biển xe máy (73 ca). Riêng sai thứ tự ghép nửa trên/dưới là đúng bằng không — chứng tỏ thuật toán split-then-hstack luôn ghép đúng thứ tự đọc.
 
 ---
 

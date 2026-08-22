@@ -4,19 +4,21 @@
 **Ngày cập nhật:** 20/07/2026 (đo lại trên mô hình chính thức `models/best.pt`; số lượng test cập nhật theo lần chạy hồi quy ghi tại [13-refactor-result.json](13-refactor-result.json))
 **Trạng thái:** Bộ kiểm thử chạy sạch (**882 test thu thập / 881 đạt, 1 `xfail`, 0 fail**). **NFR-P1 ĐẠT** trên `best.pt` (5.857 ms → **731 ms** client-side / **780 ms** in-process p95). Rò rỉ dữ liệu **đã xử lý** bằng bộ `yolo_v3`; detection đo trên `best.pt` đạt cả bốn chỉ tiêu (mAP@0.5 0,9829 / mAP@0.5:0.95 0,7834). Nút thắt còn lại là **NFR-A4/A5/A6: độ chính xác OCR biển 2 dòng** (KHÔNG ĐẠT — kết quả thật, xem báo cáo OCR).
 
-> ## ⚠ Ba con số trong báo cáo này đã lỗi thời (cập nhật 02/08/2026)
+> ## ⚠ Bốn nhóm số liệu trong báo cáo này đã lỗi thời (cập nhật 22/08/2026)
 >
 > Số liệu dưới đây **giữ nguyên như đã đo ngày 19–20/07/2026** — đây là bản ghi
-> của một lần đo, không phải trạng thái hiện tại. Ba chỗ đã đổi:
+> của một lần đo, không phải trạng thái hiện tại. Bốn chỗ đã đổi:
 >
 > | Trong báo cáo này | Hiện tại | Nguồn |
 > |---|---|---|
 > | 882 test thu thập / 881 đạt | **1.002 thu thập / 1.002 đạt**, 0 `xfail` | lượt chạy mới nhất |
+> | Khối OCR (mục 7.2 và §10): A4 = 0,8734 · A5 = 0,6098 · A6 = 0,6555 · chênh hai bố cục 36,8 điểm · hậu xử lý +4,57 điểm (128 biển) | **A4 = 0,9483 · A5 = 0,6373 · A6 = 0,7701** · chênh **23,07 điểm** · hậu xử lý **+13,28 điểm** (372 biển) | [41](41-measured-confusion-tables.md) |
 > | **NFR-P1 ĐẠT**, p95 731 ms | 🟡 **chỉ đạt sàn**, p95 **1.143 ms** | [27](27-retry-ladder-cost-benefit.md) |
 > | NFR-P2/P3/R4/R5 chưa đo | **P2 ✅ 5,257 FPS** · P3 ✅ 0,746× · R4 ✅ 100% · R5 ✅ 0 mất | [33-runtime-nfr.json](33-runtime-nfr.json) |
 >
 > NFR-P1 thoái lui **có chủ ý**: bậc thang thử-lại mua thêm 34 biển đọc đúng và
-> trả bằng đuôi độ trễ. Cùng nguyên nhân đó làm NFR-P2 trượt sàn.
+> trả bằng đuôi độ trễ. Lần đo P2 = 2,379 FPS trước đó đã bị bác bỏ vì máy bận —
+> xem [`38-runtime-backend-and-nfr-p2.md`](38-runtime-backend-and-nfr-p2.md).
 
 ---
 
@@ -1028,7 +1030,7 @@ Xếp theo mức độ nghiêm trọng.
   Toàn bộ khoảng cách nằm ở **biển 2 dòng** (char_acc 0,846 so với 0,990 biển 1
   dòng; chênh A6 36,8 điểm). Biển 2 dòng chiếm 79,8% tập nhãn (xe máy) nên kéo tổng
   xuống. Chi tiết: [04-ocr-report.md](04-ocr-report.md).
-- **NFR-P2/P3 (webcam/video), A9 (điều kiện ảnh), R5 (CSDL sau restart) chưa đo.**
+- **NFR-A9 (điều kiện ảnh) chưa đo.** R5 (CSDL sau restart) đã đo đạt ở mục 7.3 — 0 bản ghi mất qua `TerminateProcess`; NFR-P2/P3 cũng đã đo xong (xem banner đầu báo cáo).
 
 **Điều đã được chứng minh:** NFR-P1 **đạt** trên `best.pt` (731/780 ms p95, đã giải
 quyết mâu thuẫn 5.857 ms), detection **đạt cả bốn chỉ tiêu** trên split v3 sạch rò

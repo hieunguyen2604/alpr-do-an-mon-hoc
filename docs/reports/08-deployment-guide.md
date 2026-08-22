@@ -227,8 +227,10 @@ lần sự thật.** Luôn dùng `127.0.0.1` khi đo.
 
 ## 6. Hiệu năng đo được
 
-> Đo trên **Intel Core i5-14600K, container giới hạn 4 nhân**, mô hình
-> **checkpoint epoch 7** (chưa phải mô hình cuối).
+> Đo trên **Intel Core i5-14600K, container giới hạn 4 nhân**. **Mục 6.1 đã đo
+> lại ngày 14/08/2026 trên `models/best.pt`** — bản giao hàng hiện tại. Các mục
+> còn lại (6.2, 6.3) giữ số của lượt đo đầu trên **checkpoint epoch 7** (chưa
+> phải mô hình cuối) — đọc kèm ghi chú này.
 
 ### 6.1. Độ trễ đầu-cuối một ảnh (NFR-P1)
 
@@ -521,10 +523,10 @@ Chưa xử lý ngay vì nguyên tắc: **không sửa cái đang chạy được
 
 ## 11. Việc còn phải làm
 
-1. **Đo lại toàn bộ trên `models/best.pt`** khi huấn luyện xong. Mọi số ở đây
-   là của checkpoint epoch 7.
+1. **Đo lại phần còn lại trên `models/best.pt`.** Mục 6.1 đã đo lại 14/08/2026
+   (30 ảnh, p95 319 ms); mục 6.2–6.3 vẫn là số của checkpoint epoch 7.
 2. **Đo lại NFR-P1 với ≥ 100 mẫu.** p95 trên 10 mẫu không đủ tin cậy để kết
-   luận đạt hay không đạt.
+   luận đạt hay không đạt. *(Lần đo lại 14/08 đã dùng 30 mẫu — vẫn dưới 100.)*
 3. **Đo NFR-P2, P3, P5, P6** trong môi trường Docker.
 4. **Theo dõi rủi ro `cv2`** ở mục 8.
 5. **Cân nhắc giảm dung lượng image 4,12 GB** — `paddlex` kéo theo `polars`,

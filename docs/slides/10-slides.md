@@ -235,15 +235,15 @@ Chênh lệch 2 dòng còn **23,07 điểm**, cùng bậc mốc quốc tế **48
 
 ## Hiệu năng trên CPU — phân rã suy luận thuần
 
-Điểm nghẽn thời gian là OCR (**64,3%**); tầng phát hiện chiếm **34,0%**
+Điểm nghẽn thời gian là OCR (**64,3%**); tầng phát hiện chiếm **34,2%**
 
 | Bước trong pipeline | Ước lượng ban đầu | **Đo thật** | % tổng |
 |---|---|---|---|
 | Giải mã ảnh + tiền xử lý | 50 ms | **2,83 ms** | 1,7% |
-| Phát hiện *(YOLO11n @ 640, CPU)* | 150 ms | **57,27 ms** | **34,0%** |
-| Nhận dạng chữ *(PaddleOCR, mỗi biển)* | 120 ms | **108,28 ms** | **64,3%** |
+| Phát hiện *(YOLO11n @ 640, CPU)* | 150 ms | **59,83 ms** | **34,2%** |
+| Nhận dạng chữ *(PaddleOCR, mỗi biển)* | 120 ms | **112,55 ms** | **64,3%** |
 | Hậu xử lý regex + kiểm tra hợp lệ | 5 ms | **0,03 ms** | 0,0% |
-| **Tổng suy luận thuần cho một biển** | **405 ms** | **168,41 ms** | **100%** |
+| **Tổng suy luận thuần cho một biển** | **405 ms** | **175,24 ms** | **100%** |
 
 ## Phân bố độ trễ suy luận
 
@@ -272,7 +272,7 @@ Phần lớn ảnh hoàn tất dưới 500 ms; độ trễ tập trung ở các 
 | Hiệu năng | p95 **1.143 ms** *(sàn 1.500)* · video **0,785×** · truy vấn **18,7 ms** | 🟡 |
 | Thời gian thực | Webcam **5,257 FPS** *(sàn 3, mục tiêu 5)* | ✅ |
 | Độ tin cậy | Chạy liên tục **100%** · CSDL sống sót khởi động lại **0 mất** | ✅ |
-| Phần mềm | **1.000 test** · bao phủ 87,7% · `docker compose up` | ✅ |
+| Phần mềm | **1.002 test** · bao phủ 87,7% · `docker compose up` | ✅ |
 
 ## Demo trực tiếp
 
@@ -341,7 +341,7 @@ Mô hình nhận dạng ký tự siêu nhẹ chuyên biệt cho văn bản *(Pad
 | **Backbone** | **PP-LCNetV3** *(Lightweight CPU Net)* | Trích xuất chuỗi đặc trưng ký tự cực nhanh trên CPU |
 | **Neck** | **SVTR-HG** *(Gated-Attention Transformer)* | Trích xuất thông tin ngữ cảnh chuỗi ký tự trên ảnh crop cao 64px |
 | **Head & Loss** | **CTC Head** *(Connectionist Temporal Classification)* | Giải mã chuỗi ký tự không cần gán nhãn từng vạch đứng |
-| **Quy mô** | **PP-OCRv5 Mobile** · **4,5 MB** | Đạt **94,54% accuracy từng ký tự** trên vùng cắt biển số |
+| **Quy mô** | **PP-OCRv5 Mobile** · **4,5 MB** | Đạt **94,83% accuracy từng ký tự** trên vùng cắt biển số |
 
 ## Backup 3 — Phân tích lỗi (Error Analysis)
 
@@ -403,6 +403,6 @@ những khẳng định chính của bài
 | Mô hình | YOLO11n · `imgsz 640` · 20 epoch · CPU |
 | Phát hiện | mAP50 **0,983** · mAP50-95 **0,783** |
 | Đúng từng ký tự | **0,9483** |
-| Đúng cả chuỗi | **0,7701** *(1 dòng 0,954 · 2 dòng 0,700)* |
+| Đúng cả chuỗi | **0,7701** *(1 dòng 0,954 · 2 dòng 0,723)* |
 | Độ trễ | p50 **406 ms** · p95 **1.143 ms** |
-| Kiểm thử | **1.000** đạt · bao phủ **87,7%** |
+| Kiểm thử | **1.002** đạt · bao phủ **87,7%** |

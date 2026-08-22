@@ -1,5 +1,24 @@
 # Báo cáo Phase 4 — Khối nhận dạng ký tự (OCR) và hậu xử lý
 
+> ### ⚠ Số liệu dưới đây là lượt đo 19/07/2026 — đã bị thay thế một phần
+>
+> Sau báo cáo này, bảng ánh xạ được dựng lại từ **ma trận nhầm lẫn đo được** và
+> toàn bộ phép đo chạy lại ngày **14/08/2026** trên đúng 2.801 biển. Các ô đổi giá trị:
+>
+> | Ô | Trong báo cáo này | Hiện hành |
+> |---|---:|---:|
+> | NFR-A4 | 0,8734 | **0,9483** 🟡 |
+> | NFR-A5 | 0,6098 | **0,6373** ❌ |
+> | NFR-A6 | 0,6555 | **0,7701** ❌ |
+> | Chênh 1 dòng / 2 dòng (mức chuỗi) | 36,8 điểm | **23,07 điểm** |
+> | Đóng góp hậu xử lý (A6 − A5) | +4,57 điểm *(128 biển)* | **+13,28 điểm** *(372 biển)* |
+>
+> Biển 1 dòng hiện hành: A4 **0,9925** · A5 **0,9418** · A6 **0,9541** — biển 2 dòng:
+> **0,9380** · **0,5600** · **0,7234**. Hai quy tắc sai đích `L → 1`, `7 → T`
+> **đã được sửa** thành `L → 4`, `7 → Z` trong `ai/inference/plate_rules.py` và
+> **đã đo lại** — hai chỗ ghi "chưa áp dụng" trong thân bài nay đã lỗi thời.
+> Nguồn chuẩn: [`41-measured-confusion-tables.md`](41-measured-confusion-tables.md).
+
 > **Trạng thái tài liệu:** kiến trúc, mã nguồn và **phép đo NFR-A4…A8 đã hoàn thành**
 > (2026-07-19, 2.801 biển có nhãn). Mục 6 nay chứa số đo thật.
 >
@@ -693,10 +712,10 @@ Cả hai ký tự trong mỗi cặp đều **hợp lệ ở vị trí chữ cái
 tắc không chạm tới được. Muốn xử lý phải dùng thông tin khác (ví dụ đối chiếu danh sách sê-ri
 đã cấp), nằm ngoài phạm vi hiện tại.
 
-> ⚠️ **Chưa áp dụng các đề xuất trên vào `ai/inference/plate_rules.py`.** Sửa bảng ánh xạ sẽ làm
-> thay đổi NFR-A6; nếu sửa rồi báo cáo lại chính con số cũ thì đó là luật được khớp trên chính
-> tập đánh giá. Quy trình đúng: sửa bảng → **đo lại** → công bố con số mới kèm ghi chú rằng bảng
-> đã được rút ra từ dữ liệu nào.
+> ✅ **Đã áp dụng các đề xuất trên vào `ai/inference/plate_rules.py` và đo lại ngày 14/08/2026**
+> theo đúng trình tự trên: sửa bảng → đo lại → công bố con số mới kèm nguồn dữ liệu rút bảng.
+> Kết quả: NFR-A6 = **0,7701**, đóng góp hậu xử lý **+13,28 điểm** — chi tiết ở
+> [`41-measured-confusion-tables.md`](41-measured-confusion-tables.md).
 > Bảng đề xuất đầy đủ: `plate_rules_review.proposed_updates` trong `04-ocr-accuracy.json`.
 
 ---
