@@ -77,11 +77,11 @@ Mỗi slide gồm bốn phần:
 **Nội dung trên slide**
 - TT 24/2023/TT-BCA đã hết hiệu lực từ 01/01/2025
 - **TT 79/2024/TT-BCA** — Cấu trúc biển, seri, màu sắc
-- **TT 51/2025/TT-BCA** — Thay phụ lục mã tỉnh (34 tỉnh/thành mới)
+- **TT 13/2025 · TT 51/2025/TT-BCA** — Sửa đổi TT 79/2024 · phụ lục mã tỉnh (34 tỉnh/thành mới)
 - **QCVN 08:2024/BCA** — Kích thước và tỉ lệ khung hình
 
 **Speaker notes** *(35 s)*
-> Một điểm quan trọng là căn cứ pháp lý. Đề bài ban đầu dẫn Thông tư 24/2023, nhưng văn bản này đã hết hiệu lực từ đầu năm 2025. Hệ thống của nhóm được xây dựng chuẩn xác theo 3 văn bản đang có hiệu lực mới nhất: Thông tư 79/2024, Thông tư 51/2025 (phụ lục 34 tỉnh thành) và Quy chuẩn QCVN 08:2024 của Bộ Công an.
+> Một điểm quan trọng là căn cứ pháp lý. Đề bài ban đầu dẫn Thông tư 24/2023, nhưng văn bản này đã hết hiệu lực từ đầu năm 2025. Hệ thống của nhóm được xây dựng chuẩn xác theo các văn bản đang có hiệu lực mới nhất: Thông tư 79/2024 cùng hai thông tư sửa đổi là 13/2025 và 51/2025 (phụ lục 34 tỉnh thành), và Quy chuẩn QCVN 08:2024 của Bộ Công an.
 
 ---
 

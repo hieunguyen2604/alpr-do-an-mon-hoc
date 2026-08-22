@@ -77,7 +77,7 @@ Cùng hệ thống, cùng phép đo: **chênh 48,6 điểm** *(số liệu Brazi
 > Đề bài dẫn **TT 24/2023/TT-BCA** — **đã hết hiệu lực từ 01/01/2025**
 
 - **TT 79/2024/TT-BCA** — cấu trúc biển, seri, màu sắc
-- **TT 51/2025/TT-BCA** — thay phụ lục mã tỉnh, còn **34 tỉnh/thành**
+- **TT 13/2025 · TT 51/2025** — sửa đổi TT 79/2024 · phụ lục mã tỉnh còn **34 tỉnh/thành**
 - **QCVN 08:2024/BCA** — kích thước và tỉ lệ
 
 ⇒ Bộ luật xây trên văn bản **đang có hiệu lực**

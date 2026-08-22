@@ -3,7 +3,7 @@
 **Đề tài:** Xây dựng hệ thống nhận dạng biển số xe Việt Nam ứng dụng Trí tuệ nhân tạo (ALPR)  
 **Tác giả:** Nguyễn Minh Hiếu (25410007) · Phạm Công Thành (25410013)  
 **GVHD:** ThS. Cáp Phạm Đình Thăng — Trường ĐH Công nghệ Thông tin, ĐHQG-HCM  
-**Cập nhật:** 16/08/2026  
+**Cập nhật:** 22/08/2026 *(đồng bộ cấu trúc với [`10-slides.md`](10-slides.md) và [`10-slides-outline.md`](10-slides-outline.md))*
 
 ---
 
@@ -48,52 +48,52 @@ gantt
 #### Khối 1: Tổng quan & Đặc thù bài toán *(S1 – S8 · 240s / 4 phút)*
 - **S1 — Bìa:** Thông tin đề tài, sinh viên thực hiện, GVHD, đơn vị.
 - **S2 — Nội dung:** 5 phần chính theo chuẩn bảo vệ.
-- **S3 — Động lực đề tài:** Xe máy chiếm 85–90% lưu lượng VN; độ chính xác đọc biển 2 dòng sụt giảm 48.6 điểm so với 1 dòng.
-- **S4 — Căn cứ pháp lý:** Cập nhật TT 79/2024/TT-BCA, TT 13/2025/TT-BCA, TT 51/2025/TT-BCA (34 tỉnh thành), QCVN 08:2024/BCA.
-- **S5 — Đặc thù biển số VN:** Phân loại cấu trúc theo tỉ lệ khung hình (ngưỡng AR = 2.5).
+- **S3 — Vì sao đề tài này:** Xe máy chiếm ~77 triệu xe, 85–90% lưu lượng VN; chênh 48,6 điểm giữa 1 dòng / 2 dòng *(số liệu RodoSol, Brazil — Laroca 2022)*.
+- **S4 — Căn cứ pháp lý:** Đề bài dẫn TT 24/2023 đã hết hiệu lực ⇒ xây trên TT 79/2024/TT-BCA · TT 13/2025 · TT 51/2025/TT-BCA (34 tỉnh thành) · QCVN 08:2024/BCA.
+- **S5 — Đặc thù biển số VN:** Phân loại cấu trúc theo tỉ lệ khung hình (ngưỡng AR = 2,5).
 - **S6 — Lựa chọn hướng tiếp cận:** So sánh 4 thế hệ $\rightarrow$ chọn pipeline 2-Stage (Detection $\rightarrow$ OCR).
 - **S7 — Lựa chọn mô hình:** YOLO11n (2.6M params) & PP-OCRv5 mobile (4.5 MB) tối ưu cho CPU.
 - **S8 — Mục tiêu và phạm vi:** Hệ thống 5 tầng hoàn chỉnh trên CPU; xác định ranh giới ngoài phạm vi.
 
 #### Khối 2: Kiến trúc & Giải pháp AI *(S9 – S13 · 210s / 3.5 phút)*
 - **S9 — Kiến trúc 5 tầng:** Clean Architecture; tầng AI viết bằng Python thuần, độc lập FastAPI/Pydantic.
-- **S10 — Pipeline AI:** Preprocess $\rightarrow$ YOLO11n Detection $\rightarrow$ Crop/Warp $\rightarrow$ PP-OCRv5 Recognition $\rightarrow$ Rule-based Normalization.
-- **S11 — Pipeline chi tiết tầng Nhận dạng:** Xử lý tách dòng trên/dưới cho biển vuông 2 dòng.
-- **S12 — Bảng ánh xạ nhầm lẫn:** Khắc phục các cặp ký tự dễ nhầm (O/0, I/1, 8/B, D/Đ) dựa trên vị trí ký tự.
-- **S13 — Phân tích thiết kế chi tiết:** Quản lý hàng đợi và luồng xử lý bất đồng bộ.
+- **S10 — Pipeline AI:** Detect → Crop → OCR → Normalizer; không thấy biển ⇒ trả rỗng HTTP 200.
+- **S11 — Xử lý biển 2 dòng:** `split-then-hstack` — giả định một dòng nằm trong hàm mất mát CRNN/CTC.
+- **S12 — Bộ luật hậu xử lý theo vị trí:** Sửa theo vị trí D/L từ chuẩn biển VN, không sửa toàn cục.
+- **S13 — Bậc thang phục hồi khi nhận dạng hỏng:** Cứu dòng trên 209 biển · nắn hình chống méo 34 biển.
 
-#### Khối 3: Dữ liệu & Hệ thống *(S14 – S17 · 150s / 2.5 phút)*
-- **S14 — Bộ dữ liệu:** Cấu trúc tập dữ liệu biển 1 dòng & 2 dòng, phân bố nhãn tỉnh thành và góc chụp.
-- **S15 — Giao diện ứng dụng:** Web UI tích hợp dashboard, live view, tra cứu và xuất báo cáo.
-- **S16 — Backend API & CSDL:** Thiết kế API RESTful, schema SQLite/PostgreSQL quản lý sự kiện nhận dạng.
-- **S17 — Đóng gói & Triển khai:** Docker Compose, Nginx reverse proxy, cấu hình biến môi trường production.
+#### Khối 3: Dữ liệu & Hệ thống *(S14 – S17 · 150s / 2,5 phút)*
+- **S14 — Bộ dữ liệu:** 15.133 ảnh · 15.977 khung (10.592 / 3.027 / 1.514); hợp nhất 7 bộ, loại 44,2% bản sao; pHash ngưỡng Hamming 10.
+- **S15 — Huấn luyện:** YOLO11n `imgsz 640`, 20 epoch, CPU 10,05 giờ; biểu đồ đường cong hội tụ.
+- **S16 — Cơ sở dữ liệu — lưu vết đánh giá:** Lưu song song `raw_ocr_text` và `plate_number` để đo được đóng góp hậu xử lý.
+- **S17 — Giao diện:** 3 trang (Ảnh · Video · Lịch sử), đủ 4 trạng thái chờ/rỗng/lỗi/thành công.
 
-#### Khối 4: Kết quả Thực nghiệm & Đánh giá *(S18 – S26 · 210s / 3.5 phút)*
-- **S18 — Phương pháp đo đạc & Môi trường:** Đo trực tiếp trên CPU phổ thông (x86/ARM), không phụ thuộc GPU.
-- **S19 — Kết quả tầng Phát hiện:** mAP50, Precision, Recall và biểu đồ PR Curve của YOLO11n.
-- **S20 — Kết quả tầng Nhận dạng:** Độ chính xác cấp ký tự (Character Accuracy) và cấp biển số (Full Plate Accuracy).
-- **S21 — So sánh các Engine OCR:** Benchmark đối chứng giữa PP-OCRv5, EasyOCR và Tesseract trên CPU.
-- **S22 — Đo lường độ trễ toàn trình (Latency):** Thời gian từng pha (Detection ~35ms, OCR ~45ms, Normalization ~5ms).
-- **S23 — Thử nghiệm tải & Độ ổn định (NFR):** Stress test API, throughput (RPS), tiêu thụ RAM.
-- **S24 — Phân tích ca lỗi điển hình:** Biển lóa sáng, góc nghiêng cực đại, biển mờ xước, đinh tán che khuất.
-- **S25 — Đánh giá mức độ đáp ứng NFR:** Bảng kiểm chứng các yêu cầu phi chức năng đã cam kết.
-- **S26 — So sánh tổng hợp với các công trình liên quan.**
+#### Khối 4: Kết quả Thực nghiệm & Đánh giá *(S18 – S26 · 210s / 3,5 phút)*
+- **S18 — Kết quả phát hiện:** mAP50 0,983 · mAP50-95 0,783 — đạt cả 4 chỉ tiêu; chênh hai bố cục chỉ 2,09 điểm.
+- **S19 — Kết quả OCR:** A4 = 0,9483 (🟡) · A6 = 0,7701 (❌); khoảng cách dồn ở biển 2 dòng: 0,7234 vs 0,9541.
+- **S20 — Khoảng cách nằm trọn ở biển 2 dòng:** Biểu đồ tách theo bố cục, cùng hệ thống cùng phép đo.
+- **S21 — Đóng góp của hậu xử lý:** Sửa đúng 372 biển, làm hỏng 0; +13,28 điểm đo tách bạch.
+- **S22 — Ba can thiệp thực nghiệm:** +13,28 điểm · cứu dòng trên 209 biển · nắn hình 34 biển; gap còn 23,07 điểm.
+- **S23 — Hiệu năng CPU — phân rã suy luận thuần:** OCR 112,55 ms (64,3%) · Detect 59,83 ms (34,2%) · tổng 175,24 ms/biển.
+- **S24 — Phân bố độ trễ:** p50 406 ms · p95 1.143 ms (đạt sàn 1.500).
+- **S25 — Kiểm thử và triển khai:** 1.002/1.002 test · bao phủ 87,7% · soak 15 phút 2.028 request 0 lỗi · `docker compose up`.
+- **S26 — Đối chiếu chỉ tiêu:** Bảng tổng hợp ✅ / 🟡 / ❌ toàn bộ NFR.
 
-#### Khối 5: Demo, Hạn chế & Kết luận *(S27 – S31 · 90s / 1.5 phút)*
-- **S27 — Demo hệ thống:** Minh họa quy trình nhận diện từ ảnh/video thực tế.
-- **S28 — Đóng góp chính của đề tài:** Giải pháp hoàn chỉnh 5 tầng, chuẩn hóa pháp lý mới nhất, chạy CPU.
-- **S29 — Hạn chế còn tồn tại:** Biển số biến dạng nặng, camera ban đêm thiếu sáng.
-- **S30 — Hướng phát triển:** Edge AI (OpenVINO / TensorRT), tích hợp luồng camera giao thông RTSP.
-- **S31 — Lời cảm ơn & Chuyển sang Q&A.**
+#### Khối 5: Demo, Hạn chế & Kết luận *(S27 – S31 · 90s / 1,5 phút)*
+- **S27 — Demo trực tiếp:** Ảnh ô tô 1 dòng → ảnh xe máy 2 dòng → Video & Lịch sử.
+- **S28 — Hạn chế:** Biển 2 dòng chưa đạt (bộ đọc dòng đơn) · đầu-cuối chưa đo trên tập lớn · 97,7% biển trắng · chưa test xuyên bộ dữ liệu.
+- **S29 — Hướng phát triển:** Ngắn hạn fine-tune recognizer + nhãn chuỗi hiện trường; trung hạn test xuyên bộ dữ liệu + ONNX/OpenVINO.
+- **S30 — Kết luận:** Hệ thống 5 tầng chạy thật · phát hiện đạt cả 4 chỉ tiêu · hậu xử lý +13,28 điểm đo tách bạch.
+- **S31 — Cảm ơn.**
 
 #### Khối Backup (S32 – S38 · Chiếu khi hội đồng đặt câu hỏi)
-- **S32:** Chi tiết ma trận nhầm lẫn (Confusion Matrix).
-- **S33:** Danh mục 34 tỉnh/thành theo Thông tư 51/2025/TT-BCA.
-- **S34:** So sánh chi tiết tài nguyên và tốc độ giữa PyTorch CPU và OpenVINO.
-- **S35:** Quy trình huấn luyện và siêu tham số của mô hình YOLO11n.
-- **S36:** Cấu hình Docker multi-stage build và bảo mật hệ thống.
-- **S37:** Phân tích chi tiết trường hợp biển số đặc biệt (ngoại giao, quân sự, xe biển đỏ).
-- **S38:** Kiến trúc mở rộng cho hệ thống trạm thu phí nhiều làn.
+- **S32 — Backup 1:** Kiến trúc YOLO11n (C3k2, SPPF, C2PSA, anchor-free).
+- **S33 — Backup 2:** Kiến trúc PP-OCRv5 Mobile (PP-LCNetV3, SVTR-HG, CTC head).
+- **S34 — Backup 3:** Phân tích lỗi E1–E6 trên 697 ca sai (E3 nhầm ký tự 63,85%).
+- **S35 — Backup 4:** Bóc tách đóng góp (ablation) gồm cả fine-tune thất bại −7,5 điểm.
+- **S36 — Backup 5:** Siêu tham số đã thực thi (AdamW, batch 8, lr0 0,001) trích `args.yaml`.
+- **S37 — Backup 6:** Tài liệu tham khảo chính (Laroca, PP-OCR, TT/QCVN).
+- **S38 — Backup 7:** Tra nhanh số liệu toàn hệ thống.
 
 ---
 
@@ -108,7 +108,7 @@ gantt
 | **S1** | **Bìa** | Tên đề tài, Môn học (Xử lý ảnh & Ứng dụng), Nhóm SV, Giảng viên phụ trách | 20s |
 | **S2** | **Nội dung** | 5 phần: Đặt vấn đề $\rightarrow$ Phương pháp $\rightarrow$ Cài đặt $\rightarrow$ Kết quả $\rightarrow$ Kết luận | 20s |
 | **S3** | **Đặt vấn đề & Mục tiêu** | Bài toán nhận diện biển số xe máy và ô tô tại Việt Nam | 40s |
-| **S4** | **Đặc thù bài toán biển số VN** | Biển 1 dòng dài vs Biển 2 dòng vuông; phân loại theo Aspect Ratio 2.5 | 40s |
+| **S4** | **Đặc thù bài toán biển số VN** | Biển 1 dòng dài vs Biển 2 dòng vuông; phân loại theo Aspect Ratio 2,5 | 40s |
 | **S5** | **Kiến trúc Pipeline xử lý ảnh** | Sơ đồ toàn trình: Ảnh gốc $\rightarrow$ BBox $\rightarrow$ Crop/Warp $\rightarrow$ OCR $\rightarrow$ Text | 50s |
 | **S6** | **Tầng phát hiện biển số (YOLO11n)** | Cấu trúc mô hình, dữ liệu gán nhãn, quá trình huấn luyện | 50s |
 | **S7** | **Tầng nhận dạng ký tự (PP-OCRv5)** | Cơ chế nhận dạng, thuật toán phân vùng 2 dòng | 50s |

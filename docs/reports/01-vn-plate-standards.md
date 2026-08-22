@@ -338,7 +338,7 @@ Ngoài seri thông thường, tồn tại các ký hiệu đặc biệt **2 ký 
 | `TĐ` | Xe sản xuất lắp ráp trong nước được thí điểm |
 | `MĐ` | Xe máy điện |
 
-Nguồn: [tổng hợp quy định biển số từ 2025](https://khobiensodep.vn/blogs/news/nhung-quy-dinh-ban-can-biet-ve-bien-so-xe-ke-tu-nam-2025) (nguồn thương mại, độ tin cậy trung bình — cần đối chiếu toàn văn TT 79/2024).
+Danh mục ký hiệu theo **TT 79/2024/TT-BCA**; cột ý nghĩa tổng hợp qua nguồn thứ cấp (Kho Biển Số Đẹp, 2025 — xem mục Tài liệu tra cứu số 24, *nguồn thương mại*) — **chưa đối chiếu hết toàn văn**, cần kiểm tra chéo trước khi công bố.
 
 > **Hai bẫy kỹ thuật ở nhóm ký hiệu đặc biệt:**
 >

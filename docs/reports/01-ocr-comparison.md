@@ -59,7 +59,7 @@ Quan hệ giữa hai giai đoạn là **quan hệ nhân quả một chiều và 
 
 Bốn hệ quả trực tiếp cho việc chọn engine:
 
-1. **Tập ký tự đóng là tài sản, không phải hạn chế.** Biển số Việt Nam chỉ dùng A–Z và 0–9, **không dấu**. Do đó toàn bộ ưu thế "hỗ trợ tiếng Việt" của các engine (`latin_PP-OCRv5_mobile_rec`, EasyOCR `vi`, Tesseract `vie`) là **vô nghĩa** với bài toán này. Tệ hơn, model đa ngôn ngữ hệ Latin mang theo từ điển hàng trăm ký tự kèm dấu, làm **tăng không gian nhầm lẫn** và **tăng thời gian suy luận** — tài liệu PaddleOCR ghi rõ PP-OCRv5 dùng từ điển lớn hơn trong model nhận dạng, làm tăng thời gian suy luận so với các phiên bản trước ([PaddleOCR docs](https://www.paddleocr.ai/main/en/version3.x/algorithm/PP-OCRv5/PP-OCRv5.html)). Chênh lệch đo được: PP-OCRv4_mobile_rec chạy 17.48 ms còn PP-OCRv5_mobile_rec chạy 21.20 ms trên cùng phần cứng ([PaddleOCR docs](https://www.paddleocr.ai/main/en/version3.x/module_usage/text_recognition.html)).
+1. **Tập ký tự đóng là tài sản, không phải hạn chế.** Biển số Việt Nam chỉ dùng A–Z và 0–9, **không dấu**. Do đó toàn bộ ưu thế "hỗ trợ tiếng Việt" của các engine (`latin_PP-OCRv5_mobile_rec`, EasyOCR `vi`, Tesseract `vie`) là **vô nghĩa** với bài toán này. Tệ hơn, model đa ngôn ngữ hệ Latin mang theo từ điển hàng trăm ký tự kèm dấu, làm **tăng không gian nhầm lẫn** và **tăng thời gian suy luận** — tài liệu PaddleOCR ghi rõ PP-OCRv5 dùng từ điển lớn hơn trong model nhận dạng, làm tăng thời gian suy luận so với các phiên bản trước ([PaddleOCR docs](https://www.paddleocr.ai/main/en/version3.x/algorithm/PP-OCRv5/PP-OCRv5.html)). Chênh lệch đo được: PP-OCRv4_mobile_rec chạy 17,48 ms còn PP-OCRv5_mobile_rec chạy 21,20 ms trên cùng phần cứng ([PaddleOCR docs](https://www.paddleocr.ai/main/en/version3.x/module_usage/text_recognition.html)).
 
 2. **Ràng buộc cú pháp bù được điểm yếu whitelist.** Vì định dạng biển VN rất chặt, một lớp hậu xử lý regex có thể ép `O→0`, `I→1`, `B→8`, `S→5` theo vị trí. Đây chính là lớp `PlateNormalizer` đã có trong kiến trúc ([system-architecture.md](../architecture/system-architecture.md#3-luồng-xử-lý-ai)).
 
@@ -89,24 +89,24 @@ Bốn hệ quả trực tiếp cho việc chọn engine:
 
 | Model | Thời gian CPU | Kích thước | Độ chính xác | Nguồn |
 |---|---:|---:|---:|---|
-| PP-OCRv5_mobile_det | 57.77 ms | 4.7 MB | Hmean 79.0% | [PaddleX docs](https://paddlepaddle.github.io/PaddleX/3.4/en/module_usage/tutorials/ocr_modules/text_detection.html) |
-| PP-OCRv5_mobile_rec | 21.20 ms | 16 MB | 81.29% | [PaddleOCR docs](https://www.paddleocr.ai/main/en/version3.x/module_usage/text_recognition.html) |
-| PP-OCRv5_server_det | 383.15 ms | 84.3 MB | Hmean 83.8% | [PaddleX docs](https://paddlepaddle.github.io/PaddleX/3.4/en/module_usage/tutorials/ocr_modules/text_detection.html) |
-| PP-OCRv5_server_rec | 31.21 ms | 81 MB | 86.38% | [PaddleOCR docs](https://www.paddleocr.ai/main/en/version3.x/module_usage/text_recognition.html) |
-| PP-OCRv4_mobile_det | 56.60 ms | 4.7 MB | Hmean 63.8% | [PaddleX docs](https://paddlepaddle.github.io/PaddleX/3.4/en/module_usage/tutorials/ocr_modules/text_detection.html) |
-| PP-OCRv4_mobile_rec | 17.48 ms | 10.5 MB | 78.74% | [PaddleOCR docs](https://www.paddleocr.ai/main/en/version3.x/module_usage/text_recognition.html) |
+| PP-OCRv5_mobile_det | 57,77 ms | 4,7 MB | Hmean 79,0% | [PaddleX docs](https://paddlepaddle.github.io/PaddleX/3.4/en/module_usage/tutorials/ocr_modules/text_detection.html) |
+| PP-OCRv5_mobile_rec | 21,20 ms | 16 MB | 81,29% | [PaddleOCR docs](https://www.paddleocr.ai/main/en/version3.x/module_usage/text_recognition.html) |
+| PP-OCRv5_server_det | 383,15 ms | 84,3 MB | Hmean 83,8% | [PaddleX docs](https://paddlepaddle.github.io/PaddleX/3.4/en/module_usage/tutorials/ocr_modules/text_detection.html) |
+| PP-OCRv5_server_rec | 31,21 ms | 81 MB | 86,38% | [PaddleOCR docs](https://www.paddleocr.ai/main/en/version3.x/module_usage/text_recognition.html) |
+| PP-OCRv4_mobile_det | 56,60 ms | 4,7 MB | Hmean 63,8% | [PaddleX docs](https://paddlepaddle.github.io/PaddleX/3.4/en/module_usage/tutorials/ocr_modules/text_detection.html) |
+| PP-OCRv4_mobile_rec | 17,48 ms | 10,5 MB | 78,74% | [PaddleOCR docs](https://www.paddleocr.ai/main/en/version3.x/module_usage/text_recognition.html) |
 
 *Toàn bộ số liệu CPU đo trên Intel Xeon Gold 6271C @ 2.60 GHz, chế độ FP32, **chế độ thường (normal mode)**. Tập đánh giá detection là bộ đa ngôn ngữ 2677 ảnh (Trung, Trung phồn thể, Anh, Nhật), bao phủ cảnh đường phố, ảnh web, tài liệu, chữ viết tay, ảnh mờ/xoay/biến dạng ([PaddleX docs](https://paddlepaddle.github.io/PaddleX/3.4/en/module_usage/tutorials/ocr_modules/text_detection.html), truy cập 19/07/2026).*
 
-> **Ghi chú về phiên bản nguồn — cần thống nhất toàn bộ tài liệu Phase 1.** Tài liệu này trích **PaddleX 3.4** (phiên bản mới hơn), trong khi [01-yolo-comparison.md](01-yolo-comparison.md) trích **PaddleX 3.2** cho **cùng các con số** 57.77 ms / 383.15 ms / 21.20 ms. Đã đối chiếu lại trực tiếp trang PaddleX 3.4 ngày 19/07/2026: **cả ba con số vẫn giữ nguyên** giữa hai phiên bản tài liệu, nên không có mâu thuẫn số liệu — chỉ là khác phiên bản URL được trích. **Thống nhất dùng PaddleX 3.4** cho toàn bộ Phase 1; cần sửa 5 trích dẫn PaddleX 3.2 trong `01-yolo-comparison.md` cho khớp. Các trang `www.paddleocr.ai` cũng đã thống nhất dùng lược đồ **`https://`** (tài liệu này trước đây dùng `http://`).
+> **Ghi chú về phiên bản nguồn — cần thống nhất toàn bộ tài liệu Phase 1.** Tài liệu này trích **PaddleX 3.4** (phiên bản mới hơn), trong khi [01-yolo-comparison.md](01-yolo-comparison.md) trích **PaddleX 3.2** cho **cùng các con số** 57,77 ms / 383,15 ms / 21,20 ms. Đã đối chiếu lại trực tiếp trang PaddleX 3.4 ngày 19/07/2026: **cả ba con số vẫn giữ nguyên** giữa hai phiên bản tài liệu, nên không có mâu thuẫn số liệu — chỉ là khác phiên bản URL được trích. **Thống nhất dùng PaddleX 3.4** cho toàn bộ Phase 1; cần sửa 5 trích dẫn PaddleX 3.2 trong `01-yolo-comparison.md` cho khớp. Các trang `www.paddleocr.ai` cũng đã thống nhất dùng lược đồ **`https://`** (tài liệu này trước đây dùng `http://`).
 
-**Hai quan sát đáng chú ý.** Thứ nhất, `mobile_det` **rẻ hơn `server_det` 6.6 lần** về thời gian CPU (57.77 ms so với 383.15 ms) mà chỉ kém 4.8 điểm Hmean — với môi trường CPU-only của đồ án, bản server gần như bị loại ngay. Thứ hai, PP-OCRv5 cải thiện **+15.2 điểm Hmean** so với PP-OCRv4 ở phần detection *với cùng kích thước 4.7 MB* (79.0% so với 63.8%) — một cải tiến "miễn phí" hiếm gặp.
+**Hai quan sát đáng chú ý.** Thứ nhất, `mobile_det` **rẻ hơn `server_det` 6.6 lần** về thời gian CPU (57,77 ms so với 383,15 ms) mà chỉ kém 4,8 điểm Hmean — với môi trường CPU-only của đồ án, bản server gần như bị loại ngay. Thứ hai, PP-OCRv5 cải thiện **+15,2 điểm Hmean** so với PP-OCRv4 ở phần detection *với cùng kích thước 4,7 MB* (79,0% so với 63,8%) — một cải tiến "miễn phí" hiếm gặp.
 
 **Chất lượng trên ảnh xoay — rất liên quan tới biển số chụp nghiêng.** Trên OmniDocBench (normalized edit distance, thấp hơn là tốt hơn), PP-OCRv5 đạt **0.012 ở hạng mục Rotate90**, vượt cả GPT-4o (0.132) và Qwen3-VL-235B (0.029) ([PP-OCRv5 preprint](https://arxiv.org/html/2603.24373v1)).
 
 > **Trình bày cân bằng — bắt buộc.** PP-OCRv5 chỉ thắng ở hạng mục ảnh xoay. Ở **cột tổng thể**, Qwen3-VL-235B đạt 0.026 so với PP-OCRv5 0.067; ở **cột tiếng Anh**, cả GPT-4o (0.020) và Qwen3-VL-235B (0.016) đều vượt PP-OCRv5 (0.058) ([PP-OCRv5 preprint](https://arxiv.org/html/2603.24373v1)). Nếu quyển đồ án chỉ nêu thế mạnh Rotate90 mà giấu hai cột kia thì đó là trích dẫn chọn lọc. Luận điểm đúng là: *PP-OCRv5 đạt hiệu năng cạnh tranh với model lớn hơn hàng nghìn lần, và đặc biệt mạnh ở ảnh xoay*.
 
-**PP-OCRv6 — phát hành 11/06/2026.** Ba bậc model với số tham số: Tiny **1.5M** (0.43M det + 1.1M rec), Small **7.7M** (2.48M + 5.2M), Medium **34.5M** (15.5M + 19M) ([PP-OCRv6, arXiv:2606.13108](https://arxiv.org/html/2606.13108v1)). Thời gian CPU trên Intel Xeon 8350C với OpenVINO: **Tiny 0.20 s/ảnh, Small 0.59 s, Medium 1.40 s** — bản Tiny nhanh hơn PP-OCRv5_mobile (0.78 s cùng hàng) **3.9 lần** ([PP-OCRv6](https://arxiv.org/html/2606.13108v1)). Độ chính xác nhận dạng: Tiny 73.5%, Small 81.3%, Medium 83.2%; detection Hmean: Tiny 80.6%, Small 84.1%, Medium 86.2% ([PP-OCRv6](https://arxiv.org/html/2606.13108v1)). Bài báo phát biểu bản Medium vượt PP-OCRv5_server **+5.1 điểm** nhận dạng và **+4.6 điểm** detection Hmean, đồng thời vượt Qwen3-VL-235B **8.3 điểm** trong khi dùng ít hơn khoảng **6800 lần** tham số ([PP-OCRv6](https://arxiv.org/html/2606.13108v1)).
+**PP-OCRv6 — phát hành 11/06/2026.** Ba bậc model với số tham số: Tiny **1.5M** (0.43M det + 1.1M rec), Small **7.7M** (2.48M + 5.2M), Medium **34.5M** (15.5M + 19M) ([PP-OCRv6, arXiv:2606.13108](https://arxiv.org/html/2606.13108v1)). Thời gian CPU trên Intel Xeon 8350C với OpenVINO: **Tiny 0.20 s/ảnh, Small 0.59 s, Medium 1.40 s** — bản Tiny nhanh hơn PP-OCRv5_mobile (0.78 s cùng hàng) **3.9 lần** ([PP-OCRv6](https://arxiv.org/html/2606.13108v1)). Độ chính xác nhận dạng: Tiny 73,5%, Small 81,3%, Medium 83,2%; detection Hmean: Tiny 80,6%, Small 84,1%, Medium 86,2% ([PP-OCRv6](https://arxiv.org/html/2606.13108v1)). Bài báo phát biểu bản Medium vượt PP-OCRv5_server **+5,1 điểm** nhận dạng và **+4,6 điểm** detection Hmean, đồng thời vượt Qwen3-VL-235B **8,3 điểm** trong khi dùng ít hơn khoảng **6800 lần** tham số ([PP-OCRv6](https://arxiv.org/html/2606.13108v1)).
 
 > ### ⚠️ Bắt buộc đọc kèm: hai bộ số PP-OCRv5_server KHÔNG cùng tập đánh giá
 >
@@ -114,14 +114,14 @@ Bốn hệ quả trực tiếp cho việc chọn engine:
 >
 > | PP-OCRv5_server | Theo bảng PaddleX/PaddleOCR docs (đầu Mục 2.1) | Theo bài PP-OCRv6 (Bảng 4 và 6) |
 > |---|---:|---:|
-> | Nhận dạng | **86.38%** | **78.1%** |
-> | Detection Hmean | **83.8%** | **81.6%** |
+> | Nhận dạng | **86,38%** | **78,1%** |
+> | Detection Hmean | **83,8%** | **81,6%** |
 >
 > Bài PP-OCRv6 tính chênh lệch trên **baseline của chính nó**: 83.2 − 78.1 = **+5.1** điểm nhận dạng; 86.2 − 81.6 = **+4.6** điểm Hmean — hoàn toàn nhất quán nội bộ ([PP-OCRv6](https://arxiv.org/html/2606.13108v1)).
 >
-> Nếu lấy nhầm baseline từ bảng PaddleX (86.38% / 83.8%) thì kết luận **đảo chiều**: v6 Medium sẽ *thấp hơn* 3.2 điểm nhận dạng và chỉ cao hơn 2.4 điểm detection. **Đây là phép trừ SAI** vì ghép số đo trên hai tập đánh giá khác nhau — đúng loại lỗi mà [Mục 3.2](#32-đánh-giá-độ-tin-cậy-của-nguồn-trong-bảng) cảnh báo.
+> Nếu lấy nhầm baseline từ bảng PaddleX (86,38% / 83,8%) thì kết luận **đảo chiều**: v6 Medium sẽ *thấp hơn* 3,2 điểm nhận dạng và chỉ cao hơn 2,4 điểm detection. **Đây là phép trừ SAI** vì ghép số đo trên hai tập đánh giá khác nhau — đúng loại lỗi mà [Mục 3.2](#32-đánh-giá-độ-tin-cậy-của-nguồn-trong-bảng) cảnh báo.
 >
-> **Quy tắc khi viết vào quyển:** chỉ trích dẫn cặp "+5.1 / +4.6" **kèm nguyên văn baseline 78.1% / 81.6% của bài v6**, và tuyệt đối **không đặt cạnh** bảng PaddleX ở đầu mục này như thể cùng một thang đo. **Cần bổ sung ở Phase 4:** bài PP-OCRv6 không mô tả đầy đủ tập đánh giá của nó, nên **chưa kiểm chứng được** vì sao baseline v5_server lệch tới 8.3 điểm so với số PaddleX công bố.
+> **Quy tắc khi viết vào quyển:** chỉ trích dẫn cặp "+5.1 / +4.6" **kèm nguyên văn baseline 78,1% / 81,6% của bài v6**, và tuyệt đối **không đặt cạnh** bảng PaddleX ở đầu mục này như thể cùng một thang đo. **Cần bổ sung ở Phase 4:** bài PP-OCRv6 không mô tả đầy đủ tập đánh giá của nó, nên **chưa kiểm chứng được** vì sao baseline v5_server lệch tới 8,3 điểm so với số PaddleX công bố.
 
 > **Cần bổ sung ở Phase 4:** kích thước lưu trữ (MB) của các model PP-OCRv6 **không được công bố trong bài báo** — bài chỉ báo cáo số tham số. Phải lấy con số này từ model zoo chính thức trước khi đưa vào quyển.
 >
@@ -183,17 +183,17 @@ Thêm một bất lợi hình học: việc ép ảnh về ô vuông 384×384 **
 
 | Model | Tham số | FUNSD | CORD | Tốc độ | Nguồn |
 |---|---:|---:|---:|---:|---|
-| db_resnet50 (det) | 25.4M | R 83.56 / P 86.68 | R 92.61 / P 86.39 | 1.1 s/it (bs=1) | [docTR](https://mindee.github.io/doctr/latest/using_doctr/using_models.html) |
-| crnn_vgg16_bn (rec) | 15.8M | 88.21% | 95.47% | 0.6 s/it (**bs=64**) | [docTR](https://mindee.github.io/doctr/latest/using_doctr/using_models.html) |
-| crnn_mobilenet_v3_small (rec) | 2.1M | 87.25% | 93.91% | 0.05 s/it (**bs=64**) | [docTR](https://mindee.github.io/doctr/latest/using_doctr/using_models.html) |
-| parseq (rec) | 23.8M | 88.53% | 95.56% | 2.2 s/it (**bs=64**) | [docTR](https://mindee.github.io/doctr/latest/using_doctr/using_models.html) |
+| db_resnet50 (det) | 25,4M | R 83,56 / P 86,68 | R 92,61 / P 86,39 | 1,1 s/it (bs=1) | [docTR](https://mindee.github.io/doctr/latest/using_doctr/using_models.html) |
+| crnn_vgg16_bn (rec) | 15,8M | 88,21% | 95,47% | 0,6 s/it (**bs=64**) | [docTR](https://mindee.github.io/doctr/latest/using_doctr/using_models.html) |
+| crnn_mobilenet_v3_small (rec) | 2,1M | 87,25% | 93,91% | 0,05 s/it (**bs=64**) | [docTR](https://mindee.github.io/doctr/latest/using_doctr/using_models.html) |
+| parseq (rec) | 23,8M | 88,53% | 95,56% | 2,2 s/it (**bs=64**) | [docTR](https://mindee.github.io/doctr/latest/using_doctr/using_models.html) |
 
-> ⚠️ **Cảnh báo đọc số liệu.** Cả **ba** model recognition trong bảng đều đo ở **cùng batch size 64** — chú thích bảng docTR ghi rõ: *"Seconds per iteration (with a batch size of 64) is computed after a warmup phase of 100 tensors, by measuring the average number of processed tensors per second over 1000 samples"* ([docTR](https://mindee.github.io/doctr/latest/using_doctr/using_models.html), truy cập 19/07/2026). Do đó `0.6 s/it` của `crnn_vgg16_bn` tương đương khoảng **9.4 ms mỗi ảnh cắt**. Nếu trình bày `0.6 s` như thời gian cho một crop biển số thì sai lệch **64 lần**. Phải luôn ghi kèm batch size.
+> ⚠️ **Cảnh báo đọc số liệu.** Cả **ba** model recognition trong bảng đều đo ở **cùng batch size 64** — chú thích bảng docTR ghi rõ: *"Seconds per iteration (with a batch size of 64) is computed after a warmup phase of 100 tensors, by measuring the average number of processed tensors per second over 1000 samples"* ([docTR](https://mindee.github.io/doctr/latest/using_doctr/using_models.html), truy cập 19/07/2026). Do đó `0,6 s/it` của `crnn_vgg16_bn` tương đương khoảng **9,4 ms mỗi ảnh cắt**. Nếu trình bày `0.6 s` như thời gian cho một crop biển số thì sai lệch **64 lần**. Phải luôn ghi kèm batch size.
 
 **Đánh giá.** Vì cả ba model dùng **chung một batch size (64)** và chung quy trình đo, các tỷ số dưới đây là so sánh **cùng điều kiện** — hợp lệ để đối chiếu trực tiếp:
 
-- `parseq` chỉ hơn `crnn_vgg16_bn` **0.32 điểm** trên FUNSD nhưng chậm hơn **3.7 lần** (2.2 s/it so với 0.6 s/it, cùng bs=64) — không đáng cho ALPR trên CPU.
-- Ứng viên đáng chú ý nhất lại là **`crnn_mobilenet_v3_small`**: chỉ kém `crnn_vgg16_bn` khoảng 1 điểm nhưng nhanh hơn **12 lần** (0.05 s/it so với 0.6 s/it, cùng bs=64) với 2.1M tham số.
+- `parseq` chỉ hơn `crnn_vgg16_bn` **0,32 điểm** trên FUNSD nhưng chậm hơn **3.7 lần** (2,2 s/it so với 0,6 s/it, cùng bs=64) — không đáng cho ALPR trên CPU.
+- Ứng viên đáng chú ý nhất lại là **`crnn_mobilenet_v3_small`**: chỉ kém `crnn_vgg16_bn` khoảng 1 điểm nhưng nhanh hơn **12 lần** (0,05 s/it so với 0,6 s/it, cùng bs=64) với 2,1M tham số.
 
 > ⚠️ **Hạn chế còn lại.** docTR **không công bố phần cứng** dùng cho bảng tốc độ này. Vì vậy các tỷ số trên chỉ so sánh **tương đối giữa các model với nhau**, **không** dùng được làm dự báo thời gian tuyệt đối trên CPU máy đồ án — phải tự đo ở Phase 4.
 
@@ -231,10 +231,10 @@ Không phải engine mới mà là **runtime thay thế**, và đây là một t
 
 | Runtime | FUNSD (199 trang) | CORD (900 trang) |
 |---|---:|---:|
-| docTR (PyTorch) | 1.29 s/trang | 0.60 s/trang |
-| OnnxTR | 0.57 s/trang | 0.25 s/trang |
-| OnnxTR 8-bit lượng tử | 0.38 s/trang | 0.14 s/trang |
-| **OnnxTR + OpenVINO** | **0.15 s/trang** | **0.14 s/trang** |
+| docTR (PyTorch) | 1,29 s/trang | 0,60 s/trang |
+| OnnxTR | 0,57 s/trang | 0,25 s/trang |
+| OnnxTR 8-bit lượng tử | 0,38 s/trang | 0,14 s/trang |
+| **OnnxTR + OpenVINO** | **0,15 s/trang** | **0,14 s/trang** |
 
 Tăng tốc tối đa **8.6 lần** so với PyTorch gốc. Đây là **số liệu CPU thật**, đo trên phần cứng tiêu dùng — bằng chứng vững chắc nhất trong toàn bộ khảo sát cho luận điểm export ONNX + OpenVINO, và trực tiếp phục vụ phương án ứng phó rủi ro **R-03** ([project-scope.md](../00-requirements/project-scope.md#7-rủi-ro-và-phương-án-ứng-phó)).
 
@@ -246,11 +246,11 @@ Tăng tốc tối đa **8.6 lần** so với PyTorch gốc. Đây là **số li�
 
 Hai công trình này không phải engine dùng ngay được (không có bản pip, không có model tiếng Việt), nhưng **cung cấp kỹ thuật cốt lõi** cho Mục 4 và là cột mốc so sánh cho phần đánh giá.
 
-**LPTR-AFLNet** đạt **98.87%** tổng thể và **99.37% riêng trên biển 2 dòng**, với chỉ **2.7M tham số** và **2459 FPS** trên GPU TITAN X ([LPTR-AFLNet](https://arxiv.org/html/2507.16362v2)). So sánh cùng bảng: LPRNet 98.35% / 3072 FPS / 1.8M; EULpr 98.64% / 1547 FPS / 3.9M.
+**LPTR-AFLNet** đạt **98,87%** tổng thể và **99,37% riêng trên biển 2 dòng**, với chỉ **2.7M tham số** và **2459 FPS** trên GPU TITAN X ([LPTR-AFLNet](https://arxiv.org/html/2507.16362v2)). So sánh cùng bảng: LPRNet 98,35% / 3072 FPS / 1.8M; EULpr 98,64% / 1547 FPS / 3.9M.
 
-> **Đính chính ngữ cảnh quan trọng.** Con số 99.37% được báo cáo trong bảng có tiêu đề *"Performance Comparisons on CCPD"*, nhưng mục 3.4 của bài cho biết nhóm tác giả **tự xây tập biển 2 dòng gồm 200.000 ảnh tổng hợp** (chia 8:1:1), dùng ảnh CCPD làm nền. **CCPD gốc không chứa biển 2 tầng.** Phải viết là *"trên tập biển 2 dòng tổng hợp dựng từ CCPD"*, không được viết *"trên CCPD"*.
+> **Đính chính ngữ cảnh quan trọng.** Con số 99,37% được báo cáo trong bảng có tiêu đề *"Performance Comparisons on CCPD"*, nhưng mục 3.4 của bài cho biết nhóm tác giả **tự xây tập biển 2 dòng gồm 200.000 ảnh tổng hợp** (chia 8:1:1), dùng ảnh CCPD làm nền. **CCPD gốc không chứa biển 2 tầng.** Phải viết là *"trên tập biển 2 dòng tổng hợp dựng từ CCPD"*, không được viết *"trên CCPD"*.
 
-**TransLPRNet** đạt **98.70%** trên test set biển 2 dòng, **99.34%** trên CCPD với định vị thô và **99.58%** với định vị tinh, tốc độ tới **167 FPS** ([TransLPRNet, arXiv:2507.17335](https://arxiv.org/abs/2507.17335)).
+**TransLPRNet** đạt **98,70%** trên test set biển 2 dòng, **99,34%** trên CCPD với định vị thô và **99,58%** với định vị tinh, tốc độ tới **167 FPS** ([TransLPRNet, arXiv:2507.17335](https://arxiv.org/abs/2507.17335)).
 
 > **Cần bổ sung ở Phase sau:** cả hai bài đều **không công bố số liệu CPU**. LPTR-AFLNet có 2.7M tham số nhưng 2459 FPS đo trên TITAN X; TransLPRNet không nêu rõ phần cứng cho con số 167 FPS. Chưa đánh giá được liệu chúng có chạy nổi trên CPU-only hay không.
 
@@ -265,15 +265,15 @@ Hai công trình này không phải engine dùng ngay được (không có bản
 | Tiêu chí | **PaddleOCR** (PP-OCRv5 mobile) | **EasyOCR** | **Tesseract** | **TrOCR** | **docTR** | **MMOCR** | **fast-plate-ocr** |
 |---|---|---|---|---|---|---|---|
 | **Kiến trúc** | 2 giai đoạn: DB + SVTR-LCNet/CTC ([arXiv](https://arxiv.org/html/2603.24373v1)) | 2 giai đoạn: CRAFT + CRNN/CTC ([DeepWiki](https://deepwiki.com/JaidedAI/EasyOCR)) | LSTM theo dòng ([docs](https://tesseract-ocr.github.io/tessdoc/ReleaseNotes.html)) | Encoder-decoder BEiT+RoBERTa ([arXiv](https://arxiv.org/abs/2109.10282)) | 2 giai đoạn: DBNet/FAST + CRNN/PARSeq ([docs](https://mindee.github.io/doctr/latest/using_doctr/using_models.html)) | Modular, PyTorch ([GitHub](https://github.com/open-mmlab/mmocr)) | CCT fixed-slot ([GitHub](https://github.com/ankandrew/fast-plate-ocr)) |
-| **Độ chính xác** *(bối cảnh khác nhau — xem ghi chú)* | rec 81.29% nội bộ ([docs](https://www.paddleocr.ai/main/en/version3.x/module_usage/text_recognition.html)); CER 0.10 ⚠️ ([TildAlice](https://tildalice.io/ocr-tesseract-easyocr-paddleocr-benchmark/)) | CER 0.09 ⚠️ ([TildAlice](https://tildalice.io/ocr-tesseract-easyocr-paddleocr-benchmark/)); >95% trên biển số ⚠️ ([IEEE](https://ieeexplore.ieee.org/document/10009215/)) | CER 0.18 ⚠️ ([TildAlice](https://tildalice.io/ocr-tesseract-easyocr-paddleocr-benchmark/)); 90% trên biển số ⚠️ ([IEEE](https://ieeexplore.ieee.org/document/10009215/)) | *Không có số liệu trên ảnh biển số* | crnn_vgg16_bn: 88.21% FUNSD / 95.47% CORD exact match ([docs](https://mindee.github.io/doctr/latest/using_doctr/using_models.html)) | *Cần bổ sung ở Phase sau* | *Cần bổ sung ở Phase sau* |
-| **Tốc độ CPU** | det 57.77 ms + rec 21.20 ms ([PaddleX](https://paddlepaddle.github.io/PaddleX/3.4/en/module_usage/tutorials/ocr_modules/text_detection.html), [PaddleOCR](https://www.paddleocr.ai/main/en/version3.x/module_usage/text_recognition.html)); pipeline 1.75 s/ảnh tài liệu ([docs](https://www.paddleocr.ai/main/en/version3.x/algorithm/PP-OCRv5/PP-OCRv5.html)) | *Cần bổ sung ở Phase 4* | 0.77 s/ảnh ⚠️ n=1 ([CodeSOTA](https://www.codesota.com/ocr/paddleocr-vs-tesseract)) | *Không đo — đã loại* | 1.29 s/trang PyTorch → 0.15 s OnnxTR+OpenVINO ([OnnxTR](https://github.com/felixdittrich92/OnnxTR)) | *Cần bổ sung ở Phase sau* | **Không có số liệu CPU** (chỉ có GPU RTX 3090) ([GitHub](https://github.com/ankandrew/fast-plate-ocr)) |
-| **Kích thước model** | **4.7 MB det + 16 MB rec ≈ 21 MB** ([PaddleX](https://paddlepaddle.github.io/PaddleX/3.4/en/module_usage/tutorials/ocr_modules/text_detection.html), [PaddleOCR](https://www.paddleocr.ai/main/en/version3.x/module_usage/text_recognition.html)) | ~200 MB ⚠️ ([TildAlice](https://tildalice.io/ocr-tesseract-easyocr-paddleocr-benchmark/)) | ~30 MB model / ~300 MB RAM ⚠️ ([TildAlice](https://tildalice.io/ocr-tesseract-easyocr-paddleocr-benchmark/)) | 334M/558M tham số ([arXiv](https://arxiv.org/abs/2109.10282)) | 25.4M + 15.8M tham số ([docs](https://mindee.github.io/doctr/latest/using_doctr/using_models.html)) | *Cần bổ sung ở Phase sau* | *Cần bổ sung ở Phase sau* |
+| **Độ chính xác** *(bối cảnh khác nhau — xem ghi chú)* | rec 81,29% nội bộ ([docs](https://www.paddleocr.ai/main/en/version3.x/module_usage/text_recognition.html)); CER 0.10 ⚠️ ([TildAlice](https://tildalice.io/ocr-tesseract-easyocr-paddleocr-benchmark/)) | CER 0.09 ⚠️ ([TildAlice](https://tildalice.io/ocr-tesseract-easyocr-paddleocr-benchmark/)); >95% trên biển số ⚠️ ([IEEE](https://ieeexplore.ieee.org/document/10009215/)) | CER 0.18 ⚠️ ([TildAlice](https://tildalice.io/ocr-tesseract-easyocr-paddleocr-benchmark/)); 90% trên biển số ⚠️ ([IEEE](https://ieeexplore.ieee.org/document/10009215/)) | *Không có số liệu trên ảnh biển số* | crnn_vgg16_bn: 88,21% FUNSD / 95,47% CORD exact match ([docs](https://mindee.github.io/doctr/latest/using_doctr/using_models.html)) | *Cần bổ sung ở Phase sau* | *Cần bổ sung ở Phase sau* |
+| **Tốc độ CPU** | det 57,77 ms + rec 21,20 ms ([PaddleX](https://paddlepaddle.github.io/PaddleX/3.4/en/module_usage/tutorials/ocr_modules/text_detection.html), [PaddleOCR](https://www.paddleocr.ai/main/en/version3.x/module_usage/text_recognition.html)); pipeline 1.75 s/ảnh tài liệu ([docs](https://www.paddleocr.ai/main/en/version3.x/algorithm/PP-OCRv5/PP-OCRv5.html)) | *Cần bổ sung ở Phase 4* | 0.77 s/ảnh ⚠️ n=1 ([CodeSOTA](https://www.codesota.com/ocr/paddleocr-vs-tesseract)) | *Không đo — đã loại* | 1,29 s/trang PyTorch → 0.15 s OnnxTR+OpenVINO ([OnnxTR](https://github.com/felixdittrich92/OnnxTR)) | *Cần bổ sung ở Phase sau* | **Không có số liệu CPU** (chỉ có GPU RTX 3090) ([GitHub](https://github.com/ankandrew/fast-plate-ocr)) |
+| **Kích thước model** | **4,7 MB det + 16 MB rec ≈ 21 MB** ([PaddleX](https://paddlepaddle.github.io/PaddleX/3.4/en/module_usage/tutorials/ocr_modules/text_detection.html), [PaddleOCR](https://www.paddleocr.ai/main/en/version3.x/module_usage/text_recognition.html)) | ~200 MB ⚠️ ([TildAlice](https://tildalice.io/ocr-tesseract-easyocr-paddleocr-benchmark/)) | ~30 MB model / ~300 MB RAM ⚠️ ([TildAlice](https://tildalice.io/ocr-tesseract-easyocr-paddleocr-benchmark/)) | 334M/558M tham số ([arXiv](https://arxiv.org/abs/2109.10282)) | 25,4M + 15,8M tham số ([docs](https://mindee.github.io/doctr/latest/using_doctr/using_models.html)) | *Cần bổ sung ở Phase sau* | *Cần bổ sung ở Phase sau* |
 | **Giấy phép** | Apache 2.0 ([PyPI paddleocr](https://pypi.org/project/paddleocr/)) | Apache 2.0 ([PyPI easyocr](https://pypi.org/project/easyocr/)) | Apache 2.0 ([docs](https://tesseract-ocr.github.io/tessdoc/ReleaseNotes.html); binding Python: [PyPI pytesseract](https://pypi.org/project/pytesseract/)) | MIT (repo microsoft/unilm) | Apache 2.0 ([PyPI python-doctr](https://pypi.org/project/python-doctr/)) | Apache 2.0 ([PyPI mmocr](https://pypi.org/project/mmocr/)) | MIT ([PyPI fast-plate-ocr](https://pypi.org/project/fast-plate-ocr/)) |
 | **Hỗ trợ nhiều dòng** | ✅ Tự nhiên — mỗi dòng một box, **cần tự sort** | ✅ Tự nhiên — CRAFT tách vùng | ⚠️ PSM 6 về lý thuyết; kém thực tế ([PyImageSearch](https://pyimagesearch.com/2021/11/15/tesseract-page-segmentation-modes-psms-explained-how-to-improve-your-ocr-accuracy/)) | ❌ **Ảo giác trên đa dòng** ([Roboflow](https://inference-models.roboflow.com/models/trocr/)) | ✅ Tự nhiên | ✅ Tự nhiên | ❌ Không có khái niệm dòng |
 | **Whitelist ký tự** | ❌ **Không có runtime** — phải fine-tune ([Discussion 7515](https://github.com/PaddlePaddle/PaddleOCR/discussions/7515)) | ✅ `allowlist` native ([API docs](https://www.jaided.ai/easyocr/documentation/)) | ✅ **Tốt nhất** — `tessedit_char_whitelist` ([PyImageSearch](https://pyimagesearch.com/2021/09/06/whitelisting-and-blacklisting-characters-with-tesseract-and-python/)) | ❌ Subword tokenizer | ⚠️ Có `vocab` nhưng đổi phải train lại | ⚠️ Qua cấu hình, cần train lại | ✅ **Cấp kiến trúc** — `alphabet` + `max_plate_slots` ([DeepWiki](https://deepwiki.com/ankandrew/fast-plate-ocr/4.1-onnxplaterecognizer)) |
-| **Độ khó triển khai** *(Windows + CPU + Py3.13)* | 🟡 Trung bình — có wheel cp313 ([PyPI](https://pypi.org/project/paddlepaddle/)), nhưng framework riêng | 🟢 **Dễ nhất** — chỉ PyTorch | 🟡 Cần cài binary hệ thống ngoài pip | 🟢 Dễ cài, nhưng tải 1.3–2.2 GB | 🟡 Cần chọn backend; yêu cầu Python ≥3.10,<4 ([PyPI python-doctr](https://pypi.org/project/python-doctr/)) | 🔴 **Khó nhất** — 4 tầng phụ thuộc ([GitHub](https://github.com/open-mmlab/mmocr)) | 🟡 Dễ cài nhưng **phải tự train** |
+| **Độ khó triển khai** *(Windows + CPU + Py3.13)* | 🟡 Trung bình — có wheel cp313 ([PyPI](https://pypi.org/project/paddlepaddle/)), nhưng framework riêng | 🟢 **Dễ nhất** — chỉ PyTorch | 🟡 Cần cài binary hệ thống ngoài pip | 🟢 Dễ cài, nhưng tải 1.3–2,2 GB | 🟡 Cần chọn backend; yêu cầu Python ≥3.10,<4 ([PyPI python-doctr](https://pypi.org/project/python-doctr/)) | 🔴 **Khó nhất** — 4 tầng phụ thuộc ([GitHub](https://github.com/open-mmlab/mmocr)) | 🟡 Dễ cài nhưng **phải tự train** |
 
-**Ghi chú bắt buộc về cột "Độ chính xác":** các con số trong cột này **đến từ những bối cảnh khác nhau và không so sánh trực tiếp được với nhau**. `81.29%` là trên tập nội bộ PaddleOCR (ảnh tài liệu đa ngôn ngữ); `CER 0.09/0.10/0.18` là trên ảnh tài liệu tổng hợp chạy GPU; `88.21%/95.47%` là exact match trên FUNSD/CORD. **Không có số nào trong bảng là accuracy trên ảnh biển số xe máy Việt Nam 2 dòng** — xem [Mục 3.3](#33-khoảng-trống-nghiên-cứu).
+**Ghi chú bắt buộc về cột "Độ chính xác":** các con số trong cột này **đến từ những bối cảnh khác nhau và không so sánh trực tiếp được với nhau**. `81,29%` là trên tập nội bộ PaddleOCR (ảnh tài liệu đa ngôn ngữ); `CER 0.09/0.10/0.18` là trên ảnh tài liệu tổng hợp chạy GPU; `88,21%/95,47%` là exact match trên FUNSD/CORD. **Không có số nào trong bảng là accuracy trên ảnh biển số xe máy Việt Nam 2 dòng** — xem [Mục 3.3](#33-khoảng-trống-nghiên-cứu).
 
 ### 3.2. Đánh giá độ tin cậy của nguồn trong bảng
 
@@ -316,9 +316,9 @@ Nghiên cứu *On the Cross-dataset Generalization in License Plate Recognition*
 
 | Loại xe | Bố cục biển | Nhận đúng | Tỷ lệ |
 |---|---|---:|---:|
-| Ô tô | **1 dòng** | 3772 / 4000 | **94.3%** |
-| Xe máy | **2 dòng** | 1827 / 4000 | **45.7%** |
-| | | **Chênh lệch** | **48.6 điểm %** |
+| Ô tô | **1 dòng** | 3772 / 4000 | **94,3%** |
+| Xe máy | **2 dòng** | 1827 / 4000 | **45,7%** |
+| | | **Chênh lệch** | **48,6 điểm %** |
 
 *Nguồn: [Laroca et al., arXiv:2201.00267](https://ar5iv.labs.arxiv.org/html/2201.00267)*
 
@@ -334,9 +334,9 @@ Bằng chứng thứ hai đến từ PatrolVision, cho thấy chỉ riêng việ
 
 | Kích thước đầu vào | Biển 1 dòng | Biển 2 dòng | Tổng thể |
 |---|---:|---:|---:|
-| 240×80 *(dạng dài, kiểu 1 dòng)* | **83%** | **30%** | 56.6% |
-| 160×120 | — | — | 64.4% |
-| 200×160 | — | — | 63.6% |
+| 240×80 *(dạng dài, kiểu 1 dòng)* | **83%** | **30%** | 56,6% |
+| 160×120 | — | — | 64,4% |
+| 200×160 | — | — | 63,6% |
 | **288×200** *(AR ≈ 3:2)* | — | — | **67%** |
 
 *Nguồn: [PatrolVision, arXiv:2504.10810](https://arxiv.org/html/2504.10810v1)*
@@ -372,8 +372,8 @@ Module recognition của PP-OCRv3/v4/v5 resize ảnh về **chiều cao cố đ�
 
 | Tình huống | Chiều rộng sau resize | Chiều cao mỗi dòng | Đọc được? |
 |---|---:|---:|:---:|
-| Đưa thẳng crop biển 2 dòng | 48 × 1.357 ≈ **65 px** | ≈ **24 px** | ❌ |
-| Sau split + hstack (AR ≈ 5.43) | 48 × 5.43 ≈ **261 px** | **48 px** (trọn) | ✅ |
+| Đưa thẳng crop biển 2 dòng | 48 × 1,357 ≈ **65 px** | ≈ **24 px** | ❌ |
+| Sau split + hstack (AR ≈ 5,43) | 48 × 5,43 ≈ **261 px** | **48 px** (trọn) | ✅ |
 
 **Đây là con số giải thích gọn toàn bộ rủi ro R-04.** Một crop biển xe máy đưa thẳng vào module rec bị nén còn 65 px rộng, mỗi dòng chỉ còn ~24 px cao — không đủ để đọc. Sau khi tách và ghép ngang, chiều rộng tăng **4 lần** và mỗi dòng được trọn 48 px.
 
@@ -385,12 +385,12 @@ Module recognition của PP-OCRv3/v4/v5 resize ảnh về **chiều cao cố đ�
 
 | Giai đoạn | Model | Pretrained | Fine-tuned | Fine-tuned + lượng tử |
 |---|---|---:|---:|---:|
-| Detection (Hmean) | PP-OCRv3 det, 2.5M | 76.12% | **99.00%** | 98.91% |
-| Recognition | PP-OCRv3 rec, 10.3M | **0.00%** | **94.54%** | 93.40% |
+| Detection (Hmean) | PP-OCRv3 det, 2.5M | 76,12% | **99,00%** | 98,91% |
+| Recognition | PP-OCRv3 rec, 10.3M | **0,00%** | **94,54%** | 93,40% |
 
-> **Đọc đúng con số 0.00%.** Con số này *không* có nghĩa PaddleOCR không đọc được biển số. Nguyên nhân là model pretrained sinh thêm một **ký tự đặc biệt** khiến toàn bộ chuỗi sai theo tiêu chí exact match; chỉ cần một bước hậu xử lý bỏ ký tự đó là đạt **90.97%** ([PaddleOCR applications](https://www.paddleocr.ai/v2.9/applications/%E8%BD%BB%E9%87%8F%E7%BA%A7%E8%BD%A6%E7%89%8C%E8%AF%86%E5%88%AB.html)). Không được trình bày "0% ⇒ pretrained vô dụng" — đó là kết luận quá mạnh và dễ bị hội đồng bắt lỗi.
+> **Đọc đúng con số 0,00%.** Con số này *không* có nghĩa PaddleOCR không đọc được biển số. Nguyên nhân là model pretrained sinh thêm một **ký tự đặc biệt** khiến toàn bộ chuỗi sai theo tiêu chí exact match; chỉ cần một bước hậu xử lý bỏ ký tự đó là đạt **90,97%** ([PaddleOCR applications](https://www.paddleocr.ai/v2.9/applications/%E8%BD%BB%E9%87%8F%E7%BA%A7%E8%BD%A6%E7%89%8C%E8%AF%86%E5%88%AB.html)). Không được trình bày "0% ⇒ pretrained vô dụng" — đó là kết luận quá mạnh và dễ bị hội đồng bắt lỗi.
 >
-> Luận điểm đúng và vẫn rất mạnh: **fine-tune nâng recognition từ 90.97% lên 94.54% và detection từ 76.12% lên 99.00%**. Fine-tune là bắt buộc, không phải tùy chọn.
+> Luận điểm đúng và vẫn rất mạnh: **fine-tune nâng recognition từ 90,97% lên 94,54% và detection từ 76,12% lên 99,00%**. Fine-tune là bắt buộc, không phải tùy chọn.
 
 ### 4.2. Các phương pháp phân biệt biển 1 dòng / 2 dòng
 
@@ -441,7 +441,7 @@ Quy tắc đề xuất: `AR < 2.5` → 2 dòng; `AR > 3.0` → 1 dòng; `2.5 ≤
 
 Tính vector tổng cường độ pixel trên từng hàng; biển 2 dòng sẽ có một **valley sâu ở giữa**. Nếu valley vượt ngưỡng thì kết luận 2 dòng và cắt tại vị trí valley.
 
-Phương pháp này có cơ sở học thuật **trên chính biển số Việt Nam**: nghiên cứu *Research on Characters Segmentation in One-Row and Two-Row of Vietnam License Plates* thử nghiệm trên **600 biển Việt Nam (300 một dòng + 300 hai dòng)** đạt độ chính xác trung bình **98.03%** ([Advanced Materials Research, vol. 479-481, 2012](https://www.scientific.net/AMR.479-481.2293)). Quy trình gồm hai module: tiền xử lý (lượng tử hóa, chuẩn hóa, **điều chỉnh contour ngang / deskew**, morphology opening khử nhiễu) rồi phân đoạn ký tự bằng phương pháp peak-to-valley theo tham số thống kê.
+Phương pháp này có cơ sở học thuật **trên chính biển số Việt Nam**: nghiên cứu *Research on Characters Segmentation in One-Row and Two-Row of Vietnam License Plates* thử nghiệm trên **600 biển Việt Nam (300 một dòng + 300 hai dòng)** đạt độ chính xác trung bình **98,03%** ([Advanced Materials Research, vol. 479-481, 2012](https://www.scientific.net/AMR.479-481.2293)). Quy trình gồm hai module: tiền xử lý (lượng tử hóa, chuẩn hóa, **điều chỉnh contour ngang / deskew**, morphology opening khử nhiễu) rồi phân đoạn ký tự bằng phương pháp peak-to-valley theo tham số thống kê.
 
 **Điểm mạnh:** vị trí cắt **adaptive theo từng ảnh**, khác hẳn cắt cứng theo tỷ lệ. **Điểm yếu:** valley biến mất khi biển nghiêng — chính vì vậy bài báo phải deskew ở bước 1. Lưu ý đây là công trình **2012, không dùng deep learning**, nên định vị nó đúng vai trò *baseline cổ điển*.
 
@@ -449,13 +449,13 @@ Phương pháp này có cơ sở học thuật **trên chính biển số Việt
 
 Tận dụng chính output detection của PaddleOCR. Hàm `predict()` trả về dict với các key `rec_texts`, `rec_scores`, `rec_polys`, `dt_polys` và **`rec_boxes`** — mảng shape `(n, 4)` định dạng `[x_min, y_min, x_max, y_max]` ([PaddleOCR 3.x docs](https://www.paddleocr.ai/latest/en/version3.x/pipeline_usage/OCR.html)).
 
-Vì có `y_min` tường minh, hoàn toàn có thể **bỏ qua thứ tự mặc định** và tự gom nhóm: sort theo `y_center`, cluster thành 2 nhóm với ngưỡng = 0.5 × chiều cao trung bình box, rồi trong mỗi nhóm sort theo `x_min`.
+Vì có `y_min` tường minh, hoàn toàn có thể **bỏ qua thứ tự mặc định** và tự gom nhóm: sort theo `y_center`, cluster thành 2 nhóm với ngưỡng = 0,5 × chiều cao trung bình box, rồi trong mỗi nhóm sort theo `x_min`.
 
 #### PA-5 — Kiểm tra tính thẳng hàng của ký tự
 
 Repo ALPR Việt Nam `trungdinh22/License-Plate-Recognition` (YOLOv5 hai tầng: detect biển → detect từng ký tự) quyết định 1 hay 2 dòng bằng cách lấy tâm mỗi ký tự, nối ký tự trái nhất và phải nhất thành đường thẳng, rồi kiểm tra mọi ký tự bằng `math.isclose(y_pred, y, abs_tol=3)`. Nếu **bất kỳ** điểm nào lệch quá 3 pixel → kết luận biển 2 dòng ([helper.py, truy cập 19/07/2026](https://raw.githubusercontent.com/trungdinh22/License-Plate-Recognition/main/function/helper.py)). Repo báo cáo tốc độ **15–20 FPS** khi có 1 biển trong khung hình ⚠️ *(tự báo cáo, không nêu rõ CPU/GPU)* ([GitHub](https://github.com/trungdinh22/License-Plate-Recognition)).
 
-> ⚠️ **Điểm yếu phải sửa nếu áp dụng:** `abs_tol=3` là **pixel tuyệt đối**, nên kết quả phụ thuộc độ phân giải crop. Nên đổi sang tỷ lệ, ví dụ `abs_tol = 0.25 × chiều_cao_ký_tự_trung_bình`.
+> ⚠️ **Điểm yếu phải sửa nếu áp dụng:** `abs_tol=3` là **pixel tuyệt đối**, nên kết quả phụ thuộc độ phân giải crop. Nên đổi sang tỷ lệ, ví dụ `abs_tol = 0,25 × chiều_cao_ký_tự_trung_bình`.
 
 ### 4.3. Các phương pháp tách và ghép
 
@@ -498,15 +498,15 @@ flowchart LR
 Mã nguồn tham chiếu đã được kiểm chứng ([double_plate_split_merge.py, truy cập 19/07/2026](https://raw.githubusercontent.com/we0091234/Chinese_license_plate_detection_recognition/main/plate_recognition/double_plate_split_merge.py)):
 
 ```python
-img_upper = img[0:int(5/12*h), :]              # nửa trên: 0 → 41.67% chiều cao
-img_lower = img[int(1/3*h):, :]                # nửa dưới: 33.33% → hết
+img_upper = img[0:int(5/12*h), :]              # nửa trên: 0 → 41,67% chiều cao
+img_lower = img[int(1/3*h):, :]                # nửa dưới: 33,33% → hết
 img_upper = cv2.resize(img_upper, (img_lower.shape[1], img_lower.shape[0]))
 new_img = np.hstack((img_upper, img_lower))    # ghép ngang thành 1 dòng
 ```
 
 **Ba chi tiết thiết kế đáng học:**
 
-1. **Vùng chồng lấn 8.33%.** Ngưỡng trên là `5/12 = 41.67%` còn ngưỡng dưới là `1/3 = 33.33%`, tạo vùng chồng lấn `5/12 − 1/3 = 1/12 = 8.33%` chiều cao. Đây là biên an toàn để không cắt cụt chân ký tự dòng trên hay đỉnh ký tự dòng dưới khi biển hơi lệch. *(Việc chồng lấn là có chủ ý về mặt kỹ thuật — thấy rõ trong code — nhưng tác giả repo không viết comment giải thích, nên diễn giải nguyên nhân là suy luận của tài liệu này.)*
+1. **Vùng chồng lấn 8,33%.** Ngưỡng trên là `5/12 = 41,67%` còn ngưỡng dưới là `1/3 = 33,33%`, tạo vùng chồng lấn `5/12 − 1/3 = 1/12 = 8,33%` chiều cao. Đây là biên an toàn để không cắt cụt chân ký tự dòng trên hay đỉnh ký tự dòng dưới khi biển hơi lệch. *(Việc chồng lấn là có chủ ý về mặt kỹ thuật — thấy rõ trong code — nhưng tác giả repo không viết comment giải thích, nên diễn giải nguyên nhân là suy luận của tài liệu này.)*
 2. **Không chia đều 50/50**, vì dòng trên của biển 2 tầng thấp hơn dòng dưới.
 3. **Resize nửa trên về đúng kích thước nửa dưới trước khi hstack** — để chiều cao ký tự hai dòng đồng nhất. Đây là **điều kiện bắt buộc** để CRNN/CTC hoạt động.
 
@@ -522,15 +522,15 @@ new_img = np.hstack((img_upper, img_lower))    # ghép ngang thành 1 dòng
 
 LPTR-AFLNet dùng **đúng nguyên lý split-then-hstack** nhưng đưa vào trong mạng và có học. Biển 2 dòng được mô tả bằng **6 đỉnh**, trong đó hai đỉnh `(x3,y3)` và `(x4,y4)` **dùng chung** giữa vùng trên và vùng dưới. Mạng hồi quy **12 tham số cho biển 2 dòng** (so với **8 tham số cho biển 1 dòng**), tương ứng offset các đỉnh của vùng ký tự trên và dưới; sau đó nắn từng vùng bằng hai ma trận perspective riêng rồi **ghép ngang** trước khi đưa vào mạng nhận dạng 1 dòng ([LPTR-AFLNet](https://arxiv.org/html/2507.16362v2)).
 
-Kết quả: **99.37% trên tập biển 2 dòng tổng hợp dựng từ CCPD**, với 2.7M tham số và 2459 FPS trên TITAN X ([LPTR-AFLNet](https://arxiv.org/html/2507.16362v2)). Huấn luyện weak-supervised với Focal CTC loss.
+Kết quả: **99,37% trên tập biển 2 dòng tổng hợp dựng từ CCPD**, với 2.7M tham số và 2459 FPS trên TITAN X ([LPTR-AFLNet](https://arxiv.org/html/2507.16362v2)). Huấn luyện weak-supervised với Focal CTC loss.
 
-**Ý nghĩa:** con số 99.37% chứng minh rằng **nguyên lý split-then-hstack là đúng và có thể đạt độ chính xác rất cao** — nó không phải một mẹo tạm bợ.
+**Ý nghĩa:** con số 99,37% chứng minh rằng **nguyên lý split-then-hstack là đúng và có thể đạt độ chính xác rất cao** — nó không phải một mẹo tạm bợ.
 
 #### 4.3.4. Phương án không tách: model vision-language
 
 TransLPRNet **chỉ trích trực tiếp** hướng split: các phương pháp này *"thường gặp thách thức đáng kể khi xử lý biển 2 dòng, vì kiến trúc CNN hoặc CRNN truyền thống thường khó xử lý hiệu quả thông tin nhiều dòng; các phương pháp thường phải phân đoạn biển 2 dòng thành vùng trên và vùng dưới rồi tích hợp kết quả nhận dạng riêng lẻ"* ([TransLPRNet](https://arxiv.org/abs/2507.17335)).
 
-Giải pháp: visual encoder nhẹ + text decoder trong khung pre-training, xử lý toàn bộ ảnh biển một lần **bất kể bố cục 1 hay 2 dòng**. Đạt **98.70%** trên test set biển 2 dòng và tới **167 FPS**.
+Giải pháp: visual encoder nhẹ + text decoder trong khung pre-training, xử lý toàn bộ ảnh biển một lần **bất kể bố cục 1 hay 2 dòng**. Đạt **98,70%** trên test set biển 2 dòng và tới **167 FPS**.
 
 > **Cần bổ sung ở Phase sau:** chưa xác định được số tham số và kích thước model của TransLPRNet (bài chỉ công bố accuracy và FPS), nên **chưa đánh giá được liệu nó có chạy nổi trên CPU-only hay không**. Ngoài ra chưa tìm được mã nguồn công khai.
 
@@ -542,7 +542,7 @@ PatrolVision theo hướng này, đạt **67%** đúng toàn bộ ký tự, **89
 
 > ⚠️ **Đính chính số liệu tốc độ PatrolVision.** Hai con số tốc độ của bài thuộc **hai giai đoạn khác nhau** và không được ghép lại: **64 FPS** (Tesla P4, INT8) là của giai đoạn **character recognition**; **7.5 FPS** (Jetson TX2, TensorRT, **batch size 2**) là của giai đoạn **plate detection** bằng RFBNet ([PatrolVision](https://arxiv.org/html/2504.10810v1)). Bài còn ghi character recognition đạt 68 FPS trên GTX 1080Ti — rất dễ nhầm với 64 FPS. **Không có con số nào trong bài đo chi phí của hướng detect-từng-ký-tự trên thiết bị biên như một pipeline hoàn chỉnh.**
 
-Một điểm tham chiếu độc lập cho chi phí biên đến từ *An Embedded Real-Time License Plate Recognition System for Complex Traffic Scenes*, dùng mạng nhẹ cho cả phát hiện lẫn nhận dạng ký tự trong giao thông không có cấu trúc, đạt **93.6% mAP** phát hiện và **87.88%** độ chính xác nhận dạng, chạy **11.5 FPS** trên nền tảng nhúng Xilinx Kria KV260 nhờ lượng tử hóa và tăng tốc FPGA; nhóm tác giả cũng công bố bộ dữ liệu **SL-LPR** (ảnh đường bộ Sri Lanka) ([arXiv:2606.27772](https://arxiv.org/pdf/2606.27772)).
+Một điểm tham chiếu độc lập cho chi phí biên đến từ *An Embedded Real-Time License Plate Recognition System for Complex Traffic Scenes*, dùng mạng nhẹ cho cả phát hiện lẫn nhận dạng ký tự trong giao thông không có cấu trúc, đạt **93,6% mAP** phát hiện và **87,88%** độ chính xác nhận dạng, chạy **11.5 FPS** trên nền tảng nhúng Xilinx Kria KV260 nhờ lượng tử hóa và tăng tốc FPGA; nhóm tác giả cũng công bố bộ dữ liệu **SL-LPR** (ảnh đường bộ Sri Lanka) ([arXiv:2606.27772](https://arxiv.org/pdf/2606.27772)).
 
 > ⚠️ **Không dùng con số này làm mốc cho đồ án.** 11.5 FPS đo trên **FPGA có lượng tử hóa**, không phải CPU x86 thuần như máy đồ án, và trên **biển Sri Lanka** chứ không phải biển Việt Nam — bài cũng **không tách riêng kết quả biển 1 dòng và 2 dòng**. Giá trị tham chiếu duy nhất ở đây là: hướng nhận dạng theo từng ký tự bằng mạng nhẹ **có tiền lệ chạy được thời gian thực trên thiết bị biên**.
 
@@ -562,7 +562,7 @@ Cấu trúc biển Việt Nam rất chặt, cho phép dùng chính nó làm **ch
 1. **Luôn ghép dòng-trên + dòng-dưới, không bao giờ đảo.**
 2. **Validate ở mức từng dòng**, không chỉ trên chuỗi cuối: dòng trên phải khớp `^[0-9]{2}-?[A-Z][0-9]?$`, dòng dưới khớp `^[0-9]{4,5}$`. Nếu không tách được thành hai nhóm hợp lệ → **đánh dấu tách thất bại** và fallback sang phương án tách khác. Đây là mở rộng của lớp `PlateNormalizer` đã có ([system-architecture.md](../architecture/system-architecture.md#3-luồng-xử-lý-ai)) — điểm mới là áp dụng **ở mức từng dòng**.
 3. **Lưu confidence riêng cho từng dòng**, lấy `min()` làm confidence tổng thể — vì một dòng sai là cả biển sai.
-4. **Voting qua nhiều frame** khi chạy video/webcam. Phương pháp multi-angle view fusion hợp nhất nhiều frame nhiều góc nhìn đạt **F1 91.3%** trên dataset biển Việt Nam PTITPlates (500 ảnh gán nhãn bằng LabelMe) ([arXiv:2309.12972](https://ar5iv.labs.arxiv.org/html/2309.12972)). *Lưu ý: công trình này **không bàn riêng về biển 2 dòng**.*
+4. **Voting qua nhiều frame** khi chạy video/webcam. Phương pháp multi-angle view fusion hợp nhất nhiều frame nhiều góc nhìn đạt **F1 91,3%** trên dataset biển Việt Nam PTITPlates (500 ảnh gán nhãn bằng LabelMe) ([arXiv:2309.12972](https://ar5iv.labs.arxiv.org/html/2309.12972)). *Lưu ý: công trình này **không bàn riêng về biển 2 dòng**.*
 
 > **Lưu ý cấu trúc:** biển Việt Nam tồn tại **song song cả loại 4 chữ số (cũ) và 5 chữ số (mới)** ở dòng dưới. Regex validation **phải chấp nhận cả hai**. **Cần bổ sung ở Phase 4:** kiểm chứng xem có thể dùng chính số lượng chữ số này làm tín hiệu phát hiện lỗi tách dòng hay không.
 
@@ -650,7 +650,7 @@ Hai số liệu thường được viện dẫn để chứng minh "PaddleOCR t�
 
 | Khẳng định thường gặp | Sự thật theo nguồn gốc |
 |---|---|
-| ❌ "YOLOv8n + **PaddleOCR** đạt 99% độ chính xác OCR, cải thiện 4.16%" | Bài này dùng **EasyOCR**, KHÔNG phải PaddleOCR. Con số 99% là tỷ lệ **phát hiện**, không phải OCR (OCR thật là 98%). **Không có con số 4.16% nào trong bài.** |
+| ❌ "YOLOv8n + **PaddleOCR** đạt 99% độ chính xác OCR, cải thiện 4,16%" | Bài này dùng **EasyOCR**, KHÔNG phải PaddleOCR. Con số 99% là tỷ lệ **phát hiện**, không phải OCR (OCR thật là 98%). **Không có con số 4,16% nào trong bài.** |
 | ❌ "Hệ thống ANPR dùng **PaddleOCR** đạt 97% phát hiện / 95% nhận dạng trên 1000 ảnh" | Thực tế là **99% / 98% trên 270 ảnh**, cũng với **EasyOCR**. Cả ba thành phần (hai tỷ lệ, cỡ mẫu, tên engine) đều sai. |
 
 *Nguồn gốc: [Scientific Reports, s41598-024-65272-1](https://www.nature.com/articles/s41598-024-65272-1)*
@@ -667,9 +667,9 @@ Sau khi loại các số liệu bị bác bỏ, đây là những gì **thực s
 
 | # | Bằng chứng | Mức độ vững |
 |:---:|---|:---:|
-| 1 | **Nhẹ nhất trong nhóm khả dụng:** 4.7 MB det + 16 MB rec ≈ 21 MB, so với ~200 MB của EasyOCR ⚠️ | 🟢 Vững — tài liệu chính thức |
-| 2 | **Thời gian CPU khả thi:** det 57.77 ms + rec 21.20 ms trên Xeon Gold 6271C ([PaddleX](https://paddlepaddle.github.io/PaddleX/3.4/en/module_usage/tutorials/ocr_modules/text_detection.html), [PaddleOCR](https://www.paddleocr.ai/main/en/version3.x/module_usage/text_recognition.html)) | 🟢 Vững |
-| 3 | **Fine-tune trên biển số cho kết quả tốt:** recognition 90.97% → **94.54%**, detection Hmean 76.12% → **99.00%** ([PaddleOCR applications](https://www.paddleocr.ai/v2.9/applications/%E8%BD%BB%E9%87%8F%E7%BA%A7%E8%BD%A6%E7%89%8C%E8%AF%86%E5%88%AB.html)) | 🟢 Vững — nhưng là **biển Trung Quốc 1 dòng** |
+| 1 | **Nhẹ nhất trong nhóm khả dụng:** 4,7 MB det + 16 MB rec ≈ 21 MB, so với ~200 MB của EasyOCR ⚠️ | 🟢 Vững — tài liệu chính thức |
+| 2 | **Thời gian CPU khả thi:** det 57,77 ms + rec 21,20 ms trên Xeon Gold 6271C ([PaddleX](https://paddlepaddle.github.io/PaddleX/3.4/en/module_usage/tutorials/ocr_modules/text_detection.html), [PaddleOCR](https://www.paddleocr.ai/main/en/version3.x/module_usage/text_recognition.html)) | 🟢 Vững |
+| 3 | **Fine-tune trên biển số cho kết quả tốt:** recognition 90,97% → **94,54%**, detection Hmean 76,12% → **99,00%** ([PaddleOCR applications](https://www.paddleocr.ai/v2.9/applications/%E8%BD%BB%E9%87%8F%E7%BA%A7%E8%BD%A6%E7%89%8C%E8%AF%86%E5%88%AB.html)) | 🟢 Vững — nhưng là **biển Trung Quốc 1 dòng** |
 | 4 | **Mạnh trên ảnh xoay:** OmniDocBench Rotate90 đạt 0.012, vượt GPT-4o và Qwen3-VL-235B ([arXiv](https://arxiv.org/html/2603.24373v1)) | 🟢 Vững — rất liên quan tới biển chụp nghiêng |
 | 5 | **Kiến trúc 2 giai đoạn trả mỗi dòng một box** — đúng thứ cần cho biển 2 dòng | 🟢 Vững về mặt kiến trúc |
 | 6 | **Apache 2.0**, không ràng buộc copyleft — `paddleocr 3.7.0` ([PyPI paddleocr](https://pypi.org/project/paddleocr/), truy cập 19/07/2026). *Giấy phép các engine khác được xác minh riêng từng gói ở [Mục 6.5](#65-ghi-chú-về-giấy-phép).* | 🟢 Vững |
@@ -684,7 +684,7 @@ Sau khi loại các số liệu bị bác bỏ, đây là những gì **thực s
 | **CER cao hơn EasyOCR** | 0.10 so với 0.09 ⚠️ ([TildAlice](https://tildalice.io/ocr-tesseract-easyocr-paddleocr-benchmark/)) | EasyOCR — *nhưng chênh lệch 0.01 trên ảnh tài liệu chạy GPU là không có ý nghĩa quyết định* |
 | **Khó cài hơn EasyOCR** | PaddlePaddle là framework riêng (không phải PyTorch), thêm ~500 MB–1 GB dependency, đôi khi xung đột numpy/protobuf | EasyOCR — chỉ cần `pip install easyocr` |
 | **Chậm hơn Tesseract nhiều lần** | 4.85 s so với 0.77 s ⚠️ **n=1 ảnh** ([CodeSOTA](https://www.codesota.com/ocr/paddleocr-vs-tesseract)) | Tesseract — *nhưng cỡ mẫu 1 ảnh không có ý nghĩa thống kê, và Tesseract mắc 3 lỗi ký tự trong khi PaddleOCR mắc 0* |
-| **Kém xa model chuyên biển số** | LPTR-AFLNet đạt **99.37%** riêng trên biển 2 dòng với 2.7M tham số ([arXiv](https://arxiv.org/html/2507.16362v2)) | LPTR-AFLNet, TransLPRNet — *nhưng không có bản pip, không có model VN, không có số liệu CPU* |
+| **Kém xa model chuyên biển số** | LPTR-AFLNet đạt **99,37%** riêng trên biển 2 dòng với 2.7M tham số ([arXiv](https://arxiv.org/html/2507.16362v2)) | LPTR-AFLNet, TransLPRNet — *nhưng không có bản pip, không có model VN, không có số liệu CPU* |
 | **Không phải OCR đa dụng nào cũng hợp** | Chính LPTR-AFLNet nhận định PP-OCRv3 **không phù hợp để triển khai trực tiếp** cho biển số ([arXiv](https://arxiv.org/html/2507.16362v2)) | — |
 
 ### 5.4. 🎯 Kết luận thẳng thắn
@@ -693,7 +693,7 @@ Sau khi loại các số liệu bị bác bỏ, đây là những gì **thực s
 
 1. **Bằng chứng trực tiếp ủng hộ PaddleOCR trên biển số yếu hơn ta tưởng.** Hai số liệu mạnh nhất từng được viện dẫn đã bị bác bỏ ([Mục 5.1](#51-️-hai-bằng-chứng-từng-dùng-để-biện-minh-cho-paddleocr-đã-bị-bác-bỏ)). Các so sánh engine-vs-engine trên ảnh biển số mà khảo sát kiểm chứng được lại **nghiêng về EasyOCR** (>95% so với Tesseract 90% ⚠️, chỉ xác minh được ở mức abstract). **Không tồn tại số liệu công khai nào cho thấy PaddleOCR vượt EasyOCR trên ảnh biển số.**
 
-2. **Lý do giữ PaddleOCR là lý do KỸ THUẬT và VẬN HÀNH, không phải lý do độ chính xác.** Cụ thể: nhẹ hơn EasyOCR gần **10 lần** (21 MB so với ~200 MB ⚠️) — yếu tố quyết định với ràng buộc CPU-only và NFR-P7 (bộ nhớ ≤ 2 GB); có lộ trình PP-OCRv6 Tiny **0.20 s/ảnh** phục vụ NFR-P2 (webcam ≥ 5 FPS); có bằng chứng fine-tune trên biển số đạt 94.54%; mạnh trên ảnh xoay.
+2. **Lý do giữ PaddleOCR là lý do KỸ THUẬT và VẬN HÀNH, không phải lý do độ chính xác.** Cụ thể: nhẹ hơn EasyOCR gần **10 lần** (21 MB so với ~200 MB ⚠️) — yếu tố quyết định với ràng buộc CPU-only và NFR-P7 (bộ nhớ ≤ 2 GB); có lộ trình PP-OCRv6 Tiny **0.20 s/ảnh** phục vụ NFR-P2 (webcam ≥ 5 FPS); có bằng chứng fine-tune trên biển số đạt 94,54%; mạnh trên ảnh xoay.
 
 3. **Không engine nào giải sẵn bài toán 2 dòng.** Việc chọn engine **không quyết định** thành bại của R-04 — module tách/ghép mới quyết định. Đây là lý do mạnh nhất để **không tốn thời gian đổi engine** mà dồn công vào Mục 4.
 
@@ -745,7 +745,7 @@ Sau khi loại các số liệu bị bác bỏ, đây là những gì **thực s
 - **Thời gian suy luận trên CPU** (p50 / p95 / p99), đo trên chính máy Windows 11 / Python 3.13 của đồ án
 - **Bộ nhớ thường trú** (phục vụ NFR-P7)
 
-**Phân tách kết quả bắt buộc:** báo cáo **riêng biển 1 dòng và biển 2 dòng**. Đây chính là bài học rút ra từ số liệu OpenALPR 94.3% / 45.7% ([Laroca et al.](https://ar5iv.labs.arxiv.org/html/2201.00267)) — con số tổng thể che giấu điểm gãy.
+**Phân tách kết quả bắt buộc:** báo cáo **riêng biển 1 dòng và biển 2 dòng**. Đây chính là bài học rút ra từ số liệu OpenALPR 94,3% / 45,7% ([Laroca et al.](https://ar5iv.labs.arxiv.org/html/2201.00267)) — con số tổng thể che giấu điểm gãy.
 
 **Ma trận thí nghiệm đề xuất:**
 
@@ -812,7 +812,7 @@ Mục này liệt kê các số liệu **không được phép** đưa vào bả
 
 | Khẳng định sai | Sự thật | Nguồn |
 |---|---|---|
-| "YOLOv8n + PaddleOCR đạt 99% OCR, cải thiện 4.16%" | Bài dùng **EasyOCR**; 99% là tỷ lệ **phát hiện**, OCR thật là 98%; không có con số 4.16% | [Scientific Reports](https://www.nature.com/articles/s41598-024-65272-1) |
+| "YOLOv8n + PaddleOCR đạt 99% OCR, cải thiện 4,16%" | Bài dùng **EasyOCR**; 99% là tỷ lệ **phát hiện**, OCR thật là 98%; không có con số 4,16% | [Scientific Reports](https://www.nature.com/articles/s41598-024-65272-1) |
 | "ANPR dùng PaddleOCR: 97% phát hiện / 95% nhận dạng trên 1000 ảnh" | Thực tế **99% / 98% trên 270 ảnh**, với **EasyOCR** | [Scientific Reports](https://www.nature.com/articles/s41598-024-65272-1) |
 | "`text_det_unclip_ratio` mặc định là 2.0, nên hạ về 1.5" | Mặc định **đã là 1.5**; khuyến nghị hạ xuống là vô nghĩa | [utility.py](https://raw.githubusercontent.com/PaddlePaddle/PaddleOCR/main/tools/infer/utility.py) |
 
@@ -823,33 +823,33 @@ Các số liệu sau **chưa kiểm chứng được nguồn** và đã bị lo�
 | Số liệu | Lý do không kiểm chứng được |
 |---|---|
 | Độ chính xác trên ký tự dễ nhầm **O/0: Tesseract 36%, EasyOCR 50%** | Nguồn IEEE 10009215 bị paywall. Số liệu đến từ nguồn thứ cấp không rõ danh tính. **Luận điểm "cần lớp Regex Correction" vẫn giữ được, nhưng phải biện minh bằng lập luận thiết kế hoặc thực nghiệm của chính đồ án, KHÔNG được chống bằng hai con số này.** |
-| **ALPR Việt Nam: mIOU 95.01%, OCR 99.28%** | IEEE 9585279 bị paywall, không đọc được toàn văn. Đây là con số Việt Nam quan trọng nhất mà không có bằng chứng — rủi ro cao nếu bị hỏi "em lấy 99.28% ở đâu". |
-| **YOLOv11 + EasyOCR: mAP 92.4% / 88.2%** | URL nguồn trả về **HTTP 404** — trích dẫn trỏ tới trang chết. |
+| **ALPR Việt Nam: mIOU 95,01%, OCR 99,28%** | IEEE 9585279 bị paywall, không đọc được toàn văn. Đây là con số Việt Nam quan trọng nhất mà không có bằng chứng — rủi ro cao nếu bị hỏi "em lấy 99,28% ở đâu". |
+| **YOLOv11 + EasyOCR: mAP 92,4% / 88,2%** | URL nguồn trả về **HTTP 404** — trích dẫn trỏ tới trang chết. |
 | **`latin_PP-OCRv5_mobile_rec` hỗ trợ 47 ngôn ngữ Latin** | Model card không liệt kê danh sách ngôn ngữ và không nêu con số 47. *(Lập luận "dùng model Latin cho biển số chỉ A–Z0–9 là lãng phí" vẫn giữ được — nó độc lập với con số này.)* |
 | **fast-plate-ocr: `max_plate_slots = 7` (Mercosur AB123CD), 6 slot (JUH697)** | Khái niệm `max_plate_slots` và `alphabet` là có thật, nhưng các **giá trị ví dụ cụ thể** không có trong nguồn được trích. |
 | **Biển xe máy Việt Nam gồm 9 ký tự** | Nguồn Springer được trích **không mô tả** số ký tự, số dòng hay tập ký tự của biển VN. **Nên thay bằng trích dẫn trực tiếp Thông tư của Bộ Công an** — vừa chắc chắn vừa có giá trị pháp lý khi bảo vệ. |
 | **Kích thước model EasyOCR ~90 MB** | Trang DeepWiki được trích mô tả kiến trúc nhưng **không chứa con số dung lượng nào**. *(Con số ~200 MB dùng trong bảng chính đến từ nguồn khác — TildAlice — và đã khớp với nguồn đó.)* |
 | **fast-plate-ocr: CoreML tăng tốc 5 lần trên Mac M1** | Không tìm thấy trong nguồn được trích. |
-| **Benchmark hóa đơn: Tesseract 40.56 s/ảnh; EasyOCR CER 14.2%** | Không tìm thấy trong bài. *(Xác nhận được: pipeline đề xuất 3.64 s/ảnh, nhanh hơn EasyOCR 6.4 lần → EasyOCR ≈ 23.3 s/ảnh, trên 360 ảnh hóa đơn; CER 18.4% / WER 27.6% là của **pipeline đề xuất**, không phải EasyOCR.)* |
+| **Benchmark hóa đơn: Tesseract 40.56 s/ảnh; EasyOCR CER 14,2%** | Không tìm thấy trong bài. *(Xác nhận được: pipeline đề xuất 3.64 s/ảnh, nhanh hơn EasyOCR 6.4 lần → EasyOCR ≈ 23.3 s/ảnh, trên 360 ảnh hóa đơn; CER 18,4% / WER 27,6% là của **pipeline đề xuất**, không phải EasyOCR.)* |
 
 ### A.3. Số liệu ĐÃ ĐƯỢC SỬA (dùng giá trị đã sửa)
 
 | Khẳng định gốc | Giá trị đã sửa — **dùng giá trị này** |
 |---|---|
 | PP-OCRv5 mobile "5M tham số (0.07 tỷ tổng pipeline)"; "CVPR 2026" | **5 triệu tham số**; bỏ "0.07 tỷ" (tự mâu thuẫn); trích dẫn là **preprint arXiv:2603.24373 (cs.CV)**, KHÔNG phải CVPR 2026 |
-| PP-OCRv6 "Tiny 4.4 MB / Small 20.4 MB / Medium 73.3 MB" | **Chỉ dùng số tham số**: Tiny 1.5M, Small 7.7M, Medium 34.5M. **Ba con số MB không có trong bài** |
+| PP-OCRv6 "Tiny 4,4 MB / Small 20,4 MB / Medium 73,3 MB" | **Chỉ dùng số tham số**: Tiny 1.5M, Small 7.7M, Medium 34.5M. **Ba con số MB không có trong bài** |
 | PaddleOCR "hàm `order_by_tbyx()`, ngưỡng 20 pixel" | Hàm **`sorted_boxes`**, ngưỡng **10 pixel** |
 | paddlepaddle "wheel cp313 từ 3.1.0" | Có từ phiên bản **3.0.0** đến 3.3.1 |
-| "PTITPlates F1 91.3%; các bộ khác: CarTGMT, MB10000, car_long, GreenPark" | **F1 91.3% đúng**; bộ dữ liệu thứ hai trong bài là **Stanford Cars 90.8%**. Bốn tên bộ dữ liệu kia **không được nhắc trong bài** |
-| PatrolVision input 240×80 "tổng 56.5%" | **56.6%** |
+| "PTITPlates F1 91,3%; các bộ khác: CarTGMT, MB10000, car_long, GreenPark" | **F1 91,3% đúng**; bộ dữ liệu thứ hai trong bài là **Stanford Cars 90,8%**. Bốn tên bộ dữ liệu kia **không được nhắc trong bài** |
+| PatrolVision input 240×80 "tổng 56,5%" | **56,6%** |
 | PatrolVision "64 FPS / 7.5 FPS (batch 8)" | **64 FPS = giai đoạn character recognition** (Tesla P4, INT8); **7.5 FPS = giai đoạn plate detection** RFBNet-TensorRT trên Jetson TX2, **batch size 2** |
 | PaddleOCR CCPD "rec 12.4M, det 3.8M" | **rec 10.3M**, **det 2.5M** |
-| LPTR-AFLNet "2.459 FPS" | **2459 FPS** *(dấu chấm ngăn cách hàng nghìn kiểu Việt gây hiểu nhầm nghiêm trọng)*. Ghi chú "dưới 10 ms trên GPU tầm trung-thấp" **không khớp** (2459 FPS ≈ 0.4 ms) và là số **GPU**, không áp dụng cho máy không GPU |
+| LPTR-AFLNet "2.459 FPS" | **2459 FPS** *(dấu chấm ngăn cách hàng nghìn kiểu Việt gây hiểu nhầm nghiêm trọng)*. Ghi chú "dưới 10 ms trên GPU tầm trung-thấp" **không khớp** (2459 FPS ≈ 0,4 ms) và là số **GPU**, không áp dụng cho máy không GPU |
 | fast-plate-ocr độ trễ | Độ trễ **GPU RTX 3090** chính xác; **bỏ** câu về Mac M1 / CoreML |
 | PP-OCRv5 det "tập test tiếng Trung viết tay + in + tiếng Anh" | Thực tế: **bộ đa ngôn ngữ 2677 ảnh** (Trung, Trung phồn thể, Anh, Nhật), gồm cảnh đường phố, ảnh web, tài liệu, chữ viết tay, ảnh mờ/xoay/biến dạng |
 | PP-OCRv4 runtime tối ưu "giảm mạnh thời gian" | Thực tế chỉ giảm **3–21%** so với baseline PaddlePaddle (0.62 → 0.60 OpenVINO / 0.49 ONNX Runtime) |
 | **Bảy khẳng định giấy phép/phiên bản** (`easyocr`, `pytesseract`, `python-doctr`, `onnxtr`, `mmocr`, `fast-plate-ocr`, `rapidocr`) cùng trỏ tới **một URL duy nhất** `pypi.org/project/paddleocr/` | **Trích dẫn hỏng — trang paddleocr không thể chứa các thông tin đó.** Đã truy cập lại **từng trang PyPI tương ứng** (19/07/2026): **toàn bộ phiên bản và giấy phép đều ĐÚNG**, chỉ có **nguồn dẫn là sai**. Đã sửa từng trích dẫn trỏ đúng gói của nó ([Mục 6.5](#65-ghi-chú-về-giấy-phép), [Mục 7.5](#75-metadata-gói-phần-mềm-pypi)) |
-| PP-OCRv6 Medium "vượt PP-OCRv5_server +5.1 / +4.6 điểm" đặt cạnh bảng PaddleX | Con số **+5.1 / +4.6 là đúng theo bài PP-OCRv6**, nhưng tính trên baseline **của chính bài đó** (v5_server = 78.1% rec / 81.6% Hmean), **không phải** baseline PaddleX (86.38% / 83.8%). **Hai tập đánh giá khác nhau — cấm trừ chéo.** Xem hộp cảnh báo ở [Mục 2.1](#21-paddleocr-pp-ocrv4--v5--v6--baidu) |
+| PP-OCRv6 Medium "vượt PP-OCRv5_server +5.1 / +4,6 điểm" đặt cạnh bảng PaddleX | Con số **+5.1 / +4.6 là đúng theo bài PP-OCRv6**, nhưng tính trên baseline **của chính bài đó** (v5_server = 78,1% rec / 81,6% Hmean), **không phải** baseline PaddleX (86,38% / 83,8%). **Hai tập đánh giá khác nhau — cấm trừ chéo.** Xem hộp cảnh báo ở [Mục 2.1](#21-paddleocr-pp-ocrv4--v5--v6--baidu) |
 | docTR: tỷ số "parseq chậm hơn 3.7 lần", "crnn_mobilenet_v3_small nhanh hơn 12 lần" nêu không kèm batch size | **Cả ba model đều đo ở bs=64** (chú thích bảng docTR). Tỷ số **hợp lệ** vì cùng điều kiện; đã ghi rõ bs vào bảng và vào từng tỷ số. Vẫn còn hạn chế: docTR **không công bố phần cứng** |
 
 ### A.4. Hạn chế của chính đợt kiểm chứng
@@ -890,7 +890,7 @@ Cần nêu rõ để trung thực về mặt phương pháp:
 18. **Implementation of a License Plate Recognition System in Vietnam Using Embedding Devices** — MIWAI 2024. <https://link.springer.com/chapter/10.1007/978-981-96-0695-5_19>
 19. **Benchmarking OCR Pipelines with Adaptive Enhancement for Multi-Domain Retail Bill Digitization** — arXiv:2604.25176, 2026. <https://arxiv.org/abs/2604.25176>
 20. **Advancing Multinational License Plate Recognition Through Synthetic and Real Data Fusion: A Comprehensive Evaluation** — arXiv:2601.07671, 2026; đăng trên *IET Intelligent Transport Systems*, vol. 19, no. 1, 2025 *(16 model OCR / 12 bộ dữ liệu; template-based + hoán vị ký tự + GAN — trích ở [Mục 6.4](#64-phương-án-dự-phòng) DP-5)*. <https://arxiv.org/pdf/2601.07671>
-21. **An Embedded Real-Time License Plate Recognition System for Complex Traffic Scenes** — arXiv:2606.27772, 2026; chấp nhận tại IEEE ITSC 2026 *(bộ dữ liệu SL-LPR; 93.6% mAP / 87.88%; 11.5 FPS trên Xilinx Kria KV260 — trích ở [Mục 4.3.5](#435-phương-án-không-ocr-detect-từng-ký-tự))*. <https://arxiv.org/pdf/2606.27772>
+21. **An Embedded Real-Time License Plate Recognition System for Complex Traffic Scenes** — arXiv:2606.27772, 2026; chấp nhận tại IEEE ITSC 2026 *(bộ dữ liệu SL-LPR; 93,6% mAP / 87,88%; 11.5 FPS trên Xilinx Kria KV260 — trích ở [Mục 4.3.5](#435-phương-án-không-ocr-detect-từng-ký-tự))*. <https://arxiv.org/pdf/2606.27772>
 22. **Comparison of Image Preprocessing Techniques for Vehicle License Plate Recognition Using OCR** — arXiv:2410.13622, 2024. <https://arxiv.org/html/2410.13622v1>
 
 ### 7.2. Nguồn IEEE — chưa lấy được toàn văn ⚠️
