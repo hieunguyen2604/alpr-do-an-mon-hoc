@@ -13,12 +13,15 @@
 > |---|---|---|
 > | 882 test thu thập / 881 đạt | **1.002 thu thập / 1.002 đạt**, 0 `xfail` | lượt chạy mới nhất |
 > | Khối OCR (mục 7.2 và §10): A4 = 0,8734 · A5 = 0,6098 · A6 = 0,6555 · chênh hai bố cục 36,8 điểm · hậu xử lý +4,57 điểm (128 biển) | **A4 = 0,9483 · A5 = 0,6373 · A6 = 0,7701** · chênh **23,07 điểm** · hậu xử lý **+13,28 điểm** (372 biển) | [41](41-measured-confusion-tables.md) |
-> | **NFR-P1 ĐẠT**, p95 731 ms | 🟡 **chỉ đạt sàn**, p95 **1.143 ms** | [27](27-retry-ladder-cost-benefit.md) |
-> | NFR-P2/P3/R4/R5 chưa đo | **P2 ✅ 5,257 FPS** · P3 ✅ 0,746× · R4 ✅ 100% · R5 ✅ 0 mất | [33-runtime-nfr.json](33-runtime-nfr.json) |
+> | **NFR-P1 ĐẠT**, p95 731 ms | 🟡 **chỉ đạt sàn**, p95 **1.143 ms** | [`05-results.json`](05-results.json) `T5.7a` |
+> | NFR-P2/P3/R4/R5 chưa đo | **P2 ✅ 5,257 FPS** · P3 ✅ 0,785× · R4 ✅ 100% · R5 ✅ 0 mất | [`37-nfr-p2-pytorch.json`](37-nfr-p2-pytorch.json) · R4/R5: [`33-runtime-nfr.json`](33-runtime-nfr.json) |
 >
 > NFR-P1 thoái lui **có chủ ý**: bậc thang thử-lại mua thêm 34 biển đọc đúng và
 > trả bằng đuôi độ trễ. Lần đo P2 = 2,379 FPS trước đó đã bị bác bỏ vì máy bận —
 > xem [`38-runtime-backend-and-nfr-p2.md`](38-runtime-backend-and-nfr-p2.md).
+>
+> **Điều kiện gỡ banner:** khi mục 7.2, §10 và phần P1/P2 của thân bài được cập
+> nhật theo nguồn hiện hành (AGENTS.md §9.3) — hiện giữ nguyên làm bản ghi lượt đo 19–20/07.
 
 ---
 

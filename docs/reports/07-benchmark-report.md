@@ -43,7 +43,7 @@
 > "oneDNN/cold-start" và "baseline vốn chậm" **đều bị bác bỏ** (baseline đo
 > client-side ra 763,75 ms, gần y hệt best.pt).
 >
-> Các mục 4.1–4.4, 5, 9.2, 9.3 và bảng ở 5bis được **giữ nguyên văn** để ghi lịch
+> Các mục 4.1–4.4, 5, 9 (gồm cả bảng việc-còn-phải-làm), 9.2, 9.3 và bảng ở 5bis được **giữ nguyên văn** để ghi lịch
 > sử; **không trích dẫn số của chúng**. Số dùng được: bảng tóm tắt mục 2 (đã cập nhật).
 
 **Kết quả một dòng (tại thời điểm đo 20/07/2026, nay đã bị thay thế — xem banner trên):**

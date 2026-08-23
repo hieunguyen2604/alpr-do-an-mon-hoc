@@ -123,7 +123,7 @@ Sơ đồ chi tiết, sơ đồ tuần tự và các quyết định kiến trú
 
 **Chưa đo được (đã thu hẹp):** NFR-A9 (thiếu nhãn điều kiện ảnh), NFR-M3 (chưa kiểm tự động), NFR-M6 (chưa chạy lint trong đợt này), và kiểm thử frontend.
 
-**Đã đo bổ sung trong đợt này:** NFR-A4/A5/A6/A7 (mục 7 ở trên), **NFR-P2 = 5,257 FPS** (✅ vượt cả mục tiêu 5; xấu nhất đo được dưới tải nặng **4,057**, vẫn trên OpenVINO@640), **NFR-P3 = 0,754×** ✅ (mục tiêu 0,3×), **NFR-R5 = 0 bản ghi mất** ✅ (4.470 → 4.470, tắt bằng `TerminateProcess` chứ không tắt êm). **NFR-R4** đã nâng từ 5 lên **15 phút / 3.928 request / 0 lỗi**, nhưng đặc tả yêu cầu **60 phút** nên vẫn chỉ là bằng chứng một phần.
+**Đã đo bổ sung trong đợt này:** NFR-A4/A5/A6/A7 (mục 7 ở trên), **NFR-P2 = 5,257 FPS** (✅ vượt cả mục tiêu 5; xấu nhất đo được dưới tải nặng **4,057**, vẫn trên OpenVINO@640), **NFR-P3 = 0,785×** ✅ (mục tiêu 0,3×; nguồn [`37-nfr-p2-pytorch.json`](docs/reports/37-nfr-p2-pytorch.json) — số 0,754× của vòng Phase 7 và 0,746× của lượt 02/08 đều đã được thay thế), **NFR-R5 = 0 bản ghi mất** ✅ (4.470 → 4.470, tắt bằng `TerminateProcess` chứ không tắt êm). **NFR-R4** đã nâng từ 5 lên **15 phút / 2.028 request / 0 lỗi**, nhưng đặc tả yêu cầu **60 phút** nên vẫn chỉ là bằng chứng một phần.
 
 ---
 

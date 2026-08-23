@@ -18,6 +18,9 @@
 > NFR-A5 = 0,6373 **không đổi** — A5 đo *trước* hậu xử lý nên nó đứng yên chính
 > là bằng chứng mọi chênh lệch trên quy được về đúng hai hằng số đã sửa. Nguồn
 > chuẩn: **Chương 5 mục 5.5.2–5.5.3** và [báo cáo 41](41-measured-confusion-tables.md).
+>
+> **Điều kiện gỡ banner:** khi `fill_chapter5.py` chạy lại từ `05-results.json`
+> đã cập nhật khối OCR theo báo cáo 41 (AGENTS.md §9.3).
 
 *Sinh lúc 2026-07-28T17:43:40 bằng `scripts/fill_chapter5.py`.*
 

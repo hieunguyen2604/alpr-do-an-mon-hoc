@@ -14,12 +14,17 @@
 | Chênh 1 dòng / 2 dòng (A6) | Khoảng cách bố cục | **23,07 điểm** (0,9541 vs 0,7234) | như dòng trên |
 | Đóng góp hậu xử lý | A6 − A5 | **+13,28 điểm** (372 biển sửa đúng, 0 hỏng) | như dòng trên |
 | A7 | Độ chính xác đầu–cuối | 0,563 *(nhãn máy sinh, không đại diện)* | [`40-ocr-accuracy-measured-confusion.json`](40-ocr-accuracy-measured-confusion.json) |
-| P1 | Độ trễ E2E p95 | **1.143,10 ms** 🟡 (median 405,77 ms) | [`27-retry-ladder-cost-benefit.md`](27-retry-ladder-cost-benefit.md) — ⬜ rà thêm tệp JSON thô của lượt đo nếu có |
-| P2 | FPS luồng khung hình (tầng API) | **5,257 FPS** ✅ | [`33-runtime-nfr.json`](33-runtime-nfr.json) |
-| P3 | Tốc độ video | 0,785× ✅ | [`33-runtime-nfr.json`](33-runtime-nfr.json) |
+| P1 | Độ trễ E2E p95 | **1.143,10 ms** 🟡 (median 405,77 ms) | [`05-results.json`](05-results.json) → khóa `T5.7a.p95_ms` và `T5.8.chinh_thuc`; diễn giải đánh đổi ở [`27-retry-ladder-cost-benefit.md`](27-retry-ladder-cost-benefit.md) |
+| P2 | FPS luồng khung hình (tầng API) | **5,257 FPS** ✅ *(đối chứng 5,213; xấu nhất dưới tải 4,057)* | [`37-nfr-p2-pytorch.json`](37-nfr-p2-pytorch.json) — diễn giải hai lượt độc lập ở [`38-runtime-backend-and-nfr-p2.md`](38-runtime-backend-and-nfr-p2.md) |
+| P3 | Tốc độ video | **0,785×** ✅ (14,25 s video / 18,161 s wall = 0,7847) | [`37-nfr-p2-pytorch.json`](37-nfr-p2-pytorch.json) → khóa `nfr_p3_video_throughput.realtime_ratio` |
 | R4 | Soak liên tục | 15 phút · 2.028 request · 100% | [`33-runtime-nfr.json`](33-runtime-nfr.json) |
 | R5 | CSDL sống qua restart | 0/9.031 bản ghi mất | [`33-runtime-nfr.json`](33-runtime-nfr.json) |
-| P4/P4b/P5/P6/P7 | Nạp mô hình · overhead API · truy vấn CSDL · RSS | 8,36 s · 19,01 ms · 18,71 ms · ≤0,81 GB | bộ [`07-*.json`](.) của Phase 7 — ⬜ chốt tệp đơn cho từng chỉ tiêu khi rà tiếp |
+| P4 | Nạp mô hình trong tiến trình | 6,41 s *(baseline)* | [`07-benchmark-data-v2.json`](07-benchmark-data-v2.json) |
+| P4b | Server tới `/health` sẵn sàng | 8,36 s *(baseline)* | [`07-api-overhead.json`](07-api-overhead.json) |
+| P5 | Overhead API (p95) | 19,01 ms | [`07-api-overhead.json`](07-api-overhead.json) |
+| P6 | Truy vấn lịch sử 10.000 bản ghi | 18,71 ms | [`07-stress-db.json`](07-stress-db.json) |
+| P7a | RSS pipeline (đỉnh) | 0,759 GB | [`07-benchmark-system.json`](07-benchmark-system.json) |
+| P7b | RSS uvicorn dưới tải | 0,806 GB | [`07-api-overhead.json`](07-api-overhead.json) |
 | E2E trong Docker | p95 30 ảnh test | 319 ms *(không phải số NFR-P1)* | [`08-deployment-guide.md`](08-deployment-guide.md) §6.1 |
 | Kiểm thử | Số test · coverage tầng nghiệp vụ | 1.002/1.002 · 87,7% | lượt chạy pytest 13/08 + [`13-refactor-result.json`](13-refactor-result.json) |
 | Dữ liệu v3 | Quy mô · split · khử trùng lặp · rò rỉ tồn dư | 15.133 ảnh (10.592/3.027/1.514); 44,2%; d=12 còn 791 cặp | [`02-dataset-report.md`](02-dataset-report.md) |
@@ -32,6 +37,8 @@
 | `gap 25,45` / `A6 = 0,7512` / `A4 = 0,9454` | 23,07 / 0,7701 / 0,9483 | cùng vòng cũ nêu trên |
 | P1 = 5.857 ms | 1.143,10 ms | epoch 7 + máy bận ~793% CPU + lỗi crop — bị bác bỏ trong [`07-benchmark-p1-resolved.json`](07-benchmark-p1-resolved.json) |
 | P1 = 731,15 / 780,36 ms | 1.143,10 ms | lần đo 20/07, trước khi nối bậc thang thử-lại |
-| P2 = 2,379 FPS | 5,257 FPS | máy bận ~560% CPU — bị bác bỏ trong [`38-runtime-backend-and-nfr-p2.md`](38-runtime-backend-and-nfr-p2.md) |
+| P2 = 2,379 FPS | 5,257 FPS | máy bận ~560% CPU — bị bác bỏ trong [`38-runtime-backend-and-nfr-p2.md`](38-runtime-backend-and-nfr-p2.md); giá trị nằm trong [`33-runtime-nfr.json`](33-runtime-nfr.json) |
+| P3 = 0,746× *(33-runtime-nfr)* · P3 = 0,754× *(07-benchmark-data-v2, Phase 7)* | **0,785×** | hai lượt cũ; hiện hành là khóa `nfr_p3_video_throughput` của [`37-nfr-p2-pytorch.json`](37-nfr-p2-pytorch.json) |
+| ⚠️ [`33-runtime-nfr.json`](33-runtime-nfr.json) — trạng thái **một phần**: chỉ khối R4/R5 còn hiện hành | P2/P3 lấy từ [`37-nfr-p2-pytorch.json`](37-nfr-p2-pytorch.json) | lượt 02/08 đo khi máy bận |
 | Soak 185 req/300 s · 3.928 req | 2.028 req/15 phút | các lượt soak trước, đặc tả yêu cầu 60 phút nên mọi phiên bản đều mới là bằng chứng một phần |
 | `882 test / 881 đạt` · coverage 88,1% | 1.002/1.002 · 87,7% | lượt chạy cũ |

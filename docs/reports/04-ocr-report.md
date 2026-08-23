@@ -18,6 +18,8 @@
 > **đã được sửa** thành `L → 4`, `7 → Z` trong `ai/inference/plate_rules.py` và
 > **đã đo lại** — hai chỗ ghi "chưa áp dụng" trong thân bài nay đã lỗi thời.
 > Nguồn chuẩn: [`41-measured-confusion-tables.md`](41-measured-confusion-tables.md).
+> **Điều kiện gỡ banner:** khi thân bài được viết lại theo số liệu của báo cáo 41 —
+> hiện giữ nguyên vẹn làm bản ghi lịch sử của lượt đo 19/07 (AGENTS.md §9.3).
 
 > **Trạng thái tài liệu:** kiến trúc, mã nguồn và **phép đo NFR-A4…A8 đã hoàn thành**
 > (2026-07-19, 2.801 biển có nhãn). Mục 6 nay chứa số đo thật.
