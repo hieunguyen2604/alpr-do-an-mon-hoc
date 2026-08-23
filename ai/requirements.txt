@@ -51,9 +51,21 @@ torchvision==0.28.0+cpu
 ultralytics==8.4.101
 
 # --- Computer vision / imaging ------------------------------------------------
-opencv-python==5.0.0.93
-numpy==2.4.4
-pillow==12.2.0
+#
+# CÁC GHIM DƯỚI ĐÂY LẤY TỪ MÔI TRƯỜNG ĐÃ SINH RA MỌI SỐ LIỆU TRONG QUYỂN
+# (`backend/.venv`), không phải từ phiên bản mới nhất trên PyPI. Trước ngày
+# 23/08/2026 tệp này ghim `opencv-python==5.0.0.93`, `numpy==2.4.4`,
+# `pillow==12.2.0`, `pyyaml==6.0.3` — bốn phiên bản **chưa từng được cài**.
+#
+# `numpy==2.4.4` còn khiến tệp này KHÔNG THỂ CÀI ĐƯỢC: `paddlex` bên dưới đòi
+# `numpy<2.4`, nên pip báo ResolutionImpossible. Nghĩa là bất kỳ ai làm theo
+# tệp này để tái lập kết quả đều dừng ngay ở bước `pip install`.
+#
+# Quy tắc rút ra: ghim phải chép từ môi trường thật, kiểm bằng
+#   backend/.venv/Scripts/python -m pip freeze
+opencv-python==4.10.0.84
+numpy==2.3.5
+pillow==11.3.0
 
 # --- Dataset deduplication ----------------------------------------------------
 # Perceptual hashing is MANDATORY before merging datasets: the per-dataset image
@@ -63,7 +75,7 @@ pillow==12.2.0
 imagehash==4.3.2
 
 # --- Configuration (YOLO data.yaml, training configs) -------------------------
-pyyaml==6.0.3
+pyyaml==6.0.2
 
 # --- Dataset statistics and visualisation -------------------------------------
 matplotlib==3.11.1
@@ -98,9 +110,10 @@ albumentations==2.0.8
 #   d:/DATN/backend/.venv/Scripts/python.exe -m pip install \
 #       paddlepaddle==3.3.1 paddleocr==3.7.0 opencv-python==4.10.0.84
 #
-# The split is TEMPORARY. Once training is finished the two environments should
-# be reconciled into one, and the numpy/opencv pins above renegotiated against
-# whatever paddleocr requires at that time.
+# (Đoạn "the split is TEMPORARY, reconcile later" từng đứng ở đây đã được gỡ
+# ngày 23/08/2026: nó mâu thuẫn với chính đoạn ngay trên — việc tách môi trường
+# đã kết thúc, và các ghim numpy/opencv nay đã đàm phán xong đúng như đoạn trên
+# mô tả.)
 #
 # paddlepaddle is the CPU build: the plain PyPI wheel is CPU-only (the GPU build
 # ships under the separate name paddlepaddle-gpu), so no extra index is needed

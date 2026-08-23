@@ -81,6 +81,27 @@ jobs:
           python-version: "3.13"
           cache: pip
 
+      - name: Thư viện hệ thống cho OpenCV
+        # `opencv-python` (bản không headless) liên kết tới libGL, mà runner
+        # ubuntu-latest không cài sẵn — thiếu nó thì `import cv2` chết ngay với
+        # "libGL.so.1: cannot open shared object file".
+        #
+        # Ba mô-đun `ai/inference/{two_line,plate_color,superres}.py` import cv2
+        # ở CẤP MODULE, và 13 tệp test chạm tới tầng AI, nên lỗi này chặn gần
+        # như toàn bộ bộ kiểm thử chứ không riêng vài ca.
+        #
+        # Cài thư viện hệ thống thay vì đổi sang `opencv-python-headless`: CI
+        # phải chạy đúng gói mà bản giao hàng dùng, nếu không thì lại rơi vào
+        # đúng cái bẫy "công cụ đo lệch khỏi đường xử lý thật" mà đồ án đã trả
+        # giá bốn lần.
+        #
+        # Tên gói glib đổi giữa các bản Ubuntu (24.04 dùng hậu tố `t64`), nên
+        # thử bản mới trước rồi lùi về tên cũ.
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq libgl1 libglib2.0-0t64 \
+            || sudo apt-get install -y -qq libgl1 libglib2.0-0
+
       - name: Cài phụ thuộc tầng AI (torch CPU)
         run: |
           grep -vE '^\s*(torch==|torchvision==)' ai/requirements.txt > /tmp/ai-req.txt || true
