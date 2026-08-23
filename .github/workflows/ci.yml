@@ -1,0 +1,72 @@
+name: CI
+
+# Cổng chất lượng tối thiểu — đề xuất từ NFR-M6 trong 07-testing-report.md.
+# Hai lớp: (1) cổng tài liệu rẻ và tất định, chặn tham chiếu chết và số liệu
+# vòng đo đã bị thay thế; (2) bộ test đầy đủ — nặng cài đặt, tạm
+# continue-on-error cho tới lần chạy xanh đầu tiên rồi bỏ dòng đó đi.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  docs-gate:
+    name: Tài liệu — tham chiếu & số liệu
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Kiểm tra tham chiếu quyển ĐATN
+        run: python scripts/check_thesis_refs.py
+
+      - name: Kiểm tra tham chiếu quyển môn học
+        run: python scripts/check_thesis_refs.py mon-hoc
+
+      - name: Quét số vòng đo đã bị thay thế trong slide
+        # Slide không được mang banner "đã lỗi thời" như báo cáo, nên tiêu chí
+        # ở đây là 0 hit tuyệt đối. Danh sách chốt sau các đợt audit 08/2026;
+        # bổ sung mẫu mới thì ghi lý do ngay tại đây.
+        run: |
+          set -e
+          PATTERN='25,[45] điểm|25\.45|0,700\)|1\.000 test|94,54% từng|57,27 ms|108,28 ms|168,41 ms|69,96%|9\.126 cặp|2,379 FPS'
+          HITS=$(grep -rnE "$PATTERN" docs/slides/*.md || true)
+          if [ -n "$HITS" ]; then
+            echo "::error::Số liệu đã bị thay thế xuất hiện trong slide:"
+            echo "$HITS"
+            exit 1
+          fi
+          echo "Slide sạch số cũ."
+
+  tests:
+    name: Bộ kiểm thử đầy đủ
+    runs-on: ubuntu-latest
+    # TODO: sau lần chạy xanh đầu tiên, xóa dòng `continue-on-error` để biến
+    # job này thành cổng bắt buộc.
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: pip
+
+      - name: Cài phụ thuộc tầng AI (torch CPU)
+        run: |
+          grep -vE '^\s*(torch==|torchvision==)' ai/requirements.txt > /tmp/ai-req.txt || true
+          python -m pip install --index-url https://download.pytorch.org/whl/cpu torch==2.13.0+cpu torchvision==0.28.0+cpu
+          python -m pip install -r /tmp/ai-req.txt
+
+      - name: Cài phụ thuộc backend
+        run: |
+          python -m pip install -r backend/requirements.txt
+          [ -f backend/requirements-inference.txt ] && python -m pip install -r backend/requirements-inference.txt || true
+          python -m pip install pytest pytest-cov
+
+      - name: Chạy toàn bộ kiểm thử
+        run: python -m pytest -q

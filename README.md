@@ -4,7 +4,7 @@
 > Đồ án tốt nghiệp — hệ thống ALPR hoàn chỉnh từ mô hình AI đến giao diện người dùng và triển khai.
 
 <p>
-<img alt="Phase" src="https://img.shields.io/badge/Phase-9%20Documentation-blue">
+<img alt="Phase" src="https://img.shields.io/badge/Phase-11-Done-brightgreen">
 <img alt="Status" src="https://img.shields.io/badge/M0%20%C2%B7%20M1-%C4%90%C3%A3%20ph%C3%AA%20duy%E1%BB%87t-brightgreen">
 <img alt="Python" src="https://img.shields.io/badge/Python-3.13-blue">
 <img alt="License" src="https://img.shields.io/badge/License-Academic-lightgrey">
