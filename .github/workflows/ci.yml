@@ -31,9 +31,13 @@ jobs:
         # Slide không được mang banner "đã lỗi thời" như báo cáo, nên tiêu chí
         # ở đây là 0 hit tuyệt đối. Danh sách chốt sau các đợt audit 08/2026;
         # bổ sung mẫu mới thì ghi lý do ngay tại đây.
+        #
+        # Lưu ý: KHÔNG cấm con số thuần kiểu "9.126 cặp" — nó xuất hiện hợp lệ
+        # khi defense-qa kể lại lịch sử rò rỉ của bộ v2 ("v2 có 9.126, v3 có 0").
+        # Cái cần chặn là câu khẳng định quá đà "triệt hạ hoàn toàn".
         run: |
           set -e
-          PATTERN='25,[45] điểm|25\.45|0,700\)|1\.000 test|94,54% từng|57,27 ms|108,28 ms|168,41 ms|69,96%|9\.126 cặp|2,379 FPS'
+          PATTERN='25,[45] điểm|25\.45|0,700\)|1\.000 test|94,54% từng|57,27 ms|108,28 ms|168,41 ms|69,96%|triệt hạ hoàn toàn|2,379 FPS'
           HITS=$(grep -rnE "$PATTERN" docs/slides/*.md || true)
           if [ -n "$HITS" ]; then
             echo "::error::Số liệu đã bị thay thế xuất hiện trong slide:"
