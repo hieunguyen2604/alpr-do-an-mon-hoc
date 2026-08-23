@@ -95,3 +95,46 @@ Trước khi commit và push mã nguồn / tài liệu:
 2. **Kiểm tra tham chiếu — CẢ HAI bản:** `python scripts/check_thesis_refs.py` và `python scripts/check_thesis_refs.py mon-hoc` đều phải đạt **0 tham chiếu chết, 0 đường dẫn ảnh hỏng**. Bản môn học từng thiếu hai hình suốt nhiều ngày vì chỉ bản chính được kiểm.
 3. **Sửa slide thì dựng lại rồi mới kiểm:** sau khi sửa `docs/slides/*.md`, chạy `python scripts/build_thesis.py` (kèm `--slides ...` cho bộ tương ứng) **trước**, rồi `powershell -File scripts/check_slides.ps1` (0 lỗi). `check_slides.ps1` kiểm **bản dựng PPTX** — kiểm trước khi dựng là kiểm nhầm bản cũ và từng cho 0 lỗi trong khi thật ra có ba slide tràn.
 4. **Bảo mật & Dữ liệu:** Không commit file `.env` chứa bí mật, file nén dataset nặng hoặc dữ liệu nhạy cảm vào Git.
+
+---
+
+## 🔁 9. Đồng Bộ Số Liệu Liên Tệp (Cross-File Sync Rules)
+
+Bổ sung sau đợt kiểm toán 08/2026. Mỗi rule dưới đây gắn với một sự cố đã xảy ra
+thật trong dự án — đọc ví dụ để hiểu vì sao rule tồn tại.
+
+1. **Một số liệu — một nguồn (Single Source of Truth):**
+   Mỗi chỉ tiêu NFR chỉ được trích từ **đúng một tệp JSON chuẩn**, khai báo trong
+   bảng ánh xạ `NFR → tệp nguồn` đặt tại [`docs/reports/README.md`](docs/reports/README.md).
+   Cấm trích cùng một chỉ tiêu từ tệp khác, kể cả khi giá trị "trông giống".
+   *(Sự cố: số request soak R4 từng bị trích 4 cách — 185 · 1.684 · 3.928 · 2.028 —
+   riêng 1.684 không khớp tệp JSON nào; NFR-P3 có ba giá trị 0,746× / 0,754× / 0,785×
+   không ai xác định được giá nào chuẩn.)*
+2. **Vòng đo mới = đồng bộ lan truyền theo checklist cố định:**
+   Khi một vòng đo mới được chấp nhận làm hiện hành, bắt buộc rà theo đúng thứ tự:
+   `README.md` → các báo cáo liên quan → Chương 4–6 **cả hai bản quyển** → 3 bộ slide +
+   outline + defense-qa → dựng lại PPTX/PDF. Không tự đánh dấu "xong" nếu chưa đi hết.
+   *(Sự cố gốc của đợt kiểm toán 08/2026: ba vòng đo kế tiếp sống chung trong tài liệu
+   vì không ai có danh sách "phải sửa những gì" sau khi đổi nguồn số.)*
+3. **Banner "số đã lỗi thời" có hạn sử dụng:**
+   Mọi banner cảnh báo số cũ phải ghi **ngày lập** và **điều kiện gỡ** (VD: "gỡ khi
+   `fill_chapter5.py` chạy lại từ nguồn mới"). Khi một vòng đo mới vào, banner của
+   đợt *trước* phải được rà lại ngay — **banner chứa số đã bị bác bỏ là lỗi nghiêm
+   trọng hơn cả thiếu banner**, vì nó giả danh "hiện tại".
+   *(Sự cố: banner của `07-testing-report.md` ghi ô "hiện tại" = P2 ❌ 2,379 FPS —
+   chính là con số đã bị bác bỏ trong báo cáo [38].)*
+4. **Bộ slide là một đơn vị commit:**
+   `10-slides.md` + `10-slides-outline.md` + `10-defense-qa.md` + `SLIDE_PLAN.md`
+   phải thay đổi **cùng một commit**; CI quét cả bốn. Sửa deck mà bỏ kịch bản nói
+   là để lại mâu thuẫn ngay trên sân bảo vệ.
+   *(Sự cố: outline ghi siêu tham số "SGD, batch 16, lr0 0,01" trong khi Backup 5
+   của chính deck đó ghi "AdamW, batch 8, lr0 0,001" — bản ghi đã thực thi.)*
+5. **Đợt sửa quyển chỉ tính là XONG khi PDF đã xuất lại:**
+   Sau mọi đợt sửa `.md` thuộc quyển: mở docx → Ctrl+A → F9 (cập nhật mục lục) →
+   xuất PDF → chạy lại `copy_bundle()` để đồng bộ `nop/`. DOCX mới mà PDF cũ là
+   trạng thái dở dang, không phải trạng thái hoàn thành.
+   *(Sự cố: hai file PDF trong `nop/` lệch cả một ngày so với md trước khi bị phát hiện.)*
+6. **Tag bản nộp là mốc khoá:**
+   Sau khi đánh tag bản nộp (VD: `nop-2026-08-23`), mọi commit đụng tới nội dung
+   đã nộp phải **kéo tag mới hoặc đánh tag hậu tố** — không để tag "bản nộp" trôi
+   dần khỏi nội dung thật của nó. Tag cũ giữ nguyên như bằng chứng lịch sử.
