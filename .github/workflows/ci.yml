@@ -28,22 +28,43 @@ jobs:
         run: python scripts/check_thesis_refs.py mon-hoc
 
       - name: Quét số vòng đo đã bị thay thế trong slide
-        # Slide không được mang banner "đã lỗi thời" như báo cáo, nên tiêu chí
-        # ở đây là 0 hit tuyệt đối. Danh sách chốt sau các đợt audit 08/2026;
-        # bổ sung mẫu mới thì ghi lý do ngay tại đây.
+        # Hai mức, vì không phải tệp nào trong docs/slides/ cũng có cùng nhiệm vụ.
         #
-        # Lưu ý: KHÔNG cấm con số thuần kiểu "9.126 cặp" — nó xuất hiện hợp lệ
-        # khi defense-qa kể lại lịch sử rò rỉ của bộ v2 ("v2 có 9.126, v3 có 0").
-        # Cái cần chặn là câu khẳng định quá đà "triệt hạ hoàn toàn".
+        # Mức 1 — cấm ở MỌI tệp slide: các con số đã bị rút hẳn, không còn ngữ
+        # cảnh nào khiến chúng đúng.
+        #
+        # Mức 2 — chỉ cấm trên BA DECK CHIẾU, miễn trừ 10-defense-qa.md: con số
+        # cũ bị bác bỏ mà bộ Hỏi–Đáp có nhiệm vụ *giải thích*. Cấm nó ở đó là
+        # cấm đúng thứ cần có — hội đồng hỏi "sao khác con số cũ?" thì phải trả
+        # lời được. Deck chiếu thì khác: nó chỉ hiển thị kết luận, không kể sử.
+        #
+        # KHÔNG cấm: "9.126 cặp" (hợp lệ khi kể lịch sử rò rỉ v2), và KHÔNG cấm
+        # 57,27 / 108,28 / 168,41 ms — ba số này là SỐ HIỆN HÀNH của bảng phân rã
+        # độ trễ (ch5 Bảng 5.10, bản môn học Bảng 4.10), không phải số đã thay.
         run: |
           set -e
-          PATTERN='25,[45] điểm|25\.45|0,700\)|1\.000 test|94,54% từng|57,27 ms|108,28 ms|168,41 ms|69,96%|triệt hạ hoàn toàn|2,379 FPS'
-          HITS=$(grep -rnE "$PATTERN" docs/slides/*.md || true)
+          MOI_NOI='25,[45] điểm|25\.45|0,700\)|1\.000 test|94,54% từng|69,96%|triệt hạ hoàn toàn'
+          CHI_DECK='2,379 FPS'
+          FAIL=0
+
+          HITS=$(grep -rnE "$MOI_NOI" docs/slides/*.md || true)
           if [ -n "$HITS" ]; then
-            echo "::error::Số liệu đã bị thay thế xuất hiện trong slide:"
+            echo "::error::Số liệu đã bị rút xuất hiện trong slide:"
             echo "$HITS"
-            exit 1
+            FAIL=1
           fi
+
+          HITS=$(grep -rnE "$CHI_DECK" \
+            docs/slides/10-slides.md \
+            docs/slides/11-slides-ky-thuat.md \
+            docs/slides/12-slides-mon-hoc.md || true)
+          if [ -n "$HITS" ]; then
+            echo "::error::Số cũ xuất hiện trên deck chiếu (được phép trong 10-defense-qa.md, nơi giải thích nó):"
+            echo "$HITS"
+            FAIL=1
+          fi
+
+          [ "$FAIL" -eq 0 ] || exit 1
           echo "Slide sạch số cũ."
 
   tests:
