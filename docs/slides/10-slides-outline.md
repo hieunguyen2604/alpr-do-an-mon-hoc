@@ -300,10 +300,10 @@ Mỗi slide gồm bốn phần:
 
 **Nội dung trên slide**
 - Nút thắt nằm ở tầng đọc chữ PaddleOCR (**64,3%**)
-- Bảng phân rã suy luận thuần: Detect **59,83 ms** (34,2%), OCR **112,55 ms** (64,3%), còn lại tiền/hậu xử lý ⇒ Tổng **175,24 ms** mỗi biển; E2E p50 = 406 ms
+- Bảng phân rã suy luận thuần: Detect **57,27 ms** (34,0%), OCR **108,28 ms** (64,3%), còn lại tiền/hậu xử lý ⇒ Tổng **168,41 ms** mỗi biển; E2E p50 = 406 ms
 
 **Speaker notes** *(45 s)*
-> Về hiệu năng trên CPU (i5-14600K), phân rã suy luận thuần cho thấy tầng OCR chiếm tới 64,3% thời gian (112,55 ms mỗi biển), trong khi YOLO11n chỉ tốn khoảng 60 ms. Độ trễ đầu-cuối p50 đạt 406 ms. Điều này chỉ ra hướng tối ưu hiệu năng tương lai là xuất mô hình OCR sang ONNX/OpenVINO để cắt đuôi độ trễ.
+> Về hiệu năng trên CPU (i5-14600K), phân rã suy luận thuần cho thấy tầng OCR chiếm tới 64,3% thời gian (108,28 ms mỗi biển), trong khi YOLO11n chỉ tốn khoảng 57 ms. Độ trễ đầu-cuối p50 đạt 406 ms. Điều này chỉ ra hướng tối ưu hiệu năng tương lai là xuất mô hình OCR sang ONNX/OpenVINO để cắt đuôi độ trễ.
 
 ---
 

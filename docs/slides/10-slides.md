@@ -235,15 +235,15 @@ Chênh lệch 2 dòng còn **23,07 điểm**, cùng bậc mốc quốc tế **48
 
 ## Hiệu năng trên CPU — phân rã suy luận thuần
 
-Điểm nghẽn thời gian là OCR (**64,3%**); tầng phát hiện chiếm **34,2%**
+Điểm nghẽn thời gian là OCR (**64,3%**); tầng phát hiện chiếm **34,0%**
 
 | Bước trong pipeline | Ước lượng ban đầu | **Đo thật** | % tổng |
 |---|---|---|---|
 | Giải mã ảnh + tiền xử lý | 50 ms | **2,83 ms** | 1,7% |
-| Phát hiện *(YOLO11n @ 640, CPU)* | 150 ms | **59,83 ms** | **34,2%** |
-| Nhận dạng chữ *(PaddleOCR, mỗi biển)* | 120 ms | **112,55 ms** | **64,3%** |
+| Phát hiện *(YOLO11n @ 640, CPU)* | 150 ms | **57,27 ms** | **34,0%** |
+| Nhận dạng chữ *(PaddleOCR, mỗi biển)* | 120 ms | **108,28 ms** | **64,3%** |
 | Hậu xử lý regex + kiểm tra hợp lệ | 5 ms | **0,03 ms** | 0,0% |
-| **Tổng suy luận thuần cho một biển** | **405 ms** | **175,24 ms** | **100%** |
+| **Tổng suy luận thuần cho một biển** | **405 ms** | **168,41 ms** | **100%** |
 
 ## Phân bố độ trễ suy luận
 

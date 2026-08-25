@@ -810,16 +810,17 @@ Con số cũ 5.857 ms **sai**, và em đã truy ra ba nguyên nhân cộng dồn
 
 Đo lại trên máy rảnh với mô hình đúng: p95 về 731 ms — **và đó chưa phải số cuối**: bậc thang thử-lại nối vào sau đó đưa p95 giao hàng lên **1.143,10 ms**. Giả thuyết "oneDNN/cold-start" bị bác bỏ (`enable_mkldnn=false`, cold-start p95 chỉ 176 ms vì pipeline warmup lúc khởi động). Giả thuyết "baseline vốn chậm" cũng bị bác bỏ (baseline đo client-side ra 763,75 ms, gần y hệt best.pt).
 
-**Phân rã độ trễ đúng trên `best.pt` (T5.7b):**
+**Phân rã suy luận thuần trên `best.pt` (T5.7b, `05-results.json`):**
 
 | Bước | Đo thật | % tổng |
 |---|---:|---:|
-| Giải mã ảnh | 2,65 ms | 1,5% |
-| YOLO11n @640 | 59,83 ms | **34,2%** |
-| PaddleOCR (mỗi biển) | 112,55 ms | **64,3%** |
+| Giải mã ảnh | 2,83 ms | 1,7% |
+| YOLO11n @640 | 57,27 ms | **34,0%** |
+| PaddleOCR (mỗi biển) | 108,28 ms | **64,3%** |
 | Chuẩn hoá regex | 0,03 ms | 0,0% |
+| **Tổng một biển** | **168,41 ms** | **100%** |
 
-Con số cũ "OCR chiếm 93,3%" là tạo tác của lỗi crop. Trên `best.pt`, OCR chiếm **64,3%** — vẫn tốn nhất nhưng không còn áp đảo, nên tối ưu bộ phát hiện (34,2%) giờ mới có ý nghĩa.
+Con số cũ "OCR chiếm 93,3%" là tạo tác của lỗi crop. Trên `best.pt`, OCR chiếm **64,3%** — vẫn tốn nhất nhưng không còn áp đảo, nên tối ưu bộ phát hiện (34,0%) giờ mới có ý nghĩa.
 
 **Bài học phương pháp luận đáng nêu:** một phép đo lấy trên hệ thống **đang có lỗi chưa biết** trông y hệt một phép đo hợp lệ — vẫn có cỡ mẫu, phân vị, biểu đồ. Thứ duy nhất phát hiện ra là **đo lại sau khi sửa lỗi** và thấy con số OCR dịch hơn 10 lần. Mọi con số hiệu năng em công bố kèm tên CPU, số luồng, imgsz và cỡ mẫu.
 
@@ -843,7 +844,7 @@ Bằng cách lưu **cả hai** chuỗi vào cơ sở dữ liệu: `raw_ocr_text`
 Vì một con số mAP tổng **che giấu đúng thất bại cần nhìn**. Trên bộ RodoSol-ALPR (Brazil), OpenALPR đạt 94,3% trên biển 1 dòng và 45,7% trên biển 2 dòng — nếu chỉ báo cáo trung bình thì hệ thống trông khoẻ mạnh trong khi vô dụng với phần lớn phương tiện lưu thông ở Việt Nam. Đây là con số em nhìn **trước tiên**, không phải mAP tổng.
 
 **Nếu bị hỏi sâu.**
-- Tập nhãn OCR của em có **2.234 biển 2 dòng** trên tổng 2.801 (79,8%) — dư sức để con số tách nhóm có ý nghĩa thống kê. Kết quả thật: biển 1 dòng đạt A6 0,949 (vượt mục tiêu), biển 2 dòng chỉ 0,581 — chênh 36,8 điểm. Đúng thất bại mà một con số trung bình sẽ che giấu.
+- Tập nhãn OCR của em có **2.234 biển 2 dòng** trên tổng 2.801 (79,8%) — dư sức để con số tách nhóm có ý nghĩa thống kê. Kết quả thật: biển 1 dòng đạt A6 0,954 (vượt mục tiêu), biển 2 dòng chỉ 0,723 — chênh 23,07 điểm. Đúng thất bại mà một con số trung bình sẽ che giấu.
 - `evaluate.py` in bảng `single_line / two_line / ALL` với N_GT, TP, FP, FN, P, R, F1, mAP50, mAP50-95, cộng một dòng khoảng cách AP giữa hai nhóm.
 - Nếu khoảng cách vượt 10 điểm AP, script cảnh báo và khuyến nghị cân bằng dataset trước khi nghĩ tới mô hình lớn hơn.
 - Ngưỡng phân nhóm 2,5 **cố ý trùng** với ngưỡng của tầng suy luận, để phép đánh giá mô tả đúng hệ thống thật.
@@ -1037,7 +1038,7 @@ Nó là một hệ thống chạy được nhưng **chưa phải sản phẩm tr
 2. **Sai mô hình:** checkpoint epoch 7, không phải `best.pt`.
 3. **Lỗi crop:** ảnh crop quá lớn khiến PaddleOCR đọc ~1322 ms/ảnh, thổi phồng tỷ trọng OCR lên "93,3%".
 
-Đo lại trên máy rảnh với mô hình đúng: p95 731 ms *(trước bậc thang thử-lại; số giao hàng là 1.143,10 ms)*. Phân rã đúng (T5.7b): **OCR 64,3% (112,55 ms/biển) / detect 34,2% (59,83 ms)**.
+Đo lại trên máy rảnh với mô hình đúng: p95 731 ms *(trước bậc thang thử-lại; số giao hàng là 1.143,10 ms)*. Phân rã đúng (T5.7b): **OCR 64,3% (108,28 ms/biển) / detect 34,0% (57,27 ms)**.
 
 **Cái bẫy: công bố con số mà không kèm cấu hình phần cứng.** Mọi con số hiệu năng phải kèm: **model CPU, số luồng, kích thước ảnh, backend, cỡ mẫu**.
 
@@ -1060,10 +1061,10 @@ Nó là một hệ thống chạy được nhưng **chưa phải sản phẩm tr
 | Mô hình chính thức | **`best.pt`** — YOLO11n, imgsz **640**, split v3, 20 epoch, box 8,0, fliplr 0, seed 42 |
 | Detection (test v3, 1.514 ảnh) | mAP50 **0,983** · mAP50-95 **0,783** · P **0,984** · R **0,971** — đạt cả bốn |
 | Detection tách layout | 1 dòng mAP50 0,988 · 2 dòng 0,968 · chênh **2,09 điểm** |
-| OCR (2.801 biển) | A4 **0,945** đạt sàn · A5 **0,637** · A6 **0,751** — A5/A6 chưa đạt; A6−A5 = **+13,28 điểm** |
-| OCR tách layout | 1 dòng A6 0,949 (đạt) · 2 dòng A6 0,581 · chênh **36,8 điểm** |
+| OCR (2.801 biển) | A4 **0,948** đạt sàn · A5 **0,637** · A6 **0,770** — A5/A6 chưa đạt; A6−A5 = **+13,28 điểm** |
+| OCR tách layout | 1 dòng A6 0,954 (đạt) · 2 dòng A6 0,723 · chênh **23,07 điểm** |
 | NFR-P1 độ trễ E2E p95 | 🟡 **1.143,10 ms** ở cấu hình giao hàng (đạt sàn 1.500 ms, trên mục tiêu 800 ms; trung vị 405,77 ms). Mốc 731/780 ms là trước bậc thang thử-lại |
-| Phân rã độ trễ | OCR **64,3%** (112,55 ms/biển) · detect **34,2%** (59,83 ms) |
+| Phân rã độ trễ | OCR **64,3%** (108,28 ms/biển) · detect **34,0%** (57,27 ms) — T5.7b |
 | Đồng thời (SC1) | **10** yêu cầu, 0 lỗi · soak 300 s 100% |
 | Phần cứng | Intel Core i5-14600K, 14 nhân / 20 luồng, **không có GPU CUDA** |
 | Chỉ tiêu chính | mAP50 ≥ 0,90 · mAP50-95 ≥ 0,65 · E2E OCR ≥ 0,88 · p95 ≤ 800 ms |

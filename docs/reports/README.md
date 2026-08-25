@@ -15,6 +15,7 @@
 | Đóng góp hậu xử lý | A6 − A5 | **+13,28 điểm** (372 biển sửa đúng, 0 hỏng) | như dòng trên |
 | A7 | Độ chính xác đầu–cuối | 0,563 *(nhãn máy sinh, không đại diện)* | [`40-ocr-accuracy-measured-confusion.json`](40-ocr-accuracy-measured-confusion.json) |
 | P1 | Độ trễ E2E p95 | **1.143,10 ms** 🟡 (median 405,77 ms) | [`05-results.json`](05-results.json) → khóa `T5.7a.p95_ms` và `T5.8.chinh_thuc`; diễn giải đánh đổi ở [`27-retry-ladder-cost-benefit.md`](27-retry-ladder-cost-benefit.md) |
+| Phân rã suy luận thuần | Detect/OCR/tổng một biển | **57,27 / 108,28 / 168,41 ms** (34,0% / 64,3%) | [`05-results.json`](05-results.json) → khóa `T5.7b` — **không trộn** với phân rã E2E (~59,83/112,55) trong [`07-benchmark-report.md`](07-benchmark-report.md), hai phép đo khác harness |
 | P2 | FPS luồng khung hình (tầng API) | **5,257 FPS** ✅ *(đối chứng 5,213; xấu nhất dưới tải 4,057)* | [`37-nfr-p2-pytorch.json`](37-nfr-p2-pytorch.json) — diễn giải hai lượt độc lập ở [`38-runtime-backend-and-nfr-p2.md`](38-runtime-backend-and-nfr-p2.md) |
 | P3 | Tốc độ video | **0,785×** ✅ (14,25 s video / 18,161 s wall = 0,7847) | [`37-nfr-p2-pytorch.json`](37-nfr-p2-pytorch.json) → khóa `nfr_p3_video_throughput.realtime_ratio` |
 | R4 | Soak liên tục | 15 phút · 2.028 request · 100% | [`33-runtime-nfr.json`](33-runtime-nfr.json) |
