@@ -38,15 +38,32 @@ CAP_HINH = re.compile(r"^\*+Hình (\d+\.\d+)\.\s*(.*?)\**$")
 CAP_BANG = re.compile(r"^\*\*Bảng (\d+\.\d+)\.?\*\*\s*(.*)$")
 FENCE = re.compile(r"^\s*(```|~~~)")
 
-# Thu tu dong quyen — phai khop CHAPTER_FILENAMES cua build_thesis.py.
-CHUONG = [
-    "ch1-gioi-thieu.md",
-    "ch2-co-so-ly-thuyet.md",
-    "ch3-khao-sat-lua-chon.md",
-    "ch4-phan-tich-thiet-ke.md",
-    "ch5-thuc-nghiem.md",
-    "ch6-ket-luan.md",
-]
+# Thu tu dong quyen. Uu tien ORDER.txt cua chinh thu muc — day la co che
+# build_thesis.py dung (xem `read_order`), va la ly do ban mon hoc 5 chuong
+# ghep dung du ten tep chuong khac han quyen tot nghiep 6 chuong.
+# Hardcode danh sach o day tung lam script nay hong ngay khi doi ban.
+def _doc_thu_tu() -> list[str]:
+    """Doc ORDER.txt cua thu muc; neu khong co thi dung danh sach mac dinh."""
+    manifest = PAPERS / "ORDER.txt"
+    if manifest.exists():
+        ten = [
+            d.strip()
+            for d in manifest.read_text(encoding="utf-8").splitlines()
+            if d.strip() and not d.lstrip().startswith("#")
+        ]
+        # Chi lay cac chuong: bo front-matter, tham khao va phu luc.
+        return [x for x in ten if x.startswith("ch") and not x.startswith(("ch8", "ch9"))]
+    return [
+        "ch1-gioi-thieu.md",
+        "ch2-co-so-ly-thuyet.md",
+        "ch3-khao-sat-lua-chon.md",
+        "ch4-phan-tich-thiet-ke.md",
+        "ch5-thuc-nghiem.md",
+        "ch6-ket-luan.md",
+    ]
+
+
+CHUONG = _doc_thu_tu()
 
 
 def don(s: str) -> str:
@@ -162,7 +179,10 @@ def main() -> None:
     print(f"Mục lục : {sum(1 for ln in muc_luc if ln.strip())} dòng")
     print(f"Hình    : {len(hinh)}")
     print(f"Bảng    : {len(bang)}")
-    thieu = [f"ch{c}" for c in "123456"
+    # Dai chuong suy tu chinh CHUONG, khong hardcode "123456": ban mon hoc chi
+    # co 5 chuong nen dai cung se bao thieu "ch6" moi lan chay.
+    so_chuong = [m.group(1) for m in (re.match(r"ch(\d+)", x) for x in CHUONG) if m]
+    thieu = [f"ch{c}" for c in so_chuong
              if not any(s.startswith(c + ".") for s, _ in bang)]
     if thieu:
         print(f"⚠ Chương không có bảng nào được đánh số: {', '.join(thieu)}")
