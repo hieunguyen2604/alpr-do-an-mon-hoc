@@ -156,13 +156,8 @@ docs/reports/figures/28b/
 # thu muc goc nen ban cua quyen mon hoc da lot vao mot commit.
 reference-thesis.docx
 
-# Thu muc ban nop: BAN SAO cua nhung tep vo da duoc theo doi o docs/papers/ va
-# docs/slides/, dung lai o moi lan chay build_thesis.py hoac export_thesis_pdf.ps1.
-# Theo doi chung se nhan doi 13 MB nhi phan trong lich su git moi lan dung lai,
-# doi lay dung con so khong. Chi giu README de nguoi moi clone biet thu muc nay
-# la gi va chay lenh nao de co no.
-/nop/*
-!/nop/README.md
+# Thu muc ban nop:
+/nop/*.zip
 
 # sentrux — cong cu phan tich kien truc CHAY NGOAI, khong phai phu thuoc
 # cua do an: khong tai lieu, ma nguon hay kich ban dung nao nhac toi no.
