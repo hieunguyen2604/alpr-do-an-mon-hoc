@@ -519,6 +519,9 @@ class PaddleOcrRecognizer(BaseRecognizer):
             }
             selection = f"lang={self._config.ocr_lang}, {OCR_VERSION}"
 
+        if device == "cpu":
+            model_kwargs["cpu_threads"] = int(os.environ.get("OMP_NUM_THREADS", "1"))
+
         started = time.perf_counter()
         try:
             self._engine = PaddleOCR(
@@ -592,6 +595,8 @@ class PaddleOcrRecognizer(BaseRecognizer):
         """
         recognition_model = RECOGNITION_MODEL_BY_LANG.get(self._config.ocr_lang)
         kwargs: dict[str, Any] = {"device": device}
+        if device == "cpu":
+            kwargs["cpu_threads"] = int(os.environ.get("OMP_NUM_THREADS", "1"))
         if recognition_model is not None:
             kwargs["model_name"] = recognition_model
 
