@@ -1,4 +1,223 @@
 {
+  "1dong-1.png": [
+    {
+      "plate": "51G31691",
+      "display": "51G-316.91",
+      "kind": "car",
+      "color": "white",
+      "valid": true,
+      "lines": 1
+    }
+  ],
+  "1dong-2.png": [
+    {
+      "plate": "51F63034",
+      "display": "51F-630.34",
+      "kind": "car",
+      "color": "white",
+      "valid": true,
+      "lines": 1
+    }
+  ],
+  "1dong-3.png": [
+    {
+      "plate": "51G51332",
+      "display": "51G-513.32",
+      "kind": "car",
+      "color": "white",
+      "valid": true,
+      "lines": 1
+    }
+  ],
+  "2dong-1.png": [
+    {
+      "plate": "59K120173",
+      "display": "59K1-201.73",
+      "kind": "motorcycle_old",
+      "color": "white",
+      "valid": true,
+      "lines": 2
+    }
+  ],
+  "2dong-2.png": [
+    {
+      "plate": "59K122599",
+      "display": "59K1-225.99",
+      "kind": "motorcycle_old",
+      "color": "white",
+      "valid": true,
+      "lines": 2
+    }
+  ],
+  "2dong-3.png": [
+    {
+      "plate": "51P54578",
+      "display": "51P5-4578",
+      "kind": "motorcycle_old",
+      "color": "white",
+      "valid": true,
+      "lines": 2,
+      "note": "Biển in '51-P5 / 4578' — xe máy seri P5, số 4 chữ số. Bản cũ ghi nhầm là ô tô 51P-545.78."
+    }
+  ],
+  "bien-do-quan-doi.jpg": [
+    {
+      "plate": "KV6938",
+      "display": "KV-6938",
+      "kind": "military",
+      "color": "red",
+      "valid": false,
+      "lines": 1
+    }
+  ],
+  "bien-ngoai-giao-51ng.jpg": [
+    {
+      "plate": "51NG16633",
+      "display": "51NG16633",
+      "kind": "unknown",
+      "color": "white",
+      "valid": false,
+      "lines": 2
+    }
+  ],
+  "bien-ngoai-giao-ng.jpg": [
+    {
+      "plate": "80346NG68",
+      "display": "80-346-NG-68",
+      "kind": "diplomatic",
+      "color": "white",
+      "valid": true,
+      "lines": 1
+    }
+  ],
+  "bien-vang-kinh-doanh.jpg": [
+    {
+      "plate": "29E01566",
+      "display": "29E-015.66",
+      "kind": "car",
+      "color": "yellow",
+      "valid": true,
+      "lines": 2
+    }
+  ],
+  "bien-xanh-nha-nuoc-2.jpg": [
+    {
+      "plate": "65A00450",
+      "display": "65A-004.50",
+      "kind": "blue_car",
+      "color": "blue",
+      "valid": true,
+      "lines": 2,
+      "note": "kind đổi car → blue_car theo taxonomy có màu (thêm sau bản expected đầu)."
+    }
+  ],
+  "bien-xanh-nha-nuoc.jpg": [
+    {
+      "plate": "51A1987",
+      "display": "51A-1987",
+      "kind": "blue_car",
+      "color": "blue",
+      "valid": true,
+      "lines": 2,
+      "note": "Biển in '51A / 1987' (số 4 chữ số). Bản cũ chỉ ghi được dòng dưới '1987'."
+    }
+  ],
+  "khong-co-bien-so.jpg": [],
+  "nhieu-bien-1.png": [
+    {
+      "plate": "56P23135",
+      "display": "56P2-3135",
+      "kind": "motorcycle_old",
+      "color": "white",
+      "valid": true,
+      "lines": 2,
+      "note": "Biển in '56-P2 / 3135' — xe máy seri P2. Bản cũ ghi nhầm là ô tô 56P-231.35."
+    },
+    {
+      "plate": "51G09964",
+      "display": "51G-099.64",
+      "kind": "car",
+      "color": "white",
+      "valid": true,
+      "lines": 2
+    },
+    {
+      "plate": "",
+      "display": "",
+      "kind": "unknown",
+      "color": "white",
+      "valid": false,
+      "lines": 2,
+      "note": "Biển xe máy mé trái bị che khuất một phần, người cũng không đọc được."
+    }
+  ],
+  "nhieu-bien-2.png": [
+    {
+      "plate": "59XB20430",
+      "display": "59XB-204.30",
+      "kind": "motorcycle_new",
+      "color": "white",
+      "valid": true,
+      "lines": 2,
+      "note": "Biển in '59-XB / 204.30'. Hệ thống hiện đọc 59YR (nhầm X→Y, B→R) — hạn chế OCR biển 2 dòng đã ghi ở Chương 6."
+    },
+    {
+      "plate": "59X139458",
+      "display": "59X1-394.58",
+      "kind": "motorcycle_old",
+      "color": "white",
+      "valid": true,
+      "lines": 2,
+      "note": "Biển in '59-X1 / 394.58'. Từ 21/07 (sàn tin cậy rescue + bậc thang thử-lại) hệ thống đọc ĐÚNG 59X1-394.58."
+    },
+    {
+      "plate": "76B141873",
+      "display": "76B1-418.73",
+      "kind": "motorcycle_old",
+      "color": "white",
+      "valid": true,
+      "lines": 2,
+      "note": "Biển in '76-B1 / 418.73'. Từng đọc nhầm 73G3-418.73; từ 21/07 hệ thống đọc ĐÚNG 76B1-418.73."
+    },
+    {
+      "plate": "51K14116",
+      "display": "51K-141.16",
+      "kind": "car",
+      "color": "white",
+      "valid": true,
+      "lines": 1,
+      "note": "Biển trước ô tô Hyundai đỏ '51K-141.16', crop chỉ 25×16 px. Hệ thống đọc thẳng ra BA-104 — được gắn cờ quân đội/không hợp lệ trên UI (trung thực), không bịa thành biển dân sự."
+    }
+  ],
+  "nhieu-bien-3.png": [
+    {
+      "plate": "77H54374",
+      "display": "77H5-4374",
+      "kind": "motorcycle_old",
+      "color": "white",
+      "valid": true,
+      "lines": 2,
+      "note": "Biển in '77-H5 / 4374'. Ca này được Chương 6 dẫn làm bằng chứng đọc đúng khi chụp chính diện."
+    },
+    {
+      "plate": "59F227793",
+      "display": "59F2-277.93",
+      "kind": "motorcycle_old",
+      "color": "white",
+      "valid": true,
+      "lines": 2,
+      "note": "Biển in '59-F2 / 277.93'. Hệ thống hiện chỉ đọc được dòng dưới '27793'."
+    },
+    {
+      "plate": "",
+      "display": "",
+      "kind": "unknown",
+      "color": "white",
+      "valid": false,
+      "lines": 2,
+      "note": "Biển xe máy giữa khung quá mờ, người cũng không đọc chắc được."
+    }
+  ],
   "canh-mot-bien-1.jpg": [
     {
       "plate": "52Z20513",

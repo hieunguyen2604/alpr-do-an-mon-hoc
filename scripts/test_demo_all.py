@@ -88,13 +88,17 @@ def test_images(img_dir: Path, expected_file: Path | None = None):
     )
 
 
-def test_videos():
+def test_videos(video_dir: Path | None = None):
+    target_dir = video_dir or (DEMO_DIR / "videos")
+    if not target_dir.exists():
+        target_dir = DEMO_DIR
+
     print("\n=======================================================")
-    print("TEST VIDEO TRONG: demo/")
+    print(f"TEST VIDEO TRONG: {target_dir.relative_to(REPO_ROOT)}")
     print("=======================================================")
 
     video_files = sorted(
-        f for f in DEMO_DIR.iterdir() if f.suffix.lower() in VIDEO_HOP_LE
+        f for f in target_dir.iterdir() if f.suffix.lower() in VIDEO_HOP_LE
     )
 
     for idx, vid_path in enumerate(video_files, 1):
@@ -121,41 +125,34 @@ def test_videos():
                 f"(Thời gian gửi: {elapsed:.2f}s)"
             )
 
-
-
             # Polling kết quả job
             poll_count = 0
             while poll_count < 60:
                 time.sleep(2)
                 poll_count += 1
-                job_res = requests.get(f"{BASE_URL}/jobs/{job_id}", timeout=10)
-                if job_res.status_code == 200:
-                    job_data = job_res.json()
+                try:
+                    poll_res = requests.get(f"{BASE_URL}/jobs/{job_id}", timeout=10)
+                except requests.RequestException:
+                    continue
+
+                if poll_res.status_code == 200:
+                    job_data = poll_res.json()
                     job_status = job_data.get("status")
-                    # `GET /api/jobs/{id}` tra `progress` trong khoang 0..1, KHONG
-                    # phai `progress_percent`. Ban truoc doc sai ten truong nen
-                    # luon in ra 0,0%.
-                    progress = float(job_data.get("progress") or 0.0) * 100.0
+                    progress = job_data.get("progress", 0.0)
                     print(
-                        f"      Polling ({poll_count * 2}s): "
-                        f"status={job_status}, progress={progress:.1f}%",
+                        f"      Polling ({poll_count*2}s): status={job_status}, "
+                        f"progress={progress*100:.1f}%",
                         end="\r",
                     )
 
                     if job_status == "completed":
-                        total_vid_time = time.perf_counter() - start_t
-                        total_frames = job_data.get("total_frames", 0)
+                        total_vid_time = job_data.get("processing_time", 0.0)
                         processed_frames = job_data.get("processed_frames", 0)
+                        total_frames = job_data.get("total_frames", 0)
 
                         # Job KHONG mang theo danh sach bien — no chi dem
                         # (`detection_count`). Muon tung bien thi hoi lich su,
-                        # loc theo job. Ban truoc doc `job_data["results"]`, mot
-                        # truong khong ton tai, nen moi video deu bao 0 bien
-                        # trong khi he thong that su doc duoc.
-                        # `page_size` toi da la 100 (backend/services/
-                        # history_service.py). Mot video dai co the vuot con so
-                        # do, nen phai di het cac trang thay vi xin mot trang
-                        # that to — xin 200 se bi tu choi 422 va lai ra 0 bien.
+                        # loc theo job.
                         results = []
                         try:
                             page_no = 1
@@ -211,6 +208,11 @@ def test_videos():
 
 
 if __name__ == "__main__":
-    test_images(DEMO_DIR / "images", DEMO_DIR / "images" / "expected.json")
-    test_images(DEMO_DIR / "images-extra", DEMO_DIR / "images-extra" / "results.json")
-    test_videos()
+    expected_file = DEMO_DIR / "expected.json"
+    if (DEMO_DIR / "1-line").exists():
+        test_images(DEMO_DIR / "1-line", expected_file)
+    if (DEMO_DIR / "2-line").exists():
+        test_images(DEMO_DIR / "2-line", expected_file)
+    if (DEMO_DIR / "multi-plate").exists():
+        test_images(DEMO_DIR / "multi-plate", expected_file)
+    test_videos(DEMO_DIR / "videos")
