@@ -327,6 +327,13 @@ export function LiveVideoPanel({ file }: LiveVideoPanelProps): JSX.Element {
             <video
               ref={videoRef}
               src={objectUrl}
+              preload="auto"
+              onLoadedMetadata={(e) => {
+                const vid = e.currentTarget;
+                if (vid.currentTime === 0) {
+                  vid.currentTime = 0.001;
+                }
+              }}
               // Native controls only when stopped. While running the canvas
               // covers the picture, so a seek bar underneath it would be
               // invisible but still clickable -- a control the user cannot see
