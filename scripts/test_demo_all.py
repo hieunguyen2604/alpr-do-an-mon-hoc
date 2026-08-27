@@ -1,12 +1,13 @@
 """Script test toàn bộ tệp hình ảnh và video trong thư mục demo/ qua ALPR API."""
 
 import json
+import os
 import time
 from pathlib import Path
 
 import requests
 
-BASE_URL = "http://localhost:8000/api"
+BASE_URL = os.environ.get("BASE_URL", "http://localhost:8001/api")
 REPO_ROOT = Path(__file__).resolve().parents[1]
 DEMO_DIR = REPO_ROOT / "demo"
 ANH_HOP_LE = (".jpg", ".jpeg", ".png", ".webp")
