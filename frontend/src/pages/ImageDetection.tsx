@@ -34,9 +34,10 @@ import {
   toFilenameFragment,
 } from '@/components/detection/image';
 import { InlineError, LoadingState, PageSection } from '@/components/StateViews';
+import HistoryDetailModal from '@/components/history/HistoryDetailModal';
 import { Button, EmptyState, ErrorState } from '@/components/ui';
 import { detectImage, fileUrl, isApiError } from '@/services/api';
-import type { ApiError, DetectionResponse, DetectionResult } from '@/types';
+import type { ApiError, DetectionHistory, DetectionResponse, DetectionResult } from '@/types';
 
 /** Fallback error, used when a thrown value is not a normalised API error. */
 const UNEXPECTED_ERROR: ApiError = {
@@ -247,6 +248,42 @@ export default function ImageDetection(): JSX.Element {
     [reportDownloadFailure],
   );
 
+  const [selectedDetailRecord, setSelectedDetailRecord] = useState<DetectionHistory | null>(null);
+
+  const handleOpenDetailModal = useCallback(
+    (result: DetectionResult, index: number) => {
+      if (!response) return;
+      const historyRecord: DetectionHistory = {
+        id: index + 1,
+        input_type: 'image',
+        image_path: response.image_url,
+        plate_image_path: result.plate_image_url,
+        plate_number: result.plate_number,
+        plate_display: result.plate_display,
+        raw_ocr_text: result.raw_ocr_text,
+        confidence: result.detection_confidence,
+        ocr_confidence: result.ocr_confidence,
+        plate_color: result.plate_color,
+        plate_color_confidence: result.plate_color_confidence,
+        plate_kind: result.plate_kind,
+        plate_line_count: result.plate_line_count,
+        is_valid_format: result.is_valid_format,
+        processing_time: result.processing_time,
+        bbox_x: result.bbox.x,
+        bbox_y: result.bbox.y,
+        bbox_w: result.bbox.width,
+        bbox_h: result.bbox.height,
+        bbox: result.bbox,
+        video_time_seconds: null,
+        detected_time: new Date().toISOString(),
+        created_at: new Date().toISOString(),
+        source_job_id: '',
+      };
+      setSelectedDetailRecord(historyRecord);
+    },
+    [response],
+  );
+
   const annotatedImageUrl = response
     ? (fileUrl(response.image_url) ?? previewUrl)
     : null;
@@ -385,6 +422,7 @@ export default function ImageDetection(): JSX.Element {
                           void handleDownloadCrop(plate, position)
                         }
                         isDownloadingCrop={downloadingCropIndex === index}
+                        onOpenDetails={handleOpenDetailModal}
                       />
                     </li>
                   ))}
@@ -394,6 +432,13 @@ export default function ImageDetection(): JSX.Element {
           </div>
         </PageSection>
       </div>
+
+      {/* Detection Details Modal (Deep Navy 2-column view) */}
+      <HistoryDetailModal
+        record={selectedDetailRecord}
+        onClose={() => setSelectedDetailRecord(null)}
+        onDelete={() => setSelectedDetailRecord(null)}
+      />
     </div>
   );
 }

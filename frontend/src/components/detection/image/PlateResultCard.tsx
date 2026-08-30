@@ -1,10 +1,10 @@
 /**
  * Enhanced Plate Result Card with modern aesthetics, copy-to-clipboard,
- * glowing valid/invalid indicators, and clean layout.
+ * glowing valid/invalid indicators, and detail modal trigger.
  */
 
 import { useState } from 'react';
-import { Check, Copy, Download, ImageOff } from 'lucide-react';
+import { Check, Copy, Download, Eye, ImageOff } from 'lucide-react';
 
 import { Badge, Button, ConfidenceBar } from '@/components/ui';
 import { cn } from '@/lib/cn';
@@ -20,6 +20,7 @@ export interface PlateResultCardProps {
   onActiveChange?: (index: number | null) => void;
   onDownloadCrop?: (result: DetectionResult, index: number) => void;
   isDownloadingCrop?: boolean;
+  onOpenDetails?: (result: DetectionResult, index: number) => void;
 }
 
 export function PlateResultCard({
@@ -30,6 +31,7 @@ export function PlateResultCard({
   onActiveChange,
   onDownloadCrop,
   isDownloadingCrop = false,
+  onOpenDetails,
 }: PlateResultCardProps): JSX.Element {
   const [copied, setCopied] = useState(false);
   const hasPlateText = Boolean(result.plate_number || result.plate_display);
@@ -62,11 +64,13 @@ export function PlateResultCard({
               src={plateImageUrl}
               alt={`Ảnh biển số ${displayPlate} đã cắt`}
               className={cn(
-                'h-16 w-32 rounded-lg border object-contain bg-surface-raised p-0.5 transition-all',
+                'h-16 w-32 rounded-lg border object-contain bg-surface-raised p-0.5 transition-all cursor-pointer',
                 result.is_valid_format
-                  ? 'border-emerald-500/40 shadow-[0_0_8px_rgba(16,185,129,0.15)]'
-                  : 'border-amber-500/40 shadow-[0_0_8px_rgba(245,158,11,0.15)]',
+                  ? 'border-emerald-500/40 shadow-[0_0_8px_rgba(16,185,129,0.15)] group-hover:border-emerald-500'
+                  : 'border-amber-500/40 shadow-[0_0_8px_rgba(245,158,11,0.15)] group-hover:border-amber-500',
               )}
+              onClick={() => onOpenDetails?.(result, index)}
+              title="Nhấp để xem chi tiết"
             />
           ) : (
             <div
@@ -112,25 +116,27 @@ export function PlateResultCard({
               )}
             </div>
 
-            {/* Copy Button */}
-            {hasPlateText && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handleCopy}
-                className="h-7 px-2 text-xs"
-                title="Sao chép biển số"
-                leftIcon={
-                  copied ? (
-                    <Check className="h-3.5 w-3.5 text-emerald-500" />
-                  ) : (
-                    <Copy className="h-3.5 w-3.5 text-content-muted" />
-                  )
-                }
-              >
-                {copied ? 'Đã chép' : 'Sao chép'}
-              </Button>
-            )}
+            {/* Action Buttons: Copy */}
+            <div className="flex items-center gap-1.5">
+              {hasPlateText && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleCopy}
+                  className="h-7 px-2 text-xs"
+                  title="Sao chép biển số"
+                  leftIcon={
+                    copied ? (
+                      <Check className="h-3.5 w-3.5 text-emerald-500" />
+                    ) : (
+                      <Copy className="h-3.5 w-3.5 text-content-muted" />
+                    )
+                  }
+                >
+                  {copied ? 'Đã chép' : 'Sao chép'}
+                </Button>
+              )}
+            </div>
           </div>
 
           <dl className="mt-3 grid grid-cols-1 gap-x-4 gap-y-2.5 sm:grid-cols-3">
@@ -156,8 +162,22 @@ export function PlateResultCard({
         </div>
       </div>
 
-      {onDownloadCrop && plateImageUrl && (
-        <div className="mt-3 flex justify-end border-t border-border/40 pt-2.5">
+      <div className="mt-3 flex items-center justify-between border-t border-border/40 pt-2.5">
+        {onOpenDetails ? (
+          <Button
+            variant="ghost"
+            size="sm"
+            className="text-xs text-primary hover:text-primary-hover"
+            leftIcon={<Eye className="h-3.5 w-3.5" />}
+            onClick={() => onOpenDetails(result, index)}
+          >
+            Xem chi tiết
+          </Button>
+        ) : (
+          <div />
+        )}
+
+        {onDownloadCrop && plateImageUrl && (
           <Button
             variant="secondary"
             size="sm"
@@ -168,8 +188,8 @@ export function PlateResultCard({
           >
             Tải ảnh biển số
           </Button>
-        </div>
-      )}
+        )}
+      </div>
     </article>
   );
 }

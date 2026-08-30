@@ -68,20 +68,20 @@
    * and 500 shades restore it.
    */
   .dark {
-    --color-primary: 96 165 250; /* blue-400 */
-    --color-primary-hover: 147 197 253; /* blue-300 */
-    --color-primary-soft: 30 58 138; /* blue-900 */
+    --color-primary: 56 189 248; /* sky-400 */
+    --color-primary-hover: 125 211 252; /* sky-300 */
+    --color-primary-soft: 12 74 110; /* sky-900 */
 
-    --color-surface: 15 23 42; /* slate-900 */
-    --color-surface-muted: 2 6 23; /* slate-950 */
-    --color-surface-raised: 30 41 59; /* slate-800 */
+    --color-surface: 19 27 46; /* deep navy #131B2E */
+    --color-surface-muted: 11 15 25; /* deep slate #0B0F19 */
+    --color-surface-raised: 30 41 59; /* slate #1E293B */
 
     --color-text: 241 245 249; /* slate-100 */
     --color-text-muted: 148 163 184; /* slate-400 */
 
-    --color-border: 51 65 85; /* slate-700 */
+    --color-border: 45 58 82; /* #2D3A52 */
 
-    --color-success: 74 222 128; /* green-400 */
+    --color-success: 52 211 153; /* emerald-400 */
     --color-warning: 251 191 36; /* amber-400 */
     --color-danger: 248 113 113; /* red-400 */
 
