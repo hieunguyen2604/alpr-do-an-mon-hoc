@@ -85,7 +85,7 @@ export function useJobPolling(
   const {
     intervalMs = DEFAULT_POLL_INTERVAL_MS,
     onSettled,
-    maxConsecutiveErrors = 3,
+    maxConsecutiveErrors = 10,
   } = options;
 
   const [job, setJob] = useState<DetectionJob | null>(null);
