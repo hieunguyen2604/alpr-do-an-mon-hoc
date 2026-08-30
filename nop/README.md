@@ -54,6 +54,27 @@ Slide bảo vệ hiện tại ([`02-slide-bao-ve.pptx`](02-slide-bao-ve.pptx)) g
 
 ---
 
+## 🚀 3. Phương Án Phân Bổ 7 Slide Backup Vào Thẳng Luồng Slide Chính (Bản 18–20 Phút)
+
+Khi Hội đồng cho phép trình bày **18–20 phút** và muốn đi sâu trực tiếp vào bản chất thuật toán / số liệu ngay trong bài thuyết trình:
+
+1. **Khối 1 (Tổng quan & Pháp lý):**
+   - Ghép **Backup 6 (Căn cứ khoa học Laroca 2022 & TT 79/2024)** trực tiếp vào Slide 3 & Slide 4.
+2. **Khối 2 (Kiến trúc & Giải pháp AI):**
+   - Ghép **Backup 1 (Kiến trúc sâu YOLO11n: C3k2, SPPF)** trực tiếp vào Slide 10 (sau phần chọn detector).
+   - Ghép **Backup 2 (Kiến trúc sâu PP-OCRv5: SVTR-HG, CTC Loss)** trực tiếp vào Slide 12 (sau phần nhận dạng ký tự).
+3. **Khối 3 (Dữ liệu & Huấn luyện):**
+   - Ghép **Backup 5 (Bảng siêu tham số huấn luyện AdamW, loss curve 20 epochs)** trực tiếp vào Slide 16.
+4. **Khối 4 (Thực nghiệm & Đánh giá):**
+   - Ghép **Backup 4 (Ablation Study: bóc tách đóng góp luật chuẩn hoá +13,28 điểm)** vào Slide 23.
+   - Ghép **Backup 3 (Error Analysis: phân loại 6 ca lỗi E1–E6 trên 2.801 biển)** vào Slide 25.
+5. **Khối 5 (Demo & Tổng kết):**
+   - Ghép **Backup 7 (Bảng tra nhanh số liệu tổng thể)** vào Slide 30.
+
+*$\rightarrow$ Tổng cộng: **36 slide chính liền mạch**, thuyết trình hoàn hảo trong **18–20 phút**.*
+
+---
+
 ## Cách dựng lại
 
 Thư mục được làm mới ở **mỗi** lần chạy, nên nó không thể âm thầm giữ bản cũ —
