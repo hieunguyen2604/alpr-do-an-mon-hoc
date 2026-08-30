@@ -1,0 +1,366 @@
+{
+  "generated_at": "2026-08-30T21:07:16",
+  "hardware": {
+    "cpu_name": "Intel(R) Core(TM) i5-14600K",
+    "physical_cores": 14,
+    "logical_cores": 20,
+    "ram_total_gb": 31.77,
+    "platform": "Windows 11",
+    "python_version": "3.13.12",
+    "competing_processes": []
+  },
+  "configuration": {
+    "model_path_effective": "D:\\DATN\\models\\best.pt",
+    "model_path_override": null,
+    "model_path_from_env_files": "D:\\DATN\\models\\best.pt",
+    "imgsz": 640,
+    "device": "cpu",
+    "conf_threshold": 0.25,
+    "frame_stride": 5,
+    "database_url": "sqlite:///D:/DATN/data/alpr.db",
+    "use_stub": false
+  },
+  "images_root": "D:\\DATN\\datasets\\processed\\yolo\\images\\test",
+  "server_log": "D:\\DATN\\docs\\reports\\42-runtime-nfr-sau-toi-uu.server.log",
+  "server_run_1": {
+    "ready_after_s": 5.26,
+    "health": {
+      "status": "ok",
+      "app_name": "Vietnamese ALPR API",
+      "version": "0.1.0",
+      "database_connected": true,
+      "model_loaded": true,
+      "uptime_seconds": 4.531214800023008,
+      "timestamp": "2026-08-30T14:07:21.425604Z"
+    }
+  },
+  "nfr_p2_webcam_fps": {
+    "window_seconds": 60.04,
+    "virtual_capture_fps": 30.0,
+    "frames_offered_by_camera": 1801,
+    "frames_sent": 338,
+    "frames_succeeded": 338,
+    "frames_dropped_by_single_slot_queue": 1463,
+    "failure_count": 0,
+    "failures": [],
+    "plates_returned_total": 338,
+    "per_frame_latency_ms": {
+      "samples": 338,
+      "mean_ms": 165.66,
+      "p50_ms": 157.63,
+      "p95_ms": 173.25,
+      "p99_ms": 464.86,
+      "min_ms": 143.95,
+      "max_ms": 481.85
+    },
+    "effective_fps": 5.63,
+    "target_fps": 5.0,
+    "floor_fps": 3.0,
+    "status": "PASS",
+    "measurement_note": "Measured over HTTP on the loopback interface. Excludes real camera capture, browser-side JPEG encoding and canvas draw time; a real webcam session would be slower. Upper bound, not a field figure."
+  },
+  "nfr_p3_video_throughput": {
+    "video": {
+      "path": "D:\\DATN\\demo\\videos\\demo-video.mp4",
+      "frame_count": 171,
+      "fps": 12.0,
+      "duration_s": 14.25,
+      "width": 960,
+      "height": 540
+    },
+    "frame_stride": 5,
+    "accepted_after_s": 0.013,
+    "total_wall_s": 16.389,
+    "poll_interval_s": 0.25,
+    "total_frames_reported": 171,
+    "processed_frames": 35,
+    "detection_count": 13,
+    "seconds_per_processed_frame": 0.4682,
+    "realtime_ratio": 0.8695,
+    "target_ratio": 0.3,
+    "floor_ratio": 0.15,
+    "status": "PASS",
+    "measurement_note": "Stopwatch spans upload -> terminal job state, including a 0.25 s polling granularity that is not subtracted. Only every 5th frame is analysed (ALPR_FRAME_STRIDE)."
+  },
+  "nfr_r4_soak": {
+    "duration_minutes_run": 15.0,
+    "duration_minutes_specified": 60.0,
+    "requests_sent": 5337,
+    "requests_succeeded": 5337,
+    "requests_failed": 0,
+    "success_rate_percent": 100.0,
+    "target_success_percent": 99.0,
+    "latency_ms": {
+      "samples": 5337,
+      "mean_ms": 168.56,
+      "p50_ms": 158.59,
+      "p95_ms": 194.5,
+      "p99_ms": 462.4,
+      "min_ms": 142.87,
+      "max_ms": 527.05
+    },
+    "throughput_rps": 5.93,
+    "error_samples": [],
+    "rss_trace_gb": [
+      {
+        "elapsed_s": 0.3,
+        "rss_gb": 0.735
+      },
+      {
+        "elapsed_s": 30.3,
+        "rss_gb": 0.741
+      },
+      {
+        "elapsed_s": 60.4,
+        "rss_gb": 0.741
+      },
+      {
+        "elapsed_s": 90.4,
+        "rss_gb": 0.745
+      },
+      {
+        "elapsed_s": 120.5,
+        "rss_gb": 0.77
+      },
+      {
+        "elapsed_s": 150.6,
+        "rss_gb": 0.776
+      },
+      {
+        "elapsed_s": 180.7,
+        "rss_gb": 0.738
+      },
+      {
+        "elapsed_s": 210.7,
+        "rss_gb": 0.783
+      },
+      {
+        "elapsed_s": 240.8,
+        "rss_gb": 0.782
+      },
+      {
+        "elapsed_s": 270.9,
+        "rss_gb": 0.784
+      },
+      {
+        "elapsed_s": 300.9,
+        "rss_gb": 0.784
+      },
+      {
+        "elapsed_s": 330.9,
+        "rss_gb": 0.786
+      },
+      {
+        "elapsed_s": 360.9,
+        "rss_gb": 0.794
+      },
+      {
+        "elapsed_s": 391.0,
+        "rss_gb": 0.8
+      },
+      {
+        "elapsed_s": 421.0,
+        "rss_gb": 0.795
+      },
+      {
+        "elapsed_s": 451.2,
+        "rss_gb": 0.795
+      },
+      {
+        "elapsed_s": 481.3,
+        "rss_gb": 0.8
+      },
+      {
+        "elapsed_s": 511.4,
+        "rss_gb": 0.804
+      },
+      {
+        "elapsed_s": 541.5,
+        "rss_gb": 0.803
+      },
+      {
+        "elapsed_s": 571.6,
+        "rss_gb": 0.802
+      },
+      {
+        "elapsed_s": 601.8,
+        "rss_gb": 0.803
+      },
+      {
+        "elapsed_s": 631.9,
+        "rss_gb": 0.801
+      },
+      {
+        "elapsed_s": 661.9,
+        "rss_gb": 0.802
+      },
+      {
+        "elapsed_s": 691.9,
+        "rss_gb": 0.74
+      },
+      {
+        "elapsed_s": 722.0,
+        "rss_gb": 0.804
+      },
+      {
+        "elapsed_s": 752.0,
+        "rss_gb": 0.804
+      },
+      {
+        "elapsed_s": 782.2,
+        "rss_gb": 0.809
+      },
+      {
+        "elapsed_s": 812.3,
+        "rss_gb": 0.806
+      },
+      {
+        "elapsed_s": 842.5,
+        "rss_gb": 0.807
+      },
+      {
+        "elapsed_s": 872.6,
+        "rss_gb": 0.808
+      }
+    ],
+    "rss_growth_gb": 0.073,
+    "status": "PASS",
+    "coverage_caveat": "Run for 15.0 minutes, NOT the 60 minutes the requirement specifies. The success rate below is therefore evidence over a shorter window than NFR-R4 asks for, and does not by itself close the requirement."
+  },
+  "nfr_r5_restart_durability": {
+    "total_records_before": 7977,
+    "total_records_after": 7977,
+    "records_lost": 0,
+    "counts_identical": true,
+    "sample_records_identical": true,
+    "sample_size": 10,
+    "sample_before": [
+      {
+        "id": "7977",
+        "plate_number": "51G51332",
+        "detected_time": "2026-08-30T14:23:38.343054Z"
+      },
+      {
+        "id": "7976",
+        "plate_number": "51A72110",
+        "detected_time": "2026-08-30T14:23:38.163793Z"
+      },
+      {
+        "id": "7975",
+        "plate_number": "51F16159",
+        "detected_time": "2026-08-30T14:23:37.980797Z"
+      },
+      {
+        "id": "7974",
+        "plate_number": "51F76354",
+        "detected_time": "2026-08-30T14:23:37.823390Z"
+      },
+      {
+        "id": "7973",
+        "plate_number": "51A05227",
+        "detected_time": "2026-08-30T14:23:37.665402Z"
+      },
+      {
+        "id": "7972",
+        "plate_number": "51F59011",
+        "detected_time": "2026-08-30T14:23:37.509280Z"
+      },
+      {
+        "id": "7971",
+        "plate_number": "60A35981",
+        "detected_time": "2026-08-30T14:23:37.332262Z"
+      },
+      {
+        "id": "7970",
+        "plate_number": "51F24403",
+        "detected_time": "2026-08-30T14:23:37.136925Z"
+      },
+      {
+        "id": "7969",
+        "plate_number": "51F24403",
+        "detected_time": "2026-08-30T14:23:36.970584Z"
+      },
+      {
+        "id": "7968",
+        "plate_number": "51A89714",
+        "detected_time": "2026-08-30T14:23:36.814048Z"
+      }
+    ],
+    "sample_after": [
+      {
+        "id": "7977",
+        "plate_number": "51G51332",
+        "detected_time": "2026-08-30T14:23:38.343054Z"
+      },
+      {
+        "id": "7976",
+        "plate_number": "51A72110",
+        "detected_time": "2026-08-30T14:23:38.163793Z"
+      },
+      {
+        "id": "7975",
+        "plate_number": "51F16159",
+        "detected_time": "2026-08-30T14:23:37.980797Z"
+      },
+      {
+        "id": "7974",
+        "plate_number": "51F76354",
+        "detected_time": "2026-08-30T14:23:37.823390Z"
+      },
+      {
+        "id": "7973",
+        "plate_number": "51A05227",
+        "detected_time": "2026-08-30T14:23:37.665402Z"
+      },
+      {
+        "id": "7972",
+        "plate_number": "51F59011",
+        "detected_time": "2026-08-30T14:23:37.509280Z"
+      },
+      {
+        "id": "7971",
+        "plate_number": "60A35981",
+        "detected_time": "2026-08-30T14:23:37.332262Z"
+      },
+      {
+        "id": "7970",
+        "plate_number": "51F24403",
+        "detected_time": "2026-08-30T14:23:37.136925Z"
+      },
+      {
+        "id": "7969",
+        "plate_number": "51F24403",
+        "detected_time": "2026-08-30T14:23:36.970584Z"
+      },
+      {
+        "id": "7968",
+        "plate_number": "51A89714",
+        "detected_time": "2026-08-30T14:23:36.814048Z"
+      }
+    ],
+    "status": "PASS",
+    "measurement_note": "Both snapshots were read through GET /api/history and GET /api/statistics, so the check proves the rows are still reachable by the application after the process was terminated and started again -- not merely that a file survived.",
+    "shutdown_kind": "Abrupt: TerminateProcess on Windows, so no graceful shutdown hook and no orderly connection close. Closer to a crash than to a clean stop, which makes survival the stronger result.",
+    "restart_ready_after_s": 5.77,
+    "health_after_restart": {
+      "status": "ok",
+      "app_name": "Vietnamese ALPR API",
+      "version": "0.1.0",
+      "database_connected": true,
+      "model_loaded": true,
+      "uptime_seconds": 4.872731100011151,
+      "timestamp": "2026-08-30T14:23:47.280151Z"
+    }
+  },
+  "summary": {
+    "requirements_checked": 4,
+    "passed": 4,
+    "not_passed": [],
+    "verdicts": [
+      "NFR-P2 FPS webcam hiệu dụng: 5.63 -- PASS",
+      "NFR-P3 Tỉ lệ so với thời gian thực: 0.8695 -- PASS",
+      "NFR-R4 Tỉ lệ thành công khi chạy liên tục: 100.0 -- PASS",
+      "NFR-R5 Bản ghi mất sau khởi động lại: 0 -- PASS"
+    ]
+  }
+}
