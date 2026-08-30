@@ -5,6 +5,7 @@
 import { useEffect, useState } from 'react';
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
 import {
+  Camera,
   History as HistoryIcon,
   Image as ImageIcon,
   Menu,
@@ -35,6 +36,12 @@ const NAVIGATION_ITEMS: readonly NavigationItem[] = [
     label: 'Nhận dạng video',
     description: 'Tải video lên, xử lý nền và theo dõi tiến độ',
     icon: Video,
+  },
+  {
+    to: '/webcam',
+    label: 'Quét Webcam trực tiếp',
+    description: 'Nhận dạng biển số thời gian thực qua camera laptop',
+    icon: Camera,
   },
   {
     to: '/history',

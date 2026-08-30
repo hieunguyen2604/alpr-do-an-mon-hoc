@@ -24,6 +24,7 @@ import { Skeleton } from '@/components/ui';
 const History = lazy(() => import('@/pages/History'));
 const ImageDetection = lazy(() => import('@/pages/ImageDetection'));
 const VideoDetection = lazy(() => import('@/pages/VideoDetection'));
+const WebcamDetection = lazy(() => import('@/pages/WebcamDetection'));
 
 /**
  * Placeholder shown while a page chunk is being fetched.
@@ -67,6 +68,7 @@ export default function App(): JSX.Element {
       <Route element={<Layout />}>
         <Route index element={withSuspense(<ImageDetection />)} />
         <Route path="video" element={withSuspense(<VideoDetection />)} />
+        <Route path="webcam" element={withSuspense(<WebcamDetection />)} />
         <Route path="history" element={withSuspense(<History />)} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Route>
