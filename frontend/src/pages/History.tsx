@@ -233,29 +233,8 @@ export default function History(): JSX.Element {
   const isRefreshing = isLoading && response !== null;
 
   return (
-    <div className="space-y-5">
-      <header className="flex flex-wrap items-end justify-between gap-3">
-        <div>
-          <h1 className="text-xl font-semibold text-content">
-            Lịch sử nhận dạng
-          </h1>
-          <p className="mt-1 text-sm text-content-muted">
-            Mỗi dòng là một biển số. Nhiều dòng có thể thuộc cùng một lượt tải
-            lên.
-          </p>
-        </div>
-
-        <Button
-          variant="secondary"
-          onClick={() => void loadHistory()}
-          isLoading={isRefreshing}
-          loadingText="Đang tải…"
-          leftIcon={<RefreshCw className="h-4 w-4" />}
-        >
-          Tải lại
-        </Button>
-      </header>
-
+    <div className="space-y-4">
+      {/* Compact Filters Toolbar */}
       <HistoryFilters
         searchInput={searchInput}
         onSearchInputChange={setSearchInput}
@@ -275,23 +254,35 @@ export default function History(): JSX.Element {
       />
 
       {notice && (
-        // Announced politely so a keyboard or screen-reader user hears that the
-        // deletion succeeded instead of only seeing a row disappear.
         <p
           role="status"
           aria-live="polite"
-          className="rounded-lg border border-success/30 bg-success/10 px-4 py-3 text-sm text-success"
+          className="rounded-xl border border-success/30 bg-success/10 px-4 py-2.5 text-xs font-semibold text-success"
         >
           {notice}
         </p>
       )}
 
+      {/* Main Records Table Card */}
       <Card
-        title="Kết quả"
+        title="Danh sách biển số đã lưu"
         description={
           isInitialLoading
             ? 'Đang tải danh sách…'
-            : `${formatNumber(total)} biển số khớp điều kiện hiện tại`
+            : `${formatNumber(total)} biển số khớp điều kiện`
+        }
+        actions={
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => void loadHistory()}
+            isLoading={isRefreshing}
+            loadingText="Đang tải…"
+            className="h-8 text-xs font-semibold text-content-muted hover:text-content"
+            leftIcon={<RefreshCw className="h-3.5 w-3.5" />}
+          >
+            Làm mới
+          </Button>
         }
         noPadding
       >
