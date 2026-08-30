@@ -110,48 +110,73 @@ which 12 were fragments like ``S``, ``BEK`` and ``187`` -- rows nobody can act
 on, polluting the history page one upload at a time.
 """
 
-_VARIANT_MERGE_WINDOW_SECONDS: Final[float] = 2.0
+_VARIANT_MERGE_WINDOW_SECONDS: Final[float] = 3.5
 """How close in time two readings must be to count as variants of one plate.
 
 One physical plate read across consecutive sampled frames sometimes yields
-strings differing in a single character (``51P51578`` next to ``51P54578``).
-Merging on string distance alone would be unsafe -- two real consecutive
-registrations can also differ by one digit -- so the merge additionally
-requires the sightings to be near-simultaneous, when one vehicle occupying
-both readings is by far the likelier explanation.
+strings differing in 1-2 characters (e.g. ``52Z1513`` next to ``52Z20513``
+due to glare or shadow). Merging on string distance alone would be unsafe,
+so the merge additionally requires the sightings to be near-simultaneous (<=3.5s)
+and share province prefix / suffix digits.
 """
 
 
 def _within_one_edit(a: str, b: str) -> bool:
-    """Return whether two strings differ by at most one edit operation.
-
-    One edit means one substitution, one insertion or one deletion -- exactly
-    the damage a single misread or dropped character does to a plate string.
-    Written out instead of importing a Levenshtein dependency because the
-    bounded case needs only one linear scan.
-
-    Args:
-        a: First string.
-        b: Second string.
-
-    Returns:
-        ``True`` when the edit distance is 0 or 1.
-    """
+    """Return whether two strings differ by at most one edit operation."""
     if abs(len(a) - len(b)) > 1:
         return False
     if len(a) > len(b):
         a, b = b, a
-    # Walk both strings to the first mismatch, then check whether skipping one
-    # character (same length: in both; different length: in the longer only)
-    # makes the remainders equal.
     i = 0
     while i < len(a) and a[i] == b[i]:
         i += 1
     if i == len(a):
-        return True  # `a` is a prefix of `b`, at most one trailing char apart.
+        return True
     if len(a) == len(b):
         return a[i + 1 :] == b[i + 1 :]
     return a[i:] == b[i + 1 :]
+
+
+def _levenshtein_distance(a: str, b: str) -> int:
+    """Compute standard Levenshtein distance between two short strings."""
+    if a == b:
+        return 0
+    if not a:
+        return len(b)
+    if not b:
+        return len(a)
+    dp = list(range(len(b) + 1))
+    for i, ca in enumerate(a):
+        new_dp = [i + 1] * (len(b) + 1)
+        for j, cb in enumerate(b):
+            cost = 0 if ca == cb else 1
+            new_dp[j + 1] = min(dp[j + 1] + 1, new_dp[j] + 1, dp[j] + cost)
+        dp = new_dp
+    return dp[len(b)]
+
+
+def _is_fuzzy_duplicate_plate(a: str, b: str) -> bool:
+    """Return whether two plate strings describe the same physical vehicle.
+
+    Handles 1-edit substitutions/insertions, and 2-edit variations where the
+    same vehicle has common province prefix (e.g. '52Z') and trailing digits ('513').
+    """
+    if not a or not b:
+        return False
+    if a == b or _within_one_edit(a, b):
+        return True
+
+    dist = _levenshtein_distance(a, b)
+    if dist <= 2:
+        # Require shared 2-digit province code (e.g. '52', '67', '79')
+        if len(a) >= 3 and len(b) >= 3 and a[:2] == b[:2]:
+            # Shared series letter (e.g. 52Z...)
+            if a[2] == b[2]:
+                return True
+            # Or shared trailing digits (e.g. ...513)
+            if len(a) >= 4 and len(b) >= 4 and a[-3:] == b[-3:]:
+                return True
+    return False
 
 
 # ---------------------------------------------------------------------------
@@ -1077,7 +1102,7 @@ class DetectionService:
             text = entry.recognition.text if entry.recognition is not None else ""
             absorbed = max_frame_gap > 0 and any(
                 abs(frame_index - winner_frame) <= max_frame_gap
-                and _within_one_edit(text, winner_text)
+                and _is_fuzzy_duplicate_plate(text, winner_text)
                 for winner_text, winner_frame in winner_texts
             )
             if absorbed:

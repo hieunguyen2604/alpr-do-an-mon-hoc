@@ -256,19 +256,48 @@ function carryTextForward(
   });
 }
 
+function calculateLevenshtein(a: string, b: string): number {
+  if (a === b) return 0;
+  if (!a) return b.length;
+  if (!b) return a.length;
+  const m = a.length;
+  const n = b.length;
+  let prev = new Array<number>(n + 1);
+  for (let j = 0; j <= n; j++) prev[j] = j;
+
+  for (let i = 0; i < m; i++) {
+    const curr = new Array<number>(n + 1);
+    curr[0] = i + 1;
+    for (let j = 0; j < n; j++) {
+      const cost = a[i] === b[j] ? 0 : 1;
+      const val1 = (curr[j] ?? 0) + 1;
+      const val2 = (prev[j + 1] ?? 0) + 1;
+      const val3 = (prev[j] ?? 0) + cost;
+      curr[j + 1] = Math.min(val1, val2, val3);
+    }
+    prev = curr;
+  }
+  return prev[n] ?? 0;
+}
+
+function isFuzzyDuplicatePlate(a: string, b: string): boolean {
+  if (a === b) return true;
+  const dist = calculateLevenshtein(a, b);
+  if (dist <= 1) return true;
+  if (dist <= 2 && a.length >= 3 && b.length >= 3 && a.slice(0, 2) === b.slice(0, 2)) {
+    if (a[2] === b[2] || (a.length >= 4 && b.length >= 4 && a.slice(-3) === b.slice(-3))) {
+      return true;
+    }
+  }
+  return false;
+}
+
 /**
  * Fold one sighting into the merged list.
  *
  * Keeps the **best** reading rather than the latest. A plate is read many times
  * as it crosses the frame, and those reads are not equally good — it is small
- * and blurred at the edges of its pass and largest in the middle. Overwriting
- * with the newest would leave every plate described by its worst sighting, the
- * one taken as it leaves the shot.
- *
- * @param list - Current merged list.
- * @param result - One plate from one frame.
- * @param videoTime - Where in the clip the frame came from.
- * @returns A new list; the input is not modified.
+ * and blurred at the edges of its pass and largest in the middle.
  */
 export function mergePlateSighting(
   list: LivePlateSummary[],
@@ -276,7 +305,14 @@ export function mergePlateSighting(
   videoTime: number,
 ): LivePlateSummary[] {
   const key = result.plate_number ?? UNREAD_KEY;
-  const index = list.findIndex((entry) => (entry.plateNumber ?? UNREAD_KEY) === key);
+  const index = list.findIndex((entry) => {
+    const existingKey = entry.plateNumber ?? UNREAD_KEY;
+    if (existingKey === key) return true;
+    if (key === UNREAD_KEY || existingKey === UNREAD_KEY) return false;
+    // Fuzzy matching within 3.5s window
+    const timeDiff = Math.abs(videoTime - entry.lastSeen);
+    return timeDiff <= 3.5 && isFuzzyDuplicatePlate(key, existingKey);
+  });
 
   if (index === -1) {
     const entry: LivePlateSummary = {
@@ -299,14 +335,15 @@ export function mergePlateSighting(
 
   const current = list[index];
   if (current === undefined) {
-    // Unreachable: findIndex returned a valid position. The check exists
-    // because indexed access is typed as possibly-undefined, and silently
-    // asserting it away is how a real out-of-range bug would slip through
-    // later.
     return list;
   }
 
-  const isBetter = result.detection_confidence > current.detectionConfidence;
+  // Preference for valid format, then higher OCR/detection confidence
+  const shouldUpgradeIdentity =
+    (result.is_valid_format && !current.isValidFormat) ||
+    (result.is_valid_format === current.isValidFormat &&
+      result.detection_confidence > current.detectionConfidence);
+
   const betterOcr =
     result.ocr_confidence !== null &&
     (current.ocrConfidence === null || result.ocr_confidence > current.ocrConfidence);
@@ -321,8 +358,9 @@ export function mergePlateSighting(
     // The descriptive fields travel together. Taking the family from one
     // sighting and the colour from another would describe a plate that was
     // never actually seen.
-    ...(isBetter
+    ...(shouldUpgradeIdentity
       ? {
+          plateNumber: result.plate_number,
           display: result.plate_display ?? null,
           rawText: result.raw_ocr_text,
           isValidFormat: result.is_valid_format,
