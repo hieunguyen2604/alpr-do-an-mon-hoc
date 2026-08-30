@@ -37,26 +37,9 @@ Chương này trả lời sáu câu hỏi từ đặc tả phi chức năng: **R
 | **5** | **Bảng sửa ký tự dựng từ số liệu nhầm lẫn đo được** _(5.5.4)_ | **0,9483** | **0,7701** | — **đây là cấu hình bản giao hàng; mọi con số trong chương này thuộc lượt 5** |
 |  ✗   | _(nhánh đối chứng)_ Thử dùng bộ đọc ký tự đã huấn luyện thêm trên biển số Việt Nam | 0,9252 | 0,6762 | **Kém hơn bản gốc** khi chạy đầy đủ như hệ thống thật; đã bác bỏ, không đưa vào bản giao hàng _(4.5.3)_ |
 
-**Vì sao phải đo nhiều lần?** Ba lý do, và chúng khác hẳn nhau về tính chất.
+**Ba lý do phải đo lại, khác hẳn nhau về tính chất.** *(a)* **Hệ thống thật sự thay đổi** — lượt 2, 3, 5: mỗi lần cải tiến một khâu là mọi con số cũ mô tả một hệ thống không còn tồn tại, nên *không* đo lại mới là sai. *(b)* **Công cụ đo bị sai** — lượt 4, và đây là lý do đáng lo nhất: công cụ tự dựng lại các bước xử lý thay vì gọi đúng đường mà hệ thống thật chạy, nên hai bên trôi xa nhau trong khi công cụ vẫn in ra số đẹp. Lỗi cùng loại lặp **bốn lần** và được ghi thành một mối đe doạ tính hợp lệ ở mục 5.9.3. *(c)* **Điều kiện đo sai** — gặp một lần ở phép đo tốc độ khung hình, khi máy đang chạy chương trình nặng khác (mục 5.6.4).
 
-**Lý do thứ nhất — hệ thống thật sự thay đổi.** Đây là các lượt 2, 3 và 5. Mỗi
-lần cải tiến một khâu xử lý là mọi con số cũ trở thành mô tả của một hệ thống
-**không còn tồn tại**. Trong trường hợp này, *không* đo lại mới là sai.
-
-**Lý do thứ hai — công cụ đo bị sai.** Đây là lượt 4, và là lý do đáng lo nhất.
-Công cụ đo được viết riêng, tự dựng lại các bước xử lý thay vì gọi đúng đường mà
-hệ thống thật chạy. Hai bên vì thế trôi xa nhau mà không ai thấy: công cụ vẫn
-chạy trơn tru, vẫn in ra số đẹp, chỉ có điều nó đang đo **một hệ thống khác**.
-Lỗi cùng loại này lặp lại **bốn lần** trong đồ án và được ghi thành một mối đe
-doạ tính hợp lệ ở mục 5.9.3.
-
-**Lý do thứ ba — điều kiện đo sai.** Gặp một lần, ở phép đo tốc độ khung hình:
-máy lúc đo đang chạy nhiều chương trình nặng khác nên con số thu được phản ánh
-tình trạng máy nhiều hơn phản ánh hệ thống (mục 5.6.4).
-
-Từ đó đồ án rút ra và áp dụng một nguyên tắc: **một con số chỉ được đưa vào
-quyển khi công cụ đo đi qua đúng đường xử lý mà bản giao hàng đi**, và mọi tuỳ
-chọn cấu hình phải đọc từ cùng một nguồn với hệ thống đang chạy thật.
+Nguyên tắc rút ra và áp dụng từ đó: **một con số chỉ được đưa vào quyển khi công cụ đo đi qua đúng đường xử lý mà bản giao hàng đi**, và mọi tuỳ chọn cấu hình phải đọc từ cùng một nguồn với hệ thống đang chạy thật.
 
 ---
 

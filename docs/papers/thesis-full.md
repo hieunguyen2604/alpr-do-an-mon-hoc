@@ -1153,26 +1153,9 @@ Chương này trả lời sáu câu hỏi từ đặc tả phi chức năng: **R
 | **5** | **Bảng sửa ký tự dựng từ số liệu nhầm lẫn đo được** _(5.5.4)_ | **0,9483** | **0,7701** | — **đây là cấu hình bản giao hàng; mọi con số trong chương này thuộc lượt 5** |
 |  ✗   | _(nhánh đối chứng)_ Thử dùng bộ đọc ký tự đã huấn luyện thêm trên biển số Việt Nam | 0,9252 | 0,6762 | **Kém hơn bản gốc** khi chạy đầy đủ như hệ thống thật; đã bác bỏ, không đưa vào bản giao hàng _(4.5.3)_ |
 
-**Vì sao phải đo nhiều lần?** Ba lý do, và chúng khác hẳn nhau về tính chất.
+**Ba lý do phải đo lại, khác hẳn nhau về tính chất.** *(a)* **Hệ thống thật sự thay đổi** — lượt 2, 3, 5: mỗi lần cải tiến một khâu là mọi con số cũ mô tả một hệ thống không còn tồn tại, nên *không* đo lại mới là sai. *(b)* **Công cụ đo bị sai** — lượt 4, và đây là lý do đáng lo nhất: công cụ tự dựng lại các bước xử lý thay vì gọi đúng đường mà hệ thống thật chạy, nên hai bên trôi xa nhau trong khi công cụ vẫn in ra số đẹp. Lỗi cùng loại lặp **bốn lần** và được ghi thành một mối đe doạ tính hợp lệ ở mục 5.9.3. *(c)* **Điều kiện đo sai** — gặp một lần ở phép đo tốc độ khung hình, khi máy đang chạy chương trình nặng khác (mục 5.6.4).
 
-**Lý do thứ nhất — hệ thống thật sự thay đổi.** Đây là các lượt 2, 3 và 5. Mỗi
-lần cải tiến một khâu xử lý là mọi con số cũ trở thành mô tả của một hệ thống
-**không còn tồn tại**. Trong trường hợp này, *không* đo lại mới là sai.
-
-**Lý do thứ hai — công cụ đo bị sai.** Đây là lượt 4, và là lý do đáng lo nhất.
-Công cụ đo được viết riêng, tự dựng lại các bước xử lý thay vì gọi đúng đường mà
-hệ thống thật chạy. Hai bên vì thế trôi xa nhau mà không ai thấy: công cụ vẫn
-chạy trơn tru, vẫn in ra số đẹp, chỉ có điều nó đang đo **một hệ thống khác**.
-Lỗi cùng loại này lặp lại **bốn lần** trong đồ án và được ghi thành một mối đe
-doạ tính hợp lệ ở mục 5.9.3.
-
-**Lý do thứ ba — điều kiện đo sai.** Gặp một lần, ở phép đo tốc độ khung hình:
-máy lúc đo đang chạy nhiều chương trình nặng khác nên con số thu được phản ánh
-tình trạng máy nhiều hơn phản ánh hệ thống (mục 5.6.4).
-
-Từ đó đồ án rút ra và áp dụng một nguyên tắc: **một con số chỉ được đưa vào
-quyển khi công cụ đo đi qua đúng đường xử lý mà bản giao hàng đi**, và mọi tuỳ
-chọn cấu hình phải đọc từ cùng một nguồn với hệ thống đang chạy thật.
+Nguyên tắc rút ra và áp dụng từ đó: **một con số chỉ được đưa vào quyển khi công cụ đo đi qua đúng đường xử lý mà bản giao hàng đi**, và mọi tuỳ chọn cấu hình phải đọc từ cùng một nguồn với hệ thống đang chạy thật.
 
 ---
 
@@ -1820,13 +1803,7 @@ Hướng ưu tiên là thay module nhận dạng ký tự bằng mô hình huấ
 
 # PHỤ LỤC
 
-Phụ lục cung cấp các thông tin chi tiết được nhắc tới trong thân đồ án nhưng
-không đưa vào thân bài để giữ mạch đọc: quy mô và tổ chức mã nguồn, cấu hình
-huấn luyện đầy đủ, xuất xứ và giấy phép của từng bộ dữ liệu, hướng dẫn cài đặt,
-kết quả kiểm thử và đặc tả giao diện lập trình.
-
-Mọi số liệu trong phụ lục lấy trực tiếp từ kho mã nguồn và các tệp kết quả đã
-được lưu, không có số nào nhập tay.
+Phụ lục giữ phần tra cứu: quy mô mã nguồn, cấu hình huấn luyện, xuất xứ và giấy phép từng bộ dữ liệu, kết quả kiểm thử và đặc tả giao diện lập trình. Mọi số liệu lấy trực tiếp từ kho mã và các tệp kết quả đã lưu, không có số nào nhập tay.
 
 ---
 
@@ -1858,27 +1835,7 @@ trong Chương 5 phải sinh ra được bằng một lệnh chạy lại đư�
 
 ### A.2. Tổ chức thư mục
 
-```
-ai/
-  inference/      pipeline suy luận — detector, recognizer, hậu xử lý, hai dòng
-  evaluation/     đo độ chính xác, hiệu năng, phân tích lỗi, kiểm rò rỉ
-  training/       cấu hình và notebook huấn luyện
-backend/
-  api/            các route FastAPI
-  services/       tầng nghiệp vụ — điều phối, không chứa logic AI
-  repositories/   truy cập cơ sở dữ liệu
-  models/         mô hình dữ liệu SQLAlchemy
-  migrations/     Alembic
-frontend/
-  src/pages/      ba trang: nhận dạng ảnh, nhận dạng video, lịch sử
-  src/components/ thành phần dùng chung
-  src/api/        tầng gọi API và ánh xạ kiểu dữ liệu
-tests/            kiểm thử đơn vị, tích hợp, kiến trúc
-scripts/          dựng bộ dữ liệu, đo đạc, dựng quyển và slide
-deployment/       Dockerfile, nginx, entrypoint
-models/           trọng số đã huấn luyện
-docs/             tài liệu, báo cáo, quyển đồ án
-```
+Cây thư mục và ranh giới giữa các tầng trình bày ở **mục 4.2.2**.
 
 Ranh giới quan trọng nhất trong cây thư mục: **`ai/` không được import bất cứ
 thứ gì từ `backend/`**. Ràng buộc này là NFR-M1 và được canh giữ tự động bởi
@@ -1991,9 +1948,7 @@ Kiến trúc triển khai và lý do chọn Docker trình bày ở **mục 4.9**
 | Kiểm thử hồi quy   | Các ca lỗi đã từng xảy ra, mỗi ca một test để không tái diễn                       |
 
 **Lưu ý về kết quả kiểm thử.** Kết quả 0 thất bại thể hiện hệ thống đã vượt qua các kịch bản kiểm thử tự động được thiết lập, nhưng **không** đồng nghĩa với việc hoàn thành tất cả chỉ tiêu phi chức năng. Ba
-chỉ tiêu phi chức năng hiện không đạt (NFR-A5, A6, A7) và một chỉ tiêu chỉ đạt
-sàn chứ chưa đạt mục tiêu (NFR-P1) — bảng đối chiếu đầy đủ ở mục 5.7 và phân tích
-ở mục 5.9.2.
+chỉ tiêu phi chức năng hiện không đạt (NFR-A5, A6, A7) — bảng đối chiếu đầy đủ ở mục 5.7 và phân tích ở mục 5.9.2.
 
 Báo cáo kiểm thử chi tiết theo từng nhóm: `docs/reports/07-testing-report.md`.
 
@@ -2045,79 +2000,20 @@ từng tệp ở mục 4.9.
 
 ## Phụ lục H. Đặc tả yêu cầu và thiết kế dữ liệu
 
-Bốn mục dưới đây là **tài liệu tra cứu**, không phải mạch lập luận: đặc tả
-từng use case, bảng 34 yêu cầu chức năng, bảng chỉ tiêu phi chức năng, và đặc
-tả từng trường của cơ sở dữ liệu. Chương 4 nêu quyết định thiết kế và lý do;
-phần liệt kê đầy đủ để ở đây.
+Đặc tả đầy đủ — từng use case, bảng 34 yêu cầu chức năng kèm tiêu chí chấp nhận, bảng chỉ tiêu phi chức năng và đặc tả từng trường của cơ sở dữ liệu — nằm trong bộ tài liệu yêu cầu đi kèm. Chương 4 nêu quyết định thiết kế và lý do; phần liệt kê đầy đủ không lặp lại ở đây.
 
----
+**Bảng H.1.** Nơi tra cứu đặc tả đầy đủ
 
-### H.2. Bảng 34 yêu cầu chức năng
+| Nội dung | Tài liệu |
+|---|---|
+| 34 yêu cầu chức năng, 6 nhóm, mức MoSCoW, tiêu chí chấp nhận | `docs/00-requirements/functional-requirements.md` |
+| Chỉ tiêu phi chức năng bảy nhóm, ngưỡng và phương pháp đo | `docs/00-requirements/non-functional-requirements.md` |
+| Đặc tả use case | `docs/00-requirements/SRS.md` |
+| Lược đồ cơ sở dữ liệu, từng trường | Chương 4 mục 4.7.3, Bảng 4.5 |
+| Phân bố mức yêu cầu và diễn biến thay đổi phạm vi | Chương 4 mục 4.1.3; Chương 1 ghi chú sau mục 1.2 |
 
-Đồ án đặc tả **34 yêu cầu chức năng** trong **6 nhóm**, mỗi yêu cầu có mã, mức MoSCoW và một tiêu chí chấp nhận kiểm chứng được. Phân bố: FR-1 (ảnh tĩnh) **7 Must**; FR-2 (video) **4 Must + 2 Won't**; FR-3 (thời gian thực, tầng API) **3 Must + 2 Won't**; FR-4 (thống kê – lịch sử – tra cứu) **4 Must + 1 Should + 1 Could + 2 Won't**; FR-5 (quản lý dữ liệu) **2 Should + 2 Could**; FR-6 (hệ thống, vận hành) **2 Must + 2 Should**. Tổng **20 Must, 5 Should, 3 Could, 6 Won't = 34**.
+Hai ràng buộc của đặc tả đáng nhắc lại vì chúng chi phối toàn bộ phần đánh giá: **mọi chỉ tiêu hiệu năng đều là chỉ tiêu đo trên CPU** — máy thực hiện không có GPU CUDA (mục 4.3.1); và **cặp NFR-A5/A6 được đặt tách bạch có chủ đích**, vì hiệu số giữa chúng chính là đóng góp định lượng của khối hậu xử lý, đo được nhờ cột `raw_ocr_text` (mục 4.7.3).
 
-**FR-1:** tiếp nhận, kiểm tra hợp lệ, phát hiện _tất cả_ vùng biển, cắt và nhận dạng, hậu xử lý, lưu kết quả, hiển thị có bounding box. FR-1.5 quy định lưu **cả chuỗi OCR thô lẫn chuỗi đã sửa** — điều kiện cần để đo đóng góp hậu xử lý ở Chương 5 (4.7.2b). **FR-2:** thêm trích khung theo bước nhảy, **gộp trùng** (FR-2.4 — thiếu nó một video 30 giây sinh hàng nghìn bản ghi về cùng vài chiếc xe, phá hỏng thống kê FR-4), kết xuất video gắn nhãn và huỷ tác vụ — hai yêu cầu cuối đưa ra khỏi phạm vi. **FR-3:** theo quyết định thu gọn giao diện, hai yêu cầu thuần giao diện FR-3.1, FR-3.4 chuyển **M → W**; FR-3.2/3.3/3.5 vẫn Must, kiểm chứng ở tầng API. **FR-4:** chỉ số tổng hợp (FR-4.1), biểu đồ theo thời gian (FR-4.2), danh sách phân trang, tìm kiếm khớp một phần, lọc, chi tiết, tải ảnh, sắp xếp; **FR-4.3 → 4.8 không đổi**. **FR-5:** xoá bản ghi kèm tệp, xuất CSV/JSON (CSV phải UTF-8 **có BOM** kẻo Excel hiển thị sai tiếng Việt), dọn tệp mồ côi, xoá hàng loạt. **FR-6:** health check báo trạng thái mô hình và CSDL; log có cấu trúc; thông báo lỗi thân thiện không lộ stack trace; cấu hình qua biến môi trường.
-
-> ### Bốn yêu cầu mức Won't, và hai yêu cầu đã quay lại phạm vi
->
-> Bốn yêu cầu Won't đầu tiên đều **thuần giao diện**, chuyển mức trong cùng ngày qua hai đợt: đợt 1 gỡ trang Webcam (FR-3.1, FR-3.4 **M → W**; năng lực còn ở `POST /api/detect/frame`); đợt 2 gỡ trang Tổng quan (**FR-4.1 M → W**, FR-4.2 S → W; năng lực còn ở `GET /api/statistics` và `GET /health`).
->
-> **Lưu ý về phạm vi:** Bốn yêu cầu mức _Must_ từng chuyển sang _Won't_ — FR-3.1, FR-3.4, FR-4.1 và FR-2.5 — nhưng **FR-3.1 và FR-3.4 đã được dựng lại** cùng chế độ quét trực tiếp và trở về mức _Must_. Hiện chỉ còn **hai** yêu cầu _Must_ ngoài phạm vi: FR-4.1 chỉ mất màn hình hiển thị, riêng **FR-2.5 mất chính năng lực xuất video đã chú thích**. Phân bố các mức yêu cầu được cập nhật thành **22 Must, 5 Should, 3 Could, 6 Won't**, và được ghi nhận minh bạch tại mục 6.2. Cần lưu ý rằng hai đợt điều chỉnh này chỉ thu gọn **giao diện hiển thị**, không làm mất đi **năng lực xử lý của hệ thống** — các endpoint API vẫn phục vụ bình thường, nằm trong tài liệu OpenAPI và được kiểm thử tự động đầy đủ (`tests/integration/test_api_statistics.py`, `test_api_health.py`). Đánh đổi đo được: việc loại bỏ `recharts` giúp dung lượng gói tải về của giao diện giảm từ ~730 KB xuống **328,8 KB** (−55%).
-
-**Ma trận truy vết:** mỗi nhóm truy vết tới giai đoạn cài đặt và hình thức kiểm chứng (FR-1: unit + integration; FR-2: integration + performance; FR-3: performance ở tầng API; FR-4: integration + UI test cho FR-4.3→4.8; FR-5: unit; FR-6: smoke + stress). Kết quả ở Chương 5.
-
----
-
-### H.3. Bảng chỉ tiêu phi chức năng
-
-Bảy nhóm: hiệu năng (NFR-P), độ chính xác (NFR-A), tin cậy (NFR-R), khả dụng (NFR-U), bảo trì (NFR-M), bảo mật (NFR-S), tương thích – triển khai (NFR-C), mở rộng (NFR-SC).
-
-#### a) Nguyên tắc nền tảng: mọi chỉ tiêu hiệu năng đều là chỉ tiêu CPU
-
-> **Toàn bộ chỉ tiêu hiệu năng của đồ án là chỉ tiêu đo trên CPU.**
-
-Máy thực hiện chạy Windows 11, Python 3.13, **không có GPU CUDA** (Intel UHD 770 tích hợp, PyTorch không dùng được để tăng tốc). Huấn luyện trên GPU miễn phí Colab/Kaggle, nhưng **suy luận và buổi bảo vệ chạy trên CPU máy cá nhân**. Đây là **ràng buộc thiết kế**, không phải hạn chế tạm thời, vì bốn lẽ: nó cố định trong toàn bộ vòng đời và tại chính buổi bảo vệ; nó đổi _bậc độ lớn_ của độ trễ (ở 20 ms/khung, video đồng bộ và webcam xử lý mọi khung là hợp lý — ở mốc thực tế 400 ms cả hai bất khả thi, trực tiếp sinh ra hai quyết định kiến trúc: video bất đồng bộ AD-02 và webcam bỏ khung hàng đợi một khe); nó chi phối chọn biến thể mô hình (n/s/m), biến thể OCR (mobile/server), kích thước ảnh và **nền tảng suy luận** — benchmark chính thức trên CPU i7-13700H cho thấy YOLOv8n qua ONNX Runtime nhanh hơn PyTorch khoảng **3,73 lần** (104,61 → 28,02 ms) [23]<!-- ultralytics_2026_openvinoexport -->, lợi ích lớn nhất đúng ở phân khúc mô hình nhỏ [24]<!-- onnxruntime_2025_threading -->; và nó buộc phương pháp công bố chặt hơn — quy tắc CON-06: **mọi số liệu hiệu năng phải kèm model CPU, số luồng, kích thước ảnh, nền tảng suy luận và cỡ mẫu đo**. Các chỉ tiêu độ trễ vì vậy "rộng rãi" hơn văn liệu quốc tế đo trên GPU — đó là trung thực về điều kiện đo, không phải dễ dãi.
-
-> **Cảnh báo trích dẫn.** Bảng benchmark nguồn có cột mAP nhưng đo trên tập `coco8` chỉ **8 ảnh**, không có ý nghĩa thống kê; nhóm thực hiện chỉ dùng cột thời gian và cố ý lược bỏ cột độ chính xác.
-
-#### b) Chỉ tiêu định lượng nhóm hiệu năng và nhóm độ chính xác
-
-<!-- {{T4.1}} chi tieu phi chuc nang dinh luong NFR-P va NFR-A -->
-
-**Bảng 4.1.** Chỉ tiêu phi chức năng định lượng: hiệu năng (NFR-P) và độ chính xác (NFR-A)
-
-| Mã         | Chỉ tiêu                                                  | Mục tiêu              | Ngưỡng tối thiểu |
-| ---------- | --------------------------------------------------------- | --------------------- | ---------------- |
-| **NFR-P1** | Độ trễ toàn trình một ảnh (p95)                           | ≤ 800 ms              | ≤ 1500 ms        |
-| **NFR-P2** | Tốc độ khung hình thời gian thực (webcam — đo ở tầng API) | ≥ 5 FPS hiệu dụng     | ≥ 3 FPS          |
-| **NFR-P3** | Tốc độ xử lý video                                        | ≥ 0,3× thời gian thực | ≥ 0,15×          |
-| **NFR-P4** | Thời gian nạp mô hình khi khởi động                       | ≤ 15 giây             | ≤ 30 giây        |
-| **NFR-P5** | Overhead của tầng API (không tính suy luận)               | ≤ 50 ms               | ≤ 100 ms         |
-| **NFR-P6** | Thời gian truy vấn lịch sử (10.000 bản ghi)               | ≤ 500 ms              | ≤ 1000 ms        |
-| **NFR-P7** | Bộ nhớ thường trú của máy chủ                             | ≤ 2 GB                | ≤ 4 GB           |
-| **NFR-A1** | mAP@0.5 của bộ phát hiện                                  | ≥ 0,90                | ≥ 0,85           |
-| **NFR-A2** | mAP@0.5:0.95 của bộ phát hiện                             | ≥ 0,65                | ≥ 0,55           |
-| **NFR-A3** | Precision / Recall phát hiện                              | ≥ 0,92 / ≥ 0,90       | ≥ 0,88 / ≥ 0,85  |
-| **NFR-A4** | Độ chính xác OCR mức ký tự (1 − CER)                      | ≥ 0,95                | ≥ 0,92           |
-| **NFR-A5** | Độ chính xác biển đầy đủ **trước** hậu xử lý              | ≥ 0,85                | ≥ 0,80           |
-| **NFR-A6** | Độ chính xác biển đầy đủ **sau** hậu xử lý                | ≥ 0,90                | ≥ 0,85           |
-| **NFR-A7** | Độ chính xác toàn trình (ảnh vào → biển đúng)             | ≥ 0,88                | ≥ 0,82           |
-
-**Phương pháp đo NFR-P:** P1 trên 100 ảnh test, báo p50/p95/p99; P2 đo liên tục 60 giây; P3 bằng video 60 giây phải xong trong ≤ 200 giây; P4 từ khởi động đến khi `/health` sẵn sàng; P5 là hiệu tổng thời gian request trừ thời gian đường ống; P6 có phân trang và bộ lọc trên 10.000 bản ghi; P7 theo dõi RSS khi chạy tải liên tục.
-
-NFR-P1 xuất phát từ **phân rã ngân sách độ trễ**: giải mã ~50 ms; phát hiện @640 px ~150 ms; cắt ~30 ms; OCR mỗi biển ~120 ms; hậu xử lý < 5 ms; ghi CSDL ~50 ms — **tổng ~405 ms cho ảnh một biển**; ngân sách 800 ms để dự phòng ảnh nhiều biển và biến động tải. Đây là **ước lượng thiết kế, không phải kết quả đo** (số đo ở Chương 5). Ngân sách lập cho nền tảng suy luận mặc định đã chốt ở mục 3.4 là **ONNX Runtime** — điểm đã đổi so với AD-05 sơ bộ. Nếu vượt ngưỡng, thứ tự giảm tải định trước: (1) INT8 OpenVINO; (2) giảm ảnh xuống 480 px; (3) biến thể OCR nhẹ hơn — chỉ hạ chỉ tiêu **sau khi** thử hết ba phương án.
-
-Cặp NFR-A5/A6 đặt **tách bạch** có chủ đích: hiệu số giữa chúng là đóng góp định lượng của khối hậu xử lý — đo được nhờ quyết định lưu cả chuỗi thô lẫn chuỗi sửa ở tầng dữ liệu (4.7.2b). Bổ sung: **NFR-A8** — báo cáo độ chính xác **tách riêng biển một dòng và hai dòng**, căn cứ số liệu 94,3% / 45,7% **đo trên bộ RodoSol-ALPR (Brazil)** đã dẫn ở 4.1.1, vì một con số tổng thể sẽ che giấu đúng chế độ thất bại cần phân tích; **NFR-A9** — báo cáo theo điều kiện ảnh nếu bộ dữ liệu có nhãn phù hợp.
-
-#### c) Các nhóm yêu cầu phi chức năng còn lại
-
-**NFR-R:** không sập với đầu vào hỏng/độc hại (100% lỗi bị bắt); ảnh không biển trả rỗng hợp lệ HTTP 200; video thất bại không để lại rác; tỉ lệ thành công chạy liên tục một giờ ≥ 99%; CSDL sống sót khởi động lại. **NFR-U:** lượt nhận dạng đầu tiên ≤ 3 nhấp chuột, không cần tài liệu; thao tác > 500 ms có phản hồi trực quan; thông báo lỗi tiếng Việt nêu nguyên nhân và cách khắc phục; dùng được từ 1366×768; tương phản WCAG AA ≥ 4,5:1. **NFR-M:** mã AI tách hoàn toàn khỏi mã API (M1); bao phủ test tầng nghiệp vụ ≥ 70% (M2); type hint + docstring (M3); không hard-code đường dẫn (M4); thay bộ OCR không sửa tầng API (M5); lint tự động (M6) — M1 và M5 **là yêu cầu kiến trúc**, lý do tồn tại của tầng AI độc lập (4.2). **NFR-S:** kiểm tra magic bytes; chống path traversal bằng tên tệp UUID; giới hạn kích thước phía máy chủ; CORS không ký tự đại diện; không log dữ liệu nhạy cảm; truy vấn tham số hoá qua ORM. **NFR-C:** chạy Windows/Linux/macOS qua Docker một lệnh; **không cần GPU là chế độ mặc định**; Chrome/Edge/Firefox; cài từ máy sạch ≤ 15 phút. **NFR-SC:** ổn định ≥ 5 yêu cầu đồng thời; không suy giảm ở 100.000 bản ghi; video nền không chặn yêu cầu khác.
-
-> **Giới hạn đã biết cần công bố.** SQLite chỉ cho **một tiến trình ghi tại một thời điểm** — chấp nhận được ở quy mô đồ án, nhưng phải nêu trong phần Hạn chế kèm hướng khắc phục (PostgreSQL) nếu triển khai thực tế.
-
----
-
----
 
 ## Phụ lục O. Tệp cấu hình gốc, báo cáo đo và mã nguồn
 

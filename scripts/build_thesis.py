@@ -189,6 +189,21 @@ TABLE_BORDERS_XML: str = (
 # raises when one is missing so that a Pandoc upgrade fails loudly instead of
 # quietly restoring borderless tables.
 STYLE_PATCHES: tuple[tuple[str, str], ...] = (
+    # 0. Khoang cach sau moi doan: 200 dxa (10 pt) -> 120 dxa (6 pt).
+    #
+    #    Quyen co ~655 doan van. O 10 pt, rieng khoang trong giua cac doan
+    #    chiem 6.550 pt ~ 11,5 trang in. 6 pt van la muc thong thuong cua van
+    #    ban hoc thuat va khong lam chu dinh vao nhau, nhung tra lai vai trang.
+    #    Day KHONG phai thu nho co chu hay ep gian dong — co chu van 12 pt va
+    #    gian dong van don, dung chuan trinh bay.
+    (
+        "<w:pPrDefault>\n"
+        "      <w:pPr>\n"
+        '        <w:spacing w:after="200" />',
+        "<w:pPrDefault>\n"
+        "      <w:pPr>\n"
+        '        <w:spacing w:after="120" />',
+    ),
     # 1. The grid itself. In the CT_TblPrBase schema ``tblBorders`` must sit
     #    between ``tblInd`` and ``tblCellMar``, so it is inserted there rather
     #    than appended -- Word rejects the part outright if the order is wrong.
