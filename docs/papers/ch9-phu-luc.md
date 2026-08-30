@@ -199,7 +199,7 @@ Báo cáo kiểm thử chi tiết theo từng nhóm: `docs/reports/07-testing-re
 | 10  | `GET`       | `/health`                     | Trạng thái hệ thống và tình trạng nạp mô hình             |
 
 Đặc tả đầy đủ — kiểu dữ liệu đầu vào, cấu trúc đầu ra, mã trạng thái và các
-quyết định thiết kế API — ở mục 4.7.3. Tài liệu OpenAPI do FastAPI **tự sinh**
+quyết định thiết kế API — ở mục 4.7.4. Tài liệu OpenAPI do FastAPI **tự sinh**
 tại `/docs` và `/openapi.json`, nên nó không bao giờ lệch với mã nguồn.
 
 ### F.2. Cấu hình Docker Compose
@@ -238,11 +238,11 @@ phần liệt kê đầy đủ để ở đây.
 
 **FR-1:** tiếp nhận, kiểm tra hợp lệ, phát hiện _tất cả_ vùng biển, cắt và nhận dạng, hậu xử lý, lưu kết quả, hiển thị có bounding box. FR-1.5 quy định lưu **cả chuỗi OCR thô lẫn chuỗi đã sửa** — điều kiện cần để đo đóng góp hậu xử lý ở Chương 5 (4.7.2b). **FR-2:** thêm trích khung theo bước nhảy, **gộp trùng** (FR-2.4 — thiếu nó một video 30 giây sinh hàng nghìn bản ghi về cùng vài chiếc xe, phá hỏng thống kê FR-4), kết xuất video gắn nhãn và huỷ tác vụ — hai yêu cầu cuối đưa ra khỏi phạm vi. **FR-3:** theo quyết định thu gọn giao diện, hai yêu cầu thuần giao diện FR-3.1, FR-3.4 chuyển **M → W**; FR-3.2/3.3/3.5 vẫn Must, kiểm chứng ở tầng API. **FR-4:** chỉ số tổng hợp (FR-4.1), biểu đồ theo thời gian (FR-4.2), danh sách phân trang, tìm kiếm khớp một phần, lọc, chi tiết, tải ảnh, sắp xếp; **FR-4.3 → 4.8 không đổi**. **FR-5:** xoá bản ghi kèm tệp, xuất CSV/JSON (CSV phải UTF-8 **có BOM** kẻo Excel hiển thị sai tiếng Việt), dọn tệp mồ côi, xoá hàng loạt. **FR-6:** health check báo trạng thái mô hình và CSDL; log có cấu trúc; thông báo lỗi thân thiện không lộ stack trace; cấu hình qua biến môi trường.
 
-> ### Bốn yêu cầu mức Won't và hai đợt thu gọn phạm vi
+> ### Bốn yêu cầu mức Won't, và hai yêu cầu đã quay lại phạm vi
 >
 > Bốn yêu cầu Won't đầu tiên đều **thuần giao diện**, chuyển mức trong cùng ngày qua hai đợt: đợt 1 gỡ trang Webcam (FR-3.1, FR-3.4 **M → W**; năng lực còn ở `POST /api/detect/frame`); đợt 2 gỡ trang Tổng quan (**FR-4.1 M → W**, FR-4.2 S → W; năng lực còn ở `GET /api/statistics` và `GET /health`).
 >
-> **Lưu ý về phạm vi:** Bốn yêu cầu mức _Must_ đã chuyển sang _Won't_ — FR-3.1, FR-3.4, FR-4.1 và FR-2.5. Ba yêu cầu đầu chỉ mất màn hình hiển thị; riêng **FR-2.5 mất chính năng lực xuất video đã chú thích**. Phân bố các mức yêu cầu được cập nhật thành **20 Must, 5 Should, 3 Could, 6 Won't**, và được ghi nhận minh bạch tại mục 6.2. Cần lưu ý rằng hai đợt điều chỉnh này chỉ thu gọn **giao diện hiển thị**, không làm mất đi **năng lực xử lý của hệ thống** — các endpoint API vẫn phục vụ bình thường, nằm trong tài liệu OpenAPI và được kiểm thử tự động đầy đủ (`tests/integration/test_api_statistics.py`, `test_api_health.py`). Đánh đổi đo được: việc loại bỏ `recharts` giúp dung lượng gói tải về của giao diện giảm từ ~730 KB xuống **328,8 KB** (−55%).
+> **Lưu ý về phạm vi:** Bốn yêu cầu mức _Must_ từng chuyển sang _Won't_ — FR-3.1, FR-3.4, FR-4.1 và FR-2.5 — nhưng **FR-3.1 và FR-3.4 đã được dựng lại** cùng chế độ quét trực tiếp và trở về mức _Must_. Hiện chỉ còn **hai** yêu cầu _Must_ ngoài phạm vi: FR-4.1 chỉ mất màn hình hiển thị, riêng **FR-2.5 mất chính năng lực xuất video đã chú thích**. Phân bố các mức yêu cầu được cập nhật thành **22 Must, 5 Should, 3 Could, 6 Won't**, và được ghi nhận minh bạch tại mục 6.2. Cần lưu ý rằng hai đợt điều chỉnh này chỉ thu gọn **giao diện hiển thị**, không làm mất đi **năng lực xử lý của hệ thống** — các endpoint API vẫn phục vụ bình thường, nằm trong tài liệu OpenAPI và được kiểm thử tự động đầy đủ (`tests/integration/test_api_statistics.py`, `test_api_health.py`). Đánh đổi đo được: việc loại bỏ `recharts` giúp dung lượng gói tải về của giao diện giảm từ ~730 KB xuống **328,8 KB** (−55%).
 
 **Ma trận truy vết:** mỗi nhóm truy vết tới giai đoạn cài đặt và hình thức kiểm chứng (FR-1: unit + integration; FR-2: integration + performance; FR-3: performance ở tầng API; FR-4: integration + UI test cho FR-4.3→4.8; FR-5: unit; FR-6: smoke + stress). Kết quả ở Chương 5.
 

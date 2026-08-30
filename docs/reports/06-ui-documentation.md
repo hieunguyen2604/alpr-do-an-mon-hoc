@@ -428,7 +428,7 @@ Chênh lệch đợt 2026-08-03 đến từ đúng hai mã: FR-2.5 và FR-2.6 ch
 tính năng bán thành phẩm.
 
 **Về mức Must.** Toàn bộ yêu cầu mức **M (Must)** còn nằm trong phạm vi giao diện đều đã đáp ứng
-đầy đủ. Cần nói rõ điều đã đổi: **FR-3.1, FR-3.4, FR-4.1 và FR-2.5 là bốn yêu cầu mức Must của dự án bị đưa ra
+đầy đủ. Cần nói rõ điều đã đổi: **FR-4.1 và FR-2.5 là hai yêu cầu mức Must của dự án còn nằm ngoài phạm vi** *(FR-3.1 và FR-3.4 từng bị gỡ nhưng đã được dựng lại)* — bị đưa ra
 khỏi phạm vi** (20/07 và 03/08/2026), chứ không phải những yêu cầu Must chưa làm xong. Đây là
 quyết định thu hẹp phạm vi có chủ đích; dữ liệu để đáp ứng lại FR-4.1 vẫn còn nguyên ở
 `GET /api/statistics`.

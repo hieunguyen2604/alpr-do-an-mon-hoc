@@ -29,6 +29,12 @@ Các chỉ tiêu về phát hiện, thông lượng, độ tin cậy và chịu 
 3. **Benchmark ba bộ nhận dạng ký tự trên 2.801 biển, cùng một tầng bao quanh:** PaddleOCR đạt **68,87%**, so với EasyOCR (14,28%) và Tesseract (10,28%). Phép đo bổ sung bằng chứng thực nghiệm trên biển số Việt Nam cho lựa chọn bộ nhận dạng trong cấu hình của đồ án; kết quả này không được suy rộng thành so sánh tuyệt đối giữa các bộ nhận dạng. Thực nghiệm cũng cho một kết quả khác với dự đoán ban đầu: kỹ thuật tách và ghép ngang giúp độ chính xác của PaddleOCR tăng 34,92% nhưng chỉ cải thiện 0,03% đối với Tesseract; do đó, đây là **điều kiện cần, nhưng chưa đủ**.
 4. **Bộ nhận màu nền biển đạt 97,89%** trên 1.565 ảnh có nhãn, cung cấp nguồn bằng chứng mà chuỗi ký tự không mang được: phân giải nhập nhằng giữa biển xanh nhà nước và biển trắng cá nhân khi hai chuỗi giống hệt nhau.
 
+**Hai kết quả kỹ thuật bổ sung, thuộc loại kỹ thuật hệ thống hơn là nghiên cứu.**
+
+5. **Tối ưu tầng chạy đưa NFR-P1 từ chỉ-đạt-sàn lên vượt mục tiêu** — p95 giảm từ 1.143,10 xuống **509,76 ms**, trung vị từ 405,77 xuống **150,07 ms**, mà **không đụng một trọng số nào**: ba can thiệp đều ở tầng lập lịch tính toán (4.6.8). Điều đáng nói không phải mức giảm mà là **mọi chỉ số độ chính xác đứng yên tuyệt đối** — đó chính là bằng chứng cho thấy phép tối ưu không đánh đổi gì.
+
+6. **Khử trùng lặp mờ cho chuỗi khung hình video** — gom **17 trên 44** cách đọc về đúng một bản ghi mỗi xe, dùng ngưỡng chuỗi kết hợp một rào ngữ nghĩa dựng từ chính cấu trúc biển số Việt Nam (4.7.2). Bản được giữ lại quyết bằng **số khung bỏ phiếu** chứ không bằng độ tin cậy — ở mức sai khác một ký tự, độ tin cậy là trọng tài kém.
+
 Ngoài các con số, nhóm thực hiện để lại **một quy trình đánh giá có kiểm chứng**: mọi số liệu sinh lại được bằng một lệnh, mọi phép so sánh kèm điều kiện đo, và các kết quả âm — hai lượt tinh chỉnh bộ nhận dạng đều không thắng model gốc ở chế độ vận hành — được ghi lại thay vì bỏ đi.
 
 ## 6.2. Hạn chế
@@ -42,7 +48,7 @@ Ngoài các con số, nhóm thực hiện để lại **một quy trình đánh 
 |  3  | Rò rỉ dữ liệu tồn dư không khử được bằng băm tri giác               | Trung bình | phash chỉ bắt tương đồng bố cục sáng-tối, không bắt "cùng xe, khác ngày"                               |
 |  4  | Tập test không xuyên bộ dữ liệu                                     | Trung bình | mAP 0,9829 **lạc quan hơn** mức gặp khi triển khai với nguồn ảnh mới                                   |
 |  5  | ~~Độ trễ chỉ đạt ngưỡng tối thiểu~~ — **đã khép**                    | Thấp       | p95 nay 509,76 ms, vượt mục tiêu 800 ms sau đợt tối ưu tầng suy luận (5.6.1); bậc thang thử-lại vẫn giữ nguyên cùng 34 biển đọc thêm                                              |
-|  6  | **Bốn** yêu cầu mức _Must_ (FR-3.1, FR-3.4, FR-4.1, FR-2.5) chuyển sang _Won't_ | Trung bình | Ba yêu cầu đầu chỉ mất **màn hình hiển thị** — năng lực vẫn phục vụ ở tầng API và vẫn có kiểm thử; **riêng FR-2.5 mất chính năng lực** (không xuất được video đã chú thích). Nêu rõ cả bốn khi bảo vệ |
+|  6  | **Hai** yêu cầu mức _Must_ (FR-4.1, FR-2.5) còn nằm ngoài phạm vi | Trung bình | FR-3.1 và FR-3.4 từng bị gỡ nhưng **đã được dựng lại**. FR-4.1 chỉ mất **màn hình hiển thị** — thống kê vẫn phục vụ ở tầng API và vẫn có kiểm thử; **riêng FR-2.5 mất chính năng lực** (không xuất được video đã chú thích). Nêu rõ cả hai khi bảo vệ |
 |  7  | SQLite chỉ cho phép một tiến trình ghi tại một thời điểm            |    Thấp    | Đủ cho quy mô đồ án, chặn ở triển khai đa người dùng                                                   |
 |  8  | Xem trực tiếp và xử lý nền tranh chấp CPU với nhau                  |    Thấp    | Chạy video nền làm chậm luồng nhận dạng ảnh                                                            |
 |  9  | **NFR-A9 không đo được** — độ chính xác theo điều kiện ảnh           | Trung bình | Không bộ dữ liệu nguồn nào gán nhãn ban ngày, ban đêm, chụp nghiêng hay ảnh mờ. Đây là **thiếu điều kiện quan sát**, không phải phép đo bị bỏ quên: chỉ tiêu ghi ⬜ chứ không ghi ❌ (mục 5.9.2) |
@@ -58,7 +64,7 @@ Ngoài các con số, nhóm thực hiện để lại **một quy trình đánh 
 |  2  | Thu thập dữ liệu cho các loại biển hiếm                        |    2, 10     | Điều kiện để mở rộng kết luận ra ngoài biển trắng, và để hai nhánh biển đỏ · ngoại giao có số liệu đánh giá                                                  |
 |  3  | Bổ sung nhãn chuỗi cho toàn tập                                |     1, 2     | Hiện chỉ 2.801/15.133 ảnh có nhãn chuỗi                                                            |
 |  4  | Xây dựng tập test xuyên bộ dữ liệu                             |     3, 4     | Giữ nguyên một nguồn hoàn toàn không dùng để huấn luyện                                            |
-|  5  | Tăng tốc suy luận: lượng tử hoá OCR, bật OpenVINO cho bộ phát hiện |      5       | **Đã đo** (5.6.3): OpenVINO nhanh **1,57×**, mAP không giảm, đầu cuối **+20%**. Còn lại là lượng tử hoá khối OCR — phần chiếm 64,3% ngân sách |
+|  5  | Tăng tốc suy luận: lượng tử hoá OCR, bật OpenVINO cho bộ phát hiện |      5       | **Đã làm một phần.** Tối ưu tầng chạy (4.6.8) đã đưa p95 xuống 509,76 ms và khép NFR-P1. OpenVINO **đã đo** (5.6.3): nhanh **1,57×**, mAP không giảm — nhưng phép đo ấy chạy trước đợt tối ưu nên tỷ lệ cần đo lại. Còn lại là lượng tử hoá khối OCR — phần chiếm 64,3% ngân sách |
 |  6  | Thí nghiệm cô lập biến độ phân giải · dữ liệu · số epoch       |      4       | Ma trận E1–E3, ước tính ≈ 33 giờ CPU                                                               |
 |  7  | **Gán nhãn điều kiện chụp cho tập kiểm tra** (ban ngày · ban đêm · nghiêng · mờ) |      9       | Điều kiện **duy nhất** để NFR-A9 đo được. Rẻ: gán nhãn bốn lớp trên một tập con, không cần huấn luyện lại gì |
 |  8  | Bám vết đối tượng qua khung hình cho video (SORT/DeepSORT)     |      —       | Gộp nhiều lần đọc cùng một biển thành một kết quả                                                  |

@@ -88,14 +88,14 @@ graph TB
 
 ## 4. FR-3 — Nhận dạng thời gian thực (Webcam)
 
-> ⚠️ **Thay đổi phạm vi 2026-07-20:** trang Webcam đã được **gỡ khỏi giao diện web** theo quyết định thu gọn phạm vi demo (xem Nhật ký quyết định trong CLAUDE.md). Năng lực nhận dạng thời gian thực **vẫn tồn tại ở tầng API** — `POST /api/detect/frame` với phiên gộp trùng theo `job_id`, có kiểm thử tự động — nên FR-3.2, FR-3.3, FR-3.5 vẫn được đáp ứng và kiểm chứng ở mức API. Hai yêu cầu thuần giao diện FR-3.1, FR-3.4 chuyển ưu tiên **M → W** (Won't — không triển khai ở bản này); mã giao diện tương ứng còn trong lịch sử git nếu cần khôi phục.
+> ⚠️ **Thay đổi phạm vi — đã đảo ngược.** Trang Webcam từng được **gỡ khỏi giao diện web** theo quyết định thu gọn phạm vi, đưa FR-3.1 và FR-3.4 từ *Must* xuống *Won't*. **Chức năng ấy nay đã được dựng lại** dưới dạng chế độ quét trực tiếp với vòng lặp một khe (thiết kế ở mục 4.8.1, số đo ở 5.6.4), nên hai yêu cầu trở lại mức *Must* và **đã đạt**. Ghi chú gốc giữ lại bên dưới để đọc được diễn biến. Nội dung cũ: thu gọn phạm vi demo (xem Nhật ký quyết định trong CLAUDE.md). Năng lực nhận dạng thời gian thực **vẫn tồn tại ở tầng API** — `POST /api/detect/frame` với phiên gộp trùng theo `job_id`, có kiểm thử tự động — nên FR-3.2, FR-3.3, FR-3.5 vẫn được đáp ứng và kiểm chứng ở mức API. Hai yêu cầu thuần giao diện FR-3.1, FR-3.4 chuyển ưu tiên **M → W** (Won't — không triển khai ở bản này); mã giao diện tương ứng còn trong lịch sử git nếu cần khôi phục.
 
 | Mã | Yêu cầu | Ưu tiên | Tiêu chí chấp nhận |
 |---|---|:---:|---|
-| **FR-3.1** | Giao diện xin quyền và hiển thị luồng webcam của người dùng | **W** | *(Đã gỡ khỏi giao diện 2026-07-20 — xem ghi chú đầu mục)* |
+| **FR-3.1** | Giao diện xin quyền và hiển thị luồng webcam của người dùng | **M** | ✅ Đã cài đặt lại — `WebcamDetection.tsx`. *(Từng gỡ 2026-07-20, xem ghi chú đầu mục)* |
 | **FR-3.2** | Hệ thống nhận khung hình gửi về backend để xử lý theo từng yêu cầu | **M** | Gọi `POST /api/detect/frame` liên tiếp ⇒ mỗi khung được xử lý độc lập |
 | **FR-3.3** | Hệ thống phát hiện và nhận dạng biển số trên khung hình trực tiếp | **M** | Gửi khung chứa biển số ⇒ kết quả trả về trong ≤ 1 giây |
-| **FR-3.4** | Giao diện vẽ bounding box và nhãn chồng lên khung hình trực tiếp | **W** | *(Đã gỡ khỏi giao diện 2026-07-20 — xem ghi chú đầu mục)* |
+| **FR-3.4** | Giao diện vẽ bounding box và nhãn chồng lên khung hình trực tiếp | **M** | ✅ Đã cài đặt lại — lớp phủ vẽ trên canvas. *(Từng gỡ 2026-07-20 — xem ghi chú đầu mục)* |
 | **FR-3.5** | Hệ thống lưu lịch sử nhận dạng của phiên webcam, có gộp trùng | **M** | Gửi cùng biển số nhiều khung liên tiếp kèm `job_id` ⇒ tạo **1** bản ghi, không phải hàng chục |
 
 > **Ràng buộc hiệu năng:** do CON-02 (không có GPU), chế độ thời gian thực **bắt buộc** dùng kỹ thuật bỏ bớt khung hình (frame skipping) và/hoặc hàng đợi một khe (single-slot queue) để không dồn ứ yêu cầu. Chỉ tiêu cụ thể tại [NFR-P2](non-functional-requirements.md). Ràng buộc này nay áp cho **phía gọi API** (client tự triển khai), vì giao diện webcam không còn trong phạm vi.
@@ -160,7 +160,7 @@ graph TB
 
 **Tổng cộng:** 34 yêu cầu chức năng — **20 Must**, **5 Should**, **3 Could**, **6 Won't**.
 
-Bốn yêu cầu mức Won't đều đến từ **hai lần thu gọn phạm vi giao diện trong ngày 2026-07-20**: FR-3.1 và FR-3.4 (gỡ trang Webcam), FR-4.1 và FR-4.2 (gỡ trang Tổng quan). Trong đó **FR-4.1 là yêu cầu mức Must đầu tiên bị đưa ra khỏi phạm vi** — xem ghi chú đầu mục 5.
+Bốn yêu cầu mức Won't hiện tại là **FR-4.1, FR-4.2** (gỡ trang Tổng quan) và **FR-2.5, FR-2.6** (thu gọn nhóm video). FR-3.1 và FR-3.4 cũng từng nằm trong danh sách này sau đợt gỡ trang Webcam, nhưng **đã được dựng lại và trở về mức Must**. Trong bốn yêu cầu còn lại, **FR-4.1 và FR-2.5 là hai yêu cầu mức Must** — xem ghi chú đầu mục 5.
 
 | Nhóm | Must | Should | Could | Won't | Tổng |
 |---|:---:|:---:|:---:|:---:|:---:|

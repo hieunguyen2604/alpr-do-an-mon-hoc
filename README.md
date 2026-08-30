@@ -16,7 +16,7 @@
 
 Hệ thống tự động **phát hiện** và **đọc** biển số xe Việt Nam từ ảnh tĩnh và tệp video trên giao diện web, cùng năng lực nhận dạng **thời gian thực qua API** (`POST /api/detect/frame`). Kết quả được chuẩn hoá theo định dạng biển số Việt Nam, lưu vào cơ sở dữ liệu và tra cứu được trên trang **Lịch sử** (tìm kiếm, lọc, xem chi tiết, xuất CSV); số liệu tổng hợp phục vụ qua `GET /api/statistics`.
 
-**Giao diện gồm 3 trang:** Nhận dạng ảnh *(trang chủ, `/`)* · Nhận dạng video *(`/video`)* · Lịch sử *(`/history`)*.
+**Giao diện gồm 4 trang:** Nhận dạng ảnh *(trang chủ, `/`)* · Nhận dạng video *(`/video`)* · Quét webcam trực tiếp *(`/webcam`)* · Lịch sử *(`/history`)*.
 
 > ⚠️ **Thu gọn phạm vi — ba đợt.**
 > **20/07/2026, hai lần liên tiếp:** gỡ trang **Webcam** (FR-3.1, FR-3.4: Must → Won't), rồi gỡ
@@ -55,7 +55,7 @@ Hệ thống tự động **phát hiện** và **đọc** biển số xe Việt 
         ↓
     Kiểm tra định dạng biển số Việt Nam
         ↓
-    SQLite ──► REST API ──► Giao diện web (3 trang)
+    SQLite ──► REST API ──► Giao diện web (4 trang)
 ```
 
 Sơ đồ chi tiết, sơ đồ tuần tự và các quyết định kiến trúc: [docs/architecture/system-architecture.md](docs/architecture/system-architecture.md)
@@ -84,7 +84,7 @@ Sơ đồ chi tiết, sơ đồ tuần tự và các quyết định kiến trú
 | **3** | Model Training | ✅ **Mô hình chính thức `best.pt` xong** (`imgsz=640`, split v3, 20 epoch): mAP@0.5 = **0,9829** / mAP@0.5:0.95 = **0,7834** / P **0,9837** / R **0,9714** — đạt |
 | **4** | OCR | ✅ **Hoàn thành** — 145 test pass; đã đo A4–A7 (OCR biển 2 dòng KHÔNG đạt — kết quả thật) |
 | **5** | Backend | ✅ **Hoàn thành** — đã nối `ALPRPipeline` thật, xác minh bằng HTTP sống |
-| **6** | Frontend | ✅ **Hoàn thành** — build sạch, 10 endpoint khớp; **3 trang** sau thu gọn phạm vi 2026-07-20, gói tải về **328,8 KB** (−55%) |
+| **6** | Frontend | ✅ **Hoàn thành** — build sạch, 10 endpoint khớp; **4 trang** *(webcam đã dựng lại)*. Trước đó 3 trang sau thu gọn phạm vi 2026-07-20, gói tải về **328,8 KB** (−55%) |
 | **7** | Testing | ✅ **Hoàn thành** — **1.004 test thu thập / 1.004 pass / 0 fail**, bao phủ tầng nghiệp vụ **87,7%**; 🟡 **NFR-P1 chỉ đạt sàn** (p95 **1.143 ms**, sàn 1.500, mục tiêu 800) và ✅ **NFR-P2 đạt** (5,257 FPS; sàn 3, mục tiêu 5 — đo lại 13/08) — riêng NFR-P1 là đánh đổi có chủ ý lấy 34 biển; chốt M7 vẫn bị chặn bởi **NFR-A5/A6** (độ chính xác OCR biển 2 dòng) |
 | **8** | Deployment | ✅ **Kiểm chứng lại 14/08/2026 trên bản giao hàng** — 2 image dựng từ mã hiện tại, container nạp đúng `/app/models/best.pt`, `Healthy`, nhận dạng thật qua HTTP, p95 **319 ms** |
 | **9** | Documentation | ✅ **Hoàn thành** — quyển 6 chương + tham khảo + phụ lục (94 trang), 4 sổ tay, tài liệu API |
