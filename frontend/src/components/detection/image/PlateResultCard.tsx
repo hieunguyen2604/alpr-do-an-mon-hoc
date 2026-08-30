@@ -1,10 +1,25 @@
 /**
- * Enhanced Plate Result Card with modern aesthetics, copy-to-clipboard,
- * glowing valid/invalid indicators, and detail modal trigger.
+ * Modernized Plate Result Card (Deep Navy Cyber Aesthetic).
+ *
+ * Implements a rich presentation for each detected plate directly on the page:
+ * - High-contrast plate crop with glowing status border
+ * - Large monospace plate number with instant copy
+ * - Accurate vehicle & regulation badges (TT 79/2024)
+ * - Dual confidence bars (Detector & OCR) + latency
+ * - Action toolbar (Copy, Download crop, Full Modal View)
  */
 
 import { useState } from 'react';
-import { Check, Copy, Download, Eye, ImageOff } from 'lucide-react';
+import {
+  AlertTriangle,
+  Check,
+  Copy,
+  Download,
+  Eye,
+  ImageOff,
+  ShieldCheck,
+  Zap,
+} from 'lucide-react';
 
 import { Badge, Button, ConfidenceBar } from '@/components/ui';
 import { cn } from '@/lib/cn';
@@ -48,130 +63,147 @@ export function PlateResultCard({
   return (
     <article
       className={cn(
-        'group rounded-xl border p-4 transition-all duration-200 shadow-sm',
+        'group relative overflow-hidden rounded-2xl border p-5 transition-all duration-300 shadow-md',
         isActive
-          ? 'border-primary ring-2 ring-primary/20 bg-surface-raised'
-          : 'border-border/80 bg-surface hover:border-border hover:shadow-md',
+          ? 'border-primary ring-2 ring-primary/30 bg-surface-raised/90 shadow-primary/10'
+          : 'border-border/80 bg-surface hover:border-primary/50 hover:shadow-lg',
       )}
       onMouseEnter={() => onActiveChange?.(index)}
       onMouseLeave={() => onActiveChange?.(null)}
     >
-      <div className="flex flex-wrap items-start gap-4">
-        {/* Cropped Plate Image */}
-        <div className="shrink-0">
+      {/* Top Main Section */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+        {/* Left: License Plate Crop Image with Glow */}
+        <div className="relative shrink-0">
           {plateImageUrl ? (
-            <img
-              src={plateImageUrl}
-              alt={`Ảnh biển số ${displayPlate} đã cắt`}
-              className={cn(
-                'h-16 w-32 rounded-lg border object-contain bg-surface-raised p-0.5 transition-all cursor-pointer',
-                result.is_valid_format
-                  ? 'border-emerald-500/40 shadow-[0_0_8px_rgba(16,185,129,0.15)] group-hover:border-emerald-500'
-                  : 'border-amber-500/40 shadow-[0_0_8px_rgba(245,158,11,0.15)] group-hover:border-amber-500',
-              )}
-              onClick={() => onOpenDetails?.(result, index)}
-              title="Nhấp để xem chi tiết"
-            />
-          ) : (
             <div
               className={cn(
-                'flex h-16 w-32 flex-col items-center justify-center gap-1',
-                'rounded-lg border border-dashed border-border bg-surface-muted text-content-muted',
+                'relative overflow-hidden rounded-xl border bg-surface-raised p-1 transition-all',
+                result.is_valid_format
+                  ? 'border-emerald-500/50 shadow-[0_0_12px_rgba(16,185,129,0.2)] group-hover:border-emerald-400'
+                  : 'border-amber-500/50 shadow-[0_0_12px_rgba(245,158,11,0.2)] group-hover:border-amber-400',
               )}
             >
-              <ImageOff className="h-4 w-4" aria-hidden="true" />
+              <img
+                src={plateImageUrl}
+                alt={`Biển số ${displayPlate}`}
+                className="h-20 w-36 rounded-lg object-contain cursor-pointer transition-transform duration-300 hover:scale-105"
+                onClick={() => onOpenDetails?.(result, index)}
+                title="Nhấp để xem chi tiết"
+              />
+              <span className="absolute bottom-1 right-1 rounded bg-black/70 px-1.5 py-0.5 text-[10px] font-bold text-white backdrop-blur-sm">
+                #{index + 1}
+              </span>
+            </div>
+          ) : (
+            <div className="flex h-20 w-36 flex-col items-center justify-center gap-1 rounded-xl border border-dashed border-border bg-surface-muted text-content-muted">
+              <ImageOff className="h-5 w-5 opacity-60" aria-hidden="true" />
               <span className="text-[11px]">Không có ảnh cắt</span>
             </div>
           )}
         </div>
 
-        <div className="min-w-0 flex-1">
+        {/* Right: Plate Info & Badges */}
+        <div className="min-w-0 flex-1 space-y-2">
           <div className="flex flex-wrap items-center justify-between gap-2">
-            <div className="flex flex-wrap items-center gap-2">
-              <span
-                className={cn(
-                  'flex h-6 w-6 shrink-0 items-center justify-center rounded-full',
-                  'bg-surface-raised border border-border text-xs font-bold text-content-muted',
-                )}
-              >
-                #{index + 1}
-              </span>
-
-              <span className="font-mono text-lg font-bold tracking-wider text-content">
+            <div className="flex items-center gap-2.5">
+              <h3 className="font-mono text-2xl font-black tracking-widest text-content drop-shadow-sm">
                 {displayPlate}
-              </span>
-
-              {hasPlateText ? (
-                plateClassBadges(
-                  result.is_valid_format,
-                  result.plate_kind,
-                  result.plate_color,
-                ).map((badge) => (
-                  <Badge key={badge.label} variant={badge.tone} title={badge.title}>
-                    {badge.label}
-                  </Badge>
-                ))
-              ) : (
-                <Badge variant="neutral">Không đọc được ký tự</Badge>
-              )}
-            </div>
-
-            {/* Action Buttons: Copy */}
-            <div className="flex items-center gap-1.5">
+              </h3>
               {hasPlateText && (
-                <Button
-                  variant="ghost"
-                  size="sm"
+                <button
+                  type="button"
                   onClick={handleCopy}
-                  className="h-7 px-2 text-xs"
+                  className="flex h-7 items-center gap-1 rounded-lg border border-border/80 bg-surface-raised px-2 text-xs font-medium text-content hover:border-primary transition-colors"
                   title="Sao chép biển số"
-                  leftIcon={
-                    copied ? (
-                      <Check className="h-3.5 w-3.5 text-emerald-500" />
-                    ) : (
-                      <Copy className="h-3.5 w-3.5 text-content-muted" />
-                    )
-                  }
                 >
-                  {copied ? 'Đã chép' : 'Sao chép'}
-                </Button>
+                  {copied ? (
+                    <>
+                      <Check className="h-3.5 w-3.5 text-emerald-400" />
+                      <span className="text-emerald-400 font-semibold">Đã sao chép</span>
+                    </>
+                  ) : (
+                    <>
+                      <Copy className="h-3.5 w-3.5 text-content-muted" />
+                      <span>Sao chép</span>
+                    </>
+                  )}
+                </button>
               )}
             </div>
+
+            {/* TT 79 Status Pill */}
+            {result.is_valid_format ? (
+              <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/10 px-2.5 py-1 text-xs font-semibold text-emerald-400 border border-emerald-500/20">
+                <ShieldCheck className="h-3.5 w-3.5" /> Chuẩn TT 79/2024
+              </span>
+            ) : (
+              <span className="inline-flex items-center gap-1 rounded-full bg-amber-500/10 px-2.5 py-1 text-xs font-semibold text-amber-400 border border-amber-500/20">
+                <AlertTriangle className="h-3.5 w-3.5" /> Cảnh báo định dạng
+              </span>
+            )}
           </div>
 
-          <dl className="mt-3 grid grid-cols-1 gap-x-4 gap-y-2.5 sm:grid-cols-3">
-            <div className="min-w-0">
-              <dt className="text-xs text-content-muted">Độ tin cậy phát hiện</dt>
-              <dd className="mt-1">
-                <ConfidenceBar value={result.detection_confidence} size="sm" />
-              </dd>
-            </div>
-            <div className="min-w-0">
-              <dt className="text-xs text-content-muted">Độ tin cậy OCR</dt>
-              <dd className="mt-1">
-                <ConfidenceBar value={result.ocr_confidence} size="sm" />
-              </dd>
-            </div>
-            <div className="min-w-0">
-              <dt className="text-xs text-content-muted">Độ trễ xử lý (CPU)</dt>
-              <dd className="mt-1 font-mono text-xs font-semibold text-content">
-                {formatProcessingTime(result.processing_time)}
-              </dd>
-            </div>
-          </dl>
+          {/* Classification Badges */}
+          <div className="flex flex-wrap items-center gap-1.5">
+            {hasPlateText ? (
+              plateClassBadges(
+                result.is_valid_format,
+                result.plate_kind,
+                result.plate_color,
+              ).map((badge) => (
+                <Badge key={badge.label} variant={badge.tone} title={badge.title}>
+                  {badge.label}
+                </Badge>
+              ))
+            ) : (
+              <Badge variant="neutral">Không đọc được ký tự</Badge>
+            )}
+            {result.plate_line_count !== null && (
+              <Badge variant="neutral">
+                {result.plate_line_count} dòng
+              </Badge>
+            )}
+          </div>
         </div>
       </div>
 
-      <div className="mt-3 flex items-center justify-between border-t border-border/40 pt-2.5">
+      {/* Metrics Row */}
+      <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-3 rounded-xl border border-border/60 bg-surface-raised/40 p-3">
+        <div className="min-w-0">
+          <dt className="text-[11px] font-medium text-content-muted">Phát hiện (YOLO11)</dt>
+          <dd className="mt-1">
+            <ConfidenceBar value={result.detection_confidence} size="sm" />
+          </dd>
+        </div>
+        <div className="min-w-0">
+          <dt className="text-[11px] font-medium text-content-muted">Nhận dạng (OCR)</dt>
+          <dd className="mt-1">
+            <ConfidenceBar value={result.ocr_confidence} size="sm" />
+          </dd>
+        </div>
+        <div className="min-w-0 flex flex-col justify-center">
+          <dt className="text-[11px] font-medium text-content-muted flex items-center gap-1">
+            <Zap className="h-3 w-3 text-amber-400" />
+            Độ trễ xử lý (CPU)
+          </dt>
+          <dd className="mt-1 font-mono text-xs font-bold text-content">
+            {formatProcessingTime(result.processing_time)}
+          </dd>
+        </div>
+      </div>
+
+      {/* Action Footer */}
+      <div className="mt-3 flex items-center justify-between pt-1">
         {onOpenDetails ? (
           <Button
             variant="ghost"
             size="sm"
-            className="text-xs text-primary hover:text-primary-hover"
+            className="text-xs text-primary hover:text-primary-hover font-semibold"
             leftIcon={<Eye className="h-3.5 w-3.5" />}
             onClick={() => onOpenDetails(result, index)}
           >
-            Xem chi tiết
+            Xem chi tiết toàn cảnh
           </Button>
         ) : (
           <div />
@@ -186,7 +218,7 @@ export function PlateResultCard({
             leftIcon={<Download className="h-3.5 w-3.5" />}
             onClick={() => onDownloadCrop(result, index)}
           >
-            Tải ảnh biển số
+            Tải ảnh cắt
           </Button>
         )}
       </div>
