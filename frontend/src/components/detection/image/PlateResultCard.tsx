@@ -1,50 +1,27 @@
 /**
- * Everything read from one detected plate (FR-1.2).
- *
- * The card deliberately shows the two confidence scores separately. `confidence`
- * scores the detector — did we find a plate? — and `ocr_confidence` scores the
- * read — did we get the characters right? A single merged number would hide
- * which stage was uncertain, which is exactly the distinction the evaluation
- * chapter is built on.
- *
- * A plate whose text matched no known Vietnamese format is flagged but still
- * shown in full. Hiding it would remove the very cases worth inspecting, and
- * would leave the user staring at a picture with a box on it and no explanation.
+ * Enhanced Plate Result Card with modern aesthetics, copy-to-clipboard,
+ * glowing valid/invalid indicators, and clean layout.
  */
 
-import { Download, ImageOff } from 'lucide-react';
+import { useState } from 'react';
+import { Check, Copy, Download, ImageOff } from 'lucide-react';
 
 import { Badge, Button, ConfidenceBar } from '@/components/ui';
 import { cn } from '@/lib/cn';
 import { formatProcessingTime } from '@/lib/format';
-
 import { plateClassBadges } from '@/lib/plateClass';
 import type { DetectionResult } from '@/types';
 
-/** Props of {@link PlateResultCard}. */
 export interface PlateResultCardProps {
-  /** The plate to describe. */
   result: DetectionResult;
-  /** Zero-based position, shown as a number matching the box in the preview. */
   index: number;
-  /** URL of the cropped plate image, already resolved. `null` when not stored. */
   plateImageUrl: string | null;
-  /** Whether this card's box is currently highlighted in the preview. */
   isActive?: boolean;
-  /** Called on hover so the matching box can be highlighted. */
   onActiveChange?: (index: number | null) => void;
-  /** Called when the user asks to save the cropped plate image. */
   onDownloadCrop?: (result: DetectionResult, index: number) => void;
-  /** Whether this card's crop download is in flight. */
   isDownloadingCrop?: boolean;
 }
 
-/**
- * Render one plate result.
- *
- * @param props - The plate, its position and the download handler.
- * @returns The result card.
- */
 export function PlateResultCard({
   result,
   index,
@@ -54,36 +31,48 @@ export function PlateResultCard({
   onDownloadCrop,
   isDownloadingCrop = false,
 }: PlateResultCardProps): JSX.Element {
-  const hasPlateText = Boolean(result.plate_number);
+  const [copied, setCopied] = useState(false);
+  const hasPlateText = Boolean(result.plate_number || result.plate_display);
+  const displayPlate = result.plate_display ?? result.plate_number ?? 'Không đọc được';
+
+  const handleCopy = async () => {
+    if (hasPlateText) {
+      await navigator.clipboard.writeText(displayPlate);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
+  };
 
   return (
     <article
       className={cn(
-        'rounded-lg border p-4 transition-colors',
-        isActive ? 'border-warning bg-warning/5' : 'border-border bg-surface',
+        'group rounded-xl border p-4 transition-all duration-200 shadow-sm',
+        isActive
+          ? 'border-primary ring-2 ring-primary/20 bg-surface-raised'
+          : 'border-border/80 bg-surface hover:border-border hover:shadow-md',
       )}
       onMouseEnter={() => onActiveChange?.(index)}
       onMouseLeave={() => onActiveChange?.(null)}
     >
       <div className="flex flex-wrap items-start gap-4">
-        {/* Cropped plate, so the user can check the read against the pixels it
-            came from without hunting for the box in the full image. */}
+        {/* Cropped Plate Image */}
         <div className="shrink-0">
           {plateImageUrl ? (
             <img
               src={plateImageUrl}
-              alt={`Ảnh biển số ${result.plate_number ?? index + 1} đã cắt`}
+              alt={`Ảnh biển số ${displayPlate} đã cắt`}
               className={cn(
-                'h-16 w-32 rounded-md border border-border bg-surface-raised',
-                'object-contain',
+                'h-16 w-32 rounded-lg border object-contain bg-surface-raised p-0.5 transition-all',
+                result.is_valid_format
+                  ? 'border-emerald-500/40 shadow-[0_0_8px_rgba(16,185,129,0.15)]'
+                  : 'border-amber-500/40 shadow-[0_0_8px_rgba(245,158,11,0.15)]',
               )}
             />
           ) : (
             <div
               className={cn(
                 'flex h-16 w-32 flex-col items-center justify-center gap-1',
-                'rounded-md border border-dashed border-border bg-surface-muted',
-                'text-content-muted',
+                'rounded-lg border border-dashed border-border bg-surface-muted text-content-muted',
               )}
             >
               <ImageOff className="h-4 w-4" aria-hidden="true" />
@@ -93,60 +82,58 @@ export function PlateResultCard({
         </div>
 
         <div className="min-w-0 flex-1">
-          <div className="flex flex-wrap items-center gap-2">
-            <span
-              className={cn(
-                'flex h-6 w-6 shrink-0 items-center justify-center rounded-full',
-                'bg-surface-raised text-xs font-semibold text-content-muted',
-              )}
-              aria-hidden="true"
-            >
-              {index + 1}
-            </span>
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <div className="flex flex-wrap items-center gap-2">
+              <span
+                className={cn(
+                  'flex h-6 w-6 shrink-0 items-center justify-center rounded-full',
+                  'bg-surface-raised border border-border text-xs font-bold text-content-muted',
+                )}
+              >
+                #{index + 1}
+              </span>
 
-            <span
-              className={cn(
-                'plate-text text-lg',
-                hasPlateText ? 'text-content' : 'text-content-muted',
-              )}
-            >
-              {result.plate_display ?? result.plate_number ?? 'Không đọc được'}
-            </span>
+              <span className="font-mono text-lg font-bold tracking-wider text-content">
+                {displayPlate}
+              </span>
 
-            {/* Wording, not colour alone, carries the meaning (NFR-U5).
-                The badges describe what the plate *is* before judging whether
-                its string parsed: an army plate fails civil validation by
-                design, and labelling that "wrong format" contradicts a reading
-                the system got right. */}
-            {hasPlateText ? (
-              plateClassBadges(
-                result.is_valid_format,
-                result.plate_kind,
-                result.plate_color,
-              ).map((badge) => (
-                <Badge key={badge.label} variant={badge.tone} title={badge.title}>
-                  {badge.label}
-                </Badge>
-              ))
-            ) : (
-              <Badge variant="neutral">Không đọc được ký tự</Badge>
+              {hasPlateText ? (
+                plateClassBadges(
+                  result.is_valid_format,
+                  result.plate_kind,
+                  result.plate_color,
+                ).map((badge) => (
+                  <Badge key={badge.label} variant={badge.tone} title={badge.title}>
+                    {badge.label}
+                  </Badge>
+                ))
+              ) : (
+                <Badge variant="neutral">Không đọc được ký tự</Badge>
+              )}
+            </div>
+
+            {/* Copy Button */}
+            {hasPlateText && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleCopy}
+                className="h-7 px-2 text-xs"
+                title="Sao chép biển số"
+                leftIcon={
+                  copied ? (
+                    <Check className="h-3.5 w-3.5 text-emerald-500" />
+                  ) : (
+                    <Copy className="h-3.5 w-3.5 text-content-muted" />
+                  )
+                }
+              >
+                {copied ? 'Đã chép' : 'Sao chép'}
+              </Button>
             )}
           </div>
 
-          {/*
-            Hai cột, không phải ba. Thẻ này sống trong cột kết quả — chỉ một
-            nửa bề ngang trang — nhưng breakpoint của Tailwind đo theo khung
-            nhìn, nên `sm:grid-cols-3` bật ba cột từ rất sớm và mỗi ô chỉ còn
-            khoảng 150 px. Thanh độ tin cậy có bề rộng tối thiểu và nhãn phần
-            trăm không co, nên phần thừa tràn sang ô bên cạnh: ảnh chụp giao
-            diện 28/07 cho thấy "95,3%" đè lên "412 ms".
-
-            `min-w-0` là nửa còn lại của bản sửa: ô lưới mặc định lấy
-            `min-width: auto`, tức KHÔNG hẹp lại được dưới bề rộng nội dung —
-            thiếu nó thì dù chia bao nhiêu cột, nội dung vẫn tràn thay vì
-            xuống dòng.
-          */}
-          <dl className="mt-3 grid grid-cols-1 gap-x-5 gap-y-3 sm:grid-cols-2">
+          <dl className="mt-3 grid grid-cols-1 gap-x-4 gap-y-2.5 sm:grid-cols-3">
             <div className="min-w-0">
               <dt className="text-xs text-content-muted">Độ tin cậy phát hiện</dt>
               <dd className="mt-1">
@@ -160,25 +147,17 @@ export function PlateResultCard({
               </dd>
             </div>
             <div className="min-w-0">
-              <dt className="text-xs text-content-muted">Thời gian xử lý</dt>
-              <dd className="mt-1 text-sm font-medium tabular-nums text-content">
+              <dt className="text-xs text-content-muted">Độ trễ xử lý (CPU)</dt>
+              <dd className="mt-1 font-mono text-xs font-semibold text-content">
                 {formatProcessingTime(result.processing_time)}
               </dd>
             </div>
           </dl>
-
         </div>
       </div>
 
-      {/*
-        The raw-vs-corrected banner that used to sit here was removed on
-        24/07/2026 (user request): the raw OCR string remains available in the
-        API response and the history detail, but on the result card it was
-        noise once a plate read correctly. What post-processing contributes is
-        demonstrated by measurement in the thesis, not by the UI.
-      */}
       {onDownloadCrop && plateImageUrl && (
-        <div className="mt-3 flex justify-end">
+        <div className="mt-3 flex justify-end border-t border-border/40 pt-2.5">
           <Button
             variant="secondary"
             size="sm"

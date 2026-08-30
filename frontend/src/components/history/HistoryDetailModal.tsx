@@ -1,18 +1,24 @@
 /**
- * Detail dialog for one history record (FR-4.7).
+ * Upgraded Modern Detection Details Dialog (Deep Navy / Cyber Theme).
  *
- * Shows the source image, the cropped plate and **every** stored field —
- * including the ones the table has no room for: the raw OCR text, the OCR
- * confidence, the bounding box, the line count, the format verdict and the
- * `source_job_id` that ties this plate to the other plates from the same
- * upload. Those are exactly the fields the evaluation chapter is written from,
- * so a record that cannot be inspected in full is a record that cannot be
- * cited.
+ * Implements a balanced two-column layout:
+ * - Left column: Full vehicle scene image with scaled bounding box overlay and zoom.
+ * - Right column: Structured metadata hierarchy (Confidence, Timing, Plate Showcase, Specs, OCR Diff).
  */
 
 import { useEffect, useState } from 'react';
-import { ImageOff, Trash2, Wand2 } from 'lucide-react';
-import type { ReactNode } from 'react';
+import {
+  AlertTriangle,
+  Check,
+  Clock,
+  Copy,
+  Cpu,
+  Download,
+  ImageOff,
+  ShieldCheck,
+  Trash2,
+  Wand2,
+} from 'lucide-react';
 
 import { Badge, Button, ConfidenceBar, Modal, PlateChip } from '@/components/ui';
 import { cn } from '@/lib/cn';
@@ -28,38 +34,27 @@ import { plateClassBadges } from '@/lib/plateClass';
 import type { BoundingBox, DetectionHistory } from '@/types';
 
 // ---------------------------------------------------------------------------
-// Image panel
+// Image panel (Visual Showcase)
 // ---------------------------------------------------------------------------
 
-/** Props of {@link ImagePanel}. */
 interface ImagePanelProps {
   title: string;
-  /** Resolved URL, or `null` when nothing was stored. */
   src: string | null;
   alt: string;
-  /** Draw this box over the image, in source-image pixel coordinates. */
   overlay?: BoundingBox;
-  /** Explains why the image is absent, when it is. */
   missingLabel: string;
+  badgeText?: string;
+  isValid?: boolean;
 }
 
-/**
- * One image with its heading, and optionally the detected box drawn over it.
- *
- * The overlay is positioned in **percentages** derived from the image's natural
- * size, never in pixels: the element is scaled to fit the dialog, so a box
- * placed at the stored pixel offsets would drift further from the plate the
- * more the image was shrunk. Nothing is drawn until the natural size is known.
- *
- * @param props - Heading, source, alternative text and optional overlay.
- * @returns The image panel element.
- */
 function ImagePanel({
   title,
   src,
   alt,
   overlay,
   missingLabel,
+  badgeText,
+  isValid = true,
 }: ImagePanelProps): JSX.Element {
   const [naturalSize, setNaturalSize] = useState<{
     width: number;
@@ -67,8 +62,6 @@ function ImagePanel({
   } | null>(null);
   const [hasFailed, setHasFailed] = useState(false);
 
-  // A new record means a new image: without this reset, the previous image's
-  // dimensions would position the overlay on the next one.
   useEffect(() => {
     setNaturalSize(null);
     setHasFailed(false);
@@ -81,13 +74,20 @@ function ImagePanel({
     naturalSize.height > 0;
 
   return (
-    <figure className="space-y-2">
-      <figcaption className="text-xs font-medium uppercase tracking-wide text-content-muted">
-        {title}
-      </figcaption>
+    <div className="relative flex flex-col space-y-2">
+      <div className="flex items-center justify-between">
+        <span className="text-xs font-semibold uppercase tracking-wider text-content-muted">
+          {title}
+        </span>
+        {badgeText && (
+          <span className="rounded bg-surface-muted px-2 py-0.5 text-[11px] font-medium text-content-muted">
+            {badgeText}
+          </span>
+        )}
+      </div>
 
       {src && !hasFailed ? (
-        <div className="relative inline-block max-w-full overflow-hidden rounded-lg border border-border bg-surface-raised">
+        <div className="group relative overflow-hidden rounded-xl border border-border/80 bg-surface-raised shadow-inner">
           <img
             src={src}
             alt={alt}
@@ -98,7 +98,7 @@ function ImagePanel({
               })
             }
             onError={() => setHasFailed(true)}
-            className="block max-h-64 w-auto max-w-full object-contain"
+            className="block max-h-[340px] w-full object-contain transition-transform duration-300 group-hover:scale-[1.02]"
           />
           {canDrawOverlay && overlay && naturalSize && (
             <span
@@ -109,48 +109,26 @@ function ImagePanel({
                 width: `${(overlay.width / naturalSize.width) * 100}%`,
                 height: `${(overlay.height / naturalSize.height) * 100}%`,
               }}
-              className="absolute rounded-sm border-2 border-primary shadow-[0_0_0_9999px_rgba(15,23,42,0.25)]"
+              className={cn(
+                'absolute rounded-md border-2 transition-all duration-300',
+                isValid
+                  ? 'border-emerald-400 shadow-[0_0_12px_rgba(52,211,153,0.6)]'
+                  : 'border-amber-400 shadow-[0_0_12px_rgba(251,191,36,0.6)]',
+              )}
             />
           )}
         </div>
       ) : (
         <div
           className={cn(
-            'flex h-32 w-full flex-col items-center justify-center gap-2 rounded-lg',
-            'border border-dashed border-border bg-surface-raised text-content-muted',
+            'flex h-48 w-full flex-col items-center justify-center gap-2 rounded-xl',
+            'border border-dashed border-border bg-surface-raised/50 text-content-muted',
           )}
         >
-          <ImageOff className="h-5 w-5" aria-hidden="true" />
-          <p className="text-xs">{missingLabel}</p>
+          <ImageOff className="h-6 w-6 opacity-60" aria-hidden="true" />
+          <p className="text-xs font-medium">{missingLabel}</p>
         </div>
       )}
-    </figure>
-  );
-}
-
-// ---------------------------------------------------------------------------
-// Metadata
-// ---------------------------------------------------------------------------
-
-/** Props of {@link Field}. */
-interface FieldProps {
-  label: string;
-  children: ReactNode;
-  /** Let the value span the full width, for long identifiers. */
-  wide?: boolean;
-}
-
-/**
- * One labelled metadata value.
- *
- * @param props - Label, value and width.
- * @returns A definition-list pair.
- */
-function Field({ label, children, wide = false }: FieldProps): JSX.Element {
-  return (
-    <div className={cn(wide && 'sm:col-span-2')}>
-      <dt className="text-xs text-content-muted">{label}</dt>
-      <dd className="mt-0.5 text-sm text-content">{children}</dd>
     </div>
   );
 }
@@ -159,39 +137,15 @@ function Field({ label, children, wide = false }: FieldProps): JSX.Element {
 // OCR comparison
 // ---------------------------------------------------------------------------
 
-/**
- * Reduce a plate string to the characters worth comparing.
- *
- * Separators are dropped because normalisation inserts them: `"3OD04430"`
- * becoming `"30D-04430"` differs by one character, not by two, and counting the
- * hyphen as a difference would overstate what post-processing changed.
- *
- * @param value - Plate text.
- * @returns Upper-case alphanumerics only.
- */
 function normalizeForDiff(value: string): string {
   return value.replace(/[^0-9A-Za-z]/g, '').toUpperCase();
 }
 
-/** Props of {@link OcrComparison}. */
 interface OcrComparisonProps {
   rawText: string;
   plateNumber: string;
 }
 
-/**
- * Highlight what post-processing changed between the raw read and the final
- * plate.
- *
- * When the two normalise to the same length the differing positions are marked
- * character by character — the `O` → `0` and `I` → `1` substitutions are the
- * whole point of the correction step, and they are invisible in two strings
- * printed side by side. When the lengths differ, no alignment can be assumed,
- * so both values are shown plainly rather than with a guessed mapping.
- *
- * @param props - The raw OCR text and the corrected plate number.
- * @returns The comparison block.
- */
 function OcrComparison({
   rawText,
   plateNumber,
@@ -202,235 +156,311 @@ function OcrComparison({
     rawChars.length > 0 && rawChars.length === finalChars.length;
 
   return (
-    <div className="rounded-lg border border-warning/40 bg-warning/10 p-4">
-      <p className="flex items-center gap-2 text-sm font-medium text-warning">
-        <Wand2 className="h-4 w-4 shrink-0" aria-hidden="true" />
-        Kết quả OCR đã được hậu xử lý
+    <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 p-3.5">
+      <p className="flex items-center gap-1.5 text-xs font-semibold text-amber-500">
+        <Wand2 className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+        Đã qua chuẩn hóa quy chuẩn Việt Nam
       </p>
-      <p className="mt-1 text-xs text-content-muted">
-        Chuỗi OCR thô khác với biển số cuối cùng. Đây là phần giá trị mà bước
-        chuẩn hoá theo định dạng biển số Việt Nam đã sửa được.
-      </p>
-
-      <div className="mt-3 grid gap-3 sm:grid-cols-2">
-        <div>
-          <p className="text-xs text-content-muted">OCR thô</p>
-          <p className="mt-1 font-mono text-base font-semibold tracking-wider text-content">
+      <div className="mt-2 grid grid-cols-2 gap-2 text-xs">
+        <div className="rounded-lg bg-surface-raised/80 p-2">
+          <span className="text-[10px] uppercase text-content-muted">OCR thô:</span>
+          <p className="mt-0.5 font-mono text-sm font-bold tracking-wider text-content">
             {isAligned
-              ? rawChars.map((character, index) => (
+              ? rawChars.map((char, index) => (
                   <span
                     key={`raw-${index}`}
                     className={cn(
-                      character !== finalChars[index] &&
-                        'rounded bg-danger/20 px-0.5 text-danger',
+                      char !== finalChars[index] &&
+                        'rounded bg-danger/20 px-0.5 text-danger font-black',
                     )}
                   >
-                    {character}
+                    {char}
                   </span>
                 ))
               : rawText}
           </p>
         </div>
-
-        <div>
-          <p className="text-xs text-content-muted">Sau chuẩn hoá</p>
-          <p className="mt-1 font-mono text-base font-semibold tracking-wider text-content">
+        <div className="rounded-lg bg-surface-raised/80 p-2">
+          <span className="text-[10px] uppercase text-content-muted">Chuẩn hóa:</span>
+          <p className="mt-0.5 font-mono text-sm font-bold tracking-wider text-content">
             {isAligned
-              ? finalChars.map((character, index) => (
+              ? finalChars.map((char, index) => (
                   <span
                     key={`final-${index}`}
                     className={cn(
-                      character !== rawChars[index] &&
-                        'rounded bg-success/20 px-0.5 text-success',
+                      char !== rawChars[index] &&
+                        'rounded bg-emerald-500/20 px-0.5 text-emerald-500 font-black',
                     )}
                   >
-                    {character}
+                    {char}
                   </span>
                 ))
               : plateNumber}
           </p>
         </div>
       </div>
-
-      {isAligned && (
-        <p className="mt-2 text-xs text-content-muted">
-          Các ký tự được tô màu là những vị trí đã thay đổi.
-        </p>
-      )}
     </div>
   );
 }
 
 // ---------------------------------------------------------------------------
-// Dialog
+// Dialog Component
 // ---------------------------------------------------------------------------
 
-/** Props of {@link HistoryDetailModal}. */
 export interface HistoryDetailModalProps {
-  /** The record to show, or `null` when the dialog is closed. */
   record: DetectionHistory | null;
   onClose: () => void;
-  /** Ask to delete the record; confirmation is handled by the page. */
   onDelete: (record: DetectionHistory) => void;
 }
 
-/**
- * Render the detail dialog.
- *
- * @param props - The record and the close and delete handlers.
- * @returns The dialog, or `null` when no record is selected.
- */
 export function HistoryDetailModal({
   record,
   onClose,
   onDelete,
 }: HistoryDetailModalProps): JSX.Element | null {
+  const [copied, setCopied] = useState(false);
+
   if (!record) {
     return null;
   }
 
   const sourceUrl = fileUrl(record.image_path);
   const plateUrl = fileUrl(record.plate_image_path);
+  const displayPlate = record.plate_display ?? record.plate_number ?? NO_VALUE;
   const wasCorrected =
     record.raw_ocr_text !== null &&
     record.plate_number !== null &&
     record.raw_ocr_text !== record.plate_number;
+
+  const handleCopy = async () => {
+    if (record.plate_number || record.plate_display) {
+      const textToCopy = record.plate_display ?? record.plate_number ?? '';
+      await navigator.clipboard.writeText(textToCopy);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
+  };
+
+  const handleDownloadCrop = () => {
+    if (plateUrl) {
+      const link = document.createElement('a');
+      link.href = plateUrl;
+      link.download = `crop-${record.plate_number || record.id}.jpg`;
+      link.click();
+    }
+  };
 
   return (
     <Modal
       isOpen
       onClose={onClose}
       size="xl"
-      title="Chi tiết bản ghi nhận dạng"
-      description={`Mã bản ghi #${record.id}`}
+      title="Chi tiết nhận dạng"
+      description={`Mã bản ghi #${record.id} · ${formatDateTime(record.detected_time)}`}
       footer={
-        <>
-          <Button variant="secondary" onClick={onClose}>
-            Đóng
-          </Button>
-          <Button
-            variant="danger"
-            onClick={() => onDelete(record)}
-            leftIcon={<Trash2 className="h-4 w-4" />}
-          >
-            Xoá bản ghi
-          </Button>
-        </>
+        <div className="flex w-full items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={handleCopy}
+              leftIcon={copied ? <Check className="h-4 w-4 text-emerald-500" /> : <Copy className="h-4 w-4" />}
+            >
+              {copied ? 'Đã sao chép' : 'Sao chép biển số'}
+            </Button>
+            {plateUrl && (
+              <Button
+                variant="secondary"
+                size="sm"
+                onClick={handleDownloadCrop}
+                leftIcon={<Download className="h-4 w-4" />}
+              >
+                Tải ảnh cắt
+              </Button>
+            )}
+          </div>
+          <div className="flex items-center gap-2">
+            <Button variant="secondary" size="sm" onClick={onClose}>
+              Đóng
+            </Button>
+            <Button
+              variant="danger"
+              size="sm"
+              onClick={() => onDelete(record)}
+              leftIcon={<Trash2 className="h-4 w-4" />}
+            >
+              Xoá bản ghi
+            </Button>
+          </div>
+        </div>
       }
     >
-      <div className="space-y-5">
-        <div className="flex flex-wrap items-center gap-3">
-          <PlateChip
-            plateNumber={record.plate_display ?? record.plate_number}
-            isValidFormat={record.is_valid_format}
-            size="lg"
-          />
-          {/* The same badges as everywhere else. This modal used to judge the
-              format on its own, so an army plate was labelled "does not match
-              the Vietnamese format" — a correct reading presented as a failure,
-              and in the one view that exists to inspect a result closely. */}
-          {plateClassBadges(
-            record.is_valid_format,
-            record.plate_kind,
-            record.plate_color,
-          ).map((badge) => (
-            <Badge key={badge.label} variant={badge.tone} title={badge.title}>
-              {badge.label}
-            </Badge>
-          ))}
-          <Badge variant="info">
-            {INPUT_TYPE_LABELS[record.input_type]}
-          </Badge>
-        </div>
+      <div className="space-y-6">
+        {/* Main 2-Column Split */}
+        <div className="grid gap-6 lg:grid-cols-12">
+          {/* Left Column: Full Scene Showcase (5/12 cols) */}
+          <div className="space-y-4 lg:col-span-5">
+            <ImagePanel
+              title="Ảnh toàn cảnh"
+              src={sourceUrl}
+              alt={`Ảnh gốc của bản ghi ${record.id}`}
+              overlay={record.bbox}
+              isValid={record.is_valid_format}
+              badgeText={INPUT_TYPE_LABELS[record.input_type]}
+              missingLabel={
+                record.input_type === 'webcam'
+                  ? 'Khung hình webcam không lưu lại'
+                  : 'Không có ảnh gốc'
+              }
+            />
 
-        {wasCorrected && record.raw_ocr_text && record.plate_number && (
-          <OcrComparison
-            rawText={record.raw_ocr_text}
-            plateNumber={record.plate_number}
-          />
-        )}
+            {/* Quick Summary Info Card under Image */}
+            <div className="rounded-xl border border-border/60 bg-surface-raised/40 p-3 text-xs space-y-2">
+              <div className="flex items-center justify-between text-content-muted">
+                <span className="flex items-center gap-1.5">
+                  <Clock className="h-3.5 w-3.5 text-primary" />
+                  Thời điểm ghi nhận:
+                </span>
+                <span className="font-mono font-medium text-content">
+                  {formatDateTime(record.detected_time)}
+                </span>
+              </div>
+              <div className="flex items-center justify-between text-content-muted">
+                <span className="flex items-center gap-1.5">
+                  <Cpu className="h-3.5 w-3.5 text-primary" />
+                  Độ trễ xử lý (CPU):
+                </span>
+                <span className="font-mono font-medium text-content">
+                  {formatProcessingTime(record.processing_time)}
+                </span>
+              </div>
+            </div>
+          </div>
 
-        <div className="grid gap-4 sm:grid-cols-2">
-          <ImagePanel
-            title="Ảnh gốc"
-            src={sourceUrl}
-            alt={`Ảnh gốc của bản ghi ${record.id}`}
-            overlay={record.bbox}
-            // Webcam frames are processed but deliberately never persisted, so
-            // a missing source image here is normal rather than a failure.
-            missingLabel={
-              record.input_type === 'webcam'
-                ? 'Khung hình webcam không được lưu lại'
-                : 'Không có ảnh gốc'
-            }
-          />
-          <ImagePanel
-            title="Ảnh biển số đã cắt"
-            src={plateUrl}
-            alt={`Ảnh biển số đã cắt của bản ghi ${record.id}`}
-            missingLabel="Không có ảnh biển số đã cắt"
-          />
-        </div>
+          {/* Right Column: Structured Metrics & License Plate Specs (7/12 cols) */}
+          <div className="space-y-5 lg:col-span-7">
+            {/* Top Row: Plate Feature Badges & Chips */}
+            <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-border/80 bg-surface-raised/50 p-4">
+              <div className="flex items-center gap-3">
+                <PlateChip
+                  plateNumber={record.plate_display ?? record.plate_number}
+                  isValidFormat={record.is_valid_format}
+                  size="lg"
+                />
+                <div>
+                  <h3 className="font-mono text-xl font-bold tracking-wider text-content">
+                    {displayPlate}
+                  </h3>
+                  <div className="mt-1 flex flex-wrap gap-1.5">
+                    {plateClassBadges(
+                      record.is_valid_format,
+                      record.plate_kind,
+                      record.plate_color,
+                    ).map((badge) => (
+                      <Badge key={badge.label} variant={badge.tone} title={badge.title}>
+                        {badge.label}
+                      </Badge>
+                    ))}
+                    {record.is_valid_format ? (
+                      <Badge variant="success" className="gap-1">
+                        <ShieldCheck className="h-3 w-3" /> Chuẩn TT 79/2024
+                      </Badge>
+                    ) : (
+                      <Badge variant="warning" className="gap-1">
+                        <AlertTriangle className="h-3 w-3" /> Cảnh báo định dạng
+                      </Badge>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
 
-        <div className="space-y-2">
-          <h3 className="text-sm font-semibold text-content">Độ tin cậy</h3>
-          <ConfidenceBar
-            value={record.confidence}
-            label="Phát hiện (YOLO)"
-            className="max-w-md"
-          />
-          <ConfidenceBar
-            value={record.ocr_confidence}
-            label="Đọc ký tự (OCR)"
-            className="max-w-md"
-          />
-        </div>
+            {/* Middle Row: Crop Thumbnail & Properties */}
+            <div className="grid grid-cols-1 sm:grid-cols-12 gap-3">
+              {/* Plate Crop Box */}
+              <div className="sm:col-span-5 flex flex-col items-center justify-center rounded-xl border border-border bg-surface-raised p-2">
+                <span className="mb-1 text-[10px] font-semibold uppercase tracking-wider text-content-muted">
+                  Ảnh cắt biển số
+                </span>
+                {plateUrl ? (
+                  <img
+                    src={plateUrl}
+                    alt={`Biển số ${displayPlate}`}
+                    className={cn(
+                      'h-20 w-full rounded-lg object-contain border',
+                      record.is_valid_format
+                        ? 'border-emerald-500/50 shadow-[0_0_10px_rgba(16,185,129,0.2)]'
+                        : 'border-amber-500/50 shadow-[0_0_10px_rgba(245,158,11,0.2)]',
+                    )}
+                  />
+                ) : (
+                  <div className="flex h-20 w-full items-center justify-center rounded-lg border border-dashed border-border bg-surface-muted text-content-muted text-[11px]">
+                    Không có ảnh cắt
+                  </div>
+                )}
+              </div>
 
-        <div className="space-y-2">
-          <h3 className="text-sm font-semibold text-content">
-            Thông tin chi tiết
-          </h3>
-          <dl className="grid gap-x-6 gap-y-3 sm:grid-cols-2">
-            <Field label="Biển số sau chuẩn hoá">
-              <span className="font-mono">
-                {record.plate_number ?? NO_VALUE}
+              {/* Confidence Metrics */}
+              <div className="sm:col-span-7 space-y-2.5 rounded-xl border border-border/80 bg-surface-raised/40 p-3.5">
+                <span className="text-[11px] font-semibold uppercase tracking-wider text-content-muted">
+                  Độ tin cậy mô hình
+                </span>
+                <ConfidenceBar
+                  value={record.confidence}
+                  label="Phát hiện (YOLO)"
+                />
+                <ConfidenceBar
+                  value={record.ocr_confidence}
+                  label="Đọc ký tự (OCR)"
+                />
+              </div>
+            </div>
+
+            {/* OCR Diff if applicable */}
+            {wasCorrected && record.raw_ocr_text && record.plate_number && (
+              <OcrComparison
+                rawText={record.raw_ocr_text}
+                plateNumber={record.plate_number}
+              />
+            )}
+
+            {/* Technical Metadata Grid */}
+            <div className="rounded-xl border border-border/60 bg-surface-raised/30 p-4">
+              <span className="text-[11px] font-semibold uppercase tracking-wider text-content-muted">
+                Thông số kỹ thuật
               </span>
-            </Field>
-            <Field label="Chuỗi OCR thô">
-              <span className="font-mono">
-                {record.raw_ocr_text ?? NO_VALUE}
-              </span>
-            </Field>
-            <Field label="Số dòng của biển số">
-              {record.plate_line_count !== null
-                ? `${record.plate_line_count} dòng`
-                : NO_VALUE}
-            </Field>
-            <Field label="Thời gian xử lý">
-              {formatProcessingTime(record.processing_time)}
-            </Field>
-            <Field label="Thời điểm nhận dạng">
-              {formatDateTime(record.detected_time)}
-            </Field>
-            <Field label="Thời điểm lưu">
-              {formatDateTime(record.created_at)}
-            </Field>
-            <Field label="Vùng chứa biển số (pixel)" wide>
-              <span className="font-mono">
-                x = {formatNumber(record.bbox_x)}, y ={' '}
-                {formatNumber(record.bbox_y)}, rộng ={' '}
-                {formatNumber(record.bbox_w)}, cao ={' '}
-                {formatNumber(record.bbox_h)}
-              </span>
-            </Field>
-            <Field label="Mã lần tải lên (source_job_id)" wide>
-              {/* Every plate from the same image shares this id — it is what
-                  distinguishes "3 biển số" from "3 lượt tải lên". */}
-              <span className="break-all font-mono text-xs">
-                {record.source_job_id}
-              </span>
-            </Field>
-          </dl>
+              <dl className="mt-3 grid grid-cols-2 gap-x-4 gap-y-2.5 text-xs">
+                <div>
+                  <dt className="text-content-muted">Bố cục biển:</dt>
+                  <dd className="font-medium text-content mt-0.5">
+                    {record.plate_line_count !== null
+                      ? `${record.plate_line_count} dòng`
+                      : NO_VALUE}
+                  </dd>
+                </div>
+                <div>
+                  <dt className="text-content-muted">Nguồn dữ liệu:</dt>
+                  <dd className="font-medium text-content mt-0.5">
+                    {INPUT_TYPE_LABELS[record.input_type]}
+                  </dd>
+                </div>
+                <div className="col-span-2">
+                  <dt className="text-content-muted">Tọa độ Bounding Box (pixel):</dt>
+                  <dd className="font-mono text-[11px] text-content mt-0.5">
+                    x={formatNumber(record.bbox_x)}, y={formatNumber(record.bbox_y)}, w={formatNumber(record.bbox_w)}, h={formatNumber(record.bbox_h)}
+                  </dd>
+                </div>
+                {record.source_job_id && (
+                  <div className="col-span-2">
+                    <dt className="text-content-muted">Mã Job nguồn:</dt>
+                    <dd className="font-mono text-[11px] text-content-muted truncate mt-0.5">
+                      {record.source_job_id}
+                    </dd>
+                  </div>
+                )}
+              </dl>
+            </div>
+          </div>
         </div>
       </div>
     </Modal>
