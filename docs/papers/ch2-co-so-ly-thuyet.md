@@ -10,25 +10,9 @@ Chương này chỉ giữ phần lý thuyết **ràng buộc trực tiếp một
 
 ## 2.2. Quy chuẩn biển số xe Việt Nam
 
-### 2.2.1. Căn cứ pháp lý hiện hành
+Quy chuẩn biển số Việt Nam — bốn văn bản căn cứ, cấu trúc chuỗi ký tự và bảng mã tỉnh — đã trình bày ở **mục 1.1.3(b)**; danh sách 81 mã đang dùng ở **Phụ lục I**. Mục này chỉ khai triển ba đặc điểm mà thiết kế hệ thống dựa trực tiếp vào: tập ký tự sê-ri phụ thuộc vị trí, màu nền, và tỉ lệ khung hình.
 
-**Ghi chú về hiệu lực văn bản.** Nhiều tài liệu, kể cả bài báo 2023 – 2024, vẫn viện dẫn **Thông tư 24/2023/TT-BCA** — văn bản này **đã hết hiệu lực từ 01/01/2025**, bị thay bởi TT 79/2024 [3]<!-- bocongan_2024_tt79 -->; đồ án chỉ nhắc như bối cảnh lịch sử.
-
-Bốn văn bản căn cứ: **TT 79/2024/TT-BCA** hiệu lực 01/01/2025, thay TT 24/2023, quy định cấu trúc biển, seri, màu sắc [3]<!-- bocongan_2024_tt79 -->; **TT 13/2025/TT-BCA** sửa đổi TT 79/2024 [4]<!-- bocongan_2025_tt13 -->; **TT 51/2025/TT-BCA** hiệu lực 01/7/2025, **thay toàn bộ Phụ lục mã tỉnh** sau sáp nhập còn 34 tỉnh/thành [5]<!-- bocongan_2025_tt51 -->; **QCVN 08:2024/BCA** kèm TT 81/2024/TT-BCA, hiệu lực 01/01/2025, quy chuẩn quốc gia về kết cấu, kích thước, vật liệu [6]<!-- bocongan_2024_qcvn08 -->. Biển quân đội thuộc TT 169/2021/TT-BQP [8]<!-- boquocphong_2021_tt169 -->, **ngoài phạm vi** TT 79/2024.
-
-TT 79/2024 quy định **nội dung** biển — cơ sở biểu thức chính quy; QCVN 08:2024/BCA quy định **hình thức vật lý** — cơ sở ngưỡng tỷ lệ khung hình; module chuẩn hoá cần cả hai. Khung pháp lý đổi **ba lần trong hai năm** là rủi ro kỹ thuật trực tiếp; hệ quả ở mục 2.2.7.
-
-### 2.2.2. Cấu trúc biển số ô tô và xe máy
-
-**a) Biển số ô tô** trong nước: **8 ký tự chữ–số**, ba thành phần — **mã địa phương** 2 chữ số trong 81 mã hợp lệ thuộc dải 11 – 99 [5]; **seri 1 chữ cái** trong 20 chữ với biển trắng và vàng, 11 chữ với biển xanh [7]<!-- bocongan_2024_nhandienbienso -->; **số thứ tự 5 chữ số**, 000.01 – 999.99 [3] — ví dụ `30A-123.45`, `51K-999.99`, `80B-123.45` (Cục CSGT). Trên đường vẫn còn **biển 4 chữ số kiểu cũ** (`29A-1234`); xe đã đăng ký **không bắt buộc đổi biển** [11]<!-- chinhphu_2025_kyhieubienso --> nên biểu thức chính quy phải chấp nhận nhóm thứ tự **4 hoặc 5 chữ số**.
-
-### 2.2.3. Mã tỉnh, thành phố
-
-Từ 01/7/2025 cả nước còn **34 tỉnh, thành phố**; ký hiệu sau hợp nhất **bao gồm toàn bộ ký hiệu của các địa phương được hợp nhất** [11]<!-- chinhphu_2025_kyhieubienso -->, biển cũ không mất giá trị pháp lý. Dải 11 – 99 có **89 số**; theo Phụ lục TT 51/2025 có **81 mã đang dùng** (80 mã địa phương + mã 80 của Cục CSGT) và **8 mã không dùng**: **13, 42, 44, 45, 46, 87, 91, 96**. TP. Hồ Chí Minh 13 mã (41; 50 – 59; 61; 72); Hà Nội 6 mã (29; 30 – 33; 40).
-
-Kiểm tra mã tỉnh loại khoảng 9,0% không gian tìm kiếm ở hai ký tự đầu, và quan trọng hơn: biến lỗi OCR hai vị trí đầu từ **sai âm thầm** thành **sai phát hiện được** — đọc ra `46A-123.45` thì biết ngay mã 46 không tồn tại và hạ cờ hợp lệ. Giả thuyết mã 13 là mã cũ của Hà Bắc **chưa kiểm chứng được nguồn chính thức**, chỉ nêu tham khảo.
-
-### 2.2.4. Tập ký tự seri và các chữ cái bị loại trừ
+### 2.2.1. Tập ký tự seri và các chữ cái bị loại trừ
 
 Đây là nội dung dễ gây nhầm lẫn. Biển trắng và vàng chữ đen dùng seri gồm **một trong 20 chữ cái** [7]; khi đối chiếu với 26 chữ cái Latin, sẽ vắng mặt `I, J, O, Q, R, W`. Tuy nhiên, **suy luận "26 − 20 = 6 chữ bị loại trừ" là chưa chính xác**: danh sách 20 chữ cái này **chỉ áp dụng cho vị trí thứ nhất** của seri; ở **vị trí thứ hai** của seri xe máy lại sử dụng một tập hợp khác — **có chữ R, không có chữ G**. Kết hợp cả hai vị trí, tập chữ cái hoàn toàn không xuất hiện trên hệ thống biển số Việt Nam chỉ bao gồm **5 chữ: I, J, O, Q, W**; chữ R vẫn xuất hiện ở các ký hiệu đặc biệt như `R` hay `RM` của rơ moóc.
 
@@ -42,7 +26,7 @@ Kiểm tra mã tỉnh loại khoảng 9,0% không gian tìm kiếm ở hai ký t
 | **Bị loại trừ khỏi toàn hệ thống** | **5** | **I, J, O, Q, W** |
 | Tập ký tự an toàn tối thiểu cho OCR | 21 | 20 chữ ở vị trí thứ nhất, hợp thêm R |
 
-### 2.2.5. Màu nền và ý nghĩa
+### 2.2.2. Màu nền và ý nghĩa
 
 **Bảng 2.2.** Màu nền biển số và đối tượng áp dụng [7]
 
@@ -56,7 +40,7 @@ Kiểm tra mã tỉnh loại khoảng 9,0% không gian tìm kiếm ở hai ký t
 
 QCVN 08:2024/BCA chỉ quy định **4 tổ hợp màu**, **không có nền đỏ** [6] — biển quân đội do Bộ Quốc phòng quản lý riêng [8]. **Xe điện không có biển riêng**: xe năng lượng sạch **không được cấp biển xanh lá**, dùng biển thường kèm biểu tượng — không phát hiện được xe điện qua màu biển. Màu nền là tín hiệu phân loại duy nhất còn hợp lệ; nhưng module chuẩn hoá làm việc trên chuỗi ký tự, phân loại theo màu ngoài phạm vi của nó.
 
-### 2.2.6. Kích thước vật lý và tỷ lệ khung hình
+### 2.2.3. Kích thước vật lý và tỷ lệ khung hình
 
 Cơ sở định lượng phân biệt biển một dòng với hai dòng — then chốt với rủi ro R-04 (mục 2.4.3). Ô tô được cấp **02** biển: 01 ngắn (**2 dòng**), 01 dài (**1 dòng**); xe mô tô, xe gắn máy, rơ moóc được cấp **01** biển **2 dòng** — **một ô tô mang cùng chuỗi ký tự trên hai biển hình dạng hoàn toàn khác nhau**.
 
@@ -71,7 +55,7 @@ Cơ sở định lượng phân biệt biển một dòng với hai dòng — th
 
 > **Ghi chú về mốc hiệu lực.** Cần lưu ý rằng bộ số liệu kích thước trên **chỉ đúng từ 01/01/2025**; tiêu chuẩn trước đó quy định biển ô tô ngắn **200 × 280 mm**, biển dài **110 × 470 mm**, và rất nhiều tài liệu thứ cấp — kể cả bài báo năm 2023 — vẫn dùng bộ số cũ. Mọi trích dẫn kích thước biển số **bắt buộc ghi kèm mốc hiệu lực**; nếu không, người phản biện đối chiếu văn bản hiện hành sẽ kết luận là sai.
 
-### 2.2.7. Ý nghĩa đối với thiết kế hệ thống nhận dạng
+### 2.2.4. Ý nghĩa đối với thiết kế hệ thống nhận dạng
 
 Bảy dữ kiện kéo theo bảy quyết định thiết kế: **81 mã tỉnh trong dải 89 số** biến lỗi OCR hai ký tự đầu thành sai phát hiện được; **tập seri khác theo vị trí** buộc ràng buộc **theo vị trí** và tập huấn luyện OCR đủ 36 ký tự; **hai kiểu seri xe máy, nhóm thứ tự 4 hoặc 5 chữ số** buộc biểu thức chính quy đa nhánh; **chuỗi 8 ký tự khớp hai loại biển** nên phải lưu số dòng độc lập; **seri không còn cho biết loại xe** nên cấm heuristic suy loại phương tiện; **khoảng trống tỷ lệ khung hình 2,727** là cơ sở ngưỡng phân loại bố cục; **khung pháp lý đổi ba lần trong hai năm** buộc hậu xử lý tách rời mô hình để cập nhật độc lập.
 

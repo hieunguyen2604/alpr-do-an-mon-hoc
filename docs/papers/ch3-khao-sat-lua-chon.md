@@ -2,6 +2,8 @@
 
 ## 3.1. Phương pháp khảo sát và tiêu chí lựa chọn
 
+> **Một nguyên tắc chi phối toàn chương.** Mọi bảng dưới đây phân biệt rõ hai loại bằng chứng: **số tự đo trên máy thực nghiệm** và **số trích từ tài liệu của người khác**. Loại thứ hai luôn kèm tên bộ dữ liệu và quốc gia, vì một con số đo trên ngữ liệu khác không nói được điều gì chắc chắn về ngữ liệu này. Chỗ nào chưa đo thì ghi thẳng là chưa đo, chứ không mượn số của người khác làm kết luận cho đồ án.
+
 Mỗi lựa chọn trình bày theo cùng một khuôn: phương án đã xét, tiêu chí, kết luận, **đánh đổi phải chấp nhận**. Khi bằng chứng không đủ phân định, mục này nói rõ là không đủ.
 
 ### 3.1.1. Bốn ràng buộc chi phối mọi lựa chọn
@@ -13,26 +15,7 @@ Bốn ràng buộc sau thu hẹp không gian phương án **trước khi** so s�
 |  1  | **Suy luận trên CPU, không có GPU CUDA** (CON-02, mục 4.3.1) | Phương án không công bố tốc độ CPU đều **không có căn cứ để đánh giá**; mô hình hàng trăm triệu tham số loại từ đầu |
 |  2  | **Biển số Việt Nam có biển hai dòng**                        | Bộ nhận dạng giả định văn bản một dòng sẽ hỏng ở đây; tiêu chí phân loại, không phải điểm cộng                                |
 |  3  | **Phải đóng gói và bàn giao được**                           | Giấy phép, dung lượng mô hình, số phụ thuộc là tiêu chí thật                                                        |
-|  4  | **Ngân sách thời gian CPU hữu hạn**                          | Một số phép so sánh đã thiết kế nhưng **không chạy được**; mục 3.1.2 nói rõ là những phép nào                       |
-
-### 3.1.2. Ranh giới giữa cái đã đo và cái mới chỉ khảo sát tài liệu
-
-Các lựa chọn có mức độ kiểm chứng khác nhau: một số được đo trên máy và dữ liệu của đồ án, một số dựa trên số liệu nhà phát hành, và một số chưa được đo trực tiếp.
-
-**Bảng 3.1.** Mức bằng chứng của từng phép so sánh trong chương
-
-| Phép so sánh                              | Mức bằng chứng                                                                                      | Trình bày ở |
-| ----------------------------------------- | --------------------------------------------------------------------------------------------------- | :---------: |
-| PP-OCRv5_mobile ↔ PP-OCRv6_medium         | ✅ **Tự đo** — 200 vùng cắt biển số, cùng máy, cùng thứ tự ảnh                                      |    3.3.2    |
-| Bộ nhận dạng gốc ↔ bản tinh chỉnh         | ✅ **Tự đo** — 2.801 biển có nhãn chuỗi, bốn cấu hình                                               |     5.4     |
-| YOLO11n ↔ YOLOv8n và năm thế hệ YOLO khác | 📄 **Khảo sát tài liệu** — theo benchmark chính thức của nhà phát hành, đồ án **không tự chạy lại** |     3.2     |
-| PaddleOCR ↔ EasyOCR ↔ Tesseract           | ✅ **Tự đo** — 2.801 biển có nhãn chuỗi, ba nhánh, cùng tầng bao quanh                   |    3.3.3    |
-| PyTorch ↔ ONNX Runtime ↔ OpenVINO         | ✅ **Tự đo** — 50 ảnh thật, 50 lượt mỗi nền tảng, kèm mAP sau khi xuất                                   | 3.4 · 5.6.3 |
-| Độ phân giải 416 ↔ 640                    | 🟡 **Có số đo nhưng không quy kết được** — ba biến đổi đồng thời và ngược chiều nhau                |     3.6     |
-
-Dòng ❌ còn lại được ghi nhận ở mục 6.3:
-
-- **So sánh nền tảng suy luận đã chạy** — 50 ảnh thật, 50 lượt suy luận mỗi ảnh: PyTorch 33,09 ms · ONNX Runtime 24,48 ms (1,35×) · **OpenVINO 21,12 ms (1,57×)**, mAP không suy giảm. Lựa chọn ban đầu nghiêng về ONNX Runtime vì **lý do vận hành** — một nền tảng suy luận duy nhất cho cả hai mô hình, tránh xung đột hai framework học sâu — và số liệu tự đo về sau cho thấy OpenVINO còn nhanh hơn. Bản giao hàng vẫn giữ PyTorch làm mặc định; lý do ở 5.6.3.
+|  4  | **Ngân sách thời gian CPU hữu hạn**                          | Một số phép so sánh đã thiết kế nhưng **không chạy được** — mỗi bảng dưới đây ghi thẳng ô nào là chưa đo                       |
 
 ## 3.2. Mô hình phát hiện: YOLO11
 

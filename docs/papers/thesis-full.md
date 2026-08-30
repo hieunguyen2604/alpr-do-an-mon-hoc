@@ -225,7 +225,7 @@ Các kết quả trên 99% trong tài liệu ALPR quốc tế thường dựa tr
 
 **(e) Công bố hiệu năng kèm cấu hình phần cứng CPU cụ thể** — mọi số liệu kèm model CPU, số luồng, kích thước ảnh đầu vào, nền tảng suy luận và cỡ mẫu đo. FPS không kèm phần cứng thì không tái lập được, cũng không so sánh được.
 
-**(f) Đo trên chính ảnh biển số Việt Nam.** Khảo sát xác định **không tồn tại benchmark công khai nào so sánh các bộ nhận dạng ký tự trên riêng ảnh biển số xe máy Việt Nam hai dòng**, và hai số liệu thường được viện dẫn để chứng minh ưu thế của một bộ nhận dạng đã **bị bác bỏ khi truy ngược về nguồn gốc** (mục 3.3). Đề tài đã chạy ba phép so sánh trên chính ảnh biển số Việt Nam, cùng máy và cùng ngữ liệu: **PP-OCRv5_mobile ↔ PP-OCRv6_medium** (mục 3.3.2), **bộ nhận dạng gốc ↔ bản tinh chỉnh** (mục 4.5.3), và **PaddleOCR ↔ EasyOCR ↔ Tesseract trên toàn bộ 2.801 biển** (mục 3.3.3) — kết quả PaddleOCR **68,87%**, hơn EasyOCR 54,59 điểm và hơn Tesseract 58,59 điểm, **bác bỏ** tài liệu công khai vốn nghiêng về EasyOCR. Một kết quả **khác với dự đoán ban đầu**: kỹ thuật tách và ghép ngang giúp độ chính xác của PaddleOCR tăng **34,92%** nhưng chỉ cải thiện **0,03%** đối với Tesseract, nên đây **không** phải kỹ thuật độc lập bộ nhận dạng như giả định ban đầu.
+**(f) Đo trên chính ảnh biển số Việt Nam.** Khảo sát xác định **không tồn tại benchmark công khai nào so sánh các bộ nhận dạng ký tự trên riêng ảnh biển số xe máy Việt Nam hai dòng**, và hai số liệu thường được viện dẫn để chứng minh ưu thế của một bộ nhận dạng đã **bị bác bỏ khi truy ngược về nguồn gốc** (mục 3.3). Đề tài đã chạy ba phép so sánh trên chính ảnh biển số Việt Nam, cùng máy và cùng ngữ liệu: **PP-OCRv5_mobile ↔ PP-OCRv6_medium** (mục 3.3.2), **bộ nhận dạng gốc ↔ bản tinh chỉnh** (mục 5.5), và **PaddleOCR ↔ EasyOCR ↔ Tesseract trên toàn bộ 2.801 biển** (mục 3.3.3) — kết quả PaddleOCR **68,87%**, hơn EasyOCR 54,59 điểm và hơn Tesseract 58,59 điểm, **bác bỏ** tài liệu công khai vốn nghiêng về EasyOCR. Một kết quả **khác với dự đoán ban đầu**: kỹ thuật tách và ghép ngang giúp độ chính xác của PaddleOCR tăng **34,92%** nhưng chỉ cải thiện **0,03%** đối với Tesseract, nên đây **không** phải kỹ thuật độc lập bộ nhận dạng như giả định ban đầu.
 
 ### 1.5.2. Những gì đề tài KHÔNG tuyên bố
 
@@ -248,25 +248,9 @@ Chương này chỉ giữ phần lý thuyết **ràng buộc trực tiếp một
 
 ## 2.2. Quy chuẩn biển số xe Việt Nam
 
-### 2.2.1. Căn cứ pháp lý hiện hành
+Quy chuẩn biển số Việt Nam — bốn văn bản căn cứ, cấu trúc chuỗi ký tự và bảng mã tỉnh — đã trình bày ở **mục 1.1.3(b)**; danh sách 81 mã đang dùng ở **Phụ lục I**. Mục này chỉ khai triển ba đặc điểm mà thiết kế hệ thống dựa trực tiếp vào: tập ký tự sê-ri phụ thuộc vị trí, màu nền, và tỉ lệ khung hình.
 
-**Ghi chú về hiệu lực văn bản.** Nhiều tài liệu, kể cả bài báo 2023 – 2024, vẫn viện dẫn **Thông tư 24/2023/TT-BCA** — văn bản này **đã hết hiệu lực từ 01/01/2025**, bị thay bởi TT 79/2024 [3]<!-- bocongan_2024_tt79 -->; đồ án chỉ nhắc như bối cảnh lịch sử.
-
-Bốn văn bản căn cứ: **TT 79/2024/TT-BCA** hiệu lực 01/01/2025, thay TT 24/2023, quy định cấu trúc biển, seri, màu sắc [3]<!-- bocongan_2024_tt79 -->; **TT 13/2025/TT-BCA** sửa đổi TT 79/2024 [4]<!-- bocongan_2025_tt13 -->; **TT 51/2025/TT-BCA** hiệu lực 01/7/2025, **thay toàn bộ Phụ lục mã tỉnh** sau sáp nhập còn 34 tỉnh/thành [5]<!-- bocongan_2025_tt51 -->; **QCVN 08:2024/BCA** kèm TT 81/2024/TT-BCA, hiệu lực 01/01/2025, quy chuẩn quốc gia về kết cấu, kích thước, vật liệu [6]<!-- bocongan_2024_qcvn08 -->. Biển quân đội thuộc TT 169/2021/TT-BQP [8]<!-- boquocphong_2021_tt169 -->, **ngoài phạm vi** TT 79/2024.
-
-TT 79/2024 quy định **nội dung** biển — cơ sở biểu thức chính quy; QCVN 08:2024/BCA quy định **hình thức vật lý** — cơ sở ngưỡng tỷ lệ khung hình; module chuẩn hoá cần cả hai. Khung pháp lý đổi **ba lần trong hai năm** là rủi ro kỹ thuật trực tiếp; hệ quả ở mục 2.2.7.
-
-### 2.2.2. Cấu trúc biển số ô tô và xe máy
-
-**a) Biển số ô tô** trong nước: **8 ký tự chữ–số**, ba thành phần — **mã địa phương** 2 chữ số trong 81 mã hợp lệ thuộc dải 11 – 99 [5]; **seri 1 chữ cái** trong 20 chữ với biển trắng và vàng, 11 chữ với biển xanh [7]<!-- bocongan_2024_nhandienbienso -->; **số thứ tự 5 chữ số**, 000.01 – 999.99 [3] — ví dụ `30A-123.45`, `51K-999.99`, `80B-123.45` (Cục CSGT). Trên đường vẫn còn **biển 4 chữ số kiểu cũ** (`29A-1234`); xe đã đăng ký **không bắt buộc đổi biển** [11]<!-- chinhphu_2025_kyhieubienso --> nên biểu thức chính quy phải chấp nhận nhóm thứ tự **4 hoặc 5 chữ số**.
-
-### 2.2.3. Mã tỉnh, thành phố
-
-Từ 01/7/2025 cả nước còn **34 tỉnh, thành phố**; ký hiệu sau hợp nhất **bao gồm toàn bộ ký hiệu của các địa phương được hợp nhất** [11]<!-- chinhphu_2025_kyhieubienso -->, biển cũ không mất giá trị pháp lý. Dải 11 – 99 có **89 số**; theo Phụ lục TT 51/2025 có **81 mã đang dùng** (80 mã địa phương + mã 80 của Cục CSGT) và **8 mã không dùng**: **13, 42, 44, 45, 46, 87, 91, 96**. TP. Hồ Chí Minh 13 mã (41; 50 – 59; 61; 72); Hà Nội 6 mã (29; 30 – 33; 40).
-
-Kiểm tra mã tỉnh loại khoảng 9,0% không gian tìm kiếm ở hai ký tự đầu, và quan trọng hơn: biến lỗi OCR hai vị trí đầu từ **sai âm thầm** thành **sai phát hiện được** — đọc ra `46A-123.45` thì biết ngay mã 46 không tồn tại và hạ cờ hợp lệ. Giả thuyết mã 13 là mã cũ của Hà Bắc **chưa kiểm chứng được nguồn chính thức**, chỉ nêu tham khảo.
-
-### 2.2.4. Tập ký tự seri và các chữ cái bị loại trừ
+### 2.2.1. Tập ký tự seri và các chữ cái bị loại trừ
 
 Đây là nội dung dễ gây nhầm lẫn. Biển trắng và vàng chữ đen dùng seri gồm **một trong 20 chữ cái** [7]; khi đối chiếu với 26 chữ cái Latin, sẽ vắng mặt `I, J, O, Q, R, W`. Tuy nhiên, **suy luận "26 − 20 = 6 chữ bị loại trừ" là chưa chính xác**: danh sách 20 chữ cái này **chỉ áp dụng cho vị trí thứ nhất** của seri; ở **vị trí thứ hai** của seri xe máy lại sử dụng một tập hợp khác — **có chữ R, không có chữ G**. Kết hợp cả hai vị trí, tập chữ cái hoàn toàn không xuất hiện trên hệ thống biển số Việt Nam chỉ bao gồm **5 chữ: I, J, O, Q, W**; chữ R vẫn xuất hiện ở các ký hiệu đặc biệt như `R` hay `RM` của rơ moóc.
 
@@ -280,7 +264,7 @@ Kiểm tra mã tỉnh loại khoảng 9,0% không gian tìm kiếm ở hai ký t
 | **Bị loại trừ khỏi toàn hệ thống** | **5** | **I, J, O, Q, W** |
 | Tập ký tự an toàn tối thiểu cho OCR | 21 | 20 chữ ở vị trí thứ nhất, hợp thêm R |
 
-### 2.2.5. Màu nền và ý nghĩa
+### 2.2.2. Màu nền và ý nghĩa
 
 **Bảng 2.2.** Màu nền biển số và đối tượng áp dụng [7]
 
@@ -294,7 +278,7 @@ Kiểm tra mã tỉnh loại khoảng 9,0% không gian tìm kiếm ở hai ký t
 
 QCVN 08:2024/BCA chỉ quy định **4 tổ hợp màu**, **không có nền đỏ** [6] — biển quân đội do Bộ Quốc phòng quản lý riêng [8]. **Xe điện không có biển riêng**: xe năng lượng sạch **không được cấp biển xanh lá**, dùng biển thường kèm biểu tượng — không phát hiện được xe điện qua màu biển. Màu nền là tín hiệu phân loại duy nhất còn hợp lệ; nhưng module chuẩn hoá làm việc trên chuỗi ký tự, phân loại theo màu ngoài phạm vi của nó.
 
-### 2.2.6. Kích thước vật lý và tỷ lệ khung hình
+### 2.2.3. Kích thước vật lý và tỷ lệ khung hình
 
 Cơ sở định lượng phân biệt biển một dòng với hai dòng — then chốt với rủi ro R-04 (mục 2.4.3). Ô tô được cấp **02** biển: 01 ngắn (**2 dòng**), 01 dài (**1 dòng**); xe mô tô, xe gắn máy, rơ moóc được cấp **01** biển **2 dòng** — **một ô tô mang cùng chuỗi ký tự trên hai biển hình dạng hoàn toàn khác nhau**.
 
@@ -309,7 +293,7 @@ Cơ sở định lượng phân biệt biển một dòng với hai dòng — th
 
 > **Ghi chú về mốc hiệu lực.** Cần lưu ý rằng bộ số liệu kích thước trên **chỉ đúng từ 01/01/2025**; tiêu chuẩn trước đó quy định biển ô tô ngắn **200 × 280 mm**, biển dài **110 × 470 mm**, và rất nhiều tài liệu thứ cấp — kể cả bài báo năm 2023 — vẫn dùng bộ số cũ. Mọi trích dẫn kích thước biển số **bắt buộc ghi kèm mốc hiệu lực**; nếu không, người phản biện đối chiếu văn bản hiện hành sẽ kết luận là sai.
 
-### 2.2.7. Ý nghĩa đối với thiết kế hệ thống nhận dạng
+### 2.2.4. Ý nghĩa đối với thiết kế hệ thống nhận dạng
 
 Bảy dữ kiện kéo theo bảy quyết định thiết kế: **81 mã tỉnh trong dải 89 số** biến lỗi OCR hai ký tự đầu thành sai phát hiện được; **tập seri khác theo vị trí** buộc ràng buộc **theo vị trí** và tập huấn luyện OCR đủ 36 ký tự; **hai kiểu seri xe máy, nhóm thứ tự 4 hoặc 5 chữ số** buộc biểu thức chính quy đa nhánh; **chuỗi 8 ký tự khớp hai loại biển** nên phải lưu số dòng độc lập; **seri không còn cho biết loại xe** nên cấm heuristic suy loại phương tiện; **khoảng trống tỷ lệ khung hình 2,727** là cơ sở ngưỡng phân loại bố cục; **khung pháp lý đổi ba lần trong hai năm** buộc hậu xử lý tách rời mô hình để cập nhật độc lập.
 
@@ -498,6 +482,8 @@ Sáu khoảng trống đều thuộc loại **kỹ nghệ và báo cáo**, khôn
 
 ## 3.1. Phương pháp khảo sát và tiêu chí lựa chọn
 
+> **Một nguyên tắc chi phối toàn chương.** Mọi bảng dưới đây phân biệt rõ hai loại bằng chứng: **số tự đo trên máy thực nghiệm** và **số trích từ tài liệu của người khác**. Loại thứ hai luôn kèm tên bộ dữ liệu và quốc gia, vì một con số đo trên ngữ liệu khác không nói được điều gì chắc chắn về ngữ liệu này. Chỗ nào chưa đo thì ghi thẳng là chưa đo, chứ không mượn số của người khác làm kết luận cho đồ án.
+
 Mỗi lựa chọn trình bày theo cùng một khuôn: phương án đã xét, tiêu chí, kết luận, **đánh đổi phải chấp nhận**. Khi bằng chứng không đủ phân định, mục này nói rõ là không đủ.
 
 ### 3.1.1. Bốn ràng buộc chi phối mọi lựa chọn
@@ -509,26 +495,7 @@ Bốn ràng buộc sau thu hẹp không gian phương án **trước khi** so s�
 |  1  | **Suy luận trên CPU, không có GPU CUDA** (CON-02, mục 4.3.1) | Phương án không công bố tốc độ CPU đều **không có căn cứ để đánh giá**; mô hình hàng trăm triệu tham số loại từ đầu |
 |  2  | **Biển số Việt Nam có biển hai dòng**                        | Bộ nhận dạng giả định văn bản một dòng sẽ hỏng ở đây; tiêu chí phân loại, không phải điểm cộng                                |
 |  3  | **Phải đóng gói và bàn giao được**                           | Giấy phép, dung lượng mô hình, số phụ thuộc là tiêu chí thật                                                        |
-|  4  | **Ngân sách thời gian CPU hữu hạn**                          | Một số phép so sánh đã thiết kế nhưng **không chạy được**; mục 3.1.2 nói rõ là những phép nào                       |
-
-### 3.1.2. Ranh giới giữa cái đã đo và cái mới chỉ khảo sát tài liệu
-
-Các lựa chọn có mức độ kiểm chứng khác nhau: một số được đo trên máy và dữ liệu của đồ án, một số dựa trên số liệu nhà phát hành, và một số chưa được đo trực tiếp.
-
-**Bảng 3.1.** Mức bằng chứng của từng phép so sánh trong chương
-
-| Phép so sánh                              | Mức bằng chứng                                                                                      | Trình bày ở |
-| ----------------------------------------- | --------------------------------------------------------------------------------------------------- | :---------: |
-| PP-OCRv5_mobile ↔ PP-OCRv6_medium         | ✅ **Tự đo** — 200 vùng cắt biển số, cùng máy, cùng thứ tự ảnh                                      |    3.3.2    |
-| Bộ nhận dạng gốc ↔ bản tinh chỉnh         | ✅ **Tự đo** — 2.801 biển có nhãn chuỗi, bốn cấu hình                                               |     5.4     |
-| YOLO11n ↔ YOLOv8n và năm thế hệ YOLO khác | 📄 **Khảo sát tài liệu** — theo benchmark chính thức của nhà phát hành, đồ án **không tự chạy lại** |     3.2     |
-| PaddleOCR ↔ EasyOCR ↔ Tesseract           | ✅ **Tự đo** — 2.801 biển có nhãn chuỗi, ba nhánh, cùng tầng bao quanh                   |    3.3.3    |
-| PyTorch ↔ ONNX Runtime ↔ OpenVINO         | ✅ **Tự đo** — 50 ảnh thật, 50 lượt mỗi nền tảng, kèm mAP sau khi xuất                                   | 3.4 · 5.6.3 |
-| Độ phân giải 416 ↔ 640                    | 🟡 **Có số đo nhưng không quy kết được** — ba biến đổi đồng thời và ngược chiều nhau                |     3.6     |
-
-Dòng ❌ còn lại được ghi nhận ở mục 6.3:
-
-- **So sánh nền tảng suy luận đã chạy** — 50 ảnh thật, 50 lượt suy luận mỗi ảnh: PyTorch 33,09 ms · ONNX Runtime 24,48 ms (1,35×) · **OpenVINO 21,12 ms (1,57×)**, mAP không suy giảm. Lựa chọn ban đầu nghiêng về ONNX Runtime vì **lý do vận hành** — một nền tảng suy luận duy nhất cho cả hai mô hình, tránh xung đột hai framework học sâu — và số liệu tự đo về sau cho thấy OpenVINO còn nhanh hơn. Bản giao hàng vẫn giữ PyTorch làm mặc định; lý do ở 5.6.3.
+|  4  | **Ngân sách thời gian CPU hữu hạn**                          | Một số phép so sánh đã thiết kế nhưng **không chạy được** — mỗi bảng dưới đây ghi thẳng ô nào là chưa đo                       |
 
 ## 3.2. Mô hình phát hiện: YOLO11
 
@@ -641,28 +608,7 @@ Trạng thái bản này: hệ thống chạy ALPRPipeline với mô hình chín
 
 ## 4.1. Phân tích yêu cầu
 
-### 4.1.1. Khảo sát nhu cầu và các tác nhân
-
-Nhận dạng biển số là bài toán nền tảng của bãi đỗ tự động, thu phí không dừng,
-kiểm soát ra vào và giám sát giao thông. Áp một mô hình ALPR huấn luyện trên dữ
-liệu nước ngoài vào Việt Nam gặp bốn trở ngại.
-
-<!-- {{T4.0}} bon tro ngai khi ap mo hinh nuoc ngoai vao Viet Nam -->
-
-**Bảng 4.1.** Bốn trở ngại khi áp mô hình ALPR nước ngoài vào bối cảnh Việt Nam
-
-| # | Trở ngại | Biểu hiện định lượng hoặc căn cứ |
-|:--:|---|---|
-| 1 | **Biển hai dòng chiếm tỉ trọng lớn** — toàn bộ xe máy và một phần ô tô — trong khi đa số bộ dữ liệu quốc tế giả định biển một dòng | Mức suy giảm **đã đo được**: trên **bộ RodoSol-ALPR của Brazil**, OpenALPR đọc đúng 3.772/4.000 ô tô biển một dòng (**94,3%**) nhưng chỉ 1.827/4.000 xe máy biển hai dòng (**45,7%**) — chênh **48,6 điểm phần trăm** [2]<!-- laroca_2022_crossdataset --> |
-| 2 | **Quy chuẩn biển số có tính pháp lý và cấu trúc chặt** | TT 79/2024/TT-BCA [3]<!-- bocongan_2024_tt79 -->, sửa đổi bởi TT 13/2025 [4]<!-- bocongan_2025_tt13 --> và TT 51/2025 [5]<!-- bocongan_2025_tt51 -->; thông số vật lý theo QCVN 08:2024/BCA [6]<!-- bocongan_2024_qcvn08 -->. Cấu trúc chặt vừa là ràng buộc, vừa là **cơ hội thiết kế** cho khối hậu xử lý dựa trên luật |
-| 3 | **Điều kiện thu nhận ảnh khắc nghiệt** | Che khuất, bụi bẩn, chụp nghiêng, ngược sáng, ban đêm |
-| 4 | **Không có phần cứng tăng tốc** | Máy thực hiện không có GPU CUDA; mọi suy luận và trình diễn chạy trên CPU (mục 4.1.4a, 4.3.1) |
-
-> **Lưu ý phạm vi số liệu.** Cặp 94,3% / 45,7% đo trên **bộ RodoSol-ALPR của Brazil**, **không phải dữ liệu Việt Nam**; nhóm thực hiện chỉ dùng nó làm dẫn chứng định lượng rằng "biển hai dòng khó hơn" là sự kiện đo được, không phải cảm nhận.
-
-Hệ thống có bốn tác nhân: **người vận hành** (đưa ảnh/video, xem kết quả, tra cứu), **người phân tích** (thống kê, lọc, xuất báo cáo), **nhà phát triển** (tích hợp REST API), **hội đồng đánh giá** (quan sát, phản biện). Do hệ thống chạy nội bộ/`localhost` (giả định A-04), đồ án **không xây dựng xác thực và phân quyền**; ba tác nhân đầu là các _vai trò_ trên cùng một giao diện, không phải các _tài khoản_.
-
-### 4.1.2. Sơ đồ use case và ba use case chính
+### 4.1.1. Sơ đồ use case và ba use case chính
 
 Ba use case chính — nhận dạng từ ảnh (UC-01), từ video (UC-02) và tra cứu lịch sử (UC-05) — đều được đặc tả theo cùng một khuôn: tác nhân, tiền điều kiện, luồng chính, luồng thay thế và hậu điều kiện.
 
@@ -672,11 +618,11 @@ Ba use case chính — nhận dạng từ ảnh (UC-01), từ video (UC-02) và 
 use case chính được đặc tả đầy đủ theo khuôn tác nhân · tiền điều kiện · luồng
 chính · luồng thay thế.
 
-### 4.1.3. Yêu cầu chức năng
+### 4.1.2. Yêu cầu chức năng
 
 Hệ thống có **34 yêu cầu chức năng** chia sáu nhóm, phân mức theo MoSCoW: 22 _Must_, 5 _Should_, 3 _Could_, 4 _Won't_. Sáu yêu cầu mức _Won't_ đến từ ba đợt thu gọn phạm vi: bốn yêu cầu thuần giao diện chuyển mức ở đợt thu gọn giao diện, và hai yêu cầu của nhóm video — xuất video đã chú thích cùng huỷ tác vụ đang chạy — chuyển mức ở đợt thu gọn nhóm video. Bốn yêu cầu mức _Must_ từng chuyển sang _Won't_, nhưng **hai trong số đó đã quay lại**: FR-3.1 và FR-3.4 được cài đặt lại cùng chế độ quét trực tiếp (4.8.1). **Còn lại hai yêu cầu _Must_ nằm ngoài phạm vi: FR-4.1 và FR-2.5** — FR-4.1 chỉ mất màn hình hiển thị (thống kê vẫn phục vụ ở tầng API và vẫn có kiểm thử), riêng **FR-2.5 mất chính năng lực**. Nêu rõ ở mục 6.2. Bảng đầy đủ từng mã yêu cầu ở **Phụ lục H.2**.
 
-### 4.1.4. Yêu cầu phi chức năng
+### 4.1.3. Yêu cầu phi chức năng
 
 Các chỉ tiêu phi chức năng chia bảy nhóm — độ chính xác (NFR-A), hiệu năng (NFR-P), độ tin cậy (NFR-R), khả năng chịu tải (NFR-SC), khả năng bảo trì (NFR-M), bảo mật (NFR-S) và khả dụng (NFR-U) — mỗi chỉ tiêu kèm **ngưỡng tối thiểu, mục tiêu và phương pháp đo**. Hai ràng buộc chi phối toàn bộ nhóm hiệu năng: suy luận **chỉ trên CPU** (CON-02) và ngân sách độ trễ đầu cuối. Bảng đầy đủ ở **Phụ lục H.3**; kết quả đối chiếu từng chỉ tiêu ở mục 5.7.
 
@@ -754,14 +700,6 @@ Toàn bộ cài đặt, kiểm thử và đo đạc chạy trên một máy tr�
 
 Ràng buộc CPU để lại dấu vết cụ thể: NFR-P1 phát biểu thẳng cho CPU; AD-06 kéo theo `yolo11n` và PP-OCRv5 mobile; và vì huấn luyện trên CPU mất 1–3 ngày mỗi lượt, quy trình huấn luyện chạy được cả trên máy cá nhân lẫn nền tảng đám mây với toàn bộ siêu tham số trong một tệp cấu hình duy nhất. Ở cấu hình giao hàng, p95 đầu cuối là **509,76 ms**, đạt cả ngưỡng tối thiểu 1.500 ms lẫn mục tiêu 800 ms; phân rã suy luận thuần cho thấy OCR chiếm **60,8%**, phát hiện **38,0%** (đối chiếu NFR-P1 ở 4.10).
 
-### 4.3.2. Môi trường Python và bộ công cụ
-
-Trong giai đoạn huấn luyện, nhóm thực hiện dùng **ba môi trường ảo tách biệt** — một cho huấn luyện và xuất mô hình, một cho tầng nhận dạng ký tự, một cho máy chủ — vì cài `paddleocr` vào môi trường đang huấn luyện sẽ hạ cấp `numpy` và kéo theo một gói thứ hai cùng ghi vào không gian tên `cv2`. Không được để điều đó xảy ra giữa một lượt huấn luyện kéo dài mười giờ. **Việc tách là tạm thời và nay đã kết thúc:** bản giao hàng chỉ còn một môi trường, và xung đột được hoá giải bằng cách ghim mọi gói cùng ghi vào `cv2` về **cùng một phiên bản**.
-
-**Bộ công cụ:** FastAPI + Uvicorn; SQLAlchemy 2.x + Alembic; Pydantic v2; Ultralytics 8.4.101 chạy YOLO11 [9]<!-- jocher_2024_yolo11 -->; PaddleOCR 3.7.0 cho PP-OCRv5 [10]<!-- cui_2026_ppocrv5 -->; Vite + React + TypeScript; pytest + pytest-cov; Docker Compose. Docker dùng Python 3.12 trong khi local dùng 3.13 là **chủ ý**: container là nơi lấy lại phiên bản mục tiêu (NFR-C1).
-
----
-
 ## 4.4. Xây dựng bộ dữ liệu
 
 ### 4.4.1. Đường ống sáu bước và thành phần bộ dữ liệu
@@ -789,19 +727,7 @@ Mỗi bước là một kịch bản độc lập có giao diện dòng lệnh r
 
 > **Ghi chú về phạm vi của mọi số liệu OCR.** Phân loại màu nền trên 2.801 ảnh cho: **2.736 biển trắng (97,68%)**, 20 vàng, 4 xanh, **0 đỏ, 0 ngoại giao**. Phát biểu đúng là _"1 − CER = 0,9483 trên một tập gồm 97,7% biển trắng"_, **không phải** _"trên biển số Việt Nam"_.
 
-### 4.4.2. Khử trùng lặp chéo bộ và con số 44,2%
-
-Các bộ công khai fork lẫn nhau, nên một ảnh nằm ở `train` dưới tên bộ này và `test` dưới tên bộ khác thì **độ chính xác test đang đo khả năng ghi nhớ**; con số tiêu đề vì vậy là số nhóm trùng **chéo bộ**. Vét cạn ~690 triệu cặp là bất khả thi nên script dùng **multi-index hashing**: cắt mã băm 64 bit thành `threshold + 1` dải — theo nguyên lý chuồng bồ câu, hai mã khác nhau tối đa `threshold` bit bắt buộc trùng khớp trên ít nhất một dải — nên tập ứng viên chứa mọi cặp thật rồi được xác minh chính xác: **thuật toán chính xác, không xấp xỉ**.
-
-Có **hai phép đo trên hai mẫu số khác nhau**, trích một con số trần không nêu mẫu số là gây hiểu nhầm: **(a)** trên 7 bộ vào hợp nhất — mẫu số 27.111, ngưỡng Hamming 5, loại **11.978 = 44,2%**, **đã xoá thật**; **(b)** trên ngữ liệu còn lại — mẫu số 15.133, ngưỡng 10, chỉ ra **47,8% có thể loại** nhưng **chưa xoá**. 47,8% không mâu thuẫn 44,2%: ngưỡng lỏng hơn, và chỉ đo chứ chưa xoá. Hai hệ quả của tỷ lệ 44,2%: quy mô thật khác hẳn danh nghĩa (trường hợp cực đoan: một bộ vào hợp nhất với 1.005 ảnh và ra với **0** ảnh — lý do **không được cộng dồn số ảnh công bố của từng bộ**), và phân bố huấn luyện lệch vì bản sao tập trung ở các bộ được chép nhiều nhất. Bước chia tập giữ **mọi thành viên của một nhóm trùng lặp trong cùng một tập con** nên bản trùng không bị xoá cũng không rò rỉ được.
-
-### 4.4.3. Giới hạn của perceptual hash: nó tóm tắt bố cục khung ảnh, không tóm tắt chiếc xe
-
-Đây là **giới hạn không khắc phục được** bằng công cụ hiện có. Kiểm độc lập ở ngưỡng Hamming 10 trên bộ v1 tìm thấy **619 cặp gần trùng giữa `train` và `test`**, toàn bộ ở dải d = 6–10; soi bằng mắt thấy **cùng một chiếc xe, cùng chuỗi biển số, ở cả hai phép chia tập**. Đường ống không bắt được vì bộ chia gom nhóm ở ngưỡng 5 rồi lần kiểm đầu cũng đo lại ở ngưỡng 5 và báo "0 cặp" — **lập luận vòng tròn**.
-
-Nâng ngưỡng cũng không thoát: phash rút ảnh thành 64 bit mô tả **cấu trúc tần số thấp của toàn khung**, nên hai xe khác nhau qua cùng một camera vẫn có khoảng cách rất nhỏ vì 90% khung hình giống hệt. Ngưỡng thấp bỏ sót cặp cùng xe khác ngày; ngưỡng cao gộp nhầm hàng nghìn ảnh xe khác nhau cùng camera. Bộ v3 chia lại và kiểm ở ngưỡng 10, nhưng **vẫn còn rò rỉ tồn dư không khử được bằng phash** — khắc phục đòi hỏi so khớp mức chuỗi biển số hoặc đặc trưng phương tiện. Hệ quả: `baseline-416-v1.pt` đạt mAP@0.5 = 0,9933 trên bộ v1 nhưng con số ấy **không được báo cáo là "đạt"** (4.10).
-
----
+> **Hai tỉ lệ khử trùng lặp, hai mẫu số khác nhau.** Hợp nhất bảy bộ cho **27.113 ảnh thô**; sau khi loại ảnh gần trùng còn **15.133**, tức bỏ **44,2%**. Con số này đo bằng băm tri giác ở ngưỡng Hamming 5. **Giới hạn của cách làm phải nêu kèm:** băm tri giác rút ảnh thành 64 bit mô tả cấu trúc tần số thấp của *toàn khung*, nên hai xe khác nhau qua cùng một camera vẫn cho khoảng cách rất nhỏ — ngưỡng thấp bỏ sót cặp cùng xe khác ngày, ngưỡng cao gộp nhầm hàng nghìn ảnh khác xe. Vì vậy **vẫn còn rò rỉ tồn dư không khử được bằng băm tri giác**, ghi thành hạn chế số 3 ở mục 6.2 và đo lại ở 5.3.1.
 
 ## 4.5. Huấn luyện mô hình
 
@@ -833,21 +759,6 @@ Ba hàm mất mát giảm đơn điệu và **không có dấu hiệu quá khớ
 |            15             |          0,9420 |           0,3619 |            1,0205 | **0,9824** |   **0,7609** |     0,9846 |     0,9686 |
 |            20             |          0,9204 |           0,3331 |            1,0105 | **0,9830** |   **0,7688** |     0,9846 |     0,9697 |
 | **Epoch tốt nhất (= 20)** |      **0,9204** |       **0,3331** |        **1,0105** | **0,9830** |   **0,7688** | **0,9846** | **0,9697** |
-
-### 4.5.3. Tinh chỉnh bộ nhận dạng ký tự và lý do không đưa vào bản bàn giao
-
-PP-OCRv5 mobile huấn luyện trên chữ cảnh tổng quát; mục này trả lời bằng số câu hỏi fine-tune trên đúng miền dữ liệu thì được gì. **Cấu hình:** 30 epoch trên 6.672 mẫu (2.801 ảnh gốc + hai biến thể tăng cường mỗi ảnh), kiểm định 571 mẫu, charset đủ 36, khởi đầu từ `en_PP-OCRv5_mobile_rec_pretrained`; kết thúc train acc **0,9449**, val acc **0,8809**.
-
-<!-- {{T4.5b}} so sanh fine-tune va model goc -->
-
-**Bảng 4.6.** So sánh bộ nhận dạng gốc và bản tinh chỉnh trên cùng ngữ liệu
-
-| Cấu hình                                   | A5 (chuỗi thô) | A6 (sau hậu xử lý) | Đúng định dạng | ms/ảnh |
-| ------------------------------------------ | -------------: | -----------------: | -------------: | -----: |
-| **Model gốc, det + rec** — _bản bàn giao_ |         0,6373 |         **0,7701** |         0,9443 |  328,8 |
-| Model fine-tune, det + rec                 |         0,5998 |             0,6762 |         0,9018 |      — |
-| Model gốc, chỉ rec                         |         0,6776 |             0,7508 |         0,9568 |   35,7 |
-| Model fine-tune, chỉ rec                   |     **0,8618** |         **0,8758** |     **0,9886** |   38,5 |
 
 ## 4.6. Tầng AI — thiết kế và cài đặt
 
@@ -1059,14 +970,6 @@ Hệ thống cung cấp giao diện theo phong cách REST với tài liệu đ�
 
 Bốn quyết định thiết kế đáng ghi nhận. Yêu cầu xử lý video trả về mã trạng thái chấp nhận thay vì mã thành công, do một video 60 giây cần khoảng 200 giây xử lý trên CPU và không client nào chờ được; mã chấp nhận phản ánh đúng ngữ nghĩa "đã tiếp nhận, đang xử lý". Trường hợp ảnh không chứa biển số trả về mã thành công kèm danh sách rỗng thay vì mã lỗi, vì kết quả nhận dạng vẫn tồn tại và là tập rỗng (NFR-R2); trả về mã lỗi sẽ loại toàn bộ trường hợp âm khỏi thống kê. Chức năng tìm kiếm đối chiếu đồng thời chuỗi đã chuẩn hoá và chuỗi thô, để người dùng nhớ dạng nào cũng tra được. Cuối cùng, hai chỉ số thống kê về số lượt và số biển số được trả về tách biệt, kèm mô tả tường minh trong tài liệu đặc tả nhằm ngăn việc gộp nhầm hai đại lượng đã phân tích tại mục 4.7.2a.
 
-### 4.7.5. Phương án lùi phải thất bại theo cách quan sát được
-
-Trong giai đoạn chưa có mô hình đã huấn luyện, hệ thống vận hành với một đường ống mô phỏng sinh kết quả có cấu trúc hợp lệ nhưng không phản ánh nội dung ảnh. Cách làm này chính đáng ở thời điểm đó vì cho phép xây dựng và kiểm thử toàn bộ giao diện lập trình, cơ sở dữ liệu và giao diện người dùng trước khi mô hình sẵn sàng.
-
-Vấn đề nảy sinh khi đường ống mô phỏng được đặt làm phương án lùi cho tình huống không nạp được mô hình. Khi đó một triển khai bị cấu hình sai sẽ đáp lại mọi yêu cầu bằng một biển số có định dạng thuyết phục nhưng hoàn toàn hư cấu — chế độ hỏng mang biểu hiện của một hệ thống hoạt động bình thường, và là dạng nguy hiểm nhất đối với hệ thống có ghi dữ liệu vào cơ sở dữ liệu.
-
-Thiết kế hiện tại phân vai rõ ba đường ống. Đường ống thật thực hiện nhận dạng và báo trạng thái bình thường. Đường ống không khả dụng là phương án lùi mặc định: nó ném ngoại lệ và không sinh ra bất kỳ kết quả nào, đồng thời báo trạng thái suy giảm. Đường ống mô phỏng chỉ được kích hoạt khi người vận hành đặt biến môi trường tương ứng một cách tường minh. Khi thiếu trọng số, dịch vụ vẫn khởi động — một tiến trình từ chối khởi động không truyền đạt được nguyên nhân — nhưng mỗi yêu cầu đều trả về lỗi rõ ràng. Nguyên tắc rút ra: một phương án lùi phải thất bại rõ ràng và quan sát được, thay vì thay thế thất bại bằng dữ liệu thiếu cơ sở.
-
 ## 4.8. Giao diện người dùng
 
 ### 4.8.1. Cấu trúc và các màn hình
@@ -1093,7 +996,7 @@ Một nguyên tắc thiết kế đáng ghi nhận thuộc về client nhận d�
 
 ## 4.9. Triển khai bằng Docker
 
-Đóng gói phục vụ NFR-C1: môi trường chạy tái lập được, không phụ thuộc máy cá nhân. Ảnh Docker của máy chủ được dựng hai giai đoạn, cài **hai tệp khai báo phụ thuộc thành hai lớp riêng** để thay đổi một tầng không làm mất bộ đệm tầng kia (hệ quả trực tiếp của mục 4.3.2), chạy dưới người dùng không đặc quyền, giới hạn tường minh số luồng tính toán để hai container không cạnh tranh nhân CPU đến mức cùng chậm, và đặt thời gian chờ khởi động của cơ chế kiểm tra sức khoẻ đủ dài cho việc nạp trọng số. Ảnh Docker của giao diện được dựng rồi phục vụ tĩnh qua máy chủ web nhẹ — ảnh chạy không chứa Node hay mã nguồn. **Trọng số mô hình không nằm trong ảnh Docker** mà gắn từ ngoài, cùng một volume riêng cho bộ đệm mô hình PaddleOCR — không có volume này thì mỗi lần `down && up` phải tải lại vài trăm MB và không có mạng thì container không khởi động được. Bảng biến môi trường ở **Phụ lục F.2**. **Trạng thái kiểm chứng:** `docker compose config` hợp lệ; đo hiệu năng trong container thuộc Chương 5.
+Đóng gói phục vụ NFR-C1: môi trường chạy tái lập được, không phụ thuộc máy cá nhân. Ảnh Docker của máy chủ được dựng hai giai đoạn, cài **hai tệp khai báo phụ thuộc thành hai lớp riêng** để thay đổi một tầng không làm mất bộ đệm tầng kia (hệ quả trực tiếp của ràng buộc môi trường ở mục 4.3.1), chạy dưới người dùng không đặc quyền, giới hạn tường minh số luồng tính toán để hai container không cạnh tranh nhân CPU đến mức cùng chậm, và đặt thời gian chờ khởi động của cơ chế kiểm tra sức khoẻ đủ dài cho việc nạp trọng số. Ảnh Docker của giao diện được dựng rồi phục vụ tĩnh qua máy chủ web nhẹ — ảnh chạy không chứa Node hay mã nguồn. **Trọng số mô hình không nằm trong ảnh Docker** mà gắn từ ngoài, cùng một volume riêng cho bộ đệm mô hình PaddleOCR — không có volume này thì mỗi lần `down && up` phải tải lại vài trăm MB và không có mạng thì container không khởi động được. Bảng biến môi trường ở **Phụ lục F.2**. **Trạng thái kiểm chứng:** `docker compose config` hợp lệ; đo hiệu năng trong container thuộc Chương 5.
 
 ---
 
@@ -1205,7 +1108,7 @@ Lập luận đầy đủ ở **4.3.1**. NFR-P1 phát biểu _kèm_ ràng buộc
 
 ### 5.3.1. Khử trùng lặp: hai tỉ lệ, hai mẫu số khác nhau
 
-Có **hai tỉ lệ khử trùng lặp trên hai mẫu số khác nhau**: **44,2%** (11.978/27.111, trước hợp nhất, trên 7 bộ vào hợp nhất cho bài toán phát hiện) và **47,8%** (7.227/15.133, sau hợp nhất). Hai số **không cộng dồn và không thay thế nhau**; cơ chế và cách đọc trình bày ở mục 4.4.2. Điểm phải nhớ khi trích: mẫu số 27.111 là tổng ảnh của **7 bộ vào hợp nhất cho bài toán phát hiện**, **không phải** 9 bộ đã tải — hai bộ còn lại mang **nhãn mức ký tự**, tách riêng cho tầng OCR.
+Có **hai tỉ lệ khử trùng lặp trên hai mẫu số khác nhau**: **44,2%** (11.978/27.111, trước hợp nhất, trên 7 bộ vào hợp nhất cho bài toán phát hiện) và **47,8%** (7.227/15.133, sau hợp nhất). Hai số **không cộng dồn và không thay thế nhau**; cơ chế và cách đọc trình bày ở mục 4.4.1. Điểm phải nhớ khi trích: mẫu số 27.111 là tổng ảnh của **7 bộ vào hợp nhất cho bài toán phát hiện**, **không phải** 9 bộ đã tải — hai bộ còn lại mang **nhãn mức ký tự**, tách riêng cho tầng OCR.
 
 ### 5.3.2. Phân bố nguồn dữ liệu giữa các phép chia tập
 
@@ -1573,7 +1476,7 @@ Nhóm thực hiện đã bàn giao một hệ thống nhận dạng biển số 
 
 Các chỉ tiêu về phát hiện, thông lượng, độ tin cậy và chịu tải đều đạt; các chỉ tiêu về độ chính xác chuỗi chưa đạt ngưỡng. Riêng NFR-P1 chỉ đạt ngưỡng tối thiểu do bậc thử lại tăng thêm 34 biển nhận dạng đúng nhưng làm tăng độ trễ p95 — một thoái lui có chủ ý.
 
-**Bốn đại lượng đo được mà khảo sát không tìm thấy tương đương trong tài liệu Việt Nam.**
+**Bốn đại lượng đo được mà khảo sát không tìm thấy tương đương trong tài liệu Việt Nam:**
 
 1. **Đóng góp thuần của khối hậu xử lý theo vị trí: +13,28 điểm** — sửa đúng 372 biển, làm hỏng 0 biển trên 2.801 mẫu.
 2. **Chênh lệch giữa hai bố cục biển trên dữ liệu Việt Nam thật: 23,07 điểm** ở khối nhận dạng, so với chỉ 2,09 điểm ở khối phát hiện. Rủi ro R-04 vì vậy nằm trọn ở tầng đọc ký tự.
