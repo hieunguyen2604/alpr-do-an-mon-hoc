@@ -189,6 +189,19 @@ TABLE_BORDERS_XML: str = (
 # raises when one is missing so that a Pandoc upgrade fails loudly instead of
 # quietly restoring borderless tables.
 STYLE_PATCHES: tuple[tuple[str, str], ...] = (
+    # 0b. Chu trong o bang: 12 pt -> 10 pt.
+    #
+    #    Quyen co 61 bang, nhieu bang sau cot. O 12 pt chung xuong dong
+    #    lien tuc va moi bang an gan mot trang. 10 pt cho bang la muc
+    #    thong thuong cua van ban hoc thuat — chu THAN BAI van giu 12 pt,
+    #    chi rieng o bang nho lai, nen khong cham vao quy dinh trinh bay.
+    #
+    #    Pandoc dat kieu `Compact` cho moi doan trong o bang, nen sua o
+    #    day la du; khong phai dung toi tung bang.
+    (
+        '<w:style w:customStyle="1" w:styleId="Compact" w:type="paragraph">\n    <w:name w:val="Compact" />\n    <w:basedOn w:val="BodyText" />\n    <w:qFormat />\n    <w:pPr>\n      <w:spacing w:after="36" w:before="36" />\n    </w:pPr>',
+        '<w:style w:customStyle="1" w:styleId="Compact" w:type="paragraph">\n    <w:name w:val="Compact" />\n    <w:basedOn w:val="BodyText" />\n    <w:qFormat />\n    <w:pPr>\n      <w:spacing w:after="20" w:before="20" />\n    </w:pPr>\n    <w:rPr>\n      <w:sz w:val="20" />\n      <w:szCs w:val="20" />\n    </w:rPr>',
+    ),
     # 0. Khoang cach sau moi doan: 200 dxa (10 pt) -> 120 dxa (6 pt).
     #
     #    Quyen co ~655 doan van. O 10 pt, rieng khoang trong giua cac doan
