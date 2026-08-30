@@ -282,3 +282,18 @@ Rút từ quy tắc của Phase 0–1, áp dụng nguyên cho quyển đồ án:
 | 10 | Ghép quyển, sinh mục lục và danh mục hình/bảng, đánh lại trích dẫn, kết xuất | 🔵 Việc cuối |
 
 **Nút thắt kỹ thuật đã tháo:** mô hình chính thức đã huấn luyện xong và cả sáu chương đã viết với số liệu thật. Ba việc còn lại (bước 8, 9, 10) đều là việc hành chính và ghép bản, **không** phụ thuộc thêm kết quả kỹ thuật nào. Riêng bước 8 và 9 cần đầu vào từ người thực hiện và từ khoa nên không tự làm được.
+
+---
+
+## 8. Lộ trình tinh gọn quyển đồ án xuống 70 trang (Kế hoạch nâng cấp)
+
+Khi có yêu cầu từ khoa hoặc giảng viên hướng dẫn giới hạn dung lượng quyển đồ án trong khoảng 60–75 trang, thực hiện cắt giảm từ **93 trang $\rightarrow$ 70 trang** (giảm ~23 trang) theo bảng sau:
+
+| Chương | Trang hiện tại | Phần Cắt Bỏ / Thu Gọn | Mục tiêu giảm |
+|---|---|---|---|
+| **Chương 2: Cơ sở lý thuyết** | 12 trang | • **Bỏ:** Các đoạn lý thuyết giáo khoa về mạng tích chập cổ điển (CNN, VGG) và lịch sử phát triển YOLOv1–v7.<br>• **Giữ:** Đi thẳng vào cơ chế **YOLO11 (C3k2, SPPF)** và **CRNN + CTC Loss của PaddleOCR**. | **-5 trang** |
+| **Chương 3: Khảo sát & Lựa chọn** | 6 trang | • **Gom:** Ghép các tiêu chí so sánh rời rạc thành 1 bảng ma trận đánh giá tổng hợp duy nhất (YOLO11 vs YOLOv8/Faster R-CNN, PP-OCRv5 vs Tesseract/EasyOCR). | **-2 trang** |
+| **Chương 4: Phân tích & Thiết kế** | 24 trang | • **Bỏ:** Các đoạn văn xuôi mô tả chi tiết CRUD API, cấu trúc bảng CSDL SQLite/Pydantic thông thường.<br>• **Giữ:** Giữ trọn vẹn **Sơ đồ kiến trúc 3 tầng**, **Pipeline 5 bước**, và **Thuật toán phân tách biển 2 dòng**. | **-4 trang** |
+| **Chương 5: Thực nghiệm & Đánh giá** | 24 trang | • **Bỏ:** Các đoạn văn xuôi diễn giải lại số liệu đã có trong bảng.<br>• **Giữ:** Toàn bộ **Bảng số liệu đo thật** (mAP50=0.9829, độ trễ CPU=168.41ms, so sánh 1 dòng vs 2 dòng, phân tích ca lỗi Error Analysis). | **-4 trang** |
+| **Chương 9: Phụ lục** | 12 trang | • **Bỏ:** Bảng tra cứu chi tiết 63/34 tỉnh thành dài 4-5 trang và các đoạn log đo thô.<br>• **Gom:** Thành bảng tóm tắt mã vùng biển số 1 trang. | **-8 trang** |
+| **TỔNG CỘNG** | **93 trang** | **Giữ lại 100% cốt lõi học thuật, mô hình AI & số liệu đo thật** | **$\approx$ 70 trang** |

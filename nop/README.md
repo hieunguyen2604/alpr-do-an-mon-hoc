@@ -11,7 +11,7 @@ nào bị đổi đường dẫn.
 
 | Tệp | Sinh từ | Nội dung |
 |---|---|---|
-| `01-do-an-tot-nghiep.pdf` | `docs/papers/thesis-full.pdf` | Quyển đồ án tốt nghiệp, **93 trang** |
+| `01-do-an-tot-nghiep.pdf` | `docs/papers/thesis-full.pdf` | Quyển đồ án tốt nghiệp đầy đủ, **93 trang** |
 | `01-do-an-tot-nghiep.docx` | `docs/papers/thesis-full.docx` | Cùng nội dung, bản Word để hội đồng ghi chú |
 | `02-slide-bao-ve.pptx` | `docs/slides/slides.pptx` | Slide bảo vệ đầy đủ — 31 slide chính + 7 slide dự phòng |
 | `04-do-an-mon-hoc.pdf` | `docs/papers/mon-hoc/thesis-full.pdf` | Bản đồ án môn học **Xử lý ảnh và ứng dụng**, **44 trang** |
@@ -22,8 +22,22 @@ Nhóm `01` và nhóm `04` là **hai quyển riêng**, không phải hai phiên b
 một quyển: khác bố cục, khác cao độ trình bày, khác danh mục tài liệu tham khảo.
 Xem `docs/papers/mon-hoc/README.md`.
 
-Poster (`docs/poster/poster.pdf`) **không** nằm ở đây. Muốn thêm thì bổ sung một
-dòng vào `BUNDLE_FILES` trong `scripts/build_thesis.py`.
+---
+
+## ✂️ Kế Hoạch Tinh Gọn Quyển ĐATN Xuống 70 Trang (Nâng Cấp Sau)
+
+Khi cần rút gọn quyển Đồ án tốt nghiệp từ **93 trang $\rightarrow$ chuẩn 70 trang** (giảm ~23 trang) để nộp theo khung quy định 60–75 trang:
+
+| Chương | Trang hiện tại | Phần Cắt Bỏ / Thu Gọn | Mục tiêu giảm |
+|---|---|---|---|
+| **Chương 2: Cơ sở lý thuyết** | 12 trang | • **Bỏ:** Các đoạn lý thuyết giáo khoa về mạng tích chập cổ điển (CNN, VGG) và lịch sử phát triển YOLOv1–v7.<br>• **Giữ:** Đi thẳng vào cơ chế **YOLO11 (C3k2, SPPF)** và **CRNN + CTC Loss của PaddleOCR**. | **-5 trang** |
+| **Chương 3: Khảo sát & Lựa chọn** | 6 trang | • **Gom:** Ghép các tiêu chí so sánh rời rạc thành 1 bảng ma trận đánh giá tổng hợp duy nhất (YOLO11 vs YOLOv8/Faster R-CNN, PP-OCRv5 vs Tesseract/EasyOCR). | **-2 trang** |
+| **Chương 4: Phân tích & Thiết kế** | 24 trang | • **Bỏ:** Các đoạn văn xuôi mô tả chi tiết CRUD API, cấu trúc bảng CSDL SQLite/Pydantic thông thường.<br>• **Giữ:** Giữ trọn vẹn **Sơ đồ kiến trúc 3 tầng**, **Pipeline 5 bước**, và **Thuật toán phân tách biển 2 dòng**. | **-4 trang** |
+| **Chương 5: Thực nghiệm & Đánh giá** | 24 trang | • **Bỏ:** Các đoạn văn xuôi diễn giải lại số liệu đã có trong bảng.<br>• **Giữ:** Toàn bộ **Bảng số liệu đo thật** (mAP50=0.9829, độ trễ CPU=168.41ms, so sánh 1 dòng vs 2 dòng, phân tích ca lỗi Error Analysis). | **-4 trang** |
+| **Chương 9: Phụ lục** | 12 trang | • **Bỏ:** Bảng tra cứu chi tiết 63/34 tỉnh thành dài 4-5 trang và các đoạn log đo thô.<br>• **Gom:** Thành bảng tóm tắt mã vùng biển số 1 trang. | **-8 trang** |
+| **TỔNG CỘNG** | **93 trang** | **Giữ lại 100% cốt lõi học thuật, mô hình AI & số liệu đo thật** | **$\approx$ 70 trang** |
+
+---
 
 ## Cách dựng lại
 
@@ -31,28 +45,7 @@ Thư mục được làm mới ở **mỗi** lần chạy, nên nó không thể
 đó là lỗi mà một thư mục chép tay luôn mắc phải.
 
 ```bash
-backend/.venv/Scripts/python.exe scripts/build_thesis.py
-backend/.venv/Scripts/python.exe scripts/build_thesis.py --slides docs/slides/11-slides-ky-thuat.md
-backend/.venv/Scripts/python.exe scripts/build_thesis.py --src docs/papers/mon-hoc
-backend/.venv/Scripts/python.exe scripts/build_thesis.py --slides docs/slides/12-slides-mon-hoc.md
-powershell -File scripts/export_thesis_pdf.ps1
-powershell -File scripts/export_thesis_pdf.ps1 -Nguon docs/papers/mon-hoc/thesis-full.docx -Dich docs/papers/mon-hoc/thesis-full.pdf
+python scripts/build_thesis.py
+python scripts/build_thesis.py --src docs/papers/mon-hoc
+python scripts/build_thesis.py --slides docs/slides/12-slides-mon-hoc.md
 ```
-
-Bốn lệnh đầu dựng lần lượt: quyển tốt nghiệp cùng slide bảo vệ, slide báo cáo kỹ
-thuật, quyển môn học, và slide môn học. Hai lệnh sau dựng PDF bằng Word rồi tự chép sang đây.
-Cả `build_thesis.py` lẫn `export_thesis_pdf.ps1` đều cập nhật thư mục này, nên
-chạy lệnh nào cũng không để lại bản lệch.
-
-`export_thesis_pdf.ps1` **suy tên tệp đích từ đường dẫn nguồn**, không đặt cứng.
-Điều này là bắt buộc từ khi có hai quyển: bản đầu tiên đặt tên cứng, và lần xuất
-quyển môn học đầu tiên đã chép đè lên quyển tốt nghiệp trong chính thư mục này.
-
-Tệp nào chưa dựng thì bị bỏ qua kèm dòng báo `(chưa có: ...)`, không phải lỗi.
-
-## Vì sao git không theo dõi nội dung
-
-Bốn tệp trên là **bản sao đúng từng byte** của những tệp git đã theo dõi ở
-`docs/papers/` và `docs/slides/`. Theo dõi thêm ở đây sẽ nhân đôi 13 MB nhị phân
-vào lịch sử git mỗi lần dựng lại, đổi lấy đúng con số không. `.gitignore` vì vậy
-bỏ qua nội dung và chỉ giữ lại chính tệp README này.
