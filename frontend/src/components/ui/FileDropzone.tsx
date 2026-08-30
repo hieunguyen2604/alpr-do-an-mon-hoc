@@ -1,12 +1,5 @@
 /**
- * Drag-and-drop file picker with client-side validation.
- *
- * The checks here are a **convenience, not a control**. The backend validates
- * independently — it identifies a file by its magic bytes rather than by its
- * extension or `Content-Type` (NFR-S1) and enforces its own size ceiling — and
- * will reject a bad file with 413 or 415 whatever this component allows.
- * Checking in the browser only spares the user a pointless upload of a file
- * that was never going to be accepted.
+ * Drag-and-drop file picker with client-side validation and multi-file support.
  */
 
 import { useCallback, useId, useRef, useState } from 'react';
@@ -16,48 +9,30 @@ import type { DragEvent, ReactNode } from 'react';
 import { cn } from '@/lib/cn';
 import { formatFileSize } from '@/lib/format';
 
-/** Props of {@link FileDropzone}. */
 export interface FileDropzoneProps {
-  /** Called with a file that passed validation. */
-  onFileSelect: (file: File) => void;
-  /** MIME types to accept. */
+  /** Called with a file that passed validation (single mode). */
+  onFileSelect?: (file: File) => void;
+  /** Called with multiple valid files (multiple mode). */
+  onFilesSelect?: (files: File[]) => void;
+  /** Whether multiple files can be selected simultaneously. */
+  multiple?: boolean;
   acceptedTypes: readonly string[];
-  /** Largest accepted size, in megabytes. */
   maxSizeMb: number;
-  /** Human-readable format list, e.g. `"JPG, PNG, WebP, BMP"`. */
   acceptedLabel: string;
-  /** Currently selected file, shown as a summary. */
   selectedFile?: File | null;
-  /** Called when the user clears the selection. */
   onClear?: () => void;
-  /** Block interaction, e.g. while an upload is running. */
   disabled?: boolean;
-  /** Main instruction. */
   label?: string;
-  /** Replaces the default body, for a preview of the selected file. */
   children?: ReactNode;
   className?: string;
 }
 
-/**
- * Validate a file against the accepted types and size.
- *
- * @param file - The file to check.
- * @param acceptedTypes - Accepted MIME types.
- * @param maxSizeMb - Size ceiling in megabytes.
- * @param acceptedLabel - Human-readable format list, named in the message so
- *   the user is told what *is* accepted rather than only that this was not.
- * @returns A Vietnamese error message, or `null` when the file is acceptable.
- */
 function validateFile(
   file: File,
   acceptedTypes: readonly string[],
   maxSizeMb: number,
   acceptedLabel: string,
 ): string | null {
-  // Some browsers report an empty type for less common formats. Treated as
-  // acceptable and left to the server, whose magic-byte check is authoritative
-  // anyway — rejecting here would block a valid file on a browser quirk.
   if (file.type && !acceptedTypes.includes(file.type)) {
     return `Định dạng tệp không được hỗ trợ. Vui lòng chọn tệp ${acceptedLabel}.`;
   }
@@ -66,7 +41,7 @@ function validateFile(
   if (file.size > maxBytes) {
     return `Tệp có dung lượng ${formatFileSize(
       file.size,
-    )}, vượt quá giới hạn ${maxSizeMb} MB. Vui lòng chọn tệp nhỏ hơn.`;
+    )}, vượt quá giới hạn ${maxSizeMb} MB.`;
   }
 
   if (file.size === 0) {
@@ -76,14 +51,10 @@ function validateFile(
   return null;
 }
 
-/**
- * Render a dropzone.
- *
- * @param props - Selection handler, accepted types, size limit and state.
- * @returns The dropzone element.
- */
 export function FileDropzone({
   onFileSelect,
+  onFilesSelect,
+  multiple = false,
   acceptedTypes,
   maxSizeMb,
   acceptedLabel,
@@ -99,31 +70,38 @@ export function FileDropzone({
   const inputRef = useRef<HTMLInputElement>(null);
   const inputId = useId();
   const errorId = `${inputId}-error`;
-
-  // Drag events fire on every child element too, so a plain boolean would
-  // flicker as the pointer crosses the inner text. Counting enter and leave
-  // events keeps the highlight steady.
   const dragDepthRef = useRef(0);
 
-  const handleFile = useCallback(
-    (file: File | undefined) => {
-      if (!file) {
+  const handleFiles = useCallback(
+    (fileList: FileList | null | undefined) => {
+      if (!fileList || fileList.length === 0) return;
+      const validFiles: File[] = [];
+      let firstError: string | null = null;
+
+      for (let i = 0; i < fileList.length; i++) {
+        const f = fileList[i];
+        if (!f) continue;
+        const err = validateFile(f, acceptedTypes, maxSizeMb, acceptedLabel);
+        if (err) {
+          if (!firstError) firstError = `${f.name}: ${err}`;
+        } else {
+          validFiles.push(f);
+        }
+      }
+
+      if (firstError && validFiles.length === 0) {
+        setError(firstError);
         return;
       }
-      const validationError = validateFile(
-        file,
-        acceptedTypes,
-        maxSizeMb,
-        acceptedLabel,
-      );
-      if (validationError) {
-        setError(validationError);
-        return;
-      }
+
       setError(null);
-      onFileSelect(file);
+      if (multiple && onFilesSelect && validFiles.length > 0) {
+        onFilesSelect(validFiles);
+      } else if (validFiles[0] && onFileSelect) {
+        onFileSelect(validFiles[0]);
+      }
     },
-    [acceptedTypes, maxSizeMb, acceptedLabel, onFileSelect],
+    [acceptedTypes, maxSizeMb, acceptedLabel, multiple, onFileSelect, onFilesSelect],
   );
 
   const handleDrop = useCallback(
@@ -131,20 +109,16 @@ export function FileDropzone({
       event.preventDefault();
       dragDepthRef.current = 0;
       setIsDragging(false);
-      if (disabled) {
-        return;
-      }
-      handleFile(event.dataTransfer.files[0]);
+      if (disabled) return;
+      handleFiles(event.dataTransfer.files);
     },
-    [disabled, handleFile],
+    [disabled, handleFiles],
   );
 
   const handleDragEnter = useCallback(
     (event: DragEvent<HTMLDivElement>) => {
       event.preventDefault();
-      if (disabled) {
-        return;
-      }
+      if (disabled) return;
       dragDepthRef.current += 1;
       setIsDragging(true);
     },
@@ -175,8 +149,6 @@ export function FileDropzone({
         onDragLeave={handleDragLeave}
         onClick={openPicker}
         onKeyDown={(event) => {
-          // Drag and drop is unusable from a keyboard, so the zone must also
-          // work as a plain button.
           if (event.key === 'Enter' || event.key === ' ') {
             event.preventDefault();
             openPicker();
@@ -188,12 +160,12 @@ export function FileDropzone({
         aria-disabled={disabled}
         aria-describedby={error ? errorId : undefined}
         className={cn(
-          'flex flex-col items-center justify-center gap-3 rounded-xl',
-          'border-2 border-dashed px-6 py-10 text-center transition-colors',
+          'flex flex-col items-center justify-center gap-3 rounded-2xl',
+          'border-2 border-dashed px-6 py-10 text-center transition-all',
           disabled
             ? 'cursor-not-allowed border-border bg-surface-muted opacity-60'
-            : 'cursor-pointer border-border bg-surface hover:border-primary hover:bg-primary/5',
-          isDragging && !disabled && 'border-primary bg-primary/10',
+            : 'cursor-pointer border-border bg-surface hover:border-primary hover:bg-primary/5 shadow-sm',
+          isDragging && !disabled && 'border-primary bg-primary/10 scale-[0.99]',
           error && 'border-danger',
         )}
       >
@@ -202,17 +174,17 @@ export function FileDropzone({
             <div
               aria-hidden="true"
               className={cn(
-                'flex h-12 w-12 items-center justify-center rounded-full',
-                'bg-surface-raised text-content-muted',
+                'flex h-12 w-12 items-center justify-center rounded-2xl font-bold',
+                'bg-primary/10 text-primary border border-primary/20 shadow-sm',
               )}
             >
               <Upload className="h-6 w-6" />
             </div>
 
             <div>
-              <p className="text-sm font-medium text-content">{label}</p>
+              <p className="text-sm font-semibold text-content">{label}</p>
               <p className="mt-1 text-xs text-content-muted">
-                Hỗ trợ {acceptedLabel} · Tối đa {maxSizeMb} MB
+                Hỗ trợ {acceptedLabel} · Tối đa {maxSizeMb} MB {multiple && '· Chọn nhiều ảnh cùng lúc'}
               </p>
             </div>
           </>
@@ -222,25 +194,22 @@ export function FileDropzone({
           ref={inputRef}
           id={inputId}
           type="file"
+          multiple={multiple}
           className="sr-only"
           accept={acceptedTypes.join(',')}
           disabled={disabled}
-          // Cleared after each pick so that choosing the same file twice in a
-          // row still fires a change event.
           onChange={(event) => {
-            handleFile(event.target.files?.[0]);
+            handleFiles(event.target.files);
             event.target.value = '';
           }}
-          // The click is delegated from the wrapper; without this a click on
-          // the input would bubble back up and reopen the picker.
           onClick={(event) => event.stopPropagation()}
         />
       </div>
 
-      {selectedFile && (
+      {selectedFile && !multiple && (
         <div
           className={cn(
-            'mt-3 flex items-center justify-between gap-3 rounded-lg',
+            'mt-3 flex items-center justify-between gap-3 rounded-xl',
             'border border-border bg-surface px-3 py-2',
           )}
         >
@@ -274,7 +243,7 @@ export function FileDropzone({
         <p
           id={errorId}
           role="alert"
-          className="mt-2 text-sm text-danger"
+          className="mt-2 text-sm text-danger font-medium"
         >
           {error}
         </p>

@@ -1,7 +1,7 @@
 /**
- * Streamlined Image Detection Page (Ultra-compact 2-Column Responsive Layout).
+ * Multi-Image Batch Detection Page (2-Column Responsive Layout).
  *
- * All content fits cleanly in a single screen viewport without unnecessary stacking or redundant headers.
+ * Supports single & multi-image batch queueing with filmstrip switching and instant inspection.
  */
 
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -29,113 +29,195 @@ const UNEXPECTED_ERROR: ApiError = {
 };
 
 export default function ImageDetection(): JSX.Element {
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  const [response, setResponse] = useState<DetectionResponse | null>(null);
+  const [files, setFiles] = useState<File[]>([]);
+  const [activeIndex, setActiveIndex] = useState<number>(0);
+  const [previews, setPreviews] = useState<Record<number, string>>({});
+  const [responses, setResponses] = useState<Record<number, DetectionResponse>>({});
+  const [statusMap, setStatusMap] = useState<Record<number, 'detecting' | 'completed' | 'error'>>({});
+  const [errorsMap, setErrorsMap] = useState<Record<number, ApiError>>({});
+
   const [isDetecting, setIsDetecting] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
-  const [error, setError] = useState<ApiError | null>(null);
   const [downloadError, setDownloadError] = useState<string | null>(null);
-  const [activeIndex, setActiveIndex] = useState<number | null>(null);
+  const [activePlateIndex, setActivePlateIndex] = useState<number | null>(null);
   const [downloadingCropIndex, setDownloadingCropIndex] = useState<number | null>(null);
   const [isDownloadingAnnotated, setIsDownloadingAnnotated] = useState(false);
   const [selectedDetailRecord, setSelectedDetailRecord] = useState<DetectionHistory | null>(null);
 
-  const previewUrlRef = useRef<string | null>(null);
-  const abortRef = useRef<AbortController | null>(null);
+  const previewUrlsRef = useRef<Record<number, string>>({});
+  const abortControllersRef = useRef<Record<number, AbortController>>({});
 
+  // Cleanup object URLs on unmount
   useEffect(() => {
     return () => {
-      if (previewUrlRef.current) {
-        URL.revokeObjectURL(previewUrlRef.current);
-      }
-      abortRef.current?.abort();
+      Object.values(previewUrlsRef.current).forEach((url) => URL.revokeObjectURL(url));
+      Object.values(abortControllersRef.current).forEach((c) => c.abort());
     };
   }, []);
 
-  const replacePreview = useCallback((file: File | null): void => {
-    if (previewUrlRef.current) {
-      URL.revokeObjectURL(previewUrlRef.current);
-      previewUrlRef.current = null;
-    }
-    const next = file ? URL.createObjectURL(file) : null;
-    previewUrlRef.current = next;
-    setPreviewUrl(next);
-  }, []);
-
-  const runDetection = useCallback(
-    async (file: File): Promise<void> => {
-      abortRef.current?.abort();
+  const runDetectionForFile = useCallback(
+    async (file: File, fileIndex: number): Promise<void> => {
+      abortControllersRef.current[fileIndex]?.abort();
       const controller = new AbortController();
-      abortRef.current = controller;
+      abortControllersRef.current[fileIndex] = controller;
 
-      setIsDetecting(true);
-      setError(null);
-      setDownloadError(null);
-      setResponse(null);
-      setActiveIndex(null);
-      setUploadProgress(0);
+      setStatusMap((prev) => ({ ...prev, [fileIndex]: 'detecting' }));
+      if (fileIndex === activeIndex) {
+        setIsDetecting(true);
+        setUploadProgress(0);
+      }
 
       try {
         const payload = await detectImage(
           file,
-          setUploadProgress,
+          (progress) => {
+            if (fileIndex === activeIndex) setUploadProgress(progress);
+          },
           controller.signal,
         );
         if (controller.signal.aborted) return;
-        setResponse(payload);
+
+        setResponses((prev) => ({ ...prev, [fileIndex]: payload }));
+        setStatusMap((prev) => ({ ...prev, [fileIndex]: 'completed' }));
       } catch (caught) {
         if (controller.signal.aborted) return;
-        if (isApiError(caught)) {
-          setError(caught);
-        } else {
-          setError(UNEXPECTED_ERROR);
-        }
+        const err = isApiError(caught) ? caught : UNEXPECTED_ERROR;
+        setErrorsMap((prev) => ({ ...prev, [fileIndex]: err }));
+        setStatusMap((prev) => ({ ...prev, [fileIndex]: 'error' }));
       } finally {
-        if (!controller.signal.aborted) {
+        if (!controller.signal.aborted && fileIndex === activeIndex) {
           setIsDetecting(false);
         }
       }
     },
-    [],
+    [activeIndex],
   );
 
-  const handleFileSelect = useCallback(
-    (file: File): void => {
-      setSelectedFile(file);
-      replacePreview(file);
-      void runDetection(file);
+  // Add multiple files to batch
+  const handleAddFiles = useCallback(
+    (newFiles: File[]): void => {
+      if (newFiles.length === 0) return;
+
+      const startIndex = files.length;
+      const nextFiles = [...files, ...newFiles];
+      setFiles(nextFiles);
+
+      const nextPreviews = { ...previews };
+      newFiles.forEach((file, i) => {
+        const idx = startIndex + i;
+        const url = URL.createObjectURL(file);
+        previewUrlsRef.current[idx] = url;
+        nextPreviews[idx] = url;
+      });
+      setPreviews(nextPreviews);
+
+      if (files.length === 0) {
+        setActiveIndex(0);
+      }
+
+      // Trigger detection for all newly added files
+      newFiles.forEach((file, i) => {
+        void runDetectionForFile(file, startIndex + i);
+      });
     },
-    [replacePreview, runDetection],
+    [files, previews, runDetectionForFile],
   );
 
-  const handleClear = useCallback((): void => {
-    abortRef.current?.abort();
-    setSelectedFile(null);
-    replacePreview(null);
-    setResponse(null);
-    setError(null);
-    setDownloadError(null);
-    setActiveIndex(null);
+  const handleSelectIndex = useCallback(
+    (index: number) => {
+      setActiveIndex(index);
+      setActivePlateIndex(null);
+      const isFileRunning = statusMap[index] === 'detecting';
+      setIsDetecting(isFileRunning);
+      // If not started yet, trigger
+      if (files[index] && !responses[index] && !statusMap[index]) {
+        void runDetectionForFile(files[index], index);
+      }
+    },
+    [files, responses, statusMap, runDetectionForFile],
+  );
+
+  const handleRemoveFile = useCallback(
+    (removeIdx: number) => {
+      abortControllersRef.current[removeIdx]?.abort();
+      if (previewUrlsRef.current[removeIdx]) {
+        URL.revokeObjectURL(previewUrlsRef.current[removeIdx]);
+        delete previewUrlsRef.current[removeIdx];
+      }
+
+      const nextFiles = files.filter((_, i) => i !== removeIdx);
+      setFiles(nextFiles);
+
+      // Shift maps
+      const shiftMap = <T,>(map: Record<number, T>): Record<number, T> => {
+        const res: Record<number, T> = {};
+        Object.entries(map).forEach(([key, val]) => {
+          const k = Number(key);
+          if (k < removeIdx) res[k] = val;
+          else if (k > removeIdx) res[k - 1] = val;
+        });
+        return res;
+      };
+
+      setPreviews(shiftMap(previews));
+      setResponses(shiftMap(responses));
+      setStatusMap(shiftMap(statusMap));
+      setErrorsMap(shiftMap(errorsMap));
+
+      if (nextFiles.length === 0) {
+        setActiveIndex(0);
+      } else if (activeIndex >= nextFiles.length) {
+        setActiveIndex(nextFiles.length - 1);
+      }
+    },
+    [files, previews, responses, statusMap, errorsMap, activeIndex],
+  );
+
+  const handleClearAll = useCallback((): void => {
+    Object.values(previewUrlsRef.current).forEach((url) => URL.revokeObjectURL(url));
+    previewUrlsRef.current = {};
+    Object.values(abortControllersRef.current).forEach((c) => c.abort());
+    abortControllersRef.current = {};
+
+    setFiles([]);
+    setActiveIndex(0);
+    setPreviews({});
+    setResponses({});
+    setStatusMap({});
+    setErrorsMap({});
     setIsDetecting(false);
-    setUploadProgress(0);
-  }, [replacePreview]);
+    setDownloadError(null);
+    setActivePlateIndex(null);
+  }, []);
+
+  const activeResponse = responses[activeIndex] ?? null;
+  const activeError = errorsMap[activeIndex] ?? null;
+  const activePreview = previews[activeIndex] ?? null;
+  const currentAnnotatedUrl = activeResponse
+    ? (fileUrl(activeResponse.image_url) ?? activePreview)
+    : activePreview;
+  const hasResults = activeResponse !== null && activeResponse.results.length > 0;
+
+  const plateCountMap: Record<number, number> = {};
+  Object.entries(responses).forEach(([idx, resp]) => {
+    plateCountMap[Number(idx)] = resp.plate_count;
+  });
 
   const handleDownloadAnnotated = useCallback(async (): Promise<void> => {
-    if (!response || !response.results.length) return;
-    const url = fileUrl(response.image_url) ?? previewUrl;
+    if (!activeResponse || !activeResponse.results.length) return;
+    const url = fileUrl(activeResponse.image_url) ?? activePreview;
     if (!url) return;
 
     setIsDownloadingAnnotated(true);
     setDownloadError(null);
     try {
-      const firstPlate = response.results[0]?.plate_number;
-      const baseName = toFilenameFragment(firstPlate, 'ket-qua');
+      const firstPlate = activeResponse.results[0]?.plate_number;
+      const baseName = toFilenameFragment(firstPlate, `ket-qua-${activeIndex + 1}`);
       await downloadAnnotatedImage(
         url,
-        response.results,
-        response.image_width,
-        response.image_height,
+        activeResponse.results,
+        activeResponse.image_width,
+        activeResponse.image_height,
         `${baseName}-danh-dau.jpg`,
       );
     } catch {
@@ -143,7 +225,7 @@ export default function ImageDetection(): JSX.Element {
     } finally {
       setIsDownloadingAnnotated(false);
     }
-  }, [response, previewUrl]);
+  }, [activeResponse, activePreview, activeIndex]);
 
   const handleDownloadCrop = useCallback(
     async (result: DetectionResult, index: number): Promise<void> => {
@@ -166,11 +248,11 @@ export default function ImageDetection(): JSX.Element {
 
   const handleOpenDetailModal = useCallback(
     (result: DetectionResult, index: number) => {
-      if (!response) return;
+      if (!activeResponse) return;
       const historyRecord: DetectionHistory = {
         id: index + 1,
         input_type: 'image',
-        image_path: response.image_url,
+        image_path: activeResponse.image_url,
         plate_image_path: result.plate_image_url,
         plate_number: result.plate_number,
         plate_display: result.plate_display,
@@ -195,34 +277,34 @@ export default function ImageDetection(): JSX.Element {
       };
       setSelectedDetailRecord(historyRecord);
     },
-    [response],
+    [activeResponse],
   );
-
-  const annotatedImageUrl = response
-    ? (fileUrl(response.image_url) ?? previewUrl)
-    : previewUrl;
-  const hasResults = response !== null && response.results.length > 0;
 
   return (
     <div className="space-y-4">
       {/* 2-Column Responsive Layout */}
       <div className="grid grid-cols-1 gap-5 lg:grid-cols-12">
-        {/* Left Column: Upload Bar & Big Visual Canvas (7 cols) */}
+        {/* Left Column: Upload Carousel & Big Visual Box (7 cols) */}
         <div className="space-y-3.5 lg:col-span-7">
           <ImageUploadPanel
-            selectedFile={selectedFile}
-            onFileSelect={handleFileSelect}
-            onClear={handleClear}
+            files={files}
+            activeIndex={activeIndex}
+            onSelectIndex={handleSelectIndex}
+            onAddFiles={handleAddFiles}
+            onRemoveFile={handleRemoveFile}
+            onClearAll={handleClearAll}
             isDetecting={isDetecting}
             uploadProgress={uploadProgress}
+            statusMap={statusMap}
+            plateCountMap={plateCountMap}
           />
 
           {/* Annotated Visual Box */}
-          {selectedFile && annotatedImageUrl && (
+          {files.length > 0 && currentAnnotatedUrl && (
             <div className="relative overflow-hidden rounded-2xl border border-border/80 bg-surface shadow-md">
               <div className="flex items-center justify-between border-b border-border/60 bg-surface-raised/50 px-4 py-2.5">
                 <span className="text-xs font-bold uppercase tracking-wider text-content-muted">
-                  Ảnh toàn cảnh & Bounding Box
+                  Ảnh #{activeIndex + 1}: {files[activeIndex]?.name}
                 </span>
                 {hasResults && (
                   <Button
@@ -240,19 +322,19 @@ export default function ImageDetection(): JSX.Element {
               </div>
 
               <div className="p-2 bg-surface-raised/30 flex items-center justify-center min-h-[360px] max-h-[520px]">
-                {response && hasResults ? (
+                {activeResponse && hasResults ? (
                   <BoundingBoxOverlay
-                    imageUrl={annotatedImageUrl}
-                    alt="Ảnh đã nhận dạng"
-                    results={response.results}
-                    imageWidth={response.image_width}
-                    imageHeight={response.image_height}
-                    activeIndex={activeIndex}
-                    onActiveIndexChange={setActiveIndex}
+                    imageUrl={currentAnnotatedUrl}
+                    alt={`Ảnh đã nhận dạng #${activeIndex + 1}`}
+                    results={activeResponse.results}
+                    imageWidth={activeResponse.image_width}
+                    imageHeight={activeResponse.image_height}
+                    activeIndex={activePlateIndex}
+                    onActiveIndexChange={setActivePlateIndex}
                   />
                 ) : (
                   <img
-                    src={annotatedImageUrl}
+                    src={currentAnnotatedUrl}
                     alt="Xem trước ảnh"
                     className="max-h-[480px] w-auto max-w-full rounded-xl object-contain shadow-inner"
                   />
@@ -273,22 +355,22 @@ export default function ImageDetection(): JSX.Element {
 
           {isDetecting ? (
             <Card>
-              <LoadingState message="Đang phát hiện và đọc ký tự biển số (YOLO11 + PaddleOCR trên CPU)…" />
+              <LoadingState message={`Đang nhận dạng ảnh #${activeIndex + 1} (YOLO11 + PaddleOCR trên CPU)…`} />
             </Card>
-          ) : error ? (
+          ) : activeError ? (
             <ErrorState
               title="Không nhận dạng được ảnh"
-              message={error.message}
-              requestId={error.request_id}
-              onRetry={selectedFile ? () => void runDetection(selectedFile) : undefined}
+              message={activeError.message}
+              requestId={activeError.request_id}
+              onRetry={files[activeIndex] ? () => void runDetectionForFile(files[activeIndex]!, activeIndex) : undefined}
               retryLabel="Thử lại"
             />
-          ) : !response ? (
+          ) : !activeResponse ? (
             <Card title="Kết quả nhận dạng">
               <EmptyState
                 icon={<ImageIcon className="h-6 w-6" />}
                 title="Chưa có kết quả"
-                description="Kéo thả hoặc chọn một ảnh ở khung bên trái — hệ thống sẽ tự động phát hiện và hiển thị kết quả tại đây."
+                description="Kéo thả hoặc chọn một hoặc nhiều ảnh ở khung bên trái để bắt đầu nhận dạng hàng loạt."
               />
             </Card>
           ) : !hasResults ? (
@@ -296,29 +378,24 @@ export default function ImageDetection(): JSX.Element {
               <EmptyState
                 icon={<SearchX className="h-6 w-6" />}
                 title="Không tìm thấy biển số nào"
-                description="Ảnh đã xử lý xong nhưng không phát hiện được biển số xe hợp lệ. Hãy thử lại với ảnh rõ nét hơn."
-                action={
-                  <Button variant="secondary" size="sm" onClick={handleClear}>
-                    Chọn ảnh khác
-                  </Button>
-                }
+                description="Ảnh này đã xử lý xong nhưng không phát hiện được biển số xe hợp lệ."
               />
             </Card>
           ) : (
             <div className="space-y-3">
               {/* Summary Stats */}
-              <DetectionSummary response={response} />
+              <DetectionSummary response={activeResponse} />
 
               {/* Scrollable Plate List */}
               <div className="space-y-2.5 max-h-[500px] overflow-y-auto pr-1">
-                {response.results.map((result, index) => (
+                {activeResponse.results.map((result, index) => (
                   <PlateResultCard
                     key={`${result.plate_number ?? 'unread'}-${index}`}
                     result={result}
                     index={index}
                     plateImageUrl={fileUrl(result.plate_image_url)}
-                    isActive={activeIndex === index}
-                    onActiveChange={setActiveIndex}
+                    isActive={activePlateIndex === index}
+                    onActiveChange={setActivePlateIndex}
                     onDownloadCrop={(plate, position) =>
                       void handleDownloadCrop(plate, position)
                     }
