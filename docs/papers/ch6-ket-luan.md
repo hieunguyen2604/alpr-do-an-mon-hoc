@@ -2,7 +2,7 @@
 
 ## 6.1. Kết quả đạt được
 
-Nhóm thực hiện đã bàn giao một hệ thống nhận dạng biển số xe Việt Nam hoàn chỉnh, chạy đầu cuối trên máy **không có GPU**: bộ phát hiện tự huấn luyện, khối nhận dạng ký tự, bộ luật hậu xử lý theo quy chuẩn Việt Nam, REST API, giao diện web, cơ sở dữ liệu và đóng gói Docker. Trạng thái xác minh bằng HTTP thật — 10 thao tác trên 9 đường dẫn phản hồi đúng, **1.002/1.002** kiểm thử tự động đạt, bao phủ tầng nghiệp vụ 87,7%.
+Nhóm thực hiện đã bàn giao một hệ thống nhận dạng biển số xe Việt Nam hoàn chỉnh, chạy đầu cuối trên máy **không có GPU**: bộ phát hiện tự huấn luyện, khối nhận dạng ký tự, bộ luật hậu xử lý theo quy chuẩn Việt Nam, REST API, giao diện web, cơ sở dữ liệu và đóng gói Docker. Trạng thái xác minh bằng HTTP thật — 10 thao tác trên 9 đường dẫn phản hồi đúng, **1.004/1.004** kiểm thử tự động đạt, bao phủ tầng nghiệp vụ 87,7%.
 
 **Bảng 6.1.** Đối chiếu chỉ tiêu đặt ra ở giai đoạn phân tích yêu cầu với số đo trên `models/best.pt`
 
@@ -14,7 +14,7 @@ Nhóm thực hiện đã bàn giao một hệ thống nhận dạng biển số 
 |    A5 · A6    | Chuỗi trước · sau hậu xử lý                                   |         0,85 · 0,90 |      **0,6373 · 0,7701** |  ❌   |
 |      A7       | Toàn trình từ ảnh gốc                                         |                0,88 |               **0,563** ❌ | ⬜ \* |
 |      A8       | Chênh lệch bố cục ở tầng phát hiện (điểm %)                   |                   — |                 **2,09** |   —   |
-|      P1       | Độ trễ p95 một ảnh (ms)                                       |               ≤ 800 |             **1.143,10** |  🟡   |
+|      P1       | Độ trễ p95 một ảnh (ms)                                       |               ≤ 800 |               **509,76** |  ✅   |
 | P4 · P5 · P6  | Nạp mô hình (s) · Overhead API · Truy vấn 10.000 bản ghi (ms) | ≤ 15 · ≤ 50 · ≤ 500 | **6,41 · 19,01 · 18,71** |  ✅   |
 | P7 · R4 · SC1 | RSS (GB) · Thành công khi chạy liên tục · Yêu cầu đồng thời   |   ≤ 2 · ≥ 99% · ≥ 5 |    **0,806 · 100% · 10** |  ✅   |
 
@@ -41,7 +41,7 @@ Ngoài các con số, nhóm thực hiện để lại **một quy trình đánh 
 |  2  | **Bộ dữ liệu lệch nặng về biển trắng**                              |    Cao     | 97,68% mẫu thuộc một lớp, nên kết luận về độ chính xác OCR **chỉ áp cho biển trắng**                   |
 |  3  | Rò rỉ dữ liệu tồn dư không khử được bằng băm tri giác               | Trung bình | phash chỉ bắt tương đồng bố cục sáng-tối, không bắt "cùng xe, khác ngày"                               |
 |  4  | Tập test không xuyên bộ dữ liệu                                     | Trung bình | mAP 0,9829 **lạc quan hơn** mức gặp khi triển khai với nguồn ảnh mới                                   |
-|  5  | Độ trễ chỉ đạt ngưỡng tối thiểu                                     | Trung bình | p95 = 1.143,10 ms; đánh đổi có chủ ý lấy 34 biển đọc thêm                                              |
+|  5  | ~~Độ trễ chỉ đạt ngưỡng tối thiểu~~ — **đã khép**                    | Thấp       | p95 nay 509,76 ms, vượt mục tiêu 800 ms sau đợt tối ưu tầng suy luận (5.6.1); bậc thang thử-lại vẫn giữ nguyên cùng 34 biển đọc thêm                                              |
 |  6  | **Bốn** yêu cầu mức _Must_ (FR-3.1, FR-3.4, FR-4.1, FR-2.5) chuyển sang _Won't_ | Trung bình | Ba yêu cầu đầu chỉ mất **màn hình hiển thị** — năng lực vẫn phục vụ ở tầng API và vẫn có kiểm thử; **riêng FR-2.5 mất chính năng lực** (không xuất được video đã chú thích). Nêu rõ cả bốn khi bảo vệ |
 |  7  | SQLite chỉ cho phép một tiến trình ghi tại một thời điểm            |    Thấp    | Đủ cho quy mô đồ án, chặn ở triển khai đa người dùng                                                   |
 |  8  | Xem trực tiếp và xử lý nền tranh chấp CPU với nhau                  |    Thấp    | Chạy video nền làm chậm luồng nhận dạng ảnh                                                            |

@@ -293,16 +293,23 @@ Hồ sơ lỗi thiên về _xoá_ ($D$ = 1.272 > $S$ = 862) trên biển hai dò
 
 **Bảng 5.9.** Độ trễ đầu cuối một ảnh, đối chiếu NFR-P1
 
-| Chỉ số                       |        Sàn |  Mục tiêu | **Trước bậc thang** | **Cấu hình giao hàng** | Kết quả |
-| ---------------------------- | ---------: | --------: | --------------------------: | -----------------------------: | :-----: |
-| p50 (ms)                     |          — |         — |                      414,67 |                         405,77 |   n/a   |
-| **p95 (ms)**                 | **≤ 1500** | **≤ 800** |                  **731,15** |                   **1.143,10** | **🟡**  |
-| p99 (ms)                     |          — |         — |                      947,83 |                       1.420,07 |   n/a   |
-| Trung bình (ms)              |          — |         — |                      400,74 |                         447,38 |   n/a   |
-| Số ảnh đo                    |          — |         — |                         100 |                            100 |   n/a   |
-| Bội số so với sàn / mục tiêu |          — |         — |               0,49× / 0,91× |          **0,76×** / **1,43×** |   n/a   |
+| Chỉ số                       |        Sàn |  Mục tiêu | Trước bậc thang | Sau bậc thang | **Cấu hình giao hàng** | Kết quả |
+| ---------------------------- | ---------: | --------: | --------------: | ------------: | ---------------------: | :-----: |
+| p50 (ms)                     |          — |         — |          414,67 |        405,77 |             **150,07** |   n/a   |
+| **p95 (ms)**                 | **≤ 1500** | **≤ 800** |          731,15 |      1.143,10 |             **509,76** | **✅**  |
+| p99 (ms)                     |          — |         — |          947,83 |      1.420,07 |           **1.124,13** |   n/a   |
+| Trung bình (ms)              |          — |         — |          400,74 |        447,38 |             **222,34** |   n/a   |
+| Nhanh nhất (ms)              |          — |         — |               — |             — |              **74,25** |   n/a   |
+| Số ảnh đo                    |          — |         — |             100 |           100 |                    100 |   n/a   |
+| Bội số so với sàn / mục tiêu |          — |         — |   0,49× / 0,91× | 0,76× / 1,43× |  **0,34× / 0,64×**     |   n/a   |
 
-**NFR-P1 đạt ngưỡng tối thiểu nhưng không đạt mục tiêu**, và đây là **thoái lui có chủ ý và đã định lượng**: tắt hẳn bậc thang thử lại đưa p95 về **866,3 ms**, tức toàn bộ **+277 ms** là của nó; nhưng vì bậc thang chỉ chạy **sau khi lần đọc đầu thất bại** nên nó không chạm vào trường hợp thường — **trung vị thậm chí giảm nhẹ** (414,67 → 405,77 ms), chi phí dồn hết vào đuôi. Với hệ thống mà 95% ảnh xong dưới 1,15 giây và một nửa xong dưới 0,41 giây, p50 mô tả trải nghiệm điển hình còn p95 mô tả trường hợp xấu; NFR-P1 phát biểu theo p95 nên kết luận chính thức là **đạt sàn, không đạt mục tiêu**. Ở lượt đo đầu với cả ba biến thể bật, p95 là **1.514,26 ms** — **vượt cả ngưỡng tối thiểu**; bóc tách chỉ ra bậc siêu phân giải chiếm hơn nửa chi phí đó mà không cải thiện được biển nào đo được nên nó bị **tắt mặc định**, đưa p95 về 1.143,10 ms.
+**NFR-P1 đạt mục tiêu.** p95 = **509,76 ms**, dưới mục tiêu 800 ms với biên **290 ms**, và chỉ bằng **0,34×** ngưỡng tối thiểu. Đây là lần đầu chỉ tiêu này vượt mục tiêu chứ không chỉ đạt sàn.
+
+Cột thứ tư kể phần còn lại của câu chuyện, và nó là một chuỗi hai bước ngược chiều nhau. **Bước lùi:** bậc thang thử lại (5.5.7) đẩy p95 từ 731,15 lên 1.143,10 ms — thoái lui **có chủ ý và đã định lượng**, đổi 412 ms ở đuôi lấy 34 biển đọc đúng thêm; trung vị gần như không đổi vì bậc thang chỉ chạy sau khi đọc hỏng. **Bước tiến:** đợt tối ưu tầng suy luận (4.4) đưa p95 xuống 509,76 ms, tức **thấp hơn cả mốc 731,15 ms trước khi có bậc thang** — hệ thống nay vừa giữ 34 biển ấy vừa nhanh hơn điểm xuất phát.
+
+Ba can thiệp làm nên bước tiến đó đều nằm ở tầng chạy, không đụng trọng số: `torch.inference_mode()` bỏ chi phí ghi sổ đồ thị đạo hàm, ghim số luồng cho torch và OpenCV để tránh tranh khoá, và truyền `cpu_threads` xuống PaddleOCR. **Không chỉ số độ chính xác nào đổi** — A4, A5, A6, mAP và bảng nhầm lẫn giữ nguyên, vì ba can thiệp ấy chỉ đổi cách tính toán được lập lịch chứ không đổi phép tính.
+
+> **Về con số "sub-100 ms".** Ảnh nhanh nhất trong lượt đo đạt **74,25 ms**, và một biển một dòng sạch có thể xuống dưới 100 ms. Nhưng đó là **cận dưới của một mẫu**, không phải chỉ số của hệ thống; số dùng để đối chiếu chỉ tiêu là trung vị 150,07 ms và p95 509,76 ms. Tương tự, **không được lấy 1/độ_trễ làm thông lượng**: nghịch đảo của 81 ms là 12 khung/giây, trong khi thông lượng thật đo qua giao diện lập trình với hàng đợi một khe là **5,63 khung/giây** (5.6.4). Hai đại lượng đo hai thứ khác nhau.g**: tắt hẳn bậc thang thử lại đưa p95 về **866,3 ms**, tức toàn bộ **+277 ms** là của nó; nhưng vì bậc thang chỉ chạy **sau khi lần đọc đầu thất bại** nên nó không chạm vào trường hợp thường — **trung vị thậm chí giảm nhẹ** (414,67 → 405,77 ms), chi phí dồn hết vào đuôi. Với hệ thống mà 95% ảnh xong dưới 1,15 giây và một nửa xong dưới 0,41 giây, p50 mô tả trải nghiệm điển hình còn p95 mô tả trường hợp xấu; NFR-P1 phát biểu theo p95 nên kết luận chính thức là **đạt sàn, không đạt mục tiêu**. Ở lượt đo đầu với cả ba biến thể bật, p95 là **1.514,26 ms** — **vượt cả ngưỡng tối thiểu**; bóc tách chỉ ra bậc siêu phân giải chiếm hơn nửa chi phí đó mà không cải thiện được biển nào đo được nên nó bị **tắt mặc định**, đưa p95 về 1.143,10 ms.
 
 ### 5.6.2. Phân rã ngân sách độ trễ theo từng bước
 
@@ -312,15 +319,15 @@ Hồ sơ lỗi thiên về _xoá_ ($D$ = 1.272 > $S$ = 862) trên biển hai dò
 
 | Bước xử lý                        | Ước lượng ban đầu (ms) | **Đo thật (ms)** | Chênh (lần) |    % tổng |
 | --------------------------------- | ---------------------: | ---------------: | ----------: | --------: |
-| Giải mã ảnh + tiền xử lý          |                     50 |         **2,83** |        0,06 |  **1,7%** |
-| Suy luận YOLO11n @ 640px (CPU)    |                    150 |        **57,27** |        0,38 | **34,0%** |
+| Giải mã ảnh + tiền xử lý          |                     50 |         **1,78** |        0,04 |  **1,2%** |
+| Suy luận YOLO11n @ 640px (CPU)    |                    150 |        **55,66** |        0,37 | **38,0%** |
 | Cắt + tiền xử lý vùng biển số     |                     30 |         **0,00** |        0,00 |  **0,0%** |
-| **PaddleOCR (mỗi biển)**          |                **120** |       **108,28** |        0,90 | **64,3%** |
+| **PaddleOCR (mỗi biển)**          |                **120** |        **89,16** |        0,74 | **60,8%** |
 | Hậu xử lý regex + kiểm tra hợp lệ |                      5 |         **0,03** |        0,01 |  **0,0%** |
 | Ghi CSDL + lưu ảnh                |                     50 |                — |           — |         — |
-| **Tổng (một biển số)**            |                **405** |       **168,41** |        0,47 |  **100%** |
+| **Tổng (một biển số)**            |                **405** |       **146,63** |        0,36 |  **100%** |
 
-Ba phát hiện. **Một, ước lượng ở giai đoạn phân tích yêu cầu khá sát ở tổng nhưng lệch ở phân bổ:** tổng suy luận thuần **168,41 ms/biển**, nhỏ hơn cả ước lượng ban đầu. Sai lệch **không** tới một bậc độ lớn. **Hai, điểm nghẽn là PaddleOCR nhưng KHÔNG áp đảo như báo cáo cũ:** 64,3% so với 34,0% của bộ phát hiện, **thay thế** con số cũ "OCR 93,3% / detect 6,5%" vốn đo trên hệ thống đang có lỗi cắt ảnh (~1.322 ms/ảnh); nguyên nhân OCR đắt vẫn đúng — PaddleOCR là **đường ống nhiều giai đoạn** (phát hiện văn bản → phân loại hướng → nhận dạng) thiết kế cho ảnh tài liệu tổng quát, nên hệ thống trả chi phí cho năng lực mà vùng biển đã cắt không cần. **Ba, chiến lược tối ưu đổi hẳn:** theo định luật Amdahl, tăng tốc detector 2–3× có thể kéo E2E xuống quãng **15–23%**, khác hẳn kết luận cũ "chỉ giảm tối đa 6,7%". Dự đoán này **đã được kiểm chứng** ở 5.6.3: OpenVINO nhanh 1,57× ở tầng bộ phát hiện và nâng thông lượng đầu cuối **+20,0%** — nằm trong khoảng dự đoán. Vì NFR-P1 mới đạt sàn, tối ưu hiệu năng vẫn nằm trên đường tới chỉ tiêu chứ không chỉ là _dư địa cải thiện thêm_.
+Ba phát hiện. **Một, ước lượng ở giai đoạn phân tích yêu cầu khá sát ở tổng nhưng lệch ở phân bổ:** tổng suy luận thuần **146,63 ms/biển**, chỉ bằng 0,36 lần ước lượng ban đầu 405 ms. Sai lệch **không** tới một bậc độ lớn. **Hai, điểm nghẽn là PaddleOCR nhưng KHÔNG áp đảo như báo cáo cũ:** 60,8% so với 38,0% của bộ phát hiện, **thay thế** con số cũ "OCR 93,3% / detect 6,5%" vốn đo trên hệ thống đang có lỗi cắt ảnh (~1.322 ms/ảnh); nguyên nhân OCR đắt vẫn đúng — PaddleOCR là **đường ống nhiều giai đoạn** (phát hiện văn bản → phân loại hướng → nhận dạng) thiết kế cho ảnh tài liệu tổng quát, nên hệ thống trả chi phí cho năng lực mà vùng biển đã cắt không cần. **Ba, chiến lược tối ưu đổi hẳn:** theo định luật Amdahl, tăng tốc detector 2–3× có thể kéo E2E xuống quãng **15–23%**, khác hẳn kết luận cũ "chỉ giảm tối đa 6,7%". Dự đoán này **đã được kiểm chứng** ở 5.6.3: OpenVINO nhanh 1,57× ở tầng bộ phát hiện và nâng thông lượng đầu cuối **+20,0%** — nằm trong khoảng dự đoán. Vì NFR-P1 mới đạt sàn, tối ưu hiệu năng vẫn nằm trên đường tới chỉ tiêu chứ không chỉ là _dư địa cải thiện thêm_.
 
 ### 5.6.3. So sánh nền tảng suy luận: PyTorch, ONNX Runtime và OpenVINO
 
@@ -346,7 +353,7 @@ OpenVINO thắng ở mọi phân vị, và thắng đậm nhất ở **đuôi**:
 
 > **Một cái bẫy đã suýt mắc.** So thẳng 0,9718 (harness riêng, OpenVINO) với 0,9829 (validator Ultralytics, PyTorch) sẽ kết luận sai rằng xuất mô hình làm mất 1,1 điểm mAP. Hai vế đi qua **hai đường đo khác nhau** nên chênh lệch là chuyện đương nhiên. Chỉ khi chạy lại chính bản PyTorch qua chính harness riêng (0,9712) mới thấy OpenVINO thực ra nhỉnh hơn. So sánh chỉ có nghĩa khi hai vế cùng đường đo.
 
-Đầu cuối, đổi sang OpenVINO nâng tốc độ khung hình thời gian thực từ **5,257 lên 6,310 FPS (+20,0%)** — xác nhận lập luận Amdahl ở 5.6.2 bằng số đo. Nhóm thực hiện **vẫn giữ PyTorch làm mặc định của bản giao hàng**: NFR-P2 đã đạt mà không cần đổi, còn đổi mô hình mặc định sẽ làm mọi con số độ trễ trong chương này lệch khỏi bản đang giao. Cả `best.onnx` lẫn `best_openvino_model/` đều nằm sẵn trong kho; bật lên chỉ cần đổi một dòng `ALPR_MODEL_PATH` vì tầng nạp mô hình đã hỗ trợ sẵn thư mục OpenVINO. Chi tiết ở [báo cáo 38](../reports/38-runtime-backend-and-nfr-p2.md).
+Đầu cuối, đổi sang OpenVINO nâng tốc độ khung hình thời gian thực từ **5,257 lên 6,310 FPS (+20,0%)** — xác nhận lập luận Amdahl ở 5.6.2 bằng số đo. *(Cặp số này đo **trước** đợt tối ưu tầng suy luận ở 4.4, khi mốc PyTorch còn là 5,257 FPS; mốc hiện hành là 5,63 FPS. Phép so sánh giữa ba nền tảng vẫn có giá trị vì cả ba đo cùng điều kiện, nhưng **không được ghép 6,310 FPS với mốc mới** — muốn có tỷ lệ cập nhật thì phải đo lại cả ba.)* Nhóm thực hiện **vẫn giữ PyTorch làm mặc định của bản giao hàng**: NFR-P2 đã đạt mà không cần đổi, còn đổi mô hình mặc định sẽ làm mọi con số độ trễ trong chương này lệch khỏi bản đang giao. Cả `best.onnx` lẫn `best_openvino_model/` đều nằm sẵn trong kho; bật lên chỉ cần đổi một dòng `ALPR_MODEL_PATH` vì tầng nạp mô hình đã hỗ trợ sẵn thư mục OpenVINO. Chi tiết ở [báo cáo 38](../reports/38-runtime-backend-and-nfr-p2.md).
 
 Bốn hướng tấn công khối OCR theo chi phí tăng dần (chi tiết ở Chương 6): **tắt các giai đoạn không cần thiết của đường ống PaddleOCR**; **bật MKL-DNN và chỉnh số luồng CPU**; **xuất mô hình nhận dạng sang ONNX Runtime**; **thay bằng mô hình nhận dạng chuyên cho biển số** huấn luyện trên tập ký tự hẹp — tiềm năng lớn nhất, tốn công nhất.
 
@@ -354,7 +361,7 @@ Bốn hướng tấn công khối OCR theo chi phí tăng dần (chi tiết ở 
 
 <!-- {{T5.6d}} hieu nang che do webcam va xu ly video — gop vao T5.7 -->
 
-**NFR-P2 đạt: 5,257 FPS** (sàn 3, mục tiêu 5) — vượt cả mục tiêu, không chỉ sàn. Giao diện thời gian thực dùng **hàng đợi một khe**: chỉ một yêu cầu bay tại một thời điểm, khung sinh ra trong lúc chờ bị bỏ thay vì xếp hàng; ở kỷ luật đó thông lượng bị chi phối bởi những lần chậm nhất, nên phân vị đuôi mới là đại lượng quyết định. Đo được p50 = **164,08 ms**, p95 = **204,52 ms** — đuôi chỉ rộng gấp 1,25 lần trung vị. NFR-P3 cũng **đạt**: video 14,25 giây xử lý hết **18,2 giây** (sàn ≤ 95 s, mục tiêu ≤ 47,5 s), tức **0,785×** thời gian thực, `vid_stride = 5`.
+**NFR-P2 đạt: 5,63 FPS** (sàn 3, mục tiêu 5) — vượt cả mục tiêu, không chỉ sàn. Con số này đo **sau đợt tối ưu tầng suy luận** (4.4); trước đó là 5,257 FPS. Trong 60,0 giây, camera ảo 30 khung/giây chào **1.801 khung**, hệ thống nhận và trả kết quả cho **338 khung**, bỏ 1.463 khung ở hàng đợi, **0 lỗi**. Giao diện thời gian thực dùng **hàng đợi một khe**: chỉ một yêu cầu bay tại một thời điểm, khung sinh ra trong lúc chờ bị bỏ thay vì xếp hàng; ở kỷ luật đó thông lượng bị chi phối bởi những lần chậm nhất, nên phân vị đuôi mới là đại lượng quyết định. Đo được p50 = **164,08 ms**, p95 = **204,52 ms** — đuôi chỉ rộng gấp 1,25 lần trung vị. NFR-P3 cũng **đạt**: video 14,25 giây xử lý hết **16,4 giây** (sàn ≤ 95 s, mục tiêu ≤ 47,5 s), tức **0,8695×** thời gian thực, `vid_stride = 5` — cũng đo sau đợt tối ưu, trước đó là 0,785×.
 
 **Con số này thay thế một số liệu cũ đã công bố, và lý do phải kể ra.** Một lượt đo trước đó cho **2,379 FPS — trượt sàn**, và quyển từng quy nguyên nhân cho bậc thang thử-lại. Đo lại trên **mã nguồn giống hệt từng byte** (`git diff` trên `ai/` giữa hai thời điểm chỉ trả về một công cụ đo mới thêm), cùng cấu hình, cùng dãy ảnh phát lại, cho 5,257 rồi 5,213 FPS ở hai lần chạy độc lập.
 
@@ -381,7 +388,30 @@ Log lần đo cũ cho thấy máy khi đó đang cõng khoảng **560% CPU** c�
 
 **Hình 5.3.** Sáu lần đo NFR-P2. Bên trái: trung vị của lượt đo cũ nằm ngang với các lần đo trên máy rảnh, nhưng đuôi p95 cao gấp sáu lần. Bên phải: cùng dữ liệu, biểu diễn bằng tỉ lệ p95/p50 — **ép tải tới 12 lõi cũng chỉ đẩy tỉ lệ này lên 1,24× trong khi lượt đo cũ là 6,93×**. Tải cạnh tranh nâng cả phân bố đều tay; thứ xảy ra ở lượt đo cũ thì không.
 
-### 5.6.5. Chịu tải, bộ nhớ và độ tin cậy (NFR-SC1, NFR-P4…P7, NFR-R4)
+### 5.6.5. Khử trùng lặp mờ cho chuỗi khung hình video
+
+Một xe đi qua khung hình xuất hiện trong hàng chục khung liên tiếp, và khối nhận dạng đọc lại nó ở mỗi khung. Nếu mọi lần đọc đều cho cùng một chuỗi thì gom theo chuỗi là đủ. Thực tế không vậy: **cùng một biển, cùng một chất lượng ảnh, hai khung cách nhau vài phần trăm giây vẫn có thể cho hai chuỗi khác nhau**. Hệ quả trực tiếp là danh sách kết quả của một video ngắn phình ra thành nhiều dòng cho cùng một chiếc xe.
+
+**Cơ chế.** Sau khi gom theo chuỗi, một lượt thứ hai hợp nhất các biến thể của cùng một biển vật lý. Hai chuỗi được coi là cùng một biển khi thoả **đồng thời** hai điều kiện:
+
+1. **Gần nhau về chuỗi** — khoảng cách Levenshtein $\le 2$;
+2. **Gần nhau về thời gian** — hai lần đọc cách nhau không quá 48 khung.
+
+Riêng với khoảng cách bằng 2, chỉ điều kiện chuỗi là chưa đủ, vì hai biển **thật sự khác nhau** cũng có thể chỉ cách nhau hai ký tự. Vì vậy mức này còn phải qua một rào ngữ nghĩa: **cùng mã tỉnh hai chữ số**, và **hoặc** cùng chữ cái sê-ri **hoặc** cùng ba chữ số cuối. Bỏ rào ấy đi thì thuật toán sẽ gộp nhầm hai xe khác nhau đỗ cạnh nhau.
+
+**Bản nào sống sót được quyết bằng bằng chứng, không bằng thứ tự đến.** Thứ tự ưu tiên: đúng quy chuẩn định dạng trước, rồi tới **số khung đã bỏ phiếu** cho cách đọc đó, cuối cùng mới tới độ tin cậy OCR. Độ tin cậy một mình là trọng tài kém ở mức một ký tự — một lần đọc sai vẫn có thể mang điểm cao.
+
+**Kết quả đo.** Chạy toàn bộ đường ống trên `demo-video-giao-thong.mp4`, lấy mẫu một khung trong mỗi bốn khung: khối nhận dạng trả về **44 chuỗi khác nhau**, sau khi hợp nhất còn **27** — **17 chuỗi được gom vào một bản ghi khác**, tức gần **bốn trên mười** dòng kết quả là trùng lặp của một biển đã có.
+
+<!-- {{F5.4}} ca khu trung lap mo tren video demo -->
+
+![](figures/fig-ch5-dedup-51H14573.png)
+
+**Hình 5.4.** Một ca khử trùng lặp thật, cắt trực tiếp từ video demo. Cùng một chiếc xe máy được đọc thành **năm chuỗi khác nhau** ở năm khung hình khác nhau; bốn bản viền đỏ bị gom vào bản viền xanh. Điều đáng chú ý là **năm vùng cắt gần như không phân biệt được bằng mắt** — khác biệt không đến từ loá sáng hay che khuất mà từ **tính không tất định của khối nhận dạng giữa các khung gần giống nhau**. Bản `51H14573` thắng nhờ **11 khung** bỏ phiếu, trong khi bốn bản còn lại mỗi bản chỉ có một khung; nếu xét riêng độ tin cậy thì `51H4573` (0,994) đã suýt vượt qua.
+
+**Phạm vi của kết quả này, nói cho đúng.** Đây là cải thiện ở **tầng trình bày kết quả video**, không phải ở độ chính xác nhận dạng: nó không sửa được một ký tự đọc sai, chỉ chọn ra cách đọc được nhiều khung ủng hộ nhất. Vì vậy **các chỉ số NFR-A4…A6 ở mục 5.5 không đổi** — chúng đo trên ngữ liệu ảnh cắt sẵn, mỗi biển một lần, nên bước hợp nhất này không tham gia. Rủi ro còn lại cũng phải nêu: rào ngữ nghĩa thu hẹp chứ **không loại trừ** khả năng gộp nhầm hai biển thật sự khác nhau khi chúng cùng tỉnh, cùng ba số cuối và cùng xuất hiện trong một cửa sổ 48 khung. Trên bộ demo chưa gặp ca nào như vậy, nhưng đó là **chưa quan sát thấy**, không phải **đã chứng minh không xảy ra**.
+
+### 5.6.6. Chịu tải, bộ nhớ và độ tin cậy (NFR-SC1, NFR-P4…P7, NFR-R4)
 
 <!-- {{T5.6e}} chiu tai, bo nho, do tin cay — gop vao T5.7 -->
 
@@ -397,14 +427,14 @@ Log lần đo cũ cho thấy máy khi đó đang cõng khoảng **560% CPU** c�
 | Truy vấn lịch sử 10.000 bản ghi (p95) | **18,71 ms** | ≤ 500 ms | **~27×** |
 | Bộ nhớ thường trú — đường ống · máy chủ | **0,759 · 0,806 GB** | ≤ 4 GB | ~5× |
 | Yêu cầu đồng thời ổn định | **10** | ≥ 5 | 2× |
-| Chạy liên tục 15 phút | **100,0% / 2.028 yêu cầu**, bộ nhớ chỉ tăng 0,094 GB | ≥ 99% | — |
-| Khởi động lại cơ sở dữ liệu | **0/9.031 bản ghi mất** | 0 mất | — |
+| Chạy liên tục 15 phút | **100,0% / 5.337 yêu cầu**, 0 lỗi | ≥ 99% | — |
+| Khởi động lại cơ sở dữ liệu | **0/7.977 bản ghi mất** | 0 mất | — |
 
 Hai dòng cuối là bằng chứng **không rò rỉ bộ nhớ** và **không mất dữ liệu**; đối chiếu đầy đủ từng mã chỉ tiêu ở Bảng 5.15.
 
-**Trên chính đường xử lý ảnh, chỉ còn NFR-P1 là chưa trọn:** p95 một ảnh **1.143,10 ms** — đạt sàn 1.500 ms nhưng chưa tới mục tiêu 800 ms, đây là **thoái lui có chủ ý** đổi lấy 34 biển đọc thêm (5.5.7). NFR-P2 và NFR-P3 đều đạt. **Kiến trúc phần mềm không còn là vấn đề** — tầng API, tầng dữ liệu, bộ nhớ, độ ổn định đều dư biên. Hai nhánh đi tiếp: nâng _độ chính xác_ OCR biển hai dòng (5.5), và cắt _đuôi độ trễ_ của chế độ ảnh tĩnh — đặt trần thời gian cho bậc thang, hoặc chuyển bộ phát hiện sang OpenVINO, hướng đã đo được **1,57×** ở 5.6.3.
+**Trên chính đường xử lý ảnh, cả ba chỉ tiêu độ trễ nay đều đạt mục tiêu:** p95 một ảnh **509,76 ms** (mục tiêu 800), NFR-P2 **5,63 khung/giây** (mục tiêu 5) và NFR-P3 **0,8695×** thời gian thực (mục tiêu 0,3×). Bậc thang thử lại vẫn là một thoái lui có chủ ý đổi lấy 34 biển đọc thêm (5.5.7), nhưng đợt tối ưu tầng suy luận (4.4) đã bù lại và còn dư. **Kiến trúc phần mềm không còn là vấn đề** — tầng API, tầng dữ liệu, bộ nhớ, độ ổn định đều dư biên. Hai nhánh đi tiếp: nâng _độ chính xác_ OCR biển hai dòng (5.5), và cắt _đuôi độ trễ_ của chế độ ảnh tĩnh — đặt trần thời gian cho bậc thang, hoặc chuyển bộ phát hiện sang OpenVINO, hướng đã đo được **1,57×** ở 5.6.3.
 
-### 5.6.6. Ảnh hưởng của việc bỏ bước phát hiện chữ trong PaddleOCR
+### 5.6.7. Ảnh hưởng của việc bỏ bước phát hiện chữ trong PaddleOCR
 
 Mục 4.5.3 để ngỏ một câu hỏi: chế độ **chỉ nhận dạng** cho model fine-tune thêm **12,46 điểm** A6 và tiết kiệm **~290 ms** mỗi ảnh — vì sao không bật? Vì ngữ liệu chứng minh nó **không có thẩm quyền trả lời câu hỏi đó**.
 
@@ -435,9 +465,9 @@ Bảng tổng hợp trình bày khi bảo vệ, liệt kê **đầy đủ mọi 
 | **Độ chính xác — nhận dạng chuỗi** (A4 – A7)           |      4      | 🟡 **một**, ❌ **ba**             | A4 = **0,9483** (vượt sàn 0,92, dưới mục tiêu 0,95); A5 · A6 = **0,6373 · 0,7701**, cả hai dưới sàn; **A7 ⬜ không đo được** (giao thức đo không đại diện — xem 5.9.2)                                           |
 | **Đóng góp hậu xử lý** (A6 − A5)                       |      1      | ✅                          | **+13,28 điểm** — 372 sửa đúng, **0 làm hỏng**, trên 2.801 biển                                                                                            |
 | **Báo cáo tách bạch** (A8, A9)                         |      2      | 🟡 A8, ⬜ A9                | Chênh lệch bố cục: **2,09 điểm** ở phát hiện so với **23,07 điểm** ở nhận dạng. A9 không đo được — bộ dữ liệu **không có nhãn điều kiện chụp**             |
-| **Hiệu năng — độ trễ** (P1, P2, P3)                    |      3      | 🟡 P1, ✅ P2, ✅ P3         | p95 một ảnh **1.143,10 ms** (sàn 1.500, mục tiêu 800; p50 chỉ 405,77 ms). FPS thời gian thực **5,257** — vượt cả mục tiêu 5; xấu nhất đo được dưới tải nặng **4,057**, vẫn trên sàn 3. Video **0,785×** — vượt mục tiêu 0,3× |
+| **Hiệu năng — độ trễ** (P1, P2, P3)                    |      3      | ✅ **đạt cả ba**            | p95 một ảnh **509,76 ms** (sàn 1.500, mục tiêu 800; p50 chỉ 150,07 ms). FPS thời gian thực **5,63** — vượt cả mục tiêu 5; xấu nhất đo được dưới tải nặng **4,057**, vẫn trên sàn 3. Video **0,8695×** — vượt mục tiêu 0,3× |
 | **Hiệu năng — tài nguyên** (P4 – P7)                   |      5      | ✅ **đạt cả năm**           | Nạp mô hình **6,41 s**; overhead API **19,01 ms**; truy vấn 10.000 bản ghi **18,71 ms**; RSS **0,806 GB**                                                  |
-| **Độ tin cậy và chịu tải** (R1 – R5, SC1 – SC3)        |      8      | ✅ **đạt cả tám**           | **100,0%** thành công qua 2.028 yêu cầu soak 15 phút; **0/9.031** bản ghi mất sau khởi động lại; **10** yêu cầu đồng thời ổn định                          |
+| **Độ tin cậy và chịu tải** (R1 – R5, SC1 – SC3)        |      8      | ✅ **đạt cả tám**           | **100,0%** thành công qua 5.337 yêu cầu soak 15 phút; **0/7.977** bản ghi mất sau khởi động lại; **10** yêu cầu đồng thời ổn định                          |
 | **Bảo trì, bảo mật, khả dụng, ràng buộc** (M, S, U, C) |     14      | ✅ **đạt cả mười bốn**      | Bao phủ kiểm thử tầng nghiệp vụ **87,7%** (sàn 70%); chạy không cần GPU; M6 đã sạch — `ruff check` trả về **0 cảnh báo** trên toàn kho                     |
 
 ## 5.8. Phân tích lỗi

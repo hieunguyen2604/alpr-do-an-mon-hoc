@@ -130,7 +130,7 @@ Phát hiện **đạt cả bốn chỉ tiêu**; phần thiếu nằm trọn ở 
 | Đúng cả chuỗi, sau hậu xử lý | **0,7701** | 0,90 | ❌ |
 | — riêng biển **một dòng** | **0,9541** | 0,90 | ✅ |
 | — riêng biển **hai dòng** | **0,7234** | 0,90 | ❌ |
-| Độ trễ p95 · trung vị, CPU | **1.143** · 406 ms | ≤ 800 ms | 🟡 |
+| Độ trễ p95 · trung vị, CPU | **510** · 150 ms | ≤ 800 ms | ✅ |
 
 ## Khoảng cách nằm ở đâu
 

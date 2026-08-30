@@ -611,14 +611,14 @@ Vì mục tiêu triển khai là một lệnh `docker compose up`, và SQLite kh
 ### E3. Hệ thống chịu được bao nhiêu người dùng đồng thời?
 
 **Trả lời ngắn.**
-**Đã đo — NFR-SC1 đạt.** Chỉ tiêu ≥ 5 yêu cầu đồng thời; đo được **10** yêu cầu đồng thời không lỗi (0 lỗi ở mọi mức 1/2/5/10). Soak 300 giây: 100% thành công (**1.660/1.660** request, `05-stress-test.json`), không rò rỉ bộ nhớ. Lượt soak hiện hành cho NFR-R4 là **15 phút / 2.028 request**, cũng 100% (`33-runtime-nfr.json`).
+**Đã đo — NFR-SC1 đạt.** Chỉ tiêu ≥ 5 yêu cầu đồng thời; đo được **10** yêu cầu đồng thời không lỗi (0 lỗi ở mọi mức 1/2/5/10). Soak 300 giây: 100% thành công (**1.660/1.660** request, `05-stress-test.json`), không rò rỉ bộ nhớ. Lượt soak hiện hành cho NFR-R4 là **15 phút / 5.337 request**, cũng 100% (`42-runtime-nfr-sau-toi-uu.json`).
 
 **Nếu bị hỏi sâu.**
 - **Nút thắt là suy luận CPU, không phải tầng web.** Một ảnh mất ~180 ms suy luận thuần (detect 60 ms + OCR 112 ms/biển). Với CPU 14 nhân, số yêu cầu song song bị chặn bởi số luồng dành cho suy luận — thêm worker uvicorn không giúp gì, chỉ tranh nhau cùng nhân CPU.
 - **Hệ thống xuống cấp nhã nhặn**: ở mức đồng thời 10, độ trễ tăng tuyến tính nhưng **0 lỗi** — không timeout, không HTTP 5xx.
 - **Video được thiết kế để không chặn**: xử lý bất đồng bộ, trả `202 Accepted` kèm `job_id` ngay. Bắt buộc bởi NFR-SC3.
 
-**Số liệu thời gian thực.** NFR-P2 = **5,257 FPS** (sàn 3, mục tiêu 5) và NFR-P3 = **0,785×** thời gian thực, đo trên `best.pt` qua HTTP thật. Dưới tải cạnh tranh nặng, xấu nhất đo được là 4,057 FPS — vẫn trên sàn. Nếu bị hỏi vì sao khác con số 2,379 từng ghi: xem mục 5.6.4, phép đo cũ chạy khi máy đang tải nặng và harness đã tự dán nhãn *bi quan*.
+**Số liệu thời gian thực.** NFR-P2 = **5,63 FPS** (sàn 3, mục tiêu 5) và NFR-P3 = **0,8695×** thời gian thực, đo trên `best.pt` qua HTTP thật. Dưới tải cạnh tranh nặng, xấu nhất đo được là 4,057 FPS — vẫn trên sàn. Nếu bị hỏi vì sao khác con số 2,379 từng ghi: xem mục 5.6.4, phép đo cũ chạy khi máy đang tải nặng và harness đã tự dán nhãn *bi quan*.
 
 ---
 
@@ -730,7 +730,7 @@ Sáu việc, theo thứ tự ưu tiên: thêm xác thực và phân quyền, chu
 Rồi — đã dựng ảnh thật và **đo đầu-cuối qua container**, không chỉ kiểm cú pháp cấu hình. Có Dockerfile cho cả tầng máy chủ lẫn giao diện, có `docker-compose.yml` và cấu hình nginx. Phép đo qua container trên **30 mẫu**: p50 = **288,33 ms**, p95 = **318,54 ms**, nhỏ nhất 163,2 ms, lớn nhất 332,72 ms; riêng phía máy chủ p50 = 253,49 ms. Bằng chứng: [`39-docker-e2e.json`](../reports/39-docker-e2e.json).
 
 **Nếu bị hỏi sâu.**
-- Con số qua container **thấp hơn** p95 = 1.143,10 ms của NFR-P1 vì hai phép đo **không cùng ngữ liệu**: NFR-P1 đo trên ảnh hiện trường nhiều biển và có bậc thang thử-lại nổ ở ca khó, còn phép đo Docker chạy trên ảnh của bộ trình diễn. **Không được trích chéo hai con số này như thể cùng một đại lượng.**
+- Con số qua container **thấp hơn** p95 = 509,76 ms của NFR-P1 vì hai phép đo **không cùng ngữ liệu**: NFR-P1 đo trên ảnh hiện trường nhiều biển và có bậc thang thử-lại nổ ở ca khó, còn phép đo Docker chạy trên ảnh của bộ trình diễn. **Không được trích chéo hai con số này như thể cùng một đại lượng.**
 - Điều còn lại chưa làm là **triển khai lên máy chủ thật ngoài mạng nội bộ** — phép đo trên chạy ở `127.0.0.1`. Nếu hội đồng hỏi về vận hành thật, thừa nhận đúng phạm vi đó thay vì nói rộng hơn.
 
 ---
@@ -799,7 +799,7 @@ Số liệu thật minh hoạ khoảng cách: trên tập test v3, mAP50 = 0,983
 > **Bắt buộc nhắc phần cứng. Công bố FPS mà không kèm cấu hình là lỗi phương pháp luận.**
 
 **Trả lời ngắn.**
-**NFR-P1 đạt ngưỡng tối thiểu, không đạt mục tiêu (🟡).** Độ trễ đầu-cuối một ảnh ở cấu hình giao hàng: **p95 = 1.143,10 ms** — dưới ngưỡng tối thiểu 1.500 ms nhưng trên mục tiêu 800 ms; **trung vị chỉ 405,77 ms**. Mốc **731 ms** (client-side) / **780 ms** (in-process) là lần đo **trước khi nối bậc thang thử-lại**; bậc thang đó mua thêm **34 biển** đọc đúng và trả bằng đuôi độ trễ — thoái lui **có chủ ý**, và nó chỉ chạy sau khi đọc hỏng nên trung vị không đổi. Phần cứng: Intel Core i5-14600K, 14 nhân / 20 luồng, không GPU, torch CPU, imgsz 640, một ảnh mỗi lần gọi.
+**NFR-P1 đạt mục tiêu (✅).** Độ trễ đầu-cuối một ảnh ở cấu hình giao hàng: **p95 = 509,76 ms** — dưới mục tiêu 800 ms với biên 290 ms, và chỉ bằng 0,34× ngưỡng tối thiểu 1.500 ms; **trung vị 150,07 ms**. Mốc **731 ms** (client-side) / **780 ms** (in-process) là lần đo **trước khi nối bậc thang thử-lại**; bậc thang đó mua thêm **34 biển** đọc đúng và trả bằng đuôi độ trễ — thoái lui **có chủ ý**, và nó chỉ chạy sau khi đọc hỏng nên trung vị không đổi. Phần cứng: Intel Core i5-14600K, 14 nhân / 20 luồng, không GPU, torch CPU, imgsz 640, một ảnh mỗi lần gọi.
 
 **Nếu bị hỏi "sao báo cáo đầu ghi 5.857 ms?" — đây là câu chuyện phương pháp luận đáng kể.**
 
@@ -808,7 +808,7 @@ Con số cũ 5.857 ms **sai**, và em đã truy ra ba nguyên nhân cộng dồn
 2. **Sai mô hình:** đo trên checkpoint epoch 7, không phải `best.pt`.
 3. **Lỗi crop:** ảnh crop quá lớn khiến PaddleOCR chạy cả khối text-detection, đẩy OCR lên ~1322 ms/ảnh.
 
-Đo lại trên máy rảnh với mô hình đúng: p95 về 731 ms — **và đó chưa phải số cuối**: bậc thang thử-lại nối vào sau đó đưa p95 giao hàng lên **1.143,10 ms**. Giả thuyết "oneDNN/cold-start" bị bác bỏ (`enable_mkldnn=false`, cold-start p95 chỉ 176 ms vì pipeline warmup lúc khởi động). Giả thuyết "baseline vốn chậm" cũng bị bác bỏ (baseline đo client-side ra 763,75 ms, gần y hệt best.pt).
+Đo lại trên máy rảnh với mô hình đúng: p95 về 731 ms — **và đó chưa phải số cuối**. Câu chuyện còn hai chặng nữa, ngược chiều nhau: bậc thang thử-lại đẩy p95 lên **1.143,10 ms** *(đổi lấy 34 biển đọc thêm)*, rồi đợt tối ưu tầng suy luận kéo xuống **509,76 ms** — thấp hơn cả mốc 731 ms trước khi có bậc thang. Giả thuyết "oneDNN/cold-start" bị bác bỏ (`enable_mkldnn=false`, cold-start p95 chỉ 176 ms vì pipeline warmup lúc khởi động). Giả thuyết "baseline vốn chậm" cũng bị bác bỏ (baseline đo client-side ra 763,75 ms, gần y hệt best.pt).
 
 **Phân rã suy luận thuần trên `best.pt` (T5.7b, `05-results.json`):**
 
@@ -818,7 +818,7 @@ Con số cũ 5.857 ms **sai**, và em đã truy ra ba nguyên nhân cộng dồn
 | YOLO11n @640 | 57,27 ms | **34,0%** |
 | PaddleOCR (mỗi biển) | 108,28 ms | **64,3%** |
 | Chuẩn hoá regex | 0,03 ms | 0,0% |
-| **Tổng một biển** | **168,41 ms** | **100%** |
+| **Tổng một biển** | **146,63 ms** | **100%** |
 
 Con số cũ "OCR chiếm 93,3%" là tạo tác của lỗi crop. Trên `best.pt`, OCR chiếm **64,3%** — vẫn tốn nhất nhưng không còn áp đảo, nên tối ưu bộ phát hiện (34,0%) giờ mới có ý nghĩa.
 
@@ -974,7 +974,7 @@ Em có ảnh chụp màn hình **cả 3 trang** giao diện trong `docs/screensh
 ### G8. Đây có phải là hệ thống thật sự dùng được không, hay chỉ là bài tập?
 
 **Trả lời ngắn.**
-Nó là một hệ thống chạy được nhưng **chưa phải sản phẩm triển khai được**. Chạy được: backend 10 endpoint đã kiểm chứng bằng HTTP thật, frontend build thành công và gọi được cả 10 endpoint, cơ sở dữ liệu migrate xong. Chưa triển khai được: **chưa có xác thực người dùng**, **giấy phép dữ liệu chưa rõ**, và **chưa từng chạy trên máy chủ thật ngoài mạng nội bộ**. Hai việc từng nằm trong danh sách này nay đã xong: **chịu tải đã kiểm** (soak 15 phút, 2.028 yêu cầu, 0 lỗi; đồng thời tới 10 không lỗi) và **Docker đã dựng ảnh thật, đo đầu-cuối qua container** (p50 288,33 ms trên 30 mẫu).
+Nó là một hệ thống chạy được nhưng **chưa phải sản phẩm triển khai được**. Chạy được: backend 10 endpoint đã kiểm chứng bằng HTTP thật, frontend build thành công và gọi được cả 10 endpoint, cơ sở dữ liệu migrate xong. Chưa triển khai được: **chưa có xác thực người dùng**, **giấy phép dữ liệu chưa rõ**, và **chưa từng chạy trên máy chủ thật ngoài mạng nội bộ**. Hai việc từng nằm trong danh sách này nay đã xong: **chịu tải đã kiểm** (soak 15 phút, 5.337 yêu cầu, 0 lỗi; đồng thời tới 10 không lỗi) và **Docker đã dựng ảnh thật, đo đầu-cuối qua container** (p50 288,33 ms trên 30 mẫu).
 
 **Cảnh báo.** Đây là câu hỏi thử độ trung thực. Trả lời "dùng được ngay ạ" là hỏng. Trả lời "chỉ là bài tập thôi ạ" là tự hạ thấp. Câu trả lời đúng nằm ở giữa và phải **cụ thể về ranh giới**.
 
@@ -1029,7 +1029,7 @@ Nó là một hệ thống chạy được nhưng **chưa phải sản phẩm tr
 
 ### 🥉 Câu 3 — "Tốc độ xử lý bao nhiêu?" (F3)
 
-> 🟡 **NFR-P1 ĐẠT SÀN, KHÔNG ĐẠT MỤC TIÊU.** Độ trễ E2E một ảnh ở cấu hình giao hàng: **p95 = 1.143,10 ms** (sàn 1.500 ms, mục tiêu 800 ms), **trung vị 405,77 ms**. Mốc **731 ms** / **780 ms** là lần đo trước khi nối bậc thang thử-lại. Cấu hình: Intel i5-14600K, 14 nhân / 20 luồng, CPU-only, imgsz 640, một ảnh/lần, 100 mẫu. Nguồn: [07-benchmark-p1-resolved.json](../reports/07-benchmark-p1-resolved.json).
+> ✅ **NFR-P1 ĐẠT MỤC TIÊU.** Độ trễ E2E một ảnh ở cấu hình giao hàng: **p95 = 509,76 ms** (mục tiêu 800 ms, sàn 1.500 ms), **trung vị 150,07 ms**. Mốc **731 ms** / **780 ms** là lần đo trước khi nối bậc thang thử-lại. Cấu hình: Intel i5-14600K, 14 nhân / 20 luồng, CPU-only, imgsz 640, một ảnh/lần, 100 mẫu. Nguồn: [07-benchmark-p1-resolved.json](../reports/07-benchmark-p1-resolved.json).
 
 **Vì sao dễ hỏng.** Vì câu chuyện đúng ở đây là một câu chuyện phương pháp luận, và dễ trả lời hụt. Bản báo cáo đầu ghi **5.857 ms** (trượt) — nếu em nhắc con số đó mà không giải thích thì tự bắn vào chân.
 
@@ -1038,13 +1038,13 @@ Nó là một hệ thống chạy được nhưng **chưa phải sản phẩm tr
 2. **Sai mô hình:** checkpoint epoch 7, không phải `best.pt`.
 3. **Lỗi crop:** ảnh crop quá lớn khiến PaddleOCR đọc ~1322 ms/ảnh, thổi phồng tỷ trọng OCR lên "93,3%".
 
-Đo lại trên máy rảnh với mô hình đúng: p95 731 ms *(trước bậc thang thử-lại; số giao hàng là 1.143,10 ms)*. Phân rã đúng (T5.7b): **OCR 64,3% (108,28 ms/biển) / detect 34,0% (57,27 ms)**.
+Đo lại trên máy rảnh với mô hình đúng: p95 731 ms *(trước bậc thang thử-lại; sau bậc thang là 1.143,10 ms, và sau đợt tối ưu tầng suy luận là 509,76 ms — con số giao hàng)*. Phân rã đúng (T5.7b): **OCR 64,3% (108,28 ms/biển) / detect 34,0% (57,27 ms)**.
 
 **Cái bẫy: công bố con số mà không kèm cấu hình phần cứng.** Mọi con số hiệu năng phải kèm: **model CPU, số luồng, kích thước ảnh, backend, cỡ mẫu**.
 
 **Bài học phương pháp luận đáng nêu:** một phép đo lấy trên hệ thống đang có lỗi chưa biết trông y hệt một phép đo hợp lệ — vẫn có cỡ mẫu, phân vị. Thứ duy nhất phát hiện ra là đo lại sau khi sửa lỗi.
 
-**Câu chốt:** *"NFR-P1 đạt sàn, không đạt mục tiêu — p95 1.143 mili-giây, trung vị 406. Bản báo cáo đầu ghi 5.857 nhưng con số đó là tạo tác của tải cạnh tranh, sai checkpoint và một lỗi crop; đo lại trên máy rảnh với mô hình chính thức thì về 731. Bài học của em là: một phép đo trên hệ thống có lỗi trông y hệt một phép đo đúng."*
+**Câu chốt:** *"NFR-P1 đạt mục tiêu — p95 510 mili-giây, trung vị 150. Bản báo cáo đầu ghi 5.857 nhưng con số đó là tạo tác của tải cạnh tranh, sai checkpoint và một lỗi crop; đo lại trên máy rảnh với mô hình chính thức thì về 731. Bài học của em là: một phép đo trên hệ thống có lỗi trông y hệt một phép đo đúng."*
 
 ---
 
@@ -1063,7 +1063,7 @@ Nó là một hệ thống chạy được nhưng **chưa phải sản phẩm tr
 | Detection tách layout | 1 dòng mAP50 0,988 · 2 dòng 0,968 · chênh **2,09 điểm** |
 | OCR (2.801 biển) | A4 **0,948** đạt sàn · A5 **0,637** · A6 **0,770** — A5/A6 chưa đạt; A6−A5 = **+13,28 điểm** |
 | OCR tách layout | 1 dòng A6 0,954 (đạt) · 2 dòng A6 0,723 · chênh **23,07 điểm** |
-| NFR-P1 độ trễ E2E p95 | 🟡 **1.143,10 ms** ở cấu hình giao hàng (đạt sàn 1.500 ms, trên mục tiêu 800 ms; trung vị 405,77 ms). Mốc 731/780 ms là trước bậc thang thử-lại |
+| NFR-P1 độ trễ E2E p95 | ✅ **509,76 ms** ở cấu hình giao hàng (dưới mục tiêu 800 ms; trung vị 150,07 ms). Mốc 731 ms là trước bậc thang thử-lại, 1.143,10 ms là sau bậc thang và trước đợt tối ưu tầng suy luận |
 | Phân rã độ trễ | OCR **64,3%** (108,28 ms/biển) · detect **34,0%** (57,27 ms) — T5.7b |
 | Đồng thời (SC1) | **10** yêu cầu, 0 lỗi · soak 300 s 100% |
 | Phần cứng | Intel Core i5-14600K, 14 nhân / 20 luồng, **không có GPU CUDA** |

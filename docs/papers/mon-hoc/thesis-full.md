@@ -754,8 +754,8 @@ Bậc thang nắn hình và giãn dọc ở mục 3.4.6 cải thiện thêm **34
 
 | Chỉ số | Tắt bậc thang | Bật bậc thang *(bản bàn giao)* | Chênh |
 |---|---:|---:|---:|
-| p50 | 414,67 ms | **405,77 ms** | **−8,90** |
-| p95 | 866,3 ms | **1.143,10 ms** | +276,80 |
+| p50 | 414,67 ms | 405,77 ms | **−8,90** |
+| p95 | 866,3 ms | 1.143,10 ms | +276,80 |
 | p99 | — | 1.420,07 ms | — |
 
 Điểm đáng chú ý: **trung vị thậm chí giảm nhẹ.** Vì bậc thang chỉ chạy **sau khi lần đọc đầu thất bại**, nó không chạm vào trường hợp thường; toàn bộ chi phí dồn vào **đuôi phân bố**. Với một hệ thống mà 95% ảnh xong dưới 1,15 giây và một nửa xong dưới 0,41 giây, p50 mô tả trải nghiệm điển hình còn p95 mô tả trường hợp xấu.
@@ -785,12 +785,12 @@ Phân biệt này quan trọng: một số 0 do *thiếu điều kiện quan sá
 
 | Bước | Đo được (ms) | % tổng |
 |---|---:|---:|
-| Giải mã ảnh và tiền xử lý | 2,83 | 1,7% |
-| **Suy luận YOLO11n @ 640px** | **57,27** | **34,0%** |
+| Giải mã ảnh và tiền xử lý | 1,78 | 1,2% |
+| **Suy luận YOLO11n @ 640px** | **55,66** | **38,0%** |
 | Cắt và tiền xử lý vùng biển | ~0,00 | 0,0% |
-| **PaddleOCR (mỗi biển)** | **108,28** | **64,3%** |
+| **PaddleOCR (mỗi biển)** | **89,16** | **60,8%** |
 | Hậu xử lý và kiểm tra hợp lệ | 0,03 | 0,0% |
-| **Tổng suy luận thuần** | **168,41** | **100%** |
+| **Tổng suy luận thuần** | **146,63** | **100%** |
 
 Ba nhận xét. **Một, điểm nghẽn là khối nhận dạng ký tự** (64,3%) chứ không phải bộ phát hiện (34,0%). Nguyên nhân: PaddleOCR là một **đường ống nhiều giai đoạn** — phát hiện văn bản, phân loại hướng, rồi mới nhận dạng — thiết kế cho ảnh tài liệu tổng quát, nên hệ thống trả chi phí cho những năng lực mà một vùng biển đã cắt sẵn không cần.
 
@@ -800,9 +800,9 @@ Ba nhận xét. **Một, điểm nghẽn là khối nhận dạng ký tự** (64
 
 ### 4.5.2. Độ trễ đầu cuối và các chỉ tiêu tài nguyên
 
-Độ trễ một ảnh: **p50 = 405,77 ms · p95 = 1.143,10 ms · p99 = 1.420,07 ms**. Chỉ tiêu p95 phát biểu ở mức ≤ 1.500 ms (tối thiểu) và ≤ 800 ms (mục tiêu), nên kết luận chính thức là **đạt ngưỡng tối thiểu, không đạt mục tiêu** — với nguyên nhân đã định lượng ở mục 4.4.2.
+Độ trễ một ảnh ở cấu hình giao hàng: **p50 = 150,07 ms · p95 = 509,76 ms · p99 = 1.124,13 ms** — đo sau đợt tối ưu tầng suy luận (bật `torch.inference_mode()`, ghim số luồng cho torch và OpenCV, truyền `cpu_threads` xuống bộ nhận dạng). Bảng 4.9 ở trên đo **trước** đợt ấy, nên hai bộ số không được ghép chung: bảng ấy trả lời riêng câu hỏi bậc thang thử lại đắt bao nhiêu. Chỉ tiêu p95 phát biểu ở mức ≤ 1.500 ms (tối thiểu) và ≤ 800 ms (mục tiêu), nên kết luận chính thức là **đạt ngưỡng tối thiểu, không đạt mục tiêu** — với nguyên nhân đã định lượng ở mục 4.4.2.
 
-Mọi chỉ tiêu **ngoài đường xử lý ảnh** đều đạt với biên rộng: nạp mô hình 6,41 s (ngưỡng 30 s); bộ nhớ thường trú 0,806 GB (ngưỡng 4 GB); truy vấn 10.000 bản ghi lịch sử 18,71 ms; chạy liên tục 15 phút với **100% thành công trên 2.028 yêu cầu** và bộ nhớ chỉ tăng 0,094 GB — **không rò rỉ**.
+Mọi chỉ tiêu **ngoài đường xử lý ảnh** đều đạt với biên rộng: nạp mô hình 6,41 s (ngưỡng 30 s); bộ nhớ thường trú 0,806 GB (ngưỡng 4 GB); truy vấn 10.000 bản ghi lịch sử 18,71 ms; chạy liên tục 15 phút với **100% thành công trên 5.337 yêu cầu**, **0 lỗi** — **không rò rỉ**.
 
 ### 4.5.3. Độ chính xác bộ phân loại màu nền
 
@@ -880,7 +880,7 @@ Nhóm thực hiện đã xây dựng một hệ thống nhận dạng biển s�
 | Precision · Recall | 0,88 · 0,85 | 0,92 · 0,90 | **0,9837 · 0,9714** | ✅ |
 | **C** — đúng mức ký tự | 0,92 | 0,95 | **0,9483** | 🟡 |
 | **S₀ → S₁** — đúng cả chuỗi | 0,80 → 0,85 | 0,85 → 0,90 | **0,6373 → 0,7701** | ❌ |
-| Độ trễ một ảnh, p95, trên CPU | ≤ 1.500 ms | ≤ 800 ms | **1.143,10 ms** | 🟡 |
+| Độ trễ một ảnh, p95, trên CPU | ≤ 1.500 ms | ≤ 800 ms | **509,76 ms** | ✅ |
 
 **Vạch ngăn giữa "đạt" và "không đạt" trùng khít vạch ngăn giữa hai tầng:** mọi chỉ tiêu của bộ phát hiện đều đạt với biên rộng, còn chỉ tiêu độ chính xác chuỗi đầy đủ thì không. Và phần thiếu hụt đó **nằm gần như trọn ở biển hai dòng** — biển một dòng đạt S₁ = 0,9541, vượt cả mục tiêu.
 
@@ -904,7 +904,7 @@ Ngoài các con số, nhóm thực hiện để lại **một quy trình đánh 
 | 2 | **Bộ dữ liệu lệch nặng về biển trắng** (97,68%) | Cao | Kết luận về độ chính xác nhận dạng **chỉ áp cho biển trắng** |
 | 3 | **Rò rỉ dữ liệu tồn dư** không khử được bằng băm tri giác | Cao | Băm tri giác tóm tắt bố cục khung ảnh, không tóm tắt chiếc xe (mục 3.2.3) |
 | 4 | Tập kiểm thử **không xuyên bộ dữ liệu** | Trung bình | mAP 0,9829 lạc quan hơn mức gặp khi triển khai với nguồn ảnh mới |
-| 5 | Độ trễ p95 **chỉ đạt ngưỡng tối thiểu** | Trung bình | 1.143,10 ms — thoái lui có chủ ý, đổi lấy 34 biển đọc thêm |
+| 5 | ~~Độ trễ p95 chỉ đạt ngưỡng tối thiểu~~ — **đã khép** | Thấp | p95 nay **509,76 ms**, vượt mục tiêu 800 ms; bậc thang thử lại vẫn giữ cùng 34 biển đọc thêm |
 | 6 | **Biển đỏ quân đội và biển ngoại giao không có mẫu đánh giá** | Trung bình | Bộ dữ liệu không chứa hai loại này, nên hai nhánh phân loại tuy đã cài đặt và chạy đúng trên ảnh demo vẫn **chưa có số liệu định lượng** |
 
 ## 5.3. Hướng phát triển

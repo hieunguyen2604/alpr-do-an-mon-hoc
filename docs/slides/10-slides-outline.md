@@ -321,12 +321,12 @@ Mỗi slide gồm bốn phần:
 ## S25 — Kiểm thử và triển khai
 
 **Nội dung trên slide**
-- **1.002/1.002 kiểm thử tự động** đạt · Bao phủ tầng nghiệp vụ **87,7%**
+- **1.004/1.004 kiểm thử tự động** đạt · Bao phủ tầng nghiệp vụ **87,7%**
 - Chạy stress test 15 phút: 2.028 requests, **0 lỗi**, 0 rò rỉ bộ nhớ
 - `docker compose up` — **một lệnh** đóng gói hoàn chỉnh
 
 **Speaker notes** *(40 s)*
-> Hệ thống đạt 1.002 test cases tự động với độ bao phủ tầng nghiệp vụ 87,7%. Chạy thử nghiệm chịu tải 15 phút với 2.028 yêu cầu đạt tỉ lệ thành công 100%, không rò rỉ bộ nhớ, và đóng gói Docker chạy thật chỉ với 1 lệnh.
+> Hệ thống đạt 1.004 test cases tự động với độ bao phủ tầng nghiệp vụ 87,7%. Chạy thử nghiệm chịu tải 15 phút với 2.028 yêu cầu đạt tỉ lệ thành công 100%, không rò rỉ bộ nhớ, và đóng gói Docker chạy thật chỉ với 1 lệnh.
 
 ---
 

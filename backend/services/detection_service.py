@@ -1065,9 +1065,14 @@ class DetectionService:
         The per-string accumulator cannot see that ``51P51578`` and
         ``51P54578`` were the same motorcycle read twice, so it hands over one
         row per spelling. This pass absorbs a reading into another when the
-        two strings differ by **at most one edit** and were seen **within**
+        two strings differ by **at most two edits** and were seen **within**
         ``max_frame_gap`` frames of each other -- both conditions together,
         because either alone also matches two genuinely different plates.
+
+        At distance 2 the string test alone is too loose, so that tier adds a
+        semantic guard: the two readings must share the province code, and
+        either the series letter or the trailing three digits. See
+        :func:`_is_fuzzy_duplicate_plate`.
 
         Which spelling survives is decided by evidence, not arrival order:
         readings are ranked valid-format first, then by how many frames voted

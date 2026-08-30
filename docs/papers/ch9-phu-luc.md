@@ -155,8 +155,8 @@ Kiến trúc triển khai và lý do chọn Docker trình bày ở **mục 4.9**
 
 | Hạng mục                               | Kết quả    |
 | -------------------------------------- | ---------- |
-| Số test thu thập                       | **1.002**  |
-| Đạt                                    | **1.002**  |
+| Số test thu thập                       | **1.004**  |
+| Đạt                                    | **1.004**  |
 | `xfail` _(dự kiến hỏng)_               | 0          |
 | Fail                                   | **0**      |
 | Skip                                   | 0          |

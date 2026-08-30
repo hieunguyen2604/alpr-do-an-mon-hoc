@@ -62,7 +62,7 @@ Các chỉ tiêu độ trễ "rộng rãi" hơn bài báo ALPR vì máy phát tr
 
 Đề tài thành công khi **đồng thời**: (1) toàn bộ yêu cầu *Must* hoạt động và demo được — theo bộ 20 *Must* **sau** ba đợt thu gọn phạm vi, sáu yêu cầu đã chuyển *Won't* (FR-2.5, FR-2.6, FR-3.1, FR-3.4, FR-4.1, FR-4.2) **không** tính là đạt; (2) mọi chỉ tiêu đạt **ngưỡng tối thiểu** và **có bằng chứng đo đạc**; (3) đủ 12 sản phẩm bàn giao; (4) khởi động trên máy sạch bằng một lệnh `docker compose up`; (5) demo trực tiếp không cần Internet.
 
-> **Trạng thái tại thời điểm viết chương này.** Các chỉ tiêu ở mục 1.2.2 là **chỉ tiêu đặt ra**. Hệ thống chạy đường ống nhận dạng **thật** với `models/best.pt` (`imgsz=640`, phép chia tập v3); các chỉ tiêu phát hiện đều đạt (mAP@0.5 = 0,9829). Với cấu hình giao hàng, NFR-P1 đạt **ngưỡng tối thiểu** nhưng chưa đạt mục tiêu (p95 = 1.143,10 ms; ngưỡng 1.500 ms, mục tiêu 800 ms). Cặp 731/780 ms là kết quả đo trước khi bật bậc thử lại và chỉ được dùng để phân tích đánh đổi. Chỉ tiêu độ chính xác OCR đã đo; kết quả đối với biển hai dòng chưa đạt. **Đối chiếu đầy đủ từng chỉ tiêu ở Chương 5.**
+> **Trạng thái tại thời điểm viết chương này.** Các chỉ tiêu ở mục 1.2.2 là **chỉ tiêu đặt ra**. Hệ thống chạy đường ống nhận dạng **thật** với `models/best.pt` (`imgsz=640`, phép chia tập v3); các chỉ tiêu phát hiện đều đạt (mAP@0.5 = 0,9829). Với cấu hình giao hàng, NFR-P1 **đạt mục tiêu** (p95 = 509,76 ms; mục tiêu 800 ms, ngưỡng tối thiểu 1.500 ms). Cặp 731/780 ms là kết quả đo trước khi bật bậc thử lại và chỉ được dùng để phân tích đánh đổi. Chỉ tiêu độ chính xác OCR đã đo; kết quả đối với biển hai dòng chưa đạt. **Đối chiếu đầy đủ từng chỉ tiêu ở Chương 5.**
 
 ## 1.3. Đối tượng và phạm vi nghiên cứu
 
@@ -118,7 +118,7 @@ Các kết quả trên 99% trong tài liệu ALPR quốc tế thường dựa tr
 
 **Sáu đóng góp.**
 
-**(a) Hệ thống hoàn chỉnh, có kiến trúc phần mềm** — không phải tập script rời rạc: đường ống AI tách hoàn toàn khỏi tầng API (NFR-M1), interface trừu tượng cho phép thay bộ nhận dạng ký tự mà không sửa tầng API (NFR-M5), REST API có tài liệu tự sinh, giao diện web ba màn hình, cơ sở dữ liệu có migration, Docker một lệnh. Trạng thái đã đo: bao phủ kiểm thử tầng nghiệp vụ **87,7%**, **1.002 test thu thập / 1.002 đạt / 0 thất bại**. Khảo sát cho thấy mã nguồn mở ALPR Việt Nam chủ yếu là script rời rạc **không công bố số liệu độ chính xác** — đây là **khoảng trống kỹ nghệ**, không phải khoảng trống thuật toán, nhưng vẫn có thật.
+**(a) Hệ thống hoàn chỉnh, có kiến trúc phần mềm** — không phải tập script rời rạc: đường ống AI tách hoàn toàn khỏi tầng API (NFR-M1), interface trừu tượng cho phép thay bộ nhận dạng ký tự mà không sửa tầng API (NFR-M5), REST API có tài liệu tự sinh, giao diện web ba màn hình, cơ sở dữ liệu có migration, Docker một lệnh. Trạng thái đã đo: bao phủ kiểm thử tầng nghiệp vụ **87,7%**, **1.004 test thu thập / 1.004 đạt / 0 thất bại**. Khảo sát cho thấy mã nguồn mở ALPR Việt Nam chủ yếu là script rời rạc **không công bố số liệu độ chính xác** — đây là **khoảng trống kỹ nghệ**, không phải khoảng trống thuật toán, nhưng vẫn có thật.
 
 **(b) Bộ luật hậu xử lý ràng buộc theo VỊ TRÍ** cho biển số Việt Nam, khai thác ba ràng buộc đặc thù: tập hợp lệ **khác nhau theo từng vị trí** — mã địa phương thuộc **81 giá trị** chứ không phải `\d{2}`, seri **thứ nhất** thuộc 20 chữ cái có `G` không có `R` [7]<!-- bocongan_2024_nhandienbienso -->, seri **thứ hai** của biển xe mô tô thuộc **20 chữ cái KHÁC** có `R` không có `G`; cấu trúc chuỗi và độ dài theo quy chuẩn; và bảng ánh xạ nhầm lẫn ký tự **không đối xứng**.
 

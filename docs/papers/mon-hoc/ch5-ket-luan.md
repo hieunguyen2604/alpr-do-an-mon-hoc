@@ -12,7 +12,7 @@ Nhóm thực hiện đã xây dựng một hệ thống nhận dạng biển s�
 | Precision · Recall | 0,88 · 0,85 | 0,92 · 0,90 | **0,9837 · 0,9714** | ✅ |
 | **C** — đúng mức ký tự | 0,92 | 0,95 | **0,9483** | 🟡 |
 | **S₀ → S₁** — đúng cả chuỗi | 0,80 → 0,85 | 0,85 → 0,90 | **0,6373 → 0,7701** | ❌ |
-| Độ trễ một ảnh, p95, trên CPU | ≤ 1.500 ms | ≤ 800 ms | **1.143,10 ms** | 🟡 |
+| Độ trễ một ảnh, p95, trên CPU | ≤ 1.500 ms | ≤ 800 ms | **509,76 ms** | ✅ |
 
 **Vạch ngăn giữa "đạt" và "không đạt" trùng khít vạch ngăn giữa hai tầng:** mọi chỉ tiêu của bộ phát hiện đều đạt với biên rộng, còn chỉ tiêu độ chính xác chuỗi đầy đủ thì không. Và phần thiếu hụt đó **nằm gần như trọn ở biển hai dòng** — biển một dòng đạt S₁ = 0,9541, vượt cả mục tiêu.
 
@@ -36,7 +36,7 @@ Ngoài các con số, nhóm thực hiện để lại **một quy trình đánh 
 | 2 | **Bộ dữ liệu lệch nặng về biển trắng** (97,68%) | Cao | Kết luận về độ chính xác nhận dạng **chỉ áp cho biển trắng** |
 | 3 | **Rò rỉ dữ liệu tồn dư** không khử được bằng băm tri giác | Cao | Băm tri giác tóm tắt bố cục khung ảnh, không tóm tắt chiếc xe (mục 3.2.3) |
 | 4 | Tập kiểm thử **không xuyên bộ dữ liệu** | Trung bình | mAP 0,9829 lạc quan hơn mức gặp khi triển khai với nguồn ảnh mới |
-| 5 | Độ trễ p95 **chỉ đạt ngưỡng tối thiểu** | Trung bình | 1.143,10 ms — thoái lui có chủ ý, đổi lấy 34 biển đọc thêm |
+| 5 | ~~Độ trễ p95 chỉ đạt ngưỡng tối thiểu~~ — **đã khép** | Thấp | p95 nay **509,76 ms**, vượt mục tiêu 800 ms; bậc thang thử lại vẫn giữ cùng 34 biển đọc thêm |
 | 6 | **Biển đỏ quân đội và biển ngoại giao không có mẫu đánh giá** | Trung bình | Bộ dữ liệu không chứa hai loại này, nên hai nhánh phân loại tuy đã cài đặt và chạy đúng trên ảnh demo vẫn **chưa có số liệu định lượng** |
 
 ## 5.3. Hướng phát triển

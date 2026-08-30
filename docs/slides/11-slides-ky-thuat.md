@@ -87,9 +87,9 @@ Phát hiện **đạt cả bốn chỉ tiêu**; phần thiếu nằm trọn ở 
 | Precision · Recall | 0,9837 · 0,9714 | 0,92 · 0,90 | ✅ |
 | Đúng từng ký tự (1 − CER) | **0,9483** | 0,95 | 🟡 |
 | Đúng cả chuỗi, sau hậu xử lý | **0,7701** | 0,90 | ❌ |
-| Độ trễ p95 · trung vị, CPU | **1.143** · 406 ms | ≤ 800 ms | 🟡 |
+| Độ trễ p95 · trung vị, CPU | **510** · 150 ms | ≤ 800 ms | ✅ |
 | **Đóng góp của hậu xử lý** (A6 − A5) | **+13,28 điểm** · 372 sửa đúng / **0** hỏng | — | ✅ |
-| Kiểm thử · bao phủ nghiệp vụ | **1.002/1.002** · 87,7% | — · 70% | ✅ |
+| Kiểm thử · bao phủ nghiệp vụ | **1.004/1.004** · 87,7% | — · 70% | ✅ |
 
 ## Demo: hệ thống chạy thật
 

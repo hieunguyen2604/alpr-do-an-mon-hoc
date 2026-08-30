@@ -74,9 +74,9 @@ gantt
 - **S20 — Khoảng cách nằm trọn ở biển 2 dòng:** Biểu đồ tách theo bố cục, cùng hệ thống cùng phép đo.
 - **S21 — Đóng góp của hậu xử lý:** Sửa đúng 372 biển, làm hỏng 0; +13,28 điểm đo tách bạch.
 - **S22 — Ba can thiệp thực nghiệm:** +13,28 điểm · cứu dòng trên 209 biển · nắn hình 34 biển; gap còn 23,07 điểm.
-- **S23 — Hiệu năng CPU — phân rã suy luận thuần:** OCR 108,28 ms (64,3%) · Detect 57,27 ms (34,0%) · tổng 168,41 ms/biển.
-- **S24 — Phân bố độ trễ:** p50 406 ms · p95 1.143 ms (đạt sàn 1.500).
-- **S25 — Kiểm thử và triển khai:** 1.002/1.002 test · bao phủ 87,7% · soak 15 phút 2.028 request 0 lỗi · `docker compose up`.
+- **S23 — Hiệu năng CPU — phân rã suy luận thuần:** OCR 89,16 ms (60,8%) · Detect 55,66 ms (38,0%) · tổng 168,41 ms/biển.
+- **S24 — Phân bố độ trễ:** p50 150 ms · p95 510 ms (vượt mục tiêu 800).
+- **S25 — Kiểm thử và triển khai:** 1.004/1.004 test · bao phủ 87,7% · soak 15 phút 5.337 request 0 lỗi · `docker compose up`.
 - **S26 — Đối chiếu chỉ tiêu:** Bảng tổng hợp ✅ / 🟡 / ❌ toàn bộ NFR.
 
 #### Khối 5: Demo, Hạn chế & Kết luận *(S27 – S31 · 90s / 1,5 phút)*

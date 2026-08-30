@@ -243,7 +243,7 @@ Chênh lệch 2 dòng còn **23,07 điểm**, cùng bậc mốc quốc tế **48
 | Phát hiện *(YOLO11n @ 640, CPU)* | 150 ms | **57,27 ms** | **34,0%** |
 | Nhận dạng chữ *(PaddleOCR, mỗi biển)* | 120 ms | **108,28 ms** | **64,3%** |
 | Hậu xử lý regex + kiểm tra hợp lệ | 5 ms | **0,03 ms** | 0,0% |
-| **Tổng suy luận thuần cho một biển** | **405 ms** | **168,41 ms** | **100%** |
+| **Tổng suy luận thuần cho một biển** | **405 ms** | **146,63 ms** | **100%** |
 
 ## Phân bố độ trễ suy luận
 
@@ -253,11 +253,11 @@ Phần lớn ảnh hoàn tất dưới 500 ms; độ trễ tập trung ở các 
 
 ## Kiểm thử và triển khai
 
-- **1.002/1.002 kiểm thử tự động** đạt · bao phủ tầng nghiệp vụ **87,7%**
+- **1.004/1.004 kiểm thử tự động** đạt · bao phủ tầng nghiệp vụ **87,7%**
 - Đơn vị · tích hợp · độ chính xác AI · hiệu năng · chịu tải
 - Tầng AI có bộ test **chạy độc lập không cần dựng server**
-- Chạy liên tục **15 phút**: 2.028 yêu cầu, **0 lỗi**, không rò rỉ bộ nhớ
-- Cơ sở dữ liệu **bền vững qua khởi động lại**: 9.031 bản ghi, **0 mất**
+- Chạy liên tục **15 phút**: 5.337 yêu cầu, **0 lỗi**, không rò rỉ bộ nhớ
+- Cơ sở dữ liệu **bền vững qua khởi động lại**: 7.977 bản ghi, **0 mất**
 - `docker compose up` — **một lệnh**, đã đóng gói và xác minh hoàn chỉnh
 
 ## Đối chiếu chỉ tiêu — bảng tổng hợp
@@ -269,10 +269,10 @@ Phần lớn ảnh hoàn tất dưới 500 ms; độ trễ tập trung ở các 
 | Phát hiện | mAP50 **0,9829** · mAP50-95 **0,7834** · P **0,9837** · R **0,9714** | ✅ |
 | Đọc ký tự | Đúng từng ký tự **0,9483** | 🟡 |
 | Đọc chuỗi | Đúng cả chuỗi **0,7701** · đầu cuối **0,563** *(1.606 khung toàn cảnh, nhãn máy sinh)* | ❌ |
-| Hiệu năng | p95 **1.143 ms** *(sàn 1.500)* · video **0,785×** · truy vấn **18,7 ms** | 🟡 |
-| Thời gian thực | Luồng khung hình **5,257 FPS** *(sàn 3, mục tiêu 5 — đo ở tầng API `POST /api/detect/frame`, không qua trang web)* | ✅ |
+| Hiệu năng | p95 **510 ms** *(mục tiêu 800)* · video **0,87×** · truy vấn **18,7 ms** | ✅ |
+| Thời gian thực | Luồng khung hình **5,63 FPS** *(sàn 3, mục tiêu 5 — đo ở tầng API `POST /api/detect/frame`, không qua trang web)* | ✅ |
 | Độ tin cậy | Chạy liên tục **100%** · CSDL sống sót khởi động lại **0 mất** | ✅ |
-| Phần mềm | **1.002 test** · bao phủ 87,7% · `docker compose up` | ✅ |
+| Phần mềm | **1.004 test** · bao phủ 87,7% · `docker compose up` | ✅ |
 
 ## Demo trực tiếp
 
@@ -310,7 +310,7 @@ Ba tình huống minh họa trên môi trường thực tế:
 - Hệ thống **5 tầng**, đóng gói Docker một lệnh
 - Phát hiện đạt **cả 4 chỉ tiêu** — mAP50 **0,983**
 - Hậu xử lý **+13,28 điểm**, đo tách bạch
-- **1.002/1.002 kiểm thử** đạt · bao phủ **87,7%**
+- **1.004/1.004 kiểm thử** đạt · bao phủ **87,7%**
 - Định lượng riêng biển **1 dòng** và **2 dòng** trên cùng hệ thống
 
 ## Cảm ơn
@@ -404,5 +404,5 @@ những khẳng định chính của bài
 | Phát hiện | mAP50 **0,983** · mAP50-95 **0,783** |
 | Đúng từng ký tự | **0,9483** |
 | Đúng cả chuỗi | **0,7701** *(1 dòng 0,954 · 2 dòng 0,723)* |
-| Độ trễ | p50 **406 ms** · p95 **1.143 ms** |
-| Kiểm thử | **1.002** đạt · bao phủ **87,7%** |
+| Độ trễ | p50 **150 ms** · p95 **510 ms** |
+| Kiểm thử | **1.004** đạt · bao phủ **87,7%** |
