@@ -386,14 +386,22 @@ class YoloPlateDetector(BaseDetector):
 
         started = time.perf_counter()
         try:
-            predictions = self._model.predict(
-                source=image,
-                conf=self.config.conf_threshold,
-                iou=self.config.iou_threshold,
-                imgsz=self.config.imgsz,
-                device=self.config.device,
-                verbose=False,
-            )
+            try:
+                import torch
+                inference_ctx = torch.inference_mode()
+            except Exception:
+                from contextlib import nullcontext
+                inference_ctx = nullcontext()
+
+            with inference_ctx:
+                predictions = self._model.predict(
+                    source=image,
+                    conf=self.config.conf_threshold,
+                    iou=self.config.iou_threshold,
+                    imgsz=self.config.imgsz,
+                    device=self.config.device,
+                    verbose=False,
+                )
         except Exception as error:
             raise DetectionError(
                 f"YOLO inference failed on a {width}x{height} image using "

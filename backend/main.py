@@ -299,6 +299,21 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
 
     settings.ensure_directories()
 
+    # Configure optimal CPU intra-op & inter-op threads to prevent lock contention
+    import os
+    try:
+        import cv2
+        cv2.setUseOptimized(True)
+        cv2.setNumThreads(min(8, os.cpu_count() or 4))
+    except Exception:
+        pass
+    try:
+        import torch
+        torch.set_num_threads(min(8, os.cpu_count() or 4))
+        torch.set_num_interop_threads(min(4, os.cpu_count() or 2))
+    except Exception:
+        pass
+
     try:
         init_database()
     except Exception as error:  # noqa: BLE001 -- reported by /health, not fatal
