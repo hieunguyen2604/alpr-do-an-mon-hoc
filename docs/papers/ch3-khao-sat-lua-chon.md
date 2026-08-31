@@ -8,18 +8,11 @@ Mỗi lựa chọn trình bày theo cùng một khuôn: phương án đã xét, 
 
 ### 3.1.1. Bốn ràng buộc chi phối mọi lựa chọn
 
-Bốn ràng buộc sau thu hẹp không gian phương án **trước khi** so sánh — vì sao một số ứng viên mạnh bị loại sớm.
-
-|  #  | Ràng buộc                                                    | Hệ quả trực tiếp lên việc chọn                                                                                      |
-| :-: | ------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------- |
-|  1  | **Suy luận trên CPU, không có GPU CUDA** (CON-02, mục 4.3.1) | Phương án không công bố tốc độ CPU đều **không có căn cứ để đánh giá**; mô hình hàng trăm triệu tham số loại từ đầu |
-|  2  | **Biển số Việt Nam có biển hai dòng**                        | Bộ nhận dạng giả định văn bản một dòng sẽ hỏng ở đây; tiêu chí phân loại, không phải điểm cộng                                |
-|  3  | **Phải đóng gói và bàn giao được**                           | Giấy phép, dung lượng mô hình, số phụ thuộc là tiêu chí thật                                                        |
-|  4  | **Ngân sách thời gian CPU hữu hạn**                          | Một số phép so sánh đã thiết kế nhưng **không chạy được** — mỗi bảng dưới đây ghi thẳng ô nào là chưa đo                       |
+Bốn ràng buộc thu hẹp không gian phương án **trước khi** so sánh. **(1) Suy luận trên CPU, không có GPU CUDA** (CON-02): phương án không công bố tốc độ CPU không có căn cứ để đánh giá, mô hình hàng trăm triệu tham số loại từ đầu. **(2) Biển số Việt Nam có biển hai dòng**: bộ nhận dạng giả định văn bản một dòng sẽ hỏng — đây là tiêu chí phân loại, không phải điểm cộng. **(3) Phải đóng gói và bàn giao được**: giấy phép, dung lượng mô hình, số phụ thuộc là tiêu chí thật. **(4) Ngân sách thời gian CPU hữu hạn**: một số phép so sánh đã thiết kế nhưng không chạy được, và mỗi bảng ghi thẳng ô nào chưa đo.
 
 ## 3.2. Mô hình phát hiện: YOLO11
 
-**Các phương án đã xét.** Các thế hệ YOLO từ YOLOv8 trở về sau — mốc chuyển sang anchor-free, có ý nghĩa trực tiếp với bài toán biển số (mục 2.3.1). Bốn thế hệ có khác biệt kiến trúc đáng kể với bài toán này được đối chiếu ở Bảng 2.4: YOLOv8 [13], YOLOv10 [19]<!-- wang_2024_yolov10paper -->, YOLO11 [9] và YOLO26 [20]<!-- jocher_2025_yolo26 -->. Họ two-stage (Faster R-CNN, Mask R-CNN) loại từ đầu vì chi phí tính toán không hợp ràng buộc CPU.
+**Các phương án đã xét.** Các thế hệ YOLO từ YOLOv8 trở về sau — mốc chuyển sang anchor-free, có ý nghĩa trực tiếp với bài toán biển số (mục 2.3.1). Bốn thế hệ có khác biệt kiến trúc đáng kể với bài toán này được đối chiếu ở Bảng 2.1: YOLOv8 [13], YOLOv10 [19]<!-- wang_2024_yolov10paper -->, YOLO11 [9] và YOLO26 [20]<!-- jocher_2025_yolo26 -->. Họ two-stage (Faster R-CNN, Mask R-CNN) loại từ đầu vì chi phí tính toán không hợp ràng buộc CPU.
 
 ## 3.3. Bộ nhận dạng ký tự
 
@@ -33,28 +26,22 @@ Bốn ràng buộc sau thu hẹp không gian phương án **trước khi** so s�
 
 Mục này chọn **bậc mô hình** bên trong họ đã chọn, dựa trên số liệu **tự đo**.
 
-**Bảng 3.2.** PP-OCRv6_medium_rec so với PP-OCRv5_mobile_rec, đo trên 200 vùng cắt biển số của đồ án
+**Bảng 3.1.** PP-OCRv6_medium_rec so với PP-OCRv5_mobile_rec, đo trên 200 vùng cắt biển số của đồ án
 
 | Mô hình                               |          Đúng chuỗi |    Trung vị |      p95 |
 | ------------------------------------- | ------------------: | ----------: | -------: |
 | **PP-OCRv5_mobile_rec** — _đang dùng_ | 134/200 = **67,0%** | **23,0 ms** |  31,9 ms |
 | PP-OCRv6_medium_rec                   | 145/200 = **72,5%** |    386,9 ms | 429,0 ms |
 
-> **Ghi chú: kết quả này dựa trên phép chiếu, không phải phép đo trực tiếp.** Khi cộng thêm 364 ms vào độ trễ p95 hiện tại, tổng thời gian ước tính là khoảng **1.507 ms**, **vượt qua giới hạn tối đa 1.500 ms** và khiến chỉ tiêu NFR-P1 chuyển từ trạng thái Đạt ngưỡng tối thiểu (🟡) sang Không đạt (❌). Con số này được nội suy từ độ trễ của riêng nhánh nhận dạng và **chưa được đo lường lại trên toàn bộ đường ống xử lý**; để công bố chính thức, cần phải đo đạc thực tế. Tuy nhiên, dù có tính đến sai số, kết luận cốt lõi vẫn không thay đổi: khi NFR-P2 đã không đạt yêu cầu ban đầu, độ trễ tăng thêm sẽ làm chỉ tiêu này càng khó được đáp ứng.
-
-> **Lưu ý bắt buộc khi trích bài PP-OCRv6.** Cặp _"+5,1 / +4,6 điểm"_ mà bài v6 công bố được tính trên **mốc so sánh của chính nó** (v5_server 78,1% / 81,6%), không phải trên mốc so sánh trong tài liệu PaddleX (86,38% / 83,8%). Ghép hai nguồn sẽ **đảo chiều kết luận**. Trích thì phải trích kèm mốc so sánh gốc.
+PP-OCRv6_medium_rec đọc đúng hơn **5,5 điểm** nhưng chậm gấp **16,8 lần**. Cộng thêm 364 ms vào p95 hiện tại cho khoảng **1.507 ms**, vượt ngưỡng tối đa 1.500 ms của NFR-P1 — đây là **phép chiếu từ độ trễ nhánh nhận dạng, chưa đo lại trên toàn đường ống**, nhưng kết luận không đổi ở mọi biên sai số. Giữ **PP-OCRv5_mobile_rec**.
 
 ### 3.3.3. Benchmark ba bộ nhận dạng trên 2.801 biển số Việt Nam
 
 Mục 3.3.1 kết thúc bằng một hạng mục chưa giải quyết: giữ PaddleOCR dựa trên lý do kỹ thuật, **không** dựa trên bằng chứng độ chính xác, trong khi tài liệu công khai nghiêng về EasyOCR. Mục này trả nợ đó.
 
-**a) Thiết lập phép đo.** Bốn lượt chạy đầu không hợp lệ do thiếu điều kiện cần: truyền tên mô hình tường minh, tắt thư viện tăng tốc oneDNN (mục 4.6.3), khôi phục tỷ lệ khung hình và lọc mảnh nhiễu ở mép dải ghép. Hiệu năng phụ thuộc vào cả bộ nhận dạng ký tự lẫn tiền xử lý, hậu xử lý; vì vậy, so sánh các bộ nhận dạng phải dùng cùng một tầng bao quanh.
+**a) Thiết kế phép đo.** Cả ba bộ nhận dạng chạy trong **đúng một tầng bao quanh** — sao đúng chuỗi bước của bản bàn giao — trên **cùng một mảng ảnh đã chuẩn bị xong**, nên khác biệt duy nhất còn lại là bộ nhận dạng; đây cũng là bằng chứng thực nghiệm cho NFR-M5. Một chỗ cố ý không cào bằng: Tesseract chạy kèm whitelist `A-Z0-9`, vì giới hạn tập ký tự là **năng lực gốc** của nó. Công cụ đo được kiểm chứng bằng cách đối chiếu nhánh có tách đôi của PaddleOCR — **63,73%**, khớp NFR-A5 = 0,6373 đã công bố.
 
-**b) Thiết kế.** Cả ba bộ nhận dạng chạy trong **đúng một tầng bao quanh** — sao đúng chuỗi bước của bộ nhận dạng bản bàn giao — trên **cùng một mảng NumPy đã chuẩn bị xong**; khác biệt duy nhất còn lại là bộ nhận dạng. Đây cũng là bằng chứng thực nghiệm cho NFR-M5. Một chỗ cố ý không cào bằng: Tesseract chạy kèm whitelist `A-Z0-9`, vì giới hạn tập ký tự là **năng lực gốc** của nó; cắt bỏ "cho công bằng" mới là làm sai.
-
-_Kiểm chứng công cụ đo:_ nhánh có tách đôi của PaddleOCR đạt **63,73%**, khớp NFR-A5 = 0,6373 đã công bố.
-
-**Bảng 3.3.** So sánh ba bộ nhận dạng ký tự trên 2.801 biển số Việt Nam (567 một dòng, 2.234 hai dòng)
+**Bảng 3.2.** So sánh ba bộ nhận dạng ký tự trên 2.801 biển số Việt Nam (567 một dòng, 2.234 hai dòng)
 
 | Bộ nhận dạng        | Nhánh       |    Toàn bộ |    1 dòng |    2 dòng |       CER | Rỗng |    p50 |
 | ------------- | ----------- | ---------: | --------: | --------: | --------: | ---: | -----: |
@@ -68,47 +55,26 @@ _Kiểm chứng công cụ đo:_ nhánh có tách đôi của PaddleOCR đạt *
 | Tesseract     | có tách đôi    |      9,60% |     47,3% |  **0,0%** |     0,565 |  700 | 108 ms |
 | Tesseract     | + hậu xử lý |     10,28% |     50,4% |  **0,1%** |     0,567 |  700 | 106 ms |
 
-**c) Kết quả so sánh trong cấu hình của đồ án.** Ở cấu hình bản bàn giao, PaddleOCR đạt **68,87%**, cao hơn EasyOCR **54,59 điểm** và Tesseract **58,59 điểm**. Kết luận _"tài liệu công khai không cho thấy PaddleOCR vượt EasyOCR trên ảnh biển số"_ ở mục 3.3.1 vẫn đúng đối với các tài liệu đã khảo sát. Tuy nhiên, phép đo trên biển số Việt Nam trong cùng tầng bao quanh của đồ án cho kết quả khác; do đó, quyết định giữ PaddleOCR có thêm căn cứ thực nghiệm **trong phạm vi cấu hình đánh giá này**.
+**b) Kết quả.** Ở cấu hình bản bàn giao, PaddleOCR đạt **68,87%**, cao hơn EasyOCR **54,59 điểm** và Tesseract **58,59 điểm**. Kết luận ở mục 3.3.1 — *tài liệu công khai không cho thấy PaddleOCR vượt EasyOCR trên ảnh biển số* — vẫn đúng với các tài liệu đã khảo sát, nhưng phép đo trên biển số Việt Nam trong cùng tầng bao quanh cho kết quả khác, nên quyết định giữ PaddleOCR có thêm căn cứ thực nghiệm.
 
-**d) Bước tách rồi ghép ngang không độc lập với bộ nhận dạng.**
+**c) Bước tách rồi ghép ngang KHÔNG độc lập với bộ nhận dạng.** Mức tăng khi bật tách đôi rất chênh nhau: PaddleOCR **+34,92 điểm** (28,81% → 63,73%), EasyOCR +3,82, Tesseract **+0,03**. Kỹ thuật chuyển bài toán đa dòng về một dòng vì vậy là điều kiện **cần nhưng chưa đủ** — nó còn đòi hỏi bộ nhận dạng đủ năng lực đọc dải ảnh đã ghép. Ngược lại, **bộ luật hậu xử lý giúp cả ba** (+5,14 · +3,93 · +0,68 điểm), nên đóng góp này **là** đóng góp độc lập bộ nhận dạng.
 
-| Bộ nhận dạng    | tắt tách đôi → có tách đôi |        Mức tăng |
-| --------- | -------------------- | --------------: |
-| PaddleOCR | 28,81% → 63,73%      | **+34,92 điểm** |
-| EasyOCR   | 6,53% → 10,35%       |      +3,82 điểm |
-| Tesseract | 9,57% → 9,60%        |  **+0,03 điểm** |
+**d) Tesseract không đọc được biển hai dòng: 0,0% trên 2.234 mẫu**, kể cả sau khi đã ghép thành một dòng, trong khi đọc được 47,3% biển một dòng; nó có đọc ra chữ nhưng luôn kèm ký tự rác, và trả chuỗi rỗng 700/2.801 lần.
 
-Nếu cả ba bộ nhận dạng đều có sự gia tăng đáng kể về độ chính xác, có thể kết luận kỹ thuật của đồ án mang tính độc lập với bộ nhận dạng. Tuy nhiên, **kết quả thực nghiệm không ủng hộ giả định này.** Thực tế cho thấy, kỹ thuật tách và ghép ngang chỉ là điều kiện **cần** để xử lý biển hai dòng bằng cách chuyển đổi bài toán đa dòng về một dòng, nhưng **chưa đủ**; nó đòi hỏi bộ nhận dạng ký tự phải có đủ năng lực để trích xuất thông tin từ dải ảnh đã ghép hiệu quả.
-
-Ngược lại, **bộ luật hậu xử lý giúp cả ba** (+5,14 · +3,93 · +0,68 điểm). Đóng góp (b) của đồ án vì vậy **là** đóng góp độc lập bộ nhận dạng, khác với tách rồi ghép ngang.
-
-**e) Tesseract không đọc được biển hai dòng.** **0,0% trên 2.234 biển hai dòng**, kể cả sau khi đã ghép thành một dòng, trong khi đọc được 47,3% biển một dòng. Đã kiểm bằng mắt để loại khả năng lỗi công cụ: nó **có** đọc ra chữ nhưng luôn kèm ký tự rác, và 700/2.801 lần trả chuỗi rỗng. Dự đoán _"Tesseract hỏng khi vùng cắt nhiều dòng"_ ở mục 3.3.1 được xác nhận, ở mức nghiêm trọng hơn.
-
-> **Hai điều phép đo này không trả lời.** Thứ nhất, nó đo trên **vùng biển đã cắt sẵn**; báo cáo 31 cho thấy thứ tự xếp hạng có thể **đảo ngược** trên ảnh toàn cảnh qua bộ phát hiện thật, nên kết luận chỉ áp cho tầng nhận dạng. Thứ hai, nó **không** kết luận bộ nhận dạng nào tốt hơn nói chung — chỉ kết luận bộ nhận dạng nào đọc biển số Việt Nam tốt hơn _bên trong tầng bao quanh của đồ án_; một hệ thống thiết kế quanh EasyOCR, với tiền xử lý riêng của nó, có thể cho số khác.
+Phép đo này chạy trên **vùng biển đã cắt sẵn** nên kết luận chỉ áp cho tầng nhận dạng bên trong tầng bao quanh của đồ án — trên ảnh toàn cảnh qua bộ phát hiện thật, thứ tự xếp hạng có thể đảo ngược (5.5).
 
 ## 3.4. Nền tảng suy luận trên CPU: ONNX Runtime
 
-**Các phương án đã xét:** chạy trực tiếp tệp trọng số PyTorch, ONNX Runtime, OpenVINO. **Tiêu chí:** tốc độ CPU, mức đa nền tảng, độ nặng phụ thuộc khi đóng gói, khả năng cùng tồn tại với framework khác.
-
-> **Ghi chú về cách trích dẫn.** Chỉ được dùng **phần số liệu tốc độ** của bảng benchmark này. Các con số mAP đi kèm được đo trên tập `coco8` chỉ gồm **8 ảnh**, nên **vô nghĩa về mặt thống kê** và không được trích dẫn dưới bất kỳ hình thức nào.
+**Các phương án đã xét:** chạy trực tiếp tệp trọng số PyTorch, ONNX Runtime, OpenVINO. **Tiêu chí:** tốc độ CPU, mức đa nền tảng, độ nặng phụ thuộc khi đóng gói. Bản giao hàng **chạy PyTorch**: nó đã đạt mọi chỉ tiêu độ trễ, còn hai phương án kia được đo và giữ lại như đường nâng cấp (5.6.3).
 
 ## 3.5. Các lựa chọn công nghệ nền tảng khác
 
 Phần lớn quyết định còn lại là **ràng buộc của đề bài**; ghi lại kèm lý do và đánh đổi để Chương 4 tham chiếu.
 
-**Bảng 3.4.** Tổng hợp quyết định công nghệ nền tảng
-
-|  #  | Hạng mục              | Lựa chọn (phương án thay thế)                                      | Lý do chính                                                                                  | Đánh đổi phải chấp nhận                                                                   |
-| :-: | --------------------- | ------------------------------------------------------------------ | -------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
-|  1  | Nền tảng web phía máy chủ | **FastAPI** (Django, Flask)                                        | Tự sinh đặc tả OpenAPI — tạo sẵn một sản phẩm bàn giao; có sẵn WebSocket và tác vụ nền       | Phải biết khi nào **không** dùng hàm bất đồng bộ; nguy cơ tranh chấp với luồng suy luận   |
-|  2  | ORM và migration      | **SQLAlchemy 2.0 + Alembic** (Tortoise ORM, Peewee)                | Tích hợp sâu kiểu tĩnh; lược đồ đã thay đổi nên nhu cầu migration là có thật                 | Đường cong học dốc nhất trong nhóm                                                        |
-|  3  | Cơ sở dữ liệu         | **SQLite** (PostgreSQL, MySQL)                                     | Ghi có thể xếp hàng vì suy luận CPU mới là nút cổ chai; không thêm dịch vụ khi đóng gói      | **Chỉ một tiến trình ghi tại một thời điểm**; vượt ngưỡng tải phải chuyển PostgreSQL      |
-|  4  | Giao diện              | **React + TypeScript + Vite + TailwindCSS** (Vue, Angular, Svelte) | Hệ sinh thái lớn nhất; công cụ build tiền nhiệm ngừng bảo trì; kiểu tĩnh nối tiếp từ máy chủ | Tự lắp ghép routing, quản lý trạng thái, thành phần giao diện                             |
-|  5  | Framework học sâu     | **PyTorch** (TensorFlow)                                           | Ultralytics khai báo PyTorch là phụ thuộc lõi — chọn YOLO11 là chọn PyTorch                  | Kéo theo framework học sâu **thứ hai** (PaddlePaddle) do lựa chọn OCR — giải bằng mục 3.4 |
-|  6  | Đóng gói              | **Docker + Compose**                                               | Yêu cầu tái lập và khởi động bằng một lệnh                                                   | Kích thước image là rủi ro do có framework học sâu                                        |
+Sáu quyết định nền tảng: **FastAPI** (tự sinh đặc tả OpenAPI, có sẵn WebSocket và tác vụ nền), **SQLAlchemy 2.0 + Alembic** (lược đồ đã thay đổi nên nhu cầu migration là có thật), **SQLite** (không thêm dịch vụ khi đóng gói; đánh đổi là chỉ một tiến trình ghi), **React + TypeScript + Vite + TailwindCSS**, **PyTorch** (Ultralytics khai báo là phụ thuộc lõi) và **Docker Compose**. Bảng đầy đủ kèm phương án thay thế và đánh đổi ở **Phụ lục VI**.
 
 ## 3.6. Độ phân giải đầu vào: 640 thay vì 416
 
-Đồ án có sẵn hai mô hình để đối chiếu — `baseline-416-v1.pt` và `best.pt` — nhưng **phép so sánh giữa chúng không quy kết được nguyên nhân**: giữa hai lượt huấn luyện có **ba biến thay đổi đồng thời và ngược chiều nhau** (độ phân giải 416 → 640, bộ dữ liệu v1 → v3 đã khử rò rỉ, số epoch), nên chênh lệch chỉ số **không gán được cho riêng biến nào**. Cần nêu rõ điều này để tránh kết luận sai: ở tầng phát hiện, best.pt **vượt mọi ngưỡng đã đặt ra** (mục 5.4.1).
+Đồ án có sẵn hai mô hình để đối chiếu — `baseline-416-v1.pt` và `best.pt` — nhưng **phép so sánh giữa chúng không quy kết được nguyên nhân**: giữa hai lượt huấn luyện có **ba biến thay đổi đồng thời** (độ phân giải 416 → 640, bộ dữ liệu v1 → v3 đã khử rò rỉ, số epoch).
 
 Lựa chọn **640** vì vậy đứng trên căn cứ khác: đó là độ phân giải mà chỉ tiêu NFR-A1/A2 đặt ra và là độ phân giải mọi số liệu tốc độ CPU chính thức của Ultralytics được đo. Muốn quy kết nguyên nhân cần một ma trận thí nghiệm cô lập từng biến (E1 – E3), ước tính **≈ 33 giờ CPU** — vượt ngân sách còn lại, ghi nhận là **chưa thực hiện** ở mục 6.3.

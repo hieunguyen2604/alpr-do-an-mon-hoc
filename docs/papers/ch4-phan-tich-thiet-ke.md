@@ -1,6 +1,6 @@
 # CHƯƠNG 4. THIẾT KẾ VÀ CÀI ĐẶT HỆ THỐNG
 
-Trên cơ sở lý thuyết ở Chương 2 và lựa chọn công nghệ ở Chương 3, chương này trình bày thiết kế và hiện thực của hệ thống trong cùng một mạch. Nguyên tắc trình bày: mọi mô tả đều phản ánh đúng mã nguồn thực tế; các chức năng chưa hoàn thiện và các số liệu chưa được đo lường đều được ghi chú rõ ràng. Chương gồm phân tích yêu cầu (4.1), kiến trúc (4.2), môi trường phát triển (4.3), bộ dữ liệu (4.4), huấn luyện mô hình (4.5), tầng AI (4.6), máy chủ và cơ sở dữ liệu (4.7), giao diện (4.8), Docker (4.9) và bảng đối chiếu cài đặt lệch thiết kế (4.10).
+Trên cơ sở lý thuyết ở Chương 2 và lựa chọn công nghệ ở Chương 3, chương này trình bày thiết kế và hiện thực của hệ thống trong cùng một mạch. Nguyên tắc trình bày: mọi mô tả đều phản ánh đúng mã nguồn thực tế; các chức năng chưa hoàn thiện và các số liệu chưa được đo lường đều được ghi chú rõ ràng. Chương gồm phân tích yêu cầu (4.1), kiến trúc (4.2), môi trường phát triển (4.3), bộ dữ liệu (4.4), huấn luyện mô hình (4.5), tầng AI (4.6), máy chủ và cơ sở dữ liệu (4.7), giao diện (4.8) và Docker (4.9).
 
 Trạng thái bản này: hệ thống chạy ALPRPipeline với mô hình chính thức models/best.pt (`/health` báo `model_loaded: true`, bộ nhận dạng `yolo:best.pt+paddleocr-PP-OCRv5-mobile`, mAP@0.5 = 0,9829); `StubPipeline` đã ra khỏi đường chạy chính. Mọi kết quả thực nghiệm trình bày ở Chương 5.
 
@@ -30,11 +30,11 @@ Các chỉ tiêu phi chức năng chia bảy nhóm — độ chính xác (NFR-A)
 
 ### 4.2.1. Nguyên tắc kiến trúc
 
-**Kiến trúc sạch và quy tắc phụ thuộc:** phụ thuộc chỉ hướng vào trong, từ chi tiết dễ thay đổi (framework web, CSDL, giao diện) về quy tắc nghiệp vụ ổn định. Ở bài toán này, thứ ổn định là thuật toán nhận dạng biển số — phát hiện, cắt, đọc, chuẩn hoá theo quy chuẩn Việt Nam; thứ dễ đổi là FastAPI hay Flask, SQLite hay PostgreSQL. Do đó **đường ống AI nằm ở vòng trong cùng**, tầng web phụ thuộc nó chứ không ngược lại. SOLID vận dụng: _trách nhiệm đơn nhất_ — detector chỉ trả bounding box, recognizer chỉ trả chuỗi, normalizer chỉ chuẩn hoá — cho phép đo từng khối riêng; _thay thế Liskov_ — dùng theo nghĩa đen khi hệ thống chạy đường ống giả lập đúng hợp đồng đường ống thật; _đảo ngược phụ thuộc_ — tầng nghiệp vụ phụ thuộc hợp đồng trừu tượng, cài đặt tiêm từ ngoài.
+**Kiến trúc sạch và quy tắc phụ thuộc:** phụ thuộc chỉ hướng vào trong, từ chi tiết dễ thay đổi (framework web, CSDL, giao diện) về quy tắc nghiệp vụ ổn định. Ở bài toán này thứ ổn định là thuật toán nhận dạng biển số, thứ dễ đổi là FastAPI hay Flask, SQLite hay PostgreSQL — nên **đường ống AI nằm ở vòng trong cùng**, tầng web phụ thuộc nó chứ không ngược lại. Nguyên tắc **trách nhiệm đơn nhất** được vận dụng trực tiếp để đo được từng khối riêng: bộ phát hiện chỉ trả hộp bao, bộ nhận dạng chỉ trả chuỗi, bộ chuẩn hoá chỉ chuẩn hoá.
 
 <!-- {{T4.1a}} bon rang buoc kien truc va cach kiem chung -->
 
-**Bảng 4.2.** Bốn ràng buộc kiến trúc và cách kiểm chứng từng ràng buộc
+**Bảng 4.1.** Bốn ràng buộc kiến trúc và cách kiểm chứng từng ràng buộc
 
 | # | Ràng buộc | Mã chỉ tiêu | Cách hiện thực | Kiểm chứng bằng gì |
 |:--:|---|:--:|---|---|
@@ -57,7 +57,7 @@ Năm tầng: **1 — Trình bày** (giao diện, chỉ biết hợp đồng HTTP
 
 ### 4.2.3. Tách tầng AI khỏi tầng API và cách kiểm chứng ràng buộc
 
-**Ba lợi ích.** _Kiểm thử độc lập_: test chỉ cần nạp mảng NumPy, không phải dựng ứng dụng web. _Tái sử dụng trong script huấn luyện và đánh giá_: nếu logic tiền xử lý nằm lẫn trong hàm HTTP thì script đánh giá phải sao chép, hai bản sẽ lệch nhau, dẫn tới hệ quả nghiêm trọng nhất có thể xảy ra: **con số công bố không phản ánh đúng kết quả thực tế của hệ thống**. Mục 4.6.4g và 4.10 phân tích một trường hợp thuộc loại này. _Thay thế bộ nhận dạng mà không cần sửa mã tầng API_ đã được **kiểm chứng trên thực tế**: trong suốt giai đoạn xây dựng phần mềm và kiểm thử, hệ thống chạy với `StubPipeline`, toàn bộ tầng API, nghiệp vụ, cơ sở dữ liệu và giao diện đã được xây dựng và kiểm chứng **trước khi mô hình được huấn luyện**; khi trọng số đã sẵn sàng, việc chuyển sang `ALPRPipeline` chỉ là thao tác đổi thành phần phụ thuộc được tiêm vào, **không cần sửa đổi** router, service hay schema. Để tránh nhầm lẫn giữa trạng thái mô phỏng và vận hành thực tế, endpoint `/health` sẽ báo `degraded` khi `StubPipeline` còn đang hoạt động.
+Tầng AI là một gói Python độc lập, giao tiếp với tầng API **chỉ qua giao diện trừu tượng**; ràng buộc *mã đường ống AI không import FastAPI* (NFR-M1) được kiểm chứng tự động trong bộ kiểm thử. Tách như vậy cho ba lợi ích: kiểm thử tầng AI chỉ cần nạp mảng ảnh chứ không phải dựng ứng dụng web; kịch bản huấn luyện và đo đạc **dùng lại đúng mã của bản giao hàng** thay vì sao chép — bản sao lệch nhau chính là nguyên nhân của loại sự cố nghiêm trọng nhất, **con số công bố không mô tả hệ thống được bàn giao** (5.5.6); và thay bộ nhận dạng chỉ là đổi thành phần được tiêm vào, không sửa router hay lược đồ (NFR-M5).
 
 ### 4.2.4. Luồng xử lý của đường ống AI và nhánh biển hai dòng
 
@@ -73,7 +73,7 @@ Mỗi quyết định ghi kèm lý do và **đánh đổi phải chấp nhận**
 
 <!-- {{T4.2}} cac quyet dinh kien truc AD-01 den AD-08 -->
 
-**Bảng 4.3.** Tám quyết định kiến trúc — mỗi dòng kèm đánh đổi phải chấp nhận
+**Bảng 4.2.** Tám quyết định kiến trúc — mỗi dòng kèm đánh đổi phải chấp nhận
 
 | Mã | Quyết định | Lựa chọn | Đánh đổi phải chấp nhận |
 |:--:|---|---|---|
@@ -98,7 +98,7 @@ Ghi chú: AD-03 không đổi sau khi gỡ trang Webcam vì ở ~5 FPS trên CPU
 
 Toàn bộ cài đặt, kiểm thử và đo đạc chạy trên một máy trạm duy nhất: Windows 11 Pro; Intel Core i5-14600K, 14 nhân / 20 luồng; RAM 31,77 GiB; Intel UHD 770 — **không có GPU CUDA**; Python 3.13.12; Node.js 18.20.8; Docker 29.4.3. Cấu hình này **mâu thuẫn với mô tả môi trường ban đầu** (macOS Apple Silicon, Python 3.12), và ghi nhận sai lệch thành văn bản là bước đầu của giai đoạn phân tích yêu cầu.
 
-Ràng buộc CPU để lại dấu vết cụ thể: NFR-P1 phát biểu thẳng cho CPU; AD-06 kéo theo `yolo11n` và PP-OCRv5 mobile; và vì huấn luyện trên CPU mất 1–3 ngày mỗi lượt, quy trình huấn luyện chạy được cả trên máy cá nhân lẫn nền tảng đám mây với toàn bộ siêu tham số trong một tệp cấu hình duy nhất. Ở cấu hình giao hàng, p95 đầu cuối là **509,76 ms**, đạt cả ngưỡng tối thiểu 1.500 ms lẫn mục tiêu 800 ms; phân rã suy luận thuần cho thấy OCR chiếm **60,8%**, phát hiện **38,0%** (đối chiếu NFR-P1 ở 4.10).
+Ràng buộc CPU để lại dấu vết cụ thể: NFR-P1 phát biểu thẳng cho CPU; AD-06 kéo theo `yolo11n` và PP-OCRv5 mobile; và vì huấn luyện trên CPU mất 1–3 ngày mỗi lượt, quy trình huấn luyện chạy được cả trên máy cá nhân lẫn nền tảng đám mây với toàn bộ siêu tham số trong một tệp cấu hình duy nhất. Ở cấu hình giao hàng, p95 đầu cuối là **509,76 ms**, đạt cả ngưỡng tối thiểu 1.500 ms lẫn mục tiêu 800 ms; phân rã suy luận thuần cho thấy OCR chiếm **60,8%**, phát hiện **38,0%** (đối chiếu NFR-P1 ở 5.6.1).
 
 ## 4.4. Xây dựng bộ dữ liệu
 
@@ -112,7 +112,7 @@ Mỗi bước là một kịch bản độc lập có giao diện dòng lệnh r
 
 <!-- {{T4.4}} dong gop cua tung bo du lieu truoc va sau khu trung lap -->
 
-**Bảng 4.4.** Đóng góp của từng bộ dữ liệu trước và sau khử trùng lặp
+**Bảng 4.3.** Đóng góp của từng bộ dữ liệu trước và sau khử trùng lặp
 
 | #   | Bộ (slug)                   |    Vào gộp |        **Còn lại** |   Bị loại |
 | --- | --------------------------- | ---------: | -----------------: | --------: |
@@ -127,7 +127,7 @@ Mỗi bước là một kịch bản độc lập có giao diện dòng lệnh r
 
 > **Ghi chú về phạm vi của mọi số liệu OCR.** Phân loại màu nền trên 2.801 ảnh cho: **2.736 biển trắng (97,68%)**, 20 vàng, 4 xanh, **0 đỏ, 0 ngoại giao**. Phát biểu đúng là _"1 − CER = 0,9483 trên một tập gồm 97,7% biển trắng"_, **không phải** _"trên biển số Việt Nam"_.
 
-> **Hai tỉ lệ khử trùng lặp, hai mẫu số khác nhau.** Hợp nhất bảy bộ cho **27.113 ảnh thô**; sau khi loại ảnh gần trùng còn **15.133**, tức bỏ **44,2%**. Con số này đo bằng băm tri giác ở ngưỡng Hamming 5. **Giới hạn của cách làm phải nêu kèm:** băm tri giác rút ảnh thành 64 bit mô tả cấu trúc tần số thấp của *toàn khung*, nên hai xe khác nhau qua cùng một camera vẫn cho khoảng cách rất nhỏ — ngưỡng thấp bỏ sót cặp cùng xe khác ngày, ngưỡng cao gộp nhầm hàng nghìn ảnh khác xe. Vì vậy **vẫn còn rò rỉ tồn dư không khử được bằng băm tri giác**, ghi thành hạn chế số 3 ở mục 6.2 và đo lại ở 5.3.1.
+> **Giới hạn của phép khử trùng lặp.** Băm tri giác rút ảnh thành 64 bit mô tả cấu trúc tần số thấp của *toàn khung*, nên hai xe khác nhau qua cùng một camera vẫn cho khoảng cách rất nhỏ: ngưỡng thấp bỏ sót cặp cùng xe khác ngày, ngưỡng cao gộp nhầm hàng nghìn ảnh khác xe. Vì vậy **vẫn còn rò rỉ tồn dư**, ghi thành hạn chế số 3 ở mục 6.2 và đo lại ở 5.3.1.
 
 ## 4.5. Huấn luyện mô hình
 
@@ -147,26 +147,20 @@ Ba hàm mất mát giảm đơn điệu và **không có dấu hiệu quá khớ
 
 <!-- {{T4.5a}} tien trien chi so tren tap validation theo epoch -->
 
-**Bảng 4.5.** Tiến triển chỉ số trên tập validation theo mốc epoch
+**Bảng 4.4.** Tiến triển chỉ số trên tập validation theo mốc epoch
 
-|           Epoch           | Mất mát hộp bao | Mất mát phân lớp | Mất mát phân phối |    mAP@0.5 | mAP@0.5:0.95 |  Precision |     Recall |
-| :-----------------------: | --------------: | ---------------: | ----------------: | ---------: | -----------: | ---------: | ---------: |
-|             1             |          1,1705 |           0,6858 |            1,1513 | **0,9684** |   **0,6526** |     0,9552 |     0,9410 |
-|             2             |          1,1861 |           0,5554 |            1,1307 | **0,9726** |   **0,6653** |     0,9700 |     0,9450 |
-|             3             |          1,1647 |           0,5651 |            1,1098 | **0,9723** |   **0,6770** |     0,9731 |     0,9449 |
-|             5             |          1,1074 |           0,4977 |            1,0863 | **0,9754** |   **0,6950** |     0,9765 |     0,9525 |
-|            10             |          1,0548 |           0,4168 |            1,0686 | **0,9808** |   **0,7248** |     0,9850 |     0,9584 |
-|            15             |          0,9420 |           0,3619 |            1,0205 | **0,9824** |   **0,7609** |     0,9846 |     0,9686 |
-|            20             |          0,9204 |           0,3331 |            1,0105 | **0,9830** |   **0,7688** |     0,9846 |     0,9697 |
-| **Epoch tốt nhất (= 20)** |      **0,9204** |       **0,3331** |        **1,0105** | **0,9830** |   **0,7688** | **0,9846** | **0,9697** |
+| Epoch | Mất mát hộp bao | Mất mát phân lớp | mAP@0.5 | mAP@0.5:0.95 | Precision | Recall |
+| :---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| 1 | 1,1705 | 0,6858 | **0,9684** | **0,6526** | 0,9552 | 0,9410 |
+| 5 | 1,1074 | 0,4977 | **0,9754** | **0,6950** | 0,9765 | 0,9525 |
+| 10 | 1,0548 | 0,4168 | **0,9808** | **0,7248** | 0,9850 | 0,9584 |
+| **20** _(tốt nhất)_ | **0,9204** | **0,3331** | **0,9830** | **0,7688** | **0,9846** | **0,9697** |
 
 ## 4.6. Tầng AI — thiết kế và cài đặt
 
 ### 4.6.1. Tổ chức gói suy luận và ba lớp trừu tượng
 
-Tầng AI là một gói Python độc lập, không phụ thuộc bất kỳ thành phần nào của tầng API; ràng buộc được kiểm chứng tự động (mục 4.2.3) để gói vận hành được trong môi trường notebook, kịch bản đo đạc và nền tảng huấn luyện đám mây.
-
-Kiến trúc dựa trên ba lớp trừu tượng có hợp đồng thống nhất. Lớp phát hiện trả về danh sách vùng biển đã lọc ngưỡng và khử chồng lấn, trong đó danh sách rỗng là kết quả hợp lệ chứ không phải trạng thái lỗi. Lớp nhận dạng trả về chuỗi thô kèm độ tin cậy; việc sửa lỗi ký tự và kiểm tra hợp lệ không thuộc trách nhiệm của lớp này, và chính sự tách biệt đó cho phép định lượng đóng góp của khối hậu xử lý (mục 5.5.2). Lớp chuẩn hoá trả về cả chuỗi không hợp lệ, vì loại bỏ chúng sẽ làm mất đúng các trường hợp mà chương đánh giá cần thống kê. Hợp đồng chung là trả kết quả rỗng thay vì ném ngoại lệ, nhất quán với NFR-R2: không tìm thấy đối tượng và lỗi hệ thống là hai trạng thái khác nhau.
+Kiến trúc tầng AI dựa trên **ba lớp trừu tượng** có hợp đồng thống nhất. Lớp **phát hiện** trả danh sách vùng biển đã lọc ngưỡng và khử chồng lấn — danh sách rỗng là kết quả hợp lệ, không phải lỗi. Lớp **nhận dạng** trả chuỗi thô kèm độ tin cậy; sửa lỗi ký tự không thuộc trách nhiệm của nó, và chính sự tách biệt đó cho phép định lượng đóng góp của khối hậu xử lý (5.5.2). Lớp **chuẩn hoá** trả về cả chuỗi không hợp lệ, vì loại bỏ chúng sẽ làm mất đúng những trường hợp chương đánh giá cần thống kê. Hợp đồng chung: **trả kết quả rỗng thay vì ném ngoại lệ** — không tìm thấy đối tượng và lỗi hệ thống là hai trạng thái khác nhau (NFR-R2).
 
 ![](figures/fig-ch4-interfaces.png)
 
@@ -176,13 +170,13 @@ tới phần còn lại của hệ thống. Đây là bằng chứng cài đặt
 
 ### 4.6.2. Bộ phát hiện
 
-Bộ phát hiện là lớp thích ứng mỏng bao quanh thư viện Ultralytics: không thành phần nào ngoài lớp này tiếp xúc với cấu trúc dữ liệu nội bộ của thư viện. Phiên bản mô hình được ghim tường minh trong định danh mà lớp công bố, để mọi kết quả đo truy được về đúng bộ trọng số và việc nâng cấp thư viện không thay đổi ngầm mô hình đứng sau một kết quả đã công bố. Trọng số nạp ngay khi khởi tạo, nên lỗi thiếu tệp bộc lộ lúc khởi động thay vì lúc phục vụ yêu cầu đầu tiên. Lớp chấp nhận cả tệp trọng số đơn lẻ lẫn thư mục mô hình đã tối ưu cho CPU, do giới hạn ở một dạng sẽ loại bỏ cấu hình suy luận nhanh nhất trên phần cứng mục tiêu. Mọi hộp bao được kẹp về biên ảnh và hộp suy biến bị loại, nên tầng trên không nhận toạ độ ngoài khung.
+Bộ phát hiện là **lớp thích ứng mỏng** bao quanh thư viện Ultralytics: không thành phần nào ngoài lớp này tiếp xúc với cấu trúc dữ liệu nội bộ của thư viện. Phiên bản mô hình được **ghim tường minh** để mọi kết quả đo truy được về đúng bộ trọng số, và nâng cấp thư viện không đổi ngầm mô hình đứng sau một số liệu đã công bố. Trọng số nạp ngay khi khởi tạo nên lỗi thiếu tệp bộc lộ lúc khởi động; mọi hộp bao được kẹp về biên ảnh và hộp suy biến bị loại.
 
 ### 4.6.3. Bộ nhận dạng ký tự
 
 Bộ nhận dạng tuân theo cùng mô hình lớp thích ứng và cũng ghim phiên bản mô hình tường minh. Các mảnh văn bản được lọc theo tiêu chí hình học thay vì ngưỡng tin cậy, do bước nâng tương phản có thể sinh mảnh nhiễu được đọc thành chuỗi vô nghĩa ở độ tin cậy cao; độ tin cậy của cả chuỗi tổng hợp bằng trung bình có trọng số theo độ dài mảnh, vì trung bình cộng cho phép một mảnh một ký tự che lấp mảnh dài mang danh tính thực của biển số.
 
-Cần lưu ý một giới hạn kỹ thuật ảnh hưởng trực tiếp đến hiệu năng: trên nền tảng mục tiêu, thư viện nhận dạng không cho phép kích hoạt thư viện tăng tốc oneDNN do khiếm khuyết phía thư viện, nên thư viện này bị vô hiệu hoá bằng một hằng số cấu hình có tài liệu kèm theo. Đây là tham số hiệu năng chứ không phải tham số độ chính xác, và giải thích một phần kết quả NFR-P1 ở mục 5.6: một hướng tăng tốc suy luận CPU thông dụng hiện không khả dụng vì lý do nằm ngoài phạm vi kiểm soát của đồ án.
+Một giới hạn kỹ thuật ngoài tầm kiểm soát của đồ án: trên nền tảng mục tiêu, thư viện nhận dạng không kích hoạt được thư viện tăng tốc oneDNN do khiếm khuyết phía thư viện, nên nó bị vô hiệu hoá bằng cấu hình. Đây là tham số **hiệu năng**, không phải độ chính xác, và giải thích một phần kết quả NFR-P1 ở mục 5.6.
 
 ### 4.6.4. Mô-đun xử lý biển hai dòng
 
@@ -244,40 +238,13 @@ Chính sách xử lý lỗi phân tầng theo mức ảnh hưởng: ảnh không
 
 ### 4.6.7. Nhận dạng họ biển và màu nền
 
-**a) Vấn đề đặt ra.** Hệ thống ban đầu tính ra họ biển và chuỗi hiển thị có dấu phân cách nhưng loại bỏ chúng trước khi ghi vào cơ sở dữ liệu, nên một biển quân đội được nhận dạng chính xác ở độ tin cậy 0,999 vẫn bị hiển thị là sai định dạng — phát biểu không chính xác, do biển quân đội là biển hợp lệ nằm ngoài hệ dân sự (mục 4.6.5f). Hướng khắc phục gồm hai phần: lưu giữ thông tin đã tính (mục 4.7.2), và bổ sung nguồn bằng chứng mà chuỗi ký tự về nguyên tắc không thể mang, đó là màu nền.
-
-**b) Cơ sở của bằng chứng bổ trợ.** Hai nguồn bằng chứng bù trừ cho nhau. Theo Thông tư 79/2024/TT-BCA, biển vàng của xe kinh doanh vận tải mang đúng cùng cấu trúc ký tự với biển trắng của xe cá nhân nên không biểu thức chính quy nào phân biệt được; ngược lại, biển ngoại giao có nền trắng giống biển cá nhân nên riêng màu nền cũng không đủ. Chỉ cặp thuộc tính gồm chuỗi ký tự và màu nền mới định danh được loại phương tiện.
+**a) Vì sao cần bằng chứng ngoài chuỗi ký tự.** Hai nguồn bằng chứng bù trừ cho nhau. Theo TT 79/2024, biển **vàng** của xe kinh doanh vận tải mang **đúng cùng cấu trúc ký tự** với biển trắng cá nhân nên không biểu thức chính quy nào phân biệt được; ngược lại biển **ngoại giao** có nền trắng giống biển cá nhân nên riêng màu nền cũng không đủ. Chỉ **cặp** chuỗi ký tự và màu nền mới định danh được loại phương tiện.
 
 **c) Thiết kế bộ phân loại màu.** Bộ phân loại chuyển ảnh sang HSV, thống kê tỉ lệ điểm ảnh theo từng dải màu rồi chọn dải chiếm ưu thế, với ba quyết định đáng nêu. **Chỉ lấy mẫu vùng trung tâm**, biên thu vào 18% mỗi phía, vì khung phát hiện hiếm khi ôm sát mép biển và màu thân xe phía sau có thể lấn át. **Không loại điểm ảnh thuộc ký tự**: ký tự chiếm thiểu số diện tích, và thêm một bước phân đoạn ký tự là đưa vào khâu kém ổn định hơn chính khâu nó bảo vệ. **Trả *không xác định* khi dải ưu thế dưới 30%** — kết luận sai về màu tương đương khẳng định một loại phương tiện không chứng minh được, còn thừa nhận không xác định chỉ là ghi nhận một giới hạn.
 
 **d) Hợp nhất chuỗi ký tự và màu nền.** Với chuỗi như `80A12345`, bốn họ biển đều hợp lệ và bộ chuẩn hoá mặc định chọn họ phổ biến nhất — đúng với đa số nhưng sai ngầm với xe cơ quan nhà nước mang biển nền xanh. Cơ chế hợp nhất cho phép màu nền **nâng cấp một ứng viên mà bộ luật ký tự đã coi là hợp lý**, và ràng buộc an toàn quan trọng hơn chính tác dụng ấy: nếu phán quyết ban đầu không nằm trong tập ứng viên thì giữ nguyên, nên màu nền **không thể tạo ra họ biển mà bộ luật ký tự đã bác bỏ**. Khi họ biển ưu tiên có cả biến thể ô tô và xe máy thì phân định theo số dòng; mâu thuẫn cả hai thì giữ phán quyết ban đầu — đại lượng đo từ hình học ưu tiên hơn đại lượng suy từ thống kê điểm ảnh. Chỉ màu xanh nằm trong bảng ưu tiên vì đó là màu duy nhất chuỗi ký tự hoàn toàn không phân biệt được; màu vàng không đổi họ biển mà chỉ đổi mục đích sử dụng nên lưu thành trường độc lập.
 
-**e) Độ chính xác đo được.** Bộ phân loại được đánh giá trên bộ dữ liệu ảnh biển cắt sẵn có nhãn màu do người gán và chưa từng được hiệu chỉnh theo bộ này — phép đo vì vậy nằm ngoài dữ liệu hiệu chỉnh.
-
-<!-- {{T4.6}} do chinh xac bo nhan mau nen bien so -->
-
-**Bảng 4.7.** Độ chính xác bộ nhận màu nền trên bộ dữ liệu ngoài hiệu chỉnh
-
-| Lớp nhãn người gán |    Số ảnh |      Đúng | Độ chính xác |
-| ------------------ | --------: | --------: | -----------: |
-| Biển vàng          |       694 |       684 |   **98,56%** |
-| Biển trắng         |       808 |       787 |   **97,40%** |
-| Biển xanh          |        63 |        61 |   **96,83%** |
-| **Tổng**           | **1.565** | **1.532** |   **97,89%** |
-
-Ba giới hạn cần nêu kèm kết quả trên.
-
-<!-- {{T4.6a}} ba gioi han cua phep do mau nen -->
-
-**Bảng 4.8.** Ba giới hạn của phép đo bộ nhận màu nền
-
-| # | Giới hạn | Chi tiết |
-|:--:|---|---|
-| 1 | **542 ảnh bị loại khỏi phép đo** | Toàn bộ lớp không xác định, cùng các ảnh chụp ban đêm hoặc hồng ngoại mà chính người gán nhãn cũng không xác định được màu |
-| 2 | **Dạng lỗi chủ đạo: biển trắng bị xếp thành biển xanh** | **21 trên 33** trường hợp sai, do một số điểm ảnh ám lạnh vượt ngưỡng bão hoà |
-| 3 | **Phạm vi phép đo hẹp hơn phạm vi mô-đun** | Bộ dữ liệu không chứa biển đỏ và biển ngoại giao nên hai nhánh này chưa có số liệu đánh giá — ghi thành **hạn chế số 10** ở mục 6.2 |
-
-Cần lưu ý thêm rằng toàn bộ ảnh của bộ dữ liệu này đã bị biến đổi tỉ lệ về khung vuông trước khi công bố, nên bộ không dùng được để đánh giá độ chính xác nhận dạng ký tự — phép biến đổi phá huỷ tỉ lệ khung hình mà thuật toán ước lượng số dòng dựa vào. Màu nền không chịu ảnh hưởng, do đó bộ dữ liệu chỉ được dùng cho đúng câu hỏi về màu sắc.
+**d) Độ chính xác đo được.** Trên bộ ảnh biển cắt sẵn có nhãn màu do người gán và **chưa từng dùng để hiệu chỉnh**, bộ phân loại đạt **97,89%** trên 1.565 ảnh (vàng 98,56% · trắng 97,40% · xanh 96,83%). Ba giới hạn phải nêu kèm: mẫu **không có biển đỏ và biển ngoại giao** nên hai nhánh đó chưa có số liệu; nhãn gán trên **vùng biển đã cắt sẵn** chứ không phải qua bộ phát hiện thật; và ba lớp **rất lệch nhau về cỡ mẫu**, nên con số tổng nghiêng theo hai lớp lớn.
 
 ### 4.6.8. Tối ưu tầng chạy cho suy luận trên CPU
 
@@ -295,26 +262,9 @@ Kết quả đo ở 5.6.1: p95 giảm từ 1.143,10 xuống **509,76 ms**, trung
 
 ### 4.7.1. Kiến trúc phân tầng và tầng nghiệp vụ
 
-Máy chủ tổ chức thành năm tầng với luồng phụ thuộc một chiều nghiêm ngặt: tầng
-lõi được mọi tầng khác dùng nhưng không phụ thuộc tầng nào. Kiến trúc và các
-thành phần cụ thể của từng tầng đã trình bày ở **Hình 4.2**; mục này nêu ba quy
-tắc riêng khiến tầng nghiệp vụ tách biệt được khỏi hai tầng kề nó.
+Máy chủ tổ chức thành **năm tầng với luồng phụ thuộc một chiều nghiêm ngặt** (Hình 4.2). Ba quy tắc giữ cho tầng nghiệp vụ tách biệt khỏi hai tầng kề nó: tầng định tuyến **không chứa truy vấn** (mọi truy cập dữ liệu đi qua tầng kho, nên một thay đổi lược đồ có bán kính ảnh hưởng gói trong một mô-đun); tầng kho **không tự xác nhận giao dịch** (lưu một lượt nhận dạng cùng toàn bộ biển số thuộc lượt đó là **một thao tác logic duy nhất**); và mỗi ngoại lệ mang **hai mô tả** — thông điệp tiếng Việt kèm hành động khắc phục đi vào phản hồi HTTP, mô tả kỹ thuật chỉ đi vào nhật ký, nên vết ngăn xếp không lộ ra người dùng (NFR-S4). Bảng đầy đủ ở **Phụ lục VII**.
 
-<!-- {{T4.7a}} ba quy tac cua tang nghiep vu -->
-
-**Bảng 4.9.** Ba quy tắc giữ cho tầng nghiệp vụ tách biệt
-
-| Quy tắc | Nội dung | Hệ quả |
-|---|---|---|
-| Tầng định tuyến **không chứa truy vấn** | Mọi truy cập dữ liệu đi qua tầng kho dữ liệu | Một thay đổi lược đồ có **bán kính ảnh hưởng gói trong một mô-đun**, không lan ra tầng định tuyến |
-| Tầng kho **không tự xác nhận giao dịch** | Chỉ đẩy thay đổi xuống phiên làm việc; việc xác nhận thuộc về tầng gọi | Lưu một lượt nhận dạng cùng toàn bộ biển số thuộc lượt đó là **một thao tác logic duy nhất** — xác nhận giữa chừng sẽ để lại bản ghi nửa vời |
-| Mỗi ngoại lệ mang **hai mô tả** | Thông điệp tiếng Việt kèm hành động khắc phục đi vào thân phản hồi HTTP; mô tả kỹ thuật chỉ đi vào nhật ký | Cây ngoại lệ ánh xạ thẳng sang mã trạng thái HTTP, kèm bộ xử lý bắt tất cả để ngoại lệ ngoài dự kiến **không làm lộ vết ngăn xếp** ra người dùng (NFR-S4) |
-
-Phần lớn sự cố gặp trong quá trình cài đặt nằm ở **ranh giới giữa mã nguồn và
-môi trường thực thi** — nguồn cấu hình, tầng lưu trữ, bảng mã đầu ra — và đều
-vượt qua được kiểm thử đơn vị. Đây là lập luận thực nghiệm cho việc bộ kiểm thử
-phải có kiểm thử tích hợp chạy trên đường dẫn thật, không chỉ kiểm thử đơn vị
-với thành phần giả lập.
+Phần lớn sự cố gặp khi cài đặt nằm ở **ranh giới giữa mã nguồn và môi trường thực thi** — nguồn cấu hình, tầng lưu trữ, bảng mã đầu ra — và đều vượt qua được kiểm thử đơn vị; đó là lập luận thực nghiệm cho việc bộ kiểm thử phải có kiểm thử tích hợp chạy trên đường dẫn thật.
 
 ### 4.7.2. Hợp nhất các biến thể đọc sai trong chuỗi khung hình video
 
@@ -335,38 +285,9 @@ Riêng ở khoảng cách bằng 2, hai điều kiện trên vẫn chưa đủ c
 
 **a) Lược đồ.** Cơ sở dữ liệu gồm hai bảng có quan hệ một–nhiều: bảng tác vụ ghi nhận mỗi lần sử dụng hệ thống, và bảng lịch sử ghi nhận mỗi biển số được phát hiện. Việc tách thành hai bảng là điều kiện để thống kê đếm đúng, bởi _lượt nhận dạng_ và _biển số phát hiện được_ là hai đại lượng khác nhau: một ảnh chứa ba phương tiện tạo ra một lượt và ba bản ghi. Gộp hai khái niệm sẽ làm số lượt sử dụng bị đánh giá cao hơn thực tế đúng bằng số biển số trung bình trên mỗi ảnh.
 
-<!-- {{T4.7}} luoc do hai bang cua co so du lieu -->
+Bảng `detection_job` có 11 cột theo dõi trạng thái tác vụ; bảng `detection_history` có 23 cột lưu từng biển số phát hiện được. **Lược đồ đầy đủ ở Phụ lục VII.** Ba cột đáng chú ý vì là hệ quả trực tiếp của các quyết định đã nêu: `raw_ocr_text` cho phép đo đóng góp thuần của khối hậu xử lý (5.5.2); `source_job_id` gom nhiều biển của cùng một lần tải lên về một nhóm, thiếu nó thì thống kê đếm sai; và `upper_char_count` lưu *bằng chứng* để suy ra cách trình bày biển hai dòng lúc đọc, thay vì đoán từ chuỗi phẳng vốn nhập nhằng.
 
-**Bảng 4.10.** Lược đồ cơ sở dữ liệu — hai bảng, quan hệ một–nhiều
-
-| Bảng | Cột | Kiểu | Ghi chú |
-|---|---|---|---|
-| **`detection_job`** _(11 cột)_ | `id` | `VARCHAR(36)` | Khoá chính, UUID |
-| | `input_type` · `status` | `VARCHAR(16)` | `image`\|`video`\|`webcam`; `pending`\|`processing`\|`completed`\|`failed`\|`cancelled` |
-| | `progress` | `FLOAT` | 0,0 – 1,0 |
-| | `source_path` · `output_path` | `VARCHAR(512)` | Cho phép rỗng |
-| | `error_message` | `TEXT` | Chỉ phía máy chủ, không trả ra API |
-| | `total_frames` · `processed_frames` | `INTEGER` | Dùng cho tác vụ video |
-| | `created_at` · `completed_at` | `DATETIME` | |
-| **`detection_history`** _(23 cột)_ | `id` | `INTEGER` | Khoá chính |
-| | `plate_number` · `raw_ocr_text` | `VARCHAR(32)` | **Lưu song song** chuỗi đã chuẩn hoá và chuỗi thô |
-| | `confidence` · `ocr_confidence` | `FLOAT` | Của **bộ phát hiện** và của **bộ nhận dạng** — hai đại lượng khác nhau |
-| | `image_path` · `plate_image_path` | `VARCHAR(512)` | Ảnh gốc và vùng biển đã cắt |
-| | `bbox_x` · `bbox_y` · `bbox_w` · `bbox_h` | `INTEGER` | Hộp giới hạn |
-| | `is_valid_format` | `BOOLEAN` | Có khớp quy chuẩn Việt Nam không |
-| | `plate_line_count` · `upper_char_count` | `INTEGER` | 1 hoặc 2 dòng; số ký tự dòng trên (3 hoặc 4) |
-| | `plate_kind` · `plate_color` · `plate_color_confidence` | `VARCHAR(16)` · `FLOAT` | Họ biển và màu nền, cho phép rỗng |
-| | `video_time_seconds` | `FLOAT` | Mốc thời gian trong video, rỗng với ảnh tĩnh |
-| | `processing_time` · `detected_time` · `created_at` | `FLOAT` · `DATETIME` | |
-| | `source_job_id` | `VARCHAR(36)` | **Khoá ngoại** trỏ `detection_job.id` |
-
-Ba cột đáng chú ý vì chúng là **hệ quả trực tiếp của các quyết định đã nêu**:
-`raw_ocr_text` cho phép đo đóng góp thuần của khối hậu xử lý (mục 5.5.2);
-`source_job_id` gom nhiều biển của cùng một lần tải lên về một nhóm, nếu thiếu
-thì thống kê đếm sai; và `upper_char_count` lưu *bằng chứng* để suy ra cách trình
-bày biển hai dòng lúc đọc, thay vì đoán từ chuỗi phẳng vốn nhập nhằng.
-
-**b) Hai quyết định thiết kế dữ liệu đáng chú ý.** Thứ nhất, chuỗi ký tự thô do bộ nhận dạng trả về và chuỗi đã qua chuẩn hoá được lưu song song trong hai cột riêng biệt. Đây là điều kiện cần để định lượng đóng góp của khối hậu xử lý: hiệu số giữa độ chính xác tính trên hai cột này chính là chỉ số NFR-A6 trừ NFR-A5 báo cáo ở mục 5.5.2. Thứ hai, hệ thống lưu số ký tự thuộc dòng trên của biển hai dòng, nhằm giải quyết một trường hợp nhập nhằng về nguyên tắc: chuỗi tám ký tự của biển hai dòng có thể được nhóm theo hai cách đều hợp lệ, và ranh giới giữa hai dòng — thông tin duy nhất phân định được — bị chính bước ghép ngang loại bỏ. Giá trị này thu được không tốn thêm chi phí tính toán vì bộ nhận dạng trả về một mảnh kết quả cho mỗi nửa ảnh.
+**b) Hai quyết định dữ liệu đáng chú ý.** Chuỗi thô và chuỗi đã chuẩn hoá lưu **song song ở hai cột**: hiệu số độ chính xác giữa chúng chính là NFR-A6 − NFR-A5 ở mục 5.5.2. Và hệ thống lưu **số ký tự dòng trên** của biển hai dòng, vì chuỗi tám ký tự nhóm được theo hai cách đều hợp lệ mà ranh giới hai dòng — thông tin duy nhất phân định được — bị chính bước ghép ngang loại bỏ; giá trị này thu được không tốn thêm chi phí vì bộ nhận dạng vốn trả một mảnh cho mỗi nửa ảnh.
 
 ### 4.7.4. Giao diện lập trình
 
@@ -392,34 +313,12 @@ Cần lưu ý rằng thiết kế ban đầu có năm màn hình. Màn hình t�
 
 ### 4.8.2. Nguyên tắc trải nghiệm người dùng
 
-Mọi thành phần hiển thị dữ liệu đều cài đặt đủ bốn trạng thái: đang tải, có dữ liệu, rỗng và lỗi. Thiếu trạng thái đang tải khiến giao diện có biểu hiện như bị treo và người dùng thao tác lại, làm tăng tải không cần thiết; thiếu trạng thái rỗng khiến màn hình trắng không phân biệt được với lỗi hệ thống. Trạng thái rỗng xuất hiện với ba ý nghĩa cần ba thông điệp khác nhau: chưa có lượt nhận dạng nào, bộ lọc không khớp bản ghi nào, và ảnh không chứa biển số. Ý nghĩa thứ ba là biểu hiện ở tầng giao diện của cùng một quyết định đã áp dụng tại tầng giao diện lập trình và tầng suy luận: không tìm thấy đối tượng không phải là lỗi.
+Mọi thành phần hiển thị dữ liệu cài đặt đủ **bốn trạng thái**: đang tải, có dữ liệu, rỗng và lỗi — thiếu trạng thái rỗng thì màn hình trắng không phân biệt được với lỗi hệ thống. Trạng thái rỗng có ba thông điệp khác nhau, trong đó *ảnh không chứa biển số* là biểu hiện ở tầng giao diện của cùng một quyết định đã áp ở tầng suy luận: **không tìm thấy đối tượng không phải là lỗi**. Thông báo lỗi viết theo cấu trúc hiện tượng – nguyên nhân – khắc phục (NFR-U3). Giao diện hiển thị **đồng thời chuỗi thô và chuỗi đã chuẩn hoá khi hai chuỗi khác nhau**, biến một cột dữ liệu phục vụ nghiên cứu thành bằng chứng quan sát được ngay khi trình diễn.
 
-Thông báo lỗi được viết bằng tiếng Việt theo cấu trúc ba phần — hiện tượng, nguyên nhân và hành động khắc phục (NFR-U3) — trong khi chi tiết kỹ thuật được chuyển hướng vào nhật ký phía máy chủ thay vì bị loại bỏ. Giao diện hiển thị đồng thời chuỗi thô và chuỗi đã chuẩn hoá khi hai chuỗi khác nhau, qua đó biến một cột dữ liệu phục vụ nghiên cứu thành bằng chứng quan sát được ngay trong quá trình trình diễn; do chỉ hiển thị khi có thay đổi, giao diện không bị rối bởi phần lớn trường hợp mà khối hậu xử lý không can thiệp.
-
-Một nguyên tắc thiết kế đáng ghi nhận thuộc về client nhận dạng thời gian thực. Do tốc độ suy luận trên CPU chỉ đạt khoảng 5 khung hình mỗi giây, một vòng lặp gửi yêu cầu theo chu kỳ cố định sẽ khởi tạo yêu cầu mới trước khi yêu cầu trước đó hoàn tất, khiến hàng đợi tăng không giới hạn. Giải pháp là duy trì đúng một yêu cầu đang xử lý tại mỗi thời điểm; khung hình đến trong lúc kênh bận sẽ bị bỏ qua thay vì xếp hàng, do khung hình kế tiếp luôn cập nhật hơn khung hình bị bỏ. Màn hình tương ứng đã được đưa ra khỏi phạm vi, nhưng nguyên tắc này vẫn là khuyến nghị bắt buộc cho mọi client sử dụng điểm cuối nhận dạng theo khung hình.
+Riêng client nhận dạng theo khung hình giữ **đúng một yêu cầu đang xử lý** tại mỗi thời điểm: ở tốc độ ~5 khung/giây trên CPU, một vòng lặp gửi theo chu kỳ cố định sẽ khiến hàng đợi tăng không giới hạn, nên khung hình đến trong lúc kênh bận bị **bỏ qua thay vì xếp hàng** — khung kế tiếp luôn cập nhật hơn khung bị bỏ.
 
 ## 4.9. Triển khai bằng Docker
 
-Đóng gói phục vụ NFR-C1: môi trường chạy tái lập được, không phụ thuộc máy cá nhân. Ảnh Docker của máy chủ được dựng hai giai đoạn, cài **hai tệp khai báo phụ thuộc thành hai lớp riêng** để thay đổi một tầng không làm mất bộ đệm tầng kia (hệ quả trực tiếp của ràng buộc môi trường ở mục 4.3.1), chạy dưới người dùng không đặc quyền, giới hạn tường minh số luồng tính toán để hai container không cạnh tranh nhân CPU đến mức cùng chậm, và đặt thời gian chờ khởi động của cơ chế kiểm tra sức khoẻ đủ dài cho việc nạp trọng số. Ảnh Docker của giao diện được dựng rồi phục vụ tĩnh qua máy chủ web nhẹ — ảnh chạy không chứa Node hay mã nguồn. **Trọng số mô hình không nằm trong ảnh Docker** mà gắn từ ngoài, cùng một volume riêng cho bộ đệm mô hình PaddleOCR — không có volume này thì mỗi lần `down && up` phải tải lại vài trăm MB và không có mạng thì container không khởi động được. Bảng biến môi trường ở **Phụ lục F.2**. **Trạng thái kiểm chứng:** `docker compose config` hợp lệ; đo hiệu năng trong container thuộc Chương 5.
+Đóng gói phục vụ NFR-C1: môi trường chạy tái lập được, không phụ thuộc máy cá nhân. Ảnh Docker của máy chủ dựng **hai giai đoạn**, chạy dưới người dùng không đặc quyền, **giới hạn tường minh số luồng tính toán** để hai container không cạnh tranh nhân CPU, và đặt thời gian chờ khởi động của cơ chế kiểm tra sức khoẻ đủ dài cho việc nạp trọng số. Ảnh giao diện được dựng rồi phục vụ tĩnh qua máy chủ web nhẹ — ảnh chạy không chứa Node hay mã nguồn. **Trọng số mô hình không nằm trong ảnh Docker** mà gắn từ ngoài, cùng một volume riêng cho bộ đệm mô hình PaddleOCR; thiếu volume này thì mỗi lần dựng lại phải tải vài trăm MB. Bảng biến môi trường ở **Phụ lục VII**. **Trạng thái kiểm chứng:** `docker compose config` hợp lệ; đo hiệu năng trong container thuộc Chương 5.
 
 ---
-
-## 4.10. Những chỗ cài đặt lệch khỏi thiết kế, và lý do
-
-Nguyên tắc: **mọi điểm lệch đều được nêu, kể cả những điểm chưa được giải quyết.**
-
-<!-- {{T4.10a}} tong hop cac diem lech giua thiet ke va cai dat -->
-
-**Bảng 4.11.** Tổng hợp chín điểm lệch giữa thiết kế và cài đặt
-
-|  #  | Thiết kế                                          | Cài đặt thực tế                                                             | Loại lệch                       | Trạng thái             |
-| :-: | ------------------------------------------------- | --------------------------------------------------------------------------- | ------------------------------- | ---------------------- |
-|  1  | `StubPipeline` là phương án lùi khi thiếu mô hình | `UnavailablePipeline` là phương án lùi; stub chỉ chạy khi opt-in tường minh | **Cải tiến so với thiết kế**    | Đã giải quyết          |
-|  2  | Một môi trường ảo Python                          | **Ba** môi trường ảo tách biệt                                              | Bắt buộc bởi xung đột phụ thuộc | Đã giải quyết          |
-|  3  | FR-2.6: có nút huỷ tác vụ video                   | Đưa ra khỏi phạm vi; nút đã gỡ khỏi giao diện                    | **Thu hẹp phạm vi**             | ➖ Không áp dụng       |
-|  4  | Mô hình chính thức imgsz=640 trên phép chia tập sạch      | Đã có models/best.pt (imgsz=640, phép chia tập v3, mAP@0.5 0,9829)                  | Đúng thiết kế                   | ✅ Đã giải quyết       |
-|  5  | NFR-P1: độ trễ E2E p95 ≤ 800 ms                   | Đo được **509,76 ms** sau đợt tối ưu tầng suy luận (4.4); từng là 1.143,10 ms | ✅ **Đạt mục tiêu**             | ✅ Đã khép             |
-|  6  | FR-2.5: tác vụ video xuất video đã chú thích      | Đưa ra khỏi phạm vi                                                          | **Thu hẹp phạm vi**             | ➖ Không áp dụng       |
-|  7  | Bật oneDNN để tăng tốc CPU                        | Buộc phải tắt do lỗi thư viện                                               | Bắt buộc bởi lỗi thượng nguồn   | Đã ghi nhận            |
-|  8  | Khử rò rỉ bằng phash                              | Còn rò rỉ tồn dư không khử được bằng phash                                  | **Giới hạn phương pháp**        | Đã ghi nhận            |
-|  9  | Bộ đo độ chính xác OCR đo hệ thống đang giao      | Bộ đo gọi thẳng recognizer + normalizer, **bỏ qua tầng điều phối**          | **Lỗi phương pháp đo**          | ✅ Đã phát hiện và sửa |

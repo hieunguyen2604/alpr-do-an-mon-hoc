@@ -1408,12 +1408,12 @@ hợp đồng mà detector thực thi. Kiểm chứng 13/08/2026: `build_pipelin
 
 | Chỉ tiêu | Trạng thái | Xem số ở |
 |---|---|---|
-| **NFR-A5 · A6 · A7** — đúng cả chuỗi | ❌ **Không đạt**. Toàn bộ khoảng cách nằm ở **biển hai dòng**; biển một dòng đạt 0,9541, vượt mục tiêu | Quyển, mục 5.5 và Bảng 5.13 |
+| **NFR-A5 · A6 · A7** — đúng cả chuỗi | ❌ **Không đạt**. Toàn bộ khoảng cách nằm ở **biển hai dòng**; biển một dòng đạt 0,9541, vượt mục tiêu | Quyển, mục 5.5 và Bảng 5.11 |
 | **NFR-P1** — độ trễ một ảnh p95 | 🟡 Đạt sàn 1.500 ms, chưa đạt mục tiêu 800 ms. **Thoái lui có chủ ý** đổi lấy 34 biển đọc thêm | Quyển, mục 5.6.1 |
 | **NFR-A9** — độ chính xác theo điều kiện ảnh | ⬜ **Không đo được**, không phải chưa tới lượt: bộ dữ liệu không có nhãn điều kiện chụp | Quyển, mục 5.9.2 |
 
 Mọi chỉ tiêu còn lại — phát hiện, thông lượng, tài nguyên, độ tin cậy, chịu
-tải, bảo trì — đều **đạt**. Bảng đối chiếu đầy đủ ở Bảng 5.13 của quyển.
+tải, bảo trì — đều **đạt**. Bảng đối chiếu đầy đủ ở Bảng 5.11 của quyển.
 
 ### 14.3. Chưa xong — chức năng
 

@@ -12,9 +12,7 @@ ALPR là lõi của bốn nhóm ứng dụng tại Việt Nam: **bãi đỗ xe t
 
 ### 1.1.3. Vì sao không thể dùng trực tiếp giải pháp nước ngoài
 
-**(a) Biển hai dòng là điểm suy giảm đã đo được, không phải rủi ro giả định.** Trên tập kiểm thử cân bằng có chủ ý của bộ **RodoSol-ALPR (Brazil)** — 4.000 ảnh ô tô biển **một dòng**, 4.000 ảnh xe máy biển **hai dòng** — hệ thống thương mại **OpenALPR** nhận đúng **94,3% biển một dòng nhưng chỉ 45,7% biển hai dòng, chênh 48,6 điểm phần trăm**, không biến số nào khác thay đổi ngoài bố cục biển [2]<!-- laroca_2022_crossdataset -->. Cũng nghiên cứu này: cả 12 phương pháp và 2 hệ thống thương mại đều **không vượt quá 70%** recognition rate, và có công trình phải **loại bỏ hoàn toàn xe máy** khỏi thí nghiệm [2]<!-- laroca_2022_crossdataset -->.
-
-> **Ghi chú về phạm vi áp dụng của số liệu.** Cặp **94,3% / 45,7%** (chênh **48,6 điểm phần trăm**) đo trên **RodoSol-ALPR của Brazil**, **không phải trên dữ liệu Việt Nam**; dẫn như một ***analogue*** định lượng về độ khó của biển hai dòng, chọn Brazil vì cũng là nước có tỉ lệ xe máy cao. **Tuyệt đối không được trình bày cặp số này như số liệu Việt Nam** — số liệu Việt Nam do chính nhóm thực hiện đo nằm ở **Chương 5**.
+**(a) Biển hai dòng là điểm suy giảm đã đo được, không phải rủi ro giả định.** Trên tập kiểm thử cân bằng có chủ ý của bộ **RodoSol-ALPR (Brazil)** — 4.000 ảnh ô tô biển **một dòng**, 4.000 ảnh xe máy biển **hai dòng** — hệ thống thương mại **OpenALPR** nhận đúng **94,3% biển một dòng nhưng chỉ 45,7% biển hai dòng, chênh 48,6 điểm phần trăm**, không biến số nào khác thay đổi ngoài bố cục biển [2]<!-- laroca_2022_crossdataset -->. **Cặp số này đo trên dữ liệu Brazil, dẫn ra như một *analogue* định lượng về độ khó của biển hai dòng; số liệu Việt Nam do nhóm tự đo nằm ở Chương 5.** Cũng nghiên cứu này: cả 12 phương pháp và 2 hệ thống thương mại đều **không vượt quá 70%** recognition rate, và có công trình phải **loại bỏ hoàn toàn xe máy** khỏi thí nghiệm [2]<!-- laroca_2022_crossdataset -->.
 
 **(b) Căn cứ pháp lý và cấu trúc chuỗi ký tự là đặc thù quốc gia.** Biển số Việt Nam theo **TT 79/2024/TT-BCA** (hiệu lực 01/01/2025) [3]<!-- bocongan_2024_tt79 -->, sửa đổi bởi **TT 13/2025** [4]<!-- bocongan_2025_tt13 --> và **TT 51/2025** [5]<!-- bocongan_2025_tt51 -->; kích thước vật lý theo **QCVN 08:2024/BCA** [6]<!-- bocongan_2024_qcvn08 -->. *(Nhiều tài liệu trong nước vẫn viện dẫn TT 24/2023 — đã hết hiệu lực từ 01/01/2025.)* Ba đặc thù sau **không học được từ dữ liệu nước ngoài**. **(i) Tập ký tự sê-ri phụ thuộc vị trí:** vị trí thứ nhất thuộc một tập **20 chữ cái** có `G` không có `R` [7]<!-- bocongan_2024_nhandienbienso -->, còn vị trí thứ hai của biển mô tô thuộc **một tập 20 chữ khác** có `R` không có `G`; áp một danh sách phẳng chung sẽ **đọc sai toàn bộ lớp biển xe máy có `R` ở vị trí thứ hai**, và hậu xử lý không cứu được. **(ii) Mã địa phương hữu hạn, có lỗ hổng:** dải 11–99 chỉ **81 mã đang dùng**, tám mã `13, 42, 44, 45, 46, 87, 91, 96` chưa gán — nên `\d{2}` cho qua tám chuỗi không bao giờ tồn tại. **(iii) Tỉ lệ khung hình phân tách rõ hai bố cục** [6]<!-- bocongan_2024_qcvn08 -->: 110 × 520 mm → **4,727** (một dòng); 165 × 330 → **2,000** và 140 × 190 → **1,357** (hai dòng). Không biển nào rơi vào khoảng mở **(2,000 ; 4,727)** — đó là cơ sở hình học để phân loại số dòng.
 
@@ -56,9 +54,7 @@ Mỗi chỉ tiêu có **mục tiêu** và **ngưỡng tối thiểu** (bắt bu�
 
 Các chỉ tiêu độ trễ "rộng rãi" hơn bài báo ALPR vì máy phát triển **không có GPU CUDA** (CON-02): huấn luyện trên GPU Colab/Kaggle, **toàn bộ suy luận và demo chạy trên CPU**, còn bài báo thường đo trên GPU RTX/V100. Mọi số liệu hiệu năng **bắt buộc kèm cấu hình phần cứng**.
 
-> **Ghi chú về bốn yêu cầu mức *Won't*.** Sáu yêu cầu từng chuyển xuống *Won't* qua ba đợt thu gọn phạm vi: đợt 1 gỡ trang Webcam (**FR-3.1, FR-3.4**: M → W); đợt 2 gỡ trang Tổng quan (**FR-4.1**: M → W, **FR-4.2**: S → W); đợt 3 đưa **FR-2.5** (xuất video đã chú thích, M → W) và **FR-2.6** (huỷ tác vụ, S → W) ra khỏi phạm vi vì cả hai đang dở dang. **Hai trong sáu đã quay lại:** FR-3.1 và FR-3.4 được dựng lại cùng chế độ quét trực tiếp (4.8.1) và trở về mức *Must*, nên hiện chỉ còn bốn *Won't*.
->
-> Trong bốn yêu cầu *Must* từng bị gỡ, **chỉ còn hai nằm ngoài phạm vi: FR-4.1 và FR-2.5** — và hai cái này mất hai thứ khác hẳn nhau. FR-4.1 chỉ mất **màn hình hiển thị**: thống kê vẫn truy vấn được ở tầng giao diện lập trình và vẫn có kiểm thử tích hợp. **Riêng FR-2.5 mất chính năng lực** — hệ thống không còn xuất được video đã chú thích. Đây là quyết định phạm vi có chủ đích, nêu lại ở mục 4.1.3 và 6.2.
+Bốn yêu cầu ở mức *Won't* nằm ngoài phạm vi bản giao hàng; trong đó **FR-2.5** (xuất video đã chú thích) là yêu cầu duy nhất làm hệ thống **mất một năng lực**, các yêu cầu còn lại chỉ mất màn hình hiển thị. Chi tiết ở mục 4.1.3 và 6.2.
 
 ### 1.2.3. Tiêu chí thành công
 
@@ -94,21 +90,7 @@ Colab/Kaggle nằm **ngoài** ranh giới khi vận hành — chỉ là công c�
 
 ### 1.4.1. Phân định phần tự xây dựng và phần dùng lại
 
-Để tránh mọi nhập nhằng khi đánh giá, bảng dưới nêu rõ với từng thành phần: nguồn gốc của nó và **phần việc nhóm thực hiện đã làm**.
-
-**Bảng 1.3.** Phân định công việc theo từng thành phần
-
-| Thành phần | Nguồn gốc | Nhóm thực hiện đã làm gì |
-|---|---|---|
-| Bộ phát hiện biển số | Kiến trúc YOLO11n có sẵn, trọng số khởi đầu từ COCO | **Tự huấn luyện** trên dữ liệu Việt Nam do nhóm hợp nhất; chọn siêu tham số; đánh giá |
-| Bộ nhận dạng ký tự | Mô hình PP-OCRv5 mobile tiền huấn luyện | Tích hợp; **tự đo** so với hai bộ nhận dạng khác; thử tinh chỉnh và **báo cáo cả kết quả âm** |
-| **Khối xử lý ảnh vùng biển** | — | **Tự thiết kế và cài đặt toàn bộ**: nắn hình, phân loại bố cục, tách hai nửa, ghép ngang |
-| **Khối hậu xử lý theo quy chuẩn** | — | **Tự thiết kế và cài đặt toàn bộ**: mặt nạ vị trí, tập mã tỉnh, bảng ánh xạ nhầm lẫn |
-| Bộ dữ liệu | 7 bộ ảnh công khai, giấy phép ở Phụ lục C | **Tự hợp nhất, khử trùng lặp chéo bộ, chia tập có kiểm soát rò rỉ**; gán nhãn chuỗi cho tập con |
-| Máy chủ, giao diện, đóng gói | Thư viện mã nguồn mở (FastAPI, React, Docker) | **Tự thiết kế kiến trúc và cài đặt**; viết bộ kiểm thử |
-| Quy trình đo và báo cáo | — | **Tự xây dựng toàn bộ**: công cụ đo, giao thức, phân tích lỗi |
-
-Hai khối in đậm ở giữa bảng là phần **không có sẵn trong bất kỳ thư viện nào** và là đóng góp kỹ thuật chính của đề tài.
+Bảng phân định chi tiết từng thành phần — nguồn gốc và phần việc nhóm thực hiện đã làm — đặt ở **Phụ lục IV**. Hai khối **không có sẵn trong bất kỳ thư viện nào** và là đóng góp kỹ thuật chính của đề tài: khối xử lý ảnh vùng biển (nắn hình, phân loại bố cục, tách hai nửa, ghép ngang) và khối hậu xử lý theo quy chuẩn (mặt nạ vị trí, tập mã tỉnh, bảng ánh xạ nhầm lẫn).
 
 ## 1.5. Đóng góp của đề tài
 
@@ -136,4 +118,4 @@ Các kết quả trên 99% trong tài liệu ALPR quốc tế thường dựa tr
 
 ### 1.5.2. Những gì đề tài KHÔNG tuyên bố
 
-Bốn điều loại trừ. **Không** tuyên bố vượt các con số độ chính xác cao nhất trong nước — chúng đo trên tập dữ liệu riêng không công khai, **không có cơ sở so sánh công bằng**. **Không** đề xuất kiến trúc mạng nơ-ron mới; đề tài **tích hợp và tinh chỉnh**. **Không** giải quyết các thách thức mở — độ phân giải rất thấp, tổng quát hoá xuyên tập dữ liệu, che khuất nặng (**Hướng phát triển, Chương 6**). Mọi số liệu hiệu năng là **số liệu CPU**, **không so sánh trực tiếp được** với FPS đo trên GPU.
+Đề tài **không** tuyên bố vượt các con số độ chính xác cao nhất trong nước (chúng đo trên tập dữ liệu riêng không công khai, không có cơ sở so sánh công bằng), **không** đề xuất kiến trúc mạng nơ-ron mới, và **không** giải quyết các thách thức mở như độ phân giải rất thấp hay tổng quát hoá xuyên tập dữ liệu (Chương 6). Mọi số liệu hiệu năng là **số liệu CPU**, không so sánh trực tiếp được với FPS đo trên GPU.
