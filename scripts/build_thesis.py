@@ -147,7 +147,11 @@ BUNDLE_FILES: tuple[tuple[str, str], ...] = (
 # không có mở rộng này, nên trước đây các neo ấy bị nuốt im lặng và cột "Trang"
 # của Danh mục hình vẽ / Danh mục bảng biểu in ra rỗng — trường PAGEREF vẫn
 # sinh ra nhưng không có đích để trỏ tới. Xem gen_front_matter_lists._pageref.
-PANDOC_FROM: str = "gfm+raw_attribute+bracketed_spans"
+# ``-autolink_bare_uris``: GFM tu bien moi chuoi dang ``a@b`` thanh LIEN KET
+# MAILTO. Chi so ``mAP@0.5`` khop dung dang do, nen ban .docx co 6 lien ket
+# ``mailto:mAP@0.5`` va PDF in ra chung trong ngoac vuong kem mau xanh. Khong
+# co dia chi thu nao trong quyen, nen tat han cho ca tai lieu.
+PANDOC_FROM: str = "gfm+raw_attribute+bracketed_spans-autolink_bare_uris"
 # Do sau muc luc khong con o day: truong TOC nam trong 01-front-matter.md
 # (muc E) va tu mang tham so `\o "1-2"`. Xem gen_front_matter_lists.py.
 

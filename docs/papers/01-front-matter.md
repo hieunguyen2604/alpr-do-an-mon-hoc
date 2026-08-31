@@ -133,7 +133,6 @@ Nhóm cũng xin cảm ơn quý thầy cô Trường Đại học Công nghệ Th
 
      CHƯƠNG 5. THỰC NGHIỆM VÀ ĐÁNH GIÁ
          5.1. Mục tiêu và phương pháp đánh giá
-         5.2.---
          5.2. Môi trường thực nghiệm
          5.3. Bộ dữ liệu thực nghiệm
          5.4. Đánh giá bộ phát hiện biển số
