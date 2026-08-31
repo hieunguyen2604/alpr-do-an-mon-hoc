@@ -170,20 +170,21 @@ class StorageService:
 
     def get_path(self, relative_path: str) -> Path:
         """Resolve and verify absolute path for a stored relative path."""
-        root = self._settings.storage_dir.resolve()
+        root = self._settings.storage_root.resolve()
         candidate = (root / relative_path).resolve()
         try:
             candidate.relative_to(root)
         except ValueError as error:
             raise ValidationError(
-                f"Path {relative_path!r} escapes the storage root",
+                f"Path traversal attempt rejected: {relative_path!r} "
+                f"resolves outside the storage root",
                 context={"relative_path": relative_path},
             ) from error
         return candidate
 
     def _relative_to_root(self, path: Path) -> str:
         """Return POSIX-style path relative to storage root."""
-        root = self._settings.storage_dir.resolve()
+        root = self._settings.storage_root.resolve()
         try:
             rel = path.resolve().relative_to(root)
             return rel.as_posix()
