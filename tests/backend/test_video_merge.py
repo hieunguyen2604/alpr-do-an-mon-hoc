@@ -1,22 +1,4 @@
-"""Unit tests for the video de-duplication path of the detection service.
-
-Three behaviours, each traced to a defect the 14-second demo video exposed
-(21/07/2026: 27 history rows, 12 of them junk, plus one plate stored twice):
-
-**Fragments are dropped at accumulation.** Textless boxes and unclassified
-strings shorter than a complete plate (``S``, ``BEK``, ``187``) must never
-reach the history table -- but a *classified* short string such as a military
-plate must, because recognise-and-exclude is a finding.
-
-**One-edit variants within the time window collapse to one row.** The same
-motorcycle read as ``51P51578`` and ``51P54578`` in consecutive sampled frames
-is one plate, not two.
-
-**Majority evidence beats a single confident misread.** In the demo video the
-wrong spelling carried the higher OCR confidence; the correct one carried the
-majority of frames. Ranking is valid-format first, then frame votes, then
-confidence.
-"""
+"""Unit tests for the video de-duplication path of the detection service."""
 
 from __future__ import annotations
 
@@ -129,12 +111,7 @@ class TestCollapseVariants:
         assert _texts(survivors) == {"51P54578", "51P54579"}
 
     def test_two_edits_apart_merges_when_province_and_tail_match(self) -> None:
-        """Hai sai khac, nhung cung ma tinh va cung ba so cuoi -> gop.
-
-        Truoc day nguong la MOT sai khac nen cap nay khong gop. Buoc khu trung
-        lap mo nang nguong len HAI, kem rao: chi gop khi cung ma tinh va (cung
-        chu seri HOAC cung ba so cuoi). Cap duoi day khop rao qua `76` + `873`.
-        """
+        """Hai sai khac, nhung cung ma tinh va cung ba so cuoi -> gop."""
         acc: dict[str, tuple[DetectionResult, int, int]] = {
             "76B141873": (_entry("76B141873"), 100, 2),
             "76S111873": (_entry("76S111873"), 105, 1),
@@ -143,11 +120,7 @@ class TestCollapseVariants:
         assert _texts(survivors) == {"76B141873"}
 
     def test_two_edits_apart_does_not_merge_across_provinces(self) -> None:
-        """Rao mac tinh: hai sai khac nhung KHAC ma tinh thi khong duoc gop.
-
-        Day la ca giu cho nguong 2 khoi gop bua. Neu ai do bo dieu kien
-        `a[:2] == b[:2]` thi test nay do.
-        """
+        """Rao mac tinh: hai sai khac nhung KHAC ma tinh thi khong duoc gop."""
         acc: dict[str, tuple[DetectionResult, int, int]] = {
             "76B141873": (_entry("76B141873"), 100, 2),
             "51B111873": (_entry("51B111873"), 105, 1),

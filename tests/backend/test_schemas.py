@@ -1,18 +1,4 @@
-"""Unit tests for :mod:`backend.schemas.detection`.
-
-The schemas are the API's wire contract, so these tests are contract tests. Two
-themes run through them:
-
-**Bounds are enforced, not documented.** A confidence outside ``[0, 1]`` or a
-line count of 3 must be rejected at the boundary rather than stored and later
-charted. Pydantic does the work; the tests state which bounds were intended, so
-that relaxing one is a deliberate act with a failing test attached.
-
-**The two confidences and the two counting families stay separate.** A low
-detection confidence and a low OCR confidence mean entirely different things,
-and one image containing three plates is one job and three detections. Both
-distinctions are structural in the schema, and both are checked here.
-"""
+"""Unit tests for :mod:`backend.schemas.detection`."""
 
 from __future__ import annotations
 
@@ -40,14 +26,7 @@ _NOW = dt.datetime(2026, 7, 19, 9, 31, 22, tzinfo=dt.timezone.utc)
 
 
 def history_payload(**overrides: Any) -> dict[str, Any]:
-    """Build a complete, valid history-record payload.
-
-    Args:
-        **overrides: Fields to replace in the baseline.
-
-    Returns:
-        A dictionary accepted by :class:`DetectionHistoryResponse`.
-    """
+    """Build a complete, valid history-record payload."""
     payload: dict[str, Any] = {
         "id": 1247,
         "plate_number": "51F-12345",
@@ -113,12 +92,7 @@ class TestDetectionResultSchema:
         assert result.plate_number == "51F-12345"
 
     def test_an_unread_plate_is_representable(self) -> None:
-        """A detection with no text is a real, reportable outcome.
-
-        Making these fields mandatory would force the persistence layer to
-        invent a value, which is how recognition failures disappear from the
-        accuracy figures.
-        """
+        """A detection with no text is a real, reportable outcome."""
         result = DetectionResultSchema(
             detection_confidence=0.7,
             bbox=BoundingBoxSchema(x=1, y=2, width=3, height=4),
@@ -129,12 +103,7 @@ class TestDetectionResultSchema:
         assert result.is_valid_format is False
 
     def test_the_two_confidences_are_independent_fields(self) -> None:
-        """A high detection confidence with a low OCR one must be expressible.
-
-        That combination is the common case for a blurred plate, and merging
-        the two numbers would make it indistinguishable from an uncertain
-        detection.
-        """
+        """A high detection confidence with a low OCR one must be expressible."""
         result = DetectionResultSchema(
             detection_confidence=0.99,
             ocr_confidence=0.10,
@@ -183,8 +152,7 @@ class TestDetectionResponse:
     """The wrapper returned by the image and frame endpoints."""
 
     def test_an_image_with_no_plate_is_a_valid_successful_response(self) -> None:
-        """Not a 4xx: treating "found nothing" as an error would erase every
-        negative case from the statistics."""
+        """Not a 4xx: treating "found nothing" as an error would erase every"""
         response = DetectionResponse(
             job_id="job-1",
             input_type="image",
@@ -254,8 +222,7 @@ class TestDetectionHistoryResponse:
         assert record.source_job_id.startswith("3f2a")
 
     def test_exposes_the_box_in_both_flat_and_nested_form(self) -> None:
-        """The columns are flat in the database; a client drawing an overlay
-        wants one object, so the response carries both."""
+        """The columns are flat in the database; a client drawing an overlay"""
         record = DetectionHistoryResponse(**history_payload())
         assert record.bbox.x == record.bbox_x
         assert record.bbox.y == record.bbox_y
@@ -417,12 +384,7 @@ class TestDetectionJobResponse:
             )
 
     def test_the_error_message_is_not_part_of_the_contract(self) -> None:
-        """NFR-S4: the technical reason belongs in the log, never in a response.
-
-        Asserting on the field list rather than on one payload, so that adding
-        the field back to the schema fails here regardless of how it is
-        populated.
-        """
+        """NFR-S4: the technical reason belongs in the log, never in a response."""
         assert "error_message" not in DetectionJobResponse.model_fields
 
     def test_an_unknown_field_is_ignored_rather_than_serialised(self) -> None:
@@ -461,11 +423,7 @@ class TestStatisticsResponse:
         assert stats.total_detections == 689
 
     def test_the_two_counting_families_are_separate_fields(self) -> None:
-        """One image with three plates is one job and three detections.
-
-        A single ``total`` field would make the distinction unrepresentable and
-        the dashboard wrong by the average plates-per-image factor.
-        """
+        """One image with three plates is one job and three detections."""
         assert "total_jobs" in StatisticsResponse.model_fields
         assert "total_detections" in StatisticsResponse.model_fields
 
@@ -602,10 +560,6 @@ class TestErrorResponse:
         assert ErrorResponse(error="X", message="y").request_id is None
 
     def test_the_schema_has_no_field_for_a_traceback(self) -> None:
-        """NFR-S4, expressed as an absence rather than as a redaction step.
-
-        A field that does not exist cannot be populated by accident, which is
-        stronger than remembering to strip one.
-        """
+        """NFR-S4, expressed as an absence rather than as a redaction step."""
         forbidden = {"traceback", "stack_trace", "detail", "exception", "stacktrace"}
         assert forbidden.isdisjoint(set(ErrorResponse.model_fields))

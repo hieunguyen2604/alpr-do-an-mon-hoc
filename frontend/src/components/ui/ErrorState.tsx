@@ -1,12 +1,4 @@
-/**
- * Failure notice with a way to recover.
- *
- * The message shown here is always the Vietnamese text produced by the API
- * client's interceptor. Raw exception text, stack traces and status codes are
- * never rendered (NFR-U3, NFR-S4) — the correlation id is offered instead, so a
- * user can quote something that lets a developer find the server-side log entry
- * without any internals having been put on screen.
- */
+/** Failure notice with a way to recover. */
 
 import { AlertTriangle, RotateCcw } from 'lucide-react';
 import type { ReactNode } from 'react';
@@ -36,12 +28,7 @@ export interface ErrorStateProps {
 const DEFAULT_MESSAGE =
   'Đã xảy ra lỗi khi tải dữ liệu. Vui lòng thử lại sau ít phút.';
 
-/**
- * Render an error state.
- *
- * @param props - Title, message, retry handler and correlation id.
- * @returns The error-state element.
- */
+/** Render an error state. */
 export function ErrorState({
   title = 'Không tải được dữ liệu',
   message,

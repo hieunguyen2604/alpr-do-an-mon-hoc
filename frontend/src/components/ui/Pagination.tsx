@@ -66,12 +66,7 @@ function buildPageItems(
   return items;
 }
 
-/**
- * Render the pagination controls.
- *
- * @param props - Page state and change handlers.
- * @returns The pagination element, or `null` when there is nothing to show.
- */
+/** Render the pagination controls. */
 export function Pagination({
   page,
   totalPages,
@@ -90,11 +85,7 @@ export function Pagination({
   const lastRow = Math.min(page * pageSize, total);
   const items = buildPageItems(page, totalPages);
 
-  /**
-   * Move to a page, clamped to the valid range.
-   *
-   * @param nextPage - The requested page.
-   */
+  /** Move to a page, clamped to the valid range. */
   const goTo = (nextPage: number): void => {
     const clamped = Math.min(Math.max(nextPage, 1), Math.max(totalPages, 1));
     if (clamped !== page) {

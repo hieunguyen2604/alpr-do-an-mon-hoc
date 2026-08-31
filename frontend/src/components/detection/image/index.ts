@@ -1,8 +1,4 @@
-/**
- * Components composing the image detection page.
- *
- * Re-exported together so the page imports them in one statement.
- */
+/** Components composing the image detection page. */
 
 export { BoundingBoxOverlay } from './BoundingBoxOverlay';
 export type { BoundingBoxOverlayProps } from './BoundingBoxOverlay';

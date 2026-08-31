@@ -1,16 +1,4 @@
-/**
- * Dashboard metric tile.
- *
- * A caution about which number goes in one of these. The API separates
- * `total_jobs` (uploads) from `total_detections` (license plates): one image
- * containing three plates is **one** job and **three** detections. A tile
- * labelled "Số ảnh đã xử lý" must therefore read `total_jobs`. Filling it from
- * `total_detections` inflates the figure by the average number of plates per
- * image and produces a number plausible enough to survive review.
- *
- * The `hint` prop exists partly to make that distinction visible to the user
- * rather than only to whoever wrote the tile.
- */
+/** Dashboard metric tile. */
 
 import type { ReactNode } from 'react';
 
@@ -43,12 +31,7 @@ const TONE_CLASS: Readonly<Record<StatCardTone, string>> = {
   danger: 'bg-danger/10 text-danger',
 };
 
-/**
- * Render a metric tile.
- *
- * @param props - Label, value, icon, hint and loading state.
- * @returns The tile element.
- */
+/** Render a metric tile. */
 export function StatCard({
   label,
   value,

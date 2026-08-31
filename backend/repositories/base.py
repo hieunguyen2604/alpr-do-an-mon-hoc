@@ -97,15 +97,6 @@ class BaseRepository(Generic[ModelT, IdT]):
         stmt = select(func.count()).select_from(self.model)
         return int(self.session.execute(stmt).scalar_one())
 
-    def list_all(self, *, limit: int | None = None, offset: int = 0) -> list[ModelT]:
-        """Return rows in primary-key order."""
-        stmt: Select[tuple[ModelT]] = select(self.model).order_by(self._pk)
-        if offset:
-            stmt = stmt.offset(offset)
-        if limit is not None:
-            stmt = stmt.limit(limit)
-        return list(self.session.execute(stmt).scalars().all())
-
     # -- Update -----------------------------------------------------------
 
     def update(self, entity: ModelT, **fields: Any) -> ModelT:
@@ -131,11 +122,6 @@ class BaseRepository(Generic[ModelT, IdT]):
         self.session.delete(entity)
         self.session.flush()
         return True
-
-    def delete_instance(self, entity: ModelT) -> None:
-        """Delete an already loaded instance."""
-        self.session.delete(entity)
-        self.session.flush()
 
     def bulk_delete(self, entity_ids: Sequence[IdT]) -> int:
         """Delete many rows by primary key in as few statements as possible."""

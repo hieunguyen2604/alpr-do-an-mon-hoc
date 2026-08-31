@@ -1,22 +1,4 @@
-"""Unit tests for :mod:`backend.services.storage_service`.
-
-This module owns every byte the application writes to disk, so its tests are
-security tests before they are anything else. Three claims are checked, and each
-corresponds to a requirement that a naive implementation would silently fail:
-
-**NFR-S1 -- the type comes from the bytes.** A ``.jpg`` that is really a Windows
-executable must be refused. Both the extension and the ``Content-Type`` header
-are attacker-chosen, so the only trustworthy evidence is the file's signature.
-
-**NFR-S2 -- the supplied name never becomes a path.** The stored name is a
-freshly generated UUID, which is what makes traversal impossible rather than
-merely difficult: there is no code path from client text to the filesystem, so
-there is nothing left to sanitise. The read side re-derives the path from the
-configured root and verifies containment *after* resolution.
-
-**NFR-S3 -- the size ceiling is enforced before the type is examined**, so an
-oversized upload is rejected without the signature check ever touching it.
-"""
+"""Unit tests for :mod:`backend.services.storage_service`."""
 
 from __future__ import annotations
 
@@ -53,11 +35,7 @@ _ALL_ACCEPTED_TYPES = frozenset(
         "video/x-matroska",
     }
 )
-"""Every MIME type any endpoint accepts.
-
-Written out rather than imported from the settings so that a mistaken widening
-of the configured allow-list cannot silently widen these tests along with it.
-"""
+"""Every MIME type any endpoint accepts."""
 
 # -- Minimal byte sequences carrying a recognisable signature ---------------
 #
@@ -84,11 +62,7 @@ ZIP_BYTES = b"PK\x03\x04\x14\x00\x00\x00\x08\x00\x00\x00" + _PAD
 
 @pytest.fixture()
 def settings(tmp_path: Path) -> Settings:
-    """Build settings pointing entirely at a throwaway directory.
-
-    Every path the service touches comes from this object, which is what lets
-    the whole module be tested without monkey-patching anything.
-    """
+    """Build settings pointing entirely at a throwaway directory."""
     root = tmp_path / "storage"
     config = Settings(
         storage_root=root,
@@ -130,11 +104,7 @@ class TestMagicByteDetection:
         assert detect_media_type(data) == expected
 
     def test_mov_and_mp4_are_distinguished_by_their_brand(self) -> None:
-        """Both carry ``ftyp`` at offset 4 and differ only in the brand.
-
-        Without the brand table a QuickTime file reports as MP4 -- close enough
-        to be confusing and wrong enough to fail an allow-list naming only one.
-        """
+        """Both carry ``ftyp`` at offset 4 and differ only in the brand."""
         assert detect_media_type(MP4_BYTES) == "video/mp4"
         assert detect_media_type(MOV_BYTES) == "video/quicktime"
 
@@ -150,14 +120,7 @@ class TestMagicByteDetection:
 
     @pytest.mark.parametrize("data", [EXE_BYTES, PDF_BYTES, ZIP_BYTES])
     def test_an_unrecognised_format_never_reports_an_accepted_type(self, data: bytes) -> None:
-        """What matters is that the answer is outside the allow-list.
-
-        The exact string depends on whether the optional ``libmagic`` binding is
-        installed: with it, a PDF is reported as ``application/pdf``; without
-        it, as ``application/octet-stream``. Asserting on the literal would make
-        this test pass or fail on a deployment detail rather than on the
-        security property, which is that neither answer is an accepted type.
-        """
+        """What matters is that the answer is outside the allow-list."""
         assert detect_media_type(data) not in _ALL_ACCEPTED_TYPES
 
     @pytest.mark.parametrize("data", [b"", b"short"])
@@ -166,20 +129,12 @@ class TestMagicByteDetection:
         assert detect_media_type(data) not in _ALL_ACCEPTED_TYPES
 
     def test_the_builtin_table_alone_refuses_a_truncated_signature(self) -> None:
-        """The fallback path, exercised without ``libmagic`` in the way.
-
-        Three bytes are a JPEG prefix but not enough for the sniffer's 12-byte
-        minimum, so the built-in table must decline rather than guess.
-        """
+        """The fallback path, exercised without ``libmagic`` in the way."""
         assert _sniff_signature(b"\xff\xd8\xff") is None
         assert _sniff_signature(b"") is None
 
     def test_only_the_leading_bytes_are_consulted(self) -> None:
-        """A JPEG header followed by arbitrary payload is still a JPEG here.
-
-        Signature detection identifies the container, not the whole file --
-        decoding is what catches a truncated image, and it happens later.
-        """
+        """A JPEG header followed by arbitrary payload is still a JPEG here."""
         assert detect_media_type(JPEG_BYTES + b"whatever" * 100) == "image/jpeg"
 
 
@@ -212,11 +167,7 @@ class TestUploadValidation:
     def test_size_is_checked_before_the_signature(
         self, storage: StorageService, settings: Settings
     ) -> None:
-        """A 500 MB file must be refused without the type check touching it.
-
-        Verified by handing in bytes that are *both* oversized and of an
-        unacceptable type: the error raised says which check ran first.
-        """
+        """A 500 MB file must be refused without the type check touching it."""
         oversized_garbage = EXE_BYTES + b"\x00" * settings.max_image_size_bytes
         with pytest.raises(FileTooLargeError):
             storage.validate_upload(oversized_garbage, kind=MediaKind.IMAGE)
@@ -286,11 +237,7 @@ class TestGeneratedFilenames:
     def test_a_hostile_filename_cannot_influence_the_stored_path(
         self, storage: StorageService, settings: Settings, hostile: str
     ) -> None:
-        """The decisive property: the name is not sanitised, it is *dropped*.
-
-        Every rule for sanitising a filename has an encoding that slips past
-        it, so the design removes the code path instead of guarding it.
-        """
+        """The decisive property: the name is not sanitised, it is *dropped*."""
         stored = storage.save_upload(JPEG_BYTES, kind=MediaKind.IMAGE, original_filename=hostile)
         assert stored.path.parent == settings.upload_dir
         assert stored.path.is_file()
@@ -331,8 +278,7 @@ class TestStoredFileMetadata:
         assert stored.path.read_bytes() == JPEG_BYTES
 
     def test_the_relative_path_uses_posix_separators(self, storage: StorageService) -> None:
-        """A Windows backslash in the database would break the URL after a move
-        to the Linux container."""
+        """A Windows backslash in the database would break the URL after a move"""
         stored = storage.save_upload(JPEG_BYTES, kind=MediaKind.IMAGE)
         assert "\\" not in stored.relative_path
         assert stored.relative_path.startswith("uploads/")
@@ -378,11 +324,7 @@ class TestPathTraversalOnRead:
     def test_containment_is_checked_after_resolution_not_before(
         self, storage: StorageService
     ) -> None:
-        """``uploads/../../etc/passwd`` looks contained until ``..`` collapses.
-
-        Checking the string before resolving would pass this through, which is
-        exactly the bug the implementation's ordering avoids.
-        """
+        """``uploads/../../etc/passwd`` looks contained until ``..`` collapses."""
         candidate = "uploads/../../etc/passwd"
         assert candidate.startswith("uploads/")
         with pytest.raises(ValidationError):

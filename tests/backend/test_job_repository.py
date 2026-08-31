@@ -1,16 +1,4 @@
-"""Unit tests for :mod:`backend.repositories.job_repository`.
-
-The job table is what usage statistics count and what the frontend polls, so
-these tests concentrate on the two behaviours a video worker depends on:
-
-**Progress is clamped, never rejected.** Frame arithmetic overshoots ``1.0``
-routinely, and the table carries a ``CHECK`` constraint. Raising there would
-abort a job at 99% over a rounding error.
-
-**A terminal job stays terminal.** A late progress report arriving after a job
-failed or was cancelled must not drag it back out of its final state -- the
-frontend stops polling on a terminal status and would never see the change.
-"""
+"""Unit tests for :mod:`backend.repositories.job_repository`."""
 
 from __future__ import annotations
 
@@ -91,11 +79,7 @@ class TestJobListing:
             jobs.list_paginated(sort_by="detections")
 
     def test_lists_only_unfinished_jobs(self, assorted: None, jobs: JobRepository) -> None:
-        """Used at start-up to find jobs abandoned by a killed process.
-
-        Nothing will advance those, so they would otherwise sit at partial
-        progress forever while the frontend polled them without end.
-        """
+        """Used at start-up to find jobs abandoned by a killed process."""
         active = jobs.list_active()
         assert {job.status for job in active} == {
             JobStatus.PENDING.value,
@@ -106,8 +90,7 @@ class TestJobListing:
     def test_counts_every_status_including_the_unused_ones(
         self, assorted: None, jobs: JobRepository
     ) -> None:
-        """Zeros are present so a caller can index without a default, and a
-        state that has never occurred still appears in the dashboard."""
+        """Zeros are present so a caller can index without a default, and a"""
         counts = jobs.count_by_status()
         assert set(counts) == {status.value for status in JobStatus}
         assert counts[JobStatus.COMPLETED.value] == 2
@@ -138,11 +121,7 @@ class TestJobProgress:
     def test_progress_is_clamped_rather_than_rejected(
         self, jobs: JobRepository, value: float
     ) -> None:
-        """``processed / total`` gives ``1.0000001`` whenever the decoder
-        reports one more frame than the header promised. Raising would abort a
-        video job at 99% over a rounding error, and the table's CHECK
-        constraint would surface it as an opaque IntegrityError.
-        """
+        """``processed / total`` gives ``1.0000001`` whenever the decoder"""
         job = jobs.create_job(input_type=InputType.VIDEO)
         jobs.update_progress(job.id, progress=value)
         assert 0.0 <= jobs.get_by_id(job.id).progress <= 1.0
@@ -150,8 +129,7 @@ class TestJobProgress:
     def test_a_terminal_job_is_not_dragged_back_out_of_its_final_state(
         self, jobs: JobRepository
     ) -> None:
-        """The frontend stops polling on a terminal status, so a change made
-        after that point would never be seen."""
+        """The frontend stops polling on a terminal status, so a change made"""
         job = jobs.create_job(input_type=InputType.VIDEO, total_frames=100)
         jobs.mark_cancelled(job.id)
         jobs.update_progress(job.id, processed_frames=99)
@@ -214,8 +192,7 @@ class TestRetentionSweep:
     def test_leaves_a_running_job_alone_however_old(
         self, session: Session, jobs: JobRepository
     ) -> None:
-        """Deleting a job a worker is still writing to would make every
-        subsequent insert fail on the foreign key."""
+        """Deleting a job a worker is still writing to would make every"""
         make_job(
             session,
             created_at=_NOW - dt.timedelta(days=30),
@@ -230,8 +207,7 @@ class TestRetentionSweep:
         jobs: JobRepository,
         detections: DetectionRepository,
     ) -> None:
-        """Through the foreign key's ``ON DELETE CASCADE``, which is only
-        enforced because the ``foreign_keys`` pragma is switched on."""
+        """Through the foreign key's ``ON DELETE CASCADE``, which is only"""
         old = make_job(session, created_at=_NOW - dt.timedelta(days=10))
         make_detection(session, old)
         make_detection(session, old)

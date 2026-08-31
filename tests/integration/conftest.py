@@ -1,33 +1,4 @@
-"""Shared fixtures for the API integration tests.
-
-These tests drive the real application through ``TestClient``: real routers,
-real middleware, real exception handlers, real services, real SQL. Three things
-are replaced, and only three:
-
-* **the database** -- a throwaway SQLite file per test, so nothing touches the
-  developer's ``data/alpr.db``;
-* **the storage root** -- a temporary directory, so uploads are cleaned up;
-* **the pipeline** -- a fake, so the suite runs in seconds and needs no model
-  weights. This is the payoff of the dependency injection the service layer was
-  built around: the substitution is a one-line dependency override rather than
-  a monkey-patch.
-
-Why the lifespan is not run
---------------------------
-``TestClient`` executes the lifespan handler only when used as a context
-manager. It is deliberately not used that way here: the handler builds the real
-pipeline, initialises the process-wide database and loads model weights, all of
-which the overrides below replace anyway. Everything the request path reads from
-``app.state`` is set explicitly instead.
-
-Why ``SessionLocal`` is monkey-patched as well as overridden
------------------------------------------------------------
-Two code paths deliberately open a session of their own rather than accept the
-request's: the CSV export (whose generator outlives the request that returned
-it) and the background video worker. Both import the module-level
-``SessionLocal`` at call time, so a dependency override cannot reach them --
-they have to be redirected at the module.
-"""
+"""Shared fixtures for the API integration tests."""
 
 from __future__ import annotations
 
@@ -64,20 +35,7 @@ from backend.models.detection import Base
 
 
 class FakePipeline:
-    """A pipeline whose output the test decides.
-
-    Satisfies :class:`~backend.services.detection_service.PlatePipeline`
-    structurally -- it inherits from nothing, which is the point of expressing
-    that contract as a ``Protocol``: the fake does not import the service layer
-    and the service layer does not know the fake exists.
-
-    Attributes:
-        plates: Descriptions of the plates every ``process`` call should
-            report. Each entry is ``(text, raw_text, detection_confidence,
-            ocr_confidence, is_valid_format)``; ``text`` of ``None`` produces a
-            detection OCR could not read.
-        calls: How many times ``process`` has been invoked.
-    """
+    """A pipeline whose output the test decides."""
 
     def __init__(self) -> None:
         """Start with a single readable plate."""
@@ -101,21 +59,7 @@ class FakePipeline:
         return True
 
     def process(self, image: np.ndarray, *, read_text: bool = True) -> PipelineResult:
-        """Return the configured plates, positioned inside the given image.
-
-        Args:
-            image: The decoded source image; only its shape is used.
-            read_text: Whether to attach the recognised text. Honoured rather
-                than accepted-and-ignored: the detection-only path is exercised
-                through this fake, and a double that always returned text would
-                let a broken path pass.
-
-        Returns:
-            A result carrying one entry per configured plate.
-
-        Raises:
-            Exception: Whatever ``raises`` was set to, for failure-path tests.
-        """
+        """Return the configured plates, positioned inside the given image."""
         self.calls += 1
         self.last_read_text = read_text
         if self.raises is not None:
@@ -169,20 +113,7 @@ class FakePipeline:
 
 
 def encode_jpeg(width: int = 320, height: int = 240) -> bytes:
-    """Encode a small but genuinely decodable JPEG.
-
-    A real encode rather than a handcrafted header, because the upload path
-    decodes the bytes after the signature check: a file with a valid JPEG
-    header but no image data is rejected further along, which would make these
-    fixtures fail for the wrong reason.
-
-    Args:
-        width: Image width in pixels.
-        height: Image height in pixels.
-
-    Returns:
-        The encoded JPEG bytes.
-    """
+    """Encode a small but genuinely decodable JPEG."""
     image = np.zeros((height, width, 3), dtype=np.uint8)
     image[:, ::4] = 200
     image[::4, :] = 120
@@ -192,11 +123,7 @@ def encode_jpeg(width: int = 320, height: int = 240) -> bytes:
 
 
 def encode_png(width: int = 64, height: int = 48) -> bytes:
-    """Encode a small decodable PNG.
-
-    Returns:
-        The encoded PNG bytes.
-    """
+    """Encode a small decodable PNG."""
     image = np.full((height, width, 3), 90, dtype=np.uint8)
     success, buffer = cv2.imencode(".png", image)
     assert success, "failed to encode the test PNG"
@@ -220,11 +147,7 @@ PDF_BYTES = b"%PDF-1.7\n%\xe2\xe3\xcf\xd3\n1 0 obj\n<<>>\nendobj\n" + b"\x00" * 
 
 @pytest.fixture()
 def settings(tmp_path: Path) -> Settings:
-    """Configuration pointing at a throwaway database and storage root.
-
-    ``max_image_size_mb`` is set to 1 so that the oversized-upload test can
-    build its payload in memory instead of writing 10 MB.
-    """
+    """Configuration pointing at a throwaway database and storage root."""
     root = tmp_path / "storage"
     return Settings(
         app_name="ALPR test",
@@ -244,13 +167,7 @@ def settings(tmp_path: Path) -> Settings:
 
 @pytest.fixture()
 def session_factory(settings: Settings) -> Iterator[sessionmaker[Session]]:
-    """A session factory bound to the throwaway database, schema created.
-
-    Foreign keys are switched on for every connection, exactly as the real
-    engine does. Without the pragma SQLite ignores ``ON DELETE CASCADE`` and a
-    test of cascading deletion would pass against a database that never
-    cascades.
-    """
+    """A session factory bound to the throwaway database, schema created."""
     engine = create_engine(
         settings.database_url,
         connect_args={"check_same_thread": False},
@@ -273,12 +190,7 @@ def session_factory(settings: Settings) -> Iterator[sessionmaker[Session]]:
 
 @pytest.fixture()
 def db(session_factory: sessionmaker[Session]) -> Iterator[Session]:
-    """A session the *test* uses to inspect and seed the database directly.
-
-    Separate from the sessions the application opens per request, so that an
-    assertion never accidentally reads uncommitted state from the request that
-    produced it.
-    """
+    """A session the *test* uses to inspect and seed the database directly."""
     session = session_factory()
     try:
         yield session
@@ -299,11 +211,7 @@ def app(
     pipeline: FakePipeline,
     monkeypatch: pytest.MonkeyPatch,
 ) -> FastAPI:
-    """The real application, wired to the throwaway database and the fake.
-
-    Returns:
-        A fully configured application with the three dependencies overridden.
-    """
+    """The real application, wired to the throwaway database and the fake."""
     # Redirect the two paths that open their own session -- the CSV export
     # generator and the background video worker -- at the module they import
     # it from. A dependency override cannot reach either of them.
@@ -333,11 +241,5 @@ def app(
 
 @pytest.fixture()
 def client(app: FastAPI) -> TestClient:
-    """An HTTP client against the configured application.
-
-    Constructed directly rather than entered as a context manager, which is
-    what keeps the lifespan handler from running -- see the module docstring.
-    Entering it would initialise the *process-wide* engine and create the
-    developer's real ``data/alpr.db`` as a side effect of running the tests.
-    """
+    """An HTTP client against the configured application."""
     return TestClient(app)

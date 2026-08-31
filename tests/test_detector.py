@@ -1,14 +1,4 @@
-"""Unit tests for :mod:`ai.inference.detector`.
-
-The Ultralytics runtime is replaced by a fake loader in every test here. That is
-deliberate: these tests cover the *adapter* -- error handling, input validation,
-class filtering and the tensor-to-``BoundingBox`` conversion -- and none of that
-needs a real neural network. Keeping the ML runtime out makes the suite run in
-well under a second and, critically, makes it deterministic.
-
-Detection *accuracy* is not tested here; that is measured by the offline
-evaluation in :mod:`ai.evaluation`, against a labelled test split.
-"""
+"""Unit tests for :mod:`ai.inference.detector`."""
 
 from __future__ import annotations
 
@@ -39,12 +29,7 @@ from ai.inference.types import PlateDetection  # noqa: E402
 # Test doubles
 # --------------------------------------------------------------------------- #
 class FakeBoxes:
-    """Stand-in for ``ultralytics.engine.results.Boxes``.
-
-    Exposes the three attributes the adapter reads (``xyxy``, ``conf``, ``cls``)
-    as plain NumPy arrays. The adapter's ``_to_numpy`` helper accepts these
-    directly, which is exactly why it was written to be duck-typed.
-    """
+    """Stand-in for ``ultralytics.engine.results.Boxes``."""
 
     def __init__(
         self,
@@ -68,11 +53,7 @@ class FakeResult:
 
 
 class FakeYolo:
-    """Stand-in for ``ultralytics.YOLO``.
-
-    Records the keyword arguments of the last ``predict`` call so tests can
-    assert that configuration values are actually forwarded to the runtime.
-    """
+    """Stand-in for ``ultralytics.YOLO``."""
 
     def __init__(
         self,
@@ -101,20 +82,7 @@ def make_detector(
     weights_name: str = "best.pt",
     **config_overrides: Any,
 ) -> tuple[YoloPlateDetector, FakeYolo]:
-    """Build a detector backed by a fake model and a real (empty) weights file.
-
-    Args:
-        tmp_path: pytest temporary directory.
-        names: Class map the fake model advertises. ``None`` means the model
-            exposes no class map at all.
-        boxes: Boxes the fake model returns from ``predict``.
-        raise_on_predict: Exception the fake model raises instead of predicting.
-        weights_name: File name of the dummy weights file to create.
-        **config_overrides: Extra :class:`InferenceConfig` field overrides.
-
-    Returns:
-        The detector and the fake model instance it wrapped.
-    """
+    """Build a detector backed by a fake model and a real (empty) weights file."""
     weights = tmp_path / weights_name
     weights.write_bytes(b"not-real-weights")
     config = InferenceConfig(model_path=weights, **config_overrides)

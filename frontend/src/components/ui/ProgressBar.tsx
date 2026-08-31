@@ -8,13 +8,7 @@ export type ProgressBarVariant = 'primary' | 'success' | 'warning' | 'danger';
 
 /** Props of {@link ProgressBar}. */
 export interface ProgressBarProps {
-  /**
-   * Completion from 0.0 to 1.0.
-   *
-   * A ratio rather than a percentage, matching `DetectionJob.progress` so the
-   * value can be passed straight through without a conversion that could be
-   * applied twice.
-   */
+  /** Completion from 0.0 to 1.0. */
   value: number;
   variant?: ProgressBarVariant;
   /** Show the percentage beside the bar. */
@@ -40,12 +34,7 @@ const SIZE_CLASS = {
   lg: 'h-4',
 } as const;
 
-/**
- * Render a progress bar.
- *
- * @param props - Progress ratio, variant, labelling and size.
- * @returns The progress bar element.
- */
+/** Render a progress bar. */
 export function ProgressBar({
   value,
   variant = 'primary',

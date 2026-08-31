@@ -1,15 +1,4 @@
-/**
- * Shared UI component library.
- *
- * Re-exports every primitive so a page can import them in one statement:
- *
- * ```ts
- * import { Button, Card, EmptyState, Table } from '@/components/ui';
- * ```
- *
- * Types are exported alongside the components, since a page composing them
- * often needs to name a variant or a column definition.
- */
+/** Shared UI component library. */
 
 export { Badge } from './Badge';
 export type { BadgeProps, BadgeVariant } from './Badge';

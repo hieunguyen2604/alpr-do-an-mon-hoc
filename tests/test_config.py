@@ -1,18 +1,4 @@
-"""Unit tests for :class:`ai.inference.config.InferenceConfig`.
-
-Two properties matter here and both are about *failing early*:
-
-**Bad configuration must raise, not fall back.** A variable set to nonsense is a
-typo in a deployment file. Silently substituting the default would leave the
-service running with settings nobody chose and no indication anything went
-wrong -- the failure would surface later as unexplained accuracy loss.
-
-**No path may be hard-coded (NFR-M4).** Paths are derived from the package's own
-location and relative overrides are resolved against the project root, not
-against the working directory. The distinction is invisible until the service is
-launched from a different folder, at which point it decides whether the model
-loads at all.
-"""
+"""Unit tests for :class:`ai.inference.config.InferenceConfig`."""
 
 from __future__ import annotations
 
@@ -40,12 +26,7 @@ _ENV_KEYS = (
 
 @pytest.fixture(autouse=True)
 def _clean_environment(monkeypatch: pytest.MonkeyPatch) -> None:
-    """Remove every ``ALPR_`` variable so tests never inherit a real setting.
-
-    Without this the suite would pass or fail depending on the developer's
-    shell, which is the kind of flakiness that gets a test deleted rather than
-    fixed.
-    """
+    """Remove every ``ALPR_`` variable so tests never inherit a real setting."""
     for key in _ENV_KEYS:
         monkeypatch.delenv(f"{DEFAULT_ENV_PREFIX}{key}", raising=False)
         monkeypatch.delenv(f"TEST_{key}", raising=False)
@@ -70,60 +51,13 @@ class TestDefaults:
         assert InferenceConfig().ocr_use_gpu is False
 
     def test_geometry_retry_ships_on_and_super_resolution_ships_off(self) -> None:
-        """The two rungs of the retry ladder are priced differently (28/07/2026).
-
-        Measured on the same 2801-sample corpus and the same 100 test images:
-
-        =========================== ======== ============ ==========
-        Rung                        NFR-A6   plates won   p95 latency
-        =========================== ======== ============ ==========
-        neither                     0.7437   0            866 ms
-        deskew/stretch only         0.7512   34           1110 ms
-        deskew/stretch + SR         0.7512   34           1429 ms
-        =========================== ======== ============ ==========
-
-        Super-resolution therefore bought nothing for +319 ms on p95 and
-        +1381 ms on p99, and on its own pushed NFR-P1 past its 1500 ms floor.
-        Its zero is structural: every corpus crop is >= 565 px on the long
-        side while the gate opens below 200 px, so no labelled data the
-        project owns can exercise it. Off by default until that data exists;
-        the code and the switch stay.
-
-        This test exists so the defaults are a recorded decision rather than
-        an accident -- flipping either one should require reading the numbers
-        above and replacing them with better ones.
-        """
+        """The two rungs of the retry ladder are priced differently (28/07/2026)."""
         config = InferenceConfig()
         assert config.rectify_enabled is True
         assert config.sr_retry_enabled is False
 
     def test_text_detection_stays_in_the_pipeline_by_default(self) -> None:
-        """Skipping PaddleOCR's detection stage ships OFF (02/08/2026).
-
-        Two measurements disagree, and the one that ships is the one whose
-        inputs match the deployed path:
-
-        ======================== ============= =============
-        Configuration            corpus A6     demo plates
-        ======================== ============= =============
-        stock, det + rec         0.7512        **17 / 22**
-        stock, rec only          0.7508        13 / 22
-        fine-tuned, det + rec    0.6762        14 / 22
-        fine-tuned, rec only     **0.8758**    15 / 22
-        ======================== ============= =============
-
-        Every image in the 2,801-plate corpus is a pre-cropped Roboflow export,
-        so a text detector inside the crop has nothing left to localise and the
-        column reads as "detection is free to remove". The demo set runs whole
-        scenes through YOLO, whose crops are looser, and there the ordering
-        reverses: without the detection stage the recogniser reads bumper and
-        windscreen clutter as characters.
-
-        The flag stays because the fine-tuned model gains from rec-only in
-        *both* columns -- a model trained on whole-plate images has never seen a
-        fragment. Turning it on for production needs a scene-level corpus with
-        plate-string labels, which this project does not have.
-        """
+        """Skipping PaddleOCR's detection stage ships OFF (02/08/2026)."""
         config = InferenceConfig()
         assert config.ocr_skip_detection is False
 
@@ -133,11 +67,7 @@ class TestDefaults:
         assert config.model_path.is_absolute()
 
     def test_the_project_root_is_derived_not_hard_coded(self) -> None:
-        """NFR-M4: the root is computed from this package's own location.
-
-        Asserting on the *shape* rather than on a literal path, because a
-        literal here would be the very thing the requirement forbids.
-        """
+        """NFR-M4: the root is computed from this package's own location."""
         assert (PROJECT_ROOT / "ai" / "inference" / "config.py").is_file()
 
 
@@ -147,12 +77,7 @@ class TestPathResolution:
     def test_a_relative_path_is_anchored_to_the_project_root(
         self, monkeypatch: pytest.MonkeyPatch
     ) -> None:
-        """Not to the working directory -- that is the whole point.
-
-        Anchoring to the cwd would make ``uvicorn`` started from ``backend/``
-        and a script started from the repository root look for two different
-        weight files.
-        """
+        """Not to the working directory -- that is the whole point."""
         monkeypatch.setenv("ALPR_MODEL_PATH", "models/custom.pt")
         config = InferenceConfig.from_env()
         assert config.model_path == PROJECT_ROOT / "models" / "custom.pt"
@@ -305,8 +230,7 @@ class TestFieldValidation:
 
     @pytest.mark.parametrize("value", [0, -32, 100, 641, 33])
     def test_rejects_an_imgsz_that_is_not_a_positive_multiple_of_32(self, value: int) -> None:
-        """A non-multiple is silently resized by YOLO, so the configured number
-        would not be the number actually used."""
+        """A non-multiple is silently resized by YOLO, so the configured number"""
         with pytest.raises(ValueError, match="multiple of 32"):
             InferenceConfig(imgsz=value)
 

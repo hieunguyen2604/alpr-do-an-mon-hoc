@@ -1,19 +1,4 @@
-"""Tests for the Vietnamese plate rules and the normalizer.
-
-The suite is a direct port of the verification results recorded in
-``docs/reports/01-vn-plate-standards.md``:
-
-* section 8.6 -- every regex case of the verification table, including the
-  column listing *all* patterns each string matches, because a bare True/False
-  is meaningless without naming the pattern under test;
-* section 9.7 -- every position-mask repair case;
-* sections 8.5 / 9.4 -- the wildcard rule, which is the one constraint whose
-  violation silently destroys valid plates;
-* section 9.3 -- the asymmetry of the confusion mapping.
-
-Cases here are treated as a regression contract: if a constant is ever
-"improved" by hand, these tests are what catches the drift from the document.
-"""
+"""Tests for the Vietnamese plate rules and the normalizer."""
 
 from __future__ import annotations
 
@@ -71,27 +56,12 @@ def normalizer() -> VietnamesePlateNormalizer:
 
 
 def _matching_patterns(text: str) -> set[str]:
-    """Return the names of every pattern the string matches.
-
-    Args:
-        text: A cleaned plate string.
-
-    Returns:
-        The set of pattern names, which is what the last column of the
-        section 8.6 table records.
-    """
+    """Return the names of every pattern the string matches."""
     return {name for name, pattern in ALL_PATTERNS.items() if pattern.match(text)}
 
 
 def _expand(char_class: str) -> str:
-    """Expand a single-character regex class into the letters it accepts.
-
-    Args:
-        char_class: A regex character class such as ``"[A-HK-NPS-VXYZ]"``.
-
-    Returns:
-        The accepted letters, in alphabetical order.
-    """
+    """Expand a single-character regex class into the letters it accepts."""
     return "".join(c for c in string.ascii_uppercase if re.fullmatch(char_class, c))
 
 
@@ -247,8 +217,7 @@ SECTION_8_6_CASES: list[tuple[str, str, str, bool, set[str]]] = [
         {"RE_CAR", "RE_MOTORCYCLE_OLD", "RE_MOTORCYCLE_ANY", "RE_BLUE_CAR", "RE_BLUE_MOTORCYCLE"},
     ),
 ]
-"""The section 8.6 table: raw input, cleaned form, pattern under test, expected
-result, and the complete set of patterns the cleaned string matches."""
+"""The section 8.6 table: raw input, cleaned form, pattern under test, expected"""
 
 
 @pytest.mark.parametrize(
@@ -312,12 +281,7 @@ def test_section_9_7_position_rules(raw: str, mask_key: str, expected: str) -> N
 
 
 def test_unmapped_character_is_kept_verbatim() -> None:
-    """An unknown character survives untouched -- no placeholder is inserted.
-
-    The documented result of ``3OB12E45`` is ``30B12E45``, not ``30B12?45``:
-    ``?`` is a mask symbol and never appears in output. This is a controlled
-    failure, and those cases are the raw material for error analysis.
-    """
+    """An unknown character survives untouched -- no placeholder is inserted."""
     repaired = apply_position_rules("3OB12E45", POSITION_MASKS["car_5"])
     assert repaired == "30B12E45"
     assert "?" not in repaired
@@ -343,13 +307,7 @@ def test_motorcycle_mask_has_wildcard_at_index_three() -> None:
 
 @pytest.mark.parametrize("plate", ["29AA12345", "29B112345"])
 def test_wildcard_position_is_never_coerced(plate: str) -> None:
-    """Both motorcycle styles pass through the shared mask unharmed.
-
-    This is the regression test for the failure documented in section 8.5:
-    a mask asserting ``L`` turns ``29B112345`` into ``29BL12345``, and one
-    asserting ``D`` turns ``29AA12345`` into ``29A412345``. Either way, one of
-    the two legal plate styles is destroyed.
-    """
+    """Both motorcycle styles pass through the shared mask unharmed."""
     repaired = apply_position_rules(plate, POSITION_MASKS["motorcycle_9"])
     assert repaired == plate
     assert repaired[3] == plate[3]
@@ -510,21 +468,7 @@ def test_one_line_count_resolves_the_eight_character_ambiguity(
 def test_two_lines_prefers_the_motorcycle_but_stays_ambiguous(
     normalizer: VietnamesePlateNormalizer,
 ) -> None:
-    """``line_count=2`` breaks the tie toward the motorcycle without claiming proof.
-
-    Two-line car plates exist -- this project has one on file (``65A-004.50``) --
-    so the flag stays set. What changed is which candidate wins the tie.
-
-    Previously the tie fell to ``candidates[0]``, which is ``CAR`` purely because
-    of the order the patterns are declared in. Measured against the labelled
-    corpus, that arbitrary choice was wrong almost every time: of 696 ambiguous
-    two-line plates, 452 carry the vehicle type in their source filename, and
-    **450 of those are motorcycles**.
-
-    The cost was visible in the interface, not just in a field: the grouping
-    differs (``51P5-4578`` versus ``51P-515.78``), so the plate number shown did
-    not match the one printed on the vehicle.
-    """
+    """``line_count=2`` breaks the tie toward the motorcycle without claiming proof."""
     decision = normalizer.detect_plate_kind("29B11234", line_count=2)
     assert decision.kind is PlateKind.MOTORCYCLE_OLD
     assert decision.resolved_by_line_count is True
@@ -534,14 +478,7 @@ def test_two_lines_prefers_the_motorcycle_but_stays_ambiguous(
 def test_printed_dot_in_raw_text_proves_the_car_reading(
     normalizer: VietnamesePlateNormalizer,
 ) -> None:
-    """A ``DDD.DD`` group in the raw string beats the two-line motorcycle prior.
-
-    QCVN 08:2024/BCA prints a five-digit order number with a dot (``609.69``)
-    and a four-digit one without. Only the car reading of an ambiguous
-    8-character string has a five-digit number, so the printed dot is proof,
-    not preference. This is the field case of 24/07/2026: ``51H / 609.69`` on
-    an SUV tailgate was labelled a motorcycle and rendered ``51H6-0969``.
-    """
+    """A ``DDD.DD`` group in the raw string beats the two-line motorcycle prior."""
     decision = normalizer.detect_plate_kind(
         "51H60969", line_count=2, raw_text="51H 609.69"
     )
@@ -569,22 +506,7 @@ def test_dot_evidence_flows_through_normalize_detailed(
 def test_the_upper_line_outranks_the_family_for_digit_grouping(
     normalizer: VietnamesePlateNormalizer,
 ) -> None:
-    """Where the plate's own line break falls beats any inference from the string.
-
-    An eight-character two-line string is genuinely ambiguous. ``67C10815`` is
-    ``67C-108.15`` when the upper line reads ``67C`` (serial ``C``, five
-    digits) and ``67C1-0815`` when it reads ``67C1`` (serial ``C1``, four).
-    Both are legal Vietnamese plates, so no rule over the flat string can
-    separate them -- only the image can.
-
-    Measured on the demo set (02/08/2026): grouping derived from the family got
-    five of seven such plates right and two wrong (``77H54374`` rendered
-    ``77H-543.74``); the upper-line count gets all seven right, taking the demo
-    from 39/49 to 46/49 exact with zero grouping mismatches left.
-
-    Absent evidence must change nothing: ``0`` leaves the family-derived
-    grouping in charge, so the observation can only improve the answer.
-    """
+    """Where the plate's own line break falls beats any inference from the string."""
     assert (
         normalizer.format_for_display(
             "67C10815", line_count=2, kind=PlateKind.CAR, upper_char_count=4
@@ -630,12 +552,7 @@ def test_the_upper_line_outranks_the_family_for_digit_grouping(
 def test_format_for_display_follows_the_established_kind(
     normalizer: VietnamesePlateNormalizer,
 ) -> None:
-    """The digit grouping must tell the same story as the family badge.
-
-    ``51H60969`` groups as ``51H-609.69`` for a car and ``51H6-0969`` for an
-    old motorcycle; whichever family the caller established wins. A kind that
-    does not fit the string (colour-derived, stale) falls back to deriving.
-    """
+    """The digit grouping must tell the same story as the family badge."""
     assert normalizer.format_for_display("51H60969", kind=PlateKind.CAR) == "51H-609.69"
     assert (
         normalizer.format_for_display("51H60969", kind=PlateKind.MOTORCYCLE_OLD)
@@ -653,12 +570,7 @@ def test_format_for_display_follows_the_established_kind(
 def test_two_line_preference_only_applies_to_the_car_motorcycle_tie(
     normalizer: VietnamesePlateNormalizer,
 ) -> None:
-    """A two-line plate whose string is unambiguous must be left alone.
-
-    ``65A-004.50`` is a real two-line State car plate. Its serial ``A0`` is not a
-    valid motorcycle serial, so the tie never arises -- and the preference must
-    not invent one.
-    """
+    """A two-line plate whose string is unambiguous must be left alone."""
     decision = normalizer.detect_plate_kind("65A00450", line_count=2)
     assert decision.kind is PlateKind.CAR
 

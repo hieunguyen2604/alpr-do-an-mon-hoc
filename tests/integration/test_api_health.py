@@ -1,21 +1,4 @@
-"""Integration tests for the readiness endpoint.
-
-``/health`` reports *readiness*, not liveness, and the distinction is the whole
-point of the endpoint. A process that is answering HTTP but whose detector
-weights failed to load cannot serve a single detection request; an endpoint that
-says ``ok`` in that state turns a configuration mistake into a mystery that only
-surfaces when a user uploads something.
-
-Two design decisions are pinned down here because both look like bugs to someone
-who has not read the module:
-
-* the response is **always HTTP 200**, even when degraded -- the endpoint
-  answering at all is itself information, and an orchestrator distinguishing
-  "down" from "degraded" reads the body;
-* a pipeline that is not ready reports ``model_loaded = false`` and drags the
-  overall status to ``degraded``, so a deployment running on fabricated or
-  absent results cannot look healthy.
-"""
+"""Integration tests for the readiness endpoint."""
 
 from __future__ import annotations
 
@@ -55,8 +38,7 @@ class TestHealthyService:
         assert body["timestamp"]
 
     def test_sits_at_the_root_not_behind_the_api_prefix(self, client: TestClient) -> None:
-        """A health check that moves when the API prefix changes is not much of
-        a health check."""
+        """A health check that moves when the API prefix changes is not much of"""
         assert client.get(HEALTH_URL).status_code == 200
         assert client.get("/api/health").status_code == 404
 
@@ -73,8 +55,7 @@ class TestDegradedService:
         assert body["database_connected"] is True
 
     def test_the_stub_pipeline_also_reports_degraded(self, app: FastAPI) -> None:
-        """The stub fabricates plate numbers, so a deployment running on it must
-        never be able to look healthy."""
+        """The stub fabricates plate numbers, so a deployment running on it must"""
         app.dependency_overrides[get_pipeline] = lambda: StubPipeline()
         body = TestClient(app).get(HEALTH_URL).json()
 
@@ -82,9 +63,7 @@ class TestDegradedService:
         assert body["model_loaded"] is False
 
     def test_the_status_is_still_http_200_when_degraded(self, app: FastAPI) -> None:
-        """The endpoint answering at all is information; the body says what is
-        wrong. Failing the status line would make "degraded" indistinguishable
-        from "unreachable"."""
+        """The endpoint answering at all is information; the body says what is"""
         app.dependency_overrides[get_pipeline] = lambda: UnavailablePipeline("x")
         assert TestClient(app).get(HEALTH_URL).status_code == 200
 
@@ -107,8 +86,7 @@ class TestDegradedService:
         assert body["status"] == "degraded"
 
     def test_the_reason_a_pipeline_is_unavailable_is_not_published(self, app: FastAPI) -> None:
-        """NFR-S4: the health body says *that* the model is unavailable, not
-        which path on the server it failed to load from."""
+        """NFR-S4: the health body says *that* the model is unavailable, not"""
         app.dependency_overrides[get_pipeline] = lambda: UnavailablePipeline(
             "no weights at /srv/models/best.pt"
         )

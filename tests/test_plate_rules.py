@@ -1,20 +1,4 @@
-"""Unit tests for :mod:`ai.inference.plate_rules`.
-
-The module under test is a direct port of the Vietnamese plate specification, so
-these tests are written as *assertions about the standard*, not as assertions
-about the implementation. Four areas carry the weight:
-
-1. **The generated regexes.** They are built from
-   :data:`~ai.inference.plate_rules.PROVINCE_CODES`, so a drift between the
-   table and the patterns is exactly what a test can catch.
-2. **The position masks.** In particular that index 3 of the 9-character
-   motorcycle mask is a wildcard -- the single position in the whole system
-   where a letter and a digit are both legal.
-3. **The asymmetry of the confusion tables.** ``O -> 0`` is correct while
-   ``0 -> O`` is never correct, because ``O`` is not a legal serial letter.
-4. **The L20 / L20B letter sets**, whose difference (``G`` versus ``R``) decides
-   whether ``29AR-123.45`` is accepted and ``29AG-123.45`` rejected.
-"""
+"""Unit tests for :mod:`ai.inference.plate_rules`."""
 
 from __future__ import annotations
 
@@ -63,23 +47,14 @@ class TestProvinceCodes:
         assert PROVINCE_CODES & UNUSED_PROVINCE_CODES == frozenset()
 
     def test_the_two_sets_together_cover_11_to_99(self) -> None:
-        """Every two-digit code from 11 to 99 is accounted for as used or not.
-
-        A code appearing in neither set would be one the module has no opinion
-        about -- and a plate carrying it would be rejected for a reason nobody
-        wrote down.
-        """
+        """Every two-digit code from 11 to 99 is accounted for as used or not."""
         covered = PROVINCE_CODES | UNUSED_PROVINCE_CODES
         expected = {str(value) for value in range(11, 100)}
         assert covered == expected
 
     @pytest.mark.parametrize("code", ["13", "42", "44", "45", "46", "87", "91", "96"])
     def test_an_unissued_code_is_rejected_by_the_car_pattern(self, code: str) -> None:
-        """``13A-123.45`` must fail: the code 13 has never been issued.
-
-        This is the entire reason the province group is a generated alternation
-        rather than ``\\d{2}``.
-        """
+        """``13A-123.45`` must fail: the code 13 has never been issued."""
         assert RE_CAR.match(f"{code}A12345") is None
 
     def test_a_valid_code_is_accepted(self) -> None:
@@ -128,12 +103,7 @@ class TestCarPattern:
 
 
 class TestMotorcycleSerialAsymmetry:
-    """L20 versus L20B -- the difference between ``G`` and ``R``.
-
-    This is the sharpest factual claim the module makes, and the one most
-    likely to be "corrected" by someone who assumes the two letter sets must be
-    identical. These tests exist to make that assumption fail loudly.
-    """
+    """L20 versus L20B -- the difference between ``G`` and ``R``."""
 
     def test_r_is_valid_in_the_second_serial_position(self) -> None:
         assert RE_MOTORCYCLE_NEW.match("29AR12345") is not None
@@ -203,11 +173,7 @@ class TestBluePlates:
         assert RE_BLUE_CAR.match(f"80{letter}12345") is None
 
     def test_a_blue_rejection_does_not_mean_the_plate_is_invalid(self) -> None:
-        """``80N12345`` fails the blue pattern but is a perfectly valid car plate.
-
-        The blue patterns are only meaningful *in the blue-plate context*; the
-        module documents this and the test pins it down.
-        """
+        """``80N12345`` fails the blue pattern but is a perfectly valid car plate."""
         assert RE_BLUE_CAR.match("80N12345") is None
         assert RE_CAR.match("80N12345") is not None
 
@@ -224,11 +190,7 @@ class TestSpecialAndDiplomatic:
         assert RE_SPECIAL.match(f"51{code}12345") is not None
 
     def test_two_character_codes_are_preferred_over_one(self) -> None:
-        """``RM`` must be captured whole, not as ``R`` followed by ``M12345``.
-
-        The alternation lists two-character codes first for this reason; a
-        reordering would silently change what the ``code`` group contains.
-        """
+        """``RM`` must be captured whole, not as ``R`` followed by ``M12345``."""
         match = RE_SPECIAL.match("51RM12345")
         assert match is not None
         assert match.group("code") == "RM"
@@ -274,11 +236,7 @@ class TestPatternPriority:
         assert order[-1] is PlateKind.MILITARY
 
     def test_special_is_tried_before_the_motorcycle_patterns(self) -> None:
-        """``29LD12345`` matches both; the special code must win.
-
-        This ambiguity cannot be resolved by line count -- both are two-line
-        plates -- so ordering is the only resolution available.
-        """
+        """``29LD12345`` matches both; the special code must win."""
         order = list(PATTERNS_BY_KIND)
         assert order.index(PlateKind.SPECIAL) < order.index(PlateKind.MOTORCYCLE_NEW)
         assert RE_SPECIAL.match("29LD12345") is not None
@@ -369,14 +327,7 @@ class TestMaskSelection:
 
 
 class TestWildcardAtIndexThree:
-    """The forbidden zone: index 3 of the 9-character motorcycle mask.
-
-    This is the only position in the entire Vietnamese plate system where a
-    letter and a digit are both legal. Splitting the mask into ``DDLLDDDDD`` and
-    ``DDLDDDDDD`` would force a coercion here and destroy one motorcycle style
-    or the other -- the module documents both failures, and these tests
-    reproduce them.
-    """
+    """The forbidden zone: index 3 of the 9-character motorcycle mask."""
 
     def test_index_three_is_a_wildcard(self) -> None:
         assert POSITION_MASKS["motorcycle_9"][3] == MASK_WILDCARD
@@ -407,11 +358,7 @@ class TestWildcardAtIndexThree:
         assert apply_position_rules("29B112345", "DDL?DDDDD")[3] == "1"
 
     def test_the_wrong_masks_would_break_each_style(self) -> None:
-        """Reproduces the two failures documented on ``POSITION_MASKS``.
-
-        Kept as an explicit test rather than a comment: it is the evidence that
-        the wildcard is load-bearing, not decoration.
-        """
+        """Reproduces the two failures documented on ``POSITION_MASKS``."""
         assert apply_position_rules("29AA12345", "DDLDDDDDD") == "29A412345"
         assert apply_position_rules("29B112345", "DDLLDDDDD") == "29BL12345"
 
@@ -435,11 +382,7 @@ class TestApplyPositionRules:
         assert apply_position_rules("51F12345", POSITION_MASKS["car_5"]) == "51F12345"
 
     def test_an_unmappable_character_is_kept_not_replaced(self) -> None:
-        """``3OB12E45`` becomes ``30B12E45``, never ``30B12?45``.
-
-        The controlled failure is the point: the string then fails the regex
-        check, instead of a placeholder propagating into the database.
-        """
+        """``3OB12E45`` becomes ``30B12E45``, never ``30B12?45``."""
         result = apply_position_rules("3OB12E45", POSITION_MASKS["car_5"])
         assert result == "30B12E45"
         assert MASK_WILDCARD not in result
@@ -457,12 +400,7 @@ class TestApplyPositionRules:
 
 
 class TestConfusionTableAsymmetry:
-    """``O -> 0`` is right; ``0 -> O`` is never right.
-
-    With ``O`` and ``Q`` both excluded from the plate system, ``D`` is the only
-    homoglyph candidate left at a letter position. The tables encode that, and
-    the asymmetry is the module's central insight rather than an oversight.
-    """
+    """``O -> 0`` is right; ``0 -> O`` is never right."""
 
     def test_o_maps_to_zero_at_a_digit_position(self) -> None:
         assert TO_DIGIT["O"] == "0"
@@ -524,13 +462,7 @@ class TestEndToEndRepair:
 
 
 class TestMilitaryLayouts:
-    """All six layouts of Annex II to the 2021 Ministry of National Defence rules.
-
-    The pattern used to accept only the commonest one -- two letters and four to
-    six digits. The other five fell through to the civil rules, and one of them
-    failed dangerously rather than merely failing: see
-    :class:`TestMilitaryIsNeverReportedAsCivil`.
-    """
+    """All six layouts of Annex II to the 2021 Ministry of National Defence rules."""
 
     @pytest.mark.parametrize(
         ("plate", "layout"),
@@ -556,16 +488,7 @@ class TestMilitaryLayouts:
 
 
 class TestMilitaryIsNeverReportedAsCivil:
-    """An army plate must never reach a user labelled as a valid civilian plate.
-
-    The failure this guards against was real, not theoretical. Position repair
-    assumes its input is meant to be a civil plate and rewrites characters until
-    it looks like one; given ``ABS1234`` it produced ``48S1234`` -- a well-formed
-    Ho Chi Minh City car plate -- and reported ``is_valid_format = True``.
-
-    That is worse than returning nothing. "I could not read this" invites a
-    second look; a plausible plate number does not.
-    """
+    """An army plate must never reach a user labelled as a valid civilian plate."""
 
     @pytest.mark.parametrize(
         "plate",

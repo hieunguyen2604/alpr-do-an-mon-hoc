@@ -1,19 +1,4 @@
-"""Integration tests for the history endpoints.
-
-Covers listing, partial search, combined filters, sorting, deletion and the CSV
-export. Two of these carry more weight than the rest:
-
-**The export must be UTF-8 with a byte-order mark.** Excel does not auto-detect
-UTF-8 in a ``.csv``; without the BOM it falls back to the system code page and
-every Vietnamese column header renders as mojibake. Since the export exists to
-be opened in Excel, a file Excel renders wrongly is a broken export, and one BOM
-is the entire fix -- so it is asserted on the bytes, not on the decoded text.
-
-**The list and the export must interpret filters identically.** A user who
-exports what they are looking at and receives something else has been handed
-wrong data with nothing to indicate it. The two are therefore driven with the
-same query parameters and compared.
-"""
+"""Integration tests for the history endpoints."""
 
 from __future__ import annotations
 
@@ -41,16 +26,7 @@ _BASE_TIME = dt.datetime(2026, 7, 10, 8, 0, 0, tzinfo=dt.timezone.utc)
 
 @pytest.fixture()
 def seeded(db: Session) -> list[DetectionHistory]:
-    """Insert a small, deliberately varied history.
-
-    Six detections across three uploads, spanning three input types, two
-    format-validity outcomes, a range of confidences and several days. The
-    spread is what lets one fixture serve the filter, sort, search and export
-    tests without any of them having to agree on a shared magic number.
-
-    Returns:
-        The inserted rows, oldest first.
-    """
+    """Insert a small, deliberately varied history."""
     jobs = {
         "image": DetectionJob(
             input_type=InputType.IMAGE.value,
@@ -239,8 +215,7 @@ class TestPartialSearch:
     def test_searches_the_raw_ocr_string_too(
         self, client: TestClient, seeded: list[DetectionHistory]
     ) -> None:
-        """A user searching for what they saw on the vehicle should still find
-        the record when post-processing altered the text."""
+        """A user searching for what they saw on the vehicle should still find"""
         body = client.get(HISTORY_URL, params={"search": "29AI"}).json()
         assert body["total"] == 1
         assert body["items"][0]["plate_number"] == "29A1-11111"
@@ -446,10 +421,7 @@ class TestCsvExport:
     def test_the_file_begins_with_a_utf8_byte_order_mark(
         self, client: TestClient, seeded: list[DetectionHistory]
     ) -> None:
-        """Without it Excel falls back to the system code page and every
-        Vietnamese header becomes mojibake. Asserted on the raw bytes, because
-        decoding the text first would silently consume the very thing under
-        test."""
+        """Without it Excel falls back to the system code page and every"""
         content = client.get(EXPORT_URL).content
         assert content.startswith(UTF8_BOM)
 
@@ -509,8 +481,7 @@ class TestCsvExport:
     def test_the_export_honours_the_same_filters_as_the_list(
         self, client: TestClient, seeded: list[DetectionHistory]
     ) -> None:
-        """Otherwise a user exports something other than what they were looking
-        at, with nothing to indicate it."""
+        """Otherwise a user exports something other than what they were looking"""
         params = {"input_type": "image", "is_valid_format": True}
 
         listed = client.get(HISTORY_URL, params=params).json()
@@ -552,8 +523,7 @@ class TestCsvExport:
     def test_a_contradictory_filter_fails_before_streaming_starts(
         self, client: TestClient, seeded: list[DetectionHistory]
     ) -> None:
-        """Once the first byte of a 200 has gone out, an error can no longer be
-        reported as a status code."""
+        """Once the first byte of a 200 has gone out, an error can no longer be"""
         response = client.get(
             EXPORT_URL,
             params={
@@ -567,12 +537,7 @@ class TestCsvExport:
     def test_the_export_route_is_not_shadowed_by_the_detail_route(
         self, client: TestClient, seeded: list[DetectionHistory]
     ) -> None:
-        """``/history/export`` must be declared before ``/history/{id:int}``.
-
-        With the order reversed the framework tries to parse ``"export"`` as an
-        integer and answers 422 -- an endpoint that appears in Swagger, looks
-        correct in the source and never works.
-        """
+        """``/history/export`` must be declared before ``/history/{id:int}``."""
         assert client.get(EXPORT_URL).status_code == 200
 
 
@@ -607,8 +572,7 @@ class TestDeletion:
         assert target not in {item["id"] for item in body["items"]}
 
     def test_deleting_an_unknown_record_is_a_404(self, client: TestClient) -> None:
-        """Not a silent success: a client must be able to tell a completed
-        delete from one that named the wrong identifier."""
+        """Not a silent success: a client must be able to tell a completed"""
         response = client.delete(f"{HISTORY_URL}/999999")
         assert response.status_code == 404
 
@@ -622,8 +586,7 @@ class TestDeletion:
     def test_the_source_image_is_kept_while_a_sibling_still_references_it(
         self, client: TestClient, seeded: list[DetectionHistory], settings: Settings
     ) -> None:
-        """Several plates found in one photograph share that file; deleting it
-        with the first of them would leave the others pointing at nothing."""
+        """Several plates found in one photograph share that file; deleting it"""
         shared = settings.upload_dir / "source-image.jpg"
         shared.parent.mkdir(parents=True, exist_ok=True)
         shared.write_bytes(b"\xff\xd8\xff" + b"\x00" * 32)
@@ -657,11 +620,7 @@ class TestDeletion:
     def test_a_missing_file_does_not_break_the_delete(
         self, client: TestClient, seeded: list[DetectionHistory]
     ) -> None:
-        """The row references files that were never written in this test.
-
-        Raising would leave a record that can never be deleted, which is worse
-        than an orphaned file.
-        """
+        """The row references files that were never written in this test."""
         assert client.delete(f"{HISTORY_URL}/{seeded[0].id}").status_code == 204
 
     def test_an_invalid_identifier_is_refused(self, client: TestClient) -> None:

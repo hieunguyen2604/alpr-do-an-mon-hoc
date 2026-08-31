@@ -1,10 +1,4 @@
-"""Tests for background-colour classification of plate crops.
-
-Synthetic plates are built rather than loaded from disk, so the suite needs no
-fixture images and each test states the exact pixel content it depends on. The
-thresholds themselves were calibrated on real detector output; these tests guard
-the contract and the failure behaviour, not the calibration.
-"""
+"""Tests for background-colour classification of plate crops."""
 
 from __future__ import annotations
 
@@ -32,19 +26,7 @@ def make_plate(
     width: int = 200,
     height: int = 60,
 ) -> np.ndarray:
-    """Build a plate-like image: a coloured field with darker character bars.
-
-    Args:
-        background: Plate background, BGR.
-        characters: Colour of the character strokes, BGR.
-        width: Image width in pixels.
-        height: Image height in pixels.
-
-    Returns:
-        A BGR ``uint8`` image with five vertical bars standing in for glyphs,
-        covering roughly a quarter of the area -- about what real characters
-        occupy on a Vietnamese plate.
-    """
+    """Build a plate-like image: a coloured field with darker character bars."""
     image = np.full((height, width, 3), background, dtype=np.uint8)
     for index in range(5):
         left = int(width * (0.12 + index * 0.16))
@@ -75,13 +57,7 @@ class TestDominantColours:
         assert estimate.color is PlateColor.RED
 
     def test_a_diplomatic_plate_reads_as_white(self) -> None:
-        """Red serial letters on white must not outvote the white background.
-
-        This is the case colour classification cannot resolve on its own: the
-        plate is white like a private vehicle's, and only the character string
-        identifies it. The classifier's job is to not make that worse by
-        reporting red.
-        """
+        """Red serial letters on white must not outvote the white background."""
         estimate = classify_plate_color(make_plate(_WHITE, characters=_RED))
         assert estimate.color is PlateColor.WHITE
 
@@ -93,12 +69,7 @@ class TestDominantColours:
 
 class TestBorderContamination:
     def test_surrounding_bodywork_does_not_decide_the_colour(self) -> None:
-        """A loose crop puts car paint in the outer band; the centre must win.
-
-        A detector box is rarely tight. Without the centre inset, a white plate
-        photographed on a red car would be classified red -- and the system
-        would then assert the vehicle is military.
-        """
+        """A loose crop puts car paint in the outer band; the centre must win."""
         plate = make_plate(_WHITE, width=240, height=80)
         plate[:12, :] = _RED
         plate[-12:, :] = _RED

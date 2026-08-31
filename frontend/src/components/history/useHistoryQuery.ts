@@ -1,17 +1,4 @@
-/**
- * URL-backed state for the history page: filters, sorting and pagination.
- *
- * The query string is the single source of truth. Every filter the user sets is
- * written there, so reloading the page (F5), bookmarking it or sharing the link
- * reproduces exactly the same view — a filter kept only in component state
- * disappears on reload, which on a page whose whole purpose is narrowing down
- * 100 000 records is a real loss of work.
- *
- * Two inputs are debounced before reaching the URL: the plate search box and the
- * minimum-confidence slider. Both change on every keystroke or drag step, and
- * writing each intermediate value to the URL would issue a request per
- * character and fill the browser history with noise.
- */
+/** URL-backed state for the history page: filters, sorting and pagination. */
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
@@ -141,21 +128,11 @@ export interface HistoryQueryState {
   hasActiveFilters: boolean;
   /** Clear every filter, keeping the sort and the page size. */
   resetFilters: () => void;
-  /**
-   * Whether a debounced input has been changed but not yet applied.
-   *
-   * Drives the "đang chờ nhập xong" hint, so a user who has typed and sees no
-   * change knows the request is coming rather than assuming nothing happened
-   * (NFR-U2).
-   */
+  /** Whether a debounced input has been changed but not yet applied. */
   isPendingInput: boolean;
 }
 
-/**
- * Manage the history page's filters, sort and pagination in the URL.
- *
- * @returns The current query plus the setters that update it.
- */
+/** Manage the history page's filters, sort and pagination in the URL. */
 export function useHistoryQuery(): HistoryQueryState {
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -178,13 +155,7 @@ export function useHistoryQuery(): HistoryQueryState {
   const order: SortOrder =
     searchParams.get(PARAM.order) === 'asc' ? 'asc' : 'desc';
 
-  /**
-   * Write a patch into the query string.
-   *
-   * Uses `replace` so that typing into a filter does not push a history entry
-   * per keystroke — the Back button should leave the page, not undo one
-   * character at a time.
-   */
+  /** Write a patch into the query string. */
   const applyParams = useCallback(
     (patch: ParamPatch): void => {
       setSearchParams(

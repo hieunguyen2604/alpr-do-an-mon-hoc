@@ -1,11 +1,4 @@
-"""Unit tests for the OCR recogniser's flow and output parsing.
-
-These use a fake engine, so they need no model weights, no network and no
-PaddlePaddle runtime. They cover the parts this project owns -- validation,
-the two-line branch, fragment ordering, artefact filtering and confidence
-aggregation -- rather than PaddleOCR's own accuracy, which is what the Phase 4
-benchmark measures.
-"""
+"""Unit tests for the OCR recogniser's flow and output parsing."""
 
 from __future__ import annotations
 
@@ -147,17 +140,7 @@ class TestRecognizeFlow:
         assert recognition.line_count == 1
 
     def test_preprocessing_can_be_disabled(self) -> None:
-        """The ablation switch drops the enhancement chain but keeps the scale cap.
-
-        ``preprocess=False`` exists to measure what CLAHE and denoising
-        contribute. It must **not** also disable the height normalisation:
-        PP-OCR's text detector returns nothing at all on glyphs hundreds of
-        pixels tall, so an ablation that removed the cap would measure the
-        detector failing to fire rather than the enhancement chain.
-
-        A crop already at the target height is therefore passed through
-        untouched, while an oversized one is still shrunk.
-        """
+        """The ablation switch drops the enhancement chain but keeps the scale cap."""
         crop = np.full((OCR_INPUT_HEIGHT, 520, 3), 255, dtype=np.uint8)
         engine = FakeEngine([])
         PaddleOcrRecognizer(InferenceConfig(), preprocess=False, engine=engine).recognize(crop)
@@ -165,11 +148,7 @@ class TestRecognizeFlow:
         np.testing.assert_array_equal(engine.seen[0], crop)
 
     def test_oversized_crop_is_shrunk_to_the_ocr_input_height(self) -> None:
-        """A close-up crop is capped before it reaches the engine.
-
-        Regression guard for the Phase 4 finding: without this cap the engine
-        read nothing on any crop of the 640x640 label corpus.
-        """
+        """A close-up crop is capped before it reaches the engine."""
         crop = np.full((640, 640, 3), 255, dtype=np.uint8)
         engine = FakeEngine([])
         PaddleOcrRecognizer(InferenceConfig(), engine=engine).recognize(crop)
@@ -181,11 +160,7 @@ class TestParseOcrOutput:
     """Fragment ordering, artefact filtering and defensive parsing."""
 
     def test_orders_fragments_left_to_right(self) -> None:
-        """Reading order follows horizontal position, not engine order.
-
-        After the two-line merge the upper row sits on the left, so sorting by
-        x recovers the correct plate reading order.
-        """
+        """Reading order follows horizontal position, not engine order."""
         texts, _ = _parse_ocr_output(
             [
                 _result(
@@ -198,11 +173,7 @@ class TestParseOcrOutput:
         assert texts == ["29-B1", "234.56"]
 
     def test_drops_short_artefact_fragments(self) -> None:
-        """A sliver detection is discarded even at plausible confidence.
-
-        Reproduces the CLAHE artefact seen during bring-up: a 10 px-tall
-        fragment alongside genuine rows of 125 px and 87 px.
-        """
+        """A sliver detection is discarded even at plausible confidence."""
         texts, scores = _parse_ocr_output(
             [
                 _result(

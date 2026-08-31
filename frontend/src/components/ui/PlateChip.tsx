@@ -9,13 +9,7 @@ import { formatPlateNumber } from '@/lib/format';
 export interface PlateChipProps {
   /** Plate text from the API, or `null` when OCR read nothing. */
   plateNumber: string | null | undefined;
-  /**
-   * Whether the text matched a known Vietnamese plate format.
-   *
-   * `false` is **flagged, not hidden**. An unrecognised format is still a real
-   * detection, and discarding it would erase the negative cases from the
-   * accuracy figures.
-   */
+  /** Whether the text matched a known Vietnamese plate format. */
   isValidFormat?: boolean;
   size?: 'sm' | 'md' | 'lg';
   className?: string;
@@ -27,12 +21,7 @@ const SIZE_CLASS = {
   lg: 'px-3 py-1.5 text-base',
 } as const;
 
-/**
- * Render a plate chip.
- *
- * @param props - Plate text, format validity and size.
- * @returns The chip element.
- */
+/** Render a plate chip. */
 export function PlateChip({
   plateNumber,
   isValidFormat = true,

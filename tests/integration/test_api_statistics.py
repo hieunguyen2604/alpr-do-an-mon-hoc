@@ -1,20 +1,4 @@
-"""Integration tests for the dashboard statistics endpoint.
-
-The whole module is about one distinction:
-
-    Usage is counted in **jobs**. Recognition is counted in **rows**.
-
-``detection_history`` holds one row per license plate, so a photograph of three
-vehicles is **one** upload and **three** detections. Filling a tile labelled
-"images processed" from the row count inflates it by the average number of
-plates per image -- roughly a factor of two on a typical dataset. The error is
-invisible in review because both numbers are plausible and both increase over
-time, and it survives into the written report.
-
-Data is created through the API rather than inserted directly wherever the test
-is about counting, so that what is measured is the path a real upload takes --
-including the job row the service writes, which is the thing being counted.
-"""
+"""Integration tests for the dashboard statistics endpoint."""
 
 from __future__ import annotations
 
@@ -35,11 +19,7 @@ IMAGE_URL = "/api/detect/image"
 
 
 def upload_image(client: TestClient) -> dict:
-    """Upload one image through the real endpoint.
-
-    Returns:
-        The decoded detection response.
-    """
+    """Upload one image through the real endpoint."""
     response = client.post(IMAGE_URL, files={"file": ("car.jpg", encode_jpeg(), "image/jpeg")})
     assert response.status_code == 200
     return response.json()
@@ -77,11 +57,7 @@ class TestCountingJobsVersusPlates:
     def test_the_two_figures_diverge_as_soon_as_they_can(
         self, client: TestClient, pipeline: FakePipeline
     ) -> None:
-        """Two uploads, five plates: the figures must not be equal.
-
-        A test where both numbers happen to coincide would pass just as well
-        against an implementation that computed one of them from the other.
-        """
+        """Two uploads, five plates: the figures must not be equal."""
         pipeline.plates = [
             ("51F-11111", "51F11111", 0.9, 0.8, True),
             ("29A1-22222", "29A122222", 0.8, 0.7, True),
@@ -102,11 +78,7 @@ class TestCountingJobsVersusPlates:
     def test_an_upload_that_found_nothing_still_counts_as_usage(
         self, client: TestClient, pipeline: FakePipeline
     ) -> None:
-        """The user did upload the image, so the usage figure must include it.
-
-        A dashboard that counted only productive uploads would make the system
-        look like it never fails to find a plate.
-        """
+        """The user did upload the image, so the usage figure must include it."""
         pipeline.plates = []
         upload_image(client)
 
@@ -173,8 +145,7 @@ class TestEmptyDatabase:
         assert stats["unreadable_count"] == 0
 
     def test_the_averages_are_null_not_zero(self, client: TestClient) -> None:
-        """An average confidence of 0 would read as "the model is certain of
-        nothing", which is a different statement from "no data yet"."""
+        """An average confidence of 0 would read as "the model is certain of"""
         stats = client.get(STATISTICS_URL).json()
         assert stats["average_confidence"] is None
         assert stats["average_ocr_confidence"] is None
@@ -197,9 +168,7 @@ class TestFormatCounters:
     def test_the_three_counters_partition_the_detections(
         self, client: TestClient, pipeline: FakePipeline
     ) -> None:
-        """Defining "invalid" as simply ``is_valid_format = false`` would fold
-        the unreadable rows into it, so the three would overlap and a pie chart
-        built from them would not add up to the total beside it."""
+        """Defining "invalid" as simply ``is_valid_format = false`` would fold"""
         pipeline.plates = [
             ("51F-11111", "51F11111", 0.9, 0.8, True),
             ("51F-22222", "51F22222", 0.9, 0.8, True),
@@ -261,8 +230,7 @@ class TestAverages:
     def test_the_ocr_average_excludes_rows_that_read_nothing(
         self, client: TestClient, pipeline: FakePipeline
     ) -> None:
-        """Counting them as zero would drag the mean down and misreport OCR
-        quality; SQL's ``AVG`` ignoring NULL gives the right denominator."""
+        """Counting them as zero would drag the mean down and misreport OCR"""
         pipeline.plates = [
             ("51F-11111", "51F11111", 0.9, 0.8, True),
             ("29A1-22222", "29A122222", 0.9, 0.6, True),
@@ -291,9 +259,7 @@ class TestInputTypeBreakdown:
     def test_counts_jobs_and_detections_separately_per_type(
         self, client: TestClient, pipeline: FakePipeline
     ) -> None:
-        """A join would multiply each job by its detections and count a
-        three-plate image as three uploads -- the exact error this module is
-        about, and one a ``JOIN`` makes almost automatic."""
+        """A join would multiply each job by its detections and count a"""
         pipeline.plates = [
             ("51F-11111", "51F11111", 0.9, 0.8, True),
             ("29A1-22222", "29A122222", 0.8, 0.7, True),
@@ -346,9 +312,7 @@ class TestDailyTrend:
         assert len(stats["daily_counts"]) == 7
 
     def test_the_series_is_continuous_and_oldest_first(self, client: TestClient) -> None:
-        """Days with no activity are zeros, not omissions: a chart fed only the
-        active days draws a straight line across a quiet week and its x-axis
-        silently stops being uniform."""
+        """Days with no activity are zeros, not omissions: a chart fed only the"""
         stats = client.get(STATISTICS_URL, params={"days": 5}).json()
         dates = [dt.date.fromisoformat(entry["date"]) for entry in stats["daily_counts"]]
 
@@ -401,11 +365,7 @@ class TestDailyTrend:
 
 
 class TestHistoricalData:
-    """Rows dated in the past, inserted directly.
-
-    Not created through the API, because an upload is necessarily stamped
-    "now"; the only way to exercise the time window is to write the timestamps.
-    """
+    """Rows dated in the past, inserted directly."""
 
     @pytest.fixture()
     def old_and_new(self, db: Session) -> None:

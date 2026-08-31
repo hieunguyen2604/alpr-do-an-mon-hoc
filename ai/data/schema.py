@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import math
-from dataclasses import dataclass, field, replace
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Final, Iterable, Iterator, Literal, Sequence
 
@@ -111,17 +111,6 @@ class BoxRecord:
             self.y_center + half_h,
         )
 
-    def to_pixels(self, image_width: int, image_height: int) -> tuple[int, int, int, int]:
-        """Convert normalized coordinates to absolute integer pixel values."""
-        _require_positive_dimensions(image_width, image_height)
-        x1, y1, x2, y2 = self.xyxy_normalised
-        return (
-            round(x1 * image_width),
-            round(y1 * image_height),
-            round(x2 * image_width),
-            round(y2 * image_height),
-        )
-
     def aspect_ratio_for(self, image_width: int, image_height: int) -> float:
         """Compute pixel aspect ratio given image dimensions."""
         _require_positive_dimensions(image_width, image_height)
@@ -185,21 +174,6 @@ class BoxRecord:
             )
 
         return issues
-
-    def clipped(self) -> BoxRecord:
-        """Return a copy with coordinates clamped to [0, 1]."""
-        x1, y1, x2, y2 = self.xyxy_normalised
-        x1, y1 = max(0.0, x1), max(0.0, y1)
-        x2, y2 = min(1.0, x2), min(1.0, y2)
-        new_width = max(0.0, x2 - x1)
-        new_height = max(0.0, y2 - y1)
-        return replace(
-            self,
-            x_center=x1 + new_width / 2.0,
-            y_center=y1 + new_height / 2.0,
-            width=new_width,
-            height=new_height,
-        )
 
     def to_yolo_line(self, *, precision: int = 6, include_extras: bool = False) -> str:
         """Serialize box to a standard or extended YOLO label line."""
@@ -277,35 +251,9 @@ class ImageRecord:
             self.path = Path(self.path)
 
     @property
-    def box_count(self) -> int:
-        """Return number of bounding boxes."""
-        return len(self.boxes)
-
-    @property
-    def is_background(self) -> bool:
-        """Return True if image has no plate boxes (negative sample)."""
-        return not self.boxes
-
-    @property
-    def image_aspect_ratio(self) -> float:
-        """Return image width/height aspect ratio."""
-        _require_positive_dimensions(self.width, self.height)
-        return self.width / self.height
-
-    @property
     def label_path(self) -> Path:
         """Return expected YOLO label file path."""
         return image_path_to_label_path(self.path)
-
-    def box_aspect_ratios(self) -> list[float]:
-        """Return pixel aspect ratios for all usable boxes."""
-        ratios: list[float] = []
-        for box in self.boxes:
-            try:
-                ratios.append(box.aspect_ratio_for(self.width, self.height))
-            except ValueError:
-                continue
-        return ratios
 
     def estimated_line_counts(self) -> list[LineCount]:
         """Return list of line counts for all annotated boxes."""
@@ -317,15 +265,6 @@ class ImageRecord:
                 continue
         return counts
 
-    def dominant_line_count(self) -> LineCount | None:
-        """Return dominant plate line count for dataset stratification."""
-        counts = self.estimated_line_counts()
-        if not counts:
-            return None
-        ones = counts.count(1)
-        twos = len(counts) - ones
-        return 1 if ones > twos else 2
-
     def validate(self, *, min_box_area: float = 0.0) -> list[str]:
         """Validate image dimensions and all box annotations."""
         issues: list[str] = []
@@ -335,16 +274,6 @@ class ImageRecord:
             for message in box.validate(min_area=min_box_area):
                 issues.append(f"box {index}: {message}")
         return issues
-
-    def to_yolo_lines(self, *, include_extras: bool = False) -> list[str]:
-        """Serialize all boxes to YOLO annotation lines."""
-        return [box.to_yolo_line(include_extras=include_extras) for box in self.boxes]
-
-    def write_label(self, label_path: Path | None = None, *, include_extras: bool = False) -> Path:
-        """Write YOLO annotation file to disk."""
-        destination = label_path if label_path is not None else self.label_path
-        write_yolo_label_file(destination, self.boxes, include_extras=include_extras)
-        return destination
 
     @classmethod
     def from_label_file(

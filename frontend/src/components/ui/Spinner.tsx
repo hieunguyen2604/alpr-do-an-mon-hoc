@@ -12,12 +12,7 @@ export interface SpinnerProps {
   size?: SpinnerSize;
   /** Extra classes, applied last so they win. */
   className?: string;
-  /**
-   * Description announced to assistive technology.
-   *
-   * A spinner is meaningless to a screen reader without one — the element is
-   * pure decoration otherwise.
-   */
+  /** Description announced to assistive technology. */
   label?: string;
 }
 
@@ -27,12 +22,7 @@ const SIZE_CLASS: Readonly<Record<SpinnerSize, string>> = {
   lg: 'h-10 w-10 border-[3px]',
 };
 
-/**
- * Render a spinning ring.
- *
- * @param props - Size, extra classes and accessible label.
- * @returns The spinner element.
- */
+/** Render a spinning ring. */
 export function Spinner({
   size = 'md',
   className,

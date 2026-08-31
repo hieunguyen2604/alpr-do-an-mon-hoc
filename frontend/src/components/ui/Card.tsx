@@ -6,13 +6,7 @@ import type { HTMLAttributes, ReactNode } from 'react';
 
 import { cn } from '@/lib/cn';
 
-/**
- * Props of {@link Card}.
- *
- * `title` is omitted from the inherited attributes and redeclared: the native
- * one is the tooltip string, whereas here it is the card's heading and may be
- * any node.
- */
+/** Props of {@link Card}. */
 export interface CardProps extends Omit<HTMLAttributes<HTMLDivElement>, 'title'> {
   /** Heading shown in the card's header. Omit for a bare surface. */
   title?: ReactNode;
@@ -25,12 +19,7 @@ export interface CardProps extends Omit<HTMLAttributes<HTMLDivElement>, 'title'>
   children?: ReactNode;
 }
 
-/**
- * Render a card.
- *
- * @param props - Header content, padding option and native div attributes.
- * @returns The card element.
- */
+/** Render a card. */
 export function Card({
   title,
   description,

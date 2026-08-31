@@ -42,7 +42,6 @@ class StageTimings:
     crop_ms: float = 0.0
     ocr_ms: float = 0.0
     normalize_ms: float = 0.0
-    total_ms: float = 0.0
     plates_found: int = 0
 
 
@@ -229,13 +228,6 @@ def measure_stages(pipeline: Any, image_path: Path) -> StageTimings:
             pass
         timings.normalize_ms += (time.perf_counter() - started) * 1000.0
 
-    timings.total_ms = (
-        timings.decode_ms
-        + timings.detect_ms
-        + timings.crop_ms
-        + timings.ocr_ms
-        + timings.normalize_ms
-    )
     return timings
 
 

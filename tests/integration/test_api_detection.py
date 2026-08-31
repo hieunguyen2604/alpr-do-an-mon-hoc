@@ -1,18 +1,4 @@
-"""Integration tests for the detection endpoints.
-
-Each test drives a real HTTP request through the real routers, services and SQL,
-and then checks all three places the outcome must be consistent:
-
-1. the **response body** the client receives;
-2. the **database rows** that were written;
-3. the **files** that landed on disk.
-
-Checking only the first is the trap. A handler can return a convincing response
-while persisting nothing, or persist a job and lose its detections, and the
-client cannot tell. The upload endpoints are also the application's only
-untrusted input surface, so the rejection paths -- wrong type, too large,
-executable in disguise -- are tested as carefully as the happy one.
-"""
+"""Integration tests for the detection endpoints."""
 
 from __future__ import annotations
 
@@ -39,16 +25,7 @@ FRAME_URL = "/api/detect/frame"
 
 
 def upload(client: TestClient, data: bytes, filename: str = "car.jpg") -> object:
-    """POST one image to the detection endpoint.
-
-    Args:
-        client: The test client.
-        data: File contents.
-        filename: The name the client claims. Never used as a path.
-
-    Returns:
-        The HTTP response.
-    """
+    """POST one image to the detection endpoint."""
     return client.post(IMAGE_URL, files={"file": (filename, data, "image/jpeg")})
 
 
@@ -215,8 +192,7 @@ class TestNoPlateFoundIsSuccess:
     def test_returns_200_with_an_empty_result_list(
         self, client: TestClient, pipeline: FakePipeline
     ) -> None:
-        """Reporting it as an error would erase every negative case from the
-        accuracy figures, leaving them measuring only the images that worked."""
+        """Reporting it as an error would erase every negative case from the"""
         pipeline.plates = []
         response = upload(client, encode_jpeg())
 
@@ -271,11 +247,7 @@ class TestRejectedUploads:
     """The untrusted input surface."""
 
     def test_an_executable_renamed_as_a_jpeg_is_refused_with_415(self, client: TestClient) -> None:
-        """NFR-S1: the extension and the Content-Type header are both ignored.
-
-        Both are chosen by whoever uploads the file, so the only trustworthy
-        evidence is the file's own signature.
-        """
+        """NFR-S1: the extension and the Content-Type header are both ignored."""
         response = client.post(
             IMAGE_URL,
             files={"file": ("photo.jpg", EXE_DISGUISED_AS_JPEG, "image/jpeg")},
@@ -322,11 +294,7 @@ class TestRejectedUploads:
         assert response.status_code == 422
 
     def test_a_truncated_image_is_refused_with_400(self, client: TestClient) -> None:
-        """A valid JPEG header proves nothing about the rest of the file.
-
-        The signature check passes and the decode fails, which is why the two
-        are separate steps.
-        """
+        """A valid JPEG header proves nothing about the rest of the file."""
         truncated = encode_jpeg()[:40]
         response = client.post(IMAGE_URL, files={"file": ("broken.jpg", truncated, "image/jpeg")})
         assert response.status_code == 400
@@ -382,12 +350,7 @@ class TestErrorBodies:
     def test_a_failed_image_detection_leaves_no_partial_rows(
         self, client: TestClient, pipeline: FakePipeline, db: Session
     ) -> None:
-        """A failure must not leave a half-written detection behind.
-
-        This part of the contract holds: the rollback in ``_fail_job`` discards
-        everything the failed attempt wrote, so no detection row survives
-        pointing at a job that never completed.
-        """
+        """A failure must not leave a half-written detection behind."""
         pipeline.raises = RuntimeError("boom")
         client.post(IMAGE_URL, files={"file": ("x.jpg", encode_jpeg(), "image/jpeg")})
 
@@ -396,17 +359,7 @@ class TestErrorBodies:
     def test_a_failed_image_detection_records_the_failed_job(
         self, client: TestClient, pipeline: FakePipeline, db: Session
     ) -> None:
-        """A failed image upload must leave a job row marked failed.
-
-        This carried a ``strict`` ``xfail`` marker for as long as the defect
-        lived: ``_create_job`` only flushed the job on the image and webcam
-        paths, so ``_fail_job``'s rollback discarded the row before the failure
-        could be written and the upload left **zero** rows -- failures were
-        invisible to the usage figures. ``_create_job`` now commits, matching
-        what the video path always did, and the marker came off because
-        ``strict`` turned the unexpected pass into a failure rather than letting
-        a stale excuse sit here.
-        """
+        """A failed image upload must leave a job row marked failed."""
         pipeline.raises = RuntimeError("disk on fire")
         response = client.post(IMAGE_URL, files={"file": ("x.jpg", encode_jpeg(), "image/jpeg")})
         assert response.status_code == 500
@@ -419,12 +372,7 @@ class TestErrorBodies:
     def test_a_failed_video_job_does_record_its_failure(
         self, client: TestClient, db: Session
     ) -> None:
-        """The contrast that isolates the defect above.
-
-        ``create_video_job`` commits before the background work begins, so the
-        job survives the rollback and its failure *is* recorded. The image path
-        differs only in that missing commit.
-        """
+        """The contrast that isolates the defect above."""
         mp4 = b"\x00\x00\x00\x18ftypisom" + b"\x00" * 512
         accepted = client.post("/api/detect/video", files={"file": ("clip.mp4", mp4, "video/mp4")})
         assert accepted.status_code == 202
@@ -536,13 +484,7 @@ class TestWebcamFrames:
 
 
 class TestDetectionOnlyFrames:
-    """`read_text=false` locates plates without reading them.
-
-    The live video preview re-detects the same vehicles several times a second.
-    OCR is 55% of the per-frame cost and produces the same string every time, so
-    a client that tracks boxes between frames reads each plate once and asks for
-    detection alone in between.
-    """
+    """`read_text=false` locates plates without reading them."""
 
     def test_the_flag_reaches_the_pipeline(self, client: TestClient, pipeline) -> None:
         """Routes have swallowed form fields before; assert it arrives."""
@@ -576,11 +518,7 @@ class TestDetectionOnlyFrames:
         assert entry["bbox"]["width"] > 0
 
     def test_nothing_is_written_to_history(self, client: TestClient, db: Session) -> None:
-        """A box with no characters is not a detection record.
-
-        Without this the preview would write several empty rows per second and
-        every count derived from the history would be meaningless.
-        """
+        """A box with no characters is not a detection record."""
         client.post(
             FRAME_URL,
             files={"file": ("f.jpg", encode_jpeg(), "image/jpeg")},
@@ -667,12 +605,7 @@ class TestJobStatusEndpoint:
     def test_the_status_of_a_failed_job_never_carries_its_error_message(
         self, client: TestClient, db: Session
     ) -> None:
-        """NFR-S4: the technical reason stays server-side.
-
-        Driven through the video path, which is the one that actually persists
-        a failed job -- see the known defect recorded in
-        ``TestErrorBodies.test_a_failed_image_detection_records_the_failed_job``.
-        """
+        """NFR-S4: the technical reason stays server-side."""
         mp4 = b"\x00\x00\x00\x18ftypisom" + b"\x00" * 512
         client.post("/api/detect/video", files={"file": ("clip.mp4", mp4, "video/mp4")})
 

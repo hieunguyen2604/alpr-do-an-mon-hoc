@@ -1,13 +1,4 @@
-"""Unit tests for :mod:`ai.inference.pipeline`.
-
-The pipeline is tested with fake stages rather than real engines. That is not a
-shortcut: the pipeline's whole job is ordering, cropping, timing and failure
-containment, and none of that involves a model. Driving it with fakes is what
-lets these tests run in milliseconds, without Ultralytics or PaddleOCR
-installed, and lets them assert on behaviour -- such as "a crashing recogniser
-must not lose the other plates" -- that is impractical to provoke with a real
-engine.
-"""
+"""Unit tests for :mod:`ai.inference.pipeline`."""
 
 from __future__ import annotations
 
@@ -369,12 +360,7 @@ class TestWarmup:
 # Two-line rescue: re-reading the upper half after a failed strip read
 # --------------------------------------------------------------------- #
 class TwoLineRecognizer(BaseRecognizer):
-    """Reproduces the strip failure mode: the upper line is lost, alone it reads.
-
-    Call 1 is the merged strip, which the real engine sometimes reads as the
-    lower line only. Every later call is the upper half on its own, which reads
-    correctly -- exactly the asymmetry the rescue path exists to exploit.
-    """
+    """Reproduces the strip failure mode: the upper line is lost, alone it reads."""
 
     def __init__(self, strip_text: str = "01566", upper_text: str = "29E") -> None:
         self._strip_text = strip_text
@@ -402,11 +388,7 @@ class TwoLineRecognizer(BaseRecognizer):
 
 
 class LengthNormalizer(BaseNormalizer):
-    """Accepts a string only once it is long enough to be a plate.
-
-    Stands in for the real format rules: `01566` alone is rejected, and the
-    same string with its province code and serial letter restored is accepted.
-    """
+    """Accepts a string only once it is long enough to be a plate."""
 
     def __init__(self, minimum_length: int = 8) -> None:
         self.minimum_length = minimum_length
@@ -477,9 +459,7 @@ class TestTwoLineRescue:
         assert recognition.text == "01566"
 
     def test_a_hesitant_upper_fragment_is_not_prepended(self) -> None:
-        """The 21/07/2026 '81B-9458' case: a low-confidence fragment must not
-        be bent into a legal plate by position repair. Correct fragments
-        measure >= 0.95; the floor is 0.9."""
+        """The 21/07/2026 '81B-9458' case: a low-confidence fragment must not"""
 
         class HesitantUpper(TwoLineRecognizer):
             def recognize(self, plate_image: ImageArray) -> PlateRecognition:
@@ -504,15 +484,7 @@ class TestTwoLineRescue:
         assert recognition.is_valid_format is False
 
     def test_single_line_plates_are_never_retried(self) -> None:
-        """The two-line rescue must not fire on a one-line plate.
-
-        Both failure-retry ladders are switched off here on purpose. They are
-        separate mechanisms that also spend OCR calls, so leaving them on made
-        this test count *their* calls too — and its pass/fail then depended on
-        whether the machine happened to have `cv2.dnn_superres` installed,
-        which is exactly the kind of hidden environment coupling a unit test
-        must not have.
-        """
+        """The two-line rescue must not fire on a one-line plate."""
         recognizer = FakeRecognizer(text="51F1")
         result = build(
             detector=FakeDetector([make_detection(10, 10, 60, 40)]),
@@ -529,13 +501,7 @@ class TestTwoLineRescue:
         assert result.results[0].recognition is not None
 
     def test_the_rescue_still_reports_family_and_display_text(self) -> None:
-        """A rescued plate is a different string, so both must be recomputed.
-
-        Carrying the failed attempt's classification forward would describe a
-        plate number that no longer exists — and leaving them empty, as the
-        first version of the rescue did, silently stripped the very fields the
-        interface uses to avoid mislabelling a plate.
-        """
+        """A rescued plate is a different string, so both must be recomputed."""
 
         class KindAwareNormalizer(LengthNormalizer):
             def normalize_detailed(self, raw_text: str, line_count: int | None = None) -> object:
@@ -574,24 +540,12 @@ class TestTwoLineRescue:
 # Skew retry ladder: re-reading a failed crop through corrected variants
 # --------------------------------------------------------------------- #
 def make_flat_image(width: int = 400, height: int = 200) -> ImageArray:
-    """A uniform image, so ``rectify_plate`` is a guaranteed no-op.
-
-    The retry tests must control exactly which variant fires. On a uniform
-    crop the dominant blob is the whole crop at angle zero, so the deskew
-    variant is skipped and only geometry chosen by the test (the crop's
-    aspect ratio) decides whether the stretch variant runs.
-    """
+    """A uniform image, so ``rectify_plate`` is a guaranteed no-op."""
     return np.full((height, width, 3), 128, dtype=np.uint8)
 
 
 class ForeshortenedRecognizer(BaseRecognizer):
-    """Reproduces the measured 6.3.9 case (frame 168 of the demo video).
-
-    The raw crop (call 1, ratio over the two-line threshold) reads empty. The
-    vertically stretched variant (call 2) reads the lower line only. The
-    rescue's upper-half calls (3+) read the upper line. Only the full chain
-    retry -> variant read -> upper rescue assembles the whole plate.
-    """
+    """Reproduces the measured 6.3.9 case (frame 168 of the demo video)."""
 
     def __init__(self, lower_text: str = "4374", upper_text: str = "77H5") -> None:
         self._lower_text = lower_text
@@ -647,15 +601,7 @@ class TestShouldRetrySkewed:
         assert should_retry_skewed(empty) is True
 
     def test_a_recognised_military_plate_is_never_retried(self) -> None:
-        """The 21/07/2026 field regression, pinned.
-
-        A military plate is read correctly and deliberately reported invalid
-        (recognise-to-exclude). The first ladder treated that as a failed read,
-        re-read the crop through a stretched variant, and OCR smeared
-        ``KV-69-38`` into ``14D7-069.38`` -- a valid-looking civilian
-        motorcycle. Any read the classifier placed in a family is a finding,
-        not a failure.
-        """
+        """The 21/07/2026 field regression, pinned."""
         military = PlateRecognition(
             text="KV6938", raw_text="KV-69-38", confidence=0.89,
             line_count=1, is_valid_format=False, kind="military",
@@ -697,10 +643,7 @@ class TestSkewRetryLadder:
         assert recognizer.calls == 1, "the ablation switch must silence every retry"
 
     def test_a_wide_one_line_crop_is_not_stretched(self) -> None:
-        """Ratio 6.0 is beyond RETRY_STRETCH_MAX_RATIO: a real one-line plate
-        whose read failed for other reasons must not cost stretch calls.
-        240 px wide also keeps the crop beyond RETRY_SR_MAX_SIDE, so the SR
-        variants stay out of this test's scope."""
+        """Ratio 6.0 is beyond RETRY_STRETCH_MAX_RATIO: a real one-line plate"""
         recognizer = ForeshortenedRecognizer()
         detector = FakeDetector([make_detection(10, 10, 240, 40)])
 
@@ -730,12 +673,7 @@ class TestSkewRetryLadder:
     def test_small_failed_crops_get_super_resolution_variants(
         self, monkeypatch: pytest.MonkeyPatch
     ) -> None:
-        """A small unreadable crop earns one extra read per available SR scale.
-
-        SR itself is faked: what this test pins is the LADDER's contract --
-        eligibility by crop size, one variant per scale, and the usual
-        accept-only-when-valid criterion downstream.
-        """
+        """A small unreadable crop earns one extra read per available SR scale."""
         import ai.inference.pipeline as pipeline_module
 
         upscale_calls: list[int] = []
@@ -780,8 +718,7 @@ class TestSkewRetryLadder:
     def test_unavailable_sr_degrades_to_no_variant(
         self, monkeypatch: pytest.MonkeyPatch
     ) -> None:
-        """When cv2.dnn_superres is broken, upscale returns None and the
-        ladder silently runs without SR -- never raises, never blocks."""
+        """When cv2.dnn_superres is broken, upscale returns None and the"""
         import ai.inference.pipeline as pipeline_module
 
         monkeypatch.setattr(pipeline_module, "superres_upscale", lambda image, scale: None)
@@ -799,9 +736,7 @@ class TestSkewRetryLadder:
     def test_hybrid_rescue_joins_variant_upper_with_original_lower(
         self, monkeypatch: pytest.MonkeyPatch
     ) -> None:
-        """The measured 59-F2/277.93 shape: the original read holds the lower
-        line, an SR variant holds the upper line, each alone fails. The ladder
-        must be able to combine them -- same accept criterion, same floor."""
+        """The measured 59-F2/277.93 shape: the original read holds the lower"""
         import ai.inference.pipeline as pipeline_module
 
         monkeypatch.setattr(
@@ -811,8 +746,7 @@ class TestSkewRetryLadder:
         )
 
         class SplitHalvesRecognizer(BaseRecognizer):
-            """Original strip reads the bottom; only the variant's upper half
-            reads the top; the variant's own strip reads junk."""
+            """Original strip reads the bottom; only the variant's upper half"""
 
             def __init__(self) -> None:
                 self.calls = 0
@@ -854,9 +788,7 @@ class TestSkewRetryLadder:
         assert outcome.is_valid_format is True
 
     def test_a_red_plate_is_never_retried(self) -> None:
-        """Defence in depth for the military flip: red backgrounds exist only
-        on army plates, so even an unclassified failed read off a red crop
-        must not be re-read into a 'valid' civil string."""
+        """Defence in depth for the military flip: red backgrounds exist only"""
         recognizer = ForeshortenedRecognizer()
         failed = PlateRecognition(
             text="", raw_text="", confidence=0.0, line_count=1, is_valid_format=False
@@ -950,25 +882,12 @@ class TestColorResolvesKindAmbiguity:
 
     @pytest.mark.parametrize("kind", ["military", "diplomatic", "special"])
     def test_colour_cannot_overrule_an_unambiguous_string(self, kind: str) -> None:
-        """A misread colour must not be able to reclassify a definite reading.
-
-        An army plate whose crop is misjudged as blue stays an army plate: the
-        colour may only promote a family the character rules already listed as
-        plausible.
-        """
+        """A misread colour must not be able to reclassify a definite reading."""
         outcome = _Outcome(kind, (kind,))
         assert refine_kind_with_color(outcome, "blue", 1) == kind
 
     def test_a_two_line_plate_can_still_be_a_state_car(self) -> None:
-        """Two lines does not imply a motorcycle, and assuming so lost real plates.
-
-        `65A-004.50` is a two-line State **car** plate; QCVN 08:2024/BCA defines
-        the 330x165 two-line car format precisely so that it can exist. An
-        earlier version of the refinement chose between `blue_car` and
-        `blue_motorcycle` by line count, and therefore refused to promote exactly
-        the plates it was written for -- found by running the real image, not by
-        review.
-        """
+        """Two lines does not imply a motorcycle, and assuming so lost real plates."""
         outcome = _Outcome("car", ("car", "blue_car"))
         assert refine_kind_with_color(outcome, "blue", 2) == "blue_car"
 

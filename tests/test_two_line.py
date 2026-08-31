@@ -1,9 +1,4 @@
-"""Unit tests for the two-line plate handling helpers.
-
-These cover the geometry of :mod:`ai.inference.two_line` -- the module that
-carries risk R-04. They use synthetic arrays only, so they run fast and need no
-OCR engine, no model weights and no network.
-"""
+"""Unit tests for the two-line plate handling helpers."""
 
 from __future__ import annotations
 
@@ -27,16 +22,7 @@ from ai.inference.types import BoundingBox
 
 
 def _image(height: int, width: int, channels: int = 3) -> np.ndarray:
-    """Build a mid-grey test image of a given size.
-
-    Args:
-        height: Image height in pixels.
-        width: Image width in pixels.
-        channels: Number of channels; ``0`` yields a 2-D grayscale array.
-
-    Returns:
-        A ``uint8`` array filled with 128.
-    """
+    """Build a mid-grey test image of a given size."""
     shape = (height, width) if channels == 0 else (height, width, channels)
     return np.full(shape, 128, dtype=np.uint8)
 
@@ -104,11 +90,7 @@ class TestSplitTwoLine:
         assert upper.shape[1] == lower.shape[1] == 200
 
     def test_halves_overlap(self) -> None:
-        """The two halves share a band, so no glyph is cut in half.
-
-        Combined height greater than the source height is the observable
-        signature of the overlap.
-        """
+        """The two halves share a band, so no glyph is cut in half."""
         height = 140
         upper, lower = split_two_line(_image(height, 190))
 
@@ -169,11 +151,7 @@ class TestMergeTwoLine:
         assert merged.shape[0] == MIN_MERGE_HEIGHT
 
     def test_result_is_wide_enough_to_read_as_one_line(self) -> None:
-        """A motorcycle plate turns from near-square into a wide strip.
-
-        This is the whole point of the transform: PP-OCR resizes to a fixed
-        48 px height, which destroys a two-row plate but suits a wide strip.
-        """
+        """A motorcycle plate turns from near-square into a wide strip."""
         plate = _image(140, 190)
         upper, lower = split_two_line(plate)
         merged = merge_two_line(upper, lower)
@@ -300,17 +278,14 @@ class TestRectifyPlate:
 
     @pytest.mark.parametrize("angle", [-20.0, 20.0])
     def test_fixes_the_line_count_of_a_skewed_one_line_plate(self, angle: float) -> None:
-        """The measured 6.3.9 failure inverted: a skewed 110x520 car plate's
-        bounding box drops under the two-line threshold; after rectify the
-        ratio is the plate's own again and the classification is right."""
+        """The measured 6.3.9 failure inverted: a skewed 110x520 car plate's"""
         crop = _skewed_crop(_synthetic_plate(520, 110), angle)
         assert estimate_line_count(crop) == 2  # the pre-rectify misclassification
         rectified = rectify_plate(crop)
         assert estimate_line_count(rectified) == 1
 
     def test_frontal_crop_is_returned_unchanged(self) -> None:
-        """Below the minimum angle the crop must stay bit-identical -- this is
-        what keeps the pre-rectify pipeline reproducible on frontal data."""
+        """Below the minimum angle the crop must stay bit-identical -- this is"""
         plate = _synthetic_plate(190, 140)
         assert rectify_plate(plate) is plate
 

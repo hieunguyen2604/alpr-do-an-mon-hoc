@@ -1,23 +1,4 @@
-"""Unit tests for the repository layer.
-
-Run against a real in-memory SQLite database rather than mocks. The queries here
-are the thing under test, and a mocked session would assert that the code builds
-the statement the test expects rather than that the statement returns the right
-rows -- which is the only question worth asking of a query.
-
-The counting rule is the centrepiece
-------------------------------------
-``detection_history`` holds **one row per license plate**. A photograph of three
-vehicles produces three rows sharing a ``source_job_id``. So:
-
-* "how many times was the system used?" counts **jobs**;
-* "how many plates were recognised?" counts **rows**.
-
-Answering the first with ``SELECT COUNT(*) FROM detection_history`` inflates
-usage by the average number of plates per image. The failure is quiet -- the
-number is plausible and monotonically increasing -- so it is pinned down here by
-several tests rather than one.
-"""
+"""Unit tests for the repository layer."""
 
 from __future__ import annotations
 
@@ -48,12 +29,7 @@ _NOW = dt.datetime(2026, 7, 19, 12, 0, 0, tzinfo=dt.timezone.utc)
 
 @pytest.fixture()
 def session() -> Iterator[Session]:
-    """A session on a fresh in-memory database with foreign keys enforced.
-
-    The pragma matters: SQLite ignores every ``ON DELETE CASCADE`` without it,
-    so a test of cascading deletion would pass against a database that does not
-    actually cascade.
-    """
+    """A session on a fresh in-memory database with foreign keys enforced."""
     engine = create_engine("sqlite:///:memory:", future=True)
 
     @event.listens_for(engine, "connect")
@@ -91,17 +67,7 @@ def make_job(
     created_at: dt.datetime | None = None,
     status: str = JobStatus.COMPLETED.value,
 ) -> DetectionJob:
-    """Insert one job row.
-
-    Args:
-        session: The open session.
-        input_type: Which input produced it.
-        created_at: When it was accepted; defaults to a fixed instant.
-        status: Lifecycle state.
-
-    Returns:
-        The flushed job, with its generated identifier available.
-    """
+    """Insert one job row."""
     job = DetectionJob(
         input_type=input_type,
         status=status,
@@ -126,11 +92,7 @@ def make_detection(
     processing_time: float = 0.4,
     input_type: str | None = None,
 ) -> DetectionHistory:
-    """Insert one detection row belonging to a job.
-
-    Returns:
-        The flushed detection row.
-    """
+    """Insert one detection row belonging to a job."""
     row = DetectionHistory(
         plate_number=plate_number,
         raw_ocr_text=raw_ocr_text,
@@ -253,12 +215,7 @@ class TestPagination:
 
     @pytest.fixture()
     def populated(self, session: Session) -> DetectionJob:
-        """25 detections under one job, all sharing a timestamp.
-
-        A shared timestamp is the realistic case -- every plate from one image
-        is written in the same instant -- and it is what makes the tie-breaker
-        on the primary key necessary rather than decorative.
-        """
+        """25 detections under one job, all sharing a timestamp."""
         job = make_job(session)
         for index in range(25):
             make_detection(session, job, plate_number=f"51F-{index:05d}")
@@ -293,12 +250,7 @@ class TestPagination:
     def test_pages_do_not_overlap_or_lose_a_row(
         self, populated: DetectionJob, detections: DetectionRepository
     ) -> None:
-        """The property the primary-key tie-breaker exists to guarantee.
-
-        Ordering by ``detected_time`` alone leaves rows sharing a timestamp in
-        an order the database may change between two queries, so a row can
-        appear on two pages while another appears on none.
-        """
+        """The property the primary-key tie-breaker exists to guarantee."""
         seen: list[int] = []
         for page in (1, 2, 3):
             rows, _ = detections.list_paginated(page=page, page_size=10)
@@ -388,11 +340,7 @@ class TestPlateSearch:
     def test_separators_are_ignored_on_both_sides(
         self, plates: None, detections: DetectionRepository
     ) -> None:
-        """``51F12345`` must find ``51F-12345``.
-
-        Otherwise the search is a "the search is broken" bug report, since the
-        stored form depends on whatever normalisation produced.
-        """
+        """``51F12345`` must find ``51F-12345``."""
         _, total = detections.list_paginated(filters=HistoryFilter(plate_number="51F12345"))
         assert total == 1
 
@@ -561,12 +509,7 @@ class TestHistoryFilterValidation:
 
 
 class TestJobsVersusDetections:
-    """The counting rule: one image with three plates is ONE use of the system.
-
-    This is the class the module's docstring is about. Every test here states
-    the same distinction from a different angle, because getting it wrong
-    produces a number that is plausible, monotonically increasing and wrong.
-    """
+    """The counting rule: one image with three plates is ONE use of the system."""
 
     @pytest.fixture()
     def one_image_three_plates(self, session: Session) -> DetectionJob:
@@ -589,10 +532,7 @@ class TestJobsVersusDetections:
         one_image_three_plates: DetectionJob,
         detections: DetectionRepository,
     ) -> None:
-        """``COUNT(DISTINCT source_job_id)`` over the history table.
-
-        Three rows, one job identifier, therefore one.
-        """
+        """``COUNT(DISTINCT source_job_id)`` over the history table."""
         assert detections.count() == 3
         assert detections.count_distinct_job_ids() == 1
 
@@ -624,14 +564,7 @@ class TestJobsVersusDetections:
     def test_an_upload_that_found_nothing_still_counts_as_usage(
         self, session: Session, detections: DetectionRepository
     ) -> None:
-        """The difference between the two job figures, made explicit.
-
-        ``total_jobs`` reads the job table and therefore sees an upload that
-        produced no detection; ``count_distinct_job_ids`` reads the history
-        table and cannot. Both are correct answers to different questions, and
-        a dashboard tile reading "images processed" needs the first -- the user
-        did upload that image.
-        """
+        """The difference between the two job figures, made explicit."""
         productive = make_job(session)
         make_detection(session, productive)
         make_job(session)  # an upload in which no plate was found
@@ -870,12 +803,7 @@ class TestModelProperties:
         assert missing.was_corrected is False
 
     def test_a_timestamp_survives_the_round_trip_as_aware_utc(self, session: Session) -> None:
-        """SQLite drops the offset; ``UtcDateTime`` puts it back.
-
-        Without this the browser would read every timestamp as local time and
-        display it seven hours off on a UTC+7 machine -- plausible enough to go
-        unnoticed, wrong enough to invalidate any timing analysis.
-        """
+        """SQLite drops the offset; ``UtcDateTime`` puts it back."""
         job = make_job(session)
         row = make_detection(session, job, detected_time=_NOW)
         session.commit()

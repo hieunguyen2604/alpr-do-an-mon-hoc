@@ -1,115 +1,32 @@
-/**
- * Detect plates in a `<video>` element while it plays.
- *
- * How it works
- * ------------
- * A timer grabs whatever frame is currently on screen, draws it to an offscreen
- * canvas, encodes it as JPEG and posts it to `POST /api/detect/frame`. The boxes
- * that come back are held in state until the next answer replaces them, together
- * with the frame they were measured against.
- *
- * The single-slot rule
- * --------------------
- * At most **one** request is ever in flight. When the timer fires while a
- * request is still running, that frame is dropped and never queued.
- *
- * Skipping is the correct behaviour here, not a fallback. Inference costs a
- * measured 547 ms at the median on this machine, and the timer fires far more
- * often than that. A queue would grow without bound, and every box it eventually
- * drew would describe a frame the video had long since passed.
- *
- * What this is, and is not
- * ------------------------
- * A **preview**. It reads whatever frames it can keep up with, so it sees a
- * fraction of the video. The background job started from the same file is what
- * produces the complete, authoritative result; the two run side by side.
- */
+/** Detect plates in a `<video>` element while it plays. */
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { detectFrame, getErrorMessage } from '@/services/api';
 import type { DetectionResult } from '@/types';
 
-/**
- * Milliseconds between capture attempts.
- *
- * Tied to the cost of the **cheap** frame, not the expensive one. Three frames
- * in four skip OCR and come back in roughly 225 ms, so a 450 ms timer — chosen
- * when every frame cost 400-550 ms — left the model idle half the time and
- * capped throughput at about 1.4 frames per second no matter how fast inference
- * got. Lowering it was the second half of the optimisation: without it, making
- * inference twice as fast bought almost nothing.
- *
- * Firing much faster than this would only grow the number of frames the
- * single-slot rule drops, without putting one extra frame through the model.
- */
+/** Milliseconds between capture attempts. */
 const CAPTURE_INTERVAL_MS = 250;
 
 /** JPEG quality for the captured frame. */
 const FRAME_QUALITY = 0.75;
 
-/**
- * Longest edge of the captured frame, in pixels.
- *
- * Matched to the detector's own input size. Anything larger is encoded,
- * uploaded and then thrown away by the model's first resize, so the extra
- * pixels cost JPEG time and bandwidth and buy nothing.
- */
+/** Longest edge of the captured frame, in pixels. */
 const MAX_CAPTURE_EDGE = 640;
 
-/**
- * Read the characters on one frame in every this many.
- *
- * OCR is 55% of the per-frame budget — 274 ms against 225 ms for detection on a
- * 960x540 frame with three plates — and it re-reads the same vehicles in every
- * frame, producing the same string each time. Characters do not change while a
- * plate is in shot, so reading once and carrying the text forward onto the
- * boxes found in between roughly doubles the frame rate.
- *
- * Not larger than this, though: a plate that enters the shot is invisible to
- * the log until the next reading frame, so this value is also the worst-case
- * delay before a new plate is named.
- */
+/** Read the characters on one frame in every this many. */
 const READ_TEXT_EVERY = 4;
 
-/**
- * Overlap needed to treat a new box as the same plate as an earlier one.
- *
- * Deliberately forgiving. Between two frames 450 ms apart a moving vehicle
- * shifts a long way, so demanding a tight overlap would fail to match exactly
- * the plates that are moving — the ones worth tracking. A false match costs a
- * briefly mislabelled box on the preview; a missed match costs the text
- * disappearing and reappearing, which reads as a fault.
- */
+/** Overlap needed to treat a new box as the same plate as an earlier one. */
 const MATCH_MIN_IOU = 0.3;
 
-/**
- * Largest number of distinct plates kept in the log.
- *
- * Merging keeps this list far shorter than a per-sighting one, but a long clip
- * on a busy street still finds new plates indefinitely, and nobody reads past a
- * hundred rows during a demonstration.
- */
+/** Largest number of distinct plates kept in the log. */
 const MAX_PLATES = 100;
 
-/**
- * Bucket that collects every box whose text could not be read.
- *
- * Deliberately not a plate-shaped string: normalisation only ever emits
- * `A-Z0-9`, so this cannot collide with a real reading.
- */
+/** Bucket that collects every box whose text could not be read. */
 const UNREAD_KEY = '__unread__';
 
-/**
- * One **distinct plate** seen during the session, not one sighting.
- *
- * A plate stays in view for several seconds, so a chronological list of every
- * read repeats the same number over and over and buries anything new. Measured
- * on the demo clip: 8 analysed frames produced 24 log lines, and after the video
- * ended the same frozen frame kept being re-read. The background job merges its
- * results across frames for exactly this reason; the log here does the same, so
- * the two describe the world the same way.
- */
+/** One **distinct plate** seen during the session, not one sighting. */
 export interface LivePlateSummary {
   /** Normalised plate string, `null` for a box whose text could not be read. */
   plateNumber: string | null;
@@ -142,16 +59,7 @@ export interface LivePlateSummary {
 export interface LiveDetectionState {
   /** Plates found in the most recent answered frame. */
   results: DetectionResult[];
-  /**
-   * The exact frame those plates were read from.
-   *
-   * Handed back so the panel can display *this* image rather than whatever the
-   * video has moved on to. Inference costs a measured 547 ms at the median and
-   * up to 1.7 s, so at 1x playback the picture on screen is roughly half a
-   * second ahead of the boxes — far enough for a moving vehicle to leave its
-   * own box behind, which looks like a tracking failure and is really just two
-   * different moments drawn on top of each other.
-   */
+  /** The exact frame those plates were read from. */
   frameImage: ImageBitmap | null;
   /** Width of the frame those boxes were measured against. */
   frameWidth: number;
@@ -177,13 +85,7 @@ export interface LiveDetectionOptions {
   enabled: boolean;
 }
 
-/**
- * Intersection over union of two boxes.
- *
- * @param a - First box.
- * @param b - Second box.
- * @returns Overlap in `[0, 1]`; `0` when they do not touch.
- */
+/** Intersection over union of two boxes. */
 function intersectionOverUnion(
   a: DetectionResult['bbox'],
   b: DetectionResult['bbox'],
@@ -201,22 +103,7 @@ function intersectionOverUnion(
   return union > 0 ? overlap / union : 0;
 }
 
-/**
- * Attach text from an earlier reading to boxes that were located but not read.
- *
- * This is what makes the cheap frames useful. A detection-only frame comes back
- * with boxes and no characters; matching each box against the last frame that
- * *was* read lets the overlay keep naming the plate while it moves, at
- * detection cost only.
- *
- * Unmatched boxes are left as they are rather than guessed at — a new vehicle
- * entering the shot is genuinely unnamed until the next reading frame, and
- * borrowing a neighbour's number would be worse than showing none.
- *
- * @param located - Boxes from a detection-only frame.
- * @param known - Results from the most recent frame that was read.
- * @returns The located boxes, with text copied in where a match was found.
- */
+/** Attach text from an earlier reading to boxes that were located but not read. */
 function carryTextForward(
   located: DetectionResult[],
   known: DetectionResult[],
@@ -292,13 +179,7 @@ function isFuzzyDuplicatePlate(a: string, b: string): boolean {
   return false;
 }
 
-/**
- * Fold one sighting into the merged list.
- *
- * Keeps the **best** reading rather than the latest. A plate is read many times
- * as it crosses the frame, and those reads are not equally good — it is small
- * and blurred at the edges of its pass and largest in the middle.
- */
+/** Fold one sighting into the merged list. */
 export function mergePlateSighting(
   list: LivePlateSummary[],
   result: DetectionResult,
@@ -377,12 +258,7 @@ export function mergePlateSighting(
   return [merged, ...rest];
 }
 
-/**
- * Run live plate detection against a video element.
- *
- * @param options - The video element and whether the preview is active.
- * @returns The latest boxes, the frame they came from, and the merged log.
- */
+/** Run live plate detection against a video element. */
 export function useLiveVideoDetection({
   videoRef,
   enabled,
@@ -413,17 +289,7 @@ export function useLiveVideoDetection({
     };
   }, []);
 
-  /**
-   * Encode the video's current frame as a JPEG blob, and keep the pixels.
-   *
-   * The bitmap is taken from the same canvas contents that produced the blob,
-   * so the image the panel later displays is byte-for-byte the image the model
-   * was asked about — not a re-read of the video at some other instant.
-   *
-   * @param video - The source element.
-   * @returns The encoded frame and its bitmap, or `null` when no frame is
-   *   available yet.
-   */
+  /** Encode the video's current frame as a JPEG blob, and keep the pixels. */
   const captureFrame = useCallback(
     async (video: HTMLVideoElement): Promise<{ blob: Blob; bitmap: ImageBitmap } | null> => {
       // `readyState < 2` means no frame has been decoded, which happens right

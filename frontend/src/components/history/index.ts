@@ -1,12 +1,4 @@
-/**
- * Components of the detection-history page.
- *
- * Re-exported so the page imports them in one statement:
- *
- * ```ts
- * import { HistoryFilters, HistoryTable } from '@/components/history';
- * ```
- */
+/** Components of the detection-history page. */
 
 export { DeleteHistoryDialog } from './DeleteHistoryDialog';
 export type { DeleteHistoryDialogProps } from './DeleteHistoryDialog';

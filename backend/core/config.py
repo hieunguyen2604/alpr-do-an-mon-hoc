@@ -263,11 +263,6 @@ class Settings(BaseSettings):
         return self.max_video_size_mb * _MEGABYTE
 
     @property
-    def allowed_media_types(self) -> list[str]:
-        """Return every accepted MIME type, images and videos together."""
-        return [*self.allowed_image_types, *self.allowed_video_types]
-
-    @property
     def is_sqlite(self) -> bool:
         """Return ``True`` when the configured database is SQLite."""
         return self.database_url.startswith("sqlite")
