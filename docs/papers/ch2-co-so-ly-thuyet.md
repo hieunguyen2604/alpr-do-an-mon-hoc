@@ -148,7 +148,7 @@ Về kiến trúc, các nghiên cứu ALPR gần đây phần lớn theo hướn
 
 ### 2.5.2. Công trình về biển số Việt Nam
 
-Qua khảo sát các công trình và đồ án ALPR cho biển số Việt Nam được công bố công khai, phần lớn nghiên cứu tập trung vào việc cải thiện độ chính xác **phát hiện** biển số hoặc báo cáo kết quả tổng thể của toàn hệ thống. Các công trình thường dùng YOLO kết hợp EasyOCR hoặc PaddleOCR, và công bố mAP, precision, recall hoặc một con số độ chính xác nhận dạng chung. Chúng cũng chủ yếu xuất hiện tại hội nghị và tạp chí khu vực, **không nằm trên các benchmark quốc tế lớn**, và phần lớn đánh giá trên tập tự thu thập không công khai — nên **so sánh công bằng giữa các công trình gần như bất khả thi**.
+Qua khảo sát các công trình và đồ án ALPR cho biển số Việt Nam được công bố công khai, phần lớn nghiên cứu tập trung vào việc cải thiện độ chính xác **phát hiện** biển số hoặc báo cáo kết quả tổng thể của toàn hệ thống. Các công trình thường dùng YOLO kết hợp EasyOCR hoặc PaddleOCR, và công bố mAP, precision, recall hoặc một con số độ chính xác nhận dạng chung. Phần lớn đánh giá trên tập tự thu thập không công khai, nên **so sánh công bằng giữa các công trình gần như bất khả thi**.
 
 Trong tập tài liệu khảo sát được, nhóm thực hiện **chưa tìm thấy công trình công khai nào đồng thời làm ba việc sau**: *(i)* báo cáo tách riêng độ chính xác cho biển một dòng và biển hai dòng trên cùng một hệ thống; *(ii)* đo **định lượng** đóng góp của bước hậu xử lý, tức công bố độ chính xác cả trước lẫn sau bước đó; và *(iii)* công bố benchmark giữa nhiều bộ nhận dạng ký tự trên cùng một tập ảnh biển số Việt Nam.
 
@@ -167,7 +167,7 @@ Bảng 2.3 tóm tắt năm công trình tiêu biểu trong tập khảo sát, ch
 
 Bảng cho thấy ba đặc điểm chung. **Một, chỉ số báo cáo không đồng nhất** — mIoU, mAP, F1, accuracy và độ chính xác mức chuỗi xuất hiện lẫn lộn, nên các con số trong cột cuối **không so sánh trực tiếp được với nhau**. **Hai, hai trong năm công trình chỉ báo cáo chỉ số của khối phát hiện**, không công bố kết quả đọc chuỗi đầu cuối. **Ba, không công trình nào tách riêng kết quả cho biển một dòng và biển hai dòng**, dù bốn trong năm công trình làm việc với ảnh xe máy — vốn luôn mang biển hai dòng.
 
-Kết quả cao nhất được công bố cho biển số Việt Nam là **99,28% mức chuỗi** của nhóm Học viện Kỹ thuật Quân sự [25]. Con số này **không dùng làm mốc so sánh cho đồ án** vì nó đo trên tập dữ liệu riêng không công khai, và độ khó của tập ấy không được mô tả định lượng.
+Kết quả cao nhất được công bố cho biển số Việt Nam là **99,28% mức chuỗi** [25]. **Con số này không đối chiếu trực tiếp được với kết quả của đồ án**, và lý do là về nguyên tắc chứ không phải về mức độ: công trình ấy đo trên **bộ dữ liệu riêng không công khai** nên không ai tái lập hay đối chứng được, và **không công bố phân bố độ khó** của tập ấy — tỉ lệ biển hai dòng, điều kiện chụp, dải kích thước biển đều không được mô tả định lượng. Hai tập dữ liệu có phân bố độ khó khác nhau thì hai con số độ chính xác **không cùng thang đo**, nên đặt 99,28% cạnh bất kỳ con số nào của đồ án đều là so sánh không hợp lệ. Phép so sánh hợp lệ đòi hai hệ thống chạy trên **cùng một tập kiểm tra**, điều kiện mà bộ dữ liệu không công khai loại trừ ngay từ đầu.
 
 > **Phạm vi của nhận định trên.** Nó chỉ áp dụng cho tập tài liệu nhóm thực hiện khảo sát được tại thời điểm thực hiện đề tài, chủ yếu là các nguồn công khai truy cập được bằng tiếng Việt và tiếng Anh. Đây là **phát biểu về phạm vi khảo sát**, không phải khẳng định rằng những công trình như vậy không tồn tại.
 
@@ -185,10 +185,10 @@ Từ khảo sát trên, đồ án xác định sáu hướng đóng góp, mỗi 
 |:--:| --- | --- |
 | 1 | **Báo cáo tách riêng độ chính xác cho biển một dòng và biển hai dòng** trên cùng một hệ thống, ở cả tầng phát hiện lẫn tầng nhận dạng, và biến việc này thành nghĩa vụ bắt buộc qua chỉ tiêu NFR-A8 | Năm công trình trong Bảng 2.3 đều báo cáo một chỉ số chung, không tách theo bố cục biển (2.5.2) |
 | 2 | **Thiết kế bộ luật hậu xử lý ràng buộc theo VỊ TRÍ trong chuỗi**, và **đo tách bạch độ chính xác trước và sau bước đó** để hiệu số trở thành một đại lượng định lượng | Các mô tả khảo sát được dừng ở danh sách ký tự phẳng, phần lớn dùng nhầm con số 20 chữ cái cho toàn chuỗi (2.2.4) |
-| 3 | **Công bố chỉ số đầu cuối ở mức chuỗi** bên cạnh mAP của bước phát hiện, và nêu rõ chênh lệch giữa hai đại lượng | Phần lớn công trình trong nước khảo sát được chỉ báo cáo mAP của bước phát hiện (2.5.2) |
+| 3 | **Công bố chỉ số đầu cuối ở mức chuỗi** bên cạnh mAP của bước phát hiện, và nêu rõ chênh lệch giữa hai đại lượng | Trong phạm vi khảo sát, phần lớn công trình trong nước chỉ báo cáo mAP của bước phát hiện (2.5.2) |
 | 4 | **Xây dựng benchmark ba bộ nhận dạng ký tự trên 2.801 biển số Việt Nam** trong cùng một tầng bao quanh: PaddleOCR 68,87% · EasyOCR 14,28% · Tesseract 10,28% (3.3.3) | Trong tập khảo sát, không công trình nào công bố benchmark giữa nhiều bộ nhận dạng trên riêng ảnh biển số Việt Nam (3.3) |
-| 5 | **Mọi số liệu hiệu năng công bố kèm cấu hình phần cứng**: model CPU, số luồng, kích thước ảnh vào, nền tảng suy luận, cỡ mẫu đo | Số liệu hiệu năng trong tài liệu thường công bố không kèm phần cứng nên không tái lập được (2.5.1) |
-| 6 | **Bàn giao hệ thống có kiến trúc phần mềm, kiểm thử và giao thức đo công khai** — mọi số liệu sinh lại được bằng một lệnh | Phần lớn kho mã nguồn mở Việt Nam khảo sát được không công bố số liệu và không có kiến trúc phần mềm (2.5.2) |
+| 5 | **Mọi số liệu hiệu năng công bố kèm cấu hình phần cứng**: model CPU, số luồng, kích thước ảnh vào, nền tảng suy luận, cỡ mẫu đo | Trong phạm vi khảo sát, số liệu hiệu năng thường công bố không kèm phần cứng nên không tái lập được (2.5.1) |
+| 6 | **Bàn giao hệ thống có kiến trúc phần mềm, kiểm thử và giao thức đo công khai** — mọi số liệu sinh lại được bằng một lệnh | Trong phạm vi các kho mã nguồn mở được khảo sát, phần lớn không công bố số liệu và không có kiến trúc phần mềm (2.5.2) |
 
 Sáu đóng góp đều thuộc loại **kỹ nghệ và báo cáo**, không phải thuật toán; tuyên bố đóng góp đầy đủ đặt ở mục 1.5.
 

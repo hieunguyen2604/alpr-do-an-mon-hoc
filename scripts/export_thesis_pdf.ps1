@@ -41,12 +41,23 @@ $word.Visible = $false
 $word.DisplayAlerts = 0
 
 try {
-  $doc = $word.Documents.Open($Nguon, $false, $true)   # ReadOnly
+  # KHONG mo ReadOnly. Truoc day mo ReadOnly nen so trang chi duoc tinh cho ban
+  # PDF, con chinh tep .docx van giu gia tri cache: muc luc in ra cau nhac
+  # "Mo tep trong Word roi bam Ctrl+A, F9", va cot Trang cua hai danh muc in ra
+  # so 0. Ai mo .docx de doc — ke ca hoi dong — se thay dung ban chua cap nhat.
+  $doc = $word.Documents.Open($Nguon)
 
   # Cap nhat muc luc: pandoc chen truong TOC nhung khong tinh so trang, nen neu
-  # khong goi cai nay thi PDF ra mot muc luc rong.
+  # khong goi cai nay thi PDF ra mot muc luc rong. Goi HAI LAN: lan dau dien so
+  # trang cho cac truong PAGEREF cua danh muc hinh/bang, lan hai tinh lai muc
+  # luc sau khi do dai hai danh muc do da on dinh.
   foreach ($toc in $doc.TablesOfContents) { $toc.Update() }
   $doc.Fields.Update() | Out-Null
+  foreach ($toc in $doc.TablesOfContents) { $toc.Update() }
+  $doc.Fields.Update() | Out-Null
+
+  # Ghi nguoc so trang da tinh vao chinh .docx, roi moi xuat PDF.
+  $doc.Save()
 
   $doc.SaveAs([ref]$Dich, [ref]17)   # 17 = wdFormatPDF
   $so_trang = $doc.ComputeStatistics(2)   # 2 = wdStatisticPages
@@ -70,6 +81,14 @@ try {
   if (-not (Test-Path $nop)) { New-Item -ItemType Directory -Force $nop | Out-Null }
   Copy-Item $Dich (Join-Path $nop $ten) -Force
   Write-Output ("[ok] ban nop <- {0}" -f (Join-Path $nop $ten))
+
+  # Chep luon .docx DA CAP NHAT TRUONG. build_thesis.py chep .docx vao nop/
+  # TRUOC khi script nay chay, nen ban trong nop/ giu gia tri cache: muc luc in
+  # cau nhac thao tac va cot Trang cua hai danh muc in so 0. Ai mo .docx trong
+  # nop/ se doc dung ban chua cap nhat, du ban PDF canh no thi dung.
+  $ten_docx = [System.IO.Path]::ChangeExtension($ten, "docx")
+  Copy-Item $Nguon (Join-Path $nop $ten_docx) -Force
+  Write-Output ("[ok] ban nop <- {0}" -f (Join-Path $nop $ten_docx))
 }
 finally {
   $word.Quit()
