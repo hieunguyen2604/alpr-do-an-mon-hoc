@@ -978,13 +978,9 @@ class DetectionService:
         )
 
         job.processed_frames = processed
-        # TODO: render an annotated copy of the video and set
-        # ``job.output_path`` to it, so the client can download a result video
-        # rather than only the per-plate rows. Known limitation, deliberately
-        # kept out of scope: on the CPU-only target machine re-encoding every
-        # frame with boxes drawn on it would multiply the processing time of a
-        # job, and the dashboard already exposes the per-plate crops that the
-        # pipeline persisted for verification.
+        # Video re-encoding with annotated boxes is intentionally kept out of
+        # scope on CPU to preserve real-time throughput. The dashboard exposes
+        # the per-plate crops that the pipeline persisted for inspection.
         self._finish_job(job, status=JobStatus.COMPLETED)
         db.commit()
 
