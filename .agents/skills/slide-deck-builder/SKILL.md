@@ -74,7 +74,6 @@ powershell -File scripts/check_slides.ps1
 
 ## 4. Danh Mục Tài Liệu Bổ Trợ
 
-- **Tổng hợp kế hoạch slide:** [`docs/slides/SLIDE_PLAN.md`](docs/slides/SLIDE_PLAN.md)
 - **Kịch bản Q&A phản biện (40+ câu):** [`docs/slides/10-defense-qa.md`](docs/slides/10-defense-qa.md)
 - **Kịch bản Demo trực tiếp:** [`docs/slides/10-demo-script.md`](docs/slides/10-demo-script.md)
 - **Hướng dẫn dựng slide & poster:** [`docs/slides/README.md`](docs/slides/README.md)

@@ -10,7 +10,6 @@ Thư mục này chứa **khung nội dung**, không chứa file slide đã dựn
 
 | File | Nội dung | Trạng thái |
 |---|---|:--:|
-| [`SLIDE_PLAN.md`](SLIDE_PLAN.md) | **Kế hoạch chi tiết slide** — So sánh & kịch bản ĐATN vs Đồ án môn | ✅ Mới |
 | [`10-slides.md`](10-slides.md) | **Nguồn của bộ slide chiếu** — 29 slide, chỉ gạch đầu dòng | ✅ Xong |
 | [`10-kich-ban-noi.md`](10-kich-ban-noi.md) | Kịch bản nói 24 slide: lời nói, ngân sách thời gian 15 phút | ✅ Xong |
 | [`11-slides-ky-thuat.md`](11-slides-ky-thuat.md) | Bộ slide báo cáo kỹ thuật (11 slide) | ✅ Xong |
