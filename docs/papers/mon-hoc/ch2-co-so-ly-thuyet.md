@@ -21,7 +21,7 @@ Biển số ô tô trong nước gồm **8 ký tự**, ba thành phần: **mã �
 | Seri biển nền xanh | 11 | A B C D E F G H K L M |
 | **Bị loại trừ khỏi toàn hệ thống** | **5** | **I, J, O, Q, W** |
 
-Hệ quả cài đặt: bộ nhận dạng phải được huấn luyện trên **đủ 36 ký tự** rồi mới ràng buộc ở tầng hậu xử lý. Một mô hình huấn luyện trên charset 20 chữ cái sẽ **không bao giờ dự đoán được `R`**, gây sai sót có hệ thống trên mọi biển xe máy mang ký tự này — loại sai sót mà hậu xử lý không cứu được vì thông tin đã bị loại ngay ở tầng mô hình.
+Hệ quả cài đặt: **nếu huấn luyện lại bộ nhận dạng thì phải dùng đủ 36 ký tự** rồi mới ràng buộc ở tầng hậu xử lý. *(Bản giao hàng dùng model gốc PP-OCRv5, charset còn rộng hơn 36; ràng buộc hợp lệ vẫn đặt ở tầng hậu xử lý.)* Một mô hình huấn luyện trên charset 20 chữ cái sẽ **không bao giờ dự đoán được `R`**, gây sai sót có hệ thống trên mọi biển xe máy mang ký tự này — loại sai sót mà hậu xử lý không cứu được vì thông tin đã bị loại ngay ở tầng mô hình.
 
 ### 2.1.2. Kích thước vật lý và tỉ lệ khung hình
 

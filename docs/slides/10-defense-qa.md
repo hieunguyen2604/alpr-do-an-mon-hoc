@@ -531,7 +531,7 @@ Thông tư 79/2024/TT-BCA (hiệu lực 01/01/2025), sửa đổi bởi Thông t
 > **Câu này chứa một mệnh đề phổ biến nhưng SAI. Nếu em trả lời theo mệnh đề đó là hỏng.**
 
 **Trả lời ngắn.**
-**Đủ A–Z và 0–9, tức 36 ký tự.** Em cố ý không thu hẹp charset ở tầng mô hình, mà đặt ràng buộc hợp lệ ở tầng hậu xử lý — nơi có thể sửa được và ghi log được.
+**Đủ A–Z và 0–9, tức 36 ký tự** — đó là charset cho lượt tinh chỉnh (`dict36.txt`). Nhóm cố ý không thu hẹp ở tầng mô hình, mà đặt ràng buộc hợp lệ ở tầng hậu xử lý — nơi sửa được và ghi log được. *Lưu ý khi bị hỏi sâu:* bản giao hàng **chạy model gốc**, charset còn rộng hơn 36, nên nguyên tắc này càng đúng — model càng dễ đọc ra ký tự ngoài tập hợp lệ thì tầng hậu xử lý càng là chỗ bắt.
 
 **Nếu bị hỏi sâu — vì sao đây là quyết định quan trọng.**
 
@@ -1071,7 +1071,7 @@ Nó là một hệ thống chạy được nhưng **chưa phải sản phẩm tr
 | Biển 1/2 dòng — OpenALPR trên **RodoSol-ALPR (Brazil)** | 94,3% so với **45,7%** (chênh 48,6 điểm) · Laroca VISAPP 2022, `laroca_2022_crossdataset` · **số liệu Brazil, KHÔNG phải VN** |
 | Ngưỡng AR phân loại | **2,5** — đáy vùng trũng quan sát được ở 2,2–2,6 |
 | AR danh nghĩa QCVN 08:2024 | ô tô dài 4,727 · ô tô ngắn 2,000 · mô tô 1,357 |
-| Charset OCR | **36 ký tự** A–Z + 0–9; tập loại trừ chắc chắn chỉ **5 chữ I J O Q W** |
+| Charset OCR | **36 ký tự** A–Z + 0–9 cho lượt tinh chỉnh; bản giao hàng dùng model gốc, charset rộng hơn. Tập loại trừ chắc chắn chỉ **5 chữ I J O Q W** |
 | Căn cứ pháp lý | TT 79/2024 (sửa bởi TT 13/2025, TT 51/2025) + QCVN 08:2024/BCA |
 | Cơ sở dữ liệu | `detection_history` 18 cột · `detection_job` 11 cột |
 | Giao diện | **3 trang** — `/` Nhận dạng ảnh *(trang chủ)* · `/video` · `/history`; gói tải về **328,8 KB** (−55% sau khi gỡ `recharts`) |
