@@ -14,9 +14,7 @@ Ba use case chính — nhận dạng từ ảnh (UC-01), từ video (UC-02) và 
 
 ![](figures/fig-ch4-usecase.png)
 
-**Hình 4.1.** Sơ đồ use case — hai tác nhân và bốn use case. Ba use case tô đậm là
-use case chính được đặc tả đầy đủ theo khuôn tác nhân · tiền điều kiện · luồng
-chính · luồng thay thế.
+**Hình 4.1.** Sơ đồ use case — hai tác nhân và bốn use case.
 
 ### 4.1.2. Yêu cầu chức năng
 
@@ -53,7 +51,7 @@ phải nhánh ít ai đụng tới.
 
 **Hình 4.2.** Kiến trúc phân tầng năm tầng và chiều phụ thuộc
 
-Năm tầng: **1 — Trình bày** (giao diện, chỉ biết hợp đồng HTTP của tầng 2); **2 — API** (định tuyến, kiểm tra hợp lệ, ánh xạ ngoại lệ thành mã HTTP, sinh OpenAPI); **3 — Nghiệp vụ** (điều phối: tạo tác vụ, gọi đường ống, lưu tệp, ghi CSDL, gộp trùng, thống kê); **4 — AI** (phát hiện, nhận dạng, chuẩn hoá — **chỉ biết NumPy, OpenCV và thư viện học sâu**); **5 — Dữ liệu** (CSDL, kho tệp). **Điểm mấu chốt:** khối tầng AI **không có mũi tên nào đi lên**. Sau hai đợt thu gọn, tầng trình bày còn **ba trang** nhưng **tầng 2–5 không đổi một dòng**: `POST /detect/frame`, `GET /statistics`, `GET /health` vẫn phục vụ và vẫn có kiểm thử tích hợp — phép thử ngoài dự kiến cho nguyên tắc phụ thuộc một chiều.
+Năm tầng: **1 — Trình bày** (giao diện, chỉ biết hợp đồng HTTP của tầng 2); **2 — API** (định tuyến, kiểm tra hợp lệ, ánh xạ ngoại lệ thành mã HTTP, sinh OpenAPI); **3 — Nghiệp vụ** (điều phối: tạo tác vụ, gọi đường ống, lưu tệp, ghi CSDL, gộp trùng, thống kê); **4 — AI** (phát hiện, nhận dạng, chuẩn hoá — **chỉ biết NumPy, OpenCV và thư viện học sâu**); **5 — Dữ liệu** (CSDL, kho tệp). **Điều quan trọng:** khối tầng AI **không có mũi tên nào đi lên**. Sau hai đợt thu gọn, tầng trình bày còn **ba trang** nhưng **tầng 2–5 không đổi một dòng**: `POST /detect/frame`, `GET /statistics`, `GET /health` vẫn phục vụ và vẫn có kiểm thử tích hợp — phép thử ngoài dự kiến cho nguyên tắc phụ thuộc một chiều.
 
 ### 4.2.3. Tách tầng AI khỏi tầng API và cách kiểm chứng ràng buộc
 
@@ -164,9 +162,7 @@ Kiến trúc tầng AI dựa trên **ba lớp trừu tượng** có hợp đồn
 
 ![](figures/fig-ch4-interfaces.png)
 
-**Hình 4.6.** Ba lớp trừu tượng và cài đặt tương ứng. Đường ống chỉ giữ tham chiếu
-tới cột trái, nên thay một cài đặt — ví dụ đổi bộ nhận dạng ký tự — không đụng
-tới phần còn lại của hệ thống. Đây là bằng chứng cài đặt cho NFR-M5.
+**Hình 4.6.** Ba lớp trừu tượng và cài đặt tương ứng — bằng chứng cài đặt cho NFR-M5.
 
 ### 4.6.2. Bộ phát hiện
 
@@ -180,7 +176,7 @@ Một giới hạn kỹ thuật ngoài tầm kiểm soát của đồ án: trên
 
 ### 4.6.4. Mô-đun xử lý biển hai dòng
 
-**a) Cơ sở của bài toán.** Bộ nhận dạng dựa trên kiến trúc CRNN kết hợp hàm mất mát CTC, vốn giả định căn chỉnh đơn điệu giữa cột ảnh và chuỗi ký tự — giả định chỉ đúng với văn bản một dòng. Chồng lên đó, mô-đun nhận dạng chuẩn hoá mọi ảnh về chiều cao cố định 48 điểm ảnh [21]<!-- paddlepaddle_2026_textrecognition -->. Biển xe máy Việt Nam 140 × 190 mm theo QCVN 08:2024/BCA [6]<!-- bocongan_2024_qcvn08 --> có tỉ lệ khung hình xấp xỉ 1,36; sau chuẩn hoá, mỗi hàng ký tự chỉ còn khoảng 24 điểm ảnh, thấp hơn ngưỡng mà nét chữ còn tách rời. Mức nghiêm trọng đã được định lượng: trên bộ RodoSol-ALPR của Brazil, OpenALPR đạt 94,3% trên biển ô tô một dòng nhưng chỉ 45,7% trên biển xe máy hai dòng [2]<!-- laroca_2022_crossdataset -->. Cần lưu ý cặp số liệu này đo trên dữ liệu Brazil, chỉ được trích như dẫn chứng tương đương về định lượng chứ không phải số liệu Việt Nam.
+**a) Cơ sở của bài toán.** Bộ nhận dạng dựa trên kiến trúc CRNN kết hợp hàm mất mát CTC, vốn giả định đầu vào là **một chuỗi ký tự theo chiều ngang** (2.4.2). Ảnh biển hai dòng vi phạm giả định đó, và mức suy giảm đã được đo trong tài liệu (1.1.3) — đây là rủi ro R-04, mức Cao/Cao, vì ở Việt Nam biển hai dòng là dạng phổ biến chứ không phải ngoại lệ.
 
 **b) Ước lượng số dòng.** Số dòng suy từ tỉ lệ chiều rộng trên chiều cao của vùng biển, ngưỡng phân loại 2,5: tỉ lệ nhỏ hơn ngưỡng được xếp vào nhóm hai dòng. Đây là đề xuất của đồ án, không phải quy định pháp lý — quy chuẩn chỉ cung cấp ba tỉ lệ vật lý 4,727, 2,000 và 1,357. Ngưỡng được chọn lệch về phía hai dòng vì đường xử lý hai dòng suy giảm êm khi gặp đầu vào một dòng, chiều ngược lại thì không. Dải 2,5–3,0 vẫn là vùng bất định do biển một dòng chụp nghiêng lớn có thể cho tỉ lệ rơi vào khoảng này; định lượng tần suất thuộc Chương 5.
 
@@ -190,11 +186,11 @@ Một giới hạn kỹ thuật ngoài tầm kiểm soát của đồ án: trên
 
 **e) Tiền xử lý ảnh biển.** Ba bước độc lập, mỗi bước bật tắt riêng để phục vụ thí nghiệm bóc tách đóng góp. **Chuyển thang xám** vì ký tự không mang thông tin phân biệt trong kênh màu. **CLAHE** hệ số 2,0 trên ô 8 × 8, vì bề mặt phản quang tạo mảng chói cục bộ mà cân bằng toàn cục không xử lý được [22]<!-- sutikno_2025_clahe -->. **Lọc song phương** thay cho làm mờ Gauss, vì nó bảo toàn biên — yếu tố quyết định để phân biệt các cặp đồng hình như `8` và `B`. Ảnh biển do bộ phát hiện sinh ra thường chỉ cao 20–40 điểm ảnh nên được phóng về 64 trước khi đọc.
 
-**f) Bước phục hồi dòng trên.** Chế độ hỏng quan sát được: `29E-015.66` chỉ đọc ra `015.66`, vì sau khi ghép, bộ phát hiện văn bản chỉ xác định một vùng chữ và bỏ qua cụm mã tỉnh cùng ký tự sê-ri. Giả thuyết ban đầu — bỏ phép ghép, đọc riêng từng nửa rồi nối chuỗi — đã kiểm chứng trên 200 biển hai dòng có nhãn và **bị bác bỏ dứt khoát: 64,5% xuống 3,5%, không thắng ở trường hợp nào** (5.5.6). Nguyên nhân nằm ở chính vùng chồng lấn tại mục c: đọc riêng thì dải chồng lấn bị nhận dạng hai lần và sinh ký tự thừa giữa chuỗi, còn trên dải liền mạch vùng lặp nằm giữa hai cụm ký tự nên bị bộ phát hiện văn bản loại bỏ.
+**f) Bước phục hồi dòng trên.** Chế độ hỏng quan sát được: `29E-015.66` chỉ đọc ra `015.66` — sau khi ghép, bộ phát hiện văn bản bỏ qua cụm mã tỉnh và ký tự sê-ri. Giả thuyết thay thế *(bỏ phép ghép, đọc riêng từng nửa rồi nối chuỗi)* đã kiểm chứng trên 200 biển hai dòng có nhãn và **bị bác bỏ: 64,5% xuống 3,5%** (5.5.6); nguyên nhân là dải chồng lấn ở mục c bị nhận dạng hai lần khi đọc riêng.
 
 Thiết kế cuối cùng vì vậy giữ nguyên chiến lược ghép và chỉ thêm một bước phục hồi có cổng chặt: **chỉ kích hoạt khi đồng thời** vùng biển được phân loại hai dòng, chuỗi sau chuẩn hoá không hợp lệ, và chuỗi thô khác rỗng. Khi đó hệ thống đọc thêm một lượt trên riêng nửa trên, ghép với chuỗi thô rồi chuẩn hoá lại; kết quả mới chỉ được nhận nếu vượt kiểm tra định dạng. **Tính không làm hỏng mang bản chất cấu trúc** — cổng chỉ mở khi kết quả đã không hợp lệ, nên tập bị can thiệp và tập đang đúng là hai tập rời nhau. Đo được **+1,86 và +0,50 điểm** trên hai mẫu độc lập, **0 trường hợp bị làm hỏng**, chi phí 15–21 ms mỗi biển hai dòng.
 
-**g) Một giới hạn về phương pháp đo.** Kịch bản sinh NFR-A4…A7 ban đầu gọi thẳng bộ nhận dạng và bộ chuẩn hoá thay vì đi qua tầng điều phối, nên logic đặt tại tầng điều phối không được phản ánh trong số công bố. Khắc phục bằng cách tách bước phục hồi thành hàm độc lập cấp mô-đun để cả đường chạy sản phẩm lẫn công cụ đo cùng gọi một cài đặt. Bài học vượt ra ngoài phạm vi biển hai dòng: **một công cụ đo đi tắt qua tầng điều phối sẽ đo một hệ thống khác với hệ thống được bàn giao** — và biện pháp này về sau vẫn chưa đủ, cùng loại sai lệch đã tái diễn (5.5.6).
+**g) Một giới hạn về phương pháp đo.** Kịch bản sinh NFR-A4…A7 ban đầu gọi thẳng bộ nhận dạng thay vì đi qua tầng điều phối, nên logic đặt tại tầng ấy không được phản ánh trong số công bố. Khắc phục bằng cách tách bước phục hồi thành hàm cấp mô-đun để cả đường chạy sản phẩm lẫn công cụ đo cùng gọi một cài đặt. Bài học vượt ra ngoài phạm vi biển hai dòng: **một công cụ đo đi tắt qua tầng điều phối sẽ đo một hệ thống khác với hệ thống được bàn giao** (5.5.6).
 
 ### 4.6.5. Bộ luật hậu xử lý theo vị trí
 

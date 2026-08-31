@@ -164,18 +164,18 @@ Nhóm cũng xin cảm ơn quý thầy cô Trường Đại học Công nghệ Th
 |---|---|:---:|
 | Hình 1.1 | ** Ranh giới hệ thống — phần bên trong là hệ thống bàn giao, Colab/Kaggle nằm ngoài | — |
 | Hình 2.1 | * Kiến trúc tổng quát backbone – neck – head của YOLO11 (theo [13], [9]) | — |
-| Hình 2.2 | ** Kiến trúc CRNN và cách CTC gộp chuỗi thô. Điểm mấu chốt nằm ở | — |
+| Hình 2.2 | ** Kiến trúc CRNN và cách CTC gộp chuỗi thô | — |
 | Hình 2.3 | ** Cơ chế sụp đổ của CTC trên ảnh văn bản hai dòng | — |
-| Hình 4.1 | ** Sơ đồ use case — hai tác nhân và bốn use case. Ba use case tô đậm là | — |
+| Hình 4.1 | ** Sơ đồ use case — hai tác nhân và bốn use case | — |
 | Hình 4.2 | ** Kiến trúc phân tầng năm tầng và chiều phụ thuộc | — |
 | Hình 4.3 | ** Luồng xử lý của đường ống AI, các khối tô đỏ là nhánh biển hai dòng | — |
 | Hình 4.4 | ** Đường ống sáu bước xây dựng bộ dữ liệu | — |
 | Hình 4.5 | ** Đường cong huấn luyện theo epoch — ba hàm mất mát và bốn chỉ số trên tập kiểm định | — |
-| Hình 4.6 | ** Ba lớp trừu tượng và cài đặt tương ứng. Đường ống chỉ giữ tham chiếu | — |
+| Hình 4.6 | ** Ba lớp trừu tượng và cài đặt tương ứng — bằng chứng cài đặt cho NFR-M5 | — |
 | Hình 4.7 | ** Thuật toán chuẩn hoá chuỗi biển số theo bộ luật ràng buộc vị trí | — |
 | Hình 5.1 | ** Giao thức đo và ràng buộc phụ thuộc giữa các bước đánh giá | — |
-| Hình 5.2 |  Sáu lần đo NFR-P2. Trung vị của lượt đo cũ nằm ngang với các lần đo trên máy rảnh, nhưng đuôi p95 cao gấp sáu lần; ép tải tới 12 lõi cũng chỉ đẩy tỉ lệ p95/p50 lên 1,24× trong khi lượt đo cũ là 6,93× | — |
-| Hình 5.3 |  Một ca khử trùng lặp thật, cắt trực tiếp từ video demo. Cùng một chiếc xe máy được đọc thành năm chuỗi khác nhau ở năm khung hình khác nhau; bốn bản viền đỏ bị gom vào bản viền xanh. Điều đáng chú ý là năm vùng cắt gần như không phân biệt được bằng mắt — khác biệt không đến từ loá sáng hay che khuất mà từ tính không tất định của khối nhận dạng giữa các khung gần giống nhau. Bản 51H14573 thắng nhờ 11 khung** bỏ phiếu, trong khi bốn bản còn lại mỗi bản chỉ có một khung; nếu xét riêng độ tin cậy thì 51H4573 (0,994) đã suýt vượt qua | — |
+| Hình 5.2 | ** Sáu lần đo NFR-P2 trong các điều kiện máy khác nhau | — |
+| Hình 5.3 | ** Một ca khử trùng lặp thật, cắt trực tiếp từ video demo | — |
 
 ---
 

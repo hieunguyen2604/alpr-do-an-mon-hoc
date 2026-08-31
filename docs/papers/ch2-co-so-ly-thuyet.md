@@ -108,9 +108,7 @@ Tổng ở (2.3) tính bằng quy hoạch động tiến–lùi. Ưu điểm quy
 
 ![](figures/fig-ch2-crnn-ctc.png)
 
-**Hình 2.2.** Kiến trúc CRNN và cách CTC gộp chuỗi thô. Điểm mấu chốt nằm ở
-tầng tích chập: nó hạ **chiều cao về 1**, biến bản đồ đặc trưng hai chiều thành
-một chuỗi vector — nhờ đó bài toán đọc ảnh trở thành bài toán đọc chuỗi.
+**Hình 2.2.** Kiến trúc CRNN và cách CTC gộp chuỗi thô.
 
 ### 2.4.3. Vì sao kiến trúc CTC gặp khó với văn bản nhiều dòng
 

@@ -22,11 +22,13 @@ Nhóm thực hiện đã bàn giao một hệ thống nhận dạng biển số 
 
 Các chỉ tiêu về phát hiện, thông lượng, độ tin cậy và chịu tải đều đạt; các chỉ tiêu về độ chính xác chuỗi chưa đạt ngưỡng. NFR-P1 vượt mục tiêu sau đợt tối ưu tầng chạy, dù bậc thử lại đã cộng thêm độ trễ đuôi để đổi lấy 34 biển đọc đúng.
 
-**Sáu đại lượng đo được mà khảo sát không tìm thấy tương đương trong tài liệu Việt Nam.** *(1)* **Đóng góp thuần của khối hậu xử lý theo vị trí: +13,28 điểm** — sửa đúng 372 biển, làm hỏng 0 trên 2.801 mẫu. *(2)* **Chênh lệch giữa hai bố cục biển: 23,07 điểm** ở khối nhận dạng so với chỉ 2,09 điểm ở khối phát hiện, nên rủi ro R-04 nằm trọn ở tầng đọc ký tự. *(3)* **Benchmark ba bộ nhận dạng trên 2.801 biển trong cùng một tầng bao quanh**: PaddleOCR 68,87% so với EasyOCR 14,28% và Tesseract 10,28% — kết quả chỉ áp trong cấu hình của đồ án, không suy rộng thành so sánh tuyệt đối; kèm phát hiện rằng bước tách-ghép nâng PaddleOCR 34,92 điểm nhưng Tesseract chỉ 0,03 điểm, tức **điều kiện cần nhưng chưa đủ**. *(4)* **Bộ nhận màu nền đạt 97,89%** trên 1.565 ảnh có nhãn, cung cấp bằng chứng mà chuỗi ký tự không mang được. *(5)* **Tối ưu tầng chạy đưa NFR-P1 từ chỉ-đạt-sàn lên vượt mục tiêu** — p95 từ 1.143,10 xuống 509,76 ms mà **không đụng một trọng số nào**, và điều đáng nói là **mọi chỉ số độ chính xác đứng yên tuyệt đối**, bằng chứng cho thấy phép tối ưu không đánh đổi gì. *(6)* **Khử trùng lặp mờ cho chuỗi khung hình video** gom 17 trên 44 cách đọc về đúng một bản ghi mỗi xe, chọn bản giữ lại bằng **số khung bỏ phiếu** chứ không bằng độ tin cậy.
+**Bốn đại lượng đo được mà khảo sát không tìm thấy tương đương trong tài liệu Việt Nam.** *(1)* **Đóng góp thuần của khối hậu xử lý theo vị trí: +13,28 điểm** — sửa đúng 372 biển, làm hỏng 0 trên 2.801 mẫu. *(2)* **Chênh lệch giữa hai bố cục biển: 23,07 điểm** ở khối nhận dạng so với 2,09 điểm ở khối phát hiện, nên rủi ro R-04 nằm trọn ở tầng đọc ký tự. *(3)* **Benchmark ba bộ nhận dạng trên 2.801 biển trong cùng một tầng bao quanh**: PaddleOCR 68,87% so với EasyOCR 14,28% và Tesseract 10,28%, kèm phát hiện rằng bước tách-ghép nâng PaddleOCR 34,92 điểm nhưng Tesseract chỉ 0,03 điểm — **điều kiện cần nhưng chưa đủ**. *(4)* **Bộ nhận màu nền đạt 97,89%** trên 1.565 ảnh có nhãn, cung cấp bằng chứng mà chuỗi ký tự không mang được.
 
-Ngoài các con số, đồ án để lại **một quy trình đánh giá có kiểm chứng**: mọi số liệu sinh lại được bằng một lệnh, mọi phép so sánh kèm điều kiện đo, và các kết quả âm — lượt tinh chỉnh bộ nhận dạng không thắng model gốc ở chế độ vận hành — được ghi lại thay vì bỏ đi (Bảng 6.2).
+Hai kết quả kỹ thuật hệ thống đi kèm: **tối ưu tầng chạy đưa p95 từ 1.143,10 xuống 509,76 ms mà không đụng một trọng số nào và mọi chỉ số độ chính xác đứng yên** (4.6.8); và **khử trùng lặp mờ** gom 17 trên 44 cách đọc về đúng một bản ghi mỗi xe (4.7.2). Ngoài các con số, đồ án để lại một quy trình đánh giá có kiểm chứng: mọi số liệu sinh lại được bằng một lệnh, và các kết quả âm được ghi lại thay vì bỏ đi.
 
 ## 6.2. Hạn chế
+
+Mười hạn chế của đồ án, xếp theo mức nghiêm trọng, liệt kê ở Bảng 6.2.
 
 **Bảng 6.2.** Mười hạn chế của đồ án
 
