@@ -200,17 +200,18 @@ Nhóm cũng xin cảm ơn quý thầy cô Trường Đại học Công nghệ Th
 | Bảng 4.2 | Tám quyết định kiến trúc — mỗi dòng kèm đánh đổi phải chấp nhận | — |
 | Bảng 4.3 | Đóng góp của từng bộ dữ liệu trước và sau khử trùng lặp | — |
 | Bảng 4.4 | Tiến triển chỉ số trên tập validation theo mốc epoch | — |
-| Bảng 5.2 | Ba phiên bản bộ dữ liệu và số cặp ảnh gần trùng xuyên tập con theo ngưỡng Hamming | — |
-| Bảng 5.3 | Kết quả phát hiện tách theo biển một dòng và hai dòng (NFR-A8) | — |
-| Bảng 5.4 | Độ chính xác OCR trước và sau hậu xử lý, trên 2.801 biển có nhãn chuỗi | — |
-| Bảng 5.5 | Độ chính xác nhận dạng tách theo biển một dòng và hai dòng | — |
-| Bảng 5.6 | NFR-A7 ở mức ảnh toàn cảnh — ước lượng phân tầng trên 1.606 khung biển | — |
-| Bảng 5.7 | Chi phí và lợi ích của từng bậc trong thang thử lại | — |
-| Bảng 5.8 | Độ trễ đầu cuối một ảnh, đối chiếu NFR-P1 | — |
-| Bảng 5.9 | Phân rã ngân sách độ trễ theo từng bước | — |
-| Bảng 5.10 | Các chỉ tiêu hiệu năng ngoài đường xử lý ảnh | — |
-| Bảng 5.11 | Đối chiếu chỉ tiêu phi chức năng, gom theo nhóm | — |
-| Bảng 5.12 | Tần suất từng loại lỗi trên 2.801 biển có nhãn chuỗi, cấu hình giao hàng | — |
+| Bảng 5.1 | Ba phiên bản bộ dữ liệu và số cặp ảnh gần trùng xuyên tập con theo ngưỡng Hamming | — |
+| Bảng 5.2 | Kết quả phát hiện tách theo biển một dòng và hai dòng (NFR-A8) | — |
+| Bảng 5.3 | Độ chính xác OCR trước và sau hậu xử lý, trên 2.801 biển có nhãn chuỗi | — |
+| Bảng 5.4 | Độ chính xác nhận dạng tách theo biển một dòng và hai dòng | — |
+| Bảng 5.5 | NFR-A7 ở mức ảnh toàn cảnh — ước lượng phân tầng trên 1.606 khung biển | — |
+| Bảng 5.6 | Chi phí và lợi ích của từng bậc trong thang thử lại | — |
+| Bảng 5.7 | Độ trễ đầu cuối một ảnh, đối chiếu NFR-P1 | — |
+| Bảng 5.8 | Phân rã ngân sách độ trễ theo từng bước | — |
+| Bảng 5.9 | Các chỉ tiêu hiệu năng ngoài đường xử lý ảnh | — |
+| Bảng 5.10 | Đối chiếu chỉ tiêu phi chức năng, gom theo nhóm | — |
+| Bảng 5.11 | Tần suất từng loại lỗi trên 2.801 biển có nhãn chuỗi, cấu hình giao hàng | — |
+| Bảng 5.12 | Đối chiếu kết quả của đồ án với các con số đã công bố | — |
 | Bảng 5.13 | Tám mối đe doạ đến tính hợp lệ của kết quả | — |
 | Bảng 6.1 | Đối chiếu chỉ tiêu đặt ra ở giai đoạn phân tích yêu cầu với số đo trên models/best.pt | — |
 | Bảng 6.2 | Mười hạn chế của đồ án | — |

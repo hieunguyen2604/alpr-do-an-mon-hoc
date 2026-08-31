@@ -140,28 +140,38 @@ Quan hệ giữa chỉ số này và CER là **bất lợi phi tuyến**: với 
 
 ### 2.5.1. Công trình quốc tế tiêu biểu
 
-Nhiều công trình quốc tế gần đây (2018-2026) tập trung vào nhận dạng đầu cuối bằng học sâu, cải thiện độ phân giải thấp và sử dụng siêu mô hình ngôn ngữ lớn để khắc phục hạn chế của các hệ thống cũ. Tuy nhiên, ít nghiên cứu nào bóc tách số liệu cho riêng biển hai dòng phức tạp giống như ở Việt Nam.
+Laroca và cộng sự (2022) khảo sát khả năng tổng quát hoá của các hệ thống ALPR khi chuyển giữa các bộ dữ liệu khác nhau [2]<!-- laroca_2022_crossdataset -->. Trên bộ **RodoSol-ALPR** của Brazil — thiết kế cân bằng có chủ ý với 4.000 ảnh ô tô biển một dòng và 4.000 ảnh xe máy biển hai dòng — hệ thống thương mại OpenALPR đạt **94,3%** với biển một dòng nhưng chỉ **45,7%** với biển hai dòng. Vì hai nhóm ảnh chỉ khác nhau ở bố cục biển, kết quả này cho thấy **bố cục hai dòng là một thách thức độc lập với chất lượng bộ phát hiện**. Cũng trong nghiên cứu đó, cả 12 phương pháp và 2 hệ thống thương mại được đánh giá đều không vượt quá 70% tỷ lệ nhận dạng khi đo xuyên bộ dữ liệu.
+
+Cuộc thi **ICPR 2026 về nhận dạng biển số độ phân giải thấp** lấy độ chính xác đầu cuối ở **mức chuỗi** làm chỉ số chính; đội dẫn đầu đạt **82,13%** [18]<!-- laroca_2026_icprlrlpr -->. Con số này cho thấy bài toán vẫn chưa được giải quyết trọn vẹn ngay cả với những phương pháp mạnh nhất, và nó cũng là mốc tham chiếu hợp lý duy nhất cho chỉ số đầu cuối của đồ án (5.8.1).
+
+Về kiến trúc, các nghiên cứu ALPR gần đây phần lớn theo hướng **hai giai đoạn**: một bộ phát hiện đối tượng khoanh vùng biển, rồi một bộ nhận dạng ký tự đọc vùng đã cắt. Batra và cộng sự (2022) dùng YOLOv5 cho biển số Ấn Độ [15]<!-- batra_2022_yolov5 -->, và hai công trình 2025 áp dụng YOLO11 cho cùng bài toán [16]<!-- jaic_2025_yolov11alpr --> [17]<!-- jcosine_2025_yolo11plate -->. Cả ba đều báo cáo mAP của **riêng bước phát hiện**; không công trình nào trong nhóm này bóc tách kết quả nhận dạng theo bố cục biển — khoảng cách giữa mAP@0.5 và mAP@0.5:0.95 mà chúng công bố (18,8 · 27,5 · 40,7 điểm phần trăm, **Phụ lục V**) chỉ nói lên độ khít của hộp bao, không nói gì về khả năng đọc biển hai dòng.
 
 ### 2.5.2. Công trình về biển số Việt Nam
 
-Nghiên cứu ALPR cho biển Việt Nam chủ yếu công bố tại hội nghị, tạp chí khu vực, **không xuất hiện trên các benchmark quốc tế lớn**, phần lớn đánh giá trên tập tự thu thập không công khai — so sánh công bằng gần như bất khả thi.
+Qua khảo sát các công trình và đồ án ALPR cho biển số Việt Nam được công bố công khai, phần lớn nghiên cứu tập trung vào việc cải thiện độ chính xác **phát hiện** biển số hoặc báo cáo kết quả tổng thể của toàn hệ thống. Các công trình thường dùng YOLO kết hợp EasyOCR hoặc PaddleOCR, và công bố mAP, precision, recall hoặc một con số độ chính xác nhận dạng chung. Chúng cũng chủ yếu xuất hiện tại hội nghị và tạp chí khu vực, **không nằm trên các benchmark quốc tế lớn**, và phần lớn đánh giá trên tập tự thu thập không công khai — nên **so sánh công bằng giữa các công trình gần như bất khả thi**.
+
+Trong tập tài liệu khảo sát được, nhóm thực hiện **chưa tìm thấy công trình công khai nào đồng thời làm ba việc sau**: *(i)* báo cáo tách riêng độ chính xác cho biển một dòng và biển hai dòng trên cùng một hệ thống; *(ii)* đo **định lượng** đóng góp của bước hậu xử lý, tức công bố độ chính xác cả trước lẫn sau bước đó; và *(iii)* công bố benchmark giữa nhiều bộ nhận dạng ký tự trên cùng một tập ảnh biển số Việt Nam.
+
+> **Phạm vi của nhận định trên.** Nó chỉ áp dụng cho tập tài liệu nhóm thực hiện khảo sát được tại thời điểm thực hiện đề tài, chủ yếu là các nguồn công khai truy cập được bằng tiếng Việt và tiếng Anh. Đây là **phát biểu về phạm vi khảo sát**, không phải khẳng định rằng những công trình như vậy không tồn tại.
 
 ### 2.5.3. Các bộ dữ liệu chuẩn trong lĩnh vực
 
-Khảo sát đối chiếu **chín bộ dữ liệu chuẩn** của lĩnh vực theo quy mô, đặc điểm và **giấy phép sử dụng** — cột giấy phép quyết định bộ nào dùng được cho đồ án này (Bảng 2.3).
+Khảo sát đối chiếu các bộ dữ liệu chuẩn của lĩnh vực theo quy mô, đặc điểm và **giấy phép sử dụng** — cột giấy phép quyết định bộ nào dùng được cho đồ án này. Hai bộ được nhắc tới nhiều nhất là **RodoSol-ALPR** (Brazil, có nhãn bố cục một dòng · hai dòng) [2]<!-- laroca_2022_crossdataset --> và tập của **ICPR 2026 LR-LPR** (ảnh độ phân giải thấp, có nhãn chuỗi) [18]<!-- laroca_2026_icprlrlpr -->; cả hai đều **không chứa biển số Việt Nam**, nên không dùng trực tiếp được. Bộ dữ liệu mà đồ án hợp nhất cùng giấy phép từng nguồn trình bày ở mục 4.4.1 và **Phụ lục II**.
 
 ### 2.5.4. Khoảng trống nghiên cứu và định vị đề tài
+
+Sáu khoảng trống rút ra từ khảo sát trên, cùng cách đồ án lấp từng khoảng, tổng hợp ở Bảng 2.3.
 
 **Bảng 2.3.** Sáu khoảng trống nghiên cứu và cách nhóm thực hiện lấp
 
 | # | Khoảng trống được xác định từ khảo sát | Cách nhóm thực hiện lấp |
 |:--:|---|---|
-| 1 | **Chưa có nghiên cứu Việt Nam nào công bố bảng so sánh tách riêng độ chính xác biển một dòng và biển hai dòng trên cùng một hệ thống** (mục 2.5.2) | Nhóm thực hiện báo cáo tách bạch hai con số này |
-| 2 | **Chưa có nghiên cứu Việt Nam nào mô tả có hệ thống bộ luật hậu xử lý ràng buộc theo VỊ TRÍ trong chuỗi** — các mô tả hiện có dừng ở danh sách phẳng, phần lớn dùng nhầm con số 20 chữ cái cho toàn chuỗi (mục 2.2.4) | Thiết kế hậu xử lý **theo từng vị trí**, **đo tách bạch trước và sau hậu xử lý**; hiệu số là đóng góp định lượng |
-| 3 | **Hầu hết công trình trong nước chỉ báo cáo mAP của bước phát hiện**, không báo cáo end-to-end mức chuỗi (mục 2.5.2) | Báo cáo cả hai, end-to-end là chỉ tiêu quan trọng nhất |
-| 4 | **Không tồn tại benchmark công khai nào so sánh các bộ nhận dạng ký tự trên riêng ảnh biển số xe máy Việt Nam hai dòng** (mục 3.3) | ✅ **Đã lấp** — đo ba bộ nhận dạng trên 2.801 biển, cùng tầng bao quanh: PaddleOCR 68,87% · EasyOCR 14,28% · Tesseract 10,28% (mục 3.3.3) |
+| 1 | Nhóm **chưa tìm thấy công trình công khai nào của Việt Nam công bố bảng so sánh tách riêng độ chính xác biển một dòng và biển hai dòng trên cùng một hệ thống** (mục 2.5.2) | Nhóm thực hiện báo cáo tách bạch hai con số này |
+| 2 | Nhóm **chưa tìm thấy công trình công khai nào của Việt Nam mô tả có hệ thống bộ luật hậu xử lý ràng buộc theo VỊ TRÍ trong chuỗi** — các mô tả hiện có dừng ở danh sách phẳng, phần lớn dùng nhầm con số 20 chữ cái cho toàn chuỗi (mục 2.2.4) | Thiết kế hậu xử lý **theo từng vị trí**, **đo tách bạch trước và sau hậu xử lý**; hiệu số là đóng góp định lượng |
+| 3 | **Phần lớn công trình trong nước khảo sát được chỉ báo cáo mAP của bước phát hiện**, không báo cáo end-to-end mức chuỗi (mục 2.5.2) | Báo cáo cả hai, end-to-end là chỉ tiêu quan trọng nhất |
+| 4 | Nhóm **chưa tìm thấy benchmark công khai nào so sánh các bộ nhận dạng ký tự trên riêng ảnh biển số xe máy Việt Nam hai dòng** (mục 3.3) | ✅ **Đã lấp** — đo ba bộ nhận dạng trên 2.801 biển, cùng tầng bao quanh: PaddleOCR 68,87% · EasyOCR 14,28% · Tesseract 10,28% (mục 3.3.3) |
 | 5 | **Số liệu hiệu năng thường công bố không kèm phần cứng** (mục 2.5.1) | Mọi số liệu hiệu năng kèm: model CPU, số luồng, kích thước ảnh vào, nền tảng suy luận, cỡ mẫu đo |
-| 6 | **Hầu hết kho mã nguồn mở Việt Nam không công bố số liệu và không có kiến trúc phần mềm** (mục 2.5.2) | Công bố đầy đủ giao thức đo, tập kiểm thử, toàn bộ chỉ số; bàn giao hệ thống có API, giao diện, cơ sở dữ liệu, kiểm thử, đóng gói |
+| 6 | **Phần lớn kho mã nguồn mở Việt Nam khảo sát được không công bố số liệu và không có kiến trúc phần mềm** (mục 2.5.2) | Công bố đầy đủ giao thức đo, tập kiểm thử, toàn bộ chỉ số; bàn giao hệ thống có API, giao diện, cơ sở dữ liệu, kiểm thử, đóng gói |
 
 Sáu khoảng trống đều thuộc loại **kỹ nghệ và báo cáo**, không phải thuật toán; tuyên bố đóng góp đầy đủ đặt ở mục 1.5.
 
