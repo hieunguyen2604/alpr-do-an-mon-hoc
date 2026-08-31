@@ -24,7 +24,7 @@ Bốn ràng buộc thu hẹp không gian phương án **trước khi** so sánh.
 
 ### 3.3.2. PP-OCRv5 mobile so với PP-OCRv6 — đo trên máy đồ án
 
-Mục này chọn **bậc mô hình** bên trong họ đã chọn, dựa trên số liệu **tự đo** (Bảng 3.1).
+Mục này chọn **bậc mô hình** bên trong họ đã chọn, dựa trên số liệu **tự đo**; danh sách các bậc mô hình nhận dạng lấy từ tài liệu chính thức của PaddleOCR [21]<!-- paddleocr_rec_module --> (Bảng 3.1).
 
 **Bảng 3.1.**[]{#tbl-3-1} PP-OCRv6_medium_rec so với PP-OCRv5_mobile_rec, đo trên 200 vùng cắt biển số của đồ án
 

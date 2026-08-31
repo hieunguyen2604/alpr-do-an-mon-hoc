@@ -24,7 +24,7 @@ Các chỉ tiêu về phát hiện, thông lượng, độ tin cậy và chịu 
 
 **Bốn kết quả định lượng mà khảo sát không tìm thấy tương đương trong tài liệu Việt Nam.** *(1)* Đóng góp thuần của khối hậu xử lý theo vị trí: **+13,28 điểm**, sửa đúng 372 biển và làm hỏng 0 trên 2.801 mẫu. *(2)* Chênh lệch giữa hai bố cục biển: **23,07 điểm** ở khối nhận dạng so với 2,09 điểm ở khối phát hiện, nên rủi ro R-04 nằm trọn ở tầng đọc ký tự. *(3)* Benchmark ba bộ nhận dạng trên 2.801 biển trong cùng một tầng bao quanh: **PaddleOCR 68,87%**, EasyOCR 14,28%, Tesseract 10,28%. *(4)* Bộ nhận màu nền đạt **97,89%** trên 1.565 ảnh có nhãn, cung cấp bằng chứng mà chuỗi ký tự không mang được.
 
-Hai kết quả kỹ thuật hệ thống đi kèm: tối ưu tầng chạy đưa p95 từ 1.143,10 xuống **509,76 ms** mà không thay đổi trọng số và mọi chỉ số độ chính xác giữ nguyên (4.6.8); và khử trùng lặp mờ gom 17 trên 44 cách đọc về đúng một bản ghi mỗi xe (4.7.2). Ngoài các con số, đồ án để lại một quy trình đánh giá có kiểm chứng: mọi số liệu sinh lại được bằng một lệnh, và các kết quả âm được ghi lại thay vì bỏ đi.
+Hai kết quả kỹ thuật hệ thống đi kèm: tối ưu tầng chạy đưa p95 từ 1.143,10 xuống **509,76 ms** mà mọi chỉ số độ chính xác giữ nguyên (4.6.8), và khử trùng lặp mờ gom 17 trên 44 cách đọc về đúng một bản ghi mỗi xe (4.7.2). Đồ án cũng để lại một quy trình đánh giá có kiểm chứng: mọi số liệu sinh lại được bằng một lệnh, và các kết quả âm được ghi lại thay vì bỏ đi.
 
 ## 6.2. Hạn chế
 

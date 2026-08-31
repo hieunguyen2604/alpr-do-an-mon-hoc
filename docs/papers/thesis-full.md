@@ -193,7 +193,8 @@ Nhóm cũng xin cảm ơn quý thầy cô Trường Đại học Công nghệ Th
 | Bảng 1.2 | Nhóm chỉ tiêu hiệu năng trên CPU | `<w:r><w:fldChar w:fldCharType="begin"/></w:r><w:r><w:instrText xml:space="preserve"> PAGEREF tbl-1-2 \h </w:instrText></w:r><w:r><w:fldChar w:fldCharType="separate"/></w:r><w:r><w:t>0</w:t></w:r><w:r><w:fldChar w:fldCharType="end"/></w:r>`{=openxml} |
 | Bảng 2.1 | So sánh khác biệt kiến trúc giữa các phiên bản YOLO gần đây | `<w:r><w:fldChar w:fldCharType="begin"/></w:r><w:r><w:instrText xml:space="preserve"> PAGEREF tbl-2-1 \h </w:instrText></w:r><w:r><w:fldChar w:fldCharType="separate"/></w:r><w:r><w:t>0</w:t></w:r><w:r><w:fldChar w:fldCharType="end"/></w:r>`{=openxml} |
 | Bảng 2.2 | So sánh OCR văn bản tài liệu và OCR biển số xe | `<w:r><w:fldChar w:fldCharType="begin"/></w:r><w:r><w:instrText xml:space="preserve"> PAGEREF tbl-2-2 \h </w:instrText></w:r><w:r><w:fldChar w:fldCharType="separate"/></w:r><w:r><w:t>0</w:t></w:r><w:r><w:fldChar w:fldCharType="end"/></w:r>`{=openxml} |
-| Bảng 2.3 | Sáu khoảng trống nghiên cứu và cách nhóm thực hiện lấp | `<w:r><w:fldChar w:fldCharType="begin"/></w:r><w:r><w:instrText xml:space="preserve"> PAGEREF tbl-2-3 \h </w:instrText></w:r><w:r><w:fldChar w:fldCharType="separate"/></w:r><w:r><w:t>0</w:t></w:r><w:r><w:fldChar w:fldCharType="end"/></w:r>`{=openxml} |
+| Bảng 2.3 | Năm công trình ALPR cho biển số Việt Nam trong tập khảo sát | `<w:r><w:fldChar w:fldCharType="begin"/></w:r><w:r><w:instrText xml:space="preserve"> PAGEREF tbl-2-3 \h </w:instrText></w:r><w:r><w:fldChar w:fldCharType="separate"/></w:r><w:r><w:t>0</w:t></w:r><w:r><w:fldChar w:fldCharType="end"/></w:r>`{=openxml} |
+| Bảng 2.4 | Sáu khoảng trống nghiên cứu và cách nhóm thực hiện lấp | `<w:r><w:fldChar w:fldCharType="begin"/></w:r><w:r><w:instrText xml:space="preserve"> PAGEREF tbl-2-4 \h </w:instrText></w:r><w:r><w:fldChar w:fldCharType="separate"/></w:r><w:r><w:t>0</w:t></w:r><w:r><w:fldChar w:fldCharType="end"/></w:r>`{=openxml} |
 | Bảng 3.1 | PP-OCRv6_medium_rec so với PP-OCRv5_mobile_rec, đo trên 200 vùng cắt biển số của đồ án | `<w:r><w:fldChar w:fldCharType="begin"/></w:r><w:r><w:instrText xml:space="preserve"> PAGEREF tbl-3-1 \h </w:instrText></w:r><w:r><w:fldChar w:fldCharType="separate"/></w:r><w:r><w:t>0</w:t></w:r><w:r><w:fldChar w:fldCharType="end"/></w:r>`{=openxml} |
 | Bảng 3.2 | So sánh ba bộ nhận dạng ký tự trên 2.801 biển số Việt Nam (567 một dòng, 2.234 hai dòng) | `<w:r><w:fldChar w:fldCharType="begin"/></w:r><w:r><w:instrText xml:space="preserve"> PAGEREF tbl-3-2 \h </w:instrText></w:r><w:r><w:fldChar w:fldCharType="separate"/></w:r><w:r><w:t>0</w:t></w:r><w:r><w:fldChar w:fldCharType="end"/></w:r>`{=openxml} |
 | Bảng 4.1 | Bốn ràng buộc kiến trúc và cách kiểm chứng từng ràng buộc | `<w:r><w:fldChar w:fldCharType="begin"/></w:r><w:r><w:instrText xml:space="preserve"> PAGEREF tbl-4-1 \h </w:instrText></w:r><w:r><w:fldChar w:fldCharType="separate"/></w:r><w:r><w:t>0</w:t></w:r><w:r><w:fldChar w:fldCharType="end"/></w:r>`{=openxml} |
@@ -227,7 +228,7 @@ Nhóm cũng xin cảm ơn quý thầy cô Trường Đại học Công nghệ Th
 
 </div>
 
-Nhận dạng biển số xe tự động (ALPR) là bài toán nền tảng của bãi đỗ xe thông minh, thu phí không dừng và giám sát giao thông. Tại Việt Nam, biển số hai dòng chiếm tỷ lệ lớn do mật độ xe máy cao, trong khi đa số bộ dữ liệu quốc tế chỉ có biển một dòng, khiến các mô hình huấn luyện trên dữ liệu nước ngoài không áp dụng trực tiếp được. Khác biệt này đã được đo lường: trên bộ RodoSol-ALPR của Brazil, hệ thống OpenALPR đạt 94,3% với ô tô biển một dòng nhưng chỉ 45,7% với xe máy biển hai dòng [1]<!-- laroca_2022_crossdataset -->.
+Nhận dạng biển số xe tự động (ALPR) là bài toán nền tảng của bãi đỗ xe thông minh, thu phí không dừng và giám sát giao thông. Tại Việt Nam, biển số hai dòng chiếm tỷ lệ lớn do mật độ xe máy cao, trong khi đa số bộ dữ liệu quốc tế chỉ có biển một dòng, khiến các mô hình huấn luyện trên dữ liệu nước ngoài không áp dụng trực tiếp được. Khác biệt này đã được đo lường: trên bộ RodoSol-ALPR của Brazil, độ chính xác của một hệ thống ALPR thương mại suy giảm gần 50 điểm phần trăm khi chuyển từ biển một dòng sang biển hai dòng [1]<!-- laroca_2022_crossdataset -->.
 
 Đồ án xây dựng một hệ thống ALPR hoàn chỉnh cho biển số xe Việt Nam theo hướng tiếp cận hai giai đoạn: phát hiện vùng biển số bằng YOLO11, nhận dạng ký tự bằng PaddleOCR, và hậu xử lý bằng bộ luật chuẩn hoá theo quy chuẩn hiện hành. Hệ thống hỗ trợ cả biển một dòng và hai dòng, nhận đầu vào là ảnh, video hoặc khung hình thời gian thực gửi qua API (endpoint `POST /api/detect/frame`), và suy luận hoàn toàn trên CPU.
 
@@ -507,7 +508,7 @@ Quan hệ giữa chỉ số này và CER là **bất lợi phi tuyến**: với 
 
 ### 2.5.1. Công trình quốc tế tiêu biểu
 
-Laroca và cộng sự (2022) khảo sát khả năng tổng quát hoá của các hệ thống ALPR khi chuyển giữa các bộ dữ liệu khác nhau [2]<!-- laroca_2022_crossdataset -->. Trên bộ **RodoSol-ALPR** của Brazil — thiết kế cân bằng có chủ ý với 4.000 ảnh ô tô biển một dòng và 4.000 ảnh xe máy biển hai dòng — hệ thống thương mại OpenALPR đạt **94,3%** với biển một dòng nhưng chỉ **45,7%** với biển hai dòng. Vì hai nhóm ảnh chỉ khác nhau ở bố cục biển, kết quả này cho thấy **bố cục hai dòng là một thách thức độc lập với chất lượng bộ phát hiện**. Cũng trong nghiên cứu đó, cả 12 phương pháp và 2 hệ thống thương mại được đánh giá đều không vượt quá 70% tỷ lệ nhận dạng khi đo xuyên bộ dữ liệu.
+Laroca và cộng sự (2022) khảo sát khả năng tổng quát hoá của các hệ thống ALPR khi chuyển giữa các bộ dữ liệu khác nhau [2]<!-- laroca_2022_crossdataset -->. Trên bộ **RodoSol-ALPR** của Brazil — thiết kế cân bằng có chủ ý với 4.000 ảnh ô tô biển một dòng và 4.000 ảnh xe máy biển hai dòng — hệ thống thương mại OpenALPR suy giảm **48,6 điểm phần trăm** khi chuyển từ biển một dòng sang biển hai dòng (số liệu cụ thể ở 1.1.3). Vì hai nhóm ảnh chỉ khác nhau ở bố cục biển, kết quả này cho thấy **bố cục hai dòng là một thách thức độc lập với chất lượng bộ phát hiện**. Cũng trong nghiên cứu đó, cả 12 phương pháp và 2 hệ thống thương mại được đánh giá đều không vượt quá 70% tỷ lệ nhận dạng khi đo xuyên bộ dữ liệu.
 
 Cuộc thi **ICPR 2026 về nhận dạng biển số độ phân giải thấp** lấy độ chính xác đầu cuối ở **mức chuỗi** làm chỉ số chính; đội dẫn đầu đạt **82,13%** [18]<!-- laroca_2026_icprlrlpr -->. Con số này cho thấy bài toán vẫn chưa được giải quyết trọn vẹn ngay cả với những phương pháp mạnh nhất, và nó cũng là mốc tham chiếu hợp lý duy nhất cho chỉ số đầu cuối của đồ án (5.8.1).
 
@@ -519,6 +520,22 @@ Qua khảo sát các công trình và đồ án ALPR cho biển số Việt Nam 
 
 Trong tập tài liệu khảo sát được, nhóm thực hiện **chưa tìm thấy công trình công khai nào đồng thời làm ba việc sau**: *(i)* báo cáo tách riêng độ chính xác cho biển một dòng và biển hai dòng trên cùng một hệ thống; *(ii)* đo **định lượng** đóng góp của bước hậu xử lý, tức công bố độ chính xác cả trước lẫn sau bước đó; và *(iii)* công bố benchmark giữa nhiều bộ nhận dạng ký tự trên cùng một tập ảnh biển số Việt Nam.
 
+Bảng 2.3 tóm tắt năm công trình tiêu biểu trong tập khảo sát, chọn theo tiêu chí có công bố phương pháp và số liệu đủ để đối chiếu.
+
+**Bảng 2.3.**[]{#tbl-2-3} Năm công trình ALPR cho biển số Việt Nam trong tập khảo sát
+
+| Công trình | Khối phát hiện | Khối nhận dạng | Chỉ số được báo cáo |
+| --- | --- | --- | --- |
+| Học viện Kỹ thuật Quân sự, MAPR 2021 [25]<!-- mta_2021_mapr --> | Key-point detection | Encoder–decoder *segmentation-free* | mIoU 95,01%; **chuỗi 99,28%**, ký tự 99,7% |
+| Trần Anh Đạt và cộng sự, 2023 [26]<!-- tran_2023_multiangle --> | Multi-angle view model | CnOCR | **F1 91,3%** trên tập PTITPlates (500 ảnh) |
+| Le D. H. và cộng sự, FDSE 2023 [27]<!-- le_2023_fdse --> | YOLOv8 *(hai tầng: xe máy → biển)* | YOLOv8 | **mAP 93%** — chỉ báo cáo chỉ số phát hiện |
+| Tran và Bui, MIWAI 2024 [28]<!-- tran_2024_miwai --> | SSD, backbone MobileNetV2 | YOLOv8-nano | **95,68%** nhận dạng; 0,478 s/ảnh trên Raspberry Pi 4 |
+| Đặng Thị Dung và cộng sự, 2024 [29]<!-- dang_2024_tnu --> | YOLOv8 · YOLO-NAS | *(không có khối nhận dạng)* | YOLO-NAS-S: accuracy **83,92%**, F1 0,9125 |
+
+Bảng cho thấy ba đặc điểm chung. **Một, chỉ số báo cáo không đồng nhất** — mIoU, mAP, F1, accuracy và độ chính xác mức chuỗi xuất hiện lẫn lộn, nên các con số trong cột cuối **không so sánh trực tiếp được với nhau**. **Hai, hai trong năm công trình chỉ báo cáo chỉ số của khối phát hiện**, không công bố kết quả đọc chuỗi đầu cuối. **Ba, không công trình nào tách riêng kết quả cho biển một dòng và biển hai dòng**, dù bốn trong năm công trình làm việc với ảnh xe máy — vốn luôn mang biển hai dòng.
+
+Kết quả cao nhất được công bố cho biển số Việt Nam là **99,28% mức chuỗi** của nhóm Học viện Kỹ thuật Quân sự [25]. Con số này **không dùng làm mốc so sánh cho đồ án** vì nó đo trên tập dữ liệu riêng không công khai, và độ khó của tập ấy không được mô tả định lượng.
+
 > **Phạm vi của nhận định trên.** Nó chỉ áp dụng cho tập tài liệu nhóm thực hiện khảo sát được tại thời điểm thực hiện đề tài, chủ yếu là các nguồn công khai truy cập được bằng tiếng Việt và tiếng Anh. Đây là **phát biểu về phạm vi khảo sát**, không phải khẳng định rằng những công trình như vậy không tồn tại.
 
 ### 2.5.3. Các bộ dữ liệu chuẩn trong lĩnh vực
@@ -527,16 +544,16 @@ Khảo sát đối chiếu các bộ dữ liệu chuẩn của lĩnh vực theo 
 
 ### 2.5.4. Khoảng trống nghiên cứu và định vị đề tài
 
-Từ khảo sát trên, đồ án xác định sáu hướng đóng góp, mỗi hướng nhắm vào một khoảng trống cụ thể (Bảng 2.3).
+Từ khảo sát trên, đồ án xác định sáu hướng đóng góp, mỗi hướng nhắm vào một khoảng trống cụ thể (Bảng 2.4).
 
-**Bảng 2.3.**[]{#tbl-2-3} Sáu khoảng trống nghiên cứu và cách nhóm thực hiện lấp
+**Bảng 2.4.**[]{#tbl-2-4} Sáu khoảng trống nghiên cứu và cách nhóm thực hiện lấp
 
 | # | Đóng góp của đồ án | Khoảng trống mà nó lấp |
 |:--:| --- | --- |
-| 1 | **Báo cáo tách riêng độ chính xác cho biển một dòng và biển hai dòng** trên cùng một hệ thống, ở cả tầng phát hiện lẫn tầng nhận dạng, và biến việc này thành nghĩa vụ bắt buộc qua chỉ tiêu NFR-A8 | Trong tài liệu khảo sát được, các công trình Việt Nam thường chỉ công bố một con số độ chính xác chung (2.5.2) |
+| 1 | **Báo cáo tách riêng độ chính xác cho biển một dòng và biển hai dòng** trên cùng một hệ thống, ở cả tầng phát hiện lẫn tầng nhận dạng, và biến việc này thành nghĩa vụ bắt buộc qua chỉ tiêu NFR-A8 | Năm công trình trong Bảng 2.3 đều báo cáo một chỉ số chung, không tách theo bố cục biển (2.5.2) |
 | 2 | **Thiết kế bộ luật hậu xử lý ràng buộc theo VỊ TRÍ trong chuỗi**, và **đo tách bạch độ chính xác trước và sau bước đó** để hiệu số trở thành một đại lượng định lượng | Các mô tả khảo sát được dừng ở danh sách ký tự phẳng, phần lớn dùng nhầm con số 20 chữ cái cho toàn chuỗi (2.2.4) |
 | 3 | **Công bố chỉ số đầu cuối ở mức chuỗi** bên cạnh mAP của bước phát hiện, và nêu rõ chênh lệch giữa hai đại lượng | Phần lớn công trình trong nước khảo sát được chỉ báo cáo mAP của bước phát hiện (2.5.2) |
-| 4 | **Xây dựng benchmark ba bộ nhận dạng ký tự trên 2.801 biển số Việt Nam** trong cùng một tầng bao quanh: PaddleOCR 68,87% · EasyOCR 14,28% · Tesseract 10,28% (3.3.3) | Nhóm chưa tìm thấy benchmark công khai nào đo trên riêng ảnh biển số xe máy Việt Nam hai dòng (3.3) |
+| 4 | **Xây dựng benchmark ba bộ nhận dạng ký tự trên 2.801 biển số Việt Nam** trong cùng một tầng bao quanh: PaddleOCR 68,87% · EasyOCR 14,28% · Tesseract 10,28% (3.3.3) | Trong tập khảo sát, không công trình nào công bố benchmark giữa nhiều bộ nhận dạng trên riêng ảnh biển số Việt Nam (3.3) |
 | 5 | **Mọi số liệu hiệu năng công bố kèm cấu hình phần cứng**: model CPU, số luồng, kích thước ảnh vào, nền tảng suy luận, cỡ mẫu đo | Số liệu hiệu năng trong tài liệu thường công bố không kèm phần cứng nên không tái lập được (2.5.1) |
 | 6 | **Bàn giao hệ thống có kiến trúc phần mềm, kiểm thử và giao thức đo công khai** — mọi số liệu sinh lại được bằng một lệnh | Phần lớn kho mã nguồn mở Việt Nam khảo sát được không công bố số liệu và không có kiến trúc phần mềm (2.5.2) |
 
@@ -575,7 +592,7 @@ Bốn ràng buộc thu hẹp không gian phương án **trước khi** so sánh.
 
 ### 3.3.2. PP-OCRv5 mobile so với PP-OCRv6 — đo trên máy đồ án
 
-Mục này chọn **bậc mô hình** bên trong họ đã chọn, dựa trên số liệu **tự đo** (Bảng 3.1).
+Mục này chọn **bậc mô hình** bên trong họ đã chọn, dựa trên số liệu **tự đo**; danh sách các bậc mô hình nhận dạng lấy từ tài liệu chính thức của PaddleOCR [21]<!-- paddleocr_rec_module --> (Bảng 3.1).
 
 **Bảng 3.1.**[]{#tbl-3-1} PP-OCRv6_medium_rec so với PP-OCRv5_mobile_rec, đo trên 200 vùng cắt biển số của đồ án
 
@@ -639,7 +656,7 @@ Lựa chọn **640** vì vậy đứng trên căn cứ khác: đó là độ ph�
 
 Trên cơ sở lý thuyết ở Chương 2 và lựa chọn công nghệ ở Chương 3, chương này trình bày thiết kế và hiện thực của hệ thống trong cùng một mạch. Nguyên tắc trình bày: mọi mô tả đều phản ánh đúng mã nguồn thực tế; các chức năng chưa hoàn thiện và các số liệu chưa được đo lường đều được ghi chú rõ ràng. Chương gồm phân tích yêu cầu (4.1), kiến trúc (4.2), môi trường phát triển (4.3), bộ dữ liệu (4.4), huấn luyện mô hình (4.5), tầng AI (4.6), máy chủ và cơ sở dữ liệu (4.7), giao diện (4.8) và Docker (4.9).
 
-Trạng thái bản này: hệ thống chạy ALPRPipeline với mô hình chính thức models/best.pt (`/health` báo `model_loaded: true`, bộ nhận dạng `yolo:best.pt+paddleocr-PP-OCRv5-mobile`, mAP@0.5 = 0,9829); `StubPipeline` đã ra khỏi đường chạy chính. Mọi kết quả thực nghiệm trình bày ở Chương 5.
+Mọi kết quả trong đồ án được đo trên **cấu hình giao hàng**: đường ống `ALPRPipeline` với mô hình phát hiện `models/best.pt` (mAP@0.5 = 0,9829) và bộ nhận dạng PP-OCRv5 mobile. Mọi kết quả thực nghiệm trình bày ở Chương 5.
 
 ---
 
@@ -1430,7 +1447,7 @@ Các chỉ tiêu về phát hiện, thông lượng, độ tin cậy và chịu 
 
 **Bốn kết quả định lượng mà khảo sát không tìm thấy tương đương trong tài liệu Việt Nam.** *(1)* Đóng góp thuần của khối hậu xử lý theo vị trí: **+13,28 điểm**, sửa đúng 372 biển và làm hỏng 0 trên 2.801 mẫu. *(2)* Chênh lệch giữa hai bố cục biển: **23,07 điểm** ở khối nhận dạng so với 2,09 điểm ở khối phát hiện, nên rủi ro R-04 nằm trọn ở tầng đọc ký tự. *(3)* Benchmark ba bộ nhận dạng trên 2.801 biển trong cùng một tầng bao quanh: **PaddleOCR 68,87%**, EasyOCR 14,28%, Tesseract 10,28%. *(4)* Bộ nhận màu nền đạt **97,89%** trên 1.565 ảnh có nhãn, cung cấp bằng chứng mà chuỗi ký tự không mang được.
 
-Hai kết quả kỹ thuật hệ thống đi kèm: tối ưu tầng chạy đưa p95 từ 1.143,10 xuống **509,76 ms** mà không thay đổi trọng số và mọi chỉ số độ chính xác giữ nguyên (4.6.8); và khử trùng lặp mờ gom 17 trên 44 cách đọc về đúng một bản ghi mỗi xe (4.7.2). Ngoài các con số, đồ án để lại một quy trình đánh giá có kiểm chứng: mọi số liệu sinh lại được bằng một lệnh, và các kết quả âm được ghi lại thay vì bỏ đi.
+Hai kết quả kỹ thuật hệ thống đi kèm: tối ưu tầng chạy đưa p95 từ 1.143,10 xuống **509,76 ms** mà mọi chỉ số độ chính xác giữ nguyên (4.6.8), và khử trùng lặp mờ gom 17 trên 44 cách đọc về đúng một bản ghi mỗi xe (4.7.2). Đồ án cũng để lại một quy trình đánh giá có kiểm chứng: mọi số liệu sinh lại được bằng một lệnh, và các kết quả âm được ghi lại thay vì bỏ đi.
 
 ## 6.2. Hạn chế
 
@@ -1552,6 +1569,16 @@ Hướng ưu tiên là thay module nhận dạng ký tự bằng mô hình huấ
 [23] Ultralytics, "Intel OpenVINO Export — Ultralytics Docs (ma nguon markdown, day du bang benchmark CPU/GPU/NPU)," GitHub / Ultralytics Docs, 2026. [Trực tuyến]. Địa chỉ: <https://raw.githubusercontent.com/ultralytics/ultralytics/main/docs/en/integrations/openvino.md> (truy cập ngày 2026-07-19).
 
 [24] Microsoft ONNX Runtime, "Thread management — ONNX Runtime Performance Tuning (intra/inter op threads, spinning, NUMA)," Microsoft, 2025. [Trực tuyến]. Địa chỉ: <https://onnxruntime.ai/docs/performance/tune-performance/threading.html> (truy cập ngày 2026-07-19).
+[25] N. V. Huy và cộng sự (Học viện Kỹ thuật Quân sự), "An efficient method to improve the accuracy of Vietnamese vehicle license plate recognition," trong *International Conference on Multimedia Analysis and Pattern Recognition (MAPR)*, IEEE, 2021. doi: 10.1109/MAPR53640.2021.9585279.
+
+[26] T. A. Dat, T. K. Linh, V. H. Nam, "A Multi-Angle View Model for Vietnamese License Plate Recognition," *arXiv preprint* arXiv:2309.12972, 2023.
+
+[27] D. H. Le, D. Mazumder, L. D. Quach, S. Banerjee, V. D. Nguyen, "A Three-Stage YOLOv8 Architecture for Motorcycle License Plate Recognition," trong *Future Data and Security Engineering (FDSE)*, Springer CCIS vol. 1925, 2023. doi: 10.1007/978-981-99-8296-7_5.
+
+[28] Tran, Bui, "Lightweight License Plate Recognition on Embedded Devices," trong *Multi-disciplinary International Conference on Artificial Intelligence (MIWAI)*, Springer, 2024. doi: 10.1007/978-981-96-0695-5_19.
+
+[29] Đặng Thị Dung và cộng sự, "So sánh các mô hình YOLOv8 và YOLO-NAS trong phát hiện biển số xe," *TNU Journal of Science and Technology*, q. 229, s. 07, tr. 156–167, 2024.
+
 
 ```{=openxml}
 <w:p><w:r><w:br w:type="page"/></w:r></w:p>
