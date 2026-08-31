@@ -72,9 +72,7 @@ _TWO_LINE_TOKENS: Final[tuple[str, ...]] = (
 _COCO_IOU_THRESHOLDS: Final[tuple[float, ...]] = tuple(round(0.5 + 0.05 * i, 2) for i in range(10))
 
 
-# --------------------------------------------------------------------------- #
-# Data containers
-# --------------------------------------------------------------------------- #
+# --- Data containers ---
 @dataclass(slots=True)
 class GroundTruthBox:
     """One annotated plate in one image.
@@ -172,9 +170,7 @@ class GroupMetrics:
         }
 
 
-# --------------------------------------------------------------------------- #
-# Dataset reading
-# --------------------------------------------------------------------------- #
+# --- Dataset reading ---
 def load_dataset_descriptor(data_yaml: Path) -> dict[str, Any]:
     """Read and sanity-check an Ultralytics ``data.yaml``.
 
@@ -423,9 +419,7 @@ def read_ground_truth(
     return boxes, stats
 
 
-# --------------------------------------------------------------------------- #
-# Metric computation
-# --------------------------------------------------------------------------- #
+# --- Metric computation ---
 def iou(
     box_a: tuple[float, float, float, float], box_b: tuple[float, float, float, float]
 ) -> float:
@@ -585,9 +579,7 @@ def evaluate_group(
     return metrics
 
 
-# --------------------------------------------------------------------------- #
-# Inference
-# --------------------------------------------------------------------------- #
+# --- Inference ---
 def run_predictions(
     model: Any,
     images: Sequence[Path],
@@ -733,9 +725,7 @@ def summarise_latency(latencies: Sequence[float]) -> dict[str, float | int]:
     }
 
 
-# --------------------------------------------------------------------------- #
-# Plots
-# --------------------------------------------------------------------------- #
+# --- Plots ---
 def plot_pr_curves(
     metrics_by_group: dict[str, GroupMetrics], destination: Path, title: str
 ) -> Path | None:
@@ -919,9 +909,7 @@ def plot_latency(latencies: Sequence[float], destination: Path, device: str) -> 
     return destination
 
 
-# --------------------------------------------------------------------------- #
-# Ultralytics validator
-# --------------------------------------------------------------------------- #
+# --- Ultralytics validator ---
 def run_ultralytics_validation(
     model: Any,
     data_yaml: Path,
@@ -1001,9 +989,7 @@ def run_ultralytics_validation(
     return metrics
 
 
-# --------------------------------------------------------------------------- #
-# CLI
-# --------------------------------------------------------------------------- #
+# --- CLI ---
 def build_parser() -> argparse.ArgumentParser:
     """Construct the command-line parser.
 

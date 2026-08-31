@@ -145,9 +145,7 @@ def _levenshtein(a: str, b: str) -> int:
     return truoc[-1]
 
 
-# --------------------------------------------------------------------------
-# Tang bao quanh DUNG CHUNG — sao dung chuoi buoc cua PaddleOcrRecognizer
-# --------------------------------------------------------------------------
+# --- Tang bao quanh DUNG CHUNG — sao dung chuoi buoc cua PaddleOcrRecognizer ---
 
 
 def chuan_bi(anh: np.ndarray, tach_hai_dong: bool) -> np.ndarray:

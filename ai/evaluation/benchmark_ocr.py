@@ -64,9 +64,7 @@ emissions are exactly the observable, repairable mistakes the split between
 _CHAR_INDEX: Final[dict[str, int]] = {char: i for i, char in enumerate(_CHARSET)}
 
 
-# ---------------------------------------------------------------------------
-# Records
-# ---------------------------------------------------------------------------
+# --- Records ---
 
 
 @dataclass(frozen=True, slots=True)
@@ -160,9 +158,7 @@ class BenchmarkOutcome:
     settings: dict[str, Any] = field(default_factory=dict)
 
 
-# ---------------------------------------------------------------------------
-# String metrics
-# ---------------------------------------------------------------------------
+# --- String metrics ---
 
 
 def align(reference: str, hypothesis: str) -> list[tuple[str, str, str]]:
@@ -249,9 +245,7 @@ def character_error_rate(reference: str, hypothesis: str) -> float:
     return distance / len(reference)
 
 
-# ---------------------------------------------------------------------------
-# Label loading
-# ---------------------------------------------------------------------------
+# --- Label loading ---
 
 
 def _resolve_image_path(raw: str, csv_directory: Path) -> Path | None:
@@ -388,9 +382,7 @@ def _parse_line_count(value: str | None) -> int | None:
     return parsed if parsed in (1, 2) else None
 
 
-# ---------------------------------------------------------------------------
-# Engine construction
-# ---------------------------------------------------------------------------
+# --- Engine construction ---
 
 
 def build_recognizer(engine: str, config: InferenceConfig, preprocess: bool) -> BaseRecognizer:
@@ -425,9 +417,7 @@ def build_recognizer(engine: str, config: InferenceConfig, preprocess: bool) -> 
     )
 
 
-# ---------------------------------------------------------------------------
-# Benchmark
-# ---------------------------------------------------------------------------
+# --- Benchmark ---
 
 
 def run_benchmark(
@@ -540,9 +530,7 @@ def run_benchmark(
     return outcome
 
 
-# ---------------------------------------------------------------------------
-# Aggregation
-# ---------------------------------------------------------------------------
+# --- Aggregation ---
 
 
 def _percentile(ordered: Sequence[float], fraction: float) -> float:
@@ -748,9 +736,7 @@ def build_confusion_matrix(
     }
 
 
-# ---------------------------------------------------------------------------
-# Reporting
-# ---------------------------------------------------------------------------
+# --- Reporting ---
 
 
 def _environment_info() -> dict[str, Any]:
@@ -1042,9 +1028,7 @@ def write_reports(payload: dict[str, Any], output_dir: Path) -> dict[str, Path]:
     return written
 
 
-# ---------------------------------------------------------------------------
-# Command line
-# ---------------------------------------------------------------------------
+# --- Command line ---
 
 
 def build_parser() -> argparse.ArgumentParser:

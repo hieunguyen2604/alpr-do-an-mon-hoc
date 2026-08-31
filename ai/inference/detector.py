@@ -242,9 +242,7 @@ class YoloPlateDetector(BaseDetector):
             load_seconds,
         )
 
-    # ----------------------------------------------------------------- #
-    # Construction helpers
-    # ----------------------------------------------------------------- #
+    # --- Construction helpers ---
     def _verify_weights_exist(self) -> None:
         """Check that the configured weights path points at loadable weights.
 

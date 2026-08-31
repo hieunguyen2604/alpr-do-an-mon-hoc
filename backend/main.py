@@ -19,8 +19,14 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 from backend import __version__
 from backend.api.routes import (
     detection as detection_routes,
+)
+from backend.api.routes import (
     health as health_routes,
+)
+from backend.api.routes import (
     history as history_routes,
+)
+from backend.api.routes import (
     statistics as statistics_routes,
 )
 from backend.core.config import Settings, get_settings
@@ -28,6 +34,8 @@ from backend.core.exceptions import (
     APIError,
     NotFoundError,
     ProcessingError,
+)
+from backend.core.exceptions import (
     ValidationError as APIValidationError,
 )
 from backend.core.logging import (
@@ -65,7 +73,7 @@ _TAGS_METADATA = [
     },
     {
         "name": "Detection",
-        "description": "Run recognition over images, videos, or webcam frames, and poll job progress.",
+        "description": "Recognition over images, videos and webcam frames; job progress polling.",
     },
     {
         "name": "History",

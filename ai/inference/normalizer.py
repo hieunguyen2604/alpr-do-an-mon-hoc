@@ -1,4 +1,4 @@
-"""Post-processing stage: position-based correction and validation for Vietnamese license plates (NFR-M1).
+"""Post-processing: position-based repair and validation for Vietnamese plates (NFR-M1).
 
 Applies positional character repair according to national standards TT 79/2024 and QCVN 08:2024.
 """

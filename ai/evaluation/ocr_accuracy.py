@@ -144,9 +144,7 @@ class Sample:
     error: str | None = None
 
 
-# ---------------------------------------------------------------------------
-# Geometry repair
-# ---------------------------------------------------------------------------
+# --- Geometry repair ---
 
 
 def restore_aspect_ratio(image: np.ndarray, line_count: int) -> np.ndarray:
@@ -178,9 +176,7 @@ def restore_aspect_ratio(image: np.ndarray, line_count: int) -> np.ndarray:
     return cv2.resize(image, (width, height), interpolation=interpolation)
 
 
-# ---------------------------------------------------------------------------
-# Metrics
-# ---------------------------------------------------------------------------
+# --- Metrics ---
 
 
 def corpus_cer(pairs: Sequence[tuple[str, str]]) -> float:
@@ -351,9 +347,7 @@ def _percentile(values: Sequence[float], fraction: float) -> float:
     return ordered[rank - 1]
 
 
-# ---------------------------------------------------------------------------
-# Label loading
-# ---------------------------------------------------------------------------
+# --- Label loading ---
 
 
 def _load_labels(path: Path, limit: int = 0) -> list[Sample]:
@@ -406,9 +400,7 @@ def _load_labels(path: Path, limit: int = 0) -> list[Sample]:
     return samples
 
 
-# ---------------------------------------------------------------------------
-# Measurement passes
-# ---------------------------------------------------------------------------
+# --- Measurement passes ---
 
 
 def _crop_color_name(crop: np.ndarray) -> str:
@@ -661,9 +653,7 @@ def measure_end_to_end(
             )
 
 
-# ---------------------------------------------------------------------------
-# Confusion table recommendations
-# ---------------------------------------------------------------------------
+# --- Confusion table recommendations ---
 
 
 def confusion_recommendations(confusion: dict[str, Any]) -> dict[str, Any]:
@@ -834,9 +824,7 @@ def propose_table_updates(confusion: dict[str, Any]) -> dict[str, Any]:
     }
 
 
-# ---------------------------------------------------------------------------
-# Error export
-# ---------------------------------------------------------------------------
+# --- Error export ---
 
 
 def _export_errors(
@@ -887,9 +875,7 @@ def _export_errors(
     return written
 
 
-# ---------------------------------------------------------------------------
-# Charts
-# ---------------------------------------------------------------------------
+# --- Charts ---
 
 
 def _write_charts(
@@ -1012,9 +998,7 @@ def _write_charts(
     return written
 
 
-# ---------------------------------------------------------------------------
-# Verdicts
-# ---------------------------------------------------------------------------
+# --- Verdicts ---
 
 
 def _verdict(requirement: str, value: float | None) -> dict[str, Any]:
@@ -1045,9 +1029,7 @@ def _verdict(requirement: str, value: float | None) -> dict[str, Any]:
     }
 
 
-# ---------------------------------------------------------------------------
-# Command line
-# ---------------------------------------------------------------------------
+# --- Command line ---
 
 
 def build_parser() -> argparse.ArgumentParser:

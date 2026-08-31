@@ -1,4 +1,4 @@
-"""Geometry and preprocessing helpers to transform two-line plate crops into single-line strips (Risk R-04)."""
+"""Geometry helpers that turn two-line plate crops into single-line strips (Risk R-04)."""
 
 from __future__ import annotations
 

@@ -98,9 +98,7 @@ add one handler per call and print every line N times.
 """
 
 
-# --------------------------------------------------------------------------
-# Request identifier
-# --------------------------------------------------------------------------
+# --- Request identifier ---
 
 
 def new_request_id() -> str:
@@ -176,9 +174,7 @@ def request_context(request_id: str | None = None) -> Iterator[str]:
         reset_request_id(token)
 
 
-# --------------------------------------------------------------------------
-# Structured fields
-# --------------------------------------------------------------------------
+# --- Structured fields ---
 
 _RESERVED_LOG_KEYS: Final[frozenset[str]] = frozenset(
     {
@@ -249,9 +245,7 @@ def safe_extra(fields: Mapping[str, Any]) -> dict[str, Any]:
     }
 
 
-# --------------------------------------------------------------------------
-# Formatting
-# --------------------------------------------------------------------------
+# --- Formatting ---
 
 
 class RequestIdFilter(logging.Filter):
@@ -373,9 +367,7 @@ class JsonFormatter(logging.Formatter):
         return str(value)
 
 
-# --------------------------------------------------------------------------
-# Set-up
-# --------------------------------------------------------------------------
+# --- Set-up ---
 
 
 def _utf8_stdout() -> TextIO:

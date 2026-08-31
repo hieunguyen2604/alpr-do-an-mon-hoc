@@ -100,7 +100,8 @@ def main() -> int:
     for k in sorted(gom):
         nhan = "GOP VAO" if k in bi_gop else "giu"
         r, d, c, n, _ = gom[k]
-        print(f"    {k:14s} conf={r.recognition.confidence:.3f}  hop_le={r.recognition.is_valid_format}"
+        print(f"    {k:14s} conf={r.recognition.confidence:.3f}"
+              f"  hop_le={r.recognition.is_valid_format}"
               f"  khung {d}-{c}  x{n}  [{nhan}]")
 
     if not bi_gop:
@@ -139,7 +140,8 @@ def ve_hinh(gom: dict, thang: str, nhom: list[str], dich: Path) -> None:
         r, d, c, n, cat = gom[k]
         if cat is not None and cat.size:
             ax.imshow(cv2.cvtColor(cat, cv2.COLOR_BGR2RGB))
-        ax.set_xticks([]); ax.set_yticks([])
+        ax.set_xticks([])
+        ax.set_yticks([])
         la_thang = k == thang
         for s in ax.spines.values():
             s.set_edgecolor("#1f7a1f" if la_thang else "#b03030")

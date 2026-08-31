@@ -64,9 +64,7 @@ R4_SPECIFIED_MINUTES: Final[float] = 60.0
 IMAGE_SUFFIXES: Final[frozenset[str]] = frozenset({".jpg", ".jpeg", ".png", ".bmp", ".webp"})
 
 
-# --------------------------------------------------------------------------
-# Server lifecycle
-# --------------------------------------------------------------------------
+# --- Server lifecycle ---
 def start_server(
     port: int, log_path: Path, model_path: str | None = None
 ) -> subprocess.Popen[bytes]:
@@ -161,9 +159,7 @@ def discover_images(root: Path, limit: int) -> list[Path]:
     return found[:limit] if limit > 0 else found
 
 
-# --------------------------------------------------------------------------
-# NFR-P2 -- webcam frame rate
-# --------------------------------------------------------------------------
+# --- NFR-P2 -- webcam frame rate ---
 def measure_webcam_fps(
     base_url: str,
     api_prefix: str,
@@ -297,9 +293,7 @@ def measure_webcam_fps(
     }
 
 
-# --------------------------------------------------------------------------
-# NFR-P3 -- video throughput
-# --------------------------------------------------------------------------
+# --- NFR-P3 -- video throughput ---
 def probe_video(path: Path) -> dict[str, Any]:
     """Read frame count, frame rate and resolution from a video file."""
     import cv2
@@ -424,9 +418,7 @@ def measure_video_throughput(
     }
 
 
-# --------------------------------------------------------------------------
-# NFR-R4 -- soak
-# --------------------------------------------------------------------------
+# --- NFR-R4 -- soak ---
 def run_soak(
     base_url: str,
     api_prefix: str,
@@ -541,9 +533,7 @@ def server_rss_gb(pid: int) -> float | None:
         return None
 
 
-# --------------------------------------------------------------------------
-# NFR-R5 -- durability across a restart
-# --------------------------------------------------------------------------
+# --- NFR-R5 -- durability across a restart ---
 def snapshot_database(base_url: str, api_prefix: str, sample_size: int) -> dict[str, Any]:
     """Read a fingerprint of the stored data through the public API.
 
@@ -636,9 +626,7 @@ def compare_snapshots(before: dict[str, Any], after: dict[str, Any]) -> dict[str
     }
 
 
-# --------------------------------------------------------------------------
-# Driver
-# --------------------------------------------------------------------------
+# --- Driver ---
 def build_parser() -> argparse.ArgumentParser:
     """Build the command-line interface."""
     parser = argparse.ArgumentParser(

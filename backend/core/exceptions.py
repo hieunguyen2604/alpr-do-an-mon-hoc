@@ -1,4 +1,4 @@
-"""API exception hierarchy with structured error codes and user-facing Vietnamese messages (NFR-S4)."""
+"""API exception hierarchy: structured error codes, Vietnamese user-facing messages (NFR-S4)."""
 
 from __future__ import annotations
 

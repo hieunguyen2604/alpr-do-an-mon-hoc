@@ -208,8 +208,8 @@ STYLE_PATCHES: tuple[tuple[str, str], ...] = (
     #    Pandoc dat kieu `Compact` cho moi doan trong o bang, nen sua o
     #    day la du; khong phai dung toi tung bang.
     (
-        '<w:style w:customStyle="1" w:styleId="Compact" w:type="paragraph">\n    <w:name w:val="Compact" />\n    <w:basedOn w:val="BodyText" />\n    <w:qFormat />\n    <w:pPr>\n      <w:spacing w:after="36" w:before="36" />\n    </w:pPr>',
-        '<w:style w:customStyle="1" w:styleId="Compact" w:type="paragraph">\n    <w:name w:val="Compact" />\n    <w:basedOn w:val="BodyText" />\n    <w:qFormat />\n    <w:pPr>\n      <w:spacing w:after="20" w:before="20" />\n    </w:pPr>\n    <w:rPr>\n      <w:sz w:val="20" />\n      <w:szCs w:val="20" />\n    </w:rPr>',
+        '<w:style w:customStyle="1" w:styleId="Compact" w:type="paragraph">\n    <w:name w:val="Compact" />\n    <w:basedOn w:val="BodyText" />\n    <w:qFormat />\n    <w:pPr>\n      <w:spacing w:after="36" w:before="36" />\n    </w:pPr>',  # noqa: E501 — chuoi khop nguyen van, khong duoc tach
+        '<w:style w:customStyle="1" w:styleId="Compact" w:type="paragraph">\n    <w:name w:val="Compact" />\n    <w:basedOn w:val="BodyText" />\n    <w:qFormat />\n    <w:pPr>\n      <w:spacing w:after="20" w:before="20" />\n    </w:pPr>\n    <w:rPr>\n      <w:sz w:val="20" />\n      <w:szCs w:val="20" />\n    </w:rPr>',  # noqa: E501 — chuoi khop nguyen van, khong duoc tach
     ),
     # 0. Khoang cach sau moi doan: 200 dxa (10 pt) -> 120 dxa (6 pt).
     #

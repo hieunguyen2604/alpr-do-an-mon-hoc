@@ -503,39 +503,24 @@ def rescue_two_line_upper(
 
             combined = f"{upper_read.text}{recognition.raw_text}"
 
-            # This branch read the upper line on its own, so its length is known
-            # outright rather than inferred from fragment order -- the strongest
-            # form of the evidence described in
-            # `PlateRecognition.upper_char_count`. Counted over alphanumerics
-            # because the OCR fragment may carry a separator that normalisation
-            # strips. Bound here, before the branch below, because both the
-            # rendering and the returned record need it.
+            # Upper-line length read outright (strongest evidence for upper_char_count);
+            # counted over alphanumerics because the fragment may carry a separator.
             upper_chars = sum(1 for ch in upper_read.text if ch.isalnum())
 
             detailed = getattr(normalizer, "normalize_detailed", None)
             if callable(detailed):
                 outcome = detailed(combined, line_count=2)
                 text, is_valid = outcome.text, outcome.is_valid_format
-                # The rescued string is a different plate number from the one the
-                # first attempt produced, so its family and rendering have to be
-                # recomputed here. Carrying the first attempt's values over would
-                # describe a string that no longer exists.
+                # A rescued string is a different plate: family and rendering recomputed.
                 kind = refine_kind_with_color(outcome, color, 2)
-                # This branch read the upper line on its own, so its length is
-                # known outright rather than inferred from fragment order --
-                # the strongest form of the evidence described in
-                # `PlateRecognition.upper_char_count`. Counted over
-                # alphanumerics because the OCR fragment may carry a separator
-                # that normalisation strips.
+                # Same evidence as above, read off the hybrid combination.
                 display_text = _format_for_display(
                     normalizer, text, 2, kind=kind, upper_char_count=upper_chars
                 )
             else:
                 text, is_valid = normalizer.normalize(combined)
         except Exception as error:  # noqa: BLE001 - a rescue must not become a failure
-            # Try the next ratio rather than abandoning the rescue: a crop only
-            # a few pixels tall can make one cut degenerate while a later, more
-            # generous one is still a usable image.
+            # One degenerate cut does not end the rescue; a later ratio may still work.
             _LOGGER.warning(
                 "Upper-line rescue attempt failed, trying the next cut",
                 extra={
@@ -638,12 +623,8 @@ def retry_skewed_variants(
     """
     extra: dict[str, object] = dict(context or {})
 
-    # Defence in depth against the military flip (see should_retry_skewed):
-    # a red background exists ONLY on army plates, so no read off a red crop
-    # may ever be upgraded to a valid civil string, whatever the characters
-    # say. The kind gate already blocks the case where the first read
-    # recognised the military layout; this blocks the case where it did not
-    # (blur, partial crop) but the colour still tells the truth.
+    # Red background exists ONLY on army plates: no read off a red crop may be
+    # upgraded to a valid civil string, whatever the characters say.
     if color == "red":
         _LOGGER.info(
             "Skew retry refused: red plate background",
@@ -677,11 +658,8 @@ def retry_skewed_variants(
                 extra={**extra, "error": f"{type(error).__name__}: {error}"},
             )
 
-    # Super-resolution variants, small crops only: lack of pixels is the
-    # failure mode SR addresses (measured recoveries at 32x23 and 171x120 px),
-    # while the geometry variants above address shape. Tried after them
-    # because they are the more expensive hypothesis, and skipped wholesale
-    # when the environment has no usable cv2.dnn_superres.
+    # SR variants only for small crops (measured recoveries at 32x23 and 171x120 px);
+    # tried after geometry because they are the more expensive hypothesis.
     if (
         getattr(config, "sr_retry_enabled", True)
         and max(height, width) <= RETRY_SR_MAX_SIDE
@@ -729,9 +707,7 @@ def retry_skewed_variants(
                         upper_char_count=attempt.upper_char_count,
                     )
 
-            # A variant read can fail exactly the way a first read fails --
-            # lower line only. The rescue must run on the VARIANT image: its
-            # geometry, not the original's, is what the cut ratios apply to.
+            # The rescue must run on the VARIANT image: its geometry owns the cut ratios.
             if not candidate.is_valid_format and should_rescue_two_line(candidate):
                 candidate = rescue_two_line_upper(
                     recognizer,
@@ -742,13 +718,8 @@ def retry_skewed_variants(
                     color=color,
                 )
 
-            # Hybrid rescue: upper line off the VARIANT image, lower line from
-            # the ORIGINAL read. The two best halves of one physical plate can
-            # land in different attempts -- measured on the 32x23 px
-            # ``59-F2 / 277.93`` crop, where the original strip read the
-            # bottom (``27793``), the SR x4 variant read the top (``59 F2`` at
-            # 0.849) and each alone failed validation. Same accept criterion
-            # and the same fragment-confidence floor gate the combination.
+            # Hybrid rescue: upper line off the variant, lower line off the original read
+            # (measured on a 32x23 px crop where each half alone failed validation).
             if not candidate.is_valid_format and recognition.raw_text:
                 hybrid_base = PlateRecognition(
                     text=recognition.text,
@@ -829,9 +800,7 @@ def _format_for_display(
                 or text
             )
         except TypeError:
-            # An alternative normalizer predating one of the later parameters.
-            # The capability is probed, not required, so degrade one step at a
-            # time rather than giving up on formatting altogether.
+            # Older normalizer signature: probe capabilities, degrade one step at a time.
             try:
                 return formatter(text, line_count=line_count, kind=kind or None) or text
             except TypeError:
@@ -841,10 +810,8 @@ def _format_for_display(
         return text
 
 
-# Which string-level candidate a colour should promote. A blue background is
-# the *only* evidence that separates a state-agency plate from a private one:
-# `80A-123.45` is a legal string for both, so the character classifier reports
-# them as equally plausible candidates and picks the commoner one.
+# Blue background is the only evidence separating a state-agency plate from a
+# private one: 80A-123.45 is a legal string for both.
 _COLOR_PREFERRED_KINDS: Final[dict[str, tuple[str, ...]]] = {
     "blue": ("blue_car", "blue_motorcycle"),
 }
@@ -913,17 +880,9 @@ def refine_kind_with_color(outcome: object, color: str, line_count: int) -> str:
         # special. Colour must not overrule a definite reading.
         return original
 
-    # Promote within the vehicle class the *string* already established, never
-    # across it. The serial pattern is what separates a car from a motorcycle --
-    # `65A` is a car serial, `65K1` a motorcycle one -- and the colour has
-    # nothing to say about that distinction.
-    #
-    # An earlier version chose between `blue_car` and `blue_motorcycle` by line
-    # count, on the assumption that two lines meant a motorcycle. Real data
-    # disproved it: `65A-004.50` is a two-line State **car** plate, and
-    # QCVN 08:2024/BCA defines the 330x165 two-line format for cars precisely so
-    # that it can exist. The assumption cost the promotion on exactly the plates
-    # it was meant to catch.
+    # Promote within the vehicle class the string established, never across it:
+    # colour says nothing about car vs motorcycle, and line count was tried and
+    # disproved (65A-004.50 is a two-line State car, QCVN 08:2024 330x165).
     target = _BLUE_EQUIVALENT.get(original)
     if target is not None and target in candidates:
         return target

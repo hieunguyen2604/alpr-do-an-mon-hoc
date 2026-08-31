@@ -41,9 +41,7 @@ _CPU_WARNING_BANNER = (
 )
 
 
-# --------------------------------------------------------------------------- #
-# Logging
-# --------------------------------------------------------------------------- #
+# --- Logging ---
 def configure_logging(log_dir: Path, run_name: str, verbose: bool = True) -> Path:
     """Send log records to stdout and to a timestamped file.
 
@@ -99,9 +97,7 @@ def configure_logging(log_dir: Path, run_name: str, verbose: bool = True) -> Pat
     return log_file
 
 
-# --------------------------------------------------------------------------- #
-# Device selection
-# --------------------------------------------------------------------------- #
+# --- Device selection ---
 def resolve_device(requested: str) -> str:
     """Turn a requested device string into a concrete Ultralytics device.
 
@@ -190,9 +186,7 @@ def log_environment() -> None:
         LOGGER.error("ultralytics is not installed")
 
 
-# --------------------------------------------------------------------------- #
-# Checkpoints
-# --------------------------------------------------------------------------- #
+# --- Checkpoints ---
 def find_resume_checkpoint(config: TrainingConfig, explicit: str | None) -> Path:
     """Locate the checkpoint to resume training from.
 
@@ -368,9 +362,7 @@ def publish_best_weights(
     return destination
 
 
-# --------------------------------------------------------------------------- #
-# Training
-# --------------------------------------------------------------------------- #
+# --- Training ---
 def _validate_dataset(config: TrainingConfig) -> None:
     """Check the dataset descriptor exists and looks usable.
 
@@ -544,9 +536,7 @@ def run_training(
     }
 
 
-# --------------------------------------------------------------------------- #
-# CLI
-# --------------------------------------------------------------------------- #
+# --- CLI ---
 def build_parser() -> argparse.ArgumentParser:
     """Construct the command-line parser.
 

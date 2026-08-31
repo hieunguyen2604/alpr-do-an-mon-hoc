@@ -482,7 +482,7 @@ class PaddleOcrRecognizer(BaseRecognizer):
             self._engine = PaddleOCR(
                 device=device,
                 enable_mkldnn=self._enable_mkldnn,
-                # Plate crop is a single text region, document-level pre-processing skipped for latency
+                # One text region per crop: document-level pre-processing skipped
                 use_doc_orientation_classify=False,
                 use_doc_unwarping=False,
                 use_textline_orientation=False,

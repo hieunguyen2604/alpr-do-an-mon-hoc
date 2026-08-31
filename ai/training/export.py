@@ -1,4 +1,4 @@
-"""Export trained YOLO11 detector to CPU-friendly inference formats (ONNX, OpenVINO, TorchScript)."""
+"""Export the trained YOLO11 detector to CPU-friendly formats (ONNX, OpenVINO, TorchScript)."""
 
 from __future__ import annotations
 

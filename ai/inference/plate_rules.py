@@ -1,4 +1,4 @@
-"""Vietnamese license plate rules, regex patterns, and character classes (TT 79/2024, QCVN 08:2024)."""
+"""Vietnamese plate rules, regex patterns and character classes (TT 79/2024, QCVN 08:2024)."""
 
 from __future__ import annotations
 
@@ -44,9 +44,7 @@ __all__ = [
 ]
 
 
-# ---------------------------------------------------------------------------
-# Plate kinds
-# ---------------------------------------------------------------------------
+# --- Plate kinds ---
 
 
 class PlateKind(StrEnum):
@@ -83,9 +81,7 @@ class PlateKind(StrEnum):
     UNKNOWN = "unknown"
 
 
-# ---------------------------------------------------------------------------
-# Province codes -- section 4 and 8.2 of the specification
-# ---------------------------------------------------------------------------
+# --- Province codes (spec sections 4, 8.2) ---
 
 PROVINCE_CODES: Final[frozenset[str]] = frozenset(
     {
@@ -196,9 +192,7 @@ the codes below ``11``.
 _PROVINCE: Final[str] = "(?:" + "|".join(sorted(PROVINCE_CODES)) + ")"
 
 
-# ---------------------------------------------------------------------------
-# Serial character classes -- sections 5.3 and 8.2
-# ---------------------------------------------------------------------------
+# --- Serial character classes (sections 5.3, 8.2) ---
 
 L20: Final[str] = r"[A-HK-NPS-VXYZ]"
 """The 20 standard serial letters: ``A B C D E F G H K L M N P S T U V X Y Z``.
@@ -300,9 +294,7 @@ that the alternation prefers the longer match.
 """
 
 
-# ---------------------------------------------------------------------------
-# Patterns -- section 8.3
-# ---------------------------------------------------------------------------
+# --- Patterns (section 8.3) ---
 
 _NUM: Final[str] = r"\d{4,5}"
 """The order-number group: 5 digits today, 4 on older plates still in use."""
@@ -481,9 +473,7 @@ a reason to *flag and exclude*, not a reason to report a valid format.
 """
 
 
-# ---------------------------------------------------------------------------
-# Position masks -- sections 8.5 and 9
-# ---------------------------------------------------------------------------
+# --- Position masks (sections 8.5, 9) ---
 
 MASK_DIGIT: Final[str] = "D"
 """Mask symbol: this position must be a digit."""
@@ -533,9 +523,7 @@ in how the groups are interpreted.
 """
 
 
-# ---------------------------------------------------------------------------
-# OCR confusion tables -- section 9.6
-# ---------------------------------------------------------------------------
+# --- OCR confusion tables (section 9.6) ---
 
 TO_DIGIT: Final[dict[str, str]] = {
     "O": "0",
@@ -596,9 +584,7 @@ _SEPARATOR_RE: Final[re.Pattern[str]] = re.compile(r"[^0-9A-Z]")
 _D_STROKE_TRANSLATION: Final[dict[int, str]] = str.maketrans({"Đ": "D", "đ": "D"})
 
 
-# ---------------------------------------------------------------------------
-# Pure functions
-# ---------------------------------------------------------------------------
+# --- Pure functions ---
 
 
 def clean_text(raw: str) -> str:
@@ -683,11 +669,8 @@ def apply_position_rules(text: str, mask: str) -> str:
     out: list[str] = []
     for char, kind in zip(text, mask, strict=True):
         if kind == MASK_WILDCARD:
-            # Forbidden zone (section 9.4): a letter and a digit are both legal
-            # here. Return the character untouched -- do not consult TO_DIGIT,
-            # do not consult TO_LETTER. This branch is spelled out rather than
-            # left to fall into `else` because the constraint is a deliberate
-            # rule, not an accident of condition ordering.
+            # Forbidden zone (section 9.4): letter AND digit both legal here, so the
+            # character passes through untouched — a deliberate rule, not fall-through.
             out.append(char)
         elif kind == MASK_DIGIT and char.isalpha():
             out.append(TO_DIGIT.get(char, char))
