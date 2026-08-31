@@ -39,9 +39,11 @@ from __future__ import annotations
 
 import argparse
 import os
+import re
 import shutil
 import subprocess
 import sys
+import zipfile
 from pathlib import Path
 
 # --- Repository layout ------------------------------------------------------
@@ -716,7 +718,42 @@ def copy_bundle(bundle_dir: Path = BUNDLE_DIR) -> tuple[int, list[str]]:
             continue
         shutil.copy2(source, bundle_dir / bundle_name)
         copied += 1
+    _canh_bao_truong_chua_dien(bundle_dir)
     return copied, missing
+
+
+def _canh_bao_truong_chua_dien(bundle_dir: Path) -> None:
+    """Bao khi ban .docx trong nop/ con giu gia tri cache cua truong Word.
+
+    Muc luc va hai danh muc hinh/bang dung truong TOC va PAGEREF; Pandoc chi
+    ghi cong thuc truong kem mot gia tri cache la ``0``. Chinh Word dien so
+    trang, va viec do xay ra o ``scripts/export_thesis_pdf.ps1``.
+
+    Nghia la thu tu chay CO Y NGHIA: chay rieng script nay sau khi da xuat PDF
+    se sinh lai .docx tu markdown va **ghi de ban da dien so trang** trong
+    ``nop/`` bang mot ban co cot Trang toan so 0. Loi da xay ra that. Ham nay
+    khong sua duoc dieu do -- chi Word moi dien duoc truong -- nhung no khong
+    de nguoi chay ra ve ma tuong ban nop da xong.
+    """
+    for ten in ("01-do-an-tot-nghiep.docx", "04-do-an-mon-hoc.docx"):
+        tep = bundle_dir / ten
+        if not tep.is_file():
+            continue
+        try:
+            with zipfile.ZipFile(tep) as z:
+                xml = z.read("word/document.xml").decode("utf-8", "replace")
+        except (OSError, KeyError, zipfile.BadZipFile):
+            continue
+        if "PAGEREF" not in xml:
+            continue
+        # Gia tri cache nam giua fldChar 'separate' va fldChar 'end'.
+        cache = re.findall(r"PAGEREF [^<]*?</w:instrText>.*?<w:t[^>]*>([^<]*)</w:t>", xml, re.S)
+        if cache and all(x.strip() in {"0", ""} for x in cache[:5]):
+            # Khong dau: stdout cua console Windows la cp1252, va moi thong bao
+            # khac trong tep nay cung viet khong dau vi cung ly do.
+            print(f"     [!] {ten}: muc luc va danh muc hinh/bang CHUA co so trang.")
+            print("         Chay scripts/export_thesis_pdf.ps1 de Word dien truong;")
+            print("         script do ghi nguoc vao .docx roi chep lai vao nop/.")
 
 
 def main(argv: list[str] | None = None) -> int:
