@@ -224,11 +224,14 @@ NFR-A7 đo **ảnh đầu vào → phát hiện → cắt → OCR → hậu xử
 
 <!-- {{T5.5h}} truoc/sau buoc cuu dong tren tren toan tap co nhan chuoi — chuyen thanh van xuoi -->
 
-Hồ sơ lỗi thiên về **xoá** ($D$ = 1.272 > $S$ = 862) trên biển hai dòng có cách giải thích tự nhiên: **mất hẳn một dòng**. Hệ thống đọc biển hai dòng bằng **ghép rồi đọc** (*split-then-hstack*): cắt vùng biển thành hai nửa chồng lấn, xếp cạnh nhau thành dải ngang, chạy OCR **một lần**.
+Hồ sơ lỗi thiên về **xoá** ($D$ = 1.272 > $S$ = 862) trên biển hai dòng có cách giải thích tự nhiên: **mất hẳn một dòng**. Để đánh giá chiến lược xử lý biển hai dòng, nhóm thực hiện so sánh hai phương án:
 
-Phương án thay thế — đọc riêng từng nửa rồi nối chuỗi — được đo A/B trên 200 biển hai dòng với hạt giống ngẫu nhiên cố định. **Phương án A (ghép rồi đọc một lần, đang dùng) đạt 64,50%; phương án B (đọc từng nửa rồi nối) đạt 3,50%** — kém 61,00 điểm phần trăm và tốn thêm 51,24 ms, thắng ở **0/200** trường hợp. Nguyên nhân đọc được ngay trong dữ liệu: hai nửa **cố ý chồng lấn** để không cắt cụt ký tự, nên đọc riêng thì dải chồng lấn bị đọc **hai lần** và ký tự bị nhân đôi — `84G122593` thành `84-G124E009.01225.93`.
+- **Phương án A:** tách hai nửa, ghép ngang rồi nhận dạng một lần *(đang dùng)*.
+- **Phương án B:** nhận dạng riêng từng nửa rồi ghép kết quả văn bản.
 
-Riêng bước phục hồi dòng trên, đo trên toàn tập 2.801 ảnh có nhãn chuỗi ở lượt 2, đóng góp **+1,75 điểm A6** (0,6555 → 0,6730) và **+2,20 điểm** trên riêng biển hai dòng; nó cho câu trả lời cuối ở **209 biển**, làm hỏng **0**. Các giá trị tuyệt đối của lượt 2 đã bị vượt qua (A6 hiện là 0,7701) nên **không được trích như số hiện hành**.
+Trên tập kiểm thử gồm **200 biển hai dòng** có nhãn, phương án A đạt **64,5%** trong khi phương án B chỉ đạt **3,5%**. Kết quả cho thấy việc nhận dạng độc lập từng dòng làm gia tăng lỗi ghép chuỗi và không phù hợp với dữ liệu của đề tài, nên hệ thống giữ nguyên phương án ghép ngang trước khi nhận dạng.
+
+Cải tiến tiếp theo vì vậy tập trung vào **cơ chế phục hồi dòng bị mất** (4.6.4) thay vì thay đổi chiến lược xử lý cơ bản. Đo trên toàn tập 2.801 ảnh có nhãn chuỗi ở lượt 2, bước phục hồi đóng góp **+1,75 điểm A6** và **+2,20 điểm** trên riêng biển hai dòng; nó cho câu trả lời cuối ở **209 biển** và **không làm hỏng biển nào**. Các giá trị tuyệt đối của lượt 2 đã bị vượt qua nên không trích như số hiện hành.
 
 ### 5.5.7. Bậc thang thử lại cho biển nghiêng/méo — chi phí, lợi ích và một quyết định tắt tính năng
 
@@ -243,9 +246,9 @@ Khi lần đọc đầu trả về chuỗi không hợp lệ, hệ thống thử
 | Nắn hình + giãn dọc | +244 ms p95 | **+34 biển đọc đúng** | ✅ bật |
 | Siêu phân giải (FSRCNN) | **+319 ms p95, +1.381 ms p99** | **0 biển** | ❌ tắt |
 
-**Hai bậc đầu** đổi độ trễ đuôi lấy 34 biển đọc thêm, còn **trung vị không tăng** (bậc thang chỉ chạy sau khi lần đọc đầu thất bại, nên toàn bộ chi phí dồn vào đuôi phân bố). **Bậc thứ ba bị tắt mặc định**: một mình siêu phân giải đẩy p95 lên **1.514,26 ms**, vượt cả ngưỡng tối thiểu 1.500 ms, trong khi cứu được **0 biển**; mã và công tắc vẫn giữ nguyên, chỉ đổi giá trị mặc định (Bảng 5.7).
+Kết quả cho thấy bước **nắn hình và giãn dọc** giúp khôi phục thêm **34 biển số đúng** với chi phí độ trễ chấp nhận được, và trung vị không tăng vì bậc thang chỉ chạy sau khi lần đọc đầu thất bại. Ngược lại, bước **siêu phân giải FSRCNN** đẩy p95 lên **1.514,26 ms** — vượt cả ngưỡng tối thiểu 1.500 ms — nhưng **không mang lại lợi ích quan sát được** trên tập thực nghiệm. Vì vậy bản giao hàng giữ bước nắn hình và **vô hiệu hoá bước siêu phân giải trong cấu hình mặc định**; mã và công tắc vẫn giữ nguyên.
 
-> **Số 0 ấy phải đọc cho đúng.** Cổng vào bậc siêu phân giải chỉ mở cho vùng cắt **nhỏ hơn 200 điểm ảnh**, và **0 trên 120 mẫu ngữ liệu lọt qua cổng đó**. Đây là **số 0 cấu trúc**: chi phí đã đo được, còn lợi ích thì **chưa ai đo được** — khác hẳn *đã đo và thấy vô dụng*. Đo lại bậc này trên ngữ liệu có biển thật sự nhỏ là hướng phát triển ở mục 6.3.
+> **Số 0 ấy phải đọc cho đúng.** Cổng vào bậc siêu phân giải chỉ mở cho vùng cắt nhỏ hơn 200 điểm ảnh, và **0 trên 120 mẫu ngữ liệu lọt qua cổng đó**. Chi phí đã đo được, còn lợi ích thì **chưa ai đo được** — khác hẳn *đã đo và thấy vô dụng*. Đo lại bậc này trên ngữ liệu có biển thật sự nhỏ là hướng phát triển ở mục 6.3.
 
 ## 5.6. Đánh giá hiệu năng
 

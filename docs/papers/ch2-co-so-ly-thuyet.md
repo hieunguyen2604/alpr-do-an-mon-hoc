@@ -67,13 +67,7 @@ $$\mathrm{Precision} = \frac{TP}{TP + FP}, \qquad \mathrm{Recall} = \frac{TP}{TP
 
 Với ALPR, **recall của bước phát hiện quan trọng hơn precision**: biển bỏ sót là mất vĩnh viễn, vùng báo nhầm bị hậu xử lý loại vì chuỗi không khớp cú pháp.
 
-**b) AP và mAP.** AP là diện tích dưới đường cong Precision–Recall; mAP là trung bình AP trên $N$ lớp — đồ án có $N = 1$ nên mAP trùng AP:
-
-$$\mathrm{AP} = \int_0^1 p(r)\, \mathrm{d}r, \qquad \mathrm{mAP} = \frac{1}{N}\sum_{i=1}^{N} \mathrm{AP}_i$$
-
-<div align="right">(2.3)</div>
-
-**c) mAP@0.5 và mAP@0.5:0.95.** mAP@0.5 tính tại **một ngưỡng IoU cố định 0,5**; mAP@0.5:0.95 lấy **trung bình trên 10 ngưỡng** từ 0,5 đến 0,95 bước 0,05, nên trên cùng mô hình và cùng tập dữ liệu **mAP@0.5:0.95 luôn ≤ mAP@0.5**. Khoảng cách giữa hai chỉ số với biển số thường rất lớn do hộp bao dẹt: ba công trình đã công bố cho chênh **18,8 · 27,5 · 40,7 điểm phần trăm** (**Phụ lục V**), cùng xác nhận **biển số dễ phát hiện nhưng khó khớp hộp bao chính xác**. Hai chỉ số này **không so sánh chéo được**, nên đối chiếu mAP@0.5 của một nghiên cứu ALPR với mAP@0.5:0.95 trên COCO không có giá trị làm luận cứ kỹ thuật.
+**b) AP, mAP và hai biến thể theo ngưỡng IoU.** AP là diện tích dưới đường cong Precision–Recall; mAP là trung bình AP trên các lớp, và đồ án có một lớp nên mAP trùng AP. **mAP@0.5** tính tại một ngưỡng IoU cố định 0,5, còn **mAP@0.5:0.95** lấy trung bình trên 10 ngưỡng từ 0,5 đến 0,95, nên trên cùng mô hình và cùng tập dữ liệu **mAP@0.5:0.95 luôn ≤ mAP@0.5**. Khoảng cách giữa hai chỉ số với biển số thường rất lớn do hộp bao dẹt: ba công trình đã công bố cho chênh **18,8 · 27,5 · 40,7 điểm phần trăm** (**Phụ lục V**), cùng xác nhận **biển số dễ phát hiện nhưng khó khớp hộp bao chính xác**. Hai chỉ số này **không so sánh chéo được**.
 
 **d) Chỉ tiêu của đồ án.** Vì mục tiêu phát hiện là cắt vùng biển đủ tốt để OCR đọc, đồ án chọn **mAP@0.5 làm chỉ tiêu chính** và vẫn báo cáo mAP@0.5:0.95; giá trị ở Chương 5.
 
@@ -128,7 +122,7 @@ $$\mathrm{CER} = \frac{S + D + I}{N}$$
 
 <div align="right">(2.4)</div>
 
-CER **có thể vượt 1** khi chuỗi dự đoán dài hơn chuỗi thực rất nhiều — đúng tình huống CTC gặp ảnh hai dòng. **b) WER** tương tự nhưng đơn vị là từ; đồ án không dùng chỉ số này vì biển số không có ranh giới từ. **c) Độ chính xác mức chuỗi** (*plate-level accuracy*, *exact match*) là chỉ số nghiêm ngặt nhất:
+CER **có thể vượt 1** khi chuỗi dự đoán dài hơn chuỗi thực rất nhiều — đúng tình huống CTC gặp ảnh hai dòng. Đồ án không dùng WER vì biển số không có ranh giới từ. **Độ chính xác mức chuỗi** (*plate-level accuracy*) là chỉ số nghiêm ngặt nhất:
 
 $$\mathrm{Acc}_{\text{plate}} = \frac{\#\{\text{biển số có TOÀN BỘ chuỗi ký tự khớp chính xác}\}}{\#\{\text{tổng số biển số trong tập kiểm thử}\}}$$
 
@@ -148,7 +142,7 @@ Về kiến trúc, các nghiên cứu ALPR gần đây phần lớn theo hướn
 
 ### 2.5.2. Công trình về biển số Việt Nam
 
-Qua khảo sát các công trình và đồ án ALPR cho biển số Việt Nam được công bố công khai, phần lớn nghiên cứu tập trung vào việc cải thiện độ chính xác **phát hiện** biển số hoặc báo cáo kết quả tổng thể của toàn hệ thống. Các công trình thường dùng YOLO kết hợp EasyOCR hoặc PaddleOCR, và công bố mAP, precision, recall hoặc một con số độ chính xác nhận dạng chung. Phần lớn đánh giá trên tập tự thu thập không công khai, nên **so sánh công bằng giữa các công trình gần như bất khả thi**.
+Trong phạm vi năm công trình được tổng hợp ở Bảng 2.3 cùng các tài liệu công khai nhóm thực hiện tiếp cận được, phần lớn nghiên cứu tập trung vào việc cải thiện độ chính xác **phát hiện** biển số hoặc báo cáo một kết quả tổng thể cho toàn hệ thống. Các công trình thường dùng YOLO kết hợp EasyOCR hoặc PaddleOCR, và công bố mAP, precision, recall hoặc một con số độ chính xác nhận dạng chung. Phần lớn đánh giá trên tập tự thu thập không công khai, nên **so sánh công bằng giữa các công trình gần như bất khả thi**.
 
 Trong tập tài liệu khảo sát được, nhóm thực hiện **chưa tìm thấy công trình công khai nào đồng thời làm ba việc sau**: *(i)* báo cáo tách riêng độ chính xác cho biển một dòng và biển hai dòng trên cùng một hệ thống; *(ii)* đo **định lượng** đóng góp của bước hậu xử lý, tức công bố độ chính xác cả trước lẫn sau bước đó; và *(iii)* công bố benchmark giữa nhiều bộ nhận dạng ký tự trên cùng một tập ảnh biển số Việt Nam.
 

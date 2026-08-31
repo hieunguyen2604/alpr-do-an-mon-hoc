@@ -179,7 +179,10 @@ def main() -> None:
     # `\o "1-2"` = lay tieu de cap 1 va 2; `\h` = moi dong la sieu lien ket;
     # `\z` = an so trang o ban Web Layout; `\u` = dung muc luc theo outline.
     # scripts/export_thesis_pdf.ps1 goi Fields.Update() nen so trang duoc dien
-    # luc xuat PDF; mo file .docx truc tiep thi bam Ctrl+A roi F9.
+    # luc xuat PDF, va tu 31/08 script do con ghi nguoc so trang vao chinh
+    # .docx. Van ban giu cho phai la mot NHAN TRUNG TINH ("Muc luc"), khong
+    # phai cau nhac thao tac: neu ai in ban chua cap nhat thi quyen se in ra
+    # dong "Mo tep trong Word roi bam Ctrl+A, F9" giua muc luc.
     e = [ghi_chu, "",
          "```{=openxml}",
          "<w:p><w:r><w:fldChar w:fldCharType=\"begin\" w:dirty=\"true\"/></w:r>"
@@ -187,7 +190,7 @@ def main() -> None:
          r' TOC \o "1-2" \h \z \u '
          "</w:instrText></w:r>"
          "<w:r><w:fldChar w:fldCharType=\"separate\"/></w:r>"
-         "<w:r><w:t>Mở tệp trong Word rồi bấm Ctrl+A, F9 để cập nhật mục lục.</w:t></w:r>"
+         "<w:r><w:t>Mục lục</w:t></w:r>"
          "<w:r><w:fldChar w:fldCharType=\"end\"/></w:r></w:p>",
          "```", "",
          "<!-- Bản đối chiếu (không in ra):",

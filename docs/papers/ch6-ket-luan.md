@@ -22,9 +22,11 @@ Nhóm thực hiện đã bàn giao một hệ thống nhận dạng biển số 
 
 Các chỉ tiêu về phát hiện, thông lượng, độ tin cậy và chịu tải đều đạt; các chỉ tiêu về độ chính xác chuỗi chưa đạt ngưỡng. NFR-P1 vượt mục tiêu sau đợt tối ưu tầng chạy, dù bậc thử lại đã cộng thêm độ trễ đuôi để đổi lấy 34 biển đọc đúng.
 
-**Bốn kết quả định lượng mà khảo sát không tìm thấy tương đương trong tài liệu Việt Nam.** *(1)* Đóng góp thuần của khối hậu xử lý theo vị trí: **+13,28 điểm**, sửa đúng 372 biển và làm hỏng 0 trên 2.801 mẫu. *(2)* Chênh lệch giữa hai bố cục biển: **23,07 điểm** ở khối nhận dạng so với 2,09 điểm ở khối phát hiện, nên rủi ro R-04 nằm trọn ở tầng đọc ký tự. *(3)* Benchmark ba bộ nhận dạng trên 2.801 biển trong cùng một tầng bao quanh: **PaddleOCR 68,87%**, EasyOCR 14,28%, Tesseract 10,28%. *(4)* Bộ nhận màu nền đạt **97,89%** trên 1.565 ảnh có nhãn, cung cấp bằng chứng mà chuỗi ký tự không mang được.
+Kết quả thực nghiệm cho thấy hệ thống **đạt toàn bộ chỉ tiêu phát hiện biển số và hiệu năng trên CPU**: bộ phát hiện YOLO11n đạt mAP@0.5 = **0,9829** và mAP@0.5:0.95 = **0,7834**, độ trễ p95 đạt **509,76 ms**, đáp ứng mục tiêu vận hành theo thời gian thực.
 
-Hai kết quả kỹ thuật hệ thống đi kèm: tối ưu tầng chạy đưa p95 từ 1.143,10 xuống **509,76 ms** mà mọi chỉ số độ chính xác giữ nguyên (4.6.8), và khử trùng lặp mờ gom 17 trên 44 cách đọc về đúng một bản ghi mỗi xe (4.7.2). Đồ án cũng để lại một quy trình đánh giá có kiểm chứng: mọi số liệu sinh lại được bằng một lệnh, và các kết quả âm được ghi lại thay vì bỏ đi.
+Đóng góp kỹ thuật nổi bật nhất của đề tài là **bộ luật hậu xử lý theo vị trí**, giúp tăng độ chính xác mức chuỗi từ **63,73% lên 77,01%** — tương đương **13,28 điểm phần trăm**, sửa đúng **372 biển số mà không làm hỏng kết quả nào**. Ba kết quả định lượng khác mà khảo sát không tìm thấy tương đương trong tài liệu Việt Nam: chênh lệch giữa hai bố cục biển **23,07 điểm** ở khối nhận dạng so với 2,09 điểm ở khối phát hiện; benchmark ba bộ nhận dạng trong cùng một tầng bao quanh (PaddleOCR **68,87%**, EasyOCR 14,28%, Tesseract 10,28%); và bộ nhận màu nền **97,89%** trên 1.565 ảnh có nhãn.
+
+Mặc dù chỉ tiêu A6 và A7 chưa đạt mục tiêu đặt ra, các kết quả thực nghiệm đã chỉ ra rõ ràng rằng **OCR trên biển hai dòng là nút thắt chính** của hệ thống và là hướng ưu tiên trong các nghiên cứu tiếp theo (6.3).
 
 ## 6.2. Hạn chế
 

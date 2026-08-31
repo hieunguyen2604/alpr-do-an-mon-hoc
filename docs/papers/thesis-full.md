@@ -93,7 +93,7 @@ Nhóm cũng xin cảm ơn quý thầy cô Trường Đại học Công nghệ Th
      Số trang do Word điền khi xuất .docx. -->
 
 ```{=openxml}
-<w:p><w:r><w:fldChar w:fldCharType="begin" w:dirty="true"/></w:r><w:r><w:instrText xml:space="preserve"> TOC \o "1-2" \h \z \u </w:instrText></w:r><w:r><w:fldChar w:fldCharType="separate"/></w:r><w:r><w:t>Mở tệp trong Word rồi bấm Ctrl+A, F9 để cập nhật mục lục.</w:t></w:r><w:r><w:fldChar w:fldCharType="end"/></w:r></w:p>
+<w:p><w:r><w:fldChar w:fldCharType="begin" w:dirty="true"/></w:r><w:r><w:instrText xml:space="preserve"> TOC \o "1-2" \h \z \u </w:instrText></w:r><w:r><w:fldChar w:fldCharType="separate"/></w:r><w:r><w:t>Mục lục</w:t></w:r><w:r><w:fldChar w:fldCharType="end"/></w:r></w:p>
 ```
 
 <!-- Bản đối chiếu (không in ra):
@@ -435,13 +435,7 @@ $$\mathrm{Precision} = \frac{TP}{TP + FP}, \qquad \mathrm{Recall} = \frac{TP}{TP
 
 Với ALPR, **recall của bước phát hiện quan trọng hơn precision**: biển bỏ sót là mất vĩnh viễn, vùng báo nhầm bị hậu xử lý loại vì chuỗi không khớp cú pháp.
 
-**b) AP và mAP.** AP là diện tích dưới đường cong Precision–Recall; mAP là trung bình AP trên $N$ lớp — đồ án có $N = 1$ nên mAP trùng AP:
-
-$$\mathrm{AP} = \int_0^1 p(r)\, \mathrm{d}r, \qquad \mathrm{mAP} = \frac{1}{N}\sum_{i=1}^{N} \mathrm{AP}_i$$
-
-<div align="right">(2.3)</div>
-
-**c) mAP@0.5 và mAP@0.5:0.95.** mAP@0.5 tính tại **một ngưỡng IoU cố định 0,5**; mAP@0.5:0.95 lấy **trung bình trên 10 ngưỡng** từ 0,5 đến 0,95 bước 0,05, nên trên cùng mô hình và cùng tập dữ liệu **mAP@0.5:0.95 luôn ≤ mAP@0.5**. Khoảng cách giữa hai chỉ số với biển số thường rất lớn do hộp bao dẹt: ba công trình đã công bố cho chênh **18,8 · 27,5 · 40,7 điểm phần trăm** (**Phụ lục V**), cùng xác nhận **biển số dễ phát hiện nhưng khó khớp hộp bao chính xác**. Hai chỉ số này **không so sánh chéo được**, nên đối chiếu mAP@0.5 của một nghiên cứu ALPR với mAP@0.5:0.95 trên COCO không có giá trị làm luận cứ kỹ thuật.
+**b) AP, mAP và hai biến thể theo ngưỡng IoU.** AP là diện tích dưới đường cong Precision–Recall; mAP là trung bình AP trên các lớp, và đồ án có một lớp nên mAP trùng AP. **mAP@0.5** tính tại một ngưỡng IoU cố định 0,5, còn **mAP@0.5:0.95** lấy trung bình trên 10 ngưỡng từ 0,5 đến 0,95, nên trên cùng mô hình và cùng tập dữ liệu **mAP@0.5:0.95 luôn ≤ mAP@0.5**. Khoảng cách giữa hai chỉ số với biển số thường rất lớn do hộp bao dẹt: ba công trình đã công bố cho chênh **18,8 · 27,5 · 40,7 điểm phần trăm** (**Phụ lục V**), cùng xác nhận **biển số dễ phát hiện nhưng khó khớp hộp bao chính xác**. Hai chỉ số này **không so sánh chéo được**.
 
 **d) Chỉ tiêu của đồ án.** Vì mục tiêu phát hiện là cắt vùng biển đủ tốt để OCR đọc, đồ án chọn **mAP@0.5 làm chỉ tiêu chính** và vẫn báo cáo mAP@0.5:0.95; giá trị ở Chương 5.
 
@@ -496,7 +490,7 @@ $$\mathrm{CER} = \frac{S + D + I}{N}$$
 
 <div align="right">(2.4)</div>
 
-CER **có thể vượt 1** khi chuỗi dự đoán dài hơn chuỗi thực rất nhiều — đúng tình huống CTC gặp ảnh hai dòng. **b) WER** tương tự nhưng đơn vị là từ; đồ án không dùng chỉ số này vì biển số không có ranh giới từ. **c) Độ chính xác mức chuỗi** (*plate-level accuracy*, *exact match*) là chỉ số nghiêm ngặt nhất:
+CER **có thể vượt 1** khi chuỗi dự đoán dài hơn chuỗi thực rất nhiều — đúng tình huống CTC gặp ảnh hai dòng. Đồ án không dùng WER vì biển số không có ranh giới từ. **Độ chính xác mức chuỗi** (*plate-level accuracy*) là chỉ số nghiêm ngặt nhất:
 
 $$\mathrm{Acc}_{\text{plate}} = \frac{\#\{\text{biển số có TOÀN BỘ chuỗi ký tự khớp chính xác}\}}{\#\{\text{tổng số biển số trong tập kiểm thử}\}}$$
 
@@ -516,7 +510,7 @@ Về kiến trúc, các nghiên cứu ALPR gần đây phần lớn theo hướn
 
 ### 2.5.2. Công trình về biển số Việt Nam
 
-Qua khảo sát các công trình và đồ án ALPR cho biển số Việt Nam được công bố công khai, phần lớn nghiên cứu tập trung vào việc cải thiện độ chính xác **phát hiện** biển số hoặc báo cáo kết quả tổng thể của toàn hệ thống. Các công trình thường dùng YOLO kết hợp EasyOCR hoặc PaddleOCR, và công bố mAP, precision, recall hoặc một con số độ chính xác nhận dạng chung. Phần lớn đánh giá trên tập tự thu thập không công khai, nên **so sánh công bằng giữa các công trình gần như bất khả thi**.
+Trong phạm vi năm công trình được tổng hợp ở Bảng 2.3 cùng các tài liệu công khai nhóm thực hiện tiếp cận được, phần lớn nghiên cứu tập trung vào việc cải thiện độ chính xác **phát hiện** biển số hoặc báo cáo một kết quả tổng thể cho toàn hệ thống. Các công trình thường dùng YOLO kết hợp EasyOCR hoặc PaddleOCR, và công bố mAP, precision, recall hoặc một con số độ chính xác nhận dạng chung. Phần lớn đánh giá trên tập tự thu thập không công khai, nên **so sánh công bằng giữa các công trình gần như bất khả thi**.
 
 Trong tập tài liệu khảo sát được, nhóm thực hiện **chưa tìm thấy công trình công khai nào đồng thời làm ba việc sau**: *(i)* báo cáo tách riêng độ chính xác cho biển một dòng và biển hai dòng trên cùng một hệ thống; *(ii)* đo **định lượng** đóng góp của bước hậu xử lý, tức công bố độ chính xác cả trước lẫn sau bước đó; và *(iii)* công bố benchmark giữa nhiều bộ nhận dạng ký tự trên cùng một tập ảnh biển số Việt Nam.
 
@@ -841,7 +835,7 @@ Một giới hạn kỹ thuật ngoài tầm kiểm soát của đồ án: trên
 
 **e) Tiền xử lý ảnh biển.** Ba bước độc lập, mỗi bước bật tắt riêng để phục vụ thí nghiệm bóc tách đóng góp. **Chuyển thang xám** vì ký tự không mang thông tin phân biệt trong kênh màu. **CLAHE** hệ số 2,0 trên ô 8 × 8, vì bề mặt phản quang tạo mảng chói cục bộ mà cân bằng toàn cục không xử lý được [22]<!-- sutikno_2025_clahe -->. **Lọc song phương** thay cho làm mờ Gauss, vì nó bảo toàn biên — yếu tố quyết định để phân biệt các cặp đồng hình như `8` và `B`. Ảnh biển do bộ phát hiện sinh ra thường chỉ cao 20–40 điểm ảnh nên được phóng về 64 trước khi đọc.
 
-**f) Bước phục hồi dòng trên.** Chế độ hỏng quan sát được: `29E-015.66` chỉ đọc ra `015.66` — sau khi ghép, bộ phát hiện văn bản bỏ qua cụm mã tỉnh và ký tự sê-ri. Một phương án thay thế *(bỏ phép ghép, đọc riêng từng nửa rồi nối chuỗi)* đã được kiểm chứng trên 200 biển hai dòng có nhãn. Phương án này đạt **3,5%**, thấp hơn đáng kể phương án ghép ngang (**64,5%**), nên không được lựa chọn (5.5.6); nguyên nhân là dải chồng lấn ở mục c bị nhận dạng hai lần khi đọc riêng.
+**f) Bước phục hồi dòng trên.** Một số biển hai dòng bị mất cụm mã tỉnh hoặc ký tự sê-ri sau bước ghép ngang. Để xử lý trường hợp này, hệ thống bổ sung một bước phục hồi có điều kiện. Cơ chế chỉ được kích hoạt khi đồng thời thoả ba điều kiện: vùng biển được phân loại là hai dòng, chuỗi sau chuẩn hoá không hợp lệ, và chuỗi OCR thô khác rỗng. Một phương án khác — đọc riêng từng nửa rồi nối chuỗi — đã được kiểm chứng và cho kết quả thấp hơn đáng kể (5.5.6).
 
 Thiết kế cuối cùng vì vậy giữ nguyên chiến lược ghép và chỉ thêm một bước phục hồi có cổng chặt: **chỉ kích hoạt khi đồng thời** vùng biển được phân loại hai dòng, chuỗi sau chuẩn hoá không hợp lệ, và chuỗi thô khác rỗng. Khi đó hệ thống đọc thêm một lượt trên riêng nửa trên, ghép với chuỗi thô rồi chuẩn hoá lại; kết quả mới chỉ được nhận nếu vượt kiểm tra định dạng. **Tính không làm hỏng mang bản chất cấu trúc** — cổng chỉ mở khi kết quả đã không hợp lệ, nên tập bị can thiệp và tập đang đúng là hai tập rời nhau. Đo được **+1,86 và +0,50 điểm** trên hai mẫu độc lập, **0 trường hợp bị làm hỏng**, chi phí 15–21 ms mỗi biển hai dòng.
 
@@ -930,9 +924,7 @@ Tầng nghiệp vụ vì vậy có một lượt hợp nhất thứ hai. Hai chu
 | Gần nhau về chuỗi | khoảng cách Levenshtein $\le 2$ | Chỉ điều kiện này thì hai biển thật sự khác nhau cũng lọt |
 | Gần nhau về thời gian | không quá 48 khung | Chỉ điều kiện này thì hai xe khác nhau đi liền nhau cũng lọt |
 
-Riêng ở khoảng cách bằng 2, hai điều kiện trên vẫn chưa đủ chặt, nên mức đó phải qua thêm một **rào ngữ nghĩa dựa trên cấu trúc biển số Việt Nam**: hai chuỗi phải cùng **mã tỉnh hai chữ số**, và **hoặc** cùng chữ cái sê-ri **hoặc** cùng ba chữ số cuối. Rào này khai thác đúng đặc điểm đã phân tích ở 4.6.5 — biển số Việt Nam không phải chuỗi tuỳ ý mà có cấu trúc theo vị trí.
-
-**Bản nào được giữ lại là quyết định về bằng chứng, không phải về thứ tự đến.** Thứ tự ưu tiên: đúng quy chuẩn định dạng trước, rồi **số khung đã bỏ phiếu** cho cách đọc đó, cuối cùng mới tới độ tin cậy của khối nhận dạng. Đặt độ tin cậy xuống cuối là có lý do đo được: ở mức sai khác một ký tự, một lần đọc sai vẫn thường mang điểm tin cậy cao — mục 5.6.5 có ca cụ thể trong đó bản sai đạt 0,994 còn bản đúng 0,996.
+Riêng với trường hợp khoảng cách bằng **hai ký tự**, hệ thống áp thêm một **rào ngữ nghĩa** dựa trên cấu trúc biển số Việt Nam nhằm giảm nguy cơ hợp nhất nhầm: hai chuỗi phải cùng mã tỉnh, và cùng ký tự sê-ri hoặc cùng ba chữ số cuối. Kết quả cuối cùng được lựa chọn theo **mức độ phù hợp định dạng** rồi tới **tần suất xuất hiện trong chuỗi khung hình**, và chỉ sau đó mới xét độ tin cậy OCR — vì ở mức sai khác một ký tự, độ tin cậy là trọng tài kém.
 
 ### 4.7.3. Thiết kế cơ sở dữ liệu
 
@@ -958,9 +950,7 @@ Toàn bộ giao tiếp với máy chủ tập trung tại một tầng gọi API
 
 Hai màn hình sau cùng đáng nói riêng, vì cả hai đều sinh ra từ ràng buộc của tầng dưới. Giao diện có **chế độ quét trực tiếp qua webcam** và **hàng đợi tải lên nhiều ảnh**, cả hai đều sinh ra từ ràng buộc của tầng dưới chứ không phải từ mong muốn thêm tính năng.
 
-**Quét trực tiếp qua webcam.** Trình duyệt lấy khung hình từ camera và gửi từng khung tới `POST /api/detect/frame`. Điểm thiết kế đáng nêu là **vòng lặp một khe**: tại mỗi thời điểm chỉ có đúng một khung đang được gửi đi, và mọi khung camera sinh ra trong lúc chờ đều bị **bỏ thẳng** chứ không xếp hàng. Lý do là một hàng đợi không giới hạn sẽ khiến độ trễ hiển thị tăng dần không giới hạn khi tốc độ camera vượt tốc độ xử lý — người dùng sẽ thấy khung hình cũ dần so với thực tế. Chấp nhận bỏ khung giữ cho kết quả hiển thị luôn thuộc về hiện tại. Phép đo ở 5.6.4 cho thấy tỷ lệ bỏ là đáng kể và **đó là hành vi đúng**: trong 60 giây, camera ảo 30 khung/giây chào 1.801 khung, hệ thống xử lý 338 và bỏ 1.463.
-
-**Hàng đợi tải lên nhiều ảnh.** Người dùng chọn nhiều tệp một lần; giao diện xếp chúng thành một dải xem trước và xử lý tuần tự, hiển thị kết quả ngay khi từng ảnh xong thay vì chờ cả lô. Xử lý tuần tự chứ không song song là quyết định có chủ đích: máy chủ chạy suy luận trên CPU đã ghim số luồng (4.6.8), nên gửi song song chỉ làm các yêu cầu tranh nhau cùng một tài nguyên và kéo dài tổng thời gian.
+**Quét trực tiếp qua webcam.** Chế độ này gửi từng khung hình tới điểm cuối `POST /api/detect/frame` và nhận kết quả theo thời gian thực. Để tránh tích luỹ độ trễ khi tốc độ sinh khung hình vượt quá tốc độ suy luận, hệ thống chỉ duy trì **một yêu cầu đang xử lý tại mỗi thời điểm**; các khung phát sinh trong lúc đường truyền bận sẽ **bị bỏ qua thay vì đưa vào hàng đợi**. Thiết kế này giúp kết quả hiển thị luôn phản ánh trạng thái hiện tại của cảnh quan sát thay vì các khung hình đã lỗi thời. **Hàng đợi tải lên nhiều ảnh** xử lý tuần tự theo cùng lý do.
 
 Cần lưu ý rằng thiết kế ban đầu có năm màn hình. Màn hình tổng quan đã được đưa ra khỏi phạm vi trong hai đợt thu gọn giao diện, kéo theo bốn yêu cầu chức năng chuyển sang mức không thực hiện — trong đó có một yêu cầu ở mức bắt buộc, được nêu rõ tại mục 6.2. Các điểm cuối tương ứng ở phía máy chủ vẫn hoạt động và vẫn có kiểm thử tích hợp; điều bị loại bỏ là hàm gọi phía giao diện, không phải bản thân điểm cuối.
 
@@ -1207,11 +1197,14 @@ NFR-A7 đo **ảnh đầu vào → phát hiện → cắt → OCR → hậu xử
 
 <!-- {{T5.5h}} truoc/sau buoc cuu dong tren tren toan tap co nhan chuoi — chuyen thanh van xuoi -->
 
-Hồ sơ lỗi thiên về **xoá** ($D$ = 1.272 > $S$ = 862) trên biển hai dòng có cách giải thích tự nhiên: **mất hẳn một dòng**. Hệ thống đọc biển hai dòng bằng **ghép rồi đọc** (*split-then-hstack*): cắt vùng biển thành hai nửa chồng lấn, xếp cạnh nhau thành dải ngang, chạy OCR **một lần**.
+Hồ sơ lỗi thiên về **xoá** ($D$ = 1.272 > $S$ = 862) trên biển hai dòng có cách giải thích tự nhiên: **mất hẳn một dòng**. Để đánh giá chiến lược xử lý biển hai dòng, nhóm thực hiện so sánh hai phương án:
 
-Phương án thay thế — đọc riêng từng nửa rồi nối chuỗi — được đo A/B trên 200 biển hai dòng với hạt giống ngẫu nhiên cố định. **Phương án A (ghép rồi đọc một lần, đang dùng) đạt 64,50%; phương án B (đọc từng nửa rồi nối) đạt 3,50%** — kém 61,00 điểm phần trăm và tốn thêm 51,24 ms, thắng ở **0/200** trường hợp. Nguyên nhân đọc được ngay trong dữ liệu: hai nửa **cố ý chồng lấn** để không cắt cụt ký tự, nên đọc riêng thì dải chồng lấn bị đọc **hai lần** và ký tự bị nhân đôi — `84G122593` thành `84-G124E009.01225.93`.
+- **Phương án A:** tách hai nửa, ghép ngang rồi nhận dạng một lần *(đang dùng)*.
+- **Phương án B:** nhận dạng riêng từng nửa rồi ghép kết quả văn bản.
 
-Riêng bước phục hồi dòng trên, đo trên toàn tập 2.801 ảnh có nhãn chuỗi ở lượt 2, đóng góp **+1,75 điểm A6** (0,6555 → 0,6730) và **+2,20 điểm** trên riêng biển hai dòng; nó cho câu trả lời cuối ở **209 biển**, làm hỏng **0**. Các giá trị tuyệt đối của lượt 2 đã bị vượt qua (A6 hiện là 0,7701) nên **không được trích như số hiện hành**.
+Trên tập kiểm thử gồm **200 biển hai dòng** có nhãn, phương án A đạt **64,5%** trong khi phương án B chỉ đạt **3,5%**. Kết quả cho thấy việc nhận dạng độc lập từng dòng làm gia tăng lỗi ghép chuỗi và không phù hợp với dữ liệu của đề tài, nên hệ thống giữ nguyên phương án ghép ngang trước khi nhận dạng.
+
+Cải tiến tiếp theo vì vậy tập trung vào **cơ chế phục hồi dòng bị mất** (4.6.4) thay vì thay đổi chiến lược xử lý cơ bản. Đo trên toàn tập 2.801 ảnh có nhãn chuỗi ở lượt 2, bước phục hồi đóng góp **+1,75 điểm A6** và **+2,20 điểm** trên riêng biển hai dòng; nó cho câu trả lời cuối ở **209 biển** và **không làm hỏng biển nào**. Các giá trị tuyệt đối của lượt 2 đã bị vượt qua nên không trích như số hiện hành.
 
 ### 5.5.7. Bậc thang thử lại cho biển nghiêng/méo — chi phí, lợi ích và một quyết định tắt tính năng
 
@@ -1226,9 +1219,9 @@ Khi lần đọc đầu trả về chuỗi không hợp lệ, hệ thống thử
 | Nắn hình + giãn dọc | +244 ms p95 | **+34 biển đọc đúng** | ✅ bật |
 | Siêu phân giải (FSRCNN) | **+319 ms p95, +1.381 ms p99** | **0 biển** | ❌ tắt |
 
-**Hai bậc đầu** đổi độ trễ đuôi lấy 34 biển đọc thêm, còn **trung vị không tăng** (bậc thang chỉ chạy sau khi lần đọc đầu thất bại, nên toàn bộ chi phí dồn vào đuôi phân bố). **Bậc thứ ba bị tắt mặc định**: một mình siêu phân giải đẩy p95 lên **1.514,26 ms**, vượt cả ngưỡng tối thiểu 1.500 ms, trong khi cứu được **0 biển**; mã và công tắc vẫn giữ nguyên, chỉ đổi giá trị mặc định (Bảng 5.7).
+Kết quả cho thấy bước **nắn hình và giãn dọc** giúp khôi phục thêm **34 biển số đúng** với chi phí độ trễ chấp nhận được, và trung vị không tăng vì bậc thang chỉ chạy sau khi lần đọc đầu thất bại. Ngược lại, bước **siêu phân giải FSRCNN** đẩy p95 lên **1.514,26 ms** — vượt cả ngưỡng tối thiểu 1.500 ms — nhưng **không mang lại lợi ích quan sát được** trên tập thực nghiệm. Vì vậy bản giao hàng giữ bước nắn hình và **vô hiệu hoá bước siêu phân giải trong cấu hình mặc định**; mã và công tắc vẫn giữ nguyên.
 
-> **Số 0 ấy phải đọc cho đúng.** Cổng vào bậc siêu phân giải chỉ mở cho vùng cắt **nhỏ hơn 200 điểm ảnh**, và **0 trên 120 mẫu ngữ liệu lọt qua cổng đó**. Đây là **số 0 cấu trúc**: chi phí đã đo được, còn lợi ích thì **chưa ai đo được** — khác hẳn *đã đo và thấy vô dụng*. Đo lại bậc này trên ngữ liệu có biển thật sự nhỏ là hướng phát triển ở mục 6.3.
+> **Số 0 ấy phải đọc cho đúng.** Cổng vào bậc siêu phân giải chỉ mở cho vùng cắt nhỏ hơn 200 điểm ảnh, và **0 trên 120 mẫu ngữ liệu lọt qua cổng đó**. Chi phí đã đo được, còn lợi ích thì **chưa ai đo được** — khác hẳn *đã đo và thấy vô dụng*. Đo lại bậc này trên ngữ liệu có biển thật sự nhỏ là hướng phát triển ở mục 6.3.
 
 ## 5.6. Đánh giá hiệu năng
 
@@ -1452,9 +1445,11 @@ Nhóm thực hiện đã bàn giao một hệ thống nhận dạng biển số 
 
 Các chỉ tiêu về phát hiện, thông lượng, độ tin cậy và chịu tải đều đạt; các chỉ tiêu về độ chính xác chuỗi chưa đạt ngưỡng. NFR-P1 vượt mục tiêu sau đợt tối ưu tầng chạy, dù bậc thử lại đã cộng thêm độ trễ đuôi để đổi lấy 34 biển đọc đúng.
 
-**Bốn kết quả định lượng mà khảo sát không tìm thấy tương đương trong tài liệu Việt Nam.** *(1)* Đóng góp thuần của khối hậu xử lý theo vị trí: **+13,28 điểm**, sửa đúng 372 biển và làm hỏng 0 trên 2.801 mẫu. *(2)* Chênh lệch giữa hai bố cục biển: **23,07 điểm** ở khối nhận dạng so với 2,09 điểm ở khối phát hiện, nên rủi ro R-04 nằm trọn ở tầng đọc ký tự. *(3)* Benchmark ba bộ nhận dạng trên 2.801 biển trong cùng một tầng bao quanh: **PaddleOCR 68,87%**, EasyOCR 14,28%, Tesseract 10,28%. *(4)* Bộ nhận màu nền đạt **97,89%** trên 1.565 ảnh có nhãn, cung cấp bằng chứng mà chuỗi ký tự không mang được.
+Kết quả thực nghiệm cho thấy hệ thống **đạt toàn bộ chỉ tiêu phát hiện biển số và hiệu năng trên CPU**: bộ phát hiện YOLO11n đạt mAP@0.5 = **0,9829** và mAP@0.5:0.95 = **0,7834**, độ trễ p95 đạt **509,76 ms**, đáp ứng mục tiêu vận hành theo thời gian thực.
 
-Hai kết quả kỹ thuật hệ thống đi kèm: tối ưu tầng chạy đưa p95 từ 1.143,10 xuống **509,76 ms** mà mọi chỉ số độ chính xác giữ nguyên (4.6.8), và khử trùng lặp mờ gom 17 trên 44 cách đọc về đúng một bản ghi mỗi xe (4.7.2). Đồ án cũng để lại một quy trình đánh giá có kiểm chứng: mọi số liệu sinh lại được bằng một lệnh, và các kết quả âm được ghi lại thay vì bỏ đi.
+Đóng góp kỹ thuật nổi bật nhất của đề tài là **bộ luật hậu xử lý theo vị trí**, giúp tăng độ chính xác mức chuỗi từ **63,73% lên 77,01%** — tương đương **13,28 điểm phần trăm**, sửa đúng **372 biển số mà không làm hỏng kết quả nào**. Ba kết quả định lượng khác mà khảo sát không tìm thấy tương đương trong tài liệu Việt Nam: chênh lệch giữa hai bố cục biển **23,07 điểm** ở khối nhận dạng so với 2,09 điểm ở khối phát hiện; benchmark ba bộ nhận dạng trong cùng một tầng bao quanh (PaddleOCR **68,87%**, EasyOCR 14,28%, Tesseract 10,28%); và bộ nhận màu nền **97,89%** trên 1.565 ảnh có nhãn.
+
+Mặc dù chỉ tiêu A6 và A7 chưa đạt mục tiêu đặt ra, các kết quả thực nghiệm đã chỉ ra rõ ràng rằng **OCR trên biển hai dòng là nút thắt chính** của hệ thống và là hướng ưu tiên trong các nghiên cứu tiếp theo (6.3).
 
 ## 6.2. Hạn chế
 
