@@ -188,7 +188,7 @@ Từ khảo sát trên, đồ án xác định sáu hướng đóng góp, mỗi 
 | 3 | **Công bố chỉ số đầu cuối ở mức chuỗi** bên cạnh mAP của bước phát hiện, và nêu rõ chênh lệch giữa hai đại lượng | Trong phạm vi khảo sát, phần lớn công trình trong nước chỉ báo cáo mAP của bước phát hiện (2.5.2) |
 | 4 | **Xây dựng benchmark ba bộ nhận dạng ký tự trên 2.801 biển số Việt Nam** trong cùng một tầng bao quanh: PaddleOCR 68,87% · EasyOCR 14,28% · Tesseract 10,28% (3.3.3) | Trong tập khảo sát, không công trình nào công bố benchmark giữa nhiều bộ nhận dạng trên riêng ảnh biển số Việt Nam (3.3) |
 | 5 | **Mọi số liệu hiệu năng công bố kèm cấu hình phần cứng**: model CPU, số luồng, kích thước ảnh vào, nền tảng suy luận, cỡ mẫu đo | Trong phạm vi khảo sát, số liệu hiệu năng thường công bố không kèm phần cứng nên không tái lập được (2.5.1) |
-| 6 | **Bàn giao hệ thống có kiến trúc phần mềm, kiểm thử và giao thức đo công khai** — mọi số liệu sinh lại được bằng một lệnh | Trong phạm vi các kho mã nguồn mở được khảo sát, phần lớn không công bố số liệu và không có kiến trúc phần mềm (2.5.2) |
+| 6 | **Bàn giao hệ thống có kiến trúc phần mềm, kiểm thử và giao thức đo công khai** — mọi số liệu sinh lại được bằng một lệnh | Trong phạm vi các kho mã nguồn mở được khảo sát, đa số không công bố đầy đủ giao thức đo hoặc kiến trúc hệ thống (2.5.2) |
 
 Sáu đóng góp đều thuộc loại **kỹ nghệ và báo cáo**, không phải thuật toán; tuyên bố đóng góp đầy đủ đặt ở mục 1.5.
 
