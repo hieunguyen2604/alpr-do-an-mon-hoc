@@ -56,13 +56,16 @@ BUNDLE_DIR: Path = REPO_ROOT / "nop"
 # (duong dan nguon tinh tu goc repo) -> (ten trong bundle). PDF do
 # export_thesis_pdf.ps1 sinh; nguon chua ton tai thi bo qua va bao, khong loi.
 BUNDLE_FILES: tuple[tuple[str, str], ...] = (
+    # .docx KHONG nam trong danh sach nay: ban trong nop/ phai la ban Word DA
+    # DIEN SO TRANG, va chi export_thesis_pdf.ps1 (noi goi Fields.Update roi
+    # Save) lam duoc dieu do — script ay tu chep .docx sang nop/. De o day thi
+    # moi lan build se de mot ban cot-Trang-toan-so-0 len ban tot; loi nay da
+    # xay ra BA lan vi canh bao bi >/dev/null nuot.
     ("docs/papers/thesis-full.pdf", "01-do-an-tot-nghiep.pdf"),
-    ("docs/papers/thesis-full.docx", "01-do-an-tot-nghiep.docx"),
     ("docs/slides/slides.pptx", "02-slide-bao-ve.pptx"),
     # Ban rut gon cho do an mon hoc — quyen rieng, dung nguon rieng, khong
     # phai mot phien ban khac cua quyen tot nghiep.
     ("docs/papers/mon-hoc/thesis-full.pdf", "04-do-an-mon-hoc.pdf"),
-    ("docs/papers/mon-hoc/thesis-full.docx", "04-do-an-mon-hoc.docx"),
     ("docs/slides/12-slides-mon-hoc.pptx", "05-slide-mon-hoc.pptx"),
 )
 

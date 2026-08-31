@@ -89,7 +89,7 @@ gantt
 #### Khối Backup (S32 – S38 · Chiếu khi hội đồng đặt câu hỏi)
 - **S32 — Backup 1:** Kiến trúc YOLO11n (C3k2, SPPF, C2PSA, anchor-free).
 - **S33 — Backup 2:** Kiến trúc PP-OCRv5 Mobile (PP-LCNetV3, SVTR-HG, CTC head).
-- **S34 — Backup 3:** Phân tích lỗi E1–E6 trên 697 ca sai (E3 nhầm ký tự 63,85%).
+- **Backup 1:** Phân tích lỗi E1–E6 trên 644 ca sai (E1 nhầm ký tự 60,87%).
 - **S35 — Backup 4:** Bóc tách đóng góp (ablation) gồm cả fine-tune thất bại −7,5 điểm.
 - **S36 — Backup 5:** Siêu tham số đã thực thi (AdamW, batch 8, lr0 0,001) trích `args.yaml`.
 - **S37 — Backup 6:** Tài liệu tham khảo chính (Laroca, PP-OCR, TT/QCVN).
