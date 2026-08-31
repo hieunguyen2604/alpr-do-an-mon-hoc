@@ -9,9 +9,9 @@ date: "Tháng 9 năm 2026"
 <!--
 BỘ SLIDE ĐỒ ÁN MÔN HỌC — 16 slide (1 bìa + 15 nội dung), khoảng 15 phút.
 
-Khác gì hai bộ kia:
-  `10-slides.md`         37 slide, bám mạch quyển tốt nghiệp, dùng cho buổi bảo vệ.
-  `11-slides-ky-thuat.md` 11 slide, khuôn báo cáo kỹ thuật tổng quát.
+Khác gì bộ kia:
+  `10-slides.md`         28 slide (24 chính + 4 backup), bám mạch quyển tốt
+                         nghiệp, dùng cho buổi bảo vệ.
   `12-slides-mon-hoc.md`  bộ này — bám quyển `docs/papers/mon-hoc/`, trọng tâm
                           dời hẳn sang CÁC PHÉP XỬ LÝ ẢNH. YOLO và PaddleOCR
                           xuất hiện như công cụ áp dụng, không như đóng góp.

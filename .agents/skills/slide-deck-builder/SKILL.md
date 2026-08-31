@@ -45,10 +45,6 @@ Skill này cung cấp các nguyên tắc vàng, cấu trúc chuẩn, quy tắc k
 - **Tệp nguồn:** `docs/slides/12-slides-mon-hoc.md` (**15 slide** `##`)
 - **Trọng tâm:** Pipeline thị giác máy tính (YOLO11n + PP-OCRv5), thử nghiệm độ trễ CPU và demo sản phẩm.
 
-### C. Slide Báo Cáo Kỹ Thuật (5–7 phút)
-- **Tệp nguồn:** `docs/slides/11-slides-ky-thuat.md` (**10 slide** `##`)
-- **Trọng tâm:** Kiến trúc hệ thống, API contracts và tiêu chí phi chức năng (NFR).
-
 ---
 
 ## 3. Quy Trình Biên Dịch & Kiểm Thử Slide

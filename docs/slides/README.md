@@ -12,7 +12,6 @@ Thư mục này chứa **khung nội dung**, không chứa file slide đã dựn
 |---|---|:--:|
 | [`10-slides.md`](10-slides.md) | **Nguồn của bộ slide chiếu** — 29 slide, chỉ gạch đầu dòng | ✅ Xong |
 | [`10-kich-ban-noi.md`](10-kich-ban-noi.md) | Kịch bản nói 24 slide: lời nói, ngân sách thời gian 15 phút | ✅ Xong |
-| [`11-slides-ky-thuat.md`](11-slides-ky-thuat.md) | Bộ slide báo cáo kỹ thuật (11 slide) | ✅ Xong |
 | [`12-slides-mon-hoc.md`](12-slides-mon-hoc.md) | Bộ slide đồ án môn học (16 slide) | ✅ Xong |
 | [`10-defense-qa.md`](10-defense-qa.md) | 40+ câu hỏi phản biện, câu trả lời, cảnh báo trả lời sai | ✅ Xong |
 | [`../poster/10-poster-layout.md`](../poster/10-poster-layout.md) | Bố cục poster A0 dọc — 12 khối, bảng font size, bảng màu | ✅ Xong |
