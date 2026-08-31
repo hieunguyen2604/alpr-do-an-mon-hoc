@@ -70,16 +70,9 @@ Hệ thống chạy đầu cuối, **suy luận hoàn toàn trên CPU**, hỗ tr
 
 ## Bộ dữ liệu: khử trùng lặp bằng băm tri giác
 
-Các bộ công khai fork lẫn nhau, nên **44,2% ảnh là bản trùng** — không khử thì đang đo trí nhớ.
+Các bộ công khai fork lẫn nhau, nên **44,2% ảnh là bản trùng** — không khử thì đang đo trí nhớ
 
-| Bước | Kết quả |
-|---|---|
-| Hợp nhất **7 bộ công khai** | 27.111 ảnh |
-| Khử trùng lặp chéo bộ, băm tri giác **DCT 64 bit** | còn **15.133** ảnh · loại **44,2%** |
-| Ca cực đoan | một bộ vào **1.005** ảnh, ra **0** ảnh |
-| Băm đa chỉ mục (nguyên lý chuồng bồ câu) | thuật toán **chính xác**, không xấp xỉ |
-| Chia tập, giữ nhóm trùng cùng một bên | 10.592 / 3.027 / **1.514** |
-| **Giới hạn còn lại** | pHash tóm tắt **khung ảnh**, không tóm tắt **chiếc xe** |
+![](figures/fig-mon-hoc-funnel.png)
 
 ## Vì sao biển hai dòng làm OCR đọc sai
 
@@ -120,17 +113,9 @@ Ba ràng buộc đặc thù biển số Việt Nam, khai thác **theo từng v�
 
 ## Kết quả đo được
 
-Phát hiện **đạt cả bốn chỉ tiêu**; phần thiếu nằm trọn ở **biển hai dòng**.
+Phát hiện **đạt cả bốn chỉ tiêu**; phần thiếu nằm trọn ở **biển hai dòng** — riêng biển một dòng đạt 0,9541
 
-| Đo cái gì | Đo được | Ngưỡng | |
-|---|---|---|:--:|
-| mAP@0.5 · mAP@0.5:0.95 | **0,9829** · 0,7834 | 0,90 · 0,65 | ✅ |
-| Precision · Recall | 0,9837 · 0,9714 | 0,92 · 0,90 | ✅ |
-| Đúng mức ký tự (1 − CER) | **0,9483** | 0,95 | 🟡 |
-| Đúng cả chuỗi, sau hậu xử lý | **0,7701** | 0,90 | ❌ |
-| — riêng biển **một dòng** | **0,9541** | 0,90 | ✅ |
-| — riêng biển **hai dòng** | **0,7234** | 0,90 | ❌ |
-| Độ trễ p95 · trung vị, CPU | **510** · 150 ms | ≤ 800 ms | ✅ |
+![](figures/fig-mon-hoc-kpi.png)
 
 ## Khoảng cách nằm ở đâu
 
@@ -146,15 +131,9 @@ Ba ca được chuẩn hóa đúng nhờ hậu xử lý, ba ca vẫn sai — **c
 
 ## Bóc tách đóng góp của từng bước
 
-Mọi bước bật tắt độc lập, nên đóng góp của từng bước **đo được riêng** — kể cả khi bằng 0.
+Mọi bước bật tắt độc lập, nên đóng góp của từng bước **đo được riêng** — kể cả khi bằng 0. *(Đối chứng: tách-ghép trên Tesseract chỉ +0,03 điểm)*
 
-| Bước xử lý ảnh | Cải thiện được | Chi phí tính toán |
-|---|---|---|
-| **Tách hai nửa + ghép ngang** | **+34,92 điểm** | ~0 ms |
-| **Bộ luật hậu xử lý** | **+13,28 điểm** · 372 sửa đúng, **0 hỏng** | 0,03 ms |
-| Nắn hình + giãn dọc | **+34 biển** | +244 ms ở p95 |
-| Siêu phân giải — đã **tắt** | **0 biển**, nhưng **0/120 mẫu lọt cổng** | +319 ms p95 |
-| *Đối chứng:* tách-ghép trên **Tesseract** | **+0,03 điểm** | — |
+![](figures/fig-mon-hoc-donggop.png)
 
 ## Ba kết quả khác với dự đoán ban đầu
 
