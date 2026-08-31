@@ -1,44 +1,4 @@
-"""Geometry helpers that turn a two-line plate crop into a one-line strip.
-
-This module is the concrete answer to project risk **R-04** -- two-line plates.
-It is deliberately *engine-agnostic*: it contains pure image geometry and
-contrast work, imports no OCR runtime, and can therefore be reused unchanged if
-the recogniser behind :class:`~ai.inference.interfaces.BaseRecognizer` is
-swapped for a different engine.
-
-Why the problem exists
-----------------------
-Modern text recognisers are CRNN/CTC models. Their core assumption is a
-*monotonic alignment* between image columns and output characters, which only
-holds when the text sits on a single line. On top of that, the recognition
-module of PP-OCR resizes every crop to a **fixed height of 48 px**. A
-motorcycle plate has an aspect ratio near 1.36, so after that resize each of
-its two text lines is squeezed into roughly 24 px of height -- below the point
-where the glyphs are still separable. The published consequence is stark: on
-the Brazilian RodoSol-ALPR dataset, OpenALPR reports 94.3% on single-line car
-plates but only 45.7% on two-line motorcycle plates (Laroca et al., VISAPP
-2022). Those numbers describe Brazilian data, not Vietnamese, and are quoted
-here only as a quantitative analogue for the difficulty of the two-line layout.
-
-The strategy implemented here
------------------------------
-**Split-then-hstack.** Cut the crop into an upper and a lower half *with
-deliberate vertical overlap*, resize both halves to a common height, then
-:func:`numpy.hstack` them into one wide single-line strip. The recogniser then
-sees exactly the kind of input its architecture was designed for, and the full
-48 px budget is spent on one line of glyphs instead of two.
-
-Typical use::
-
-    crop = rectify_plate(crop)
-    if estimate_line_count(crop) == 2:
-        upper, lower = split_two_line(crop)
-        crop = merge_two_line(upper, lower)
-    crop = preprocess_plate(crop)
-
-Every step is individually switchable through keyword arguments so that Phase 7
-can ablate them one at a time and measure what each contributes.
-"""
+"""Geometry and preprocessing helpers to transform two-line plate crops into single-line strips (Risk R-04)."""
 
 from __future__ import annotations
 
@@ -291,9 +251,7 @@ def rectify_plate(
     blurred = cv2.GaussianBlur(gray, (5, 5), 0)
     _, binary = cv2.threshold(blurred, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
 
-    # A white plate is the bright blob, a blue plate the dark one. Trying both
-    # polarities and keeping the larger dominant blob covers either without
-    # guessing the plate colour here.
+    # Test both polarities to handle bright (white) and dark (blue) plates
     best_rect: tuple[tuple[float, float], tuple[float, float], float] | None = None
     best_area = 0.0
     for candidate in (binary, cv2.bitwise_not(binary)):
@@ -316,11 +274,7 @@ def rectify_plate(
     (center_x, center_y), (rect_side_a, rect_side_b), _raw_angle = best_rect
     rect_width = max(rect_side_a, rect_side_b)
     rect_height = min(rect_side_a, rect_side_b)
-    # ``minAreaRect``'s angle convention changed across OpenCV releases
-    # ([-90, 0) before 4.5, (0, 90] after), so the reported angle is not
-    # interpreted at all. The tilt is measured directly instead: take the
-    # longest edge of the fitted box and read its direction, folded into
-    # (-90, 90]. That value is version-independent by construction.
+    # Version-independent tilt angle calculation from the longest bounding box edge
     box = cv2.boxPoints(best_rect)
     edges = box - np.roll(box, 1, axis=0)
     longest_edge = edges[int(np.argmax(np.hypot(edges[:, 0], edges[:, 1])))]
@@ -337,11 +291,7 @@ def rectify_plate(
         )
         return image
 
-    # Rotate the whole crop about the rectangle centre on an expanded canvas
-    # (so no corner is clipped), then cut the now-level rectangle back out.
-    # Border replication beats black fill: the OCR engine treats a smeared
-    # continuation of the scene as background, whereas hard black corners
-    # produce phantom edges.
+    # Rotate on expanded canvas with border replication to prevent phantom edges
     matrix = cv2.getRotationMatrix2D((center_x, center_y), angle, 1.0)
     cos = abs(matrix[0, 0])
     sin = abs(matrix[0, 1])
@@ -357,9 +307,7 @@ def rectify_plate(
         borderMode=cv2.BORDER_REPLICATE,
     )
 
-    # Small margin around the fitted rectangle: minAreaRect hugs the blob, and
-    # binarisation routinely eats one or two boundary pixels off the plate
-    # frame. Losing a character's edge costs far more than a sliver of scene.
+    # Margin around fitted rectangle to avoid clipping boundary characters
     cut_width = min(canvas_width, int(rect_width * 1.04) + 2)
     cut_height = min(canvas_height, int(rect_height * 1.08) + 2)
     rectified: ImageArray = cv2.getRectSubPix(
@@ -463,8 +411,7 @@ def split_two_line(
     upper_end = int(upper_end_ratio * height)
     lower_start = int(lower_start_ratio * height)
 
-    # Guarantee non-empty halves even for crops only a few pixels tall, where
-    # int() truncation could otherwise collapse a slice to zero rows.
+    # Guarantee non-empty split halves even for tiny crops
     upper_end = max(upper_end, 1)
     lower_start = min(lower_start, height - 1)
 

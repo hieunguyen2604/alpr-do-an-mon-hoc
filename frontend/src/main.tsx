@@ -1,9 +1,4 @@
-/**
- * Application entry point.
- *
- * Mounts the React tree into the `#root` element declared in `index.html` and
- * installs the router. Everything below this file is routing and UI.
- */
+/** Application entry point (mounts React tree and router into #root). */
 
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';

@@ -1,6 +1,4 @@
-/**
- * Compact Video Upload Panel (Auto-collapsing when video is selected).
- */
+/** Video file upload panel with dropzone and file selection bar. */
 
 import { FileVideo, RefreshCw, Trash2 } from 'lucide-react';
 

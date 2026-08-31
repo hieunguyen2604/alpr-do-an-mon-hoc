@@ -1,26 +1,4 @@
-"""Abstract base classes for the swappable stages of the ALPR pipeline.
-
-This module is the concrete answer to NFR-M5: *"the OCR engine can be replaced
-without touching the API layer"*. The pipeline depends on these abstractions
-only; concrete engines (YOLO11, PaddleOCR, ...) are implementation details
-injected at start-up. Swapping PaddleOCR for EasyOCR means writing one new
-subclass of :class:`BaseRecognizer` -- no change to the pipeline, the services
-or the routers.
-
-Three stages are abstracted:
-
-=================== ===================================== ======================
-Stage               Contract                              Reference engine
-=================== ===================================== ======================
-Locate the plate    :class:`BaseDetector`                 YOLO11
-Read the characters :class:`BaseRecognizer`               PaddleOCR
-Correct + validate  :class:`BaseNormalizer`               regex rules
-=================== ===================================== ======================
-
-Implementations receive their settings through
-:class:`~ai.inference.config.InferenceConfig` and must raise only the exception
-types defined in :mod:`ai.inference.exceptions`.
-"""
+"""Abstract base classes for swappable detector, recognizer, and normalizer stages (NFR-M5)."""
 
 from __future__ import annotations
 

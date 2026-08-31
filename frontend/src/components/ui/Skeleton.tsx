@@ -1,10 +1,4 @@
-/**
- * Placeholder shapes shown while content loads.
- *
- * Preferred over a bare spinner for content whose layout is known: the page
- * settles into the same shape it was already showing, instead of jumping when
- * the data lands.
- */
+/** Placeholder shapes shown while content loads (preserves layout to prevent jumping). */
 
 import type { HTMLAttributes } from 'react';
 
@@ -23,17 +17,7 @@ const ROUNDED_CLASS = {
   full: 'rounded-full',
 } as const;
 
-/**
- * Render one placeholder block.
- *
- * Hidden from assistive technology: a screen reader gains nothing from a
- * description of a grey rectangle. The surrounding container should carry the
- * `aria-busy` state instead.
- *
- * @param props - Rounding and native div attributes. Size comes from
- *   `className`.
- * @returns The placeholder element.
- */
+/** Render one placeholder block (hidden from assistive tech). */
 export function Skeleton({
   rounded = 'md',
   className,
@@ -59,15 +43,7 @@ export interface SkeletonTextProps {
   className?: string;
 }
 
-/**
- * Render several placeholder lines resembling a paragraph.
- *
- * The last line is drawn short, which is what makes the block read as text
- * rather than as a solid rectangle.
- *
- * @param props - Line count and extra classes.
- * @returns The placeholder block.
- */
+/** Render several placeholder lines resembling a paragraph. */
 export function SkeletonText({
   lines = 3,
   className,
@@ -91,12 +67,7 @@ export interface SkeletonTableProps {
   className?: string;
 }
 
-/**
- * Render a grid of placeholders matching a table's shape.
- *
- * @param props - Row and column counts, plus extra classes.
- * @returns The placeholder grid.
- */
+/** Render a grid of placeholders matching a table's shape. */
 export function SkeletonTable({
   rows = 5,
   columns = 4,

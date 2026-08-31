@@ -1,22 +1,4 @@
-/**
- * Live progress of the background video job (FR-2.1, FR-2.6).
- *
- * Two backend details drive almost every decision in this file, and both are
- * easy to render misleadingly:
- *
- * 1. **`progress` is a position in the video, `processed_frames` is a count of
- *    analysed frames.** The backend samples one frame in every `frame_stride`
- *    (5 by default) but computes `progress` as `frame_index / total_frames`.
- *    So `processed_frames / total_frames` is roughly one fifth of the real
- *    completion, and drawing a bar from it would show 20% on a finished job.
- *    The bar is driven by `progress`; the two frame counters are shown as two
- *    separate labelled facts rather than as a fraction.
- * 2. **`progress` is pinned to 0.99 when the frame count is unknown.** Some
- *    containers carry no reliable count, and the backend then reports a
- *    constant 0.99 so the client keeps polling. Rendering that as "99%" would
- *    promise an imminent finish that may be minutes away, so the bar switches
- *    to indeterminate whenever `total_frames` is null.
- */
+/** Live progress of the background video job (FR-2.1, FR-2.6). */
 
 import { useEffect, useState } from 'react';
 import { RefreshCw } from 'lucide-react';
@@ -70,16 +52,7 @@ const STATUS_HINTS: Readonly<Record<JobStatus, string>> = {
   cancelled: 'Tác vụ đã được dừng trước khi xử lý xong.',
 };
 
-/**
- * Parse a timestamp coming from the API.
- *
- * The backend sends UTC. A date-time arriving without a zone designator would
- * be read as local time and land seven hours out in Vietnam, so the marker is
- * supplied when it is missing.
- *
- * @param isoString - Timestamp from the API.
- * @returns A `Date`, or `null` when absent or unparsable.
- */
+/** Parse a timestamp coming from the API (assumes UTC if no timezone is provided). */
 function parseApiDate(isoString: string | null | undefined): Date | null {
   if (!isoString) {
     return null;
@@ -92,16 +65,7 @@ function parseApiDate(isoString: string | null | undefined): Date | null {
   return Number.isNaN(date.getTime()) ? null : date;
 }
 
-/**
- * Format a rough remaining time in Vietnamese.
- *
- * Deliberately coarse — "khoảng 2 phút" rather than "1 phút 47 giây". The
- * estimate is a linear extrapolation from a job whose per-frame cost varies,
- * so a to-the-second figure would claim a precision it does not have.
- *
- * @param seconds - Estimated seconds remaining.
- * @returns A display string such as `"khoảng 2 phút"`.
- */
+/** Format a rough remaining time in Vietnamese (e.g. "khoảng 2 phút"). */
 function formatRemainingTime(seconds: number): string {
   if (seconds < 10) {
     return 'chỉ còn vài giây';
@@ -120,21 +84,7 @@ function formatRemainingTime(seconds: number): string {
     : `khoảng ${hours} giờ ${restMinutes} phút`;
 }
 
-/**
- * Estimate the time left on a running job.
- *
- * Returns `null` whenever the estimate would be untrustworthy rather than
- * showing a confident wrong number:
- *
- * - the job is not actually processing;
- * - `total_frames` is unknown, in which case `progress` is the backend's fixed
- *   0.99 placeholder and extrapolating from it is meaningless;
- * - too little progress has been made for the rate to have settled.
- *
- * @param job - The job being followed.
- * @param nowMs - Current wall-clock time in milliseconds.
- * @returns Estimated seconds remaining, or `null` when not calculable.
- */
+/** Estimate the time left on a running job, returning `null` if the estimate is untrustworthy. */
 function estimateRemainingSeconds(
   job: DetectionJob,
   nowMs: number,
@@ -145,8 +95,7 @@ function estimateRemainingSeconds(
   if (job.total_frames === null || job.total_frames <= 0) {
     return null;
   }
-  // Below a few percent the elapsed time is dominated by start-up cost and the
-  // extrapolation swings wildly between polls.
+  // Suppress remaining time extrapolation below 5% or when completed
   if (job.progress < 0.05 || job.progress >= 1) {
     return null;
   }
@@ -165,12 +114,7 @@ function estimateRemainingSeconds(
   return Number.isFinite(remaining) && remaining > 0 ? remaining : null;
 }
 
-/**
- * Render the progress panel for a background video job.
- *
- * @param props - Job state, polling state and the refresh handler.
- * @returns The progress card.
- */
+/** Render the progress panel for a background video job. */
 export function JobProgressPanel({
   job,
   jobId,
@@ -182,15 +126,10 @@ export function JobProgressPanel({
 
   const isActive = job !== null && !isTerminalStatus(job.status);
 
-  // Same idea as `isActive`, but true *before* the first poll as well. Used
-  // only for what is shown: a control that appeared a second after the panel
-  // did would read as a glitch, whereas starting the elapsed-time ticker for a
-  // job that has not reported yet would be wrong.
+  // True before first poll and while job is running
   const isPossiblyRunning = job === null || !isTerminalStatus(job.status);
 
-  // The remaining-time estimate is derived from wall-clock elapsed time, so it
-  // has to advance between polls; without this ticker it would freeze for the
-  // 1.5 s between updates and jump.
+  // Advance elapsed wall-clock timer between polls
   useEffect(() => {
     if (!isActive) {
       return undefined;
@@ -206,8 +145,7 @@ export function JobProgressPanel({
   const status: JobStatus = job?.status ?? 'pending';
   const remainingSeconds = job ? estimateRemainingSeconds(job, nowMs) : null;
 
-  // Unknown frame count means `progress` is the backend's fixed 0.99 filler.
-  // Showing that as a near-complete bar would be a promise the job cannot keep.
+  // Indeterminate progress when total frame count is unknown
   const isFrameCountUnknown = job !== null && job.total_frames === null;
   const isIndeterminate =
     job === null || status === 'pending' || (status === 'processing' && isFrameCountUnknown);

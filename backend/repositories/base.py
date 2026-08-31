@@ -1,38 +1,4 @@
-"""Generic CRUD repository shared by every concrete repository.
-
-The repository layer sits between the service layer and SQLAlchemy. Its job is
-to be the only place in the backend that writes a query, so that a change to
-the storage schema has one blast radius instead of one per endpoint.
-
-Transaction policy
-------------------
-**Repositories flush; they never commit.** This is the single most important
-rule in this module, and it is not a stylistic preference.
-
-A commit inside a repository method would end the transaction at an arbitrary
-point in the middle of a unit of work. Saving a job and the six plates found in
-it is *one* logical operation: if the fourth plate fails to insert, the correct
-outcome is that none of it is stored. A repository that committed after every
-``create`` would leave three plates and a job claiming to be complete -- a state
-no later code could detect as broken, because each individual row is valid.
-
-Flushing still gives call sites what they actually want from a commit: the
-statement is sent to the database, so server-side defaults and autoincrement
-primary keys are populated and constraint violations surface *here*, at the
-line that caused them, rather than later at commit time with no useful
-traceback. The service layer owns the commit, via
-:func:`~backend.models.database.session_scope` or an explicit
-``session.commit()`` once the whole operation has succeeded.
-
-Sort-key safety
----------------
-:meth:`BaseRepository.paginate` resolves a sort column through an explicit
-allow-list rather than ``getattr(model, name)``. The distinction matters
-because the sort key arrives from a query string: ``getattr`` would accept any
-attribute name at all, turning ``?sort_by=metadata`` into an
-``AttributeError``-shaped 500 and ``?sort_by=job`` into an unintended join.
-Resolution against a mapping means an unknown key is a clean 400 instead.
-"""
+"""Generic CRUD repository base class with flush-only transactions and safe pagination."""
 
 from __future__ import annotations
 
@@ -370,8 +336,7 @@ class BaseRepository(Generic[ModelT, IdT]):
             result = self.session.execute(stmt, execution_options={"synchronize_session": False})
             deleted += result.rowcount or 0
 
-        # Identity-map entries for the deleted rows are now stale: a session
-        # that had loaded one would keep serving it from memory.
+        # Expire stale identity map entries after bulk delete
         self.session.expire_all()
         self.session.flush()
         return deleted

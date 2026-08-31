@@ -1,6 +1,4 @@
-/**
- * Compact Filter Toolbar for the History Page (Deep Navy Cyber Theme).
- */
+/** Filter toolbar for the detection history page. */
 
 import { Download, FilterX, Loader2, Search } from 'lucide-react';
 

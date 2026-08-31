@@ -1,16 +1,4 @@
-"""The API's route modules, and the error documentation they share.
-
-Splitting routes by resource keeps each module small enough to read in one
-sitting, and it means two features being worked on at once rarely touch the
-same file.
-
-This module holds the OpenAPI descriptions of the error responses, because
-those are identical across routes and Swagger has to be *told* about them --
-FastAPI documents the success response automatically but has no way to know
-that an endpoint may answer 413. Left undocumented, the generated client would
-have no type for the error body and the frontend would be written against
-whatever it observed by trial and error.
-"""
+"""Route modules and shared OpenAPI error-response definitions."""
 
 from __future__ import annotations
 
@@ -29,16 +17,7 @@ __all__ = [
 
 
 def _error(description: str, code: str, message: str) -> dict[str, Any]:
-    """Build one OpenAPI error-response entry.
-
-    Args:
-        description: Short English explanation shown in Swagger.
-        code: The stable ``error`` code the body carries.
-        message: The Vietnamese ``message`` a user would see, as an example.
-
-    Returns:
-        An entry suitable for a route's ``responses`` mapping.
-    """
+    """Build one OpenAPI error-response entry."""
     return {
         "model": ErrorResponse,
         "description": description,
@@ -99,14 +78,7 @@ ERROR_500: Final[dict[int, dict[str, Any]]] = {
 
 
 def errors(*groups: dict[int, dict[str, Any]]) -> dict[int | str, dict[str, Any]]:
-    """Merge several error-response groups into one ``responses`` mapping.
-
-    Args:
-        *groups: The groups to combine, e.g. ``errors(ERROR_400, ERROR_404)``.
-
-    Returns:
-        A single mapping to hand to a route's ``responses`` argument.
-    """
+    """Merge several error-response groups into one ``responses`` mapping."""
     merged: dict[int | str, dict[str, Any]] = {}
     for group in groups:
         merged.update(group)

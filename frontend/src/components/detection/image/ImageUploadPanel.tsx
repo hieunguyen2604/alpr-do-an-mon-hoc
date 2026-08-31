@@ -1,6 +1,4 @@
-/**
- * Multi-Image Upload Panel with Filmstrip Carousel & Batch Queue.
- */
+/** Multi-Image Upload Panel with Filmstrip Carousel. */
 
 import { Loader2, Plus, XCircle } from 'lucide-react';
 
@@ -44,7 +42,6 @@ export function ImageUploadPanel({
   if (files.length > 0 && activeFile) {
     return (
       <div className="space-y-3">
-        {/* Top Filmstrip Carousel */}
         <div className="flex items-center gap-2 overflow-x-auto rounded-2xl border border-border/80 bg-surface p-2.5 shadow-sm scrollbar-thin">
           {files.map((file, idx) => {
             const isSelected = idx === activeIndex;
@@ -96,7 +93,6 @@ export function ImageUploadPanel({
             );
           })}
 
-          {/* Add more files button */}
           <label className="cursor-pointer shrink-0">
             <input
               type="file"
@@ -114,7 +110,6 @@ export function ImageUploadPanel({
             </span>
           </label>
 
-          {/* Clear all */}
           <button
             type="button"
             onClick={onClearAll}
@@ -124,7 +119,6 @@ export function ImageUploadPanel({
           </button>
         </div>
 
-        {/* Active file summary bar */}
         <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-border/60 bg-surface-raised/40 px-3.5 py-2 text-xs">
           <div className="flex items-center gap-2 min-w-0">
             <span className="font-bold text-content">Ảnh {activeIndex + 1}/{files.length}:</span>
@@ -141,7 +135,6 @@ export function ImageUploadPanel({
           </div>
         </div>
 
-        {/* Progress bar */}
         {isDetecting && (
           <div className="rounded-xl border border-border/60 bg-surface-raised/40 p-3">
             <ProgressBar

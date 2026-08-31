@@ -1,11 +1,4 @@
-/**
- * License plate shown as a chip.
- *
- * Set in a monospace face on purpose. Plate strings are read character by
- * character, and a proportional font makes `O`/`0` and `I`/`1` nearly
- * identical — precisely the confusions OCR makes, and precisely the ones a
- * reviewer is checking for.
- */
+/** License plate display chip with format validation indicator (TT 79/2024). */
 
 import { AlertTriangle } from 'lucide-react';
 

@@ -1,40 +1,4 @@
-"""SQLAlchemy ORM models for the approved ALPR database schema.
-
-This module implements the schema approved on 2026-07-19, which extends the
-nine fields originally sketched in ``CLAUDE.md``. Two additions drive the whole
-design and are worth restating, because the rest of the file only makes sense
-in their light:
-
-``raw_ocr_text`` beside ``plate_number``
-    The OCR string is stored twice: once exactly as the engine returned it, and
-    once after regex correction. Without the raw column there is no way to
-    measure what the post-processing step contributes -- a comparison the
-    evaluation chapter depends on. Storing only the corrected string would
-    quietly delete the evidence.
-
-``source_job_id`` on every row
-    One upload can contain several plates. Without a grouping key, a photo of
-    three vehicles becomes three unrelated rows and the dashboard reports
-    "3 detections" where the honest answer is "1 upload containing 3 plates".
-    Every statistic about *how much the system was used* must therefore count
-    distinct jobs, and every statistic about *how many plates were read* counts
-    rows. Confusing the two inflates the usage figures by exactly the average
-    number of plates per image.
-
-Object graph::
-
-    DetectionJob  1 ──< N  DetectionHistory
-      one upload             one plate found in it
-
-Relationship with the ``ai`` package
-------------------------------------
-Column names deliberately mirror the attribute names on
-``ai.inference.types.PlateDetection`` and ``PlateRecognition``, so the
-persistence layer performs a field-by-field copy rather than a translation.
-A translation layer would be one more place for ``confidence`` and
-``ocr_confidence`` to get swapped -- the exact mistake the split into two
-columns exists to prevent.
-"""
+"""SQLAlchemy ORM models for detection jobs and plate detection history records."""
 
 from __future__ import annotations
 

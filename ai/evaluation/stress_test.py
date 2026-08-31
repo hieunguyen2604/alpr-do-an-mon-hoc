@@ -1,34 +1,4 @@
-"""Load and soak tests for the recognition pipeline (NFR-SC1, NFR-R4).
-
-Two questions, two sections
----------------------------
-1. **Concurrency (NFR-SC1, target >= 5 simultaneous requests).** Fire N requests
-   at once for N in {1, 2, 5, 10} and record throughput and error rate. On a
-   CPU-bound pipeline the interesting result is usually *not* the error rate --
-   it is that throughput stops rising once N exceeds the available cores,
-   because the work was never I/O-bound to begin with.
-2. **Soak (NFR-R4, target >= 99% success).** Run continuously for a set duration
-   and report the success rate, sampling resident memory at both ends so a leak
-   shows up as a number rather than a suspicion. Short benchmarks miss gradual
-   degradation; the soak is what catches a pipeline that works for a minute and
-   dies after ten.
-
-Where the database benchmark went
----------------------------------
-NFR-P6 (history query at 10,000 rows) is **not** measured here. Timing the real
-query requires importing ``backend.repositories``, and NFR-M1 forbids the ``ai``
-package from depending on the service tier -- ``tests/test_architecture.py``
-enforces that boundary. It therefore lived in ``scripts/``, which may depend on
-both tiers.
-
-That script (``scripts/benchmark_history_query.py``) was removed in the
-2026-08-02 cleanup. Its measured output survives in
-``docs/reports/07-stress-db.json``; the script itself is recoverable from git
-history if the measurement ever has to be re-run.
-
-Example:
-    python -m ai.evaluation.stress_test --soak-seconds 300
-"""
+"""Load and soak tests for the recognition pipeline (NFR-SC1, NFR-R4)."""
 
 from __future__ import annotations
 

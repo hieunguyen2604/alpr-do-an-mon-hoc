@@ -29,17 +29,7 @@ export interface PaginationProps {
 /** How many numbered buttons to show around the current page. */
 const WINDOW_RADIUS = 1;
 
-/**
- * Work out which page numbers to show.
- *
- * Always includes the first and last page, a window around the current one, and
- * `null` where a run was skipped — rendered as an ellipsis. Without this the
- * control would draw 63 buttons for a 1247-record history.
- *
- * @param page - Current page, 1-based.
- * @param totalPages - Total pages available.
- * @returns Page numbers, with `null` marking a gap.
- */
+/** Compute list of visible page numbers with ellipsis gaps. */
 function buildPageItems(
   page: number,
   totalPages: number,

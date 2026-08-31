@@ -1,17 +1,4 @@
-"""Dataset-side data structures for the Vietnamese ALPR project.
-
-This package is the single source of truth for how a *training sample* is
-represented in memory. It sits next to :mod:`ai.inference` (which models what
-comes out of the pipeline at runtime) and is deliberately kept free of any web
-framework: nothing here may import FastAPI or Pydantic (NFR-M1). The names are
-written capitalised on purpose, so that the grep enforcing the rule does not
-match this sentence describing it.
-
-The only public module today is :mod:`ai.data.schema`, which defines
-:class:`~ai.data.schema.ImageRecord` / :class:`~ai.data.schema.BoxRecord` and
-the conversions to and from the YOLO ``.txt`` label format used by every script
-under ``scripts/dataset/``.
-"""
+"""Dataset-side data structures and YOLO label I/O (NFR-M1: pure Python only)."""
 
 from __future__ import annotations
 

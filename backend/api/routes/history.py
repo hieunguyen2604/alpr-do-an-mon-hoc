@@ -1,13 +1,4 @@
-"""History endpoints: listing, searching, detail, deletion and CSV export.
-
-One ordering detail in this module is load-bearing and easy to undo by
-accident. ``/history/export`` is declared **before** ``/history/{detection_id}``.
-FastAPI matches routes in declaration order, and ``detection_id`` is typed as
-``int``; with the order reversed, a request for ``/history/export`` would match
-the detail route first, fail to parse ``"export"`` as an integer and return 422.
-The endpoint would appear in Swagger, look correct in the source, and never
-work. Keep the export route above the parameterised one.
-"""
+"""History endpoints: listing, searching, detail, deletion, and CSV export."""
 
 from __future__ import annotations
 

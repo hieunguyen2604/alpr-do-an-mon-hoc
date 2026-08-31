@@ -1,50 +1,6 @@
 """Queries over the detection history table, including dashboard statistics.
 
-Most of this module is ordinary filtering and pagination. The part worth
-reading carefully is :meth:`DetectionRepository.get_statistics`, because it is
-where the project's easiest serious bug lives.
-
-The counting rule
------------------
-``detection_history`` holds **one row per license plate**, not one row per
-upload. A photograph containing three vehicles produces three rows that share a
-``source_job_id``. Two different questions therefore have two different answers,
-and they must never be computed the same way:
-
-======================================= ======================================
-Question                                Correct computation
-======================================= ======================================
-"How many times was the system used?"   Count **jobs** -- one per upload.
-"How many plates were recognised?"      Count **rows** in detection_history.
-======================================= ======================================
-
-Answering the first with ``SELECT COUNT(*) FROM detection_history`` inflates
-usage by the average number of plates per image. The failure is quiet: the
-number is plausible, monotonically increasing, and wrong by a factor nobody can
-see without recomputing it. Every job-level figure produced here is therefore
-named ``*_jobs`` or ``job_count`` and every plate-level figure ``*_detections``
-or ``detection_count``, so that a mismatched assignment reads as wrong at the
-call site.
-
-Where the job counts come from
-------------------------------
-Job counts are read from the ``detection_job`` table rather than as
-``COUNT(DISTINCT source_job_id)`` over ``detection_history``. The two agree on
-every job that found at least one plate, and differ on the ones that found
-none -- an upload of a photo containing no readable plate creates a job and
-zero history rows, so the ``DISTINCT`` form cannot see it at all.
-
-That difference is not an edge case to be waved away. Uploads that yield no
-detection are exactly the negative cases the evaluation chapter needs, and a
-dashboard tile reading "412 images processed" must include the image where
-nothing was found -- the user did upload it. Counting the job table includes
-them; counting distinct ids in the history table silently drops them and makes
-the system look like it never fails to find a plate.
-
-:meth:`DetectionRepository.count_distinct_job_ids` exposes the narrower
-``COUNT(DISTINCT source_job_id)`` figure for the cases that genuinely want
-"jobs that produced at least one detection", such as computing a hit rate.
-Both are available and each is named for what it counts.
+Distinguishes upload job counts from plate detection rows to ensure accurate usage metrics.
 """
 
 from __future__ import annotations
@@ -465,9 +421,7 @@ class DetectionRepository(BaseRepository[DetectionHistory, int]):
             The number of distinct ``source_job_id`` values.
         """
         stmt = self._apply_filters(select(DetectionHistory), filters)
-        # Counted against the filtered statement wrapped as a subquery, so the
-        # DISTINCT sees exactly the rows the filters selected -- rebuilding the
-        # conditions a second time is how a count drifts away from its list.
+        # Count distinct jobs from filtered subquery
         subquery = stmt.order_by(None).subquery()
         counted = select(func.count(func.distinct(subquery.c.source_job_id)))
         return int(self.session.execute(counted).scalar_one() or 0)
@@ -525,8 +479,7 @@ class DetectionRepository(BaseRepository[DetectionHistory, int]):
             ValidationError: If the time range is reversed, ``input_type`` is
                 unknown, or ``trend_days`` is not positive.
         """
-        # Reuses the filter object purely for its validation, so that the
-        # statistics endpoint rejects the same bad input as the history one.
+        # Reuse HistoryFilter for input validation
         HistoryFilter(input_type=input_type, start_time=start_time, end_time=end_time)
         if trend_days < 1:
             raise ValidationError(
@@ -756,10 +709,7 @@ class DetectionRepository(BaseRepository[DetectionHistory, int]):
         if first_day > last_day:
             return []
 
-        # Re-derive the bounds from the resolved days so the SQL window and the
-        # emitted series cover exactly the same period. Deriving them
-        # separately is how a chart ends up with a leading or trailing day that
-        # is always zero.
+        # Match SQL query time bounds with series time span
         bound_start = dt.datetime.combine(first_day, dt.time.min, tzinfo=dt.timezone.utc)
         bound_end = dt.datetime.combine(
             last_day, dt.time.min, tzinfo=dt.timezone.utc

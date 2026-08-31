@@ -21,25 +21,7 @@ router = APIRouter(tags=["Statistics"])
     response_model=StatisticsResponse,
     status_code=status.HTTP_200_OK,
     summary="Get aggregate statistics for the dashboard",
-    description=(
-        "Returns every figure the dashboard displays, in one call.\n\n"
-        "**Two families of counter, which must not be mixed up.** `*_jobs` "
-        "counts uploads and capture sessions — how much the system was used. "
-        "`*_detections` counts license plates — how much was recognized. An "
-        "image containing three plates is **one** job and **three** "
-        "detections.\n\n"
-        "A tile labelled 'images processed' must therefore read `total_jobs`. "
-        "Filling it from `total_detections` inflates the figure by the average "
-        "number of plates per image, and the result is plausible enough to "
-        "survive review.\n\n"
-        "`valid_format_count`, `invalid_format_count` and `unreadable_count` "
-        "are mutually exclusive and sum to `total_detections`: text read and "
-        "matching a Vietnamese pattern, text read but matching none, and no "
-        "text read at all.\n\n"
-        "Averages are `null` rather than `0` when there is nothing to average — "
-        "an average confidence of zero would read as 'the model is certain of "
-        "nothing', which is a different statement from 'no data yet'."
-    ),
+    description="Returns aggregate figures and recognition metrics for the dashboard.",
     responses={
         200: {
             "description": "The aggregate figures.",

@@ -1,6 +1,4 @@
-/**
- * Small status pill.
- */
+/** Status badge pill component (NFR-U5). */
 
 import type { HTMLAttributes, ReactNode } from 'react';
 
@@ -14,7 +12,7 @@ export type BadgeVariant =
   | 'info'
   | 'neutral';
 
-/** Props of {@link Badge}. */
+/** Props of Badge component. */
 export interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {
   variant?: BadgeVariant;
   /** Icon placed before the label. */
@@ -22,15 +20,7 @@ export interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {
   children?: ReactNode;
 }
 
-/**
- * Variant styles.
- *
- * A 10% tint of the status colour over the page surface, with the status colour
- * itself as the text. The text sits on a background barely distinguishable from
- * the surface, so the contrast ratio remains essentially that of the status
- * colour against the surface — which the palette already holds above 4.5:1 in
- * both themes.
- */
+/** Variant style mappings for badge tints. */
 const VARIANT_CLASS: Readonly<Record<BadgeVariant, string>> = {
   success: 'bg-success/10 text-success',
   warning: 'bg-warning/10 text-warning',
@@ -39,15 +29,7 @@ const VARIANT_CLASS: Readonly<Record<BadgeVariant, string>> = {
   neutral: 'bg-surface-raised text-content-muted',
 };
 
-/**
- * Render a badge.
- *
- * Colour alone never carries the meaning — the label states it in words too,
- * so the badge is still readable to a colour-blind user (NFR-U5).
- *
- * @param props - Variant, optional icon and native span attributes.
- * @returns The badge element.
- */
+/** Render a badge with semantic variant styling. */
 export function Badge({
   variant = 'neutral',
   icon,

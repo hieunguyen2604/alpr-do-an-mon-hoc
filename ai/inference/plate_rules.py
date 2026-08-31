@@ -1,37 +1,4 @@
-"""Vietnamese license plate standards expressed as data and pure functions.
-
-This module is a **direct port** of the specification in
-``docs/reports/01-vn-plate-standards.md`` (sections 8 and 9). Every constant
-here was verified by running the reference script documented in section 8.6
-(17 regex cases) and section 9.7 (6 position-mask cases). Nothing in this module
-is re-derived or re-invented: when the law changes, the document is updated
-first and this module follows it.
-
-Legal basis
-    Circular 79/2024/TT-BCA (in force 01/01/2025), amended by 13/2025/TT-BCA
-    and 51/2025/TT-BCA (in force 01/07/2025); QCVN 08:2024/BCA for the physical
-    plate dimensions.
-
-Design rules this module obeys
-    1. **Pure.** No I/O, no logging, no framework import, no mutable global
-       state. Everything is a frozen constant or a function of its arguments,
-       which makes the whole module trivially testable and safe to import from
-       anywhere in the AI tier (NFR-M1).
-    2. **Regexes are generated from sets, never hand-written.** The province
-       group is built from :data:`PROVINCE_CODES`, so the patterns can never
-       drift away from the table they are supposed to encode.
-    3. **Character classes are named constants.** Two of them (:data:`L20` and
-       :data:`L20B`) are still *well-founded hypotheses* rather than settled
-       facts -- see the warning on :data:`L20B`. Isolating them means a future
-       correction touches one line, not nine patterns.
-
-Naming note
-    The specification document writes these character classes as ``_L20``,
-    ``_L20B``, ``_L11`` and ``L21``. They are public here (:data:`L20`,
-    :data:`L20B`, :data:`L11`, :data:`L21`) because the test suite and the
-    recogniser charset both need them; underscore-prefixed aliases are kept so
-    that a reader holding the document finds the exact names it uses.
-"""
+"""Vietnamese license plate rules, regex patterns, and character classes (TT 79/2024, QCVN 08:2024)."""
 
 from __future__ import annotations
 

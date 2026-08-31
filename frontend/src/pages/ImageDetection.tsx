@@ -1,8 +1,4 @@
-/**
- * Multi-Image Batch Detection Page (2-Column Responsive Layout).
- *
- * Supports single & multi-image batch queueing with filmstrip switching and instant inspection.
- */
+/** Multi-image batch license plate detection page with filmstrip preview (FR-1.1). */
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Download, Image as ImageIcon, SearchX } from 'lucide-react';

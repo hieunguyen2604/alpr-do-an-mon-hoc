@@ -1,33 +1,4 @@
-"""Train a YOLO11 Vietnamese license-plate detector.
-
-The script is a thin, well-instrumented wrapper around Ultralytics: all
-hyper-parameters come from a YAML file under ``ai/training/configs/`` (see
-:class:`ai.training.config.TrainingConfig`), and only a handful of operational
-overrides are accepted on the command line.
-
-Responsibilities that justify the wrapper existing at all:
-
-* resolve ``device: auto`` explicitly, and shout when the answer is CPU;
-* log to both stdout and a timestamped file, so a Colab session that dies still
-  leaves evidence behind;
-* snapshot the effective config next to the run artefacts;
-* resume cleanly from ``last.pt`` after the inevitable Colab disconnect;
-* publish the winning ``best.pt`` into ``models/`` when the run finishes.
-
-Examples:
-    Fine-tune on whatever hardware is present::
-
-        python -m ai.training.train --config yolo11n_finetune.yaml
-
-    Resume after a dropped Colab session::
-
-        python -m ai.training.train --config yolo11n_finetune.yaml --resume
-
-    Quick local smoke test on CPU (deliberately tiny)::
-
-        python -m ai.training.train --config yolo11n_finetune.yaml \\
-            --device cpu --epochs 1 --fraction 0.01 --name smoke_test
-"""
+"""Train YOLO11 Vietnamese license-plate detector with Ultralytics."""
 
 from __future__ import annotations
 

@@ -345,9 +345,7 @@ class YoloPlateDetector(BaseDetector):
             )
         return matched
 
-    # ----------------------------------------------------------------- #
     # BaseDetector contract
-    # ----------------------------------------------------------------- #
     @property
     def name(self) -> str:
         """Return the identifier of the weights in use, e.g. ``"best"``.
@@ -446,9 +444,7 @@ class YoloPlateDetector(BaseDetector):
             time.perf_counter() - started,
         )
 
-    # ----------------------------------------------------------------- #
     # Internals
-    # ----------------------------------------------------------------- #
     @staticmethod
     def _validate_image(image: ImageArray) -> None:
         """Reject anything that is not a usable image before touching the model.

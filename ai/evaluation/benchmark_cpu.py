@@ -1,28 +1,4 @@
-"""Benchmark PyTorch vs ONNX vs OpenVINO inference latency on **this** CPU.
-
-The deployment target has no CUDA GPU, so every millisecond of detector latency
-is paid on the CPU. Phase 1 found ONNX Runtime roughly 3.7x faster than eager
-PyTorch for this model class, but that figure came from published third-party
-measurements. Phase 1 also recorded an explicit warning: **do not quote another
-machine's CPU numbers in the thesis.** This script exists to replace that
-borrowed figure with a measurement taken here.
-
-Method:
-
-* Each backend is timed on the *same* images, in the same order, single image
-  per call -- the way the API serves an upload.
-* A warm-up pass is discarded before timing: the first inference of any backend
-  pays one-off graph construction and allocator costs that a steady-state
-  latency figure must not include.
-* Percentiles are reported alongside the mean, because the p95/p99 tail is what
-  a user actually notices, and CPU inference tails are long.
-* The CPU model, physical/logical core count and thread settings are recorded
-  with the results, so the numbers stay interpretable a year from now.
-
-Example:
-    python -m ai.evaluation.benchmark_cpu --weights models/best.pt \\
-        --images datasets/processed/test/images --runs 50
-"""
+"""Benchmark PyTorch vs ONNX vs OpenVINO inference latency on CPU."""
 
 from __future__ import annotations
 

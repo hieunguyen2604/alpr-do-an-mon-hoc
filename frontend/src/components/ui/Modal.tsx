@@ -1,9 +1,4 @@
-/**
- * Dialog rendered above the page.
- *
- * Closes on Escape and on a backdrop click, locks body scrolling while open,
- * moves focus inside on open and returns it to the trigger on close.
- */
+/** Modal dialog rendered through a portal with focus management. */
 
 import { useCallback, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
@@ -52,15 +47,7 @@ const FOCUSABLE_SELECTOR = [
   '[tabindex]:not([tabindex="-1"])',
 ].join(',');
 
-/**
- * Render a modal dialog.
- *
- * Rendered through a portal on `document.body`, so an ancestor's `overflow` or
- * `transform` cannot clip it or trap it in the wrong stacking context.
- *
- * @param props - Open state, close handler, content and size.
- * @returns The dialog, or `null` when closed.
- */
+/** Render a modal dialog through a portal (returns `null` when closed). */
 export function Modal({
   isOpen,
   onClose,

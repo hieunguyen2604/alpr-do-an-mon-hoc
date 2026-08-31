@@ -1,15 +1,4 @@
-"""The service readiness endpoint.
-
-Reports *readiness*, not liveness. A process that is answering HTTP but whose
-detector weights failed to load cannot serve a single detection request, and an
-endpoint that says "ok" in that state is worse than none: it turns a
-configuration mistake into a mystery that only surfaces when a user uploads
-something.
-
-The two dependencies that can independently fail are therefore probed and
-reported separately, and any failure downgrades the overall status to
-``degraded``.
-"""
+"""Service readiness endpoint reporting database connection and AI model state."""
 
 from __future__ import annotations
 
@@ -35,22 +24,7 @@ router = APIRouter(tags=["Health"])
     response_model=HealthResponse,
     status_code=status.HTTP_200_OK,
     summary="Check service readiness",
-    description=(
-        "Reports whether the service can actually do its job, not merely "
-        "whether the process is running.\n\n"
-        "The response is always **HTTP 200**, even when a dependency is "
-        "unavailable: the endpoint answering at all is itself information, and "
-        "an orchestrator distinguishing 'down' from 'degraded' needs to read "
-        "the body rather than only the status line. Inspect the `status` "
-        "field.\n\n"
-        "- `ok` — the database responded and the recognition model is loaded.\n"
-        "- `degraded` — the API is answering but at least one dependency is "
-        "not usable. `database_connected` and `model_loaded` say which.\n\n"
-        "`model_loaded` is `false` while the placeholder pipeline is installed, "
-        "which is the intended behaviour before the trained weights exist: a "
-        "deployment producing fabricated results must not be able to look "
-        "healthy."
-    ),
+    description="Reports service readiness including database and AI model availability.",
     responses={
         200: {
             "description": "The service answered. Read `status` for its state.",

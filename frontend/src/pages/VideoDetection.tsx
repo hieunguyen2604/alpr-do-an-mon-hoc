@@ -1,9 +1,4 @@
-/**
- * Modernized Video Detection Page (Balanced 2-Column Responsive Layout).
- *
- * Left Column: Upload dropzone + Live real-time video playback & AI frame tracker.
- * Right Column: Asynchronous background job progress + Deduplicated Plate Result Feed with Detail Modal.
- */
+/** Video license plate detection page with background processing and live preview (FR-2.1). */
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { FileVideo } from 'lucide-react';

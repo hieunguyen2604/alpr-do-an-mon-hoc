@@ -1,6 +1,4 @@
-/**
- * Drag-and-drop file picker with client-side validation and multi-file support.
- */
+/** Drag-and-drop file picker with client-side validation and multi-file support. */
 
 import { useCallback, useId, useRef, useState } from 'react';
 import { Upload, X } from 'lucide-react';

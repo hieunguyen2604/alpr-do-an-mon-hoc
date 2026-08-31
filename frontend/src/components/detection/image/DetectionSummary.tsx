@@ -1,6 +1,4 @@
-/**
- * Modernized Headline figures for one completed image detection (Deep Navy Theme).
- */
+/** Headline metric cards for completed image detection results. */
 
 import { Cpu, ScanLine, ShieldCheck } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';

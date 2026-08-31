@@ -1,39 +1,6 @@
-"""Aggregate figures for the dashboard.
+"""Aggregate figures and metrics for dashboard statistics.
 
-Every number the dashboard shows is computed here, and the module exists as
-much to make one distinction unmissable as to run the queries.
-
-Usage is counted in jobs. Recognition is counted in rows.
------------------------------------------------------------
-``detection_history`` holds one row **per license plate**, not per upload. An
-image containing three vehicles is one upload and three rows. So:
-
-===================================== ====================== =================
-Question the tile is really asking    Correct source         Field
-===================================== ====================== =================
-"How many images were processed?"     ``detection_job``      ``total_jobs``
-"How many plates were recognised?"    ``detection_history``  ``total_detections``
-===================================== ====================== =================
-
-Labelling a tile "images processed" and filling it from a row count inflates
-the figure by the average number of plates per image -- roughly a factor of two
-on a typical dataset. The error is invisible in review because both numbers are
-plausible, and it survives into the thesis. Every count below therefore states
-which table it comes from, and the two families are never summed together.
-
-The format counters partition the detections
---------------------------------------------
-``valid_format_count``, ``invalid_format_count`` and ``unreadable_count`` are
-mutually exclusive and add up to ``total_detections``:
-
-* **valid** -- text was read and matches a Vietnamese plate pattern;
-* **invalid** -- text was read but matches no known pattern;
-* **unreadable** -- the detector found a plate and OCR read nothing at all.
-
-Defining "invalid" as simply ``is_valid_format = false`` would fold the
-unreadable ones into it, double-counting them and making the two categories
-overlap -- so a pie chart built from the three would not add up to the total it
-sits next to.
+Distinguishes upload job counts from plate detection counts, and partitions format statuses.
 """
 
 from __future__ import annotations
@@ -137,8 +104,7 @@ class StatisticsService:
             .select_from(DetectionHistory)
             .where(DetectionHistory.is_valid_format.is_(True)),
         )
-        # Read but unrecognised: text present, pattern not matched. Excluding
-        # the unreadable rows is what keeps the three counters a partition.
+        # Read but unrecognised: text present, pattern not matched
         invalid_format_count = self._scalar_count(
             db,
             select(func.count())
@@ -149,7 +115,6 @@ class StatisticsService:
             ),
         )
 
-        # -- Averages --------------------------------------------------------
         averages = db.execute(
             select(
                 func.avg(DetectionHistory.confidence),
@@ -158,9 +123,7 @@ class StatisticsService:
             )
         ).one()
         average_confidence = self._as_optional_float(averages[0])
-        # AVG ignores NULLs, so this is the mean over the readings that
-        # produced text -- which is the only meaningful denominator. Including
-        # unreadable plates as zeros would report a confidence nobody measured.
+        # AVG over readings with valid text (NULLs ignored by SQL AVG)
         average_ocr_confidence = self._as_optional_float(averages[1])
         average_processing_time = self._as_optional_float(averages[2])
 

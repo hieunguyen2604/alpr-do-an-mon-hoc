@@ -1,10 +1,4 @@
-/**
- * Upgraded Modern Detection Details Dialog (Deep Navy / Cyber Theme).
- *
- * Implements a balanced two-column layout:
- * - Left column: Full vehicle scene image with scaled bounding box overlay and zoom.
- * - Right column: Structured metadata hierarchy (Confidence, Timing, Plate Showcase, Specs, OCR Diff).
- */
+/** Detection Details Dialog with two-column vehicle image and metadata layout. */
 
 import { useEffect, useState } from 'react';
 import {
@@ -33,9 +27,7 @@ import { fileUrl } from '@/services/api';
 import { plateClassBadges } from '@/lib/plateClass';
 import type { BoundingBox, DetectionHistory } from '@/types';
 
-// ---------------------------------------------------------------------------
-// Image panel (Visual Showcase)
-// ---------------------------------------------------------------------------
+
 
 interface ImagePanelProps {
   title: string;
@@ -133,9 +125,7 @@ function ImagePanel({
   );
 }
 
-// ---------------------------------------------------------------------------
-// OCR comparison
-// ---------------------------------------------------------------------------
+
 
 function normalizeForDiff(value: string): string {
   return value.replace(/[^0-9A-Za-z]/g, '').toUpperCase();
@@ -203,9 +193,7 @@ function OcrComparison({
   );
 }
 
-// ---------------------------------------------------------------------------
-// Dialog Component
-// ---------------------------------------------------------------------------
+
 
 export interface HistoryDetailModalProps {
   record: DetectionHistory | null;

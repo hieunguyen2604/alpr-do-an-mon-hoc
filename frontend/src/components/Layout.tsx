@@ -1,6 +1,4 @@
-/**
- * Application shell: sidebar navigation, header with theme switch, and content region.
- */
+/** Application shell layout with sidebar and header. */
 
 import { useEffect, useState } from 'react';
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
@@ -73,13 +71,13 @@ export default function Layout(): JSX.Element {
   const activeItem = findActiveItem(location.pathname);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-  // Dark mode state: default to true (Deep Navy theme)
+  // Dark mode state: default to true
   const [isDark, setIsDark] = useState<boolean>(() => {
     const saved = localStorage.getItem('alpr_theme');
     if (saved !== null) {
       return saved === 'dark';
     }
-    return true; // Default to dark theme
+    return true;
   });
 
   useEffect(() => {
@@ -97,7 +95,6 @@ export default function Layout(): JSX.Element {
 
   return (
     <div className="min-h-screen bg-surface-muted transition-colors duration-200">
-      {/* Backdrop for mobile */}
       {isSidebarOpen && (
         <div
           className="fixed inset-0 z-30 bg-black/60 backdrop-blur-sm lg:hidden"
@@ -106,7 +103,6 @@ export default function Layout(): JSX.Element {
         />
       )}
 
-      {/* Sidebar */}
       <aside
         className={`fixed inset-y-0 left-0 z-40 flex w-64 flex-col border-r border-border
                     bg-surface transition-transform duration-200 lg:translate-x-0
@@ -155,7 +151,6 @@ export default function Layout(): JSX.Element {
         </div>
       </aside>
 
-      {/* Main Content Frame */}
       <div className="lg:pl-64">
         <header className="sticky top-0 z-20 flex h-16 items-center justify-between border-b border-border bg-surface/90 px-5 backdrop-blur-md">
           <div className="flex items-center gap-3 min-w-0">
@@ -178,13 +173,12 @@ export default function Layout(): JSX.Element {
             </div>
           </div>
 
-          {/* Theme Toggle Button */}
           <div className="flex items-center gap-2">
             <button
               type="button"
               onClick={toggleTheme}
               className="flex h-9 w-9 items-center justify-center rounded-xl border border-border bg-surface-raised text-content hover:border-primary/50 transition-colors shadow-sm"
-              title={isDark ? 'Chuyển sang giao diện Sáng' : 'Chuyển sang giao diện Tối (Deep Navy)'}
+              title={isDark ? 'Chuyển sang giao diện Sáng' : 'Chuyển sang giao diện Tối'}
               aria-label="Đổi giao diện"
             >
               {isDark ? (

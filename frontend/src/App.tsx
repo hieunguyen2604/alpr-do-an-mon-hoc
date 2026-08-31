@@ -1,18 +1,4 @@
-/**
- * Route table for the application.
- *
- * Three pages sit inside the shared {@link Layout}, which renders the sidebar
- * and header around an `<Outlet />`. Image detection is the index route — the
- * screen a demo opens on — and any unknown path redirects there rather than
- * showing a dead end.
- *
- * Each page is loaded on demand. Only one of the three is ever on screen, and
- * the video page in particular carries code the other pages never need, so
- * loading everything up front only delays the first paint. The `<Suspense>`
- * boundary sits *inside* the layout route, which means the sidebar and header
- * stay mounted while a page's chunk arrives — the shell never flickers, only
- * the content region does.
- */
+/** Route table for the application (loads pages lazily to avoid blocking first paint). */
 
 import { lazy, Suspense } from 'react';
 import type { ReactNode } from 'react';
@@ -26,15 +12,7 @@ const ImageDetection = lazy(() => import('@/pages/ImageDetection'));
 const VideoDetection = lazy(() => import('@/pages/VideoDetection'));
 const WebcamDetection = lazy(() => import('@/pages/WebcamDetection'));
 
-/**
- * Placeholder shown while a page chunk is being fetched.
- *
- * Given a fixed minimum height on purpose: a fallback that collapses to its
- * content height would let the page grow abruptly the instant the real content
- * mounts, which reads as a glitch during a live demonstration.
- *
- * @returns The placeholder block.
- */
+/** Placeholder shown while a lazily loaded page chunk is being fetched. */
 function RouteFallback(): JSX.Element {
   return (
     <div className="min-h-[70vh] space-y-5" aria-busy="true">
@@ -44,24 +22,12 @@ function RouteFallback(): JSX.Element {
   );
 }
 
-/**
- * Wrap a lazily loaded page element in its own suspense boundary.
- *
- * Per route rather than once around `<Routes>`: a single outer boundary would
- * unmount the layout — sidebar included — every time a page changed.
- *
- * @param element - The page element to render once its chunk is available.
- * @returns The element, guarded by a suspense boundary.
- */
+/** Wrap a lazily loaded page element in its own suspense boundary. */
 function withSuspense(element: ReactNode): JSX.Element {
   return <Suspense fallback={<RouteFallback />}>{element}</Suspense>;
 }
 
-/**
- * Root component: declares the routes.
- *
- * @returns The routed application tree.
- */
+/** Root component: declares the routes. */
 export default function App(): JSX.Element {
   return (
     <Routes>

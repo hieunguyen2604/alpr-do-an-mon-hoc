@@ -1,43 +1,4 @@
-"""Evaluate a trained YOLO11 license-plate detector on a held-out split.
-
-Produces three things the thesis needs and one it needs *more* than the others:
-
-1. Headline detection metrics -- mAP@0.5, mAP@0.5:0.95, precision, recall, F1 --
-   taken from the Ultralytics validator, which is the reference implementation.
-2. Diagnostic plots -- precision/recall curve and confusion matrix.
-3. **A separate breakdown for single-line and two-line plates (NFR-A8).**
-4. CPU inference latency percentiles (p50/p95/p99) measured on real images.
-
-Item 3 is the important one. Two-line plates are the project's largest technical
-risk (R-04): on the Brazilian RodoSol-ALPR dataset, OpenALPR reaches 94.3% on
-single-line car plates but only 45.7% on two-line motorcycle plates (Laroca et
-al., VISAPP 2022). Those figures are Brazilian, not Vietnamese, and are cited
-only as a quantitative analogue. A single aggregate mAP hides exactly that failure --
-a model can look healthy overall while being useless on half of Vietnam's
-vehicles. Reporting the two populations separately is therefore not a nice
-extra; it is the number the defence will be judged on.
-
-How a ground-truth box is assigned to a group, in priority order:
-
-1. An explicit ``line_count`` value in the label file (a 6th column), if present.
-2. A class name that names the layout (``plate_1line`` / ``plate_2line``, and
-   common variants).
-3. Otherwise, the box aspect ratio, per QCVN 08:2024/BCA plate dimensions:
-
-   =========================== ============ ============= ==========
-   Plate type                  Size (mm)    Aspect ratio  Layout
-   =========================== ============ ============= ==========
-   Car, long plate             520 x 110    4.727         1 line
-   Car, short plate            330 x 165    2.000         2 lines
-   Motorcycle                  190 x 140    1.357         2 lines
-   =========================== ============ ============= ==========
-
-   The two populations are well separated (2.000 vs 4.727), so a threshold in
-   between splits them robustly even with imperfect boxes.
-
-Example:
-    python -m ai.evaluation.evaluate --weights models/best.pt --split test
-"""
+"""Evaluate trained YOLO11 license-plate detector on held-out splits with 1-line/2-line breakdowns (NFR-A8)."""
 
 from __future__ import annotations
 

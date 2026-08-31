@@ -1,14 +1,4 @@
-"""Centralised configuration for the ALPR inference package.
-
-Every tunable value and **every filesystem path** used by the pipeline lives
-here. No module under ``ai/inference`` may build a path of its own: that is the
-whole point of NFR-M4, and it is what lets the same code run unchanged on a
-Windows development machine, inside the Linux Docker image and on a Colab GPU
-runtime.
-
-Paths are derived from this file's own location, never written as absolute
-literals, and can always be overridden through environment variables.
-"""
+"""Centralised configuration dataclass for the ALPR inference package (NFR-M4)."""
 
 from __future__ import annotations
 

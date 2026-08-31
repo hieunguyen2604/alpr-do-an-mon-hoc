@@ -1,10 +1,4 @@
-/**
- * Confidence score shown as a coloured bar.
- *
- * The colour bands are a display convention only — nothing is filtered by them.
- * A low-confidence detection is still shown, just flagged, because hiding it
- * would remove exactly the cases the evaluation chapter needs to count.
- */
+/** Confidence score visual progress bar with color thresholds. */
 
 import { cn } from '@/lib/cn';
 import { CONFIDENCE_THRESHOLDS } from '@/lib/constants';
@@ -12,13 +6,7 @@ import { NO_VALUE, formatConfidence } from '@/lib/format';
 
 /** Props of {@link ConfidenceBar}. */
 export interface ConfidenceBarProps {
-  /**
-   * Score from 0.0 to 1.0, or `null` when OCR read nothing.
-   *
-   * `null` renders neutrally rather than as zero: a plate that was located but
-   * not read has *no* confidence, which is a different statement from a
-   * confidence of zero.
-   */
+  /** Score from 0.0 to 1.0, or `null` when OCR read nothing (renders neutrally). */
   value: number | null | undefined;
   /** Show the percentage beside the bar. */
   showValue?: boolean;
@@ -28,12 +16,7 @@ export interface ConfidenceBarProps {
   className?: string;
 }
 
-/**
- * Classify a score into a display band.
- *
- * @param value - Score from 0.0 to 1.0, or `null`.
- * @returns The band, with its bar colour and Vietnamese wording.
- */
+/** Classify a score into a display band. */
 function classify(value: number | null | undefined): {
   barClass: string;
   textClass: string;
@@ -59,12 +42,7 @@ function classify(value: number | null | undefined): {
   return { barClass: 'bg-danger', textClass: 'text-danger', wording: 'thấp' };
 }
 
-/**
- * Render a confidence bar.
- *
- * @param props - Score, labelling and size.
- * @returns The bar element.
- */
+/** Render a confidence bar. */
 export function ConfidenceBar({
   value,
   showValue = true,

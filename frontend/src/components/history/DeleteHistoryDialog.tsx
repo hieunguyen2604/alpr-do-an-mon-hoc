@@ -1,12 +1,4 @@
-/**
- * Confirmation dialog for deleting a history record (FR-5.1).
- *
- * Deletion is irreversible and takes the stored media with it, so it is put
- * behind an explicit confirmation rather than behind a single click on a small
- * icon in a dense table. The dialog states plainly what else disappears — a
- * user who expects only the row to go would otherwise lose the source image
- * without ever being told.
- */
+/** Confirmation dialog for deleting a history record (FR-5.1). */
 
 import { AlertTriangle, Trash2 } from 'lucide-react';
 
@@ -14,30 +6,19 @@ import { Button, Modal, PlateChip } from '@/components/ui';
 import { formatDateTime } from '@/lib/format';
 import type { DetectionHistory } from '@/types';
 
-/** Props of {@link DeleteHistoryDialog}. */
+/** Props of DeleteHistoryDialog. */
 export interface DeleteHistoryDialogProps {
-  /** Record awaiting confirmation, or `null` when the dialog is closed. */
+  /** Record awaiting confirmation, or null when dialog is closed. */
   record: DetectionHistory | null;
   /** Whether the delete request is in flight. */
   isDeleting: boolean;
-  /**
-   * Display-ready Vietnamese message from a failed attempt, or `null`.
-   *
-   * Shown inside the dialog rather than behind it: the dialog stays open on
-   * failure so the user can simply try again, instead of having to find the row
-   * a second time.
-   */
+  /** Display-ready error message from a failed deletion attempt. */
   error: string | null;
   onConfirm: () => void;
   onCancel: () => void;
 }
 
-/**
- * Render the delete confirmation dialog.
- *
- * @param props - The record, the request state and the handlers.
- * @returns The dialog, or `null` when nothing is pending confirmation.
- */
+/** Render the delete confirmation dialog (returns `null` when nothing is pending). */
 export function DeleteHistoryDialog({
   record,
   isDeleting,

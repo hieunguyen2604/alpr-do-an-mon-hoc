@@ -1,19 +1,4 @@
-"""Hyper-parameter configuration for YOLO11 license-plate detector training.
-
-Everything that can be tuned lives in :class:`TrainingConfig`. Scripts never
-hard-code a hyper-parameter or a filesystem path: they load a YAML file from
-``ai/training/configs/`` and, at most, override a couple of fields from the
-command line. That is what makes a training run reproducible and what lets the
-same config file drive a slow CPU run on the Windows development machine and a
-fast GPU run on Colab.
-
-Two domain rules are enforced here rather than left to convention:
-
-* ``fliplr`` **must** be ``0.0``. Horizontal flipping mirrors the glyphs on the
-  plate, which destroys the very signal the downstream OCR stage depends on.
-* ``seed`` defaults to ``42`` and ``deterministic`` to ``True`` so that a run
-  quoted in the thesis can actually be reproduced.
-"""
+"""Hyper-parameter configuration for YOLO11 license-plate detector training."""
 
 from __future__ import annotations
 

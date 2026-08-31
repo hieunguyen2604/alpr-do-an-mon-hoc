@@ -1,23 +1,4 @@
-"""Queries over ``detection_job``: the lifecycle of one upload or session.
-
-A job is created when a file is accepted and updated as processing proceeds. Two
-callers depend on this table and they run concurrently, which shapes the whole
-module:
-
-* a **background worker** processing a video, calling
-  :meth:`JobRepository.update_progress` after each batch of frames;
-* the **frontend**, polling the job's status a few times a second to drive a
-  progress bar (FR-2.6, decision AD-02).
-
-Every state transition therefore has a named method here rather than being
-assembled from ``update(status=..., completed_at=...)`` at the call site. The
-reason is that each transition carries obligations the caller would otherwise
-have to remember: a completed job must have ``progress == 1.0`` and a
-``completed_at``, a failed job must record an ``error_message`` server-side and
-must *not* have its progress advanced. Spread across call sites, one of those
-gets forgotten, and the result is a job that reads as 87% complete forever --
-the frontend polls it indefinitely because it never reaches a terminal state.
-"""
+"""Queries over detection_job: managing the lifecycle and progress of uploads and tasks (FR-2.6)."""
 
 from __future__ import annotations
 
@@ -44,11 +25,7 @@ JOB_SORT_COLUMNS: Final[dict[str, InstrumentedAttribute[Any]]] = {
     "progress": DetectionJob.progress,
     "id": DetectionJob.id,
 }
-"""Sort keys the job listing accepts, mapped to columns.
-
-An allow-list for the same reason as the history one: the key comes from a
-query string and must never be resolved with ``getattr``.
-"""
+"""Allowed sort columns for job queries."""
 
 
 class JobRepository(BaseRepository[DetectionJob, str]):
@@ -209,8 +186,7 @@ class JobRepository(BaseRepository[DetectionJob, str]):
         Returns:
             The number of detections attributed to the job.
         """
-        # Imported lazily: detection_repository imports this module's model,
-        # and a module-level import in both directions would be a cycle.
+        # Lazy import to avoid circular dependency
         from backend.models.detection import DetectionHistory
 
         stmt = (

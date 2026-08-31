@@ -1,38 +1,6 @@
 """Orchestration of the recognition pipeline, storage and persistence.
 
-This service is the only place where the three sides of a detection meet: the
-AI pipeline that reads the plate, the storage service that keeps the pixels,
-and the database that records what happened. Routers call it and translate
-nothing; the pipeline knows nothing about either of the other two.
-
-Dependency injection, and why it is not optional here
------------------------------------------------------
-The pipeline arrives as a **constructor argument**. The service never imports a
-detector, never reads ``model_path`` and never calls a factory. That is what
-makes NFR-M5 real rather than aspirational: swapping PaddleOCR for EasyOCR, or
-the whole pipeline for the :class:`StubPipeline` below, changes one line in
-``backend.main`` and nothing in this file, in the routers, or in the tests --
-which inject a stub precisely so that the suite runs in a second and without
-2 GB of model weights.
-
-The pipeline contract is expressed as a :class:`typing.Protocol` rather than as
-an abstract base class, and the direction of that choice matters. An ABC would
-have to live in ``backend`` and be *inherited* by the pipeline in ``ai``, which
-would make ``ai`` import from ``backend`` -- the arrow NFR-M1 forbids. A
-Protocol is structural: Phase 4's ``ALPRPipeline`` satisfies it by having the
-right methods, while remaining entirely unaware that this file exists.
-
-.. important::
-   :class:`StubPipeline` fabricates results. It existed so the API, the
-   database and the frontend could be built and demonstrated end to end before
-   the model was trained; since Phase 4 wired the real
-   ``ai.inference.pipeline.ALPRPipeline`` into
-   :func:`backend.main.build_pipeline`, the stub is installed **only on
-   explicit opt-in** (``ALPR_USE_STUB``). When the weights are missing the
-   composition root installs :class:`UnavailablePipeline` instead, which fails
-   every request cleanly rather than inventing plates. The stub reports
-   ``is_ready = False``, so ``/health`` answers ``"degraded"`` and no
-   demonstration can silently pass off fabricated plates as real ones.
+Connects AI pipeline inference, storage operations, and database persistence (NFR-M1, NFR-M5).
 """
 
 from __future__ import annotations
@@ -79,46 +47,16 @@ __all__ = [
 logger = get_logger(__name__)
 
 _NORMALIZER = VietnamesePlateNormalizer()
-"""Shared, stateless formatter for the display rendering of a stored plate.
-
-Module-level because it holds no per-request state and constructing one per
-response would recompile the same regular expressions on every history page.
-"""
+"""Stateless formatter for display rendering of stored plates."""
 
 _PROGRESS_COMMIT_EVERY: Final[int] = 10
-"""Processed frames between two progress writes.
-
-Committing on every frame turns a two-minute video into thousands of write
-transactions competing with the dashboard's reads. Committing only at the end
-would leave the progress bar frozen at zero for the whole job, which is exactly
-what the endpoint exists to prevent. Ten is the compromise: at the configured
-frame stride it refreshes several times a second of video.
-"""
+"""Processed frame interval between progress commits."""
 
 _MIN_UNCLASSIFIED_TEXT_LEN: Final[int] = 7
-"""Shortest OCR string worth persisting from a video when nothing matched it.
-
-Every legal civil layout is at least 7 characters (2 province + 1 serial +
-4 order digits), so an *unclassified* string shorter than this cannot be a
-complete plate -- it is a fragment read off a blurred frame. The guard applies
-only when the classifier found no family at all: a recognised-but-invalid kind
-such as ``military`` passes at any length, because "recognise and exclude" is
-a finding the operator must see, not noise.
-
-Measured motivation: the 14-second demo video produced 27 history rows of
-which 12 were fragments like ``S``, ``BEK`` and ``187`` -- rows nobody can act
-on, polluting the history page one upload at a time.
-"""
+"""Minimum text length threshold for unclassified video plate persistence."""
 
 _VARIANT_MERGE_WINDOW_SECONDS: Final[float] = 3.5
-"""How close in time two readings must be to count as variants of one plate.
-
-One physical plate read across consecutive sampled frames sometimes yields
-strings differing in 1-2 characters (e.g. ``52Z1513`` next to ``52Z20513``
-due to glare or shadow). Merging on string distance alone would be unsafe,
-so the merge additionally requires the sightings to be near-simultaneous (<=3.5s)
-and share province prefix / suffix digits.
-"""
+"""Maximum time gap in seconds to merge plate reading variants."""
 
 
 def _within_one_edit(a: str, b: str) -> bool:
@@ -179,9 +117,7 @@ def _is_fuzzy_duplicate_plate(a: str, b: str) -> bool:
     return False
 
 
-# ---------------------------------------------------------------------------
 # The pipeline contract
-# ---------------------------------------------------------------------------
 
 
 @runtime_checkable
@@ -302,10 +238,7 @@ class StubPipeline:
         started = time.perf_counter()
         height, width = int(image.shape[0]), int(image.shape[1])
 
-        # A box in the lower-middle of the frame, where a plate usually sits,
-        # sized as a realistic single-line plate. Clamped so that a very small
-        # image still produces a box with positive width and height, which
-        # BoundingBox requires.
+        # Realistic single-line plate box clamped to positive dimensions
         box_width = max(32, width // 5)
         box_height = max(12, box_width // 4)
         left = max(0, (width - box_width) // 2)
@@ -322,8 +255,7 @@ class StubPipeline:
         letter = self._LETTERS[seed % len(self._LETTERS)]
         serial = f"{seed % 100000:05d}"
         text = f"{province}{letter}-{serial}"
-        # The raw string differs from the corrected one, so that every consumer
-        # of `raw_ocr_text` is exercised rather than seeing two equal strings.
+        # Perturb raw text to exercise OCR correction downstream
         raw_text = text.replace("-", "").replace("0", "O", 1)
 
         recognition = (
@@ -417,9 +349,7 @@ class UnavailablePipeline:
         return None
 
 
-# ---------------------------------------------------------------------------
 # Mapping helpers
-# ---------------------------------------------------------------------------
 
 
 def to_job_response(job: DetectionJob, storage: StorageService) -> DetectionJobResponse:
@@ -571,9 +501,7 @@ def _to_unstored_result_schema(result: DetectionResult) -> DetectionResultSchema
     )
 
 
-# ---------------------------------------------------------------------------
 # Service
-# ---------------------------------------------------------------------------
 
 
 class DetectionService:
@@ -736,9 +664,7 @@ class DetectionService:
                 exceeds the image size ceiling.
             ProcessingError: If the pipeline fails.
         """
-        # Validated as an image -- a webcam frame arrives as a JPEG or PNG and
-        # is subject to the same magic-byte and size rules as an upload
-        # (NFR-S1, NFR-S3). It is simply not written to disk afterwards.
+        # Validated as an image subject to magic-byte and size rules (NFR-S1, NFR-S3)
         self._storage.validate_upload(data, kind=MediaKind.IMAGE)
 
         job = self._resume_or_create_webcam_job(db, job_id)
@@ -759,9 +685,7 @@ class DetectionService:
             else:
                 entries = [_to_unstored_result_schema(item) for item in result.results]
 
-            # The frame counter still advances: the frame was processed, and a
-            # progress figure that ignored the cheap frames would understate how
-            # much of the session the system actually looked at.
+            # Advance processed frames counter
             job.processed_frames += 1
             job.status = JobStatus.PROCESSING.value
             db.commit()
@@ -779,8 +703,6 @@ class DetectionService:
             image_width=result.image_width,
             image_height=result.image_height,
         )
-
-    # -- Video ------------------------------------------------------------
 
     def create_video_job(
         self,
@@ -815,9 +737,7 @@ class DetectionService:
         stored = self._storage.save_upload(
             data, kind=MediaKind.VIDEO, original_filename=original_filename
         )
-        # _create_job commits, so the job is visible to the background task and
-        # to a status poll that may arrive first. That used to be an extra
-        # `db.commit()` here, needed only because _create_job did not commit.
+        # _create_job commits so job is visible to background worker and pollers
         job = self._create_job(
             db,
             input_type=InputType.VIDEO,
@@ -917,15 +837,10 @@ class DetectionService:
         frame_index = 0
         processed = 0
 
-        # Read while the capture is still open. Querying these properties after
-        # ``capture.release()`` returns 0 on every backend, which would report a
-        # video of size 0x0 and make any bounding box the frontend scales
-        # against it collapse.
+        # Capture dimensions must be queried before capture.release()
         frame_width = int(capture.get(cv2.CAP_PROP_FRAME_WIDTH) or 0)
         frame_height = int(capture.get(cv2.CAP_PROP_FRAME_HEIGHT) or 0)
-        # Needed to turn a frame index into a timestamp. Read here for the same
-        # reason as the dimensions above: it reports 0 once the capture is
-        # released, and a frame rate of 0 would put every plate at second zero.
+        # Capture FPS for frame-to-timestamp calculation
         fps = float(capture.get(cv2.CAP_PROP_FPS) or 0.0)
 
         try:
@@ -949,18 +864,11 @@ class DetectionService:
         finally:
             capture.release()
 
-        # An unknown frame rate disables the variant merge (a window of "0
-        # frames apart" can never hold), which fails safe: no merge is better
-        # than a merge whose time window was guessed.
+        # Unknown frame rate disables variant merge window
         max_frame_gap = int(_VARIANT_MERGE_WINDOW_SECONDS * fps) if fps > 0 else 0
         sightings = self._collapse_variants(best_by_key, max_frame_gap=max_frame_gap)
         merged = [entry for entry, _ in sightings]
-        # Where each plate was found, in seconds. The frame index was already
-        # tracked and then discarded; keeping it lets the interface say *when* a
-        # plate passed and lets a reviewer seek to that moment in the source to
-        # check a doubtful reading. ``None`` when the container reports no frame
-        # rate -- an unknown timestamp is better left absent than reported as
-        # second zero.
+        # Plate timestamp in seconds (None if frame rate is unknown)
         video_times = [(index / fps if fps > 0 else None) for _, index in sightings]
         pseudo = PipelineResult(
             results=merged,
@@ -1417,9 +1325,7 @@ class DetectionService:
                 ).relative_path
 
             row = DetectionHistory(
-                # Empty text is stored as NULL, not as "", so that "no reading"
-                # is one value everywhere instead of two that queries must both
-                # remember to handle.
+                # Empty text stored as NULL to unify "no reading" representation
                 plate_number=(recognition.text or None) if recognition else None,
                 raw_ocr_text=(recognition.raw_text or None) if recognition else None,
                 confidence=entry.detection.confidence,
@@ -1433,25 +1339,17 @@ class DetectionService:
                 bbox_h=bbox.height,
                 is_valid_format=bool(recognition.is_valid_format) if recognition else False,
                 plate_line_count=recognition.line_count if recognition else None,
-                # Only a 3- or 4-character upper line is a legal Vietnamese
-                # reading, and the column's CHECK says so. Anything else came
-                # from a mis-segmented crop rather than from the plate, so it is
-                # stored as "not recorded" instead of being pushed at the
-                # constraint -- an unusable observation must not be able to fail
-                # the write for a plate that was otherwise read fine.
+                # Store upper char count only for 3 or 4 valid chars per CHECK constraint
                 upper_char_count=(
                     recognition.upper_char_count
                     if recognition and recognition.upper_char_count in (3, 4)
                     else None
                 ),
-                # Vehicle-class attributes. Stored as NULL rather than "" when
-                # absent, matching how the text columns above treat "nothing
-                # read": one value for "not recorded", not two.
+                # Vehicle-class attributes (NULL when absent)
                 plate_kind=(recognition.kind or None) if recognition else None,
                 plate_color=entry.plate_color or None,
                 plate_color_confidence=entry.plate_color_confidence or None,
-                # Positional, matching this entry's index in ``result.results``.
-                # Absent for images and realtime frames, which have no timeline.
+                # Positional timestamp matching entry index in results
                 video_time_seconds=(
                     video_times[index]
                     if video_times is not None and index < len(video_times)

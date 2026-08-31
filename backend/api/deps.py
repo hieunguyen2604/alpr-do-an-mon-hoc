@@ -1,28 +1,4 @@
-"""Shared FastAPI dependencies.
-
-Every collaborator a router needs is assembled here, once, and injected by
-type annotation. Two things follow from that, and both are the reason this
-module exists rather than the routers constructing what they need:
-
-**Tests can replace anything.** ``app.dependency_overrides[get_pipeline] =
-lambda: FakePipeline()`` swaps the model out for the whole test session with no
-monkey-patching and no global state. The same trick points ``get_db`` at a
-throwaway SQLite file.
-
-**Lifetimes stay correct.** The pipeline is expensive and is created once at
-start-up, so it is read from ``app.state`` rather than built per request. The
-database session is the opposite -- one per request, closed when the request
-ends -- and the services in between are cheap wrappers rebuilt each time, which
-keeps them free of shared mutable state.
-
-The ``Annotated`` aliases at the bottom are what routers actually use::
-
-    def list_history(db: DbSession, history: HistoryDep) -> HistoryListResponse:
-        ...
-
-That reads as ordinary typed Python, and it means a change to how a dependency
-is resolved does not touch a single route signature.
-"""
+"""Shared FastAPI dependencies and dependency injection aliases (NFR-M1, NFR-M5)."""
 
 from __future__ import annotations
 

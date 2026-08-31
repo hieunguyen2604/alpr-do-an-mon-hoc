@@ -1,6 +1,4 @@
-/**
- * The application's button.
- */
+/** Primary interactive button component (NFR-U2, NFR-U5). */
 
 import { forwardRef } from 'react';
 import type { ButtonHTMLAttributes, ReactNode } from 'react';
@@ -14,18 +12,13 @@ export type ButtonVariant = 'primary' | 'secondary' | 'danger' | 'ghost';
 /** Size presets. */
 export type ButtonSize = 'sm' | 'md' | 'lg';
 
-/** Props of {@link Button}. */
+/** Props of Button component. */
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: ButtonVariant;
   size?: ButtonSize;
-  /**
-   * Show a spinner and block interaction.
-   *
-   * Required for anything that can take more than 500 ms (NFR-U2): without it
-   * a user who sees no reaction clicks again, and a second upload is submitted.
-   */
+  /** Show a spinner and block interaction (NFR-U2). */
   isLoading?: boolean;
-  /** Text shown while `isLoading`. Falls back to the normal children. */
+  /** Text shown while isLoading. */
   loadingText?: string;
   /** Icon placed before the label. */
   leftIcon?: ReactNode;
@@ -36,13 +29,7 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   children?: ReactNode;
 }
 
-/**
- * Variant styles.
- *
- * In dark mode the primary and danger fills become light (blue-400, red-400),
- * where white text would fall to roughly 2.7:1. Those variants therefore switch
- * to near-black text in the dark theme to hold the 4.5:1 that NFR-U5 requires.
- */
+/** Variant class mappings for button styles. */
 const VARIANT_CLASS: Readonly<Record<ButtonVariant, string>> = {
   primary:
     'bg-primary text-white hover:bg-primary-hover dark:text-slate-950 ' +
@@ -64,15 +51,7 @@ const SIZE_CLASS: Readonly<Record<ButtonSize, string>> = {
   lg: 'px-5 py-2.5 text-base gap-2',
 };
 
-/**
- * Render a button.
- *
- * Forwards its ref so a parent can focus it — a modal returning focus to the
- * control that opened it, for instance.
- *
- * @param props - Variant, size, loading state and native button attributes.
- * @returns The button element.
- */
+/** Render a button (forwards ref for focus management). */
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   function Button(
     {

@@ -1,42 +1,4 @@
-"""Database engine, session factory and the SQLite pragmas that matter.
-
-Owns the connection to the database and nothing else: no queries live here.
-Repositories receive a :class:`~sqlalchemy.orm.Session` and do the querying,
-which is what keeps this module importable by Alembic without dragging in the
-service layer.
-
-Note that no FastAPI import appears in this file even though :func:`get_db` is
-written to be used as a dependency. A plain generator is all FastAPI needs, and
-keeping the import out means the persistence layer can also be driven from a
-migration script or a benchmark with no web server present.
-
-The SQLite pragmas
-------------------
-Three settings are applied to every connection, and the first is not optional:
-
-``foreign_keys=ON``
-    **SQLite disables foreign key enforcement by default.** Every declared
-    ``ForeignKey`` and every ``ON DELETE CASCADE`` is inert until this pragma
-    is set -- deleting a job would leave its detections behind as orphans
-    pointing at a row that no longer exists, and nothing would complain. The
-    constraint would exist on paper and do nothing in practice. It is set per
-    *connection*, not per database, because SQLite scopes it that way; hence
-    the event listener rather than a one-off statement at start-up.
-
-``journal_mode=WAL``
-    Write-ahead logging lets readers proceed while a writer holds the database.
-    This is what allows a background video job -- which writes a row per
-    processed frame for up to several minutes -- to run without blocking the
-    history and statistics queries the dashboard is making at the same time.
-    Under the default rollback journal those reads would fail with "database is
-    locked", and only under exactly the load a demo produces.
-
-``busy_timeout``
-    Makes a competing writer wait rather than fail instantly. WAL removes
-    reader/writer contention but not writer/writer contention, and a webcam
-    session writing frames while a video job writes its own is precisely two
-    writers.
-"""
+"""Database engine configuration, session lifecycle, and SQLite connection pragmas."""
 
 from __future__ import annotations
 

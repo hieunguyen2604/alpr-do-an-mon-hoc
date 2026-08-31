@@ -1,13 +1,4 @@
-/**
- * Modernized Plate Result Card (Deep Navy Cyber Aesthetic).
- *
- * Implements a rich presentation for each detected plate directly on the page:
- * - High-contrast plate crop with glowing status border
- * - Large monospace plate number with instant copy
- * - Accurate vehicle & regulation badges (TT 79/2024)
- * - Dual confidence bars (Detector & OCR) + latency
- * - Action toolbar (Copy, Download crop, Full Modal View)
- */
+/** Plate result card displaying plate crop, OCR text, and confidence scores (TT 79/2024). */
 
 import { useState } from 'react';
 import {
@@ -71,9 +62,7 @@ export function PlateResultCard({
       onMouseEnter={() => onActiveChange?.(index)}
       onMouseLeave={() => onActiveChange?.(null)}
     >
-      {/* Top Main Section */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-        {/* Left: License Plate Crop Image with Glow */}
         <div className="relative shrink-0">
           {plateImageUrl ? (
             <div
@@ -103,7 +92,6 @@ export function PlateResultCard({
           )}
         </div>
 
-        {/* Right: Plate Info & Badges */}
         <div className="min-w-0 flex-1 space-y-2">
           <div className="flex flex-wrap items-center justify-between gap-2">
             <div className="flex items-center gap-2.5">
@@ -132,7 +120,6 @@ export function PlateResultCard({
               )}
             </div>
 
-            {/* TT 79 Status Pill */}
             {result.is_valid_format ? (
               <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/10 px-2.5 py-1 text-xs font-semibold text-emerald-400 border border-emerald-500/20">
                 <ShieldCheck className="h-3.5 w-3.5" /> Chuẩn TT 79/2024
@@ -144,7 +131,6 @@ export function PlateResultCard({
             )}
           </div>
 
-          {/* Classification Badges */}
           <div className="flex flex-wrap items-center gap-1.5">
             {hasPlateText ? (
               plateClassBadges(
@@ -168,7 +154,6 @@ export function PlateResultCard({
         </div>
       </div>
 
-      {/* Metrics Row */}
       <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-3 rounded-xl border border-border/60 bg-surface-raised/40 p-3">
         <div className="min-w-0">
           <dt className="text-[11px] font-medium text-content-muted">Phát hiện (YOLO11)</dt>
@@ -193,7 +178,6 @@ export function PlateResultCard({
         </div>
       </div>
 
-      {/* Action Footer */}
       <div className="mt-3 flex items-center justify-between pt-1">
         {onOpenDetails ? (
           <Button

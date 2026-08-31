@@ -1,19 +1,4 @@
-/**
- * Polling for background video jobs.
- *
- * Video is processed asynchronously because it cannot be processed inline:
- * roughly 200 seconds of CPU per 60 seconds of footage (NFR-SC3), far past any
- * HTTP timeout. `POST /api/detect/video` answers 202 with a job id and the
- * frontend follows progress from here (decision AD-02).
- *
- * Two rules matter and are easy to get wrong by hand:
- *
- * 1. **Stop at a terminal status.** `completed`, `failed` and `cancelled` are
- *    final. Polling past one is a request every 1.5 seconds, forever, for an
- *    answer that will never change.
- * 2. **Stop on unmount.** A timer left running holds the component alive and
- *    sets state on something React has already discarded.
- */
+/** Polling hook for async background video jobs (stops on terminal status or unmount). */
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 
@@ -25,20 +10,9 @@ import type { DetectionJob } from '@/types';
 export interface UseJobPollingOptions {
   /** Milliseconds between polls. */
   intervalMs?: number;
-  /**
-   * Called once when the job reaches a terminal status.
-   *
-   * Fires for `failed` and `cancelled` as well as `completed` — inspect
-   * `job.status` rather than assuming success.
-   */
+  /** Called once when the job reaches a terminal status (completed/failed/cancelled). */
   onSettled?: (job: DetectionJob) => void;
-  /**
-   * How many consecutive failed polls to tolerate before giving up.
-   *
-   * Not zero, because a single dropped request is not a dead job: aborting on
-   * the first failure would discard a run that is still progressing fine on the
-   * server, and the user would have no way to recover it.
-   */
+  /** How many consecutive failed polls to tolerate before giving up. */
   maxConsecutiveErrors?: number;
 }
 
@@ -58,26 +32,7 @@ export interface UseJobPollingResult {
   refresh: () => Promise<void>;
 }
 
-/**
- * Follow a background job until it finishes.
- *
- * Polling starts when `jobId` becomes non-null and stops on its own at a
- * terminal status, on unmount, or after too many consecutive failures.
- *
- * @param jobId - Job to watch, or `null` to poll nothing. Passing `null` is the
- *   normal idle state, not an error.
- * @param options - Interval, completion callback and error tolerance.
- * @returns The job state, progress and a manual refresh.
- *
- * @example
- * ```tsx
- * const { job, progress, error } = useJobPolling(jobId, {
- *   onSettled: (finished) => {
- *     if (finished.status === 'completed') void reloadHistory();
- *   },
- * });
- * ```
- */
+/** Follow a background job until it finishes. */
 export function useJobPolling(
   jobId: string | null,
   options: UseJobPollingOptions = {},
@@ -94,12 +49,9 @@ export function useJobPolling(
 
   const isMountedRef = useRef(true);
   const errorCountRef = useRef(0);
-  // Guards `onSettled` against firing twice, which would otherwise happen when
-  // a manual `refresh` and a scheduled tick both observe the terminal status.
+  // Guards onSettled against duplicate executions
   const settledRef = useRef(false);
-  // Held in a ref so that changing the callback does not restart the interval:
-  // an inline arrow function is a new reference on every render, and in a
-  // dependency array it would tear the timer down and rebuild it each time.
+  // Stable ref callback prevents interval teardown on re-render
   const onSettledRef = useRef(onSettled);
 
   useEffect(() => {
@@ -113,12 +65,7 @@ export function useJobPolling(
     };
   }, []);
 
-  /**
-   * Fetch the job once and apply the result.
-   *
-   * @param signal - Abort signal tied to the current polling session.
-   * @returns Whether polling should continue.
-   */
+  /** Fetch the job once and apply the result; returns whether polling should continue. */
   const poll = useCallback(
     async (signal?: AbortSignal): Promise<boolean> => {
       try {
@@ -145,9 +92,7 @@ export function useJobPolling(
         }
 
         errorCountRef.current += 1;
-        // A transient failure is tolerated silently: reporting the first
-        // dropped request as an error would flash a message on a job that is
-        // still running normally.
+        // Silently tolerate transient polling errors up to threshold
         if (errorCountRef.current >= maxConsecutiveErrors) {
           setError(getErrorMessage(caught));
           return false;
@@ -164,8 +109,7 @@ export function useJobPolling(
       return;
     }
 
-    // A new job starts with a clean slate, otherwise the previous job's final
-    // state would be shown as this one's opening state.
+    // Reset state on job ID change
     settledRef.current = false;
     errorCountRef.current = 0;
     setJob(null);
@@ -176,13 +120,7 @@ export function useJobPolling(
     let timerId: number | null = null;
     let stopped = false;
 
-    /**
-     * Poll, then schedule the next one only if polling should continue.
-     *
-     * Chained timeouts rather than `setInterval`: an interval fires on a fixed
-     * schedule regardless of whether the previous request has returned, so a
-     * slow response would let calls pile up and overlap.
-     */
+    /** Poll, then schedule the next one only if polling should continue (chained timeouts to avoid overlap). */
     const tick = async (): Promise<void> => {
       const shouldContinue = await poll(controller.signal);
 

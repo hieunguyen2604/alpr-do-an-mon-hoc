@@ -1,38 +1,4 @@
-"""Measure end-to-end system performance against the NFR-P targets.
-
-This is the script that turns the estimated latency budget in
-``docs/00-requirements/non-functional-requirements.md`` section 1 into measured
-numbers. Every figure it prints was timed on the machine it ran on; nothing here
-is extrapolated.
-
-What it measures
-----------------
-=========== =========================================================== =========
-Requirement Quantity                                                    Target
-=========== =========================================================== =========
-NFR-P1      End-to-end latency for one image, p50/p95/p99                p95 <= 800 ms
-NFR-P4      Model load time, process start to pipeline ready             <= 15 s
-NFR-P7      Resident memory of the loaded pipeline                       <= 2 GB
---          Per-stage latency budget: decode / detect / crop / OCR /     (breakdown)
-            normalise
---          PyTorch vs ONNX detector backend on this CPU                 (comparison)
-=========== =========================================================== =========
-
-Reporting rules this script enforces
-------------------------------------
-1. **Hardware is printed before any timing.** A throughput number without the
-   CPU it was measured on is not a result, it is a rumour. The header names the
-   processor, physical and logical core counts, and total RAM.
-2. **Percentiles, not means.** A mean latency hides the tail that a user
-   actually notices, and the first inference after load is always an outlier;
-   p50/p95/p99 are reported and warmup runs are excluded.
-3. **Concurrent system load is recorded.** If something else is saturating the
-   CPU while this runs, every latency here is pessimistic and the report has to
-   say so rather than quietly publishing a slow number.
-
-Example:
-    python -m ai.evaluation.benchmark_system --images datasets/processed/yolo/images/test
-"""
+"""Measure end-to-end system performance and latency breakdown against NFR-P targets."""
 
 from __future__ import annotations
 

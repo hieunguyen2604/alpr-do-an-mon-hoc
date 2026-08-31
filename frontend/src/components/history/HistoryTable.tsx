@@ -1,15 +1,4 @@
-/**
- * The history table itself (FR-4.6, FR-4.8).
- *
- * One row is one **license plate**, not one upload: an image holding three
- * plates produces three rows sharing a `source_job_id`. That is why this table
- * counts rows while the dashboard counts jobs, and the two figures are supposed
- * to differ.
- *
- * Sorting is delegated to the server — the column keys are the exact values the
- * API's `sort_by` accepts, so a header click becomes a query parameter with no
- * translation in between.
- */
+/** The history table itself (FR-4.6, FR-4.8). Each row is one license plate, not one upload. */
 
 import { useState } from 'react';
 import { ImageOff, Trash2 } from 'lucide-react';
@@ -46,16 +35,7 @@ interface PlateThumbnailProps {
   plateNumber: string | null;
 }
 
-/**
- * Small preview of the cropped plate.
- *
- * A crop can be missing in two different ways — never stored, or stored and
- * since gone from disk — and both must land on the placeholder rather than on
- * the browser's broken-image icon, which in a dense table reads as a bug.
- *
- * @param props - Image URL and the plate text describing it.
- * @returns The thumbnail element.
- */
+/** Small preview of the cropped plate (falls back to a placeholder icon on error). */
 function PlateThumbnail({ src, plateNumber }: PlateThumbnailProps): JSX.Element {
   const [hasFailed, setHasFailed] = useState(false);
 
@@ -101,12 +81,7 @@ export interface HistoryTableProps {
   isRefreshing?: boolean;
 }
 
-/**
- * Render the history table.
- *
- * @param props - Rows, sort state and row handlers.
- * @returns The table element.
- */
+/** Render the history table. */
 export function HistoryTable({
   records,
   sortBy,
@@ -192,8 +167,7 @@ export function HistoryTable({
         <button
           type="button"
           onClick={(event) => {
-            // Without this the click also reaches the row and opens the detail
-            // dialog behind the delete confirmation.
+            // Prevent row click from opening detail dialog behind delete confirmation
             event.stopPropagation();
             onDelete(record);
           }}

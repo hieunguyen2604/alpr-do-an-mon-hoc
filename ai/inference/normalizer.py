@@ -1,42 +1,6 @@
-"""Post-processing stage: correct and validate raw OCR output.
+"""Post-processing stage: position-based correction and validation for Vietnamese license plates (NFR-M1).
 
-This module implements :class:`~ai.inference.interfaces.BaseNormalizer` for
-Vietnamese plates. It is the project's own technical contribution: the
-detector and the recogniser are off-the-shelf models, whereas the rules applied
-here come from the national plate standard and are what turns an approximate
-character string into a plate number that can be trusted.
-
-The central idea (section 9.1 of ``docs/reports/01-vn-plate-standards.md``) is
-that **repair must be positional, never global**. A global table such as
-``{"O": "0", "I": "1"}`` applied to the whole string destroys correct data. The
-standard, however, tells us in advance whether each position *must* be a digit
-or *must* be a letter, and that constraint is free information: at a digit
-position every letter read is by definition a mistake, and vice versa.
-
-Processing order, mirroring the flowchart of section 9.5::
-
-    raw OCR string
-      -> clean (fold Đ, upper-case, strip separators)
-      -> already matches a pattern?  yes -> valid, return untouched
-      -> length within 7..9?         no  -> controlled failure, still returned
-      -> apply the position mask (skipping the wildcard)
-      -> matches now?                yes -> valid, corrections logged
-                                     no  -> controlled failure, still returned
-
-Three operating rules are load-bearing:
-
-1. **Try the regex before repairing.** If the string is already valid, any edit
-   can only damage it.
-2. **Never discard.** An unrepairable string is returned with
-   ``is_valid_format=False`` and stored by the caller. Dropping it would hide
-   recognition failures from the statistics and remove the error-analysis
-   material the evaluation chapter depends on.
-3. **Keep the raw string.** The caller persists it in ``raw_ocr_text``.
-   Comparing raw against normalised is the only way to measure what this stage
-   contributes -- which is exactly why it lives outside the recogniser.
-
-The module depends on the standard library only; it imports no web framework
-and no schema library (NFR-M1).
+Applies positional character repair according to national standards TT 79/2024 and QCVN 08:2024.
 """
 
 from __future__ import annotations
@@ -61,18 +25,7 @@ __all__ = ["KindDecision", "NormalizationOutcome", "VietnamesePlateNormalizer"]
 logger = logging.getLogger(__name__)
 
 _FIVE_DIGIT_DOT_GROUP_RE: Final[re.Pattern[str]] = re.compile(r"\d{3}[.,]\d{2}(?!\d)")
-"""A ``DDD.DD`` group in the RAW OCR string -- physical proof of a 5-digit number.
-
-QCVN 08:2024/BCA prints a five-digit order number with a dot before its last
-two digits (``609.69``) while a four-digit number is printed plain (``4578``).
-That dot survives OCR in the raw string and settles the 8-character
-car / old-motorcycle ambiguity that the cleaned string cannot: ``51H60969``
-reads as car ``51H`` + ``60969`` or motorcycle ``51H6`` + ``0969``, but only
-the car reading has a five-digit number, so a printed ``609.69`` proves it.
-A comma is accepted alongside the dot because low-resolution OCR renders the
-separator either way. The negative lookahead keeps a six-digit run such as
-``123.456`` from matching -- that is not a plate number group.
-"""
+"""A ``DDD.DD`` group in the RAW OCR string -- physical proof of a 5-digit number."""
 
 _MIN_PLATE_LENGTH = 7
 _MAX_PLATE_LENGTH = 9
@@ -89,24 +42,7 @@ _AMBIGUOUS_PAIRS: tuple[frozenset[PlateKind], ...] = (
 
 @dataclass(frozen=True, slots=True)
 class KindDecision:
-    """The outcome of classifying a cleaned plate string.
-
-    Classification returns a *set* of candidates rather than one answer,
-    because two documented ambiguities are not resolvable from the characters
-    alone (section 8.6).
-
-    Attributes:
-        kind: The best candidate under the priority order of
-            :data:`~ai.inference.plate_rules.PATTERNS_BY_KIND`, or
-            :attr:`~ai.inference.plate_rules.PlateKind.UNKNOWN` if nothing
-            matched.
-        candidates: Every kind whose pattern matched, in priority order.
-        is_ambiguous: ``True`` when the candidates include one of the two
-            documented ambiguous pairs *and* the ambiguity was not resolved by
-            the supplied line count.
-        resolved_by_line_count: ``True`` when a line count was supplied and it
-            settled an otherwise ambiguous string.
-    """
+    """The outcome of classifying a cleaned plate string."""
 
     kind: PlateKind
     candidates: tuple[PlateKind, ...] = ()
@@ -116,28 +52,7 @@ class KindDecision:
 
 @dataclass(frozen=True, slots=True)
 class NormalizationOutcome:
-    """Everything the normalizer learned about one OCR string.
-
-    :meth:`VietnamesePlateNormalizer.normalize` narrows this down to the
-    ``(text, is_valid_format)`` pair required by the interface; callers that
-    want the classification, the ambiguity flag or the list of applied
-    corrections use :meth:`VietnamesePlateNormalizer.normalize_detailed`
-    instead.
-
-    Attributes:
-        raw_text: The string exactly as the OCR engine returned it.
-        cleaned_text: The string after separator stripping and upper-casing,
-            before any positional repair.
-        text: The final normalised string. Equals :attr:`cleaned_text` when no
-            repair was applied or when repair was impossible.
-        is_valid_format: Whether :attr:`text` matches a known civil plate
-            pattern. Army plates match :data:`RE_MILITARY` but are reported as
-            ``False`` here: they are recognised in order to be excluded.
-        decision: The classification of :attr:`text`.
-        corrections: One ``(index, before, after)`` entry per character the
-            positional rules changed, in order. Empty when nothing was
-            repaired. This is the audit trail for the evaluation chapter.
-    """
+    """Everything the normalizer learned about one OCR string."""
 
     raw_text: str
     cleaned_text: str
@@ -153,39 +68,10 @@ class NormalizationOutcome:
 
 
 class VietnamesePlateNormalizer(BaseNormalizer):
-    """Correct and validate Vietnamese plate strings coming out of OCR.
-
-    The class is stateless and therefore safe to share across threads and
-    reuse for the lifetime of the process; a single instance is normally built
-    at start-up and injected into the pipeline.
-
-    Example:
-        >>> normalizer = VietnamesePlateNormalizer()
-        >>> normalizer.normalize("3OA-123.45")
-        ('30A12345', True)
-        >>> normalizer.normalize("30012345")
-        ('30D12345', True)
-        >>> normalizer.normalize("3OB12E45")
-        ('30B12E45', False)
-    """
+    """Correct and validate Vietnamese plate strings coming out of OCR."""
 
     def normalize(self, raw_text: str) -> tuple[str, bool]:
-        """Correct a raw OCR string and check it against the plate formats.
-
-        This is the interface method of
-        :class:`~ai.inference.interfaces.BaseNormalizer`. Its signature is
-        fixed, so it cannot carry the line count; use
-        :meth:`normalize_detailed` when the caller knows how many lines the
-        plate had.
-
-        Args:
-            raw_text: The unmodified OCR output.
-
-        Returns:
-            A ``(normalized_text, is_valid_format)`` pair. An invalid result is
-            still returned rather than discarded, so that recognition failures
-            stay visible in the statistics.
-        """
+        """Correct a raw OCR string and check it against the plate formats."""
         outcome = self.normalize_detailed(raw_text)
         return outcome.text, outcome.is_valid_format
 
@@ -234,23 +120,7 @@ class VietnamesePlateNormalizer(BaseNormalizer):
                 decision=decision,
             )
 
-        # Rule 1b: an army plate is already correctly identified, so repairing it
-        # can only make things worse -- and specifically, worse in the one way
-        # that matters most.
-        #
-        # Position repair assumes the string is *meant* to be a civil plate and
-        # rewrites characters until it looks like one. Applied to ``ABS1234`` it
-        # turns ``A`` into ``4`` and ``B`` into ``8``, yielding ``48S1234``: a
-        # well-formed Ho Chi Minh City car plate, returned with
-        # ``is_valid_format = True``. An army specialised-machine plate would
-        # reach the operator disguised as a valid civilian car, with nothing to
-        # indicate anything had happened.
-        #
-        # A confident wrong answer is worse than an admitted failure: "I could
-        # not read this" invites a second look, a plausible plate number does
-        # not. So military strings return here, unrepaired and explicitly not
-        # valid as a *civil* format -- which is the correct verdict, not a
-        # failure to reach one.
+        # Rule 1b: Military plates return unrepaired and marked invalid as civil format
         if decision.kind is PlateKind.MILITARY:
             return NormalizationOutcome(
                 raw_text=raw_text,
@@ -376,11 +246,7 @@ class VietnamesePlateNormalizer(BaseNormalizer):
 
         candidate_set = set(candidates)
         is_ambiguous = any(pair <= candidate_set for pair in _AMBIGUOUS_PAIRS)
-        # Mặc định phải đặt TRƯỚC mọi nhánh: phần lớn chuỗi (quân đội, ngoại
-        # giao, biển một dòng thường) không rơi vào nhánh phân xử nào cả, và
-        # nếu để hai biến này chỉ được gán bên trong nhánh thì chúng chưa tồn
-        # tại lúc dựng KindDecision -- UnboundLocalError, tức mọi biển không
-        # mơ hồ đều hỏng.
+        # Default initialization before branching to avoid UnboundLocalError
         best = candidates[0]
         resolved = False
 
@@ -391,10 +257,7 @@ class VietnamesePlateNormalizer(BaseNormalizer):
         if is_ambiguous and car_or_old_moto and (
             line_count == 1 or printed_dot or car_truck_van_serial
         ):
-            # Two independent proofs collapse to the same verdict: a one-line
-            # plate cannot be a motorcycle plate (section 7.1), a printed
-            # DDD.DD group means a five-digit number, or a C/D/H/F series with
-            # 5 trailing digits which is a commercial car/truck/van plate.
+            # Single-line, printed dot, or commercial series resolves ambiguity to CAR
             best = PlateKind.CAR
 
             is_ambiguous = any(
@@ -403,24 +266,7 @@ class VietnamesePlateNormalizer(BaseNormalizer):
             resolved = True
         elif is_ambiguous and line_count == 2 and car_or_old_moto:
 
-            # Two lines is a *prior*, not a proof -- two-line car plates exist,
-            # and this project has one on file (`65A-004.50`, a State vehicle).
-            # So `is_ambiguous` deliberately stays set: the caller is still told
-            # the string could go either way.
-            #
-            # What changes is which way the tie falls. Leaving the default at
-            # ``candidates[0]`` meant CAR, purely because of the order the
-            # patterns happen to be declared in -- an arbitrary choice presented
-            # to the user as a formatted plate number. Measured against the
-            # labelled corpus, that arbitrary choice was wrong almost every time:
-            # of 696 ambiguous two-line plates, 452 carry the vehicle type in
-            # their source filename, and 450 of those are motorcycles. Two are
-            # cars.
-            #
-            # The visible cost of getting it wrong is not academic. The grouping
-            # differs -- ``51P5-4578`` against ``51P-515.78`` -- so the interface
-            # shows a plate number that does not match the one printed on the
-            # vehicle, and the badge says the wrong vehicle class.
+            # Prior preference for 2-line ambiguous plates resolves to MOTORCYCLE_OLD
             best = PlateKind.MOTORCYCLE_OLD
             resolved = True
 
@@ -520,9 +366,7 @@ class VietnamesePlateNormalizer(BaseNormalizer):
             if resolved_kind in (PlateKind.UNKNOWN, None):
                 resolved_kind = None
             elif PATTERNS_BY_KIND[resolved_kind].match(text) is None:
-                # The caller's family does not fit this string (a stale or
-                # colour-derived kind); fall back to deriving rather than
-                # rendering a grouping the characters cannot carry.
+                # Fall back to deriving when caller's kind does not match string regex
                 resolved_kind = None
 
         if resolved_kind is None:
@@ -546,10 +390,7 @@ class VietnamesePlateNormalizer(BaseNormalizer):
         number = groups["number"]
         prefix = text[: len(text) - len(number)]
 
-        # The upper line, when the engine read it, says where the serial ends.
-        # Applied only for two-line plates of a civil family, and only when the
-        # implied number is a legal 4- or 5-digit group -- a stray fragment
-        # length must not be able to invent a grouping.
+        # Upper line char count indicates where serial ends for 2-line civil plates
         if (
             upper_char_count > 0
             and line_count == 2

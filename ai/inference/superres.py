@@ -1,32 +1,4 @@
-"""Super-resolution for small plate crops, used by the failure-retry ladder.
-
-Why this exists
----------------
-The remaining OCR error mass concentrates on crops smaller than ~50 px
-(measured 24/07/2026: 6 of the 9 outstanding wrong reads). Plain cubic
-upscaling was tried first and did not help -- interpolation invents no
-detail. A learned super-resolution model does better on exactly this class:
-FSRCNN x3 turned the 32x23 px crop the engine could only read the bottom
-line of (``27793``) into a complete correct read (``59F227793``), and x4
-recovered a 171x120 px crop from a dark scene (``67H148066``).
-
-Why FSRCNN
-----------
-It is the smallest practical SR architecture (the shipped graphs are ~40 KB
-each, MIT-licensed, from the repository the OpenCV ``dnn_superres``
-documentation itself references) and runs in milliseconds on CPU -- an
-acceptable price for a step that only ever runs on reads that have already
-failed.
-
-Availability is not assumed
----------------------------
-``cv2.dnn_superres`` lives in the *contrib* build of OpenCV, and this
-project has already been bitten once by the three-way ``cv2`` namespace
-clobbering (see the deployment guide): an environment can carry a ``cv2``
-whose ``dnn_superres`` module exists but is empty. Everything here therefore
-degrades to "SR unavailable, ladder runs without it" rather than raising --
-the retry ladder loses a variant, never a read.
-"""
+"""Super-resolution for small plate crops via FSRCNN, used by the failure-retry ladder."""
 
 from __future__ import annotations
 

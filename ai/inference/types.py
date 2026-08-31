@@ -1,22 +1,4 @@
-"""Immutable data structures exchanged across the ALPR pipeline.
-
-These are plain :mod:`dataclasses`. They deliberately do **not** use Pydantic:
-the ``ai`` package must stay framework-free (NFR-M1). The API layer defines its
-own Pydantic schemas and maps them from these objects, which keeps the wire
-format free to evolve independently of the pipeline's internal model.
-
-Object graph produced by one pipeline run::
-
-    PipelineResult
-    └── results: list[DetectionResult]
-        ├── detection:   PlateDetection      (always present)
-        │   └── bbox:    BoundingBox
-        ├── recognition: PlateRecognition | None   (None if OCR read nothing)
-        └── plate_image: ndarray | None            (the cropped plate)
-
-Field names line up with the approved ``detection_history`` table so the
-persistence layer is a direct mapping rather than a translation.
-"""
+"""Immutable dataclasses exchanged across the ALPR pipeline (NFR-M1)."""
 
 from __future__ import annotations
 

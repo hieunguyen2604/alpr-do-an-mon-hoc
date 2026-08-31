@@ -1,25 +1,4 @@
-"""Detection endpoints: image, video and webcam frame, plus job status.
-
-The three inputs need three shapes of response, and the differences are forced
-by physics rather than by taste:
-
-============ ============= =============================================
-Input        Response      Why
-============ ============= =============================================
-Image        200 + results Under a second on CPU; the client can wait.
-Video        202 + job_id  ~200 s for 60 s of footage (NFR-SC3). No HTTP
-                           client waits that long, so the work is queued
-                           and polled.
-Webcam frame 200 + results One frame at a time, same cost as an image,
-                           but the frames of a session share one job.
-============ ============= =============================================
-
-All three endpoints are declared with ``def`` rather than ``async def``, and
-that is deliberate. Recognition is CPU-bound and blocking; on an ``async``
-endpoint it would occupy the event loop and stall every other request in the
-process for the duration. A synchronous endpoint is run by FastAPI in a worker
-thread instead, so a slow detection delays only itself.
-"""
+"""Detection endpoints for image, video, webcam frame, and async background job status."""
 
 from __future__ import annotations
 

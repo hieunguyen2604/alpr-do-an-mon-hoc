@@ -1,10 +1,4 @@
-/**
- * Real-Time Live Webcam License Plate Detection Page.
- *
- * Captures live frames from user's camera, streams to backend `POST /api/detect/frame`
- * using a single-slot worker loop (frame skipping), overlays neon bounding boxes,
- * and maintains a deduplicated real-time plate feed.
- */
+/** Real-time live webcam license plate detection page (FR-3.1). */
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import {

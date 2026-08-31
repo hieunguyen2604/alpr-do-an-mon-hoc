@@ -1,25 +1,4 @@
-"""Export a trained YOLO11 detector to CPU-friendly inference formats.
-
-The deployment target has no CUDA GPU, so the exported format is not a detail --
-it is the difference between a usable demo and an unusable one. Phase 1 measured
-ONNX Runtime at roughly **3.7x** the throughput of eager PyTorch on CPU for this
-model class, and OpenVINO is typically faster still on Intel hardware (the
-development machine is an Intel CPU with UHD 770 graphics).
-
-Every export is **verified by loading it back and running a real forward pass**
-on a synthetic image. An export that writes a file but produces a model nobody
-can load is worse than a failed export, because it is discovered later.
-
-Examples:
-    Export the published model to both CPU formats::
-
-        python -m ai.training.export --weights models/best.pt --format all
-
-    ONNX only, at a smaller input size::
-
-        python -m ai.training.export --weights models/best.pt \\
-            --format onnx --imgsz 480
-"""
+"""Export trained YOLO11 detector to CPU-friendly inference formats (ONNX, OpenVINO, TorchScript)."""
 
 from __future__ import annotations
 

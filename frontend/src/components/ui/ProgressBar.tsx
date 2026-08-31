@@ -1,9 +1,4 @@
-/**
- * Determinate progress bar.
- *
- * Used for upload progress and for video job progress, both of which routinely
- * run past 500 ms and so require visible feedback (NFR-U2).
- */
+/** Determinate and indeterminate progress bar (NFR-U2). */
 
 import { cn } from '@/lib/cn';
 import { formatPercent } from '@/lib/format';

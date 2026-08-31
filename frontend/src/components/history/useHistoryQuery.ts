@@ -30,23 +30,12 @@ import type {
   SortOrder,
 } from '@/types';
 
-// ---------------------------------------------------------------------------
-// Query-string parameter names
-// ---------------------------------------------------------------------------
-
-/**
- * Names used in the query string.
- *
- * Deliberately identical to the API's own parameter names. A URL that reads
- * `?search=51F&min_confidence=80` can be compared with the request it produces
- * without a translation table in between.
- */
+/** Names used in the query string matching backend API parameters. */
 const PARAM = {
   search: 'search',
   inputType: 'input_type',
   dateFrom: 'date_from',
   dateTo: 'date_to',
-  /** Held as a **percentage** (0-100) in the URL; sent as a ratio to the API. */
   minConfidence: 'min_confidence',
   sortBy: 'sort_by',
   order: 'order',
@@ -54,7 +43,7 @@ const PARAM = {
   pageSize: 'page_size',
 } as const;
 
-/** Sort fields this page offers. Must be values the API's `sort_by` accepts. */
+/** Sort fields this page offers. */
 const SORTABLE_FIELDS: readonly HistorySortField[] = [
   'detected_time',
   'confidence',
@@ -63,30 +52,12 @@ const SORTABLE_FIELDS: readonly HistorySortField[] = [
 /** Input types accepted by the filter dropdown. */
 const INPUT_TYPES: readonly InputType[] = ['image', 'video', 'webcam'];
 
-// ---------------------------------------------------------------------------
-// Parsing
-// ---------------------------------------------------------------------------
-
-/**
- * Whether a string is a sort field this page supports.
- *
- * Values reaching this come from the query string, which anyone can edit by
- * hand. An unknown `sort_by` makes the API answer 422, so it is filtered out
- * here and the default is used instead.
- *
- * @param value - Candidate value.
- * @returns `true` when the value is a supported sort field.
- */
+/** Return true if value is a supported sort field. */
 export function isHistorySortField(value: string): value is HistorySortField {
   return (SORTABLE_FIELDS as readonly string[]).includes(value);
 }
 
-/**
- * Read the input-type filter from the query string.
- *
- * @param value - Raw parameter value, or `null` when absent.
- * @returns The input type, or an empty string meaning "all types".
- */
+/** Parse input type filter from query string. */
 function parseInputType(value: string | null): InputType | '' {
   if (value && (INPUT_TYPES as readonly string[]).includes(value)) {
     return value as InputType;
@@ -94,26 +65,12 @@ function parseInputType(value: string | null): InputType | '' {
   return '';
 }
 
-/**
- * Read a calendar date from the query string.
- *
- * Only a `YYYY-MM-DD` value is accepted — the format a native date input
- * produces. Anything else is discarded rather than forwarded, so a hand-edited
- * URL cannot turn into a 422 from the API.
- *
- * @param value - Raw parameter value, or `null` when absent.
- * @returns The date, or an empty string when absent or malformed.
- */
+/** Parse YYYY-MM-DD date string from query parameters. */
 function parseDate(value: string | null): string {
   return value && /^\d{4}-\d{2}-\d{2}$/.test(value) ? value : '';
 }
 
-/**
- * Read the minimum-confidence filter, as a percentage.
- *
- * @param value - Raw parameter value, or `null` when absent.
- * @returns A whole percentage clamped to 0-100; `0` means "no minimum".
- */
+/** Parse confidence percentage integer from query parameter. */
 function parseConfidencePercent(value: string | null): number {
   if (!value) {
     return 0;
@@ -125,67 +82,29 @@ function parseConfidencePercent(value: string | null): number {
   return Math.min(Math.max(Math.round(parsed), 0), 100);
 }
 
-/**
- * Read a 1-based page number from the query string.
- *
- * @param value - Raw parameter value, or `null` when absent.
- * @returns The page number, never below 1.
- */
+/** Parse 1-based page number from query string. */
 function parsePage(value: string | null): number {
   const parsed = Number.parseInt(value ?? '', 10);
   return Number.isFinite(parsed) && parsed >= 1 ? parsed : 1;
 }
 
-/**
- * Read the page size from the query string.
- *
- * Restricted to the offered sizes: the API rejects anything above
- * `MAX_PAGE_SIZE` with a 422, and an arbitrary value would also make the page
- * selector show a size it cannot select.
- *
- * @param value - Raw parameter value, or `null` when absent.
- * @returns One of {@link PAGE_SIZE_OPTIONS}.
- */
+/** Parse page size from query string, constrained to allowed options. */
 function parsePageSize(value: string | null): number {
   const parsed = Number.parseInt(value ?? '', 10);
   return PAGE_SIZE_OPTIONS.includes(parsed) ? parsed : DEFAULT_PAGE_SIZE;
 }
 
-// ---------------------------------------------------------------------------
-// Date bounds
-// ---------------------------------------------------------------------------
-
-/**
- * Expand a `YYYY-MM-DD` day into the start of that day.
- *
- * @param date - Calendar date from the date input.
- * @returns An ISO 8601 timestamp, or `undefined` when no date was chosen.
- */
+/** Expand YYYY-MM-DD date into ISO start-of-day timestamp. */
 function startOfDay(date: string): string | undefined {
   return date ? `${date}T00:00:00` : undefined;
 }
 
-/**
- * Expand a `YYYY-MM-DD` day into the last instant of that day.
- *
- * The time component is not cosmetic. `date_to` is compared against
- * `detected_time`, which is a timestamp: sending the bare date sends midnight,
- * and every record made during that day falls after the bound. Verified against
- * the running API — `date_to=2026-07-19` returns zero rows for a record
- * detected at 07:00 that same day, while `2026-07-19T23:59:59` returns it.
- *
- * @param date - Calendar date from the date input.
- * @returns An ISO 8601 timestamp, or `undefined` when no date was chosen.
- */
+/** Expand YYYY-MM-DD date into ISO end-of-day timestamp (23:59:59). */
 function endOfDay(date: string): string | undefined {
   return date ? `${date}T23:59:59` : undefined;
 }
 
-// ---------------------------------------------------------------------------
-// Hook
-// ---------------------------------------------------------------------------
-
-/** Patch applied to the query string; `null` removes a parameter. */
+/** Patch applied to the query string; null removes a parameter. */
 type ParamPatch = Readonly<Record<string, string | null>>;
 
 /** Everything the history page needs to drive its filters and its request. */

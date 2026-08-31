@@ -1,27 +1,15 @@
-/**
- * Reusable loading, empty and error views.
- *
- * Every page has to handle the same three non-happy-path states. Centralising
- * them keeps the wording and spacing consistent, and means a page's own code
- * stays focused on its actual content.
- */
+/** Reusable loading, empty and error state views. */
 
 import type { ReactNode } from 'react';
 import { AlertCircle, Inbox, Loader2, RefreshCw } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 
-/** Props for {@link LoadingState}. */
+/** Props for LoadingState component. */
 export interface LoadingStateProps {
-  /** Message shown under the spinner. */
   message?: string;
 }
 
-/**
- * Centred spinner for a region that is waiting on data.
- *
- * @param props - Optional message override.
- * @returns The loading view.
- */
+/** Centred loading spinner view. */
 export function LoadingState({
   message = 'Đang tải dữ liệu…',
 }: LoadingStateProps): JSX.Element {
@@ -37,27 +25,15 @@ export function LoadingState({
   );
 }
 
-/** Props for {@link EmptyState}. */
+/** Props for EmptyState component. */
 export interface EmptyStateProps {
-  /** Headline, e.g. "Chưa có dữ liệu". */
   title: string;
-  /** Sentence explaining what to do next. */
   description?: string;
-  /** Icon override; defaults to an inbox. */
   icon?: LucideIcon;
-  /** Optional call-to-action, typically a button or a link. */
   action?: ReactNode;
 }
 
-/**
- * View shown when a request succeeded but returned nothing.
- *
- * Kept visually distinct from {@link ErrorState}: an empty result is a normal
- * outcome, and must not look like a failure.
- *
- * @param props - Title, description, icon and optional action.
- * @returns The empty view.
- */
+/** Empty data state view. */
 export function EmptyState({
   title,
   description,
@@ -80,27 +56,14 @@ export function EmptyState({
   );
 }
 
-/** Props for {@link ErrorState}. */
+/** Props for ErrorState component. */
 export interface ErrorStateProps {
-  /**
-   * Display-ready Vietnamese message.
-   *
-   * Always comes from the API layer, which strips anything internal — a raw
-   * exception must never be passed here.
-   */
   message: string;
-  /** Retry handler; the button is hidden when omitted. */
   onRetry?: () => void;
-  /** Correlation id, shown so the user can quote it when reporting a problem. */
   requestId?: string;
 }
 
-/**
- * View shown when a request failed.
- *
- * @param props - Message, optional retry handler and request id.
- * @returns The error view.
- */
+/** Error state display view with optional retry action. */
 export function ErrorState({
   message,
   onRetry,
@@ -133,23 +96,13 @@ export function ErrorState({
   );
 }
 
-/** Props for {@link InlineError}. */
+/** Props for InlineError component. */
 export interface InlineErrorProps {
-  /** Display-ready Vietnamese message. */
   message: string;
-  /** Dismiss handler; the close button is hidden when omitted. */
   onDismiss?: () => void;
 }
 
-/**
- * Compact error banner for failures beside content that is still usable.
- *
- * Used where {@link ErrorState} would be too heavy — for example when an upload
- * fails but the form should stay on screen.
- *
- * @param props - Message and optional dismiss handler.
- * @returns The banner.
- */
+/** Compact inline error banner. */
 export function InlineError({ message, onDismiss }: InlineErrorProps): JSX.Element {
   return (
     <div
@@ -171,26 +124,16 @@ export function InlineError({ message, onDismiss }: InlineErrorProps): JSX.Eleme
   );
 }
 
-/** Props for {@link PageSection}. */
+/** Props for PageSection component. */
 export interface PageSectionProps {
-  /** Section heading. */
   title: string;
-  /** Optional supporting line under the heading. */
   subtitle?: string;
-  /** Controls rendered at the right of the header row. */
   actions?: ReactNode;
-  /** Section body. */
   children: ReactNode;
-  /** Extra classes for the wrapping card. */
   className?: string;
 }
 
-/**
- * Card with a titled header, used to group content on a page.
- *
- * @param props - Title, subtitle, actions and body.
- * @returns The section card.
- */
+/** Card container with header for grouping page sections. */
 export function PageSection({
   title,
   subtitle,

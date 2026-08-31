@@ -1,10 +1,4 @@
-/**
- * Generic data table with optional sortable columns.
- *
- * Generic over the row type so a column's `accessor` is checked against the
- * data it will actually receive — a renamed field becomes a compile error here
- * rather than an empty column in the browser.
- */
+/** Generic data table with optional sortable columns (type-safe). */
 
 import { ArrowDown, ArrowUp, ChevronsUpDown } from 'lucide-react';
 import type { ReactNode } from 'react';
@@ -20,12 +14,7 @@ export interface TableColumn<TRow> {
   header: ReactNode;
   /** Produce the cell content for a row. */
   accessor: (row: TRow) => ReactNode;
-  /**
-   * Whether this column can be sorted.
-   *
-   * Sorting is performed by the **server**, so `key` must match a value the
-   * API's `sort_by` accepts. The table only reports the intent.
-   */
+  /** Whether this column can be sorted (sorting is performed by the server). */
   sortable?: boolean;
   /** Horizontal alignment of the cells. */
   align?: 'left' | 'center' | 'right';
@@ -45,12 +34,7 @@ export interface TableProps<TRow> {
   sortKey?: string;
   /** Direction of the current sort. */
   sortOrder?: SortOrder;
-  /**
-   * Called when a sortable header is activated.
-   *
-   * Receives the column key and the direction to apply — the table works out
-   * the toggle so every caller does not have to.
-   */
+  /** Called when a sortable header is activated with the column key and next sort direction. */
   onSortChange?: (key: string, order: SortOrder) => void;
   /** Called when a row is activated. Rows become focusable when supplied. */
   onRowClick?: (row: TRow) => void;
@@ -69,13 +53,7 @@ const ALIGN_CLASS = {
   right: 'text-right',
 } as const;
 
-/**
- * Render a data table.
- *
- * @typeParam TRow - Shape of one row.
- * @param props - Columns, rows, sort state and handlers.
- * @returns The table element.
- */
+/** Render a data table. */
 export function Table<TRow>({
   columns,
   rows,
@@ -89,15 +67,7 @@ export function Table<TRow>({
   caption,
   className,
 }: TableProps<TRow>): JSX.Element {
-  /**
-   * Report the sort the user asked for by activating a header.
-   *
-   * Clicking the active column flips the direction; clicking a new one starts
-   * it descending, which for a timestamp means newest first — the ordering a
-   * user almost always wants on first click.
-   *
-   * @param column - The column that was activated.
-   */
+  /** Report the sort the user asked for by activating a header. */
   const handleSort = (column: TableColumn<TRow>): void => {
     if (!column.sortable || !onSortChange) {
       return;

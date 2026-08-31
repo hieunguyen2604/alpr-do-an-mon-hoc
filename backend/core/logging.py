@@ -1,35 +1,4 @@
-"""Structured JSON logging with per-request correlation identifiers.
-
-Every log line is one JSON object on one line. That format is chosen because
-logs from a video job are interleaved with logs from concurrent uploads, and
-plain text cannot be filtered back apart afterwards. With JSON, one ``jq``
-expression reconstructs a single request's story::
-
-    jq 'select(.request_id == "3f2a...")' backend.log
-
-The correlation identifier travels in a :class:`~contextvars.ContextVar`, not
-in a function argument. That matters: a value passed by hand would have to be
-threaded through the service layer, the repository layer and the pipeline
-adapter, and every function that forgot to forward it would silently break the
-trace. A context variable is set once by the HTTP middleware and is then
-visible to every ``logger`` call underneath it, including inside ``async``
-tasks, because each task inherits a copy of the context at creation time.
-
-What must never appear in a log line
-------------------------------------
-NFR-S5 forbids logging file contents. Log the filename, the size and the
-detected MIME type; never the bytes. :func:`get_logger` cannot enforce that --
-it is a review rule, stated here because this is where someone looks when
-deciding what to log.
-
-Relationship with :mod:`backend.core.exceptions`
-------------------------------------------------
-The split is deliberate and is the mechanism behind NFR-S4: the technical
-detail of a failure is written *here*, with a stack trace, while the user
-receives only the Vietnamese ``user_message`` carried by the exception. The
-``request_id`` appears on both sides, so a user quoting the identifier from an
-error screen lets a developer find the exact stack trace behind it.
-"""
+"""Structured JSON logging with per-request correlation identifiers (NFR-S4, NFR-S5)."""
 
 from __future__ import annotations
 

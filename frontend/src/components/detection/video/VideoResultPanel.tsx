@@ -1,6 +1,4 @@
-/**
- * Results of a finished video job (Modernized Deep Navy Theme).
- */
+/** Results list and video summary for a completed video detection job. */
 
 import { useState } from 'react';
 import {

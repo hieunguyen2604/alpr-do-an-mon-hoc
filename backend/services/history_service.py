@@ -1,30 +1,6 @@
 """Querying, exporting and deleting stored detection records.
 
-Sits between the routers and the database and owns every query the history
-screen makes: pagination, free-text search, filtering, sorting, CSV export and
-deletion. Routers hand it validated parameters and receive response models --
-they never see a SQLAlchemy object, and no SQL is written anywhere else.
-
-Why a repository does not appear as a separate layer here
----------------------------------------------------------
-The architecture sketch names a repository between the service and the ORM.
-For this table it would be a pass-through: ``detection_history`` is queried by
-exactly one consumer, with one shape of query, and the "repository" would hold
-a single method per service method with no logic of its own. That indirection
-is worth adding when a second consumer appears or when the storage engine has
-to be swapped. Until then this class *is* the data-access boundary -- it is the
-only place that builds a query against the table -- and the boundary can be
-extracted later without touching a single router, because the routers already
-depend on the response models rather than on the ORM.
-
-Pagination is not optional
---------------------------
-Every listing method takes a page and a size, and there is no unpaginated
-variant to reach for by accident. The table is specified to hold 100 000 rows
-(NFR-SC2); a single ``SELECT *`` against it would materialise every row into
-memory and serialise them all into one response. The export endpoint is the one
-place that legitimately walks the whole table, and it streams rather than
-buffers.
+Provides pagination, filtering, full-text search, CSV export, and deletion (NFR-SC2).
 """
 
 from __future__ import annotations
@@ -154,13 +130,7 @@ class HistoryFilter:
             )
 
 
-# Column headers of the CSV export.
-#
-# Vietnamese on purpose, and it is the same reasoning that governs the error
-# messages in ``backend.core.exceptions``: these strings are *interface text*
-# that happens to live in a Python file. They are read by the person who opens
-# the file in Excel, not by a developer reading the source, so they follow the
-# interface-language rule rather than the source-language rule.
+# Column headers of the CSV export (Vietnamese for end-user Excel export)
 _CSV_HEADERS: Final[tuple[str, ...]] = (
     "ID",
     "Biển số",
@@ -219,13 +189,7 @@ class HistoryService:
             bbox_w=row.bbox_w,
             bbox_h=row.bbox_h,
             is_valid_format=row.is_valid_format,
-            # Vehicle-class fields. Listed explicitly, like every other field
-            # here, rather than relying on `from_attributes`: a mapper that
-            # enumerates its fields fails loudly when the schema gains one it
-            # does not know, whereas an implicit mapping would return the column
-            # for some endpoints and silently omit it for others -- which is
-            # exactly what happened when these three reached the detection
-            # response but not this one.
+            # Explicit vehicle-class fields mapping
             plate_kind=row.plate_kind,
             plate_color=row.plate_color,
             plate_color_confidence=row.plate_color_confidence,
@@ -261,8 +225,7 @@ class HistoryService:
             The narrowed query.
         """
         if criteria.search:
-            # Escape the LIKE wildcards so a plate containing '%' searches for
-            # a literal '%' instead of matching every row.
+            # Escape LIKE wildcards to prevent unintended matches
             needle = criteria.search.strip().replace("\\", "\\\\")
             needle = needle.replace("%", "\\%").replace("_", "\\_")
             pattern = f"%{needle}%"
@@ -360,8 +323,7 @@ class HistoryService:
         criteria = criteria or HistoryFilter()
         criteria.validate()
 
-        # Counted over the same conditions but without the ORDER BY, which the
-        # database would otherwise compute and then throw away.
+        # Count matching records without ORDER BY overhead
         count_statement = self._apply_filter(
             select(func.count()).select_from(DetectionHistory), criteria
         )
@@ -499,8 +461,7 @@ class HistoryService:
         statement = self._apply_sort(statement, sort_by, order)
 
         buffer = io.StringIO()
-        # \r\n is the line terminator Excel expects; the default \n renders the
-        # whole file as a single row in some locales.
+        # Use CRLF line terminators for Excel compatibility
         writer = csv.writer(buffer, lineterminator="\r\n")
 
         def flush() -> str:

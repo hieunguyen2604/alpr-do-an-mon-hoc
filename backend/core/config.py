@@ -1,34 +1,4 @@
-"""Centralised application settings for the ALPR backend.
-
-This module is the single source of truth for configuration. No other module in
-``backend`` may read ``os.environ`` or build a filesystem path from a literal:
-that is the whole content of NFR-M4, and it is what lets the identical code run
-on a Windows development machine and inside the Linux Docker image without an
-edit.
-
-Relationship with the ``ai`` package
-------------------------------------
-``ai.inference.config.InferenceConfig`` is a plain dataclass reading the same
-``ALPR_`` environment prefix, because the ``ai`` package must not import
-Pydantic (NFR-M1). The two configuration objects are therefore *separate types*
-that deliberately share an environment contract: ``ALPR_MODEL_PATH``,
-``ALPR_DEVICE``, ``ALPR_CONF_THRESHOLD``, ``ALPR_IOU_THRESHOLD`` and
-``ALPR_IMGSZ`` mean the same thing to both. One ``.env`` file configures both
-layers, and no value has to be stated twice.
-
-Path resolution
----------------
-Every path is anchored, never trusted as given:
-
-* an **absolute** value is used unchanged;
-* a **relative** storage directory is resolved against :attr:`Settings.storage_root`;
-* a **relative** ``storage_root`` or ``model_path`` is resolved against
-  :data:`PROJECT_ROOT`, which is derived from this file's own location.
-
-The consequence that matters: the process behaves identically no matter which
-working directory it was started from. ``uvicorn`` launched from ``backend/``
-and Alembic launched from the repository root see exactly the same paths.
-"""
+"""Centralised application settings and environment validation for ALPR backend (NFR-M4)."""
 
 from __future__ import annotations
 

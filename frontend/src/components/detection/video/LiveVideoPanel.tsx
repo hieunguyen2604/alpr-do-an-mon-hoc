@@ -1,29 +1,4 @@
-/**
- * Live preview: watch the chosen video with plate boxes drawn over it.
- *
- * Three states, in the order a user meets them:
- *
- * 1. **Chosen.** The video appears immediately, playable and scrubbable, with
- *    no detection running. Seeing the frame is what confirms the right file was
- *    picked, and that answer should not cost a single inference call.
- * 2. **Running.** Pressing the button starts detection against whatever frame
- *    is on screen; boxes track the plates and every reading is appended to the
- *    log below.
- * 3. **Stopped.** The overlay clears — stale boxes over a frame the user has
- *    since scrubbed away from would label the wrong moment — but the log stays,
- *    because that is the thing they stopped to read.
- *
- * Runs beside the background job, not instead of it. The job produces the
- * complete, de-duplicated result and the downloadable per-plate crops; this
- * panel shows what the system is seeing *while* that runs, which is what makes
- * a demonstration legible.
- *
- * Boxes are scaled, never assumed 1:1. The API reports coordinates against the
- * frame it received, which is capped at 960 px on the long edge, while the
- * element on screen is whatever CSS made it. Drawing raw coordinates would put
- * every box in the wrong place, and consistently enough to look like a
- * detection bug rather than a scaling one.
- */
+/** Live preview: watch the chosen video with plate boxes drawn over it. */
 
 import { useEffect, useRef, useState } from 'react';
 import { Play, ScanLine, Square } from 'lucide-react';
@@ -40,29 +15,13 @@ export interface LiveVideoPanelProps {
   file: File;
 }
 
-/**
- * Colour of a box and its label, by whether the plate parsed as a civil format.
- *
- * Two colours only. More would encode information the viewer cannot decode at a
- * glance on a moving image.
- */
+/** Colour of a box and its label, by whether the plate parsed as a civil format. */
 const BOX_COLOURS = {
   valid: '#16a34a',
   invalid: '#ea580c',
 } as const;
 
-/**
- * Playback speed while detection is running.
- *
- * The analysed picture updates a few times a second, and that is bounded by
- * inference cost, not by the player. Halving the playback speed does not make
- * the system faster — it makes each analysed frame cover half as much motion,
- * so the sequence reads as continuous instead of jumping. The clip takes twice
- * as long to watch, which for a fourteen-second demo is a good trade.
- *
- * Reset to 1 when detection stops, so the player behaves normally for anyone
- * scrubbing through the video by hand.
- */
+/** Playback speed while detection is running (slower to allow inference to keep up visually). */
 const ANALYSIS_PLAYBACK_RATE = 0.5;
 
 /** Length of each focus-bracket arm, as a fraction of the shorter box side. */
@@ -71,20 +30,7 @@ const BRACKET_RATIO = 0.28;
 /** Shortest bracket arm worth drawing, in pixels. */
 const MIN_BRACKET = 8;
 
-/**
- * Draw a camera-style focus bracket around one plate.
- *
- * Corner brackets rather than a closed rectangle: a plate is small on screen and
- * a solid box drawn around it covers the very characters the viewer is trying to
- * read. Open corners mark the same region while leaving the glyphs visible.
- *
- * @param context - Target 2-D context.
- * @param x - Left edge, in element pixels.
- * @param y - Top edge, in element pixels.
- * @param width - Box width, in element pixels.
- * @param height - Box height, in element pixels.
- * @param colour - Stroke colour.
- */
+/** Draw a camera-style focus bracket around one plate. */
 function drawFocusBracket(
   context: CanvasRenderingContext2D,
   x: number,
@@ -127,21 +73,13 @@ function drawFocusBracket(
   context.stroke();
 }
 
-/**
- * Live detection preview over the selected video.
- *
- * @param props - The selected video file.
- * @returns The preview card.
- */
+/** Live detection preview over the selected video. */
 export function LiveVideoPanel({ file }: LiveVideoPanelProps): JSX.Element {
   const videoRef = useRef<HTMLVideoElement>(null);
   const overlayRef = useRef<HTMLCanvasElement>(null);
   const [objectUrl, setObjectUrl] = useState<string | null>(null);
 
-  // Starts off. Choosing a file is a request to *see* the video, not yet a
-  // request to spend inference on every frame of it -- and on CPU that spend is
-  // roughly 400 ms per frame, which is not something to begin without being
-  // asked.
+  // Analysis starts disabled on initial file selection
   const [enabled, setEnabled] = useState(false);
 
   const {
@@ -156,16 +94,7 @@ export function LiveVideoPanel({ file }: LiveVideoPanelProps): JSX.Element {
     error,
   } = useLiveVideoDetection({ videoRef, enabled });
 
-  // Stop when the clip finishes. Otherwise the panel stays in its running
-  // state over a frozen last frame, with the seek bar hidden and no way to
-  // replay — and it goes on claiming to be analysing something.
-  //
-  // Keyed on `objectUrl`, not on nothing: the <video> element is only rendered
-  // once the object URL exists, so an effect with an empty dependency list runs
-  // while `videoRef.current` is still null and attaches the listener to
-  // nothing. That is exactly what happened first time round — capture stopped
-  // correctly but the button went on saying "Dừng nhận dạng" over a finished
-  // clip.
+  // Stop analysis and reset state when playback ends
   useEffect(() => {
     const video = videoRef.current;
     if (video === null) {
@@ -176,10 +105,7 @@ export function LiveVideoPanel({ file }: LiveVideoPanelProps): JSX.Element {
     return () => video.removeEventListener('ended', handleEnded);
   }, [objectUrl]);
 
-  // The button drives playback as well as detection. Separating them made the
-  // two easy to leave out of step -- detection running against a paused frame,
-  // or a video playing with nothing reading it -- and there is no use for
-  // either state. One control, one meaning: "analyse this video".
+  // Synchronize video playback with detection state
   useEffect(() => {
     const video = videoRef.current;
     if (video === null) {
@@ -187,9 +113,6 @@ export function LiveVideoPanel({ file }: LiveVideoPanelProps): JSX.Element {
     }
     if (enabled) {
       video.playbackRate = ANALYSIS_PLAYBACK_RATE;
-      // Started from a click, so the autoplay policy is satisfied; a rejection
-      // here means the file itself will not play and the empty overlay already
-      // says so.
       void video.play().catch(() => {});
     } else {
       video.playbackRate = 1;
@@ -197,8 +120,7 @@ export function LiveVideoPanel({ file }: LiveVideoPanelProps): JSX.Element {
     }
   }, [enabled]);
 
-  // Every createObjectURL holds the file in memory until revoked. Without the
-  // cleanup, choosing five videos in a row keeps all five alive.
+  // Revoke object URL on unmount or file change
   useEffect(() => {
     const url = URL.createObjectURL(file);
     setObjectUrl(url);
@@ -232,14 +154,7 @@ export function LiveVideoPanel({ file }: LiveVideoPanelProps): JSX.Element {
         return;
       }
 
-      // A <video> letterboxes: it preserves the source aspect ratio and centres
-      // the picture inside the element, padding the remainder with black. The
-      // canvas covers the whole element, so scaling by the element's size
-      // stretches every box across the padding as well and slides it away from
-      // the plate — boxes drift left and can land entirely inside a black bar,
-      // which reads as a detector fault rather than a drawing one.
-      //
-      // Scale against the *picture* rectangle and offset by the padding.
+      // Calculate video letterboxing scale and padding offset
       const frameAspect = frameWidth / frameHeight;
       const elementAspect = width / height;
       const pictureWidth = elementAspect > frameAspect ? height * frameAspect : width;
@@ -407,21 +322,7 @@ interface LiveDetectionLogProps {
   isRunning: boolean;
 }
 
-/**
- * One row per **plate**, not per sighting.
- *
- * A vehicle stays in shot for several seconds and is read in every frame that
- * catches it, so an unmerged list says the same number a dozen times and pushes
- * anything new off the screen. Merging also matches how the background job
- * reports: one row per plate, however many frames it appeared in.
- *
- * Each row carries the raw OCR string next to the corrected one whenever they
- * differ. That comparison is the only place the post-processing stage is
- * visible to a viewer, and it is a large part of what this project claims.
- *
- * @param props - The merged plates and whether detection is currently running.
- * @returns The log section.
- */
+/** One row per plate, not per sighting (merges duplicate reads). */
 function LiveDetectionLog({ plates, isRunning }: LiveDetectionLogProps): JSX.Element {
   return (
     <section className="rounded-lg border border-border">

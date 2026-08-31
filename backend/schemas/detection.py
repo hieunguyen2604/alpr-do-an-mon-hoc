@@ -1,30 +1,4 @@
-"""Pydantic v2 schemas: the API's wire contract and its Swagger documentation.
-
-These classes define what the API accepts and returns. They are deliberately
-*not* the ORM models: the database schema and the public JSON contract are
-allowed to change independently, and a column added for an internal reason
-should not automatically appear in a public response. The clearest example is
-``DetectionJob.error_message``, which holds a technical failure description and
-is never serialised for a user (NFR-S4).
-
-Every field carries ``description=`` in English, because those strings are what
-Swagger renders -- they are the API documentation, generated rather than
-written separately so it cannot drift out of date.
-
-Responses that read from ORM objects set ``from_attributes=True``, which lets
-a router return a SQLAlchemy row directly and have Pydantic map it by
-attribute name. Column names were chosen to match these field names for exactly
-that reason.
-
-A note on statistics
---------------------
-:class:`StatisticsResponse` separates counts *of uploads* from counts *of
-plates*, and names them so they cannot be mixed up. An image containing three
-plates is one upload and three plates. Reporting the latter as usage would
-overstate how much the system was used by the average number of plates per
-image -- which is why the field is called ``total_jobs`` rather than
-``total_detections``.
-"""
+"""Pydantic v2 schemas: API wire contract, request/response models, and OpenAPI schema."""
 
 from __future__ import annotations
 

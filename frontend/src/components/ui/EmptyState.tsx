@@ -1,10 +1,4 @@
-/**
- * Placeholder for a view that loaded successfully but has nothing to show.
- *
- * Kept distinct from {@link ErrorState}. "No results match this filter" and
- * "the request failed" are different situations, and showing an error for an
- * empty result sends the user off to debug a system that is working.
- */
+/** Placeholder for a view that loaded successfully but has nothing to show. */
 
 import type { ReactNode } from 'react';
 
@@ -12,12 +6,7 @@ import { cn } from '@/lib/cn';
 
 /** Props of {@link EmptyState}. */
 export interface EmptyStateProps {
-  /**
-   * Illustrative icon, typically a `lucide-react` element.
-   *
-   * Rendered decoratively — the title carries the meaning, so nothing is lost
-   * when the icon is not announced.
-   */
+  /** Illustrative icon, typically a `lucide-react` element (rendered decoratively). */
   icon?: ReactNode;
   /** Short statement of what is missing. */
   title: string;
@@ -28,12 +17,7 @@ export interface EmptyStateProps {
   className?: string;
 }
 
-/**
- * Render an empty state.
- *
- * @param props - Icon, title, description and optional action.
- * @returns The empty-state element.
- */
+/** Render an empty state. */
 export function EmptyState({
   icon,
   title,

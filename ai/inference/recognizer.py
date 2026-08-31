@@ -1,32 +1,4 @@
-"""PaddleOCR-backed implementation of :class:`~ai.inference.interfaces.BaseRecognizer`.
-
-This module reads the characters off a cropped plate. It does **not** correct
-or validate them: that is :class:`~ai.inference.interfaces.BaseNormalizer`'s
-job, and keeping the two apart is what makes the contribution of
-post-processing measurable (``raw_ocr_text`` versus ``plate_number`` in
-``detection_history``).
-
-Choice of engine -- and an honest caveat
-----------------------------------------
-PP-OCRv5 mobile is used as the **baseline**, not as a proven optimum. The
-Phase 1 survey found *no* public evidence that PaddleOCR outperforms EasyOCR on
-license-plate imagery; the one reproducible comparison that was located
-actually favoured EasyOCR. Presenting PaddleOCR as "the accurate one" would
-therefore be unsupported.
-
-This is precisely why :class:`~ai.inference.interfaces.BaseRecognizer` exists.
-Adding an EasyOCR recogniser means writing a second subclass in this package
-and changing which one is constructed at start-up -- nothing else in the
-pipeline, the services or the routers moves. The Phase 4 benchmark, run on this
-project's own dataset, is what decides which engine ships.
-
-Two-line plates
----------------
-The hard case (risk R-04) is delegated to :mod:`ai.inference.two_line`: a crop
-whose aspect ratio suggests two rows is split into overlapping halves and
-re-stacked side by side into a single-line strip before OCR runs. See that
-module for why this is necessary.
-"""
+"""PaddleOCR-backed implementation of BaseRecognizer for text recognition on license plates."""
 
 from __future__ import annotations
 
@@ -346,10 +318,7 @@ class PaddleOcrRecognizer(BaseRecognizer):
                 downscale_to_height=_MAX_OCR_HEIGHT,
             )
         else:
-            # The scale cap is a correctness requirement of the engine, not part
-            # of the enhancement chain, so disabling pre-processing for an
-            # ablation must not disable it -- otherwise the ablation measures
-            # the detector failing to fire rather than what CLAHE contributes.
+            # Scale cap is preserved during ablation to avoid detector firing failures
             ocr_input = preprocess_plate(
                 ocr_input,
                 to_grayscale=False,
@@ -364,15 +333,7 @@ class PaddleOcrRecognizer(BaseRecognizer):
         text = "".join(raw_text.split()).upper()
         confidence = _aggregate_confidence(texts, scores)
 
-        # Where the serial ends on a two-line plate. The halves were stacked
-        # side by side above, so the engine returns one fragment per half and
-        # the first fragment IS the upper line -- `67C` (three characters, one
-        # letter of serial) versus `77H5` (four, two characters of serial).
-        # That distinction is invisible in the flat string and decides whether
-        # the number is grouped as five digits or four.
-        #
-        # Stays 0 when the engine returned a single fragment, which means the
-        # upper line was not read: absent evidence, not wrong evidence.
+        # Upper-line length tracks serial boundary for two-line plates (0 if unread)
         upper_char_count = 0
         if line_count == 2 and len(texts) >= 2:
             upper_char_count = sum(1 for ch in texts[0] if ch.isalnum())
@@ -480,10 +441,7 @@ class PaddleOcrRecognizer(BaseRecognizer):
         if self._config.ocr_skip_detection:
             return self._build_recognition_only_engine(TextRecognition, device)
 
-        # Both sub-model names are pinned together, or neither is. Supplying
-        # only one makes PaddleOCR ignore lang/ocr_version for the other and
-        # fall back to its own default -- in that state it silently selected
-        # PP-OCRv6_medium_rec, a different model generation entirely.
+        # Pinned sub-model names ensure consistent architecture selection
         recognition_model = RECOGNITION_MODEL_BY_LANG.get(self._config.ocr_lang)
         if recognition_model is not None:
             model_kwargs: dict[str, Any] = {
@@ -497,10 +455,7 @@ class PaddleOcrRecognizer(BaseRecognizer):
                 and rec_dir.is_dir()
                 and (rec_dir / "inference.pdiparams").exists()
             ):
-                # A fine-tuned recognition model (ai/training). The model NAME
-                # stays pinned so PaddleOCR resolves the right architecture and
-                # pre/post-processing; the DIR overrides where the weights and
-                # the exported dictionary come from.
+                # Fine-tuned recognition model directory override
                 model_kwargs["text_recognition_model_dir"] = str(rec_dir)
                 selection += f", rec_dir={rec_dir}"
 
@@ -527,27 +482,7 @@ class PaddleOcrRecognizer(BaseRecognizer):
             self._engine = PaddleOCR(
                 device=device,
                 enable_mkldnn=self._enable_mkldnn,
-                # A plate crop contains a single text region, so the
-                # document-level pre-processing stages cost latency for little
-                # return here.
-                #
-                # This comment used to add "and is already deskewed by the
-                # detector", which is false: a YOLO box is axis-aligned and
-                # deskews nothing. A plate photographed from the kerb arrives
-                # tilted, and the tilt survives cropping. The consequence is
-                # measurable -- on frame 168 of ``demo/demo-video.mp4`` a
-                # legible ``77-H5 / 4374`` yields a 146x42 box, aspect ratio
-                # 3.48, so :func:`~ai.inference.two_line.estimate_line_count`
-                # calls a two-line plate one-line and OCR returns nothing.
-                # Forcing the two-line path does not rescue it either, because a
-                # horizontal cut crosses both rows diagonally.
-                #
-                # The project's own decision log describes the two-line pipeline
-                # as "rectify -> classify -> split -> hstack -> OCR". The
-                # rectify stage does not exist in this codebase. Turning these
-                # flags on is not the fix -- they unwarp documents, not plates --
-                # but the missing stage should not hide behind a false claim
-                # that something else already did the work.
+                # Plate crop is a single text region, document-level pre-processing skipped for latency
                 use_doc_orientation_classify=False,
                 use_doc_unwarping=False,
                 use_textline_orientation=False,
@@ -704,12 +639,7 @@ def _parse_ocr_output(raw_results: Any) -> tuple[list[str], list[float]]:
         scores = _lookup(result, "rec_scores") or []
 
         if not texts:
-            # Recognition-only mode (``ocr_skip_detection``). ``TextRecognition``
-            # reads the whole strip in one pass, so it reports a single
-            # ``rec_text``/``rec_score`` rather than the pipeline's plural
-            # fields, and no polygons at all. Everything downstream already
-            # copes with absent geometry, so the singular payload only has to be
-            # widened into a one-element list here.
+            # Recognition-only mode: wrap singular text/score into list without polygons
             single = _lookup(result, "rec_text")
             if single:
                 texts = [single]

@@ -1,17 +1,4 @@
-/**
- * Detection history: search, filter, sort, inspect and delete stored results.
- *
- * Covers FR-4.3 to FR-4.8 (list, search, filter, sort, detail) and FR-5.1 to
- * FR-5.2 (delete a record with its media, export the current selection to CSV).
- *
- * Each row is one **license plate**, not one upload. Rows sharing a
- * `source_job_id` came from the same image or video — which is why the dashboard
- * headline counts jobs while this table lists plates, and why the two numbers
- * are expected to differ.
- *
- * All filter, sort and page state lives in the URL (see `useHistoryQuery`), so
- * the view survives a reload and can be shared as a link.
- */
+/** Detection history: search, filter, sort, inspect, delete, and export (FR-4.3 to FR-4.8, FR-5.1 to FR-5.2). */
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
@@ -46,11 +33,7 @@ import type { DetectionHistory, HistoryListResponse, SortOrder } from '@/types';
 /** How long a transient confirmation stays on screen, in milliseconds. */
 const NOTICE_TIMEOUT_MS = 4000;
 
-/**
- * History page.
- *
- * @returns The history view.
- */
+/** History page view. */
 export default function History(): JSX.Element {
   const {
     query,
@@ -91,9 +74,7 @@ export default function History(): JSX.Element {
   const [deleteError, setDeleteError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
 
-  // Monotonic counter: only the newest request may write to state. A user
-  // changing two filters quickly has two requests in flight, and without this
-  // the slower one can land last and show rows matching neither filter.
+  // Monotonic request counter ensures latest query result wins
   const requestSequenceRef = useRef(0);
   const abortControllerRef = useRef<AbortController | null>(null);
   const isMountedRef = useRef(true);
@@ -106,13 +87,7 @@ export default function History(): JSX.Element {
     };
   }, []);
 
-  /**
-   * Fetch the page of history described by the current query.
-   *
-   * The previous request is aborted rather than merely ignored: while typing
-   * into the search box the browser would otherwise hold several connections
-   * open for answers that are already stale.
-   */
+  /** Fetch the page of history described by the current query (aborts stale requests). */
   const loadHistory = useCallback(async (): Promise<void> => {
     abortControllerRef.current?.abort();
     const controller = new AbortController();
@@ -132,8 +107,7 @@ export default function History(): JSX.Element {
       if (!isMountedRef.current || requestId !== requestSequenceRef.current) {
         return;
       }
-      // A cancellation is this page's own doing, not a failure the user needs
-      // to see; the request that replaced it will report its own outcome.
+      // Silently ignore aborted requests
       if (isApiError(caught) && caught.code === 'CANCELLED') {
         return;
       }
@@ -149,8 +123,7 @@ export default function History(): JSX.Element {
     void loadHistory();
   }, [loadHistory]);
 
-  // Clear the transient confirmation on its own, so it does not linger over an
-  // unrelated action later.
+  // Auto-clear transient feedback messages
   useEffect(() => {
     if (!notice) {
       return;
@@ -161,16 +134,10 @@ export default function History(): JSX.Element {
     };
   }, [notice]);
 
-  /**
-   * Apply a sort asked for by a column header (FR-4.8).
-   *
-   * @param key - Column key, which is also the API's `sort_by` value.
-   * @param nextOrder - Direction the table worked out.
-   */
+  /** Apply a sort asked for by a column header (FR-4.8). */
   const handleSortChange = useCallback(
     (key: string, nextOrder: SortOrder): void => {
-      // The table reports a plain string; only fields the API accepts are
-      // forwarded, so a future non-sortable column cannot cause a 422.
+      // Forward only valid sortable fields
       if (isHistorySortField(key)) {
         setSort(key, nextOrder);
       }
@@ -178,11 +145,7 @@ export default function History(): JSX.Element {
     [setSort],
   );
 
-  /**
-   * Ask to delete a record, from either the table or the detail dialog.
-   *
-   * @param record - The record to delete.
-   */
+  /** Ask to delete a record, from either the table or the detail dialog. */
   const requestDelete = useCallback((record: DetectionHistory): void => {
     setDeleteError(null);
     setRecordToDelete(record);
@@ -207,9 +170,8 @@ export default function History(): JSX.Element {
       setSelectedRecord(null);
       setNotice('Đã xoá bản ghi cùng với ảnh liên quan trên máy chủ.');
 
+      // Step back one page if current page becomes empty after deletion
       if (wasLastRowOfPage) {
-        // Reloading in place would land on a page that no longer exists and
-        // show an empty table; stepping back one page re-triggers the fetch.
         setPage(page - 1);
       } else {
         await loadHistory();
@@ -300,9 +262,7 @@ export default function History(): JSX.Element {
             isRetrying={isLoading}
           />
         ) : records.length === 0 ? (
-          // The two empty cases are deliberately different. "Nothing matches
-          // this filter" is a dead end unless the way out is offered with it,
-          // whereas "nothing recorded yet" is a working system with no data.
+          // Distinguish between filtered empty state and clean empty database
           hasActiveFilters ? (
             <EmptyState
               icon={<SearchX className="h-6 w-6" />}
