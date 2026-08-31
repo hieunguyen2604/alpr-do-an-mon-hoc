@@ -12,7 +12,7 @@ Thư mục này chứa **khung nội dung**, không chứa file slide đã dựn
 |---|---|:--:|
 | [`SLIDE_PLAN.md`](SLIDE_PLAN.md) | **Kế hoạch chi tiết slide** — So sánh & kịch bản ĐATN vs Đồ án môn | ✅ Mới |
 | [`10-slides.md`](10-slides.md) | **Nguồn của bộ slide chiếu** — 29 slide, chỉ gạch đầu dòng | ✅ Xong |
-| [`10-slides-outline.md`](10-slides-outline.md) | Kịch bản trình bày: speaker notes + ngân sách thời gian 15 phút | ✅ Xong |
+| [`10-kich-ban-noi.md`](10-kich-ban-noi.md) | Kịch bản nói 24 slide: lời nói, ngân sách thời gian 15 phút | ✅ Xong |
 | [`11-slides-ky-thuat.md`](11-slides-ky-thuat.md) | Bộ slide báo cáo kỹ thuật (11 slide) | ✅ Xong |
 | [`12-slides-mon-hoc.md`](12-slides-mon-hoc.md) | Bộ slide đồ án môn học (16 slide) | ✅ Xong |
 | [`10-defense-qa.md`](10-defense-qa.md) | 40+ câu hỏi phản biện, câu trả lời, cảnh báo trả lời sai | ✅ Xong |
@@ -30,7 +30,7 @@ Thư mục này chứa **khung nội dung**, không chứa file slide đã dựn
 | File | Dùng để | Ai đọc |
 |---|---|---|
 | `10-slides.md` | **Chiếu lên màn hình** — 29 slide, mỗi slide vài gạch đầu dòng | Hội đồng nhìn |
-| `10-slides-outline.md` | Kịch bản: lời nói, số liệu chi tiết, ngân sách thời gian | Người trình bày đọc trước |
+| `10-kich-ban-noi.md` | Kịch bản nói: lời nói, ngân sách thời gian, khung 'nếu bị hỏi' | Người trình bày đọc trước |
 
 Chỉ `10-slides.md` được xuất ra `slides.pptx`. Trước 28/07/2026 build lấy từ
 file outline và cho ra **51 slide** dày đặc bảng biểu và speaker notes — hội
@@ -172,7 +172,7 @@ style: |
 ![w:800](../images/split-hstack.svg)
 
 <!--
-Speaker notes: chép nguyên phần SPEAKER NOTES của S13 trong 10-slides-outline.md vào đây.
+Speaker notes: lấy từ mục tương ứng trong 10-kich-ban-noi.md.
 Marp đưa nội dung comment này vào phần notes khi xuất PPTX.
 -->
 ```

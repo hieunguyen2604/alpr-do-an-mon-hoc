@@ -203,7 +203,7 @@ backend/.venv/Scripts/python.exe scripts/build_thesis.py --no-docx
 
 # Ghép Markdown và, nếu tìm thấy Pandoc, kết xuất thêm:
 #   docs/papers/thesis-full.docx  (từ bản ghép, --from gfm --toc --toc-depth=3)
-#   docs/slides/slides.pptx       (từ docs/slides/10-slides-outline.md)
+#   docs/slides/slides.pptx       (từ docs/slides/10-slides.md)
 backend/.venv/Scripts/python.exe scripts/build_thesis.py
 
 # Ghi bản ghép ra vị trí khác

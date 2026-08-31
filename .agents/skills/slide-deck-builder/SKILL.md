@@ -32,7 +32,7 @@ Skill này cung cấp các nguyên tắc vàng, cấu trúc chuẩn, quy tắc k
 
 ### A. Slide Đồ Án Tốt Nghiệp (15–20 phút)
 - **Tệp nguồn:** `docs/slides/10-slides.md` (**37 slide** `##`, gồm cả khối backup; `check_slides.ps1` báo 38 vì tính thêm trang tiêu đề)
-- **Kịch bản:** `docs/slides/10-slides-outline.md`
+- **Kịch bản:** `docs/slides/10-kich-ban-noi.md`
 - **Phân bổ thời gian (900s):**
   - Khối 1: Tổng quan & Đặc thù biển số VN (S1–S8 · 240s)
   - Khối 2: Kiến trúc 5 tầng & Pipeline AI (S9–S13 · 210s)

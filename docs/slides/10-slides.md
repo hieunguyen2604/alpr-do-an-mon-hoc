@@ -11,7 +11,7 @@ date: "Tháng 9 năm 2026"
 BỘ SLIDE TRÌNH CHIẾU — cố ý ngắn.
 
 Đây là thứ CHIẾU LÊN MÀN HÌNH. Lời nói, số liệu chi tiết, bảng đầy đủ và kịch
-bản trả lời phản biện nằm ở `10-slides-outline.md` và `10-defense-qa.md`.
+bản trả lời phản biện nằm ở `10-kich-ban-noi.md` và `10-defense-qa.md`.
 Không chuyển nội dung từ hai file đó sang đây: một slide đọc được trong 5 giây
 thì hội đồng nghe người nói; một slide đầy chữ thì hội đồng đọc slide.
 
