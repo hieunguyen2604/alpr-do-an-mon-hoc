@@ -20,9 +20,9 @@
 
 ### 4.2.1. Chỉ số tổng thể
 
-**Cả bốn chỉ tiêu của bộ phát hiện đều đạt mục tiêu**, đo bằng công cụ đánh giá chuẩn của thư viện tại ngưỡng tin cậy 0,25.
+**Cả bốn chỉ tiêu của bộ phát hiện đều đạt mục tiêu**, đo bằng công cụ đánh giá chuẩn của thư viện tại ngưỡng tin cậy 0,25 (Bảng 4.1).
 
-**Bảng 4.1.** Kết quả phát hiện trên tập kiểm thử 1.514 ảnh
+**Bảng 4.1.**[]{#tbl-4-1} Kết quả phát hiện trên tập kiểm thử 1.514 ảnh
 
 | Chỉ số | Ngưỡng tối thiểu | Mục tiêu | Đo được | |
 |---|:--:|:--:|---:|:--:|
@@ -36,7 +36,7 @@ Ba lưu ý khi đọc bảng này. **Một,** bài toán chỉ có **một lớp
 
 ### 4.2.2. Tách theo bố cục biển
 
-**Bảng 4.2.** Kết quả phát hiện tách theo biển một dòng và hai dòng
+**Bảng 4.2.**[]{#tbl-4-2} Kết quả phát hiện tách theo biển một dòng và hai dòng
 
 | Chỉ số | Biển **một dòng** | Biển **hai dòng** | Chênh (điểm %) |
 |---|---:|---:|---:|
@@ -49,9 +49,9 @@ Chênh lệch giữa hai bố cục ở tầng phát hiện chỉ **2,09 điểm
 
 ### 4.2.3. Tách theo kích thước đối tượng
 
-Mục này tồn tại vì bộ dữ liệu có **10,91% số hộp bao chiếm dưới 0,5% diện tích ảnh** — vượt ngưỡng chất lượng 10% mà đồ án tự đặt. Đối tượng nhỏ là chế độ thất bại đã ghi nhận rộng rãi của bộ phát hiện một giai đoạn, nên một con số mAP tổng sẽ **giấu chế độ thất bại đó sau giá trị trung bình**.
+Mục này tồn tại vì bộ dữ liệu có **10,91% số hộp bao chiếm dưới 0,5% diện tích ảnh** — vượt ngưỡng chất lượng 10% mà đồ án tự đặt. Đối tượng nhỏ là chế độ thất bại đã ghi nhận rộng rãi của bộ phát hiện một giai đoạn, nên một con số mAP tổng sẽ **giấu chế độ thất bại đó sau giá trị trung bình** (Bảng 4.3).
 
-**Bảng 4.3.** Kết quả phát hiện tách theo dải kích thước hộp bao
+**Bảng 4.3.**[]{#tbl-4-3} Kết quả phát hiện tách theo dải kích thước hộp bao
 
 | Dải (diện tích hộp / diện tích ảnh) | Số đối tượng | mAP@0,5 | mAP@0,5:0,95 | Recall |
 |---|---:|---:|---:|---:|
@@ -63,13 +63,13 @@ Mục này tồn tại vì bộ dữ liệu có **10,91% số hộp bao chiếm 
 
 † Dòng này chỉ có 28 đối tượng, dưới ngưỡng 30 nên không có ý nghĩa thống kê và không được dùng để so sánh.
 
-Điểm yếu duy nhất của bộ phát hiện lộ ra ở đây: dải **rất nhỏ** rớt xuống mAP@0,5 = 0,8553 và mAP@0,5:0,95 = 0,5249, tức **hộp bao vừa dễ bỏ sót vừa kém khít**. Với biển số, hộp kém khít kéo theo hậu quả dây chuyền: vùng cắt lệch làm tỉ lệ khung hình đo sai, khiến bước ước lượng số dòng ở mục 3.4.3 phân loại nhầm.
+Điểm yếu duy nhất của bộ phát hiện lộ ra ở đây: dải **rất nhỏ** rớt xuống mAP@0,5 = 0,8553 và mAP@0,5:0,95 = 0,5249, tức **hộp bao vừa dễ bỏ sót vừa kém khít**. Với biển số, hộp kém khít kéo theo hậu quả dây chuyền: vùng cắt lệch làm tỉ lệ khung hình đo sai, khiến bước ước lượng số dòng ở mục 3.4.3 phân loại nhầm (Bảng 4.4).
 
 ## 4.3. Kết quả nhận dạng ký tự
 
 ### 4.3.1. Mức ký tự và đóng góp của khối hậu xử lý
 
-**Bảng 4.4.** Độ chính xác trước và sau hậu xử lý, trên 2.801 biển có nhãn chuỗi
+**Bảng 4.4.**[]{#tbl-4-4} Độ chính xác trước và sau hậu xử lý, trên 2.801 biển có nhãn chuỗi
 
 | Chỉ số | Ngưỡng tối thiểu | Mục tiêu | **Trước** | **Sau** | Chênh |
 |---|:--:|:--:|---:|---:|---:|
@@ -81,11 +81,11 @@ Mục này tồn tại vì bộ dữ liệu có **10,91% số hộp bao chiếm 
 
 **Khối hậu xử lý đóng góp +13,28 điểm, sửa đúng 372 biển và không làm hỏng biển nào.** Con số "0 biển bị làm hỏng" không phải may mắn mà là hệ quả của nguyên tắc thiết kế ở mục 3.6d: biểu thức chính quy được thử **trước** khi sửa bất cứ thứ gì, nên chuỗi vốn đã hợp lệ không bao giờ bị can thiệp.
 
-Phân rã lỗi ký tự cho một manh mối quan trọng: **số ký tự bị xoá ($D$ = 1.272) lớn hơn số bị thay thế ($S$ = 862)**. Hồ sơ lỗi thiên về *xoá* có cách giải thích tự nhiên là **mất hẳn một dòng** — đúng cơ chế đã dự đoán ở mục 2.4.2.
+Phân rã lỗi ký tự cho một manh mối quan trọng: **số ký tự bị xoá ($D$ = 1.272) lớn hơn số bị thay thế ($S$ = 862)**. Hồ sơ lỗi thiên về *xoá* có cách giải thích tự nhiên là **mất hẳn một dòng** — đúng cơ chế đã dự đoán ở mục 2.4.2 (Bảng 4.5).
 
 ### 4.3.2. Tách theo bố cục — kết quả quan trọng nhất của chương
 
-**Bảng 4.5.** Độ chính xác nhận dạng tách theo biển một dòng và hai dòng
+**Bảng 4.5.**[]{#tbl-4-5} Độ chính xác nhận dạng tách theo biển một dòng và hai dòng
 
 | Chỉ số | Biển **một dòng** | Biển **hai dòng** | Chênh (điểm %) |
 |---|---:|---:|---:|
@@ -97,7 +97,7 @@ Phân rã lỗi ký tự cho một manh mối quan trọng: **số ký tự bị
 
 ![](figures/fig-ch4-layout.png)
 
-**Hình 4.1.** Đối chiếu biển một dòng và hai dòng trên ba chỉ số
+**Hình 4.1.**[]{#fig-4-1} Đối chiếu biển một dòng và hai dòng trên ba chỉ số
 
 Chênh lệch mà tầng phát hiện gần như che khuất (2,09 điểm ở Bảng 4.2) **lộ ra ở tầng nhận dạng với biên độ khác hẳn cấp**: 5,45 điểm ở mức ký tự, **23,07 điểm** ở S₁, **38,18 điểm** ở S₀.
 
@@ -113,9 +113,9 @@ Ba kết luận rút ra:
 
 ### 4.3.3. Ma trận nhầm lẫn ký tự và mức chính xác của bảng luật
 
-Mục 3.6c đã nêu một giới hạn: bảng ánh xạ nhầm lẫn ban đầu **suy từ hình dạng ký tự chứ không từ đo đạc**. Mục này kiểm chứng nó bằng ma trận nhầm lẫn 36 × 36 đo được, và kết quả đã được dùng để **sửa lại chính bảng đó**.
+Mục 3.6c đã nêu một giới hạn: bảng ánh xạ nhầm lẫn ban đầu **suy từ hình dạng ký tự chứ không từ đo đạc**. Mục này kiểm chứng nó bằng ma trận nhầm lẫn 36 × 36 đo được, và kết quả đã được dùng để **sửa lại chính bảng đó** (Bảng 4.6).
 
-**Bảng 4.6.** Mười cặp ký tự bị nhầm nhiều nhất, đối chiếu bảng luật hiện hành
+**Bảng 4.6.**[]{#tbl-4-6} Mười cặp ký tự bị nhầm nhiều nhất, đối chiếu bảng luật hiện hành
 
 | Hạng | Nhầm | Số lần | Tỉ lệ trong tổng lỗi thay thế | Bảng luật có phủ? |
 |:---:|:---:|---:|---:|---|
@@ -138,9 +138,9 @@ Hướng cải thiện rõ ràng: **thay bảng suy đoán bằng bảng trích 
 
 Câu hỏi: chọn PaddleOCR có đúng không, khi một số tài liệu công khai lại nghiêng về EasyOCR?
 
-**Thiết kế thí nghiệm.** Cả ba bộ nhận dạng chạy trong **đúng một tầng bao quanh** — sao đúng chuỗi bước xử lý ảnh của bản bàn giao — trên **cùng một mảng ảnh đã chuẩn bị xong**; khác biệt duy nhất còn lại là bộ nhận dạng. Điều này quan trọng, vì bốn lượt chạy đầu đều cho số vô nghĩa và mỗi lượt hỏng lộ ra một điều kiện bắt buộc. Bài học chung: **phần lớn năng lực đọc biển số không nằm trong bộ nhận dạng mà ở tầng xử lý ảnh bao quanh nó** — so sánh ba bộ nhận dạng với ba tầng bao quanh khác nhau là đo tầng bao quanh chứ không đo bộ nhận dạng.
+**Thiết kế thí nghiệm.** Cả ba bộ nhận dạng chạy trong **đúng một tầng bao quanh** — sao đúng chuỗi bước xử lý ảnh của bản bàn giao — trên **cùng một mảng ảnh đã chuẩn bị xong**; khác biệt duy nhất còn lại là bộ nhận dạng. Điều này quan trọng, vì bốn lượt chạy đầu đều cho số vô nghĩa và mỗi lượt hỏng lộ ra một điều kiện bắt buộc. Bài học chung: **phần lớn năng lực đọc biển số không nằm trong bộ nhận dạng mà ở tầng xử lý ảnh bao quanh nó** — so sánh ba bộ nhận dạng với ba tầng bao quanh khác nhau là đo tầng bao quanh chứ không đo bộ nhận dạng (Bảng 4.7).
 
-**Bảng 4.7.** So sánh ba bộ nhận dạng trên 2.801 biển số Việt Nam
+**Bảng 4.7.**[]{#tbl-4-7} So sánh ba bộ nhận dạng trên 2.801 biển số Việt Nam
 
 | bộ nhận dạng | Tắt bước tách-ghép | Có tách-ghép | + hậu xử lý | Riêng biển 2 dòng |
 |---|---:|---:|---:|---:|
@@ -170,9 +170,9 @@ Mục này là lý do các bước ở mục 3.4 được thiết kế bật t�
 
 ### 4.4.1. Ghép rồi đọc một lần, so với đọc riêng từng nửa
 
-Thí nghiệm A/B trên **200 biển hai dòng** với hạt giống ngẫu nhiên cố định:
+Thí nghiệm A/B trên **200 biển hai dòng** với hạt giống ngẫu nhiên cố định cho kết quả ở Bảng 4.8.
 
-**Bảng 4.8.** Hai chiến lược đọc biển hai dòng
+**Bảng 4.8.**[]{#tbl-4-8} Hai chiến lược đọc biển hai dòng
 
 | Phương án | Đúng | Chuỗi rỗng | Thời gian |
 |---|---:|---:|---:|
@@ -189,7 +189,7 @@ Nguyên nhân đọc được ngay trong dữ liệu, và nó chính là hệ qu
 
 Bậc thang nắn hình và giãn dọc ở mục 3.4.6 cải thiện thêm **34 biển đọc đúng**. Cái giá đo được:
 
-**Bảng 4.9.** Ảnh hưởng của bậc thang thử lại lên độ trễ
+**Bảng 4.9.**[]{#tbl-4-9} Ảnh hưởng của bậc thang thử lại lên độ trễ
 
 | Chỉ số | Tắt bậc thang | Bật bậc thang *(bản bàn giao)* | Chênh |
 |---|---:|---:|---:|
@@ -214,13 +214,13 @@ Một mình bậc siêu phân giải đẩy p95 lên **1.514,26 ms**, tức **v�
 
 **Nhưng số 0 đó phải đọc cho đúng, và đây là điểm phương pháp luận đáng nêu.** Cổng vào bậc siêu phân giải chỉ mở cho vùng cắt **nhỏ hơn 200 điểm ảnh**, và trong ngữ liệu đo **0 trên 120 mẫu lọt qua cổng đó**. Nói cách khác, quyết định tắt dựa trên **"chi phí đã đo, lợi ích chưa ai đo được"** — không phải trên "đã đo và thấy vô dụng". Mã và công tắc vì vậy được **giữ nguyên**, để đo lại khi có ngữ liệu chứa biển thật sự nhỏ.
 
-Phân biệt này quan trọng: một số 0 do *thiếu điều kiện quan sát* khác hẳn một số 0 do *đã quan sát và thấy bằng không*.
+Phân biệt này quan trọng: một số 0 do *thiếu điều kiện quan sát* khác hẳn một số 0 do *đã quan sát và thấy bằng không* (Bảng 4.10).
 
 ## 4.5. Hiệu năng
 
 ### 4.5.1. Phân rã ngân sách độ trễ
 
-**Bảng 4.10.** Phân rã thời gian xử lý một biển số
+**Bảng 4.10.**[]{#tbl-4-10} Phân rã thời gian xử lý một biển số
 
 | Bước | Đo được (ms) | % tổng |
 |---|---:|---:|
@@ -231,21 +231,21 @@ Phân biệt này quan trọng: một số 0 do *thiếu điều kiện quan sá
 | Hậu xử lý và kiểm tra hợp lệ | 0,03 | 0,0% |
 | **Tổng suy luận thuần** | **146,63** | **100%** |
 
-Ba nhận xét. **Một, điểm nghẽn là khối nhận dạng ký tự** (64,3%) chứ không phải bộ phát hiện (34,0%). Nguyên nhân: PaddleOCR là một **đường ống nhiều giai đoạn** — phát hiện văn bản, phân loại hướng, rồi mới nhận dạng — thiết kế cho ảnh tài liệu tổng quát, nên hệ thống trả chi phí cho những năng lực mà một vùng biển đã cắt sẵn không cần.
+Ba nhận xét. **Một, điểm nghẽn là khối nhận dạng ký tự** (60,8%) chứ không phải bộ phát hiện (38,0%). Nguyên nhân: PaddleOCR là một **đường ống nhiều giai đoạn** — phát hiện văn bản, phân loại hướng, rồi mới nhận dạng — thiết kế cho ảnh tài liệu tổng quát, nên hệ thống trả chi phí cho những năng lực mà một vùng biển đã cắt sẵn không cần.
 
 **Hai, toàn bộ khối xử lý ảnh của đồ án gần như miễn phí**: bước cắt và tiền xử lý vùng biển đo được xấp xỉ 0 ms, hậu xử lý 0,03 ms. Đóng góp +13,28 điểm ở mục 4.3.1 vì vậy đến với chi phí tính toán không đáng kể — một tỉ lệ lợi ích trên chi phí rất hiếm.
 
-**Ba, chiến lược tối ưu suy ra trực tiếp từ bảng này.** Theo định luật Amdahl, tăng tốc bộ phát hiện gấp 2–3 lần chỉ kéo tổng xuống khoảng 15–23%; muốn giảm mạnh hơn thì khối nhận dạng (64,3%) mới là mục tiêu.
+**Ba, chiến lược tối ưu suy ra trực tiếp từ bảng này.** Theo định luật Amdahl, tăng tốc bộ phát hiện gấp 2–3 lần chỉ kéo tổng xuống khoảng 15–23%; muốn giảm mạnh hơn thì khối nhận dạng (60,8%) mới là mục tiêu.
 
 ### 4.5.2. Độ trễ đầu cuối và các chỉ tiêu tài nguyên
 
 Độ trễ một ảnh ở cấu hình giao hàng: **p50 = 150,07 ms · p95 = 509,76 ms · p99 = 1.124,13 ms** — đo sau đợt tối ưu tầng suy luận (bật `torch.inference_mode()`, ghim số luồng cho torch và OpenCV, truyền `cpu_threads` xuống bộ nhận dạng). Bảng 4.9 ở trên đo **trước** đợt ấy, nên hai bộ số không được ghép chung: bảng ấy trả lời riêng câu hỏi bậc thang thử lại đắt bao nhiêu. Chỉ tiêu p95 phát biểu ở mức ≤ 1.500 ms (tối thiểu) và ≤ 800 ms (mục tiêu), nên kết luận chính thức là **đạt ngưỡng tối thiểu, không đạt mục tiêu** — với nguyên nhân đã định lượng ở mục 4.4.2.
 
-Mọi chỉ tiêu **ngoài đường xử lý ảnh** đều đạt với biên rộng: nạp mô hình 6,41 s (ngưỡng 30 s); bộ nhớ thường trú 0,806 GB (ngưỡng 4 GB); truy vấn 10.000 bản ghi lịch sử 18,71 ms; chạy liên tục 15 phút với **100% thành công trên 5.337 yêu cầu**, **0 lỗi** — **không rò rỉ**.
+Mọi chỉ tiêu **ngoài đường xử lý ảnh** đều đạt với biên rộng: nạp mô hình 6,41 s (ngưỡng 30 s); bộ nhớ thường trú 0,806 GB (ngưỡng 4 GB); truy vấn 10.000 bản ghi lịch sử 18,71 ms; chạy liên tục 15 phút với **100% thành công trên 5.337 yêu cầu**, **0 lỗi** — **không rò rỉ** (Bảng 4.11).
 
 ### 4.5.3. Độ chính xác bộ phân loại màu nền
 
-**Bảng 4.11.** Độ chính xác phân loại màu nền trên tập ngoài dữ liệu hiệu chỉnh
+**Bảng 4.11.**[]{#tbl-4-11} Độ chính xác phân loại màu nền trên tập ngoài dữ liệu hiệu chỉnh
 
 | Lớp nhãn người gán | Số ảnh | Đúng | Độ chính xác |
 |---|---:|---:|---:|
@@ -258,16 +258,20 @@ Ba giới hạn phải nêu kèm. **Một,** 542 ảnh đã bị loại khỏi p
 
 ## 4.6. Phân tích lỗi
 
-**Bảng 4.12.** Tần suất từng loại lỗi trên 2.801 mẫu
+**Bảng 4.12.**[]{#tbl-4-12} Tần suất từng loại lỗi trên 2.801 mẫu, cấu hình giao hàng
 
-| Mã | Loại lỗi | Số ca | Tỉ lệ trong tổng ca sai | Một dòng | Hai dòng |
+
+| Mã | Loại lỗi | Số ca | Tỉ lệ trong ca sai | Một dòng | Hai dòng |
 |:---:|---|---:|---:|---:|---:|
-| E1 | Bỏ sót biển ở khâu phát hiện | 335 | — | — | — |
-| E3 | **Nhầm ký tự** | **445** | **63,85%** | 17 | **428** |
-| E4 | Thiếu ký tự | 73 | 10,47% | 0 | 73 |
-| E5 | Thừa ký tự | 18 | 2,58% | 5 | 13 |
-| E6 | Sai thứ tự | **0** | 0,00% | 0 | 0 |
-| | **Tổng ca sai** | **697** | 100% | — | — |
+| E1 | Nhầm ký tự _(thay thế)_ | 392 | 60,87% | 17 | 375 |
+| E2 | Thiếu ký tự | 76 | 11,80% | 0 | 76 |
+| E3 | Thừa ký tự | 20 | 3,11% | 5 | 15 |
+| E4 | Sai thứ tự | 0 | 0,00% | 0 | 0 |
+| E5 | Trả chuỗi rỗng | 10 | 1,55% | 0 | 10 |
+| E6 | Hỗn hợp nhiều loại | 146 | 22,67% | 4 | 142 |
+| | **Tổng ca sai** | **644** | **100%** | **26** | **618** |
+
+> Không có lớp *bỏ sót biển* hay *phát hiện nhầm* vì cả 2.801 mẫu là **vùng biển đã cắt sẵn**, nên bước phát hiện không chạy; hai loại lỗi ấy được đo riêng ở tầng bộ phát hiện.
 
 Bảng này khép lại mạch lập luận của chương. **Nhầm ký tự chiếm gần hai phần ba số ca sai, và 428 trên 445 ca thuộc biển hai dòng** — cùng một kết luận đã rút ra ở mục 4.3.2, nay xác nhận từ một góc đo khác.
 
@@ -277,7 +281,7 @@ Bảng này khép lại mạch lập luận của chương. **Nhầm ký tự ch
 
 ![](figures/fig-ch4-loi.png)
 
-**Hình 4.2.** Sáu vùng biển thật: ba ca khối hậu xử lý sửa được, ba ca vẫn sai
+**Hình 4.2.**[]{#fig-4-2} Sáu vùng biển thật: ba ca khối hậu xử lý sửa được, ba ca vẫn sai
 
 Hình 4.2 cho thấy các con số ở Bảng 4.12 **trông như thế nào trên ảnh thật**. Hàng trên minh hoạ đúng ba cơ chế mà mục 3.6 mô tả: `2947872 → 29A7872` là mặt nạ vị trí ép chữ số thành chữ cái ở vị trí seri; `52126661 → 52L26661` là cùng cơ chế với cặp `1 / L`; còn `5203 → 78N25203` là bước phục hồi dòng trên ở mục 3.4.7 — chuỗi thô mất trọn dòng trên và được đọc lại riêng nửa trên.
 
@@ -287,9 +291,9 @@ Cần lưu ý về ảnh: ngữ liệu nhãn xuất mọi vùng cắt về khung
 
 ## 4.7. Các yếu tố ảnh hưởng tới tính hợp lệ của kết quả
 
-Nguyên tắc: nêu mối đe doạ, đánh giá mức nghiêm trọng, và nói rõ đã làm gì để giảm thiểu — **kể cả khi biện pháp là "không có"**.
+Nguyên tắc: nêu mối đe doạ, đánh giá mức nghiêm trọng, và nói rõ đã làm gì để giảm thiểu — **kể cả khi biện pháp là "không có"** (Bảng 4.13).
 
-**Bảng 4.13.** Sáu yếu tố ảnh hưởng tới tính hợp lệ
+**Bảng 4.13.**[]{#tbl-4-13} Sáu yếu tố ảnh hưởng tới tính hợp lệ
 
 | # | Yếu tố | Mức | Biện pháp đã áp dụng |
 |:--:|---|:--:|---|

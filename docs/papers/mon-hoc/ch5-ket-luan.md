@@ -2,9 +2,9 @@
 
 ## 5.1. Kết quả đạt được
 
-Nhóm thực hiện đã xây dựng một hệ thống nhận dạng biển số xe Việt Nam chạy đầu cuối trên máy **không có GPU**, gồm bộ phát hiện tự huấn luyện, khối xử lý ảnh vùng biển, khối nhận dạng ký tự và bộ luật hậu xử lý theo quy chuẩn Việt Nam, kèm một ứng dụng web để trình diễn.
+Nhóm thực hiện đã xây dựng một hệ thống nhận dạng biển số xe Việt Nam chạy đầu cuối trên máy **không có GPU**, gồm bộ phát hiện tự huấn luyện, khối xử lý ảnh vùng biển, khối nhận dạng ký tự và bộ luật hậu xử lý theo quy chuẩn Việt Nam, kèm một ứng dụng web để trình diễn (Bảng 5.1).
 
-**Bảng 5.1.** Đối chiếu chỉ tiêu đặt ra với kết quả đo được
+**Bảng 5.1.**[]{#tbl-5-1} Đối chiếu chỉ tiêu đặt ra với kết quả đo được
 
 | Đo cái gì | Ngưỡng tối thiểu | Mục tiêu | Đo được | |
 |---|:--:|:--:|---:|:--:|
@@ -24,11 +24,11 @@ Ba đại lượng đo được đáng ghi nhận, đều liên quan trực ti�
 
 **Ba — trực giác hình dạng ký tự ghép đúng cặp nhưng sai chiều.** Bảng ánh xạ ban đầu suy từ hình dạng chỉ phủ 2 trên 10 cặp nhầm phổ biến nhất, và cặp `L` thì suy **ngược**: khi một vị trí bắt buộc là số mà bộ nhận dạng đọc ra `L`, sự thật là `4` **53 lần** và là `1` **đúng một lần**. Thay hai mục bằng bảng trích từ ma trận nhầm lẫn đo được — chỉ những cặp vượt ngưỡng thống kê — mua thêm **53 biển đọc đúng và làm hỏng 0 biển**, toàn bộ nằm ở biển hai dòng.
 
-Ngoài các con số, nhóm thực hiện để lại **một quy trình đánh giá có kiểm chứng**: mọi bước xử lý ảnh bật tắt được độc lập nên đóng góp của từng bước đo được riêng, và các kết quả âm — phương án đọc riêng từng nửa thua 61 điểm, bậc siêu phân giải không cải thiện được biển nào — được ghi lại thay vì bỏ đi.
+Ngoài các con số, nhóm thực hiện để lại **một quy trình đánh giá có kiểm chứng**: mọi bước xử lý ảnh bật tắt được độc lập nên đóng góp của từng bước đo được riêng, và các kết quả âm — phương án đọc riêng từng nửa thua 61 điểm, bậc siêu phân giải không cải thiện được biển nào — được ghi lại thay vì bỏ đi (Bảng 5.2).
 
 ## 5.2. Hạn chế
 
-**Bảng 5.2.** Sáu hạn chế của đồ án
+**Bảng 5.2.**[]{#tbl-5-2} Sáu hạn chế của đồ án
 
 | # | Hạn chế | Mức | Hệ quả |
 |:--:|---|:--:|---|
@@ -41,7 +41,9 @@ Ngoài các con số, nhóm thực hiện để lại **một quy trình đánh 
 
 ## 5.3. Hướng phát triển
 
-**Bảng 5.3.** Sáu hướng phát triển, xếp theo mức tác động
+Sáu hướng phát triển, xếp theo mức tác động, tổng hợp ở Bảng 5.3.
+
+**Bảng 5.3.**[]{#tbl-5-3} Sáu hướng phát triển, xếp theo mức tác động
 
 | # | Hướng | Giải hạn chế | Ghi chú |
 |:--:|---|:--:|---|
@@ -50,7 +52,7 @@ Ngoài các con số, nhóm thực hiện để lại **một quy trình đánh 
 | 3 | Thu thập dữ liệu biển vàng, xanh, đỏ và ngoại giao | 2, 6 | Điều kiện để mở rộng kết luận ra ngoài biển trắng, và để hai nhánh biển đỏ · ngoại giao có số liệu đánh giá |
 | 4 | **Khử rò rỉ theo chuỗi biển số thay vì theo băm tri giác** | 3, 4 | Gom nhóm theo chuỗi ký tự thay vì theo tương đồng ảnh; giải đúng loại rò rỉ mà pHash không thấy |
 | 5 | Đo lại bậc siêu phân giải trên ngữ liệu có biển thật sự nhỏ | — | Mục 4.4.3: số 0 hiện tại do **thiếu điều kiện quan sát**, không phải do đã quan sát thấy vô dụng |
-| 6 | Tăng tốc khối nhận dạng: lượng tử hoá, đóng gói ONNX hoặc OpenVINO | 5 | Khối nhận dạng chiếm 64,3% ngân sách độ trễ (Bảng 4.10). Riêng bộ phát hiện đã đo: OpenVINO nhanh **1,57×** mà không giảm mAP |
+| 6 | Tăng tốc khối nhận dạng: lượng tử hoá, đóng gói ONNX hoặc OpenVINO | 5 | Khối nhận dạng chiếm 60,8% ngân sách độ trễ (Bảng 4.10). Riêng bộ phát hiện đã đo: OpenVINO nhanh **1,57×** mà không giảm mAP |
 
 ## 5.4. Kết luận chung
 

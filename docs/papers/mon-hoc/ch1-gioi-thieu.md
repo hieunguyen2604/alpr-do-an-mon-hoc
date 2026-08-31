@@ -18,9 +18,9 @@ Nhận dạng biển số xe tự động (ALPR) là lõi của bãi đỗ xe th
 
 ### 1.2.1. Mục tiêu
 
-Xây dựng một hệ thống nhận dạng biển số xe Việt Nam chạy được đầu cuối, **suy luận hoàn toàn trên CPU**, hỗ trợ cả biển một dòng và biển hai dòng. Trọng tâm của đồ án môn học đặt ở **khối xử lý ảnh** nằm giữa bộ phát hiện và bộ nhận dạng ký tự: chuẩn hoá, tăng cường tương phản, khử nhiễu bảo toàn biên, nắn hình, phân loại bố cục theo hình học, tách và ghép ảnh, phân tích màu trong không gian HSV.
+Xây dựng một hệ thống nhận dạng biển số xe Việt Nam chạy được đầu cuối, **suy luận hoàn toàn trên CPU**, hỗ trợ cả biển một dòng và biển hai dòng. Trọng tâm của đồ án môn học đặt ở **khối xử lý ảnh** nằm giữa bộ phát hiện và bộ nhận dạng ký tự: chuẩn hoá, tăng cường tương phản, khử nhiễu bảo toàn biên, nắn hình, phân loại bố cục theo hình học, tách và ghép ảnh, phân tích màu trong không gian HSV (Bảng 1.1).
 
-**Bảng 1.1.** Chỉ tiêu đặt ra, mỗi chỉ tiêu có ngưỡng tối thiểu và mục tiêu
+**Bảng 1.1.**[]{#tbl-1-1} Chỉ tiêu đặt ra, mỗi chỉ tiêu có ngưỡng tối thiểu và mục tiêu
 
 | Đo cái gì | Ngưỡng tối thiểu | Mục tiêu |
 |---|:--:|:--:|
@@ -43,9 +43,9 @@ Ngưỡng độ trễ rộng hơn các bài báo ALPR vì máy thực hiện **k
 
 ## 1.3. Lựa chọn công nghệ
 
-Mỗi lựa chọn dưới đây bị chi phối bởi cùng bốn ràng buộc: **không có GPU**, **phải xử lý được biển hai dòng**, **phải đóng gói bàn giao được**, và **ngân sách thời gian máy hữu hạn**.
+Mỗi lựa chọn dưới đây bị chi phối bởi cùng bốn ràng buộc: **không có GPU**, **phải xử lý được biển hai dòng**, **phải đóng gói bàn giao được**, và **ngân sách thời gian máy hữu hạn** (Bảng 1.2).
 
-**Bảng 1.2.** Các quyết định công nghệ và lý do
+**Bảng 1.2.**[]{#tbl-1-2} Các quyết định công nghệ và lý do
 
 | Hạng mục | Chọn | Phương án đã xét | Lý do chính | Đánh đổi |
 |---|---|---|---|---|

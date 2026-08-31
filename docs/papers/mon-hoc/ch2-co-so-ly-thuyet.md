@@ -10,9 +10,9 @@ Biển số ô tô trong nước gồm **8 ký tự**, ba thành phần: **mã �
 
 **Mã địa phương hữu hạn và có lỗ hổng.** Dải 11–99 có 89 giá trị, nhưng chỉ **81 mã đang được sử dụng**; tám mã **13, 42, 44, 45, 46, 87, 91, 96** không được gán [7]. Kiểm tra mã tỉnh vì vậy biến lỗi đọc ở hai vị trí đầu từ **sai âm thầm** thành **sai phát hiện được**: đọc ra `46A-123.45` thì biết ngay mã 46 không tồn tại.
 
-**Tập ký tự seri phụ thuộc vị trí.** Đây là chi tiết dễ trình bày sai nhất. Biển trắng và vàng dùng seri thuộc tập **20 chữ cái** [6]; đối chiếu 26 chữ Latin thì vắng `I J O Q R W`. Nhưng suy diễn *"26 − 20 = 6 chữ bị loại trừ"* là **sai**: danh sách 20 chữ chỉ áp dụng cho **chữ cái thứ nhất**; ở **vị trí thứ hai** của seri xe máy là một tập khác — **có `R`, không có `G`**. Hợp hai vị trí, tập chữ không bao giờ xuất hiện trên biển Việt Nam chỉ gồm **5 chữ: `I`, `J`, `O`, `Q`, `W`**.
+**Tập ký tự seri phụ thuộc vị trí.** Đây là chi tiết dễ trình bày sai nhất. Biển trắng và vàng dùng seri thuộc tập **20 chữ cái** [6]; đối chiếu 26 chữ Latin thì vắng `I J O Q R W`. Nhưng suy diễn *"26 − 20 = 6 chữ bị loại trừ"* là **sai**: danh sách 20 chữ chỉ áp dụng cho **chữ cái thứ nhất**; ở **vị trí thứ hai** của seri xe máy là một tập khác — **có `R`, không có `G`**. Hợp hai vị trí, tập chữ không bao giờ xuất hiện trên biển Việt Nam chỉ gồm **5 chữ: `I`, `J`, `O`, `Q`, `W`** (Bảng 2.1).
 
-**Bảng 2.1.** Tổng hợp các tập ký tự seri
+**Bảng 2.1.**[]{#tbl-2-1} Tổng hợp các tập ký tự seri
 
 | Tập | Số lượng | Nội dung |
 |---|:--:|---|
@@ -25,9 +25,9 @@ Hệ quả cài đặt: **nếu huấn luyện lại bộ nhận dạng thì ph�
 
 ### 2.1.2. Kích thước vật lý và tỉ lệ khung hình
 
-Đây là cơ sở hình học quan trọng nhất của đồ án, vì nó cho phép **phân biệt biển một dòng với biển hai dòng bằng một đại lượng đo trực tiếp từ ảnh**, không cần huấn luyện thêm mô hình nào.
+Đây là cơ sở hình học quan trọng nhất của đồ án, vì nó cho phép **phân biệt biển một dòng với biển hai dòng bằng một đại lượng đo trực tiếp từ ảnh**, không cần huấn luyện thêm mô hình nào (Bảng 2.2).
 
-**Bảng 2.2.** Kích thước và tỉ lệ khung hình các loại biển số [5]
+**Bảng 2.2.**[]{#tbl-2-2} Kích thước và tỉ lệ khung hình các loại biển số [5]
 
 | Loại biển | Kích thước (dài × cao) | Tỉ lệ khung hình | Số dòng |
 |---|---|:--:|:--:|
@@ -39,11 +39,11 @@ Ba giá trị này để lại một **khoảng trống rộng 2,727 đơn vị*
 
 Cần lưu ý mốc hiệu lực: bộ số liệu trên **chỉ đúng từ 01/01/2025**. Tiêu chuẩn trước đó quy định biển ô tô ngắn 200 × 280 mm và biển dài 110 × 470 mm, và nhiều tài liệu thứ cấp vẫn dùng bộ số cũ.
 
-Một hệ quả nữa: ô tô được cấp **hai** biển mang cùng chuỗi ký tự nhưng **hình dạng hoàn toàn khác nhau** (một dài một ngắn), trong khi xe mô tô chỉ có một biển hai dòng. Do đó số dòng bằng một *chứng minh* biển thuộc ô tô, còn số dòng bằng hai *không chứng minh gì* — cả ô tô lẫn xe máy đều có thể.
+Một hệ quả nữa: ô tô được cấp **hai** biển mang cùng chuỗi ký tự nhưng **hình dạng hoàn toàn khác nhau** (một dài một ngắn), trong khi xe mô tô chỉ có một biển hai dòng. Do đó số dòng bằng một *chứng minh* biển thuộc ô tô, còn số dòng bằng hai *không chứng minh gì* — cả ô tô lẫn xe máy đều có thể (Bảng 2.3).
 
 ### 2.1.3. Màu nền và giới hạn của thông tin ký tự
 
-**Bảng 2.3.** Màu nền biển số và đối tượng áp dụng [6]
+**Bảng 2.3.**[]{#tbl-2-3} Màu nền biển số và đối tượng áp dụng [6]
 
 | Màu nền / màu chữ | Đối tượng | Ghi chú |
 |---|---|---|
@@ -122,11 +122,11 @@ Việc giữ lại tần số thấp chính là điều khiến pHash bền vữ
 
 ### 2.3.1. Kiến trúc một giai đoạn và ý nghĩa của anchor-free
 
-Họ hai giai đoạn (Faster R-CNN) sinh vùng đề xuất rồi phân loại từng đề xuất, cho độ chính xác cao nhưng độ trễ lớn; họ **một giai đoạn** (YOLO, SSD) hồi quy trực tiếp trong một lần lan truyền xuôi. Ràng buộc CPU của đồ án loại họ hai giai đoạn ngay từ đầu.
+Họ hai giai đoạn (Faster R-CNN) sinh vùng đề xuất rồi phân loại từng đề xuất, cho độ chính xác cao nhưng độ trễ lớn; họ **một giai đoạn** (YOLO, SSD) hồi quy trực tiếp trong một lần lan truyền xuôi. Ràng buộc CPU của đồ án loại họ hai giai đoạn ngay từ đầu (Hình 2.1).
 
 ![](figures/fig-ch2-05.png)
 
-**Hình 2.1.** Kiến trúc tổng quát backbone – neck – head của YOLO11 *(theo [8])*
+**Hình 2.1.**[]{#fig-2-1} Kiến trúc tổng quát backbone – neck – head của YOLO11 *(theo [8])*
 
 Từ YOLOv8, họ YOLO chuyển sang **đầu dự đoán anchor-free**, và điều này có ý nghĩa riêng với bài toán biển số. Cách tiếp cận anchor-based hồi quy theo một tập hộp mẫu được thiết kế theo phân bố của bộ dữ liệu COCO; biển số **nằm ngoài phân bố đó** — một dòng khoảng 4,7:1, hai dòng khoảng 1,4:1, hai chế độ tỉ lệ cách xa nhau. Anchor-free hồi quy **trực tiếp khoảng cách từ tâm tới bốn cạnh**, nên xử lý được cả hai chế độ bằng một cơ chế duy nhất [8].
 
@@ -156,19 +156,19 @@ $$p(\mathbf{l} \mid \mathbf{x}) = \sum_{\boldsymbol{\pi} \in \mathcal{B}^{-1}(\m
 
 <div align="right">(2.5)</div>
 
-Ưu điểm quyết định: **không cần nhãn vị trí từng ký tự**, lý do CTC là mặc định của hầu hết bộ nhận dạng ký tự mã nguồn mở.
+Ưu điểm quyết định: **không cần nhãn vị trí từng ký tự**, lý do CTC là mặc định của hầu hết bộ nhận dạng ký tự mã nguồn mở (Hình 2.2).
 
 ![](figures/fig-ch2-crnn-ctc.png)
 
-**Hình 2.2.** Kiến trúc CRNN và cách CTC gộp chuỗi thô. Điểm mấu chốt nằm ở
+**Hình 2.2.**[]{#fig-2-2} Kiến trúc CRNN và cách CTC gộp chuỗi thô. Điểm mấu chốt nằm ở
 tầng tích chập: nó hạ **chiều cao về 1**, biến bản đồ đặc trưng hai chiều thành
-một chuỗi vector — nhờ đó bài toán đọc ảnh trở thành bài toán đọc chuỗi.
+một chuỗi vector — nhờ đó bài toán đọc ảnh trở thành bài toán đọc chuỗi (Hình 2.3).
 
 ### 2.4.2. Vì sao CTC gãy trên biển hai dòng
 
 ![](figures/fig-ch2-07.png)
 
-**Hình 2.3.** Cơ chế sụp đổ của CTC trên ảnh văn bản hai dòng
+**Hình 2.3.**[]{#fig-2-3} Cơ chế sụp đổ của CTC trên ảnh văn bản hai dòng
 
 Phép hạ chiều cao về 1 ở mục 2.4.1 **giả định toàn bộ văn bản nằm trên một dòng ngang**. Với ảnh hai dòng, mọi ký tự của dòng trên và dòng dưới bị **chiếu chồng lên nhau** vào cùng một cột đặc trưng, và giả định căn chỉnh đơn điệu giữa cột ảnh và chuỗi ký tự — nền tảng của CTC — không còn đúng. Hệ quả quan sát được là mô hình đọc theo thứ tự không xác định, ghép lẫn hai dòng, hoặc bỏ sót hẳn một dòng.
 

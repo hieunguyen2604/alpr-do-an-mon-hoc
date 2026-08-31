@@ -2,9 +2,11 @@
 
 ## 3.1. Kiến trúc tổng thể
 
+Toàn bộ luồng xử lý của đường ống nhận dạng trình bày ở Hình 3.1.
+
 ![](figures/fig-ch4-03.png)
 
-**Hình 3.1.** Luồng xử lý của đường ống nhận dạng; các khối tô đỏ là nhánh biển hai dòng
+**Hình 3.1.**[]{#fig-3-1} Luồng xử lý của đường ống nhận dạng; các khối tô đỏ là nhánh biển hai dòng
 
 Đường ống gồm bốn khối nối tiếp, và độ chính xác cuối cùng là **tích** của độ chính xác từng khối — một khối yếu kéo cả chuỗi xuống:
 
@@ -17,7 +19,7 @@ Khối 2 và khối 4 là phần do đồ án tự thiết kế; khối 1 và kh
 
 Toàn bộ đường ống được đóng gói thành một **gói Python độc lập không phụ thuộc tầng web**. Ràng buộc này không phải hình thức: nó cho phép cùng một mã chạy được trong sổ tay thử nghiệm, trong kịch bản đo đạc và trong dịch vụ đang vận hành. Bài học ngược lại đã xảy ra trong quá trình thực hiện đồ án: một kịch bản đo **chép lại** các bước của đường ống thay vì **gọi** nó, nên mỗi bước mới thêm vào đường ống đều rơi ra ngoài phép đo, và số liệu công bố mô tả một hệ thống ngắn hơn hệ thống thực tế.
 
-Ba lớp trừu tượng có hợp đồng thống nhất: lớp phát hiện trả danh sách vùng biển đã lọc ngưỡng và khử chồng lấn, **danh sách rỗng là kết quả hợp lệ chứ không phải lỗi**; lớp nhận dạng trả chuỗi thô kèm độ tin cậy, **không** tự sửa lỗi ký tự; lớp chuẩn hoá trả về cả chuỗi không hợp lệ kèm cờ đánh dấu. Chính việc lớp nhận dạng không được phép tự sửa lỗi là điều kiện để **đo tách bạch** đóng góp của khối hậu xử lý ở mục 4.3.2.
+Ba lớp trừu tượng có hợp đồng thống nhất: lớp phát hiện trả danh sách vùng biển đã lọc ngưỡng và khử chồng lấn, **danh sách rỗng là kết quả hợp lệ chứ không phải lỗi**; lớp nhận dạng trả chuỗi thô kèm độ tin cậy, **không** tự sửa lỗi ký tự; lớp chuẩn hoá trả về cả chuỗi không hợp lệ kèm cờ đánh dấu. Chính việc lớp nhận dạng không được phép tự sửa lỗi là điều kiện để **đo tách bạch** đóng góp của khối hậu xử lý ở mục 4.3.2 (Hình 3.2).
 
 ## 3.2. Xây dựng bộ dữ liệu
 
@@ -25,11 +27,11 @@ Ba lớp trừu tượng có hợp đồng thống nhất: lớp phát hiện tr
 
 ![](figures/fig-ch5-01.png)
 
-**Hình 3.2.** Đường ống sáu bước xây dựng bộ dữ liệu
+**Hình 3.2.**[]{#fig-3-2} Đường ống sáu bước xây dựng bộ dữ liệu
 
-Mỗi bước là một kịch bản độc lập sinh báo cáo dạng dữ liệu có cấu trúc; một kịch bản điều phối chạy toàn chuỗi bằng một lệnh. Kết quả: **15.133 ảnh** hợp nhất từ **7 bộ công khai**, sau khi loại **11.978 ảnh trùng lặp (44,2%)** từ **27.111 ảnh** ban đầu. Chia theo tỉ lệ 70/20/10 thành **10.592 / 3.027 / 1.514 ảnh**.
+Mỗi bước là một kịch bản độc lập sinh báo cáo dạng dữ liệu có cấu trúc; một kịch bản điều phối chạy toàn chuỗi bằng một lệnh. Kết quả: **15.133 ảnh** hợp nhất từ **7 bộ công khai**, sau khi loại **11.978 ảnh trùng lặp (44,2%)** từ **27.111 ảnh** ban đầu. Chia theo tỉ lệ 70/20/10 thành **10.592 / 3.027 / 1.514 ảnh** (Bảng 3.1).
 
-**Bảng 3.1.** Đóng góp của từng bộ dữ liệu trước và sau khử trùng lặp
+**Bảng 3.1.**[]{#tbl-3-1} Đóng góp của từng bộ dữ liệu trước và sau khử trùng lặp
 
 | # | Bộ dữ liệu | Vào hợp nhất | Còn lại | Bị loại |
 |:--:|---|---:|---:|---:|
@@ -67,9 +69,9 @@ Số liệu xác nhận: ở ngưỡng 12 còn **791 cặp**, ở ngưỡng 15 l
 
 ## 3.3. Huấn luyện bộ phát hiện
 
-Cấu hình lượt huấn luyện chính thức được trích từ tệp tham số do thư viện tự sinh — bản ghi *đã thực thi* chứ không phải *dự định*.
+Cấu hình lượt huấn luyện chính thức được trích từ tệp tham số do thư viện tự sinh — bản ghi *đã thực thi* chứ không phải *dự định* (Bảng 3.2).
 
-**Bảng 3.2.** Siêu tham số lượt huấn luyện chính thức
+**Bảng 3.2.**[]{#tbl-3-2} Siêu tham số lượt huấn luyện chính thức
 
 | Tham số | Giá trị | Lý do |
 |---|---|---|
@@ -106,7 +108,7 @@ Hai chi tiết về thứ tự này đáng nêu, vì đảo lại sẽ ra một 
 
 ![](figures/fig-pipeline-strip.png)
 
-**Hình 3.3.** Toàn bộ chuỗi xử lý trên một biển thật, ảnh chụp sau từng bước
+**Hình 3.3.**[]{#fig-3-3} Toàn bộ chuỗi xử lý trên một biển thật, ảnh chụp sau từng bước
 
 Hình 3.3 là kết quả chạy **chính các hàm của bản bàn giao**, không phải hình vẽ minh hoạ: mỗi khung là mảng ảnh thật ở đầu ra của bước tương ứng, và chuỗi kết thúc bằng chuỗi ký tự mà hệ thống thực sự đọc được. Hai khung đáng nhìn kỹ là khung 3 và khung 4 — chúng cho thấy trực tiếp thứ mà cả mục này mô tả bằng chữ: **tỉ lệ khung hình nhảy từ 1,12 lên 4,42**, và hai hàng ký tự cao 30 px trở thành một hàng duy nhất nhận trọn 50 px.
 
@@ -187,13 +189,13 @@ Bộ phân loại chuyển vùng biển sang không gian HSV, thống kê tỉ l
 
 **Trả kết quả *không xác định* khi dải chiếm ưu thế không đạt 30%.** Một kết luận sai về màu tương đương khẳng định một loại phương tiện không chứng minh được; thừa nhận không xác định được chỉ là ghi nhận một giới hạn.
 
-Kết quả hợp nhất giữa hai nguồn bằng chứng tuân một **ràng buộc an toàn**: màu nền chỉ được phép **nâng cấp một ứng viên mà bộ luật ký tự đã coi là hợp lý**, và nếu phán quyết ban đầu không nằm trong tập ứng viên thì kết quả giữ nguyên. Nói cách khác, màu nền không thể tạo ra một họ biển mà bộ luật ký tự đã bác bỏ.
+Kết quả hợp nhất giữa hai nguồn bằng chứng tuân một **ràng buộc an toàn**: màu nền chỉ được phép **nâng cấp một ứng viên mà bộ luật ký tự đã coi là hợp lý**, và nếu phán quyết ban đầu không nằm trong tập ứng viên thì kết quả giữ nguyên. Nói cách khác, màu nền không thể tạo ra một họ biển mà bộ luật ký tự đã bác bỏ (Hình 3.4).
 
 ## 3.6. Bộ luật hậu xử lý theo vị trí
 
 ![](figures/fig-ch5-03.png)
 
-**Hình 3.4.** Thuật toán chuẩn hoá chuỗi biển số theo bộ luật ràng buộc vị trí
+**Hình 3.4.**[]{#fig-3-4} Thuật toán chuẩn hoá chuỗi biển số theo bộ luật ràng buộc vị trí
 
 Khối này là thành phần do đồ án tự thiết kế hoàn toàn. Nó khai thác ba ràng buộc đặc thù đã trình bày ở mục 2.1.1.
 
@@ -222,11 +224,11 @@ Nguyên tắc thứ ba có hệ quả trực tiếp lên cơ sở dữ liệu: h
 
 ## 3.7. Ứng dụng trình diễn
 
-Phần này không phải trọng tâm của môn học nên chỉ nêu những quyết định có liên quan tới khối xử lý ảnh.
+Phần này không phải trọng tâm của môn học nên chỉ nêu những quyết định có liên quan tới khối xử lý ảnh (Hình 3.5).
 
 ![](figures/fig-ch4-02.png)
 
-**Hình 3.5.** Kiến trúc phân tầng và chiều phụ thuộc
+**Hình 3.5.**[]{#fig-3-5} Kiến trúc phân tầng và chiều phụ thuộc
 
 Hệ thống gồm **máy chủ FastAPI** phục vụ mười thao tác HTTP trên chín đường dẫn, **cơ sở dữ liệu SQLite** lưu lịch sử nhận dạng, **giao diện web React** ba trang (nhận dạng ảnh, nhận dạng video, tra cứu lịch sử), và **đóng gói Docker Compose** khởi động toàn bộ bằng một lệnh.
 
