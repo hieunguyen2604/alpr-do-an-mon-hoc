@@ -306,10 +306,8 @@ def accuracy_block(samples: Sequence[Sample]) -> dict[str, Any]:
                 1.0 - corpus_cer([(s.truth, s.e2e_text) for s in measured_e2e]), 4
             ),
         }
-        # Separates "the detector never found the plate" from "it found it and
-        # the reading was wrong". Without this split the headline figure cannot
-        # be attributed to a stage, and on a corpus of tight crops the detector
-        # is operating far outside the distribution it was trained on.
+        # Tach 'detector khong tim thay' khoi 'tim thay nhung doc sai' — thieu no
+        # thi con so tong khong quy duoc ve tang nao.
         detected = [s for s in measured_e2e if s.e2e_detected]
         if detected:
             block["e2e"]["exact_given_detected"] = round(
@@ -468,10 +466,8 @@ def measure_crops(
         sample.plate_number = outcome.text
         sample.is_valid_format = outcome.is_valid_format
 
-        # The same rescue the pipeline applies, invoked through the same shared
-        # function. Measuring without it would publish an NFR-A5/A6 figure for a
-        # code path production does not run -- understating the shipped system by
-        # roughly two points on two-line plates.
+        # Cung ham rescue ma pipeline goi: do thieu no la cong bo so cho mot duong
+        # chay ngan hon ban giao hang (~2 diem tren bien hai dong).
         candidate = PlateRecognition(
             text=outcome.text,
             raw_text=sample.raw_ocr_text,
@@ -490,11 +486,8 @@ def measure_crops(
                 sample.rescued_upper_line = True
                 candidate = rescued
 
-        # The failure-retry ladder, in the same position and under the same
-        # condition as ALPRPipeline._process_one. Omitted here until 28/07/2026,
-        # which meant NFR-A4/A5/A6 described a pipeline two rungs shorter than
-        # the shipped one -- the identical defect the rescue block above already
-        # carries a comment about, repeated for the stage added after it.
+        # Bac thang thu lai, dung vi tri va dieu kien nhu ALPRPipeline._process_one
+        # — thieu no thi A4/A5/A6 mo ta mot pipeline ngan hon hai bac.
         if recognizer.config.rectify_enabled and should_retry_skewed(candidate):
             retried = retry_skewed_variants(
                 recognizer, normalizer, repaired, candidate, color=color_name
@@ -562,12 +555,9 @@ def _run_pipeline(
         clean_text(recognition.raw_text), line_count=recognition.line_count
     )
 
-    # The end-to-end figure must measure the end-to-end product. Leaving the
-    # rescue out here -- as this function did until the first re-run reported an
-    # unchanged NFR-A7 while NFR-A6 moved +1.75 points -- publishes a number for
-    # a shorter pipeline than the one users get. The unchanged figure was itself
-    # the tell: a step that improves recognition cannot leave the metric that
-    # contains recognition untouched.
+    # So dau-cuoi phai do san pham dau-cuoi. Dau hieu tung lo: A6 tang +1,75 ma
+    # A7 dung yen — mot buoc cai thien nhan dang khong the khong cham chi so
+    # chua nhan dang.
     candidate = PlateRecognition(
         text=outcome.text,
         raw_text=clean_text(recognition.raw_text),
@@ -1052,11 +1042,8 @@ def build_parser() -> argparse.ArgumentParser:
         default="runs/cpu-finetune-416/weights/best.pt",
         help="Detector weights for the NFR-A7 pass. Empty string skips E2E.",
     )
-    # Mac dinh PHAI lay tu cau hinh cua ban giao hang, khong duoc gan cung.
-    # Truoc day dong nay ghi cung 416 trong khi `best.pt` huan luyen o 640 va
-    # `.env` dat ALPR_IMGSZ=640. Ai chay lai NFR-A7 ma khong truyen tay tham so
-    # nay se do detector o sai do phan giai: ty le phat hien tut tu 0,8804 xuong
-    # 0,6109 va con so A7 thu duoc mo ta mot he thong khong ai giao.
+    # Mac dinh doc tu cau hinh ban giao hang, cam gan cung: do 416 khi best.pt
+    # huan luyen o 640 lam ty le phat hien tut 0,8804 -> 0,6109.
     parser.add_argument(
         "--detector-imgsz", type=int, default=InferenceConfig.from_env().imgsz
     )
@@ -1188,11 +1175,8 @@ def main(argv: list[str] | None = None) -> int:
         return 2
     LOGGER.info("Loaded %d labelled crops", len(samples))
 
-    # Read the environment, so ALPR_RECTIFY_ENABLED / ALPR_SR_RETRY_ENABLED can
-    # ablate the retry ladder here too. Constructing InferenceConfig() bare --
-    # which this did until 28/07/2026 -- pinned both switches on regardless, so
-    # the accuracy contribution of each rung could not be attributed at all.
-    # Same defect, same day, as in ai/evaluation/benchmark_system.py.
+    # from_env() de ALPR_RECTIFY/SR_RETRY boc tach duoc tai day — cung loi,
+    # cung ngay sua voi benchmark_system.py (28/07).
     config = InferenceConfig.from_env()
     recognizer = PaddleOcrRecognizer(config)
     normalizer = VietnamesePlateNormalizer()
@@ -1335,10 +1319,8 @@ def main(argv: list[str] | None = None) -> int:
                 "changed; a positive value means the rules are not loss-free."
             ),
         },
-        # What each failure-recovery rung actually delivered on this corpus.
-        # Both rungs cost real time -- the ladder alone raises p95 latency by
-        # about two thirds -- so the count of plates each one supplied is the
-        # only thing that can justify keeping it switched on.
+        # Tung bac cuu duoc bao nhieu bien tren ngu lieu nay — chi phi p95 cua bac
+        # thang chi bien minh duoc bang con so nay.
         "recovery_contribution": {
             "rescue_upper_line_plates": sum(1 for s in samples if s.rescued_upper_line),
             "retry_ladder_plates": sum(1 for s in samples if s.retried_skewed),

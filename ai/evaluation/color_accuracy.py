@@ -19,10 +19,8 @@ LOGGER = logging.getLogger("color_accuracy")
 
 __all__ = ["ColorSample", "evaluate_dataset", "build_parser", "main"]
 
-#: Maps the dataset's Vietnamese class names onto this project's enum. The
-#: dataset names its classes in unaccented Vietnamese, which is itself part of
-#: the evidence that it is a Vietnamese corpus rather than a relabelled foreign
-#: one -- a distinction this project has had to make before.
+#: Ten lop tieng Viet khong dau cua dataset -> enum cua du an; chinh cach
+#: dat ten ay la bang chung day la ngu lieu Viet, khong phai gan nhan lai.
 CLASS_TO_COLOR: dict[str, PlateColor] = {
     "bien_trang": PlateColor.WHITE,
     "bien_vang": PlateColor.YELLOW,

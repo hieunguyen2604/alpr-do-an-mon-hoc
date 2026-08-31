@@ -33,12 +33,8 @@ LOGGER = logging.getLogger("ai.evaluation.evaluate")
 SINGLE_LINE: Final[str] = "single_line"
 TWO_LINE: Final[str] = "two_line"
 
-# QCVN 08:2024/BCA aspect ratios: 4.727 (single line) vs 2.000 / 1.357 (two
-# lines). Anything below the threshold is treated as a two-line plate. 2.5 is
-# used rather than the midpoint so that the value matches
-# InferenceConfig.two_line_aspect_ratio_threshold -- evaluation must classify
-# plates the same way the deployed pipeline does, or the reported per-group
-# accuracy would not describe the shipped system.
+# 2.5 trung InferenceConfig.two_line_aspect_ratio_threshold: danh gia phai
+# phan loai bo cuc DUNG nhu pipeline giao hang, khong lay trung diem.
 DEFAULT_AR_THRESHOLD: Final[float] = 2.5
 
 DEFAULT_OUTPUT_DIR: Final[Path] = PROJECT_ROOT / "docs" / "reports"

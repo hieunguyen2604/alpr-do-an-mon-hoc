@@ -352,11 +352,8 @@ class TrainingConfig:
         if self.fraction <= 0.0:
             raise ValueError(f"fraction must be positive, got {self.fraction}")
 
-        # --- Domain rule: never mirror a license plate -----------------------
-        # A mirrored plate is not a rotation of a real plate, it is a different
-        # (non-existent) object. Allowing this silently would be a subtle,
-        # expensive bug: training would converge fine and accuracy on real
-        # plates would simply be worse than it should be.
+        # Domain rule: KHONG lat guong bien so — bien lat la vat the khong ton tai;
+        # huan luyen van hoi tu, chi co do chinh xac tren bien that am tham kem di.
         if self.fliplr != 0.0:
             raise ValueError(
                 "fliplr must be 0.0: horizontal flipping mirrors the characters "

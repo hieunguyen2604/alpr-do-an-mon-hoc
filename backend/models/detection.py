@@ -236,10 +236,7 @@ class DetectionJob(Base):
     detections: Mapped[list[DetectionHistory]] = relationship(
         back_populates="job",
         cascade="all, delete-orphan",
-        # The database performs the cascade itself, so deleting a job does not
-        # require loading its rows into memory first. This depends on SQLite
-        # foreign keys being switched on -- see backend.models.database, which
-        # enables the pragma on every connection.
+        # DB-side cascade; requires the SQLite foreign_keys pragma (backend.models.database).
         passive_deletes=True,
         lazy="selectin",
     )
@@ -360,23 +357,15 @@ class DetectionHistory(Base):
     plate_line_count: Mapped[int | None] = mapped_column(Integer)
     upper_char_count: Mapped[int | None] = mapped_column(Integer)
 
-    # Vehicle-class attributes, added 2026-07-20. Both were already computed
-    # during recognition and then discarded before reaching this table, which
-    # meant an army plate was stored indistinguishable from an unreadable one:
-    # `is_valid_format = false` and nothing to say why. Read the two together --
-    # neither identifies a vehicle class alone. `plate_kind` comes from the
-    # character string and cannot see that a business vehicle's yellow plate
-    # carries the same layout as a private vehicle's white one; `plate_color`
-    # comes from the pixels and cannot tell a diplomatic plate from a private
-    # one, both being white.
+    # Read the two together — neither identifies a vehicle class alone:
+    # plate_kind comes from the string, plate_color from the crop, and a yellow
+    # business plate shares its exact layout with a white private one.
     plate_kind: Mapped[str | None] = mapped_column(String(_ENUM_LENGTH))
     plate_color: Mapped[str | None] = mapped_column(String(_ENUM_LENGTH))
     plate_color_confidence: Mapped[float | None] = mapped_column(Float)
 
-    # Where in the source clip this plate was found, in seconds. NULL for images
-    # and realtime frames, which have no "when" to record. Stored as a timestamp
-    # rather than a frame index because an index means nothing without the clip's
-    # frame rate, and that is neither stored nor constant across sources.
+    # Seconds, not a frame index: an index means nothing without the clip's
+    # frame rate, which is neither stored nor constant across sources.
     video_time_seconds: Mapped[float | None] = mapped_column(Float)
 
     processing_time: Mapped[float] = mapped_column(Float, nullable=False, default=0.0)
@@ -384,12 +373,8 @@ class DetectionHistory(Base):
     detected_time: Mapped[dt.datetime] = mapped_column(UtcDateTime, nullable=False, default=utcnow)
     created_at: Mapped[dt.datetime] = mapped_column(UtcDateTime, nullable=False, default=utcnow)
 
-    # Non-nullable on purpose. Every detection must belong to a job, because
-    # usage statistics are defined as a count of distinct jobs; a row with no
-    # job would be invisible to those counts while still appearing in the
-    # history list, so the two views of the same data would disagree. Making
-    # the column mandatory turns that inconsistency into an insert-time error
-    # instead of a silently wrong dashboard number.
+    # Mandatory: usage statistics count distinct jobs, so an orphan row would
+    # show in history yet be invisible to the counts — the two views would disagree.
     source_job_id: Mapped[str] = mapped_column(
         String(_UUID_LENGTH),
         ForeignKey("detection_job.id", ondelete="CASCADE"),
@@ -403,10 +388,8 @@ class DetectionHistory(Base):
         Index("ix_detection_history_detected_time", "detected_time"),
         Index("ix_detection_history_input_type", "input_type"),
         Index("ix_detection_history_source_job_id", "source_job_id"),
-        # The history screen's default query is "newest first, optionally
-        # filtered by input type". A composite index lets SQLite satisfy the
-        # filter and the ordering from one structure, which is what keeps the
-        # paginated query inside NFR-P6 at 100k rows.
+        # Composite index serves the default query (newest first + input-type filter)
+        # from one structure — what keeps pagination inside NFR-P6 at 100k rows.
         Index(
             "ix_detection_history_input_type_detected_time",
             "input_type",
@@ -428,11 +411,8 @@ class DetectionHistory(Base):
             "plate_line_count IS NULL OR plate_line_count IN (1, 2)",
             name="ck_detection_history_plate_line_count",
         ),
-        # A Vietnamese two-line plate carries province + serial on the upper
-        # line: three characters (`67C`) or four (`77H5`). Nothing else is a
-        # legal reading, so a value outside that range means the count was
-        # miscomputed rather than observed, and it must not reach the
-        # display rule.
+        # Upper line legally holds 3 (67C) or 4 (77H5) characters; anything else is
+        # a miscomputed count and must not reach the display rule.
         CheckConstraint(
             "upper_char_count IS NULL OR upper_char_count IN (3, 4)",
             name="ck_detection_history_upper_char_count",

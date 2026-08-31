@@ -969,10 +969,8 @@ def _write_charts(payload: dict[str, Any], output_dir: Path) -> list[Path]:
         # Chart 3 -- the 36x36 confusion matrix.
         charset = payload["confusion_matrix"]["charset"]
         matrix = np.asarray(payload["confusion_matrix"]["matrix"], dtype=float)
-        # The diagonal dwarfs everything else by orders of magnitude, so a
-        # linear scale would render every confusion as the same shade of white.
-        # log1p keeps the correct readings visible without flattening the
-        # off-diagonal structure, which is the part that matters here.
+        # log1p: duong cheo ap dao moi thu, thang tuyen tinh se xoa sach cau truc
+        # ngoai duong cheo — phan quan trong o day.
         figure, axes = plt.subplots(figsize=(11, 9.5))
         image = axes.imshow(np.log1p(matrix), cmap="viridis", aspect="auto")
         axes.set_xticks(range(len(charset)), list(charset), fontsize=7)
@@ -1168,10 +1166,8 @@ def main(argv: list[str] | None = None) -> int:
     LOGGER.info("Engine        : %s", args.engine)
     LOGGER.info("Pre-processing: %s", "off" if args.no_preprocess else "on")
 
-    # Environment first, explicit CLI second: the aspect-ratio threshold is this
-    # benchmark's own subject, so it wins, but every other field -- notably the
-    # retry-ladder switches -- must come through rather than be pinned to the
-    # dataclass defaults. See the same fix in benchmark_system.py / ocr_accuracy.py.
+    # Env truoc, CLI sau: nguong ty le la chu the cua benchmark nay nen thang,
+    # moi truong khac phai xuyen qua (cung fix voi benchmark_system/ocr_accuracy).
     config = replace(
         InferenceConfig.from_env(),
         two_line_aspect_ratio_threshold=args.aspect_ratio_threshold,

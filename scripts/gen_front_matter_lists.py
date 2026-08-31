@@ -38,10 +38,8 @@ CAP_HINH = re.compile(r"^\*+Hình (\d+\.\d+)\.\**\s*(.*?)\**$")
 CAP_BANG = re.compile(r"^\*\*Bảng (\d+\.\d+)\.?\*\*\s*(.*)$")
 FENCE = re.compile(r"^\s*(```|~~~)")
 
-# Thu tu dong quyen. Uu tien ORDER.txt cua chinh thu muc — day la co che
-# build_thesis.py dung (xem `read_order`), va la ly do ban mon hoc 5 chuong
-# ghep dung du ten tep chuong khac han quyen tot nghiep 6 chuong.
-# Hardcode danh sach o day tung lam script nay hong ngay khi doi ban.
+# Uu tien ORDER.txt cua chinh thu muc (co che read_order cua build_thesis);
+# hardcode danh sach tung lam script hong ngay khi doi ban 5 chuong.
 def _doc_thu_tu() -> list[str]:
     """Doc ORDER.txt cua thu muc; neu khong co thi dung danh sach mac dinh."""
     manifest = PAPERS / "ORDER.txt"
@@ -166,23 +164,10 @@ def main() -> None:
         "     Số trang do Word điền khi xuất .docx. -->"
     )
 
-    # Muc E KHONG chua muc luc ASCII. Word da co truong TOC tu sinh (pandoc
-    # --toc); in them mot ban liet ke tay la quyen co HAI muc luc — loi da xay
-    # ra that o ban 231 trang. Ban ASCII chi de doi chieu, nam trong chu thich.
-    # Truong TOC cua Word, chen THANG vao day duoi dang OpenXML tho.
-    #
-    # Truoc day muc luc do `pandoc --toc` sinh, va pandoc luon dat no o DAU tai
-    # lieu — tuc la TRUOC CA TRANG BIA. Ban 171 trang co hai trang muc luc dung
-    # truoc bia, con muc "E. MUC LUC" thi in ra mot muc rong. Chen truong TOC
-    # tai cho nhu duoi day dat muc luc dung vi tri cua no va bo luon `--toc`.
-    #
-    # `\o "1-2"` = lay tieu de cap 1 va 2; `\h` = moi dong la sieu lien ket;
-    # `\z` = an so trang o ban Web Layout; `\u` = dung muc luc theo outline.
-    # scripts/export_thesis_pdf.ps1 goi Fields.Update() nen so trang duoc dien
-    # luc xuat PDF, va tu 31/08 script do con ghi nguoc so trang vao chinh
-    # .docx. Van ban giu cho phai la mot NHAN TRUNG TINH ("Muc luc"), khong
-    # phai cau nhac thao tac: neu ai in ban chua cap nhat thi quyen se in ra
-    # dong "Mo tep trong Word roi bam Ctrl+A, F9" giua muc luc.
+    # Truong TOC cua Word chen THANG tai muc E duoi dang OpenXML tho — khong dung
+    # pandoc --toc (no dat muc luc TRUOC trang bia; ban 171 trang tung dinh loi nay).
+    # \o "1-2" lay tieu de cap 1-2. export_thesis_pdf.ps1 goi Fields.Update() va ghi
+    # nguoc vao .docx; van ban giu cho la nhan trung tinh, khong phai cau nhac F9.
     e = [ghi_chu, "",
          "```{=openxml}",
          "<w:p><w:r><w:fldChar w:fldCharType=\"begin\" w:dirty=\"true\"/></w:r>"

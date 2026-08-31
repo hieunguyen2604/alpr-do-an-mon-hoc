@@ -497,10 +497,8 @@ def run_training(
     run_dir = Path(getattr(model.trainer, "save_dir", config.run_dir))
     LOGGER.info("Training finished in %.1f min. Run directory: %s", elapsed / 60.0, run_dir)
 
-    # Safety net: confirm the trainer really used our dataset. Ultralytics falls
-    # back to its default (COCO) descriptor in a few edge cases -- most notably a
-    # rejected resume -- and the resulting run looks entirely normal until its
-    # useless weights are published over a good model.
+    # Chot lai trainer dung DUNG dataset: Ultralytics roi ve COCO o vai canh
+    # (resume bi tu choi) va lan chay trong hoan toan binh thuong.
     trained_on = str(getattr(getattr(model.trainer, "args", None), "data", "") or "")
     if trained_on and Path(trained_on).name != config.data.name and resume_from is None:
         raise RuntimeError(

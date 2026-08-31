@@ -53,15 +53,9 @@ REPO_ROOT: Path = Path(__file__).resolve().parent.parent
 PAPERS_DIR: Path = REPO_ROOT / "docs" / "papers"
 SLIDES_DIR: Path = REPO_ROOT / "docs" / "slides"
 
-# Front matter + the six chapters, in binding order. Listed explicitly (not
-# via a glob) so that tool files such as ``00-thesis-outline-v2.md`` and
-# ``THESIS-README.md`` — and any future stray file — are never merged in by
-# accident.
-#
-# Restructured 2026-08-02 from six chapters to seven: technology selection was
-# buried as §2.8 at the end of a 1,193-line chapter even though it is what a
-# defence committee asks about most, so it became Chapter 3 of its own. See
-# ``docs/papers/00-thesis-outline-v2.md`` for the full mapping.
+# Liet ke tuong minh, khong glob: tep lac (outline, THESIS-README) khong
+# duoc phep tu chui vao quyen. Tai cau truc 6->7 chuong 02/08 — xem
+# docs/papers/00-thesis-outline-v2.md.
 CHAPTER_FILENAMES: tuple[str, ...] = (
     "01-front-matter.md",
     "ch1-gioi-thieu.md",
@@ -74,20 +68,9 @@ CHAPTER_FILENAMES: tuple[str, ...] = (
     "ch9-phu-luc.md",
 )
 
-# Page break inserted after every section.
-#
-# This used to be ``"\n\n\newpage\n\n"``, which in a non-raw Python string is
-# three newlines followed by the literal text ``ewpage`` — because ``\n`` is an
-# escape sequence. The word **ewpage** was therefore printed as a paragraph of
-# body text eight times in the delivered thesis, once before each chapter
-# heading. The previous comment here documented the bug correctly but chose to
-# keep it so rebuilds stayed byte-identical with an earlier committed file; that
-# reason expired when the book was restructured.
-#
-# A raw ``\newpage`` would not have helped either: Pandoc only honours it for
-# LaTeX output, and this build targets DOCX. The block below is raw OpenXML,
-# which Word renders as an actual page break — hence the ``raw_attribute``
-# extension on :data:`PANDOC_FROM`, without which Pandoc would print the XML.
+# Ngat trang bang OpenXML tho (can raw_attribute): '\n' trong chuoi thuong
+# la escape — ban cu in ra chu 'ewpage' 8 lan giua quyen; con \newpage that
+# thi pandoc chi ton trong khi xuat LaTeX, khong phai DOCX.
 SECTION_SEPARATOR: str = (
     "\n\n```{=openxml}\n"
     '<w:p><w:r><w:br w:type="page"/></w:r></w:p>\n'
@@ -107,26 +90,12 @@ questions and only one of them belongs on a projector.
 SLIDES_OUTPUT_FILENAME: str = "slides.pptx"
 SLIDES_TEMPLATE_FILENAME: str = "template-uit.pptx"
 
-# --- Submission bundle ------------------------------------------------------
-# The things actually handed in are scattered across two directories and carry
-# build names -- ``thesis-full.pdf``, ``slides.pptx`` -- that say nothing to
-# someone opening the folder. Collecting copies under one directory with names
-# a reader understands removes the step where the wrong file gets attached.
-#
-# Copies, not moves: the originals stay where every script, README link and
-# cross-reference already expects them.
-#
-# Refreshed on every build so the bundle cannot quietly go stale. That is the
-# whole point -- a hand-copied folder is exactly the thing that ends up holding
-# last week's PDF.
+# --- Bundle nop: ban sao (khong move) duoi ten nguoi doc hieu duoc, lam
+# tuoi moi lan dung de khong bao gio om PDF cua tuan truoc ---
 BUNDLE_DIR: Path = REPO_ROOT / "nop"
 
-# (source path relative to repo root) -> (name inside the bundle)
-#
-# The PDF is produced by ``scripts/export_thesis_pdf.ps1``, not by this script,
-# so it is listed here rather than copied at its own export step: whichever ran
-# most recently, the next build picks the file up. A source that does not exist
-# yet is skipped and reported, never an error.
+# (duong dan nguon tinh tu goc repo) -> (ten trong bundle). PDF do
+# export_thesis_pdf.ps1 sinh; nguon chua ton tai thi bo qua va bao, khong loi.
 BUNDLE_FILES: tuple[tuple[str, str], ...] = (
     ("docs/papers/thesis-full.pdf", "01-do-an-tot-nghiep.pdf"),
     ("docs/papers/thesis-full.docx", "01-do-an-tot-nghiep.docx"),
@@ -138,45 +107,20 @@ BUNDLE_FILES: tuple[tuple[str, str], ...] = (
     ("docs/slides/12-slides-mon-hoc.pptx", "05-slide-mon-hoc.pptx"),
 )
 
-# Pandoc arguments shared by every export path.
-# ``raw_attribute`` is what lets :data:`SECTION_SEPARATOR` reach Word as a real
-# page break instead of being printed as XML. Harmless for the slide export,
-# which contains no raw blocks.
-# ``bracketed_spans`` cho phép `[]{#fig-4-1}` trở thành một bookmark Word. GFM
-# không có mở rộng này, nên trước đây các neo ấy bị nuốt im lặng và cột "Trang"
-# của Danh mục hình vẽ / Danh mục bảng biểu in ra rỗng — trường PAGEREF vẫn
-# sinh ra nhưng không có đích để trỏ tới. Xem gen_front_matter_lists._pageref.
-# ``-autolink_bare_uris``: GFM tu bien moi chuoi dang ``a@b`` thanh LIEN KET
-# MAILTO. Chi so ``mAP@0.5`` khop dung dang do, nen ban .docx co 6 lien ket
-# ``mailto:mAP@0.5`` va PDF in ra chung trong ngoac vuong kem mau xanh. Khong
-# co dia chi thu nao trong quyen, nen tat han cho ca tai lieu.
+# raw_attribute: SECTION_SEPARATOR toi Word nhu ngat trang that. bracketed_spans:
+# neo []{#fig-N} thanh bookmark cho PAGEREF (GFM khong co, tung nuot im lang).
+# -autolink_bare_uris: tat de mAP@0.5 khong thanh lien ket mailto.
 PANDOC_FROM: str = "gfm+raw_attribute+bracketed_spans-autolink_bare_uris"
 # Do sau muc luc khong con o day: truong TOC nam trong 01-front-matter.md
 # (muc E) va tu mang tham so `\o "1-2"`. Xem gen_front_matter_lists.py.
 
-# How many image pixels count as one printed inch.
-#
-# The 25 diagrams are rendered by mermaid-cli at scale 2, so the widest are
-# 1568 px. At Pandoc's default of 96 dpi that is 16.3 inches -- four times the
-# page width, and each diagram would swallow a page. ``{width=14cm}`` cannot fix
-# this here because the sources are read as ``gfm``, which does not support
-# ``link_attributes``; the annotation would print verbatim instead.
-#
-# 285 dpi puts a 1568 px diagram at 1568/285 = 5.5 in = 14.0 cm, which fits
-# inside the 15.9 cm text column with margin to spare.
+# 285 dpi: mermaid xuat rong nhat 1568 px -> 5,5 in = 14 cm, vua cot chu 15,9 cm.
+# Khong dung {width=14cm} duoc vi gfm khong ho tro link_attributes.
 PANDOC_IMAGE_DPI: str = "285"
 
-# --- Table borders ----------------------------------------------------------
-# Pandoc's built-in ``Table`` style draws exactly one rule -- under the header
-# row -- and nothing else: no outline, no vertical rules, no separators between
-# body rows. On a 43-table thesis where several tables carry five or six numeric
-# columns, that leaves the reader aligning figures by eye across white space.
-#
-# The fix is a reference document. Rather than authoring one by hand (which
-# would silently redefine every other style at the same time), the functions
-# below take Pandoc's *own* default reference.docx and patch the one style that
-# is wrong. Everything else -- headings, body font, list indents, caption style
-# -- stays byte-identical to what the build already produced.
+# --- Table borders: kieu Table mac dinh cua pandoc chi ke MOT duong duoi
+# header. Sua bang cach va DUNG MOT style trong reference.docx cua chinh
+# pandoc, moi style khac giu nguyen byte ---
 REFERENCE_DOCX_FILENAME: str = "reference-thesis.docx"
 
 # Border weights are in eighths of a point: sz="8" is 1 pt, sz="4" is 0.5 pt.
@@ -193,31 +137,17 @@ TABLE_BORDERS_XML: str = (
     "</w:tblBorders>"
 )
 
-# Anchor -> replacement, applied to ``word/styles.xml`` of the default
-# reference document. Each anchor must match exactly once; :func:`patch_styles`
-# raises when one is missing so that a Pandoc upgrade fails loudly instead of
-# quietly restoring borderless tables.
+# Anchor -> thay the tren word/styles.xml; moi anchor phai khop DUNG MOT lan,
+# thieu la patch_styles nem loi de nang cap Pandoc hong to thay vi im lang.
 STYLE_PATCHES: tuple[tuple[str, str], ...] = (
-    # 0b. Chu trong o bang: 12 pt -> 10 pt.
-    #
-    #    Quyen co 61 bang, nhieu bang sau cot. O 12 pt chung xuong dong
-    #    lien tuc va moi bang an gan mot trang. 10 pt cho bang la muc
-    #    thong thuong cua van ban hoc thuat — chu THAN BAI van giu 12 pt,
-    #    chi rieng o bang nho lai, nen khong cham vao quy dinh trinh bay.
-    #
-    #    Pandoc dat kieu `Compact` cho moi doan trong o bang, nen sua o
-    #    day la du; khong phai dung toi tung bang.
+    # 0b. Chu trong o bang 12->10 pt (chuan van ban hoc thuat; than bai van 12).
+    #     Pandoc gan kieu Compact cho moi doan trong o bang nen sua mot cho la du.
     (
         '<w:style w:customStyle="1" w:styleId="Compact" w:type="paragraph">\n    <w:name w:val="Compact" />\n    <w:basedOn w:val="BodyText" />\n    <w:qFormat />\n    <w:pPr>\n      <w:spacing w:after="36" w:before="36" />\n    </w:pPr>',  # noqa: E501 — chuoi khop nguyen van, khong duoc tach
         '<w:style w:customStyle="1" w:styleId="Compact" w:type="paragraph">\n    <w:name w:val="Compact" />\n    <w:basedOn w:val="BodyText" />\n    <w:qFormat />\n    <w:pPr>\n      <w:spacing w:after="20" w:before="20" />\n    </w:pPr>\n    <w:rPr>\n      <w:sz w:val="20" />\n      <w:szCs w:val="20" />\n    </w:rPr>',  # noqa: E501 — chuoi khop nguyen van, khong duoc tach
     ),
-    # 0. Khoang cach sau moi doan: 200 dxa (10 pt) -> 120 dxa (6 pt).
-    #
-    #    Quyen co ~655 doan van. O 10 pt, rieng khoang trong giua cac doan
-    #    chiem 6.550 pt ~ 11,5 trang in. 6 pt van la muc thong thuong cua van
-    #    ban hoc thuat va khong lam chu dinh vao nhau, nhung tra lai vai trang.
-    #    Day KHONG phai thu nho co chu hay ep gian dong — co chu van 12 pt va
-    #    gian dong van don, dung chuan trinh bay.
+    # 0. Khoang cach sau doan 200->120 dxa: ~655 doan van, rieng khoang trong da
+    #    ~11,5 trang in. Co chu va gian dong KHONG doi.
     (
         "<w:pPrDefault>\n"
         "      <w:pPr>\n"
@@ -226,16 +156,9 @@ STYLE_PATCHES: tuple[tuple[str, str], ...] = (
         "      <w:pPr>\n"
         '        <w:spacing w:after="120" />',
     ),
-    # 1. The grid itself. In the CT_TblPrBase schema ``tblBorders`` must sit
-    #    between ``tblInd`` and ``tblCellMar``, so it is inserted there rather
-    #    than appended -- Word rejects the part outright if the order is wrong.
-    #
-    # 2. Vertical cell padding, in the same edit because it shares the anchor.
-    #    The default is 0 dxa top and bottom, which was invisible while there
-    #    were no rules to collide with; with a grid it puts the text directly
-    #    on the line. 20 dxa is 20/1440 in = 0.35 mm per side -- deliberately
-    #    small: at 40 dxa the book grew from 92 printed pages to 95, and 20 dxa
-    #    measured back at 92, so the grid costs no pages at all.
+    # 1. Luoi bang: tblBorders phai nam giua tblInd va tblCellMar (Word tu choi
+    #    neu sai thu tu). 2. Dem doc 20 dxa — do o 40 dxa quyen phinh 92->95
+    #    trang, 20 dxa giu nguyen 92.
     (
         '<w:tblInd w:w="0" w:type="dxa" />\n'
         "      <w:tblCellMar>\n"
@@ -257,17 +180,9 @@ STYLE_PATCHES: tuple[tuple[str, str], ...] = (
         '<w:bottom w:val="single"/>',
         '<w:bottom w:val="single" w:sz="12" w:space="0" w:color="000000"/>',
     ),
-    # 4. Keep each row whole. Word's default lets a row break mid-way down a
-    #    page, which was merely untidy while tables had no rules: the tail of a
-    #    wrapped cell simply continued overleaf. With a grid it draws an empty
-    #    boxed row -- Bang 2.2 split so that page 14 opened with a bordered cell
-    #    containing the single syllable "le". ``cantSplit`` moves the whole row
-    #    to the next page instead.
-    #
-    #    It goes directly under ``w:style`` rather than inside a
-    #    ``tblStylePr``, because the conditional-formatting slots only cover
-    #    named regions (firstRow, lastRow, bands) and this has to reach every
-    #    row. Schema order for CT_Style puts ``trPr`` after ``tblPr``.
+    # 4. cantSplit: co luoi thi hang bi cat giua trang ve ra o rong (Bang 2.2
+    #    tung mo trang 14 bang mot o chi chua chu 'le'). Dat duoi w:style vi
+    #    tblStylePr chi phu vung dat ten; CT_Style xep trPr sau tblPr.
     (
         "</w:tblPr>\n"
         '    <w:tblStylePr w:type="firstRow">',
@@ -293,10 +208,7 @@ def patch_styles(styles_xml: str) -> str:
             means Pandoc's default styles moved and the patch is no longer
             describing what it thinks it is.
     """
-    # Pandoc 3.10 ships this part with CRLF endings; the anchors above are
-    # written with plain "\n" so they stay readable in the source. Detect what
-    # the document actually uses and translate, instead of hard-coding "\r\n"
-    # and breaking the day a Pandoc release switches to LF.
+    # Pandoc 3.10 xuat phan nay voi CRLF; do thuc te roi dich thay vi ghi cung.
     eol = "\r\n" if "\r\n" in styles_xml else "\n"
 
     for anchor, replacement in STYLE_PATCHES:
@@ -555,18 +467,9 @@ def export_docx(pandoc: Path, markdown_path: Path, docx_path: Path) -> None:
             # Bordered tables; see build_reference_docx. Omitted when the
             # reference document could not be built.
             *(["--reference-doc", str(reference)] if reference else []),
-            # Khong dung `--toc`: pandoc luon dat muc luc o DAU tai lieu, tuc
-            # la truoc ca trang bia. Truong TOC duoc chen thang vao muc "E. MUC
-            # LUC" cua 01-front-matter.md duoi dang OpenXML tho — xem
-            # scripts/gen_front_matter_lists.py.
-            # The chapters reference diagrams as ``figures/fig-chN-MM.png``,
-            # relative to themselves. Pandoc resolves image paths against the
-            # working directory, so without this the build silently produces a
-            # DOCX with broken image placeholders instead of the 25 diagrams.
-            #
-            # The parent directory is on the path too, so a chapter set kept
-            # in a sub-directory can share the one ``figures/`` folder instead
-            # of duplicating every PNG.
+            # Khong dung --toc (pandoc dat muc luc TRUOC trang bia); truong TOC chen
+            # thang vao muc E — xem gen_front_matter_lists.py. resource-path gom ca thu
+            # muc cha de mon-hoc/ dung chung figures/ — thieu thi DOCX ra 25 o anh vo.
             "--resource-path",
             os.pathsep.join(
                 [str(markdown_path.parent), str(markdown_path.parent.parent)]
@@ -607,16 +510,10 @@ def export_pptx(pandoc: Path, outline_path: Path, pptx_path: Path) -> None:
         str(outline_path),
         "--from",
         PANDOC_FROM,
-        # Pinned rather than inferred. Pandoc's automatic slide level depends on
-        # where the first content happens to sit, so adding one paragraph under
-        # a section heading silently re-cuts the whole deck. Level 2 fixes the
-        # contract: `#` is a section divider, `##` is one slide.
+        # Ghim slide-level=2: de pandoc tu suy thi them mot doan van la ca bo bi cat lai.
         "--slide-level=2",
-        # Image paths resolve against the working directory, not against the
-        # Markdown file, so `figures/fig-gap.png` fails whenever the build runs
-        # from anywhere but docs/slides. Adding the file's own directory lets
-        # the source keep paths that are relative to itself -- which is also
-        # what makes the images render when the file is read on GitHub.
+        # Duong dan anh resolve theo cwd — them thu muc cua chinh tep nguon de
+        # figures/... chay tu bat ky dau (va van render tren GitHub).
         "--resource-path",
         str(outline_path.parent),
         "-o",

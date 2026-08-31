@@ -28,12 +28,8 @@ logger = get_logger(__name__)
 
 router = APIRouter(tags=["History"])
 
-# -- Reusable query parameters ---------------------------------------------
-#
-# Declared once and shared by the list and the export endpoints, because the
-# two must interpret every filter identically. A user who exports what they are
-# looking at and receives something else has been handed wrong data with no
-# indication that anything went wrong.
+# --- Reusable query parameters — shared so the list and export endpoints
+# interpret every filter identically ---
 
 SearchQuery = Annotated[
     str | None,

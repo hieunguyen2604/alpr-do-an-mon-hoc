@@ -109,12 +109,8 @@ def main() -> None:
                     tong += 1
                     hong[f.name].append(f"  {i:>5}  (trần) {m.group(0).strip()}")
 
-    # --- Duong dan anh -------------------------------------------------------
-    # Cong cu nay von chi kiem tham chieu MUC va BANG, khong kiem anh. Hau qua:
-    # mot dot chuan hoa tu ngu tung thay ca ten TEP anh -- "pipeline" thanh
-    # "duong ong", "layout" thanh "bo cuc" -- lam hong hai hinh trong ban mon
-    # hoc, va khong ai thay vi khong ai mo lai PDF ban do. Mot tham chieu anh
-    # chet khong bao loi luc dung: Pandoc van chay, PDF van ra, chi la thieu hinh.
+    # --- Duong dan anh: tham chieu anh chet KHONG bao loi luc dung (Pandoc van
+    # chay, PDF chi thieu hinh) — mot dot doi ten tep tung lam hong hai hinh ---
     so_anh = 0
     for f in files:
         for i, dong in enumerate(f.read_text(encoding="utf-8").splitlines(), 1):
@@ -129,11 +125,8 @@ def main() -> None:
                 if not ((f.parent / duong).is_file() or (PAPERS / duong).is_file()):
                     hong[f.name].append(f"  {i:>5}  (ảnh) {duong}")
 
-    # --- Tieu de hua gi thi phai co cai do ------------------------------------
-    # Mot muc ten chua "so do" / "luoc do" / "kien truc" / "luong xu ly" ma ben
-    # trong khong co hinh lan bang la loi. Da tung co muc ten "So do use case va
-    # ba use case chinh" nhung khong mot so do nao -- khong cong cu nao bat duoc
-    # vi ve mat cu phap chang co gi sai. Quy tac o .agents/rules muc 1.5.
+    # --- Tieu de hua 'so do'/'kien truc' ma trong khong co hinh lan bang la loi
+    # (tung co muc 'So do use case' khong so do nao) — quy tac .agents/rules 1.5 ---
     HUA = re.compile(r"^#{2,4}\s+[\d.]+\.\s+.*\b(sơ đồ|lược đồ|kiến trúc|luồng xử lý)\b",
                      re.I)
     # "luoc do xam" la histogram, khong phai luoc do CSDL -- loai truoc khi khop.
@@ -158,10 +151,8 @@ def main() -> None:
             het = moc[k + 1] if k + 1 < len(moc) else len(dong)
             than = "\n".join(dong[i + 1 : het])
             if "![" not in than and not re.search(r"^\s*\|", than, re.M):
-                # CANH BAO, khong phai loi: mot muc kien truc viet bang van
-                # xuoi la "nen tot hon", khac han mot tham chieu chet. Neu de no
-                # chan cong kiem thi cong kiem se bi tat, va mat luon phan bat
-                # tham chieu chet -- thu that su quan trong.
+                # CANH BAO chu khong phai loi: de no chan cong kiem thi cong kiem se bi tat,
+                # mat luon phan bat tham chieu chet — thu that su quan trong.
                 nhac.append(
                     f"  {f.name} : {dong[i].strip()[:64]}"
                 )

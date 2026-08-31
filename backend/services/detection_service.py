@@ -1104,23 +1104,9 @@ class DetectionService:
             source_path=source_path,
         )
         db.add(job)
-        # Commit, not flush. This used to flush and keep the transaction open,
-        # reasoning that "a later failure should roll the whole detection back
-        # rather than leave a job with no results". That reasoning produced the
-        # opposite of what it wanted: :meth:`_fail_job` rolls back *before*
-        # writing the failure record, so the uncommitted job row went with it,
-        # ``db.get`` returned ``None``, and a failed image upload left **zero
-        # rows** -- the failure became invisible to the usage figures instead
-        # of being recorded.
-        #
-        # A failed job row is not "a job with no results"; it *is* the record of
-        # the failure, and it is what the run deserves to leave behind. The
-        # detection rows are still written afterwards and are still rolled back
-        # on failure, so the guarantee that actually mattered is untouched.
-        #
-        # ``create_video_job`` has always committed here, which is why the video
-        # path recorded its failures correctly while the image and webcam paths
-        # did not. This makes all three consistent.
+        # Commit, not flush: _fail_job rolls back BEFORE writing the failure record,
+        # so an uncommitted job row would vanish with it and a failed upload would
+        # leave zero rows. A failed job row IS the record of the failure.
         db.commit()
         return job
 

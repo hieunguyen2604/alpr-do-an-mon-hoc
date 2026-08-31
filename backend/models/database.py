@@ -107,10 +107,8 @@ SessionLocal: sessionmaker[Session] = sessionmaker(
     bind=engine,
     autocommit=False,
     autoflush=False,
-    # Keeps ORM objects usable after ``commit()``. Without it, every attribute
-    # access on a committed object triggers a refresh query -- and serialising a
-    # just-created detection into its response does exactly that, on a session
-    # the request is about to close.
+    # Keeps ORM objects usable after commit(); otherwise serialising a
+    # just-created detection re-queries on a session about to close.
     expire_on_commit=False,
 )
 """Factory producing sessions bound to :data:`engine`."""

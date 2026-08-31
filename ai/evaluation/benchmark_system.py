@@ -182,16 +182,9 @@ def measure_model_load(model_path: Path, device: str) -> tuple[Any, float]:
     from ai.inference.config import InferenceConfig
     from ai.inference.pipeline import build_default_pipeline
 
-    # Read the environment first, then override only what this benchmark owns.
-    #
-    # Building InferenceConfig() directly -- which this did until 28/07/2026 --
-    # silently pinned every other field to its default, so ALPR_RECTIFY_ENABLED
-    # and ALPR_SR_RETRY_ENABLED had no effect here. Those two switches exist
-    # precisely so Phase 7 can ablate the retry ladder and attribute its cost,
-    # and Phase 7's tool is this module: the knob was unreachable from the one
-    # place designed to turn it. An ablation run that way produces three sets of
-    # numbers differing only by measurement noise, which reads as "the ladder
-    # costs nothing" rather than as "the experiment never ran".
+    # from_env() truoc, chi ghi de truong benchmark nay so huu: dung
+    # InferenceConfig() tran se ghim ALPR_RECTIFY/SR_RETRY vao mac dinh va phep
+    # boc tach khong do duoc gi (loi da xay ra, sua 28/07).
     config = replace(
         InferenceConfig.from_env(),
         model_path=model_path,
@@ -455,10 +448,8 @@ def build_parser() -> argparse.ArgumentParser:
         prog="python -m ai.evaluation.benchmark_system",
         description="Measure end-to-end system performance against the NFR-P targets.",
     )
-    # Mac dinh PHAI la mo hinh cua ban giao hang. Truoc day dong nay tro
-    # `models/checkpoints/best-cpu-epoch7.pt` -- checkpoint giua chung cua luot
-    # baseline imgsz=416, va moi so do tren no da bi bac bo. Ai chay lai cong cu
-    # nay ma khong truyen --weights se do nham mo hinh va khong he duoc canh bao.
+    # Mac dinh PHAI la mo hinh ban giao hang — tro nham checkpoint la moi so do
+    # mo ta mot he thong khong ai giao, va khong co canh bao nao.
     parser.add_argument("--weights", default="models/best.pt")
     parser.add_argument("--images", default="datasets/processed/yolo/images/test")
     parser.add_argument(

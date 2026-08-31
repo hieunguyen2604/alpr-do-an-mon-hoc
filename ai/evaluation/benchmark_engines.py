@@ -167,15 +167,9 @@ def chuan_bi(anh: np.ndarray, tach_hai_dong: bool) -> np.ndarray:
     )
 
 
-# --------------------------------------------------------------------------
-# Ba engine — moi ham nhan anh DA CHUAN BI, tra [(trai, cao, chu)]
-#
-# Tra ve HINH HOC chu khong chi chu, vi buoc loc manh vun phia sau can no. Buoc
-# loc do (`_drop_short_fragments`) la mot heuristic hinh hoc TONG QUAT — bo manh
-# thap hon nhieu so voi manh cao nhat — chu khong phai thu rieng cua PaddleOCR.
-# Bo phep loc nay di thi PaddleOCR tu 65% tut xuong 40% chi vi cac manh rac
-# "JJ", "JJR" o mep dai ghep (da do). Ap no cho ca ba engine moi la cong bang.
-# --------------------------------------------------------------------------
+# --- Ba engine: nhan anh DA CHUAN BI, tra [(trai, cao, chu)] — tra hinh hoc
+# vi buoc loc manh vun (_drop_short_fragments) la heuristic chung, khong
+# rieng cua PaddleOCR ---
 
 
 def _loc_va_sap(manh: list[tuple[float, float, str]]) -> list[str]:
@@ -189,15 +183,9 @@ def _loc_va_sap(manh: list[tuple[float, float, str]]) -> list[str]:
 def dung_paddle() -> Callable[[np.ndarray], list[str]]:
     from paddleocr import PaddleOCR
 
-    # Phai truyen CA HAI ten model. Chi truyen mot thi PaddleOCR 3.7 bo qua
-    # lang/ocr_version cho cai con lai va am tham nap PP-OCRv6_medium — mot the
-    # he model KHAC HAN. Bay nay da duoc ghi o ai/inference/recognizer.py, va
-    # lan chay thu dau tien cua chinh tep nay da vap dung vao no.
-    #
-    # enable_mkldnn=False: backend oneDNN lam SAP suy luan tren
-    # PP-OCRv5_mobile_det (NotImplementedError trong
-    # ConvertPirAttribute2RuntimeAttribute). Ban giao hang tat no vi dung ly do
-    # nay (muc 5.5.4), nen phep do phai chay dung cau hinh do.
+    # Phai truyen CA HAI ten model: thieu mot cai thi PaddleOCR 3.7 am tham nap
+    # PP-OCRv6_medium — the he KHAC HAN. enable_mkldnn=False vi oneDNN sap suy
+    # luan tren nen tang nay (xem ai/inference/recognizer.py).
     engine = PaddleOCR(
         text_detection_model_name="PP-OCRv5_mobile_det",
         text_recognition_model_name="en_PP-OCRv5_mobile_rec",
@@ -257,23 +245,14 @@ def dung_easyocr() -> Callable[[np.ndarray], list[str]]:
 def dung_tesseract() -> Callable[[np.ndarray], list[str]]:
     import pytesseract
 
-    # Tim theo thu tu: bien moi truong -> PATH -> mac dinh cua pytesseract.
-    #
-    # Truoc day cho nay ghi cung `C:\Program Files\Tesseract-OCR\tesseract.exe`,
-    # vi pham NFR-M4 (cam hard-code duong dan) va lam do
-    # tests/test_architecture.py::TestNoHardCodedPaths. Duong dan do cung chi
-    # dung tren mot may Windows cai theo mac dinh — tren Linux hay tren may cai
-    # bang scoop/choco thi no khong ton tai, va ham nay im lang bo qua.
+    # Thu tu tim: bien moi truong -> PATH -> mac dinh pytesseract. Cam ghi cung
+    # duong dan (NFR-M4, test_architecture bat).
     duong_dan = os.environ.get("ALPR_TESSERACT_CMD") or shutil.which("tesseract")
     if duong_dan and Path(duong_dan).is_file():
         pytesseract.pytesseract.tesseract_cmd = duong_dan
 
-    # psm 7 = "mot dong van ban duy nhat". Sau khi da ghep ngang thi day la gia
-    # thiet DUNG, khong phai gia thiet uu ai Tesseract.
-    #
-    # Whitelist la nang luc GOC cua Tesseract ma hai engine kia khong co (muc
-    # 3.3.1). Bo no di "cho cong bang" chinh la lam sai — no dim Tesseract
-    # xuong duoi muc that cua no.
+    # psm 7 = mot dong van ban — dung SAU khi ghep ngang. Whitelist la nang luc
+    # GOC cua Tesseract; bo di 'cho cong bang' moi la lam sai.
     cau_hinh = f"--oem 3 --psm 7 -c tessedit_char_whitelist={CHU_SO}"
 
     def doc(anh: np.ndarray) -> list[tuple[float, float, str]]:
@@ -337,10 +316,8 @@ def main() -> None:
     print(f"Engine  : {', '.join(args.engines)}")
     print(f"Nhánh   : {', '.join(args.nhanh)}\n")
 
-    # `restore_aspect_ratio` KHONG phai tien xu ly rieng cua do an — no khoi
-    # phuc mot thu bo du lieu da pha: anh Roboflow xuat o khung vuong nen ty le
-    # khung hinh that cua bien so bi bop meo. Bo buoc nay thi CA BA engine deu
-    # doc ra gan nhu 0% (da do thu).
+    # restore_aspect_ratio khoi phuc thu bo du lieu da pha (Roboflow xuat khung
+    # vuong); bo buoc nay thi CA BA engine doc ra gan 0% (da do).
     print("Nạp ảnh…", end=" ", flush=True)
     goc: list[np.ndarray | None] = []
     for m in mau:
