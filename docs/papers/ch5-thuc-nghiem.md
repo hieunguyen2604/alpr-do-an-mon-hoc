@@ -388,13 +388,13 @@ Bảng tổng hợp trình bày khi bảo vệ, liệt kê **đầy đủ mọi 
 
 | Mã | Loại lỗi | Số ca | Tỉ lệ trong ca sai | Tỉ lệ toàn tập | Một dòng | Hai dòng |
 | :-: | --- | ---: | ---: | ---: | ---: | ---: |
-| E1 | Nhầm ký tự _(thay thế)_ | 392 | 60.87% | 14.00% | 17 | 375 |
-| E2 | Thiếu ký tự | 76 | 11.80% | 2.71% | 0 | 76 |
-| E3 | Thừa ký tự | 20 | 3.11% | 0.71% | 5 | 15 |
-| E4 | Sai thứ tự | 0 | 0.00% | 0.00% | 0 | 0 |
-| E5 | Trả chuỗi rỗng | 10 | 1.55% | 0.36% | 0 | 10 |
-| E6 | Hỗn hợp nhiều loại | 146 | 22.67% | 5.21% | 4 | 142 |
-| | **Tổng ca sai** | **644** | **100%** | **22.99%** | **26** | **618** |
+| E1 | Nhầm ký tự _(thay thế)_ | 392 | 60,87% | 14,00% | 17 | 375 |
+| E2 | Thiếu ký tự | 76 | 11,80% | 2,71% | 0 | 76 |
+| E3 | Thừa ký tự | 20 | 3,11% | 0,71% | 5 | 15 |
+| E4 | Sai thứ tự | 0 | 0,00% | 0,00% | 0 | 0 |
+| E5 | Trả chuỗi rỗng | 10 | 1,55% | 0,36% | 0 | 10 |
+| E6 | Hỗn hợp nhiều loại | 146 | 22,67% | 5,21% | 4 | 142 |
+| | **Tổng ca sai** | **644** | **100%** | **22,99%** | **26** | **618** |
 | | **Tổng ca đánh giá** | **2.801** | n/a | **100%** | **567** | **2234** |
 
 Tổng **644** ca sai khớp đúng với Bảng 5.3: 2.801 × (1 − 0,7701). Phân bố lỗi cho thấy ba điểm. **Một, lỗi thay thế ký tự áp đảo** — 392 ca, 60.9% số ca sai, và đây chính là loại lỗi mà bảng ánh xạ nhầm lẫn ở mục 5.5.4 nhắm vào. **Hai, không một ca sai thứ tự nào** trên toàn tập: bước ghép ngang không đảo vị trí ký tự, đúng như thiết kế ở mục 4.6.4. **Ba, gánh nặng dồn lên biển hai dòng** — 618 trên 644 ca sai, trong khi biển hai dòng chỉ chiếm 79.8% ngữ liệu.

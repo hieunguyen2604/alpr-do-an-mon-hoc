@@ -72,16 +72,6 @@ Cùng hệ thống, cùng phép đo: **chênh 48,6 điểm** *(số liệu Brazi
 
 ![](figures/fig-gap.png)
 
-## Căn cứ pháp lý: một phát hiện
-
-> Đề bài dẫn **TT 24/2023/TT-BCA** — **đã hết hiệu lực từ 01/01/2025**
-
-- **TT 79/2024/TT-BCA** — cấu trúc biển, seri, màu sắc
-- **TT 13/2025 · TT 51/2025** — sửa đổi TT 79/2024 · phụ lục mã tỉnh còn **34 tỉnh/thành**
-- **QCVN 08:2024/BCA** — kích thước và tỉ lệ
-
-⇒ Bộ luật xây trên văn bản **đang có hiệu lực**
-
 ## Đặc thù biển số Việt Nam
 
 Bố cục tách bạch theo **tỉ lệ khung hình** *(QCVN 08:2024/BCA)*
@@ -145,17 +135,6 @@ Sửa theo **VỊ TRÍ**, không sửa toàn cục — đóng góp kỹ thuật 
 
 ![](figures/fig-position-rules.png)
 
-## Bậc thang phục hồi khi nhận dạng hỏng
-
-Chỉ kích hoạt **sau khi nhận dạng hỏng**, chỉ nhận chuỗi **hợp lệ**
-
-⇒ Không làm thay đổi kết quả đang đúng
-
-| Cơ chế | Số biển phục hồi |
-|---|---:|
-| Phục hồi dòng trên của biển 2 dòng | **209 biển** |
-| Nắn hình / giãn dọc chống méo | **34 biển** |
-
 ## Bộ dữ liệu
 
 - **15.133 ảnh · 15.977 khung** · chia **10.592 / 3.027 / 1.514**
@@ -172,22 +151,6 @@ Chỉ kích hoạt **sau khi nhận dạng hỏng**, chỉ nhận chuỗi **hợ
 đều trên CPU, hết **10,05 giờ** *(30,2 phút/epoch)*
 
 ![](figures/fig-training-curve.png)
-
-## Cơ sở dữ liệu — lưu vết đánh giá
-
-Không có `raw_ocr_text` thì **không đo được** đóng góp của hậu xử lý
-
-| Cột | Nội dung |
-|---|---|
-| `raw_ocr_text` | Chuỗi **thô** do PaddleOCR trả về |
-| `plate_number` | Chuỗi **sau** bộ luật hậu xử lý |
-| `is_valid_format` | Hợp quy cách Việt Nam hay không |
-
-## Giao diện
-
-Mọi vùng dữ liệu xử lý đủ **4 trạng thái**: chờ · rỗng · lỗi · thành công
-
-![](../screenshots/image-detection.png)
 
 ## Kết quả phát hiện — đạt cả 4 chỉ tiêu
 
@@ -235,13 +198,13 @@ Chênh lệch 2 dòng còn **23,07 điểm**, cùng bậc mốc quốc tế **48
 
 ## Hiệu năng trên CPU — phân rã suy luận thuần
 
-Điểm nghẽn thời gian là OCR (**64,3%**); tầng phát hiện chiếm **34,0%**
+Điểm nghẽn thời gian là **OCR (60,8%)**; tầng phát hiện chiếm **38,0%**
 
 | Bước trong pipeline | Ước lượng ban đầu | **Đo thật** | % tổng |
 |---|---|---|---|
-| Giải mã ảnh + tiền xử lý | 50 ms | **2,83 ms** | 1,7% |
-| Phát hiện *(YOLO11n @ 640, CPU)* | 150 ms | **57,27 ms** | **34,0%** |
-| Nhận dạng chữ *(PaddleOCR, mỗi biển)* | 120 ms | **108,28 ms** | **64,3%** |
+| Giải mã ảnh + tiền xử lý | 50 ms | **1,78 ms** | 1,2% |
+| Phát hiện *(YOLO11n @ 640, CPU)* | 150 ms | **55,66 ms** | **38,0%** |
+| Nhận dạng chữ *(PaddleOCR, mỗi biển)* | 120 ms | **89,16 ms** | **60,8%** |
 | Hậu xử lý regex + kiểm tra hợp lệ | 5 ms | **0,03 ms** | 0,0% |
 | **Tổng suy luận thuần cho một biển** | **405 ms** | **146,63 ms** | **100%** |
 
@@ -274,36 +237,15 @@ Phần lớn ảnh hoàn tất dưới 500 ms; độ trễ tập trung ở các 
 | Độ tin cậy | Chạy liên tục **100%** · CSDL sống sót khởi động lại **0 mất** | ✅ |
 | Phần mềm | **1.004 test** · bao phủ 87,7% · `docker compose up` | ✅ |
 
-## Demo trực tiếp
+## Hạn chế và hướng phát triển
 
-Ba tình huống minh họa trên môi trường thực tế:
+**Ba hạn chế chính** — và hướng xử lý tương ứng
 
-| Tình huống | Mục tiêu kiểm chứng |
+| Hạn chế | Hướng phát triển |
 |---|---|
-| Ảnh ô tô — biển 1 dòng | Luồng cơ bản, nhận dạng chính xác dưới 1 giây |
-| Ảnh xe máy — biển 2 dòng | Luồng phân tách hai nửa và ghép ngang chạy thực tế |
-| Video + Lịch sử | Xử lý bất đồng bộ, tra cứu và hiển thị lịch sử |
-
-## Hạn chế
-
-| Hạn chế | Nguyên nhân gốc |
-|---|---|
-| **Biển 2 dòng chưa đạt** — đọc đúng cả chuỗi 0,7234 so với 0,9541 của biển 1 dòng | Bộ đọc dòng đơn; xe máy chiếm 79,8% tập nhãn |
-| **Độ chính xác đầu cuối chưa đo trên tập lớn** | Thiếu bộ dữ liệu đồng thời có ảnh toàn cảnh và nhãn chuỗi biển |
-| **Dữ liệu chủ yếu là biển trắng** — tập nhãn có 97,7% biển trắng, 20 vàng, 4 xanh, **0 đỏ, 0 ngoại giao** | Nguồn công khai chưa đa dạng các loại biển hiếm |
-| Tập test **chưa mở rộng xuyên bộ dữ liệu** | Đánh giá tổng quát hóa chủ yếu trong cùng phân phối thu thập |
-
-## Hướng phát triển
-
-**Ngắn hạn** — Tập trung vào các điểm nghẽn đã xác định
-
-1. **Fine-tune bộ nhận dạng** trên vùng cắt biển số Việt Nam
-2. **Xây dựng tập nhãn chuỗi cho ảnh hiện trường** để đo đạc độ chính xác đầu cuối hoàn chỉnh
-
-**Trung hạn**
-
-3. Đánh giá kiểm thử **xuyên bộ dữ liệu** để đo tổng quát hóa ngoài phân phối
-4. Xuất mô hình sang OpenVINO / ONNX Runtime để tối ưu hóa độ trễ đuôi
+| **OCR biển 2 dòng còn thấp** — 0,7234 so với 0,9541 của biển 1 dòng, mà biển 2 dòng chiếm 79,8% tập nhãn | Huấn luyện lại bộ nhận dạng riêng cho biển số Việt Nam |
+| **Nhãn ảnh hiện trường do mô hình sinh, không phải người gán** — A7 = 56,3% phải đọc kèm hạn chế này | Xây dựng bộ nhãn chuỗi do người gán cho ảnh toàn cảnh |
+| **Chưa đánh giá xuyên bộ dữ liệu** — giữ nguyên một nguồn không dùng để huấn luyện | Dựng tập test xuyên bộ để đo tổng quát hoá ngoài phân phối |
 
 ## Kết luận
 
@@ -312,14 +254,6 @@ Ba tình huống minh họa trên môi trường thực tế:
 - Hậu xử lý **+13,28 điểm**, đo tách bạch
 - **1.004/1.004 kiểm thử** đạt · bao phủ **87,7%**
 - Định lượng riêng biển **1 dòng** và **2 dòng** trên cùng hệ thống
-
-## Cảm ơn
-
-<br>
-
-**Nhóm thực hiện xin trân trọng cảm ơn Quý Thầy/Cô và Hội đồng.**
-
-**Trân trọng kính mời Hội đồng đặt câu hỏi phản biện.**
 
 ## Backup 1 — Kiến trúc mô hình YOLO11
 
@@ -345,16 +279,17 @@ Mô hình nhận dạng ký tự siêu nhẹ chuyên biệt cho văn bản *(Pad
 
 ## Backup 3 — Phân tích lỗi (Error Analysis)
 
-Sáu loại lỗi **loại trừ lẫn nhau**, mỗi ca sai gán đúng một loại — **697 ca trên 2.801 biển (24,88%)**
+Sáu loại lỗi **loại trừ lẫn nhau** — **644 ca sai trên 2.801 biển (22,99%)**, khớp đúng 1 − A6
 
-| Mã | Loại lỗi | Số ca | % tổng ca sai | Một dòng | Hai dòng |
+| Mã | Loại lỗi | Số ca | % ca sai | 1 dòng | 2 dòng |
 |:--:|---|---:|---:|---:|---:|
-| E1 | Bỏ sót biển | 335 | — | — | — |
-| E2 | Phát hiện nhầm | *(chưa đo)* | — | — | — |
-| E3 | **Nhầm ký tự** | **445** | **63,85%** | 17 | **428** |
-| E4 | Thiếu ký tự | 73 | 10,47% | 0 | 73 |
-| E5 | Thừa ký tự | 18 | 2,58% | 5 | 13 |
-| E6 | Sai thứ tự | 0 | 0,00% | 0 | 0 |
+| E1 | **Nhầm ký tự** *(thay thế)* | **392** | **60,87%** | 17 | **375** |
+| E2 | Thiếu ký tự | 76 | 11,80% | 0 | 76 |
+| E3 | Thừa ký tự | 20 | 3,11% | 5 | 15 |
+| E4 | Sai thứ tự | **0** | 0,00% | 0 | 0 |
+| E5 | Trả chuỗi rỗng | 10 | 1,55% | 0 | 10 |
+| E6 | Hỗn hợp nhiều loại | 146 | 22,67% | 4 | 142 |
+| | **Tổng** | **644** | **100%** | **26** | **618** |
 
 ## Backup 4 — Bóc tách đóng góp (Ablation)
 
@@ -406,3 +341,13 @@ những khẳng định chính của bài
 | Đúng cả chuỗi | **0,7701** *(1 dòng 0,954 · 2 dòng 0,723)* |
 | Độ trễ | p50 **150 ms** · p95 **510 ms** |
 | Kiểm thử | **1.004** đạt · bao phủ **87,7%** |
+
+## Backup 8 — Kịch bản demo trực tiếp
+
+Ba tình huống minh họa trên môi trường thực tế:
+
+| Tình huống | Mục tiêu kiểm chứng |
+|---|---|
+| Ảnh ô tô — biển 1 dòng | Luồng cơ bản, nhận dạng chính xác dưới 1 giây |
+| Ảnh xe máy — biển 2 dòng | Luồng phân tách hai nửa và ghép ngang chạy thực tế |
+| Video + Lịch sử | Xử lý bất đồng bộ, tra cứu và hiển thị lịch sử |
