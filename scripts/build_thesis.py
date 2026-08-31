@@ -131,7 +131,6 @@ BUNDLE_FILES: tuple[tuple[str, str], ...] = (
     ("docs/papers/thesis-full.pdf", "01-do-an-tot-nghiep.pdf"),
     ("docs/papers/thesis-full.docx", "01-do-an-tot-nghiep.docx"),
     ("docs/slides/slides.pptx", "02-slide-bao-ve.pptx"),
-    ("docs/slides/11-slides-ky-thuat.pptx", "03-slide-bao-cao-ky-thuat.pptx"),
     # Ban rut gon cho do an mon hoc — quyen rieng, dung nguon rieng, khong
     # phai mot phien ban khac cua quyen tot nghiep.
     ("docs/papers/mon-hoc/thesis-full.pdf", "04-do-an-mon-hoc.pdf"),

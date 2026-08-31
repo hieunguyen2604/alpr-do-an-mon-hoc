@@ -11,9 +11,9 @@ nào bị đổi đường dẫn.
 
 | Tệp | Sinh từ | Nội dung |
 |---|---|---|
-| `01-do-an-tot-nghiep.pdf` | `docs/papers/thesis-full.pdf` | Quyển đồ án tốt nghiệp đầy đủ, **93 trang** |
+| `01-do-an-tot-nghiep.pdf` | `docs/papers/thesis-full.pdf` | Quyển đồ án tốt nghiệp đầy đủ, **79 trang** |
 | `01-do-an-tot-nghiep.docx` | `docs/papers/thesis-full.docx` | Cùng nội dung, bản Word để hội đồng ghi chú |
-| `02-slide-bao-ve.pptx` | `docs/slides/slides.pptx` | Slide bảo vệ ĐATN đầy đủ — **31 slide chính + 7 slide dự phòng** (Chuẩn 15 phút) |
+| `02-slide-bao-ve.pptx` | `docs/slides/slides.pptx` | Slide bảo vệ ĐATN đầy đủ — **24 slide chính + 4 slide dự phòng** (Chuẩn 15 phút) |
 | `04-do-an-mon-hoc.pdf` | `docs/papers/mon-hoc/thesis-full.pdf` | Bản đồ án môn học **Xử lý ảnh và ứng dụng**, **44 trang** |
 | `04-do-an-mon-hoc.docx` | `docs/papers/mon-hoc/thesis-full.docx` | Cùng nội dung, bản Word |
 | `05-slide-mon-hoc.pptx` | `docs/slides/12-slides-mon-hoc.pptx` | Slide báo cáo môn học, **16 slide** (Chuẩn 7–10 phút) |
@@ -41,7 +41,7 @@ Khi cần rút gọn quyển Đồ án tốt nghiệp từ **93 trang $\rightarr
 
 ## 📽️ 2. Kế Hoạch Rút Gọn Slide Thuyết Trình (Khi Hội Đồng Giới Hạn 10–12 Phút)
 
-Slide bảo vệ hiện tại ([`02-slide-bao-ve.pptx`](02-slide-bao-ve.pptx)) gồm **31 slide chính + 7 slide backup** (tổng 38 slide, chuẩn 15 phút). Nếu Hội đồng chỉ cho phép trình bày trong **10–12 phút**, rút gọn về **20 slide chính** theo kế hoạch sau:
+Slide bảo vệ hiện tại ([`02-slide-bao-ve.pptx`](02-slide-bao-ve.pptx)) gồm **24 slide chính + 4 slide backup** (tổng 38 slide, chuẩn 15 phút). Nếu Hội đồng chỉ cho phép trình bày trong **10–12 phút**, rút gọn về **20 slide chính** theo kế hoạch sau:
 
 | Khối nội dung | Bản 15 phút (Hiện tại) | Bản 10 phút (Rút gọn) | Nội dung giữ lại |
 |---|---|---|---|

@@ -86,6 +86,10 @@ Desktop.ini
 docs/**/*.aux
 docs/**/*.out
 docs/**/~$*
+# Tep khoa cua Word/PowerPoint cung sinh ra trong nop/ khi ai do mo ban
+# thanh pham de xem — no khong phai san pham, va no lam build_thesis.py
+# hong voi PermissionError.
+nop/~$*
 
 # ---------- Bổ sung khi đóng gói (Phase 11) ----------
 # Ảnh crop trung gian để gán nhãn — tái tạo bằng scripts/labeling/extract_plates.py.
