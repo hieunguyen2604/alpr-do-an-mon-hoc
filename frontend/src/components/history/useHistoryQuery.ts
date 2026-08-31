@@ -235,12 +235,8 @@ export function useHistoryQuery(): HistoryQueryState {
     }
   }, [urlConfidence]);
 
-  // Push the settled search value into the URL.
-  //
-  // The `debouncedSearch === searchInput` guard is what keeps an external reset
-  // from being undone: right after one, the input already holds the new value
-  // while the debounce still holds the old one, and writing that stale value
-  // back would resurrect the filter the user just cleared.
+  // The debouncedSearch === searchInput guard keeps an external reset from
+  // being undone by the stale value still sitting in the debounce.
   useEffect(() => {
     if (debouncedSearch !== searchInput || debouncedSearch === urlSearch) {
       return;

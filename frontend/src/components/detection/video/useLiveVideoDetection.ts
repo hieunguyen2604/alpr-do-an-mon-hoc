@@ -398,11 +398,8 @@ export function useLiveVideoDetection({
   const inFlightRef = useRef(false);
   const jobIdRef = useRef<string | null>(null);
   const captureCountRef = useRef(0);
-  // The most recent frame that was actually read. Detection-only frames borrow
-  // their text from here, so it must hold the raw server results rather than
-  // enriched ones -- otherwise text would be copied from a copy, and a single
-  // mismatch would propagate through every later frame instead of expiring at
-  // the next reading.
+  // Raw server results, not enriched: detection-only frames borrow text from
+  // here, and a copy-of-a-copy would propagate one mismatch through every frame.
   const lastReadResultsRef = useRef<DetectionResult[]>([]);
   const abortRef = useRef<AbortController | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -477,11 +474,8 @@ export function useLiveVideoDetection({
         return;
       }
 
-      // A still video is not a new moment. Without this the timer keeps
-      // re-reading one frozen frame: measured after the demo clip ended, seven
-      // further requests went out in six seconds, each returning the same
-      // plates and inflating both the counters and the log. Not counted as
-      // skipped either — nothing was there to miss.
+      // A still video is not a new moment — without this, seven identical requests
+      // went out in six seconds after the demo clip ended. Not counted as skipped.
       if (video.paused || video.ended) {
         return;
       }
@@ -540,11 +534,8 @@ export function useLiveVideoDetection({
           setCounters((previous) => ({ ...previous, sent: previous.sent + 1 }));
           setError(null);
 
-          // Hand the pixels over and release the previous frame in the same
-          // step. An ImageBitmap holds decoded pixels outside the JS heap, so
-          // dropping the reference without closing it leaks until the garbage
-          // collector happens to notice — over a long clip that is hundreds of
-          // frames.
+          // Close the previous ImageBitmap in the same step: its pixels live outside
+          // the JS heap and leak until GC notices — hundreds of frames on a long clip.
           const { bitmap } = captured;
           setFrameImage((previous) => {
             previous?.close();
@@ -588,14 +579,8 @@ export function useLiveVideoDetection({
     };
   }, [enabled, videoRef, captureFrame]);
 
-  // Stopping clears the **overlay** but keeps the **log**. The two answer
-  // different questions: boxes describe the frame on screen right now, and
-  // leaving them up while the user scrubs elsewhere would label the wrong
-  // moment; the log is the record of what was found, and wiping it the instant
-  // someone pauses to read it would destroy the thing they stopped to look at.
-  //
-  // A new file gets a clean slate through remounting — the panel is keyed on
-  // the file — so nothing here has to know which video is loaded.
+  // Stop clears the overlay (boxes describe the current frame) but keeps the
+  // log (the record the user stopped to read). A new file resets via remount.
   useEffect(() => {
     if (!enabled) {
       setResults([]);
@@ -604,10 +589,8 @@ export function useLiveVideoDetection({
         return null;
       });
       setError(null);
-      // Restart the read/skip cycle so the first frame after resuming is a
-      // reading one, and forget the carried text -- the user may have scrubbed
-      // to an entirely different part of the clip while stopped, where those
-      // boxes describe nothing.
+      // Resume starts on a reading frame and drops carried text — the user may
+      // have scrubbed somewhere those boxes describe nothing.
       captureCountRef.current = 0;
       lastReadResultsRef.current = [];
     }

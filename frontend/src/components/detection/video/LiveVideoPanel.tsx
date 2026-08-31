@@ -165,13 +165,8 @@ export function LiveVideoPanel({ file }: LiveVideoPanelProps): JSX.Element {
       const scaleX = pictureWidth / frameWidth;
       const scaleY = pictureHeight / frameHeight;
 
-      // Paint the analysed frame over the live one. This is what makes the
-      // picture and the boxes describe the same instant: the video element has
-      // moved on by roughly half a second while the model was thinking, and
-      // drawing boxes over *that* picture shows a vehicle next to its own box.
-      // The cost is a picture that updates about twice a second instead of
-      // smoothly -- an honest trade, because the smooth version was showing a
-      // correspondence that did not exist.
+      // Paint the ANALYSED frame, not the live one: the video moved on ~0.5 s while
+      // the model thought, and smooth playback showed boxes on the wrong picture.
       if (frameImage !== null) {
         context.drawImage(frameImage, offsetX, offsetY, pictureWidth, pictureHeight);
       }
@@ -249,10 +244,8 @@ export function LiveVideoPanel({ file }: LiveVideoPanelProps): JSX.Element {
                   vid.currentTime = 0.001;
                 }
               }}
-              // Native controls only when stopped. While running the canvas
-              // covers the picture, so a seek bar underneath it would be
-              // invisible but still clickable -- a control the user cannot see
-              // and cannot predict. Stopping hands the player back.
+              // Native controls only when stopped: while running, the canvas covers the
+              // seek bar — invisible but still clickable.
               controls={!enabled}
               playsInline
               className="block max-h-[60vh] w-full"
