@@ -62,7 +62,7 @@ Hệ thống chạy đầu cuối, **suy luận hoàn toàn trên CPU**, hỗ tr
 
 | Đo cái gì | Sàn | Mục tiêu |
 |---|---:|---:|
-| mAP@0,5 của bộ phát hiện | 0,85 | **0,90** |
+| mAP@0.5 của bộ phát hiện | 0,85 | **0,90** |
 | Đúng mức ký tự (1 − CER) | 0,92 | 0,95 |
 | Đúng cả chuỗi, **trước** hậu xử lý | 0,80 | 0,85 |
 | Đúng cả chuỗi, **sau** hậu xử lý | 0,85 | 0,90 |
@@ -124,7 +124,7 @@ Phát hiện **đạt cả bốn chỉ tiêu**; phần thiếu nằm trọn ở 
 
 | Đo cái gì | Đo được | Ngưỡng | |
 |---|---|---|:--:|
-| mAP@0,5 · mAP@0,5:0,95 | **0,9829** · 0,7834 | 0,90 · 0,65 | ✅ |
+| mAP@0.5 · mAP@0.5:0.95 | **0,9829** · 0,7834 | 0,90 · 0,65 | ✅ |
 | Precision · Recall | 0,9837 · 0,9714 | 0,92 · 0,90 | ✅ |
 | Đúng mức ký tự (1 − CER) | **0,9483** | 0,95 | 🟡 |
 | Đúng cả chuỗi, sau hậu xử lý | **0,7701** | 0,90 | ❌ |
@@ -179,7 +179,7 @@ Khởi động bằng một lệnh `docker compose up`; giao diện hiện **c�
 
 ## Cảm ơn
 
-- Chạy đầu cuối trên CPU: phát hiện **mAP@0,5 = 0,9829**
+- Chạy đầu cuối trên CPU: phát hiện **mAP@0.5 = 0,9829**
 - Biển hai dòng giải bằng **phép biến đổi ảnh**, không bằng mô hình nặng hơn — **34,92 điểm**
 - Hậu xử lý theo vị trí **+13,28 điểm**, **0 ca làm hỏng** / 2.801 biển
 - Chưa đạt: đọc đúng cả chuỗi **0,7701** so với ngưỡng 0,85

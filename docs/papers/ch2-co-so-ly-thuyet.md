@@ -22,7 +22,7 @@ Năm tổ hợp màu nền phân biệt đối tượng sử dụng (bảng đ�
 
 ### 2.2.3. Kích thước vật lý và tỷ lệ khung hình
 
-Cơ sở định lượng phân biệt biển một dòng với hai dòng — then chốt với rủi ro R-04 (mục 2.4.3). Ô tô được cấp **02** biển: 01 ngắn (**2 dòng**), 01 dài (**1 dòng**); xe mô tô, xe gắn máy, rơ moóc được cấp **01** biển **2 dòng** — **một ô tô mang cùng chuỗi ký tự trên hai biển hình dạng hoàn toàn khác nhau**.
+Cơ sở định lượng phân biệt biển một dòng với hai dòng — quyết định với rủi ro R-04 (mục 2.4.3). Ô tô được cấp **02** biển: 01 ngắn (**2 dòng**), 01 dài (**1 dòng**); xe mô tô, xe gắn máy, rơ moóc được cấp **01** biển **2 dòng** — **một ô tô mang cùng chuỗi ký tự trên hai biển hình dạng hoàn toàn khác nhau**.
 
 Ba tỷ lệ khung hình tách rõ hai bố cục [6]: ô tô biển **dài** 520 × 110 mm → **4,727** (một dòng); ô tô biển **ngắn** 330 × 165 mm → **2,000** và xe máy 190 × 140 mm → **1,357** (hai dòng). Không biển nào rơi vào khoảng mở **(2,000 ; 4,727)** — đó là cơ sở hình học của bộ phân loại số dòng. Bộ số này **chỉ đúng từ 01/01/2025**; tiêu chuẩn trước đó quy định kích thước khác, nên mọi trích dẫn kích thước biển số bắt buộc kèm mốc hiệu lực. Bảng chi tiết ở **Phụ lục V**.
 
@@ -34,7 +34,7 @@ Bảy dữ kiện kéo theo bảy quyết định thiết kế: **81 mã tỉnh 
 
 ### 2.3.1. Kiến trúc YOLO: nguyên lý one-stage và anchor-free
 
-Ràng buộc CPU loại họ **two-stage** (Faster R-CNN — sinh vùng đề xuất rồi phân loại từng đề xuất) ngay từ đầu; đồ án dùng họ **one-stage**, hồi quy trực tiếp trong một lần lan truyền xuôi. Một nghiên cứu ALPR trên 50.000 ảnh và 10.000 video clip kết luận nhóm YOLO vượt trội Faster R-CNN và SSD cả về độ chính xác lẫn thời gian suy luận [12]<!-- scirep_2025_advanceddl -->.
+Ràng buộc CPU loại họ **two-stage** (Faster R-CNN — sinh vùng đề xuất rồi phân loại từng đề xuất) ngay từ đầu; đồ án dùng họ **one-stage**, hồi quy trực tiếp trong một lần lan truyền xuôi. Một nghiên cứu ALPR trên 50.000 ảnh và 10.000 video clip kết luận nhóm YOLO vượt trội Faster R-CNN và SSD cả về độ chính xác lẫn thời gian suy luận [12]<!-- scirep_2025_advanceddl --> (Hình 2.1).
 
 ![](figures/fig-ch2-05.png)
 
@@ -44,7 +44,7 @@ Ba phần: **backbone** trích đặc trưng, **neck** hợp nhất đặc trưn
 
 ### 2.3.2. YOLO11: các cải tiến kiến trúc
 
-Đồ án **không cải tiến kiến trúc YOLO**, nên phần này chỉ nêu điều cần để đọc kết quả ở Chương 5. Khác biệt kiến trúc thực sự của YOLO11 so với YOLOv8 là khối attention **C2PSA** đặt ngay sau SPPF — thành phần YOLOv8 hoàn toàn không có; khối `C3k2` thì **kế thừa trực tiếp từ `C2f`** của YOLOv8 và trùng khớp với nó khi tắt cờ cấu hình [14]<!-- ultralytics_2026_blockpy -->. Ultralytics cho biết C2PSA cải thiện phát hiện **đối tượng nhỏ** và **che khuất phức tạp** [9]<!-- jocher_2024_yolo11 -->, nhưng đây là phát biểu **định tính**: hãng không công bố AP_small/AP_medium/AP_large theo chuẩn COCO cho từng biến thể, nên đồ án phải **tự đo trên dữ liệu của mình** (Chương 5).
+Đồ án **không cải tiến kiến trúc YOLO**, nên phần này chỉ nêu điều cần để đọc kết quả ở Chương 5. Khác biệt kiến trúc thực sự của YOLO11 so với YOLOv8 là khối attention **C2PSA** đặt ngay sau SPPF — thành phần YOLOv8 hoàn toàn không có; khối `C3k2` thì **kế thừa trực tiếp từ `C2f`** của YOLOv8 và trùng khớp với nó khi tắt cờ cấu hình [14]<!-- ultralytics_2026_blockpy -->. Ultralytics cho biết C2PSA cải thiện phát hiện **đối tượng nhỏ** và **che khuất phức tạp** [9]<!-- jocher_2024_yolo11 -->, nhưng đây là phát biểu **định tính**: hãng không công bố AP_small/AP_medium/AP_large theo chuẩn COCO cho từng biến thể, nên đồ án phải **tự đo trên dữ liệu của mình** (Chương 5) (Bảng 2.1).
 
 **Bảng 2.1.** So sánh khác biệt kiến trúc giữa các phiên bản YOLO gần đây
 
@@ -81,7 +81,7 @@ $$\mathrm{AP} = \int_0^1 p(r)\, \mathrm{d}r, \qquad \mathrm{mAP} = \frac{1}{N}\s
 
 ### 2.4.1. Bài toán OCR và đặc thù khi áp dụng cho biển số
 
-**OCR** (*Optical Character Recognition*) chuyển văn bản trong ảnh thành chuỗi, thường gồm **text detection** khoanh vùng rồi **text recognition** đọc từng vùng. Sai lầm phổ biến: lấy thẳng bảng xếp hạng OCR phổ thông làm căn cứ chọn bộ nhận dạng cho ALPR.
+**OCR** (*Optical Character Recognition*) chuyển văn bản trong ảnh thành chuỗi, thường gồm **text detection** khoanh vùng rồi **text recognition** đọc từng vùng. Sai lầm phổ biến: lấy thẳng bảng xếp hạng OCR phổ thông làm căn cứ chọn bộ nhận dạng cho ALPR (Bảng 2.2).
 
 **Bảng 2.2.** So sánh OCR văn bản tài liệu và OCR biển số xe
 
@@ -96,7 +96,7 @@ $$\mathrm{AP} = \int_0^1 p(r)\, \mathrm{d}r, \qquad \mathrm{mAP} = \frac{1}{N}\s
 
 ### 2.4.2. Kiến trúc CRNN và hàm mất mát CTC
 
-**CRNN** gồm ba tầng: **tầng tích chập** trích đặc trưng và — điểm mấu chốt — downsample chiều cao **về 1**, biến bản đồ đặc trưng thành **chuỗi vector theo chiều rộng**; **tầng hồi quy** (Bi-LSTM) mô hình hoá ngữ cảnh hai chiều; **tầng phiên mã** giải mã thành chuỗi, thường bằng CTC. EasyOCR dùng đúng kiến trúc này; PaddleOCR dùng SVTR-LCNet kết hợp GTC [10]<!-- cui_2026_ppocrv5 -->, vẫn thuộc họ CTC.
+**CRNN** gồm ba tầng: **tầng tích chập** trích đặc trưng và — điểm quyết định — downsample chiều cao **về 1**, biến bản đồ đặc trưng thành **chuỗi vector theo chiều rộng**; **tầng hồi quy** (Bi-LSTM) mô hình hoá ngữ cảnh hai chiều; **tầng phiên mã** giải mã thành chuỗi, thường bằng CTC. EasyOCR dùng đúng kiến trúc này; PaddleOCR dùng SVTR-LCNet kết hợp GTC [10]<!-- cui_2026_ppocrv5 -->, vẫn thuộc họ CTC.
 
 **Hàm mất mát CTC** giải vấn đề: biết chuỗi nhãn đúng nhưng **không biết mỗi ký tự nằm ở cột đặc trưng nào**. CTC thêm ký hiệu trống $\varepsilon$, định nghĩa ánh xạ $\mathcal{B}$ gộp ký tự lặp rồi xoá $\varepsilon$ — ví dụ $\mathcal{B}(\texttt{3}\varepsilon\texttt{00}\varepsilon\texttt{A}) = \texttt{30A}$ — và tính xác suất chuỗi nhãn $\mathbf{l}$ bằng tổng xác suất **mọi** đường đi thô $\boldsymbol{\pi}$ ánh xạ về nó:
 
@@ -104,7 +104,7 @@ $$p(\mathbf{l} \mid \mathbf{x}) = \sum_{\boldsymbol{\pi} \in \mathcal{B}^{-1}(\m
 
 <div align="right">(2.3)</div>
 
-Tổng ở (2.3) tính bằng quy hoạch động tiến–lùi. Ưu điểm quyết định: **không cần nhãn vị trí từng ký tự** — lý do CTC là mặc định của hầu hết bộ nhận dạng mã nguồn mở.
+Tổng ở (2.3) tính bằng quy hoạch động tiến–lùi. Ưu điểm quyết định: **không cần nhãn vị trí từng ký tự** — lý do CTC là mặc định của hầu hết bộ nhận dạng mã nguồn mở (Hình 2.2).
 
 ![](figures/fig-ch2-crnn-ctc.png)
 
@@ -114,7 +114,7 @@ một chuỗi vector — nhờ đó bài toán đọc ảnh trở thành bài to
 
 ### 2.4.3. Vì sao kiến trúc CTC gặp khó với văn bản nhiều dòng
 
-Nền tảng lý thuyết cho rủi ro **R-04**: ở Việt Nam nơi xe máy áp đảo, biển hai dòng là dạng phổ biến chứ không phải ngoại lệ. CTC giả định đầu vào là **một chuỗi theo chiều rộng**; ảnh hai dòng vi phạm giả định đó — tầng tích chập hạ chiều cao về 1 nên hai dòng bị chồng vào cùng một cột đặc trưng, sinh chuỗi trộn lẫn hoặc mất hẳn một dòng.
+Nền tảng lý thuyết cho rủi ro **R-04**: ở Việt Nam nơi xe máy áp đảo, biển hai dòng là dạng phổ biến chứ không phải ngoại lệ. CTC giả định đầu vào là **một chuỗi theo chiều rộng**; ảnh hai dòng vi phạm giả định đó — tầng tích chập hạ chiều cao về 1 nên hai dòng bị chồng vào cùng một cột đặc trưng, sinh chuỗi trộn lẫn hoặc mất hẳn một dòng (Hình 2.3).
 
 ![](figures/fig-ch2-07.png)
 
@@ -150,7 +150,7 @@ Nghiên cứu ALPR cho biển Việt Nam chủ yếu công bố tại hội ngh�
 
 ### 2.5.3. Các bộ dữ liệu chuẩn trong lĩnh vực
 
-Khảo sát đối chiếu **chín bộ dữ liệu chuẩn** của lĩnh vực theo quy mô, đặc điểm và **giấy phép sử dụng** — cột giấy phép quyết định bộ nào dùng được cho đồ án này.
+Khảo sát đối chiếu **chín bộ dữ liệu chuẩn** của lĩnh vực theo quy mô, đặc điểm và **giấy phép sử dụng** — cột giấy phép quyết định bộ nào dùng được cho đồ án này (Bảng 2.3).
 
 ### 2.5.4. Khoảng trống nghiên cứu và định vị đề tài
 

@@ -47,7 +47,7 @@ Hệ thống hoàn chỉnh, **suy luận hoàn toàn trên CPU**, hỗ trợ c�
 
 | Đo cái gì | Sàn | Mục tiêu |
 |---|---:|---:|
-| mAP@0,5 của bộ phát hiện | 0,85 | **0,90** |
+| mAP@0.5 của bộ phát hiện | 0,85 | **0,90** |
 | Đúng cả chuỗi, sau hậu xử lý | 0,85 | 0,90 |
 | Đúng đầu-cuối: ảnh vào → chuỗi ra | 0,82 | 0,88 |
 | Độ trễ một ảnh, p95, **trên CPU** | ≤ 1.500 ms | ≤ 800 ms |
@@ -83,7 +83,7 @@ Phát hiện **đạt cả bốn chỉ tiêu**; phần thiếu nằm trọn ở 
 
 | Đo cái gì | Đo được | Ngưỡng | |
 |---|---:|---:|:--:|
-| mAP@0,5 · mAP@0,5:0,95 | **0,9829** · 0,7834 | 0,90 · 0,65 | ✅ |
+| mAP@0.5 · mAP@0.5:0.95 | **0,9829** · 0,7834 | 0,90 · 0,65 | ✅ |
 | Precision · Recall | 0,9837 · 0,9714 | 0,92 · 0,90 | ✅ |
 | Đúng từng ký tự (1 − CER) | **0,9483** | 0,95 | 🟡 |
 | Đúng cả chuỗi, sau hậu xử lý | **0,7701** | 0,90 | ❌ |
@@ -117,7 +117,7 @@ Giao diện hiện **cả chuỗi OCR thô lẫn chuỗi đã sửa** khi hai ch
 
 ## Cảm ơn — và mời đặt câu hỏi
 
-- Chạy đầu-cuối trên CPU: phát hiện **mAP@0,5 = 0,9829**
+- Chạy đầu-cuối trên CPU: phát hiện **mAP@0.5 = 0,9829**
 - Hậu xử lý **+13,28 điểm**, **0 ca làm hỏng** / 2.801 biển
 - Ba engine OCR đo trên cùng một tầng *(`36-engine-benchmark`)*: PaddleOCR **68,87%**, hơn EasyOCR 54,59 điểm; kết quả khác với khuynh hướng của một số tài liệu công khai
 - Chưa đạt: đọc đúng cả chuỗi **0,7701** so với ngưỡng 0,85

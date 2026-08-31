@@ -377,7 +377,7 @@ Trích `runs/final-640-v3/args.yaml` và `results.csv` — bản ghi *đã thự
 | **`imgsz` / `epochs`** | **640 px** / **20** | `box_loss` | **1,252 → 0,809** |
 | **`batch` / `seed`** | **8** / **42** | `cls_loss` | **0,833 → 0,313** |
 | **`optimizer` / `lr0`** | **AdamW** / **0,001** | `dfl_loss` | **1,154 → 0,987** |
-| **`device` / tham số mô hình** | **cpu** / **2.590.035** | **mAP@0,5** | **0,9684 → 0,9830** |
+| **`device` / tham số mô hình** | **cpu** / **2.590.035** | **mAP@0.5** | **0,9684 → 0,9830** |
 | **Thời gian huấn luyện** | **10,05 giờ** *(30,2 phút/epoch)* | | |
 
 ## Backup 6 — Tài liệu tham khảo chính

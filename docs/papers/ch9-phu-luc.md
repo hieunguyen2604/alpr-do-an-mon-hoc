@@ -176,3 +176,18 @@ Biến môi trường của bản đóng gói Docker liệt kê trong tệp `dep
 | Ép tải 6 lõi | 4,367 | 201,76 | 238,97 | 1,18 | 🟡 |
 | Ép tải 12 lõi | 4,057 | 215,69 | 268,40 | 1,24 | 🟡 |
 | OpenVINO, máy rảnh | **6,310** | 129,60 | 148,50 | 1,15 | ✅ |
+
+---
+
+## Phụ lục IX. Năm lượt hiệu chỉnh độ chính xác nhận dạng
+
+**Bảng IX.1.** Tiến triển độ chính xác qua năm lượt hiệu chỉnh
+
+| Lượt | Thay đổi chính | A4 | A6 |
+| :--: | --- | ---: | ---: |
+| 1 | Lượt đo đầu tiên | 0,8734 | 0,6555 |
+| 2 | Trả lại tỷ lệ đúng cho ảnh biển; phục hồi dòng trên _(5.5.6)_ | 0,8848 | 0,6730 |
+| 3 | Bốn đợt sửa độ chính xác ở khối đọc ký tự | 0,9416 | 0,7437 |
+| 4 | Công cụ đo chạy đúng đường xử lý của bản giao hàng _(5.5.7)_ | 0,9454 | 0,7512 |
+| **5** | **Bảng sửa ký tự dựng từ ma trận nhầm lẫn đo được** _(5.5.4)_ | **0,9483** | **0,7701** |
+| ✗ | _(đối chứng)_ Bộ đọc ký tự đã tinh chỉnh — **kém hơn bản gốc**, đã bác bỏ | 0,9252 | 0,6762 |

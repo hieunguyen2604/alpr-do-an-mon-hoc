@@ -10,7 +10,7 @@ Trạng thái bản này: hệ thống chạy ALPRPipeline với mô hình chín
 
 ### 4.1.1. Sơ đồ use case và ba use case chính
 
-Ba use case chính — nhận dạng từ ảnh (UC-01), từ video (UC-02) và tra cứu lịch sử (UC-05) — đều được đặc tả theo cùng một khuôn: tác nhân, tiền điều kiện, luồng chính, luồng thay thế và hậu điều kiện.
+Ba use case chính — nhận dạng từ ảnh (UC-01), từ video (UC-02) và tra cứu lịch sử (UC-05) — đều được đặc tả theo cùng một khuôn: tác nhân, tiền điều kiện, luồng chính, luồng thay thế và hậu điều kiện (Hình 4.1).
 
 ![](figures/fig-ch4-usecase.png)
 
@@ -30,7 +30,7 @@ Các chỉ tiêu phi chức năng chia bảy nhóm — độ chính xác (NFR-A)
 
 ### 4.2.1. Nguyên tắc kiến trúc
 
-**Kiến trúc sạch và quy tắc phụ thuộc:** phụ thuộc chỉ hướng vào trong, từ chi tiết dễ thay đổi (framework web, CSDL, giao diện) về quy tắc nghiệp vụ ổn định. Ở bài toán này thứ ổn định là thuật toán nhận dạng biển số, thứ dễ đổi là FastAPI hay Flask, SQLite hay PostgreSQL — nên **đường ống AI nằm ở vòng trong cùng**, tầng web phụ thuộc nó chứ không ngược lại. Nguyên tắc **trách nhiệm đơn nhất** được vận dụng trực tiếp để đo được từng khối riêng: bộ phát hiện chỉ trả hộp bao, bộ nhận dạng chỉ trả chuỗi, bộ chuẩn hoá chỉ chuẩn hoá.
+**Kiến trúc sạch và quy tắc phụ thuộc:** phụ thuộc chỉ hướng vào trong, từ chi tiết dễ thay đổi (framework web, CSDL, giao diện) về quy tắc nghiệp vụ ổn định. Ở bài toán này thứ ổn định là thuật toán nhận dạng biển số, thứ dễ đổi là FastAPI hay Flask, SQLite hay PostgreSQL — nên **đường ống AI nằm ở vòng trong cùng**, tầng web phụ thuộc nó chứ không ngược lại. Nguyên tắc **trách nhiệm đơn nhất** được vận dụng trực tiếp để đo được từng khối riêng: bộ phát hiện chỉ trả hộp bao, bộ nhận dạng chỉ trả chuỗi, bộ chuẩn hoá chỉ chuẩn hoá (Bảng 4.1).
 
 <!-- {{T4.1a}} bon rang buoc kien truc va cach kiem chung -->
 
@@ -57,7 +57,7 @@ Năm tầng: **1 — Trình bày** (giao diện, chỉ biết hợp đồng HTTP
 
 ### 4.2.3. Tách tầng AI khỏi tầng API và cách kiểm chứng ràng buộc
 
-Tầng AI là một gói Python độc lập, giao tiếp với tầng API **chỉ qua giao diện trừu tượng**; ràng buộc *mã đường ống AI không import FastAPI* (NFR-M1) được kiểm chứng tự động trong bộ kiểm thử. Tách như vậy cho ba lợi ích: kiểm thử tầng AI chỉ cần nạp mảng ảnh chứ không phải dựng ứng dụng web; kịch bản huấn luyện và đo đạc **dùng lại đúng mã của bản giao hàng** thay vì sao chép — bản sao lệch nhau chính là nguyên nhân của loại sự cố nghiêm trọng nhất, **con số công bố không mô tả hệ thống được bàn giao** (5.5.6); và thay bộ nhận dạng chỉ là đổi thành phần được tiêm vào, không sửa router hay lược đồ (NFR-M5).
+Tầng AI là một gói Python độc lập, giao tiếp với tầng API **chỉ qua giao diện trừu tượng**; ràng buộc *mã đường ống AI không import FastAPI* (NFR-M1) được kiểm chứng tự động trong bộ kiểm thử. Tách như vậy cho ba lợi ích: kiểm thử tầng AI chỉ cần nạp mảng ảnh chứ không phải dựng ứng dụng web; kịch bản huấn luyện và đo đạc **dùng lại đúng mã của bản giao hàng** thay vì sao chép — bản sao lệch nhau chính là nguyên nhân của loại sự cố nghiêm trọng nhất, **con số công bố không mô tả hệ thống được bàn giao** (5.5.6); và thay bộ nhận dạng chỉ là đổi thành phần được tiêm vào, không sửa router hay lược đồ (NFR-M5) (Hình 4.3).
 
 ### 4.2.4. Luồng xử lý của đường ống AI và nhánh biển hai dòng
 
@@ -69,7 +69,7 @@ Tầng AI là một gói Python độc lập, giao tiếp với tầng API **ch�
 
 ### 4.2.5. Bảng tổng hợp các quyết định kiến trúc
 
-Mỗi quyết định ghi kèm lý do và **đánh đổi phải chấp nhận** — một quyết định trình bày như không có nhược điểm là quyết định chưa cân nhắc đủ.
+Mỗi quyết định ghi kèm lý do và **đánh đổi phải chấp nhận** — một quyết định trình bày như không có nhược điểm là quyết định chưa cân nhắc đủ (Bảng 4.2).
 
 <!-- {{T4.2}} cac quyet dinh kien truc AD-01 den AD-08 -->
 
@@ -98,7 +98,7 @@ Ghi chú: AD-03 không đổi sau khi gỡ trang Webcam vì ở ~5 FPS trên CPU
 
 Toàn bộ cài đặt, kiểm thử và đo đạc chạy trên một máy trạm duy nhất: Windows 11 Pro; Intel Core i5-14600K, 14 nhân / 20 luồng; RAM 31,77 GiB; Intel UHD 770 — **không có GPU CUDA**; Python 3.13.12; Node.js 18.20.8; Docker 29.4.3. Cấu hình này **mâu thuẫn với mô tả môi trường ban đầu** (macOS Apple Silicon, Python 3.12), và ghi nhận sai lệch thành văn bản là bước đầu của giai đoạn phân tích yêu cầu.
 
-Ràng buộc CPU để lại dấu vết cụ thể: NFR-P1 phát biểu thẳng cho CPU; AD-06 kéo theo `yolo11n` và PP-OCRv5 mobile; và vì huấn luyện trên CPU mất 1–3 ngày mỗi lượt, quy trình huấn luyện chạy được cả trên máy cá nhân lẫn nền tảng đám mây với toàn bộ siêu tham số trong một tệp cấu hình duy nhất. Ở cấu hình giao hàng, p95 đầu cuối là **509,76 ms**, đạt cả ngưỡng tối thiểu 1.500 ms lẫn mục tiêu 800 ms; phân rã suy luận thuần cho thấy OCR chiếm **60,8%**, phát hiện **38,0%** (đối chiếu NFR-P1 ở 5.6.1).
+Ràng buộc CPU để lại dấu vết cụ thể: NFR-P1 phát biểu thẳng cho CPU; AD-06 kéo theo `yolo11n` và PP-OCRv5 mobile; và vì huấn luyện trên CPU mất 1–3 ngày mỗi lượt, quy trình huấn luyện chạy được cả trên máy cá nhân lẫn nền tảng đám mây với toàn bộ siêu tham số trong một tệp cấu hình duy nhất. Ở cấu hình giao hàng, p95 đầu cuối là **509,76 ms**, đạt cả ngưỡng tối thiểu 1.500 ms lẫn mục tiêu 800 ms; phân rã suy luận thuần cho thấy OCR chiếm **60,8%**, phát hiện **38,0%** (đối chiếu NFR-P1 ở 5.6.1) (Hình 4.4).
 
 ## 4.4. Xây dựng bộ dữ liệu
 
@@ -108,7 +108,7 @@ Ràng buộc CPU để lại dấu vết cụ thể: NFR-P1 phát biểu thẳng
 
 **Hình 4.4.** Đường ống sáu bước xây dựng bộ dữ liệu
 
-Mỗi bước là một kịch bản độc lập có giao diện dòng lệnh riêng và sinh báo cáo dạng dữ liệu có cấu trúc; một kịch bản điều phối chạy toàn chuỗi bằng một lệnh. **Kết quả:** **15.133 ảnh** hợp nhất từ **7 bộ công khai** (Roboflow, HuggingFace, Kaggle), còn **6 nguồn nguyên tố** sau khi loại **11.978 ảnh (44,2%)** bản sao từ **27.111 ảnh**; tổng 9 bộ tải về, 2 bộ nhãn mức ký tự tách riêng cho đánh giá OCR. Chia 70/20/10 thành **10.592 / 3.027 / 1.514 ảnh**. Bảng dưới **phải trích khi nói về dữ liệu của đồ án**; nguồn và giấy phép từng bộ ở **Phụ lục C.1**.
+Mỗi bước là một kịch bản độc lập có giao diện dòng lệnh riêng và sinh báo cáo dạng dữ liệu có cấu trúc; một kịch bản điều phối chạy toàn chuỗi bằng một lệnh. **Kết quả:** **15.133 ảnh** hợp nhất từ **7 bộ công khai** (Roboflow, HuggingFace, Kaggle), còn **6 nguồn nguyên tố** sau khi loại **11.978 ảnh (44,2%)** bản sao từ **27.111 ảnh**; tổng 9 bộ tải về, 2 bộ nhãn mức ký tự tách riêng cho đánh giá OCR. Chia 70/20/10 thành **10.592 / 3.027 / 1.514 ảnh**. Bảng dưới **phải trích khi nói về dữ liệu của đồ án**; nguồn và giấy phép từng bộ ở **Phụ lục C.1** (Bảng 4.3).
 
 <!-- {{T4.4}} dong gop cua tung bo du lieu truoc va sau khu trung lap -->
 
@@ -135,7 +135,7 @@ Mỗi bước là một kịch bản độc lập có giao diện dòng lệnh r
 
 Cấu hình lượt huấn luyện chính thức trích từ tệp tham số do thư viện tự sinh — bản ghi *đã thực thi* chứ không phải *dự định*. Các giá trị chịu lực: YOLO11n tiền huấn luyện COCO (**2.590.035** tham số, biến thể nhỏ nhất do ràng buộc CPU), độ phân giải **640** theo NFR-A1/A2, **20 epoch** lô 8, AdamW với tốc độ học 0,001 theo lịch cosine, thiết bị CPU, hạt giống cố định 42 kèm chế độ tất định. Phép lật ngang **tắt hoàn toàn** — lệch có chủ ý so với mặc định, vì nó sinh ký tự đối xứng gương, một phân bố không bao giờ xuất hiện thật.
 
-Giới hạn thời gian CPU chỉ cho phép **một lượt huấn luyện duy nhất**, nên không có nhiều hạt giống để ước lượng phương sai; cố định hạt giống ít nhất bảo đảm lượt này tái lập được, và mọi chỉ số phải đọc là **kết quả một lần chạy, không có khoảng tin cậy** (5.9.3). **Chi phí:** mô hình đối chứng 40 epoch @416 trên bộ v1 mất **156 phút**; mô hình chính thức 20 epoch @640 trên bộ v3 mất **30,2 phút mỗi epoch, tổng 10,05 giờ** trên CPU. Ba yếu tố cùng đổi (số ảnh ×3,3, diện tích ×2,37, epoch giảm nửa) nên so sánh ở mục 3.6 **không quy kết được nguyên nhân cho từng biến**.
+Giới hạn thời gian CPU chỉ cho phép **một lượt huấn luyện duy nhất**, nên không có nhiều hạt giống để ước lượng phương sai; cố định hạt giống ít nhất bảo đảm lượt này tái lập được, và mọi chỉ số phải đọc là **kết quả một lần chạy, không có khoảng tin cậy** (5.9.1). **Chi phí:** mô hình đối chứng 40 epoch @416 trên bộ v1 mất **156 phút**; mô hình chính thức 20 epoch @640 trên bộ v3 mất **30,2 phút mỗi epoch, tổng 10,05 giờ** trên CPU. Ba yếu tố cùng đổi (số ảnh ×3,3, diện tích ×2,37, epoch giảm nửa) nên so sánh ở mục 3.6 **không quy kết được nguyên nhân cho từng biến** (Hình 4.5).
 
 ### 4.5.2. Tiến triển của quá trình huấn luyện
 
@@ -143,7 +143,7 @@ Giới hạn thời gian CPU chỉ cho phép **một lượt huấn luyện duy 
 
 **Hình 4.5.** Đường cong huấn luyện theo epoch — ba hàm mất mát và bốn chỉ số trên tập kiểm định
 
-Ba hàm mất mát giảm đơn điệu và **không có dấu hiệu quá khớp**: mất mát hộp bao 1,252 → 0,809, mất mát phân lớp 0,833 → 0,313, mất mát phân phối 1,154 → 0,987; đường validation bám sát đường train suốt 20 epoch. Chỉ số trên tập validation đi lên rồi bão hoà sớm: mAP@0,5 đạt **0,9684 ngay ở epoch 1** và chỉ nhích lên **0,9830** ở epoch 20, trong khi mAP@0,5:0,95 — chỉ số nhạy với độ khít của hộp — tăng đáng kể hơn, **0,6526 → 0,7688**.
+Ba hàm mất mát giảm đơn điệu và **không có dấu hiệu quá khớp**: mất mát hộp bao 1,252 → 0,809, mất mát phân lớp 0,833 → 0,313, mất mát phân phối 1,154 → 0,987; đường validation bám sát đường train suốt 20 epoch. Chỉ số trên tập validation đi lên rồi bão hoà sớm: mAP@0.5 đạt **0,9684 ngay ở epoch 1** và chỉ nhích lên **0,9830** ở epoch 20, trong khi mAP@0.5:0.95 — chỉ số nhạy với độ khít của hộp — tăng đáng kể hơn, **0,6526 → 0,7688** (Bảng 4.4).
 
 <!-- {{T4.5a}} tien trien chi so tren tap validation theo epoch -->
 
@@ -198,9 +198,9 @@ Thiết kế cuối cùng vì vậy giữ nguyên chiến lược ghép và ch�
 
 ### 4.6.5. Bộ luật hậu xử lý theo vị trí
 
-Bộ phát hiện và bộ nhận dạng đều dùng mô hình có sẵn; khối hậu xử lý là thành phần do nhóm thực hiện tự thiết kế và là đóng góp kỹ thuật chính. Khối tuân ba nguyên tắc: thuần khiết về mặt hàm số, không vào/ra và không giữ trạng thái toàn cục khả biến; biểu thức chính quy sinh tự động từ các tập ký tự thay vì viết tay, loại trừ khả năng mẫu lệch khỏi bảng dữ liệu mà nó mã hoá; mọi lớp ký tự là hằng số có tên.
+Bộ phát hiện dùng kiến trúc có sẵn nhưng **trọng số do nhóm tự huấn luyện trên dữ liệu Việt Nam** (4.5); bộ nhận dạng dùng mô hình tiền huấn luyện nguyên bản. Khối hậu xử lý là thành phần nhóm tự thiết kế toàn bộ. Khối tuân ba nguyên tắc: thuần khiết về mặt hàm số, không vào/ra và không giữ trạng thái toàn cục khả biến; biểu thức chính quy sinh tự động từ các tập ký tự thay vì viết tay, loại trừ khả năng mẫu lệch khỏi bảng dữ liệu mà nó mã hoá; mọi lớp ký tự là hằng số có tên.
 
-**a) Tập mã tỉnh.** Khối lưu 81 mã tỉnh đang sử dụng theo phụ lục Thông tư 51/2025/TT-BCA [5]<!-- bocongan_2025_tt51 -->, song song tập 8 mã không bao giờ được cấp: 13, 42, 44, 45, 46, 87, 91 và 96. So với biểu thức tổng quát chấp nhận mọi cặp chữ số, ràng buộc này bác bỏ được các chuỗi không tồn tại trên thực tế; lưu tường minh cả tập không sử dụng cho phép kiểm thử khẳng định hai tập phủ đúng dải 11–99.
+**a) Tập mã tỉnh.** Khối lưu 81 mã tỉnh đang sử dụng theo phụ lục Thông tư 51/2025/TT-BCA [5]<!-- bocongan_2025_tt51 -->, đối chiếu với bảng ký hiệu do Cổng Thông tin điện tử Chính phủ công bố [11]<!-- chinhphu_2025_kyhieu -->, song song tập 8 mã không bao giờ được cấp: 13, 42, 44, 45, 46, 87, 91 và 96. So với biểu thức tổng quát chấp nhận mọi cặp chữ số, ràng buộc này bác bỏ được các chuỗi không tồn tại trên thực tế; lưu tường minh cả tập không sử dụng cho phép kiểm thử khẳng định hai tập phủ đúng dải 11–99.
 
 **b) Các lớp ký tự sê-ri.** Bốn lớp được định nghĩa: tập 20 chữ cái cho sê-ri ô tô và ký tự thứ nhất của sê-ri xe máy; tập 20 chữ cái cho ký tự thứ hai của sê-ri xe máy; tập 11 chữ cái cho biển nền xanh; và tập mở rộng 21 chữ cái. Hai tập đầu là ảnh gương của nhau tại đúng hai ký tự — tập thứ nhất chứa `G` không chứa `R`, tập thứ hai ngược lại — nên `29-AR 123.45` hợp lệ còn `29-AG 123.45` thì không.
 
@@ -216,13 +216,15 @@ Tập bị loại trừ toàn hệ thống gồm năm chữ `I`, `J`, `O`, `Q`, 
 - chuỗi 7 ký tự (ô tô, sê-ri 4 chữ số kiểu cũ): `DDLDDDD`
 - chuỗi 9 ký tự (xe máy): `DDL?DDDDD`
 
-Ký tự đại diện tại chỉ số 3 của chuỗi 9 ký tự là chi tiết thiết kế then chốt. Hai kiểu biển xe máy cùng 9 ký tự nhưng khác nhau đúng tại vị trí này: kiểu mới dùng sê-ri hai chữ cái, kiểu cũ dùng một chữ cái kết hợp một chữ số và vẫn lưu hành hợp pháp. Nếu tách thành hai mặt nạ riêng thì việc áp kiểu tại chỉ số 3 trở thành bắt buộc, và kiểm chứng bằng chạy thật cho thấy một trong hai kiểu sẽ bị phá huỷ. Chỉ số 3 của chuỗi 9 ký tự là vị trí duy nhất trong toàn hệ thống biển số Việt Nam mà cả chữ cái lẫn chữ số đều hợp lệ.
+Ký tự đại diện tại chỉ số 3 của chuỗi 9 ký tự quyết định tính đúng đắn của mặt nạ. Hai kiểu biển xe máy cùng 9 ký tự nhưng khác nhau đúng tại vị trí này: kiểu mới dùng sê-ri hai chữ cái, kiểu cũ dùng một chữ cái kết hợp một chữ số và vẫn lưu hành hợp pháp. Nếu tách thành hai mặt nạ riêng thì việc áp kiểu tại chỉ số 3 trở thành bắt buộc, và kiểm chứng bằng chạy thật cho thấy một trong hai kiểu sẽ bị phá huỷ. Chỉ số 3 của chuỗi 9 ký tự là vị trí duy nhất trong toàn hệ thống biển số Việt Nam mà cả chữ cái lẫn chữ số đều hợp lệ.
 
 **d) Bảng ánh xạ nhầm lẫn và tính không đối xứng.** Hai bảng riêng biệt áp tại vị trí bắt buộc chữ số và vị trí bắt buộc chữ cái, và **phát hiện trung tâm là chúng không đối xứng**: `O → 0` tại vị trí chữ số là hợp lý, nhưng `0 → O` thì không bao giờ, vì `O` không thuộc tập sê-ri hợp lệ. Do cả `O` và `Q` đều bị loại, ứng viên đồng hình duy nhất còn lại ở vị trí chữ cái là `D`, nên chiều đúng là `0 → D`. Ký tự `R` không được ánh xạ trong mọi trường hợp vì nó hợp lệ ở vị trí sê-ri thứ hai của biển xe máy (2.2.1). Nguyên tắc an toàn: ký tự không có mục trong bảng thì giữ nguyên. Hai bảng này **suy từ hình dạng ký tự chứ không từ đo đạc** — thay chúng bằng bảng trích từ ma trận nhầm lẫn đo được thuộc Chương 5.
 
 **e) Thuật toán chuẩn hoá.**
 
 ![](figures/fig-ch5-03.png)
+
+Trình tự các bước của thuật toán trình bày ở Hình 4.7.
 
 **Hình 4.7.** Thuật toán chuẩn hoá chuỗi biển số theo bộ luật ràng buộc vị trí
 
@@ -252,7 +254,7 @@ Ba can thiệp dưới đây **không đổi trọng số, không đổi phép t
 
 **Một — tắt ghi sổ đồ thị đạo hàm.** Lệnh dự đoán của bộ phát hiện được bọc trong `torch.inference_mode()`. Ở chế độ mặc định, PyTorch vẫn dựng cấu trúc dữ liệu phục vụ lan truyền ngược cho mọi phép toán, kể cả khi không ai gọi `backward()`. Với suy luận thuần đó là chi phí trả không công. Lệnh gọi được bọc trong `try/except` và lùi về ngữ cảnh rỗng nếu không nhập được `torch`, để tầng AI vẫn chạy khi thiếu thư viện.
 
-**Hai — ghim số luồng thay vì để thư viện tự đoán.** Torch và OpenCV mặc định lấy toàn bộ số nhân sẵn có. Trên máy 14 nhân / 20 luồng, hai thư viện cùng làm vậy trong một tiến trình sẽ **tranh khoá lẫn nhau**, và tổng thời gian tăng chứ không giảm. Số luồng nay được ghim ở `min(8, số_nhân)` cho phép toán trong một toán tử, và `min(4, số_nhân)` cho phép toán giữa các toán tử.
+**Hai — ghim số luồng thay vì để thư viện tự đoán.** Torch và OpenCV mặc định lấy toàn bộ số nhân sẵn có; tài liệu ONNX Runtime nêu đúng hiện tượng này là nguồn suy giảm hiệu năng phổ biến trên CPU nhiều nhân [24]<!-- onnxruntime_threads -->. Trên máy 14 nhân / 20 luồng, hai thư viện cùng làm vậy trong một tiến trình sẽ **tranh khoá lẫn nhau**, và tổng thời gian tăng chứ không giảm. Số luồng nay được ghim ở `min(8, số_nhân)` cho phép toán trong một toán tử, và `min(4, số_nhân)` cho phép toán giữa các toán tử.
 
 **Ba — truyền số luồng xuống bộ nhận dạng.** PaddleOCR nhận `cpu_threads` từ biến môi trường `OMP_NUM_THREADS`. Trước đó tham số này không được truyền, và trong một số cấu hình OpenBLAS điều đó gây lỗi nghiêm trọng làm sập tiến trình chứ không chỉ chậm.
 

@@ -24,7 +24,7 @@ Bốn ràng buộc thu hẹp không gian phương án **trước khi** so sánh.
 
 ### 3.3.2. PP-OCRv5 mobile so với PP-OCRv6 — đo trên máy đồ án
 
-Mục này chọn **bậc mô hình** bên trong họ đã chọn, dựa trên số liệu **tự đo**.
+Mục này chọn **bậc mô hình** bên trong họ đã chọn, dựa trên số liệu **tự đo** (Bảng 3.1).
 
 **Bảng 3.1.** PP-OCRv6_medium_rec so với PP-OCRv5_mobile_rec, đo trên 200 vùng cắt biển số của đồ án
 
@@ -39,7 +39,7 @@ PP-OCRv6_medium_rec đọc đúng hơn **5,5 điểm** nhưng chậm gấp **16,
 
 Mục 3.3.1 kết thúc bằng một hạng mục chưa giải quyết: giữ PaddleOCR dựa trên lý do kỹ thuật, **không** dựa trên bằng chứng độ chính xác, trong khi tài liệu công khai nghiêng về EasyOCR. Mục này trả nợ đó.
 
-**a) Thiết kế phép đo.** Cả ba bộ nhận dạng chạy trong **đúng một tầng bao quanh** — sao đúng chuỗi bước của bản bàn giao — trên **cùng một mảng ảnh đã chuẩn bị xong**, nên khác biệt duy nhất còn lại là bộ nhận dạng; đây cũng là bằng chứng thực nghiệm cho NFR-M5. Một chỗ cố ý không cào bằng: Tesseract chạy kèm whitelist `A-Z0-9`, vì giới hạn tập ký tự là **năng lực gốc** của nó. Công cụ đo được kiểm chứng bằng cách đối chiếu nhánh có tách đôi của PaddleOCR — **63,73%**, khớp NFR-A5 = 0,6373 đã công bố.
+**a) Thiết kế phép đo.** Cả ba bộ nhận dạng chạy trong **đúng một tầng bao quanh** — sao đúng chuỗi bước của bản bàn giao — trên **cùng một mảng ảnh đã chuẩn bị xong**, nên khác biệt duy nhất còn lại là bộ nhận dạng; đây cũng là bằng chứng thực nghiệm cho NFR-M5. Một chỗ cố ý không cào bằng: Tesseract chạy kèm whitelist `A-Z0-9`, vì giới hạn tập ký tự là **năng lực gốc** của nó. Công cụ đo được kiểm chứng bằng cách đối chiếu nhánh có tách đôi của PaddleOCR — **63,73%**, khớp NFR-A5 = 0,6373 đã công bố (Bảng 3.2).
 
 **Bảng 3.2.** So sánh ba bộ nhận dạng ký tự trên 2.801 biển số Việt Nam (567 một dòng, 2.234 hai dòng)
 

@@ -2,17 +2,17 @@
 
 ## 6.1. Kết quả đạt được
 
-Nhóm thực hiện đã bàn giao một hệ thống nhận dạng biển số xe Việt Nam hoàn chỉnh, chạy đầu cuối trên máy **không có GPU**: bộ phát hiện tự huấn luyện, khối nhận dạng ký tự, bộ luật hậu xử lý theo quy chuẩn Việt Nam, REST API, giao diện web, cơ sở dữ liệu và đóng gói Docker. Trạng thái xác minh bằng HTTP thật — 10 thao tác trên 9 đường dẫn phản hồi đúng, **1.004/1.004** kiểm thử tự động đạt, bao phủ tầng nghiệp vụ 87,7%.
+Nhóm thực hiện đã bàn giao một hệ thống nhận dạng biển số xe Việt Nam hoàn chỉnh, chạy đầu cuối trên máy **không có GPU**: bộ phát hiện tự huấn luyện, khối nhận dạng ký tự, bộ luật hậu xử lý theo quy chuẩn Việt Nam, REST API, giao diện web, cơ sở dữ liệu và đóng gói Docker. Trạng thái xác minh bằng HTTP thật — 10 thao tác trên 9 đường dẫn phản hồi đúng, **1.004/1.004** kiểm thử tự động đạt, bao phủ tầng nghiệp vụ 87,7% (Bảng 6.1).
 
 **Bảng 6.1.** Đối chiếu chỉ tiêu đặt ra ở giai đoạn phân tích yêu cầu với số đo trên `models/best.pt`
 
 |      Mã       | Chỉ tiêu                                                      |            Mục tiêu |                  Đo được |       |
 | :-----------: | ------------------------------------------------------------- | ------------------: | -----------------------: | :---: |
-|    A1 · A2    | mAP@0,5 · mAP@0,5:0,95 (phát hiện)                            |         0,90 · 0,65 |      **0,9829 · 0,7834** |  ✅   |
+|    A1 · A2    | mAP@0.5 · mAP@0.5:0.95 (phát hiện)                            |         0,90 · 0,65 |      **0,9829 · 0,7834** |  ✅   |
 |      A3       | Precision · Recall (phát hiện)                                |         0,92 · 0,90 |      **0,9837 · 0,9714** |  ✅   |
 |      A4       | 1 − CER (mức ký tự)                                           |                0,95 |               **0,9483** |  🟡   |
 |    A5 · A6    | Chuỗi trước · sau hậu xử lý                                   |         0,85 · 0,90 |      **0,6373 · 0,7701** |  ❌   |
-|      A7       | Toàn trình từ ảnh gốc                                         |                0,88 |               **0,563** ❌ | ⬜ \* |
+|      A7       | Toàn trình từ ảnh gốc                                         |                0,88 |               **0,563** | ❌ \* |
 |      A8       | Chênh lệch bố cục ở tầng phát hiện (điểm %)                   |                   — |                 **2,09** |   —   |
 |      P1       | Độ trễ p95 một ảnh (ms)                                       |               ≤ 800 |               **509,76** |  ✅   |
 | P4 · P5 · P6  | Nạp mô hình (s) · Overhead API · Truy vấn 10.000 bản ghi (ms) | ≤ 15 · ≤ 50 · ≤ 500 | **6,41 · 19,01 · 18,71** |  ✅   |
@@ -20,22 +20,11 @@ Nhóm thực hiện đã bàn giao một hệ thống nhận dạng biển số 
 
 \* A7 đo ở **mức ảnh toàn cảnh** — ước lượng phân tầng trên 1.606 khung biển của 1.514 ảnh hiện trường, 608 khung có nhãn. **Nhãn do mô hình ngôn ngữ-thị giác đọc, không phải người**, nên phải đọc như ước lượng có nguồn nhãn máy sinh (mục 5.5.5). Con số cũ 0,5552 đo trên ảnh cắt sẵn đã bị rút vì không tái lập được.
 
-Các chỉ tiêu về phát hiện, thông lượng, độ tin cậy và chịu tải đều đạt; các chỉ tiêu về độ chính xác chuỗi chưa đạt ngưỡng. Riêng NFR-P1 chỉ đạt ngưỡng tối thiểu do bậc thử lại tăng thêm 34 biển nhận dạng đúng nhưng làm tăng độ trễ p95 — một thoái lui có chủ ý.
+Các chỉ tiêu về phát hiện, thông lượng, độ tin cậy và chịu tải đều đạt; các chỉ tiêu về độ chính xác chuỗi chưa đạt ngưỡng. NFR-P1 vượt mục tiêu sau đợt tối ưu tầng chạy, dù bậc thử lại đã cộng thêm độ trễ đuôi để đổi lấy 34 biển đọc đúng.
 
-**Bốn đại lượng đo được mà khảo sát không tìm thấy tương đương trong tài liệu Việt Nam:**
+**Sáu đại lượng đo được mà khảo sát không tìm thấy tương đương trong tài liệu Việt Nam.** *(1)* **Đóng góp thuần của khối hậu xử lý theo vị trí: +13,28 điểm** — sửa đúng 372 biển, làm hỏng 0 trên 2.801 mẫu. *(2)* **Chênh lệch giữa hai bố cục biển: 23,07 điểm** ở khối nhận dạng so với chỉ 2,09 điểm ở khối phát hiện, nên rủi ro R-04 nằm trọn ở tầng đọc ký tự. *(3)* **Benchmark ba bộ nhận dạng trên 2.801 biển trong cùng một tầng bao quanh**: PaddleOCR 68,87% so với EasyOCR 14,28% và Tesseract 10,28% — kết quả chỉ áp trong cấu hình của đồ án, không suy rộng thành so sánh tuyệt đối; kèm phát hiện rằng bước tách-ghép nâng PaddleOCR 34,92 điểm nhưng Tesseract chỉ 0,03 điểm, tức **điều kiện cần nhưng chưa đủ**. *(4)* **Bộ nhận màu nền đạt 97,89%** trên 1.565 ảnh có nhãn, cung cấp bằng chứng mà chuỗi ký tự không mang được. *(5)* **Tối ưu tầng chạy đưa NFR-P1 từ chỉ-đạt-sàn lên vượt mục tiêu** — p95 từ 1.143,10 xuống 509,76 ms mà **không đụng một trọng số nào**, và điều đáng nói là **mọi chỉ số độ chính xác đứng yên tuyệt đối**, bằng chứng cho thấy phép tối ưu không đánh đổi gì. *(6)* **Khử trùng lặp mờ cho chuỗi khung hình video** gom 17 trên 44 cách đọc về đúng một bản ghi mỗi xe, chọn bản giữ lại bằng **số khung bỏ phiếu** chứ không bằng độ tin cậy.
 
-1. **Đóng góp thuần của khối hậu xử lý theo vị trí: +13,28 điểm** — sửa đúng 372 biển, làm hỏng 0 biển trên 2.801 mẫu.
-2. **Chênh lệch giữa hai bố cục biển trên dữ liệu Việt Nam thật: 23,07 điểm** ở khối nhận dạng, so với chỉ 2,09 điểm ở khối phát hiện. Rủi ro R-04 vì vậy nằm trọn ở tầng đọc ký tự.
-3. **Benchmark ba bộ nhận dạng ký tự trên 2.801 biển, cùng một tầng bao quanh:** PaddleOCR đạt **68,87%**, so với EasyOCR (14,28%) và Tesseract (10,28%). Phép đo bổ sung bằng chứng thực nghiệm trên biển số Việt Nam cho lựa chọn bộ nhận dạng trong cấu hình của đồ án; kết quả này không được suy rộng thành so sánh tuyệt đối giữa các bộ nhận dạng. Thực nghiệm cũng cho một kết quả khác với dự đoán ban đầu: kỹ thuật tách và ghép ngang giúp độ chính xác của PaddleOCR tăng 34,92% nhưng chỉ cải thiện 0,03% đối với Tesseract; do đó, đây là **điều kiện cần, nhưng chưa đủ**.
-4. **Bộ nhận màu nền biển đạt 97,89%** trên 1.565 ảnh có nhãn, cung cấp nguồn bằng chứng mà chuỗi ký tự không mang được: phân giải nhập nhằng giữa biển xanh nhà nước và biển trắng cá nhân khi hai chuỗi giống hệt nhau.
-
-**Hai kết quả kỹ thuật bổ sung, thuộc loại kỹ thuật hệ thống hơn là nghiên cứu.**
-
-5. **Tối ưu tầng chạy đưa NFR-P1 từ chỉ-đạt-sàn lên vượt mục tiêu** — p95 giảm từ 1.143,10 xuống **509,76 ms**, trung vị từ 405,77 xuống **150,07 ms**, mà **không đụng một trọng số nào**: ba can thiệp đều ở tầng lập lịch tính toán (4.6.8). Điều đáng nói không phải mức giảm mà là **mọi chỉ số độ chính xác đứng yên tuyệt đối** — đó chính là bằng chứng cho thấy phép tối ưu không đánh đổi gì.
-
-6. **Khử trùng lặp mờ cho chuỗi khung hình video** — gom **17 trên 44** cách đọc về đúng một bản ghi mỗi xe, dùng ngưỡng chuỗi kết hợp một rào ngữ nghĩa dựng từ chính cấu trúc biển số Việt Nam (4.7.2). Bản được giữ lại quyết bằng **số khung bỏ phiếu** chứ không bằng độ tin cậy — ở mức sai khác một ký tự, độ tin cậy là trọng tài kém.
-
-Ngoài các con số, nhóm thực hiện để lại **một quy trình đánh giá có kiểm chứng**: mọi số liệu sinh lại được bằng một lệnh, mọi phép so sánh kèm điều kiện đo, và các kết quả âm — hai lượt tinh chỉnh bộ nhận dạng đều không thắng model gốc ở chế độ vận hành — được ghi lại thay vì bỏ đi.
+Ngoài các con số, đồ án để lại **một quy trình đánh giá có kiểm chứng**: mọi số liệu sinh lại được bằng một lệnh, mọi phép so sánh kèm điều kiện đo, và các kết quả âm — lượt tinh chỉnh bộ nhận dạng không thắng model gốc ở chế độ vận hành — được ghi lại thay vì bỏ đi (Bảng 6.2).
 
 ## 6.2. Hạn chế
 
@@ -43,7 +32,7 @@ Ngoài các con số, nhóm thực hiện để lại **một quy trình đánh 
 
 |  #  | Hạn chế                                                             |    Mức     | Hệ quả cần lưu ý                                                                                       |
 | :-: | ------------------------------------------------------------------- | :--------: | ------------------------------------------------------------------------------------------------------ |
-|  1  | **OCR biển hai dòng còn yếu, kéo độ chính xác toàn trình chưa đạt** |    Cao     | A6 = 0,7701 dưới ngưỡng — điểm nghẽn lớn nhất. A7 không đo được vì giao thức đo không đại diện (5.9.2)                                        |
+|  1  | **OCR biển hai dòng còn yếu, kéo độ chính xác toàn trình chưa đạt** |    Cao     | A6 = 0,7701 dưới ngưỡng — điểm nghẽn lớn nhất. A7 ở mức ảnh toàn cảnh chỉ đạt 0,563, dưới sàn 0,82 (5.5.5)                                        |
 |  2  | **Bộ dữ liệu lệch nặng về biển trắng**                              |    Cao     | 97,68% mẫu thuộc một lớp, nên kết luận về độ chính xác OCR **chỉ áp cho biển trắng**                   |
 |  3  | Rò rỉ dữ liệu tồn dư không khử được bằng băm tri giác               | Trung bình | phash chỉ bắt tương đồng bố cục sáng-tối, không bắt "cùng xe, khác ngày"                               |
 |  4  | Tập test không xuyên bộ dữ liệu                                     | Trung bình | mAP 0,9829 **lạc quan hơn** mức gặp khi triển khai với nguồn ảnh mới                                   |
@@ -55,6 +44,8 @@ Ngoài các con số, nhóm thực hiện để lại **một quy trình đánh 
 | 10  | **Biển đỏ quân đội và biển ngoại giao không có mẫu đánh giá**        | Trung bình | Bộ dữ liệu không chứa hai loại này, nên hai nhánh phân loại tuy đã cài đặt và chạy đúng trên ảnh demo vẫn **chưa có số liệu định lượng** |
 
 ## 6.3. Hướng phát triển
+
+Các hướng phát triển xếp theo mức tác động ở Bảng 6.3.
 
 **Bảng 6.3.** Mười một hướng phát triển, xếp theo mức tác động
 
