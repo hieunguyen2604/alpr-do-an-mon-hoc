@@ -507,7 +507,7 @@ Một chi tiết phương pháp luận: ngưỡng 2,5 dùng trong `evaluate.py` 
 **Nếu bị hỏi sâu.**
 - Đây là **khoảng trống lớn nhất của đồ án** và em ghi nó ngay trong báo cáo dữ liệu chứ không giấu.
 - Khoảng trống ấy **đã được lấp**: gộp thêm các bộ Roboflow cho **2.801 biển có nhãn chuỗi**, nhờ đó đo được NFR-A5/A6 (**0,6373** trước và **0,7701** sau hậu xử lý) và có căn cứ để chạy fine-tune thật.
-- **Kết quả fine-tune, đo đủ bốn cấu hình (mục 5.6.4):** ở đúng chế độ production (phát hiện chữ + nhận dạng) model fine-tune **thua 7,50 điểm** A6 (0,6762 so với 0,7701). Nó chỉ thắng **+12,46 điểm** ở chế độ *chỉ nhận dạng* — nhưng chế độ đó đo trên **ảnh cắt sẵn**, và trên ảnh toàn cảnh thật thứ tự **đảo ngược** (13/22 so với 17/22). Vì vậy bản giao hàng dùng **model gốc**.
+- **Kết quả fine-tune, đo đủ bốn cấu hình (mục 5.5):** ở đúng chế độ production (phát hiện chữ + nhận dạng) model fine-tune **thua 7,50 điểm** A6 (0,6762 so với 0,7701). Nó chỉ thắng **+12,46 điểm** ở chế độ *chỉ nhận dạng* — nhưng chế độ đó đo trên **ảnh cắt sẵn**, và trên ảnh toàn cảnh thật thứ tự **đảo ngược** (13/22 so với 17/22). Vì vậy bản giao hàng dùng **model gốc**.
 - Bằng chứng rằng fine-tune sẽ có tác dụng: ứng dụng biển số của chính PaddleOCR cho thấy fine-tune nâng recognition từ 90,97% lên 94,54% và detection Hmean từ 76,12% lên 99,00% — nhưng trên biển Trung Quốc 1 dòng.
 - Nếu fine-tune, **charset phải là đủ A–Z + 0–9 (36 ký tự)** — lý do ở câu D6.
 

@@ -60,7 +60,7 @@ Ngoài các con số, nhóm thực hiện để lại **một quy trình đánh 
 
 |  #  | Hướng                                                          | Giải hạn chế | Ghi chú                                                                                            |
 | :-: | -------------------------------------------------------------- | :----------: | -------------------------------------------------------------------------------------------------- |
-|  1  | **Huấn luyện lại module nhận dạng riêng cho biển số Việt Nam** |      1       | Hướng quan trọng nhất. Hai lượt tinh chỉnh đã thực hiện đều chưa thắng model gốc ở chế độ vận hành |
+|  1  | **Huấn luyện lại module nhận dạng riêng cho biển số Việt Nam** |      1       | Hướng quan trọng nhất. Một lượt tinh chỉnh đã chạy và đo đủ bốn cấu hình (5.5): thua model gốc 7,50 điểm ở chế độ vận hành. Lượt thứ hai trên ngữ liệu biển hiếm **đã dừng có chủ ý** |
 |  2  | Thu thập dữ liệu cho các loại biển hiếm                        |    2, 10     | Điều kiện để mở rộng kết luận ra ngoài biển trắng, và để hai nhánh biển đỏ · ngoại giao có số liệu đánh giá                                                  |
 |  3  | Bổ sung nhãn chuỗi cho toàn tập                                |     1, 2     | Hiện chỉ 2.801/15.133 ảnh có nhãn chuỗi                                                            |
 |  4  | Xây dựng tập test xuyên bộ dữ liệu                             |     3, 4     | Giữ nguyên một nguồn hoàn toàn không dùng để huấn luyện                                            |
