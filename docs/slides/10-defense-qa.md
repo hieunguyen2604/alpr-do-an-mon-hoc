@@ -816,11 +816,11 @@ Con số cũ 5.857 ms **sai**, và em đã truy ra ba nguyên nhân cộng dồn
 |---|---:|---:|
 | Giải mã ảnh | 2,83 ms | 1,7% |
 | YOLO11n @640 | 57,27 ms | **34,0%** |
-| PaddleOCR (mỗi biển) | 108,28 ms | **64,3%** |
+| PaddleOCR (mỗi biển) | 89,16 ms | **60,8%** |
 | Chuẩn hoá regex | 0,03 ms | 0,0% |
 | **Tổng một biển** | **146,63 ms** | **100%** |
 
-Con số cũ "OCR chiếm 93,3%" là tạo tác của lỗi crop. Trên `best.pt`, OCR chiếm **64,3%** — vẫn tốn nhất nhưng không còn áp đảo, nên tối ưu bộ phát hiện (34,0%) giờ mới có ý nghĩa.
+Con số cũ "OCR chiếm 93,3%" là tạo tác của lỗi crop. Trên `best.pt`, OCR chiếm **60,8%** — vẫn tốn nhất nhưng không còn áp đảo, nên tối ưu bộ phát hiện (34,0%) giờ mới có ý nghĩa.
 
 **Bài học phương pháp luận đáng nêu:** một phép đo lấy trên hệ thống **đang có lỗi chưa biết** trông y hệt một phép đo hợp lệ — vẫn có cỡ mẫu, phân vị, biểu đồ. Thứ duy nhất phát hiện ra là **đo lại sau khi sửa lỗi** và thấy con số OCR dịch hơn 10 lần. Mọi con số hiệu năng em công bố kèm tên CPU, số luồng, imgsz và cỡ mẫu.
 
@@ -1038,7 +1038,7 @@ Nó là một hệ thống chạy được nhưng **chưa phải sản phẩm tr
 2. **Sai mô hình:** checkpoint epoch 7, không phải `best.pt`.
 3. **Lỗi crop:** ảnh crop quá lớn khiến PaddleOCR đọc ~1322 ms/ảnh, thổi phồng tỷ trọng OCR lên "93,3%".
 
-Đo lại trên máy rảnh với mô hình đúng: p95 731 ms *(trước bậc thang thử-lại; sau bậc thang là 1.143,10 ms, và sau đợt tối ưu tầng suy luận là 509,76 ms — con số giao hàng)*. Phân rã đúng (T5.7b): **OCR 64,3% (108,28 ms/biển) / detect 34,0% (57,27 ms)**.
+Đo lại trên máy rảnh với mô hình đúng: p95 731 ms *(trước bậc thang thử-lại; sau bậc thang là 1.143,10 ms, và sau đợt tối ưu tầng suy luận là 509,76 ms — con số giao hàng)*. Phân rã đúng (Bảng 5.8): **OCR 60,8% (89,16 ms/biển) / detect 38,0% (55,66 ms)**.
 
 **Cái bẫy: công bố con số mà không kèm cấu hình phần cứng.** Mọi con số hiệu năng phải kèm: **model CPU, số luồng, kích thước ảnh, backend, cỡ mẫu**.
 
@@ -1064,7 +1064,7 @@ Nó là một hệ thống chạy được nhưng **chưa phải sản phẩm tr
 | OCR (2.801 biển) | A4 **0,948** đạt sàn · A5 **0,637** · A6 **0,770** — A5/A6 chưa đạt; A6−A5 = **+13,28 điểm** |
 | OCR tách layout | 1 dòng A6 0,954 (đạt) · 2 dòng A6 0,723 · chênh **23,07 điểm** |
 | NFR-P1 độ trễ E2E p95 | ✅ **509,76 ms** ở cấu hình giao hàng (dưới mục tiêu 800 ms; trung vị 150,07 ms). Mốc 731 ms là trước bậc thang thử-lại, 1.143,10 ms là sau bậc thang và trước đợt tối ưu tầng suy luận |
-| Phân rã độ trễ | OCR **64,3%** (108,28 ms/biển) · detect **34,0%** (57,27 ms) — T5.7b |
+| Phân rã độ trễ | OCR **60,8%** (89,16 ms/biển) · detect **38,0%** (55,66 ms) — T5.7b |
 | Đồng thời (SC1) | **10** yêu cầu, 0 lỗi · soak 300 s 100% |
 | Phần cứng | Intel Core i5-14600K, 14 nhân / 20 luồng, **không có GPU CUDA** |
 | Chỉ tiêu chính | mAP50 ≥ 0,90 · mAP50-95 ≥ 0,65 · E2E OCR ≥ 0,88 · p95 ≤ 800 ms |

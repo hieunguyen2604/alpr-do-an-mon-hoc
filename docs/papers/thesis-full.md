@@ -878,7 +878,7 @@ Thuật toán tuân ba nguyên tắc. Biểu thức chính quy được thử tr
 
 ### 4.6.6. Tổ hợp đường ống bằng tiêm phụ thuộc
 
-Đường ống suy luận là đối tượng tổ hợp: nó không sở hữu mô hình mà chỉ điều phối thứ tự giai đoạn, cắt vùng ảnh, đo thời gian từng giai đoạn và cô lập lỗi ở mức từng biển số; do không chứa logic học sâu, đường ống kiểm thử được đầy đủ bằng thành phần giả lập. Thời gian của cả năm giai đoạn luôn được ghi nhận, giai đoạn không thực thi báo giá trị 0 thay vì vắng mặt — cơ sở cho phép phân rã ngân sách độ trễ ở mục 5.6.2, theo đó khối nhận dạng chiếm 64,3% và khối phát hiện 34,0% tổng thời gian suy luận thuần.
+Đường ống suy luận là đối tượng tổ hợp: nó không sở hữu mô hình mà chỉ điều phối thứ tự giai đoạn, cắt vùng ảnh, đo thời gian từng giai đoạn và cô lập lỗi ở mức từng biển số; do không chứa logic học sâu, đường ống kiểm thử được đầy đủ bằng thành phần giả lập. Thời gian của cả năm giai đoạn luôn được ghi nhận, giai đoạn không thực thi báo giá trị 0 thay vì vắng mặt — cơ sở cho phép phân rã ngân sách độ trễ ở mục 5.6.2, theo đó khối nhận dạng chiếm 60,8% và khối phát hiện 38,0% tổng thời gian suy luận thuần.
 
 Chính sách xử lý lỗi phân tầng theo mức ảnh hưởng: ảnh không chứa biển số trả kết quả rỗng; lỗi nhận dạng trên một biển chỉ vô hiệu hoá biển đó, các biển còn lại vẫn được xử lý; lỗi ở bộ phát hiện làm dừng toàn bộ yêu cầu; lỗi chuẩn hoá giữ nguyên kết quả thô. Thao tác cắt ảnh kẹp toạ độ **thêm một lần nữa** dù lớp phát hiện đã bảo đảm, vì cắt ảnh là nơi duy nhất mà sai lệch một đơn vị tạo mảng rỗng không kèm cảnh báo; ảnh cắt được tạo dưới dạng bản sao thay vì khung nhìn, tránh giữ toàn bộ khung hình gốc trong bộ nhớ khi xử lý video.
 
@@ -1226,6 +1226,8 @@ Kết quả cho thấy bước **nắn hình và giãn dọc** giúp khôi phụ
 
 ### 5.6.1. Độ trễ đầu cuối (NFR-P1)
 
+Độ trễ một ảnh qua ba mốc cấu hình — trước bậc thang, sau bậc thang, và cấu hình giao hàng — đối chiếu ở Bảng 5.7.
+
 <!-- {{T5.6a}} do tre dau-cuoi mot anh, doi chieu NFR-P1 -->
 
 **Bảng 5.7.**[]{#tbl-5-7} Độ trễ đầu cuối một ảnh, đối chiếu NFR-P1
@@ -1479,7 +1481,7 @@ Các hướng phát triển xếp theo mức tác động ở Bảng 6.3.
 |  2  | Thu thập dữ liệu cho các loại biển hiếm                        |    2, 10     | Điều kiện để mở rộng kết luận ra ngoài biển trắng, và để hai nhánh biển đỏ · ngoại giao có số liệu đánh giá                                                  |
 |  3  | Bổ sung nhãn chuỗi cho toàn tập                                |     1, 2     | Hiện chỉ 2.801/15.133 ảnh có nhãn chuỗi                                                            |
 |  4  | Xây dựng tập test xuyên bộ dữ liệu                             |     3, 4     | Giữ nguyên một nguồn hoàn toàn không dùng để huấn luyện                                            |
-|  5  | Tăng tốc suy luận: lượng tử hoá OCR, bật OpenVINO cho bộ phát hiện |      5       | **Đã làm một phần.** Tối ưu tầng chạy (4.6.8) đã đưa p95 xuống 509,76 ms và khép NFR-P1. OpenVINO **đã đo** (5.6.3): nhanh **1,57×**, mAP không giảm — nhưng phép đo ấy chạy trước đợt tối ưu nên tỷ lệ cần đo lại. Còn lại là lượng tử hoá khối OCR — phần chiếm 64,3% ngân sách |
+|  5  | Tăng tốc suy luận: lượng tử hoá OCR, bật OpenVINO cho bộ phát hiện |      5       | **Đã làm một phần.** Tối ưu tầng chạy (4.6.8) đã đưa p95 xuống 509,76 ms và khép NFR-P1. OpenVINO **đã đo** (5.6.3): nhanh **1,57×**, mAP không giảm — nhưng phép đo ấy chạy trước đợt tối ưu nên tỷ lệ cần đo lại. Còn lại là lượng tử hoá khối OCR — phần chiếm 60,8% ngân sách |
 |  6  | Thí nghiệm cô lập biến độ phân giải · dữ liệu · số epoch       |      4       | Ma trận E1–E3, ước tính ≈ 33 giờ CPU                                                               |
 |  7  | **Gán nhãn điều kiện chụp cho tập kiểm tra** (ban ngày · ban đêm · nghiêng · mờ) |      9       | Điều kiện **duy nhất** để NFR-A9 đo được. Rẻ: gán nhãn bốn lớp trên một tập con, không cần huấn luyện lại gì |
 |  8  | Bám vết đối tượng qua khung hình cho video (SORT/DeepSORT)     |      —       | Gộp nhiều lần đọc cùng một biển thành một kết quả                                                  |

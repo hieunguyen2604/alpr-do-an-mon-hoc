@@ -1540,7 +1540,7 @@ Về độ trễ đầu-cuối (NFR-P1), kết quả đo hiện tại **ĐẠT**
 (đo client-side qua HTTP) và **780,36 ms** (đo in-process), đều dưới mục tiêu
 **800 ms** và ngưỡng tối thiểu 1.500 ms. Phép đo thực hiện trên mô hình chính
 thức `models/best.pt` khi máy rảnh, warmup trước rồi đo 100 ảnh test. Phân rã độ
-trễ: OCR **64,3%** (112,55 ms/biển), phát hiện **34,2%** (59,83 ms).
+trễ: OCR **60,8%** (89,16 ms/biển), phát hiện **38,0%** (55,66 ms).
 
 Nguồn xác minh: [`docs/reports/07-benchmark-p1-resolved.json`](../reports/07-benchmark-p1-resolved.json);
 phân tích đầy đủ ở Chương 5 (mục 5.7).

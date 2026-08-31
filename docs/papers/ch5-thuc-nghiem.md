@@ -254,6 +254,8 @@ Kết quả cho thấy bước **nắn hình và giãn dọc** giúp khôi phụ
 
 ### 5.6.1. Độ trễ đầu cuối (NFR-P1)
 
+Độ trễ một ảnh qua ba mốc cấu hình — trước bậc thang, sau bậc thang, và cấu hình giao hàng — đối chiếu ở Bảng 5.7.
+
 <!-- {{T5.6a}} do tre dau-cuoi mot anh, doi chieu NFR-P1 -->
 
 **Bảng 5.7.**[]{#tbl-5-7} Độ trễ đầu cuối một ảnh, đối chiếu NFR-P1

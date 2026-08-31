@@ -275,7 +275,7 @@ mmdc -i architecture.mmd -o docs/images/architecture-5layer.svg -b transparent
 | 8 | Kịch bản demo trực tiếp | ✅ Xong | `10-demo-script.md` |
 | 9 | **Số liệu cho S12** (kết quả detection) | ✅ **Đã có** | `models/best.pt` (YOLO11n, `imgsz=640`, split v3, 20 epoch), test v3 1.514 ảnh: mAP@0.5 = 0,9829 · mAP@0.5:0.95 = 0,7834 · P = 0,9837 · R = 0,9714 |
 | 10 | **Số liệu cho S15** (đóng góp hậu xử lý) | ✅ **Đã có** | 2.801 biển: A4 = 0,9483 · A5 = 0,6373 · A6 = 0,7701 (A6 − A5 = +13,28 điểm) — xem `docs/reports/04-ocr-report.md` |
-| 11 | **Số liệu cho S17** (hiệu năng CPU) | ✅ **Đã có** | NFR-P1 đạt: p95 = 731,15 ms client-side / 780,36 ms in-process (mục tiêu 800 ms); phân rã OCR 64,3% / detect 34,2% |
+| 11 | **Số liệu cho S17** (hiệu năng CPU) | ✅ **Đã có** | NFR-P1 đạt: p95 = 731,15 ms client-side / 780,36 ms in-process (mục tiêu 800 ms); phân rã OCR 60,8% / detect 38,0% |
 | 12 | Tập dượt tính giờ | ⬜ Chưa làm | Chạy thử ≥ 2 lần, bấm giờ |
 
 ### Ba slide còn ô trống — quy tắc xử lý
