@@ -255,29 +255,7 @@ Phần lớn ảnh hoàn tất dưới 500 ms; độ trễ tập trung ở các 
 - **1.004/1.004 kiểm thử** đạt · bao phủ **87,7%**
 - Định lượng riêng biển **1 dòng** và **2 dòng** trên cùng hệ thống
 
-## Backup 1 — Kiến trúc mô hình YOLO11
-
-Cải tiến mạng trích xuất đặc trưng & head phát hiện đa tỉ lệ *(Ultralytics 2024)*
-
-| Thành phần | Chi tiết kỹ thuật | Vai trò trong hệ thống ALPR |
-|---|---|---|
-| **Backbone** | Block **C3k2** & **C2PSA** *(Attention)* | Trích xuất đặc trưng vùng biển số sắc nét ở nhiều góc nghiêng |
-| **Neck** | **SPPF** *(Spatial Pyramid Pooling - Fast)* | Tăng cường thông tin ngữ cảnh đa tỉ lệ mà không tăng độ trễ |
-| **Head** | Anchor-free Decoupled Head | Dự đoán bounding box của lớp `license_plate`; bố cục một/hai dòng được suy ra ở bước hậu xử lý theo tỷ lệ khung hình |
-| **Quy mô** | **YOLO11n** · **2,6M params** · **6,5 GFLOPs** | Đạt **mAP50 0,983** trên CPU với tốc độ ~35 ms/khung hình |
-
-## Backup 2 — Kiến trúc mô hình PP-OCRv5
-
-Mô hình nhận dạng ký tự siêu nhẹ chuyên biệt cho văn bản *(PaddlePaddle 2025)*
-
-| Thành phần | Chi tiết kỹ thuật | Vai trò trong hệ thống ALPR |
-|---|---|---|
-| **Backbone** | **PP-LCNetV3** *(Lightweight CPU Net)* | Trích xuất chuỗi đặc trưng ký tự cực nhanh trên CPU |
-| **Neck** | **SVTR-HG** *(Gated-Attention Transformer)* | Trích xuất thông tin ngữ cảnh chuỗi ký tự trên ảnh crop cao 64px |
-| **Head & Loss** | **CTC Head** *(Connectionist Temporal Classification)* | Giải mã chuỗi ký tự không cần gán nhãn từng vạch đứng |
-| **Quy mô** | **PP-OCRv5 Mobile** · **4,5 MB** | Đạt **94,83% accuracy từng ký tự** trên vùng cắt biển số |
-
-## Backup 3 — Phân tích lỗi (Error Analysis)
+## Backup 1 — Phân tích lỗi (Error Analysis)
 
 Sáu loại lỗi **loại trừ lẫn nhau** — **644 ca sai trên 2.801 biển (22,99%)**, khớp đúng 1 − A6
 
@@ -291,7 +269,8 @@ Sáu loại lỗi **loại trừ lẫn nhau** — **644 ca sai trên 2.801 biể
 | E6 | Hỗn hợp nhiều loại | 146 | 22,67% | 4 | 142 |
 | | **Tổng** | **644** | **100%** | **26** | **618** |
 
-## Backup 4 — Bóc tách đóng góp (Ablation)
+
+## Backup 2 — Bóc tách đóng góp (Ablation)
 
 Đóng góp độc lập của từng module kỹ thuật vào độ chính xác đọc chuỗi
 
@@ -303,34 +282,8 @@ Sáu loại lỗi **loại trừ lẫn nhau** — **644 ca sai trên 2.801 biể
 | **+ Bậc thang nắn hình chống nghiêng/méo** | — | **+34 biển** được cứu hợp lệ |
 | **Fine-tune OCR (giữ detector)** | 0,6762 | ❌ Sụt -7,5 điểm do lệch phân phối |
 
-## Backup 5 — Siêu tham số và huấn luyện
 
-Trích `runs/final-640-v3/args.yaml` và `results.csv` — bản ghi *đã thực thi*, không phải dự định.
-
-| Siêu tham số | Giá trị | Hàm mất mát | Epoch 1 → 20 |
-|---|---:|---|---:|
-| **`imgsz` / `epochs`** | **640 px** / **20** | `box_loss` | **1,252 → 0,809** |
-| **`batch` / `seed`** | **8** / **42** | `cls_loss` | **0,833 → 0,313** |
-| **`optimizer` / `lr0`** | **AdamW** / **0,001** | `dfl_loss` | **1,154 → 0,987** |
-| **`device` / tham số mô hình** | **cpu** / **2.590.035** | **mAP@0.5** | **0,9684 → 0,9830** |
-| **Thời gian huấn luyện** | **10,05 giờ** *(30,2 phút/epoch)* | | |
-
-## Backup 6 — Tài liệu tham khảo chính
-
-Đầy đủ **232 mục** trong `docs/references.bib` — dưới đây là các nguồn chống đỡ
-những khẳng định chính của bài
-
-| | |
-|---|---|
-| **Laroca** và cộng sự, VISAPP **2022** | *On the Cross-Dataset Generalization in License Plate Recognition* — **nguồn của cặp số 94,3% / 45,7%**, đo trên RodoSol-ALPR của **Brazil** |
-| **Laroca** và cộng sự, IET ITS **2021** | *An efficient and layout-independent ALPR system based on the YOLO detector* |
-| **Du** và cộng sự, arXiv **2020** | *PP-OCR: A Practical Ultra Lightweight OCR System* |
-| PaddlePaddle Team, arXiv **2025** | *PaddleOCR 3.0 Technical Report* |
-| **Jocher & Qiu**, Ultralytics **2024** | *Ultralytics YOLO11* |
-| **TT 79/2024/TT-BCA** · **TT 51/2025/TT-BCA** | Cấu trúc biển, seri, màu nền · phụ lục mã tỉnh (34 tỉnh/thành) |
-| **QCVN 08:2024/BCA** | Kích thước và tỉ lệ khung hình biển số |
-
-## Backup 7 — Tra nhanh số liệu
+## Backup 3 — Tra nhanh số liệu
 
 | | |
 |---|---|
@@ -342,12 +295,15 @@ những khẳng định chính của bài
 | Độ trễ | p50 **150 ms** · p95 **510 ms** |
 | Kiểm thử | **1.004** đạt · bao phủ **87,7%** |
 
-## Backup 8 — Kịch bản demo trực tiếp
 
-Ba tình huống minh họa trên môi trường thực tế:
+## Backup 4 — Kiến trúc hai mô hình: YOLO11n và PP-OCRv5 mobile
 
-| Tình huống | Mục tiêu kiểm chứng |
-|---|---|
-| Ảnh ô tô — biển 1 dòng | Luồng cơ bản, nhận dạng chính xác dưới 1 giây |
-| Ảnh xe máy — biển 2 dòng | Luồng phân tách hai nửa và ghép ngang chạy thực tế |
-| Video + Lịch sử | Xử lý bất đồng bộ, tra cứu và hiển thị lịch sử |
+Bố cục một dòng hay hai dòng **không do mô hình quyết** — suy ra ở bước hậu xử lý theo tỉ lệ khung hình
+
+| | **YOLO11n** *(phát hiện)* | **PP-OCRv5 mobile** *(nhận dạng)* |
+|---|---|---|
+| **Backbone** | C3k2 + **C2PSA** *(attention)* | **PP-LCNetV3** *(lightweight CPU net)* |
+| **Cơ chế đặc trưng** | SPPF — gộp ngữ cảnh đa tỉ lệ | **SVTR-HG** — transformer có cổng, trên dải cao 64 px |
+| **Đầu ra** | Anchor-free decoupled head, một lớp `license_plate` | **CTC head** — giải mã chuỗi không cần nhãn từng vạch |
+| **Quy mô** | **2,6M tham số** · 6,5 GFLOPs | **4,5 MB** |
+| **Đo được** | mAP@0.5 = **0,9829** | 1 − CER = **94,83%** |
