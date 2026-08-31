@@ -66,12 +66,12 @@
 [23] Ultralytics, "Intel OpenVINO Export — Ultralytics Docs (ma nguon markdown, day du bang benchmark CPU/GPU/NPU)," GitHub / Ultralytics Docs, 2026. [Trực tuyến]. Địa chỉ: <https://raw.githubusercontent.com/ultralytics/ultralytics/main/docs/en/integrations/openvino.md> (truy cập ngày 2026-07-19).
 
 [24] Microsoft ONNX Runtime, "Thread management — ONNX Runtime Performance Tuning (intra/inter op threads, spinning, NUMA)," Microsoft, 2025. [Trực tuyến]. Địa chỉ: <https://onnxruntime.ai/docs/performance/tune-performance/threading.html> (truy cập ngày 2026-07-19).
-[25] N. V. Huy và cộng sự (Học viện Kỹ thuật Quân sự), "An efficient method to improve the accuracy of Vietnamese vehicle license plate recognition," trong *International Conference on Multimedia Analysis and Pattern Recognition (MAPR)*, IEEE, 2021. doi: 10.1109/MAPR53640.2021.9585279.
+[25] K. Nguyen Quoc, D. Pham Van, V. Pham Thi Bich, "An efficient method to improve the accuracy of Vietnamese vehicle license plate recognition in unconstrained environment," trong *4th International Conference on Multimedia Analysis and Pattern Recognition (MAPR)*, IEEE, 2021. doi: 10.1109/MAPR53640.2021.9585279.
 
-[26] T. A. Dat, T. K. Linh, V. H. Nam, "A Multi-Angle View Model for Vietnamese License Plate Recognition," *arXiv preprint* arXiv:2309.12972, 2023.
+[26] D. Tran-Anh, K. L. Tran, H.-N. Vu, "License Plate Recognition Based On Multi-Angle View Model," *arXiv preprint* arXiv:2309.12972, 2023.
 
-[27] D. H. Le, D. Mazumder, L. D. Quach, S. Banerjee, V. D. Nguyen, "A Three-Stage YOLOv8 Architecture for Motorcycle License Plate Recognition," trong *Future Data and Security Engineering (FDSE)*, Springer CCIS vol. 1925, 2023. doi: 10.1007/978-981-99-8296-7_5.
+[27] D. H. Le, D. Mazumder, L. D. Quach, S. Banerjee, V. D. Nguyen, "Robust Vietnam's Motorcycle License Plate Detection and Recognition Using Deep Learning Model," trong *Future Data and Security Engineering (FDSE 2023)*, Springer CCIS vol. 1925, 2023. doi: 10.1007/978-981-99-8296-7_5.
 
-[28] Tran, Bui, "Lightweight License Plate Recognition on Embedded Devices," trong *Multi-disciplinary International Conference on Artificial Intelligence (MIWAI)*, Springer, 2024. doi: 10.1007/978-981-96-0695-5_19.
+[28] Tran, Bui, "Implementation of a License Plate Recognition System in Vietnam Using Embedding Devices," trong *Multi-disciplinary Trends in Artificial Intelligence (MIWAI 2024)*, Springer, 2024. doi: 10.1007/978-981-96-0695-5_19.
 
-[29] Đặng Thị Dung và cộng sự, "So sánh các mô hình YOLOv8 và YOLO-NAS trong phát hiện biển số xe," *TNU Journal of Science and Technology*, q. 229, s. 07, tr. 156–167, 2024.
+[29] Đặng Thị Dung, Hà Lê Ngọc Dung, Trương Lê Chương, Thái Chí Hào, Trần Văn Phúc, "Nghiên cứu các phiên bản YOLOv8 và YOLO-NAS trong phát hiện biển số xe," *TNU Journal of Science and Technology*, q. 229, s. 07, tr. 156–167, 2024. doi: 10.34238/tnu-jst.10336.

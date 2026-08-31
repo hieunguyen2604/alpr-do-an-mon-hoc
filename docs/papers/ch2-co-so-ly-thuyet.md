@@ -154,15 +154,16 @@ Trong tập tài liệu khảo sát được, nhóm thực hiện **chưa tìm t
 
 Bảng 2.3 tóm tắt năm công trình tiêu biểu trong tập khảo sát, chọn theo tiêu chí có công bố phương pháp và số liệu đủ để đối chiếu.
 
-**Bảng 2.3.**[]{#tbl-2-3} Năm công trình ALPR cho biển số Việt Nam trong tập khảo sát
+**Bảng 2.3.**[]{#tbl-2-3} Tóm tắt một số công trình ALPR cho biển số Việt Nam được khảo sát
 
-| Công trình | Khối phát hiện | Khối nhận dạng | Chỉ số được báo cáo |
-| --- | --- | --- | --- |
-| Học viện Kỹ thuật Quân sự, MAPR 2021 [25]<!-- mta_2021_mapr --> | Key-point detection | Encoder–decoder *segmentation-free* | mIoU 95,01%; **chuỗi 99,28%**, ký tự 99,7% |
-| Trần Anh Đạt và cộng sự, 2023 [26]<!-- tran_2023_multiangle --> | Multi-angle view model | CnOCR | **F1 91,3%** trên tập PTITPlates (500 ảnh) |
-| Le D. H. và cộng sự, FDSE 2023 [27]<!-- le_2023_fdse --> | YOLOv8 *(hai tầng: xe máy → biển)* | YOLOv8 | **mAP 93%** — chỉ báo cáo chỉ số phát hiện |
-| Tran và Bui, MIWAI 2024 [28]<!-- tran_2024_miwai --> | SSD, backbone MobileNetV2 | YOLOv8-nano | **95,68%** nhận dạng; 0,478 s/ảnh trên Raspberry Pi 4 |
-| Đặng Thị Dung và cộng sự, 2024 [29]<!-- dang_2024_tnu --> | YOLOv8 · YOLO-NAS | *(không có khối nhận dạng)* | YOLO-NAS-S: accuracy **83,92%**, F1 0,9125 |
+| Công trình | Năm | Khối phát hiện | Khối nhận dạng | Chỉ số báo cáo | Hạn chế đối với câu hỏi của đồ án |
+| --- | :--: | --- | --- | --- | --- |
+| Nguyen Quoc và cộng sự, MAPR [25]<!-- mta_2021_mapr --> | 2021 | Key-point detection | Encoder–decoder *segmentation-free* | Chuỗi **99,28%**, ký tự 99,7%; mIoU 95,01% | Tập dữ liệu riêng không công khai; không tách theo bố cục biển |
+| Tran-Anh và cộng sự [26]<!-- tran_2023_multiangle --> | 2023 | Multi-angle view model | CnOCR | **F1 91,3%** trên PTITPlates (500 ảnh) | Không đo đóng góp của khối hậu xử lý |
+| Le và cộng sự, FDSE [27]<!-- le_2023_fdse --> | 2023 | YOLOv8 | YOLOv8 | **mAP 93%** | Chỉ báo cáo chỉ số phát hiện, không có chỉ số đầu cuối |
+| Tran và Bui, MIWAI [28]<!-- tran_2024_miwai --> | 2024 | SSD, backbone MobileNetV2 | YOLOv8-nano | **95,68%**; 0,478 s/ảnh trên Raspberry Pi 4 | Không benchmark giữa nhiều bộ nhận dạng |
+| Đặng Thị Dung và cộng sự, TNU [29]<!-- dang_2024_tnu --> | 2024 | YOLOv8 · YOLO-NAS | *(không có)* | YOLO-NAS-S accuracy **83,92%**, F1 0,9125 | Chỉ so sánh bộ phát hiện; không đọc chuỗi |
+| **Đồ án này** | **2026** | **YOLO11n** | **PaddleOCR PP-OCRv5 mobile** | **A6 = 77,01%**, **A7 = 56,3%**, tách theo bố cục biển | Độ chính xác trên biển hai dòng còn hạn chế (72,34%) |
 
 Bảng cho thấy ba đặc điểm chung. **Một, chỉ số báo cáo không đồng nhất** — mIoU, mAP, F1, accuracy và độ chính xác mức chuỗi xuất hiện lẫn lộn, nên các con số trong cột cuối **không so sánh trực tiếp được với nhau**. **Hai, hai trong năm công trình chỉ báo cáo chỉ số của khối phát hiện**, không công bố kết quả đọc chuỗi đầu cuối. **Ba, không công trình nào tách riêng kết quả cho biển một dòng và biển hai dòng**, dù bốn trong năm công trình làm việc với ảnh xe máy — vốn luôn mang biển hai dòng.
 

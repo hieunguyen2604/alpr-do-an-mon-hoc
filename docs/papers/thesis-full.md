@@ -193,7 +193,7 @@ Nhóm cũng xin cảm ơn quý thầy cô Trường Đại học Công nghệ Th
 | Bảng 1.2 | Nhóm chỉ tiêu hiệu năng trên CPU | `<w:r><w:fldChar w:fldCharType="begin"/></w:r><w:r><w:instrText xml:space="preserve"> PAGEREF tbl-1-2 \h </w:instrText></w:r><w:r><w:fldChar w:fldCharType="separate"/></w:r><w:r><w:t>0</w:t></w:r><w:r><w:fldChar w:fldCharType="end"/></w:r>`{=openxml} |
 | Bảng 2.1 | So sánh khác biệt kiến trúc giữa các phiên bản YOLO gần đây | `<w:r><w:fldChar w:fldCharType="begin"/></w:r><w:r><w:instrText xml:space="preserve"> PAGEREF tbl-2-1 \h </w:instrText></w:r><w:r><w:fldChar w:fldCharType="separate"/></w:r><w:r><w:t>0</w:t></w:r><w:r><w:fldChar w:fldCharType="end"/></w:r>`{=openxml} |
 | Bảng 2.2 | So sánh OCR văn bản tài liệu và OCR biển số xe | `<w:r><w:fldChar w:fldCharType="begin"/></w:r><w:r><w:instrText xml:space="preserve"> PAGEREF tbl-2-2 \h </w:instrText></w:r><w:r><w:fldChar w:fldCharType="separate"/></w:r><w:r><w:t>0</w:t></w:r><w:r><w:fldChar w:fldCharType="end"/></w:r>`{=openxml} |
-| Bảng 2.3 | Năm công trình ALPR cho biển số Việt Nam trong tập khảo sát | `<w:r><w:fldChar w:fldCharType="begin"/></w:r><w:r><w:instrText xml:space="preserve"> PAGEREF tbl-2-3 \h </w:instrText></w:r><w:r><w:fldChar w:fldCharType="separate"/></w:r><w:r><w:t>0</w:t></w:r><w:r><w:fldChar w:fldCharType="end"/></w:r>`{=openxml} |
+| Bảng 2.3 | Tóm tắt một số công trình ALPR cho biển số Việt Nam được khảo sát | `<w:r><w:fldChar w:fldCharType="begin"/></w:r><w:r><w:instrText xml:space="preserve"> PAGEREF tbl-2-3 \h </w:instrText></w:r><w:r><w:fldChar w:fldCharType="separate"/></w:r><w:r><w:t>0</w:t></w:r><w:r><w:fldChar w:fldCharType="end"/></w:r>`{=openxml} |
 | Bảng 2.4 | Sáu khoảng trống nghiên cứu và cách nhóm thực hiện lấp | `<w:r><w:fldChar w:fldCharType="begin"/></w:r><w:r><w:instrText xml:space="preserve"> PAGEREF tbl-2-4 \h </w:instrText></w:r><w:r><w:fldChar w:fldCharType="separate"/></w:r><w:r><w:t>0</w:t></w:r><w:r><w:fldChar w:fldCharType="end"/></w:r>`{=openxml} |
 | Bảng 3.1 | PP-OCRv6_medium_rec so với PP-OCRv5_mobile_rec, đo trên 200 vùng cắt biển số của đồ án | `<w:r><w:fldChar w:fldCharType="begin"/></w:r><w:r><w:instrText xml:space="preserve"> PAGEREF tbl-3-1 \h </w:instrText></w:r><w:r><w:fldChar w:fldCharType="separate"/></w:r><w:r><w:t>0</w:t></w:r><w:r><w:fldChar w:fldCharType="end"/></w:r>`{=openxml} |
 | Bảng 3.2 | So sánh ba bộ nhận dạng ký tự trên 2.801 biển số Việt Nam (567 một dòng, 2.234 hai dòng) | `<w:r><w:fldChar w:fldCharType="begin"/></w:r><w:r><w:instrText xml:space="preserve"> PAGEREF tbl-3-2 \h </w:instrText></w:r><w:r><w:fldChar w:fldCharType="separate"/></w:r><w:r><w:t>0</w:t></w:r><w:r><w:fldChar w:fldCharType="end"/></w:r>`{=openxml} |
@@ -522,15 +522,16 @@ Trong tập tài liệu khảo sát được, nhóm thực hiện **chưa tìm t
 
 Bảng 2.3 tóm tắt năm công trình tiêu biểu trong tập khảo sát, chọn theo tiêu chí có công bố phương pháp và số liệu đủ để đối chiếu.
 
-**Bảng 2.3.**[]{#tbl-2-3} Năm công trình ALPR cho biển số Việt Nam trong tập khảo sát
+**Bảng 2.3.**[]{#tbl-2-3} Tóm tắt một số công trình ALPR cho biển số Việt Nam được khảo sát
 
-| Công trình | Khối phát hiện | Khối nhận dạng | Chỉ số được báo cáo |
-| --- | --- | --- | --- |
-| Học viện Kỹ thuật Quân sự, MAPR 2021 [25]<!-- mta_2021_mapr --> | Key-point detection | Encoder–decoder *segmentation-free* | mIoU 95,01%; **chuỗi 99,28%**, ký tự 99,7% |
-| Trần Anh Đạt và cộng sự, 2023 [26]<!-- tran_2023_multiangle --> | Multi-angle view model | CnOCR | **F1 91,3%** trên tập PTITPlates (500 ảnh) |
-| Le D. H. và cộng sự, FDSE 2023 [27]<!-- le_2023_fdse --> | YOLOv8 *(hai tầng: xe máy → biển)* | YOLOv8 | **mAP 93%** — chỉ báo cáo chỉ số phát hiện |
-| Tran và Bui, MIWAI 2024 [28]<!-- tran_2024_miwai --> | SSD, backbone MobileNetV2 | YOLOv8-nano | **95,68%** nhận dạng; 0,478 s/ảnh trên Raspberry Pi 4 |
-| Đặng Thị Dung và cộng sự, 2024 [29]<!-- dang_2024_tnu --> | YOLOv8 · YOLO-NAS | *(không có khối nhận dạng)* | YOLO-NAS-S: accuracy **83,92%**, F1 0,9125 |
+| Công trình | Năm | Khối phát hiện | Khối nhận dạng | Chỉ số báo cáo | Hạn chế đối với câu hỏi của đồ án |
+| --- | :--: | --- | --- | --- | --- |
+| Nguyen Quoc và cộng sự, MAPR [25]<!-- mta_2021_mapr --> | 2021 | Key-point detection | Encoder–decoder *segmentation-free* | Chuỗi **99,28%**, ký tự 99,7%; mIoU 95,01% | Tập dữ liệu riêng không công khai; không tách theo bố cục biển |
+| Tran-Anh và cộng sự [26]<!-- tran_2023_multiangle --> | 2023 | Multi-angle view model | CnOCR | **F1 91,3%** trên PTITPlates (500 ảnh) | Không đo đóng góp của khối hậu xử lý |
+| Le và cộng sự, FDSE [27]<!-- le_2023_fdse --> | 2023 | YOLOv8 | YOLOv8 | **mAP 93%** | Chỉ báo cáo chỉ số phát hiện, không có chỉ số đầu cuối |
+| Tran và Bui, MIWAI [28]<!-- tran_2024_miwai --> | 2024 | SSD, backbone MobileNetV2 | YOLOv8-nano | **95,68%**; 0,478 s/ảnh trên Raspberry Pi 4 | Không benchmark giữa nhiều bộ nhận dạng |
+| Đặng Thị Dung và cộng sự, TNU [29]<!-- dang_2024_tnu --> | 2024 | YOLOv8 · YOLO-NAS | *(không có)* | YOLO-NAS-S accuracy **83,92%**, F1 0,9125 | Chỉ so sánh bộ phát hiện; không đọc chuỗi |
+| **Đồ án này** | **2026** | **YOLO11n** | **PaddleOCR PP-OCRv5 mobile** | **A6 = 77,01%**, **A7 = 56,3%**, tách theo bố cục biển | Độ chính xác trên biển hai dòng còn hạn chế (72,34%) |
 
 Bảng cho thấy ba đặc điểm chung. **Một, chỉ số báo cáo không đồng nhất** — mIoU, mAP, F1, accuracy và độ chính xác mức chuỗi xuất hiện lẫn lộn, nên các con số trong cột cuối **không so sánh trực tiếp được với nhau**. **Hai, hai trong năm công trình chỉ báo cáo chỉ số của khối phát hiện**, không công bố kết quả đọc chuỗi đầu cuối. **Ba, không công trình nào tách riêng kết quả cho biển một dòng và biển hai dòng**, dù bốn trong năm công trình làm việc với ảnh xe máy — vốn luôn mang biển hai dòng.
 
@@ -1569,15 +1570,15 @@ Hướng ưu tiên là thay module nhận dạng ký tự bằng mô hình huấ
 [23] Ultralytics, "Intel OpenVINO Export — Ultralytics Docs (ma nguon markdown, day du bang benchmark CPU/GPU/NPU)," GitHub / Ultralytics Docs, 2026. [Trực tuyến]. Địa chỉ: <https://raw.githubusercontent.com/ultralytics/ultralytics/main/docs/en/integrations/openvino.md> (truy cập ngày 2026-07-19).
 
 [24] Microsoft ONNX Runtime, "Thread management — ONNX Runtime Performance Tuning (intra/inter op threads, spinning, NUMA)," Microsoft, 2025. [Trực tuyến]. Địa chỉ: <https://onnxruntime.ai/docs/performance/tune-performance/threading.html> (truy cập ngày 2026-07-19).
-[25] N. V. Huy và cộng sự (Học viện Kỹ thuật Quân sự), "An efficient method to improve the accuracy of Vietnamese vehicle license plate recognition," trong *International Conference on Multimedia Analysis and Pattern Recognition (MAPR)*, IEEE, 2021. doi: 10.1109/MAPR53640.2021.9585279.
+[25] K. Nguyen Quoc, D. Pham Van, V. Pham Thi Bich, "An efficient method to improve the accuracy of Vietnamese vehicle license plate recognition in unconstrained environment," trong *4th International Conference on Multimedia Analysis and Pattern Recognition (MAPR)*, IEEE, 2021. doi: 10.1109/MAPR53640.2021.9585279.
 
-[26] T. A. Dat, T. K. Linh, V. H. Nam, "A Multi-Angle View Model for Vietnamese License Plate Recognition," *arXiv preprint* arXiv:2309.12972, 2023.
+[26] D. Tran-Anh, K. L. Tran, H.-N. Vu, "License Plate Recognition Based On Multi-Angle View Model," *arXiv preprint* arXiv:2309.12972, 2023.
 
-[27] D. H. Le, D. Mazumder, L. D. Quach, S. Banerjee, V. D. Nguyen, "A Three-Stage YOLOv8 Architecture for Motorcycle License Plate Recognition," trong *Future Data and Security Engineering (FDSE)*, Springer CCIS vol. 1925, 2023. doi: 10.1007/978-981-99-8296-7_5.
+[27] D. H. Le, D. Mazumder, L. D. Quach, S. Banerjee, V. D. Nguyen, "Robust Vietnam's Motorcycle License Plate Detection and Recognition Using Deep Learning Model," trong *Future Data and Security Engineering (FDSE 2023)*, Springer CCIS vol. 1925, 2023. doi: 10.1007/978-981-99-8296-7_5.
 
-[28] Tran, Bui, "Lightweight License Plate Recognition on Embedded Devices," trong *Multi-disciplinary International Conference on Artificial Intelligence (MIWAI)*, Springer, 2024. doi: 10.1007/978-981-96-0695-5_19.
+[28] Tran, Bui, "Implementation of a License Plate Recognition System in Vietnam Using Embedding Devices," trong *Multi-disciplinary Trends in Artificial Intelligence (MIWAI 2024)*, Springer, 2024. doi: 10.1007/978-981-96-0695-5_19.
 
-[29] Đặng Thị Dung và cộng sự, "So sánh các mô hình YOLOv8 và YOLO-NAS trong phát hiện biển số xe," *TNU Journal of Science and Technology*, q. 229, s. 07, tr. 156–167, 2024.
+[29] Đặng Thị Dung, Hà Lê Ngọc Dung, Trương Lê Chương, Thái Chí Hào, Trần Văn Phúc, "Nghiên cứu các phiên bản YOLOv8 và YOLO-NAS trong phát hiện biển số xe," *TNU Journal of Science and Technology*, q. 229, s. 07, tr. 156–167, 2024. doi: 10.34238/tnu-jst.10336.
 
 
 ```{=openxml}
