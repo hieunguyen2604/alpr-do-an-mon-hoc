@@ -30,60 +30,25 @@ __all__ = [
 _LOGGER = logging.getLogger(__name__)
 
 DEFAULT_TWO_LINE_AR_THRESHOLD: Final[float] = 2.5
-"""Aspect-ratio cut-off below which a crop is treated as a two-line plate.
-
-See :func:`estimate_line_count` for the reasoning. Mirrors the default of
-:attr:`~ai.inference.config.InferenceConfig.two_line_aspect_ratio_threshold`;
-callers should pass the configured value rather than rely on this constant.
-"""
+"""Aspect-ratio cut-off below which a crop is treated as a two-line plate."""
 
 UPPER_HALF_END_RATIO: Final[float] = 5.0 / 12.0
 """Fraction of the crop height at which the upper half stops (0.4167)."""
 
 LOWER_HALF_START_RATIO: Final[float] = 1.0 / 3.0
-"""Fraction of the crop height at which the lower half starts (0.3333).
-
-Smaller than :data:`UPPER_HALF_END_RATIO` on purpose -- the two halves overlap
-by 1/12 of the plate height. See :func:`split_two_line`.
-"""
+"""Fraction of the crop height at which the lower half starts (0.3333)."""
 
 MIN_MERGE_HEIGHT: Final[int] = 48
-"""Floor for the common height used when merging the two halves, in pixels.
-
-Matches the fixed input height of the PP-OCR recognition module: producing a
-strip shorter than this would force the engine to upscale a degraded image,
-which loses detail that was still present in the source crop.
-"""
+"""Floor for the common height used when merging the two halves, in pixels."""
 
 MIN_RECTIFY_ANGLE_DEGREES: Final[float] = 1.5
-"""Estimated skew below which :func:`rectify_plate` leaves the crop untouched.
-
-Nearly every crop in the labelled corpus is close to frontal; resampling those
-through ``warpAffine`` would trade a fraction of stroke sharpness for a
-correction nobody needs. The threshold keeps the frontal path bit-identical to
-the pre-rectify pipeline, which is also what makes the before/after measurement
-attributable: any change comes from crops that were actually skewed.
-"""
+"""Estimated skew below which :func:`rectify_plate` leaves the crop untouched."""
 
 MAX_RECTIFY_ANGLE_DEGREES: Final[float] = 35.0
-"""Estimated skew above which the estimate itself is distrusted.
-
-A street-mounted plate photographed from a vehicle-height camera is tilted by
-tens of degrees at most. An estimate beyond this bound almost always means the
-binarisation latched onto something that is not the plate -- a bumper edge, a
-shadow -- and "correcting" by that angle would destroy a readable crop. The
-safe failure is to return the crop unchanged.
-"""
+"""Estimated skew above which the estimate itself is distrusted."""
 
 MIN_RECTIFY_AREA_FRACTION: Final[float] = 0.25
-"""Smallest fraction of the crop the candidate plate blob must cover.
-
-The detector's box hugs the plate, so the true plate region dominates its own
-crop. A largest-blob smaller than a quarter of the crop is evidence that
-thresholding fragmented the plate instead of isolating it, and any rectangle
-fitted to such a fragment risks cropping characters away. Below the bound the
-crop is returned unchanged.
-"""
+"""Smallest fraction of the crop the candidate plate blob must cover."""
 
 _CLAHE_DEFAULT_CLIP_LIMIT: Final[float] = 2.0
 _CLAHE_DEFAULT_TILE_GRID: Final[tuple[int, int]] = (8, 8)

@@ -25,11 +25,7 @@ DEFAULT_TREND_DAYS: Final[int] = 7
 """Length of the dashboard trend window when the client does not ask."""
 
 MAX_TREND_DAYS: Final[int] = 365
-"""Longest trend window a client may request.
-
-Bounded because the response carries one object per day: an unbounded window
-would let a single query return an arbitrarily large payload.
-"""
+"""Longest trend window a client may request."""
 
 
 class StatisticsService:

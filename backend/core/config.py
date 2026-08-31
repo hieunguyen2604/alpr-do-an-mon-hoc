@@ -13,31 +13,10 @@ from pydantic_settings import BaseSettings, NoDecode, SettingsConfigDict
 __all__ = ["PROJECT_ROOT", "Settings", "get_settings"]
 
 StringList = Annotated[list[str], NoDecode]
-"""A list field that pydantic-settings must not JSON-decode on its own.
-
-Without ``NoDecode``, a list-typed setting read from the environment or a
-``.env`` file is passed through ``json.loads`` *before* any validator runs, so
-the natural line::
-
-    ALPR_CORS_ORIGINS=http://localhost:5173,http://127.0.0.1:5173
-
-raises ``JSONDecodeError`` at start-up and the ``mode="before"`` validator below
-never sees it. Suppressing the built-in decoding hands the raw string to
-:meth:`Settings._split_list`, which accepts both the comma-separated form and
-JSON.
-
-The failure this prevents is a nasty one: the same value supplied as a keyword
-argument works fine, because the init source does not decode. A unit test
-constructing ``Settings(cors_origins="a,b")`` would therefore pass while the
-deployed service refused to boot.
-"""
+"""A list field that pydantic-settings must not JSON-decode on its own."""
 
 PROJECT_ROOT: Final[Path] = Path(__file__).resolve().parents[2]
-"""Repository root, derived from ``<root>/backend/core/config.py``.
-
-Computed from ``__file__`` rather than the working directory so that moving or
-renaming the checkout breaks nothing and no absolute path is ever written down.
-"""
+"""Repository root, derived from ``<root>/backend/core/config.py``."""
 
 _MEGABYTE: Final[int] = 1024 * 1024
 

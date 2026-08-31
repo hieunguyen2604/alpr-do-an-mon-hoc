@@ -27,13 +27,7 @@ __all__ = [
 ]
 
 NO_REQUEST_ID: Final[str] = "-"
-"""Placeholder used for log records emitted outside any request.
-
-Start-up, shutdown and background maintenance produce real log lines that
-belong to no HTTP request. They still get the ``request_id`` key so that every
-record has an identical shape -- a log consumer never has to handle a missing
-field.
-"""
+"""Placeholder used for log records emitted outside any request."""
 
 _request_id: ContextVar[str] = ContextVar("alpr_request_id", default=NO_REQUEST_ID)
 """Holds the identifier of the request being served by the current context."""
@@ -66,14 +60,7 @@ _LOG_RECORD_BUILTINS: Final[frozenset[str]] = frozenset(
         "request_id",
     }
 )
-"""Attributes the standard library puts on every record.
-
-Anything on a record that is *not* in this set was supplied by the caller
-through ``logger.info(..., extra={...})``, and is copied into the JSON output
-verbatim. This is what makes structured logging usable::
-
-    logger.info("upload accepted", extra={"job_id": job.id, "size_bytes": n})
-"""
+"""Attributes the standard library puts on every record."""
 
 _UVICORN_LOGGERS: Final[tuple[str, ...]] = (
     "uvicorn",
@@ -81,21 +68,10 @@ _UVICORN_LOGGERS: Final[tuple[str, ...]] = (
     "uvicorn.access",
     "fastapi",
 )
-"""Third-party loggers re-pointed at our handler.
-
-Uvicorn installs its own colourised handlers at start-up. Left alone, the
-server's own lines would be plain text in the middle of a JSON stream, which
-defeats machine parsing. Their handlers are removed and propagation is turned
-on so they flow through the same formatter as everything else.
-"""
+"""Third-party loggers re-pointed at our handler."""
 
 _CONFIGURED: bool = False
-"""Guards against installing duplicate handlers.
-
-``setup_logging`` is reachable from the app factory, from Alembic and from test
-fixtures. Without this flag a test suite that builds the app repeatedly would
-add one handler per call and print every line N times.
-"""
+"""Guards against installing duplicate handlers."""
 
 
 # --- Request identifier ---
@@ -160,17 +136,7 @@ _RESERVED_LOG_KEYS: Final[frozenset[str]] = frozenset(
         "threadName",
     }
 )
-"""Keys ``logging`` refuses to accept in ``extra=``.
-
-The standard library owns these attribute names on every ``LogRecord`` and
-raises ``KeyError: "Attempt to overwrite 'filename' in LogRecord"`` rather than
-letting a caller shadow one. The failure has an unpleasant shape: it is raised
-*by the logging call*, so it replaces the diagnostic that was being written
-with an unrelated exception -- and it usually happens on an error path, which
-is the moment the log mattered most. ``filename`` and ``module`` are the ones
-that bite in practice, because they are the natural names for exactly the
-things worth logging about an upload.
-"""
+"""Keys ``logging`` refuses to accept in ``extra=``."""
 
 _SAFE_KEY_PREFIX: Final[str] = "ctx_"
 """Prefix applied to a field whose name the standard library has reserved."""

@@ -34,30 +34,13 @@ DEFAULT_TREND_DAYS: Final[int] = 14
 """Days covered by the dashboard trend series when no window is given."""
 
 MAX_TREND_DAYS: Final[int] = 365
-"""Ceiling on the trend window.
-
-A request for a ten-year series would build a list with thousands of entries,
-almost all of them zero, and the chart would be unreadable long before the
-response was large enough to matter.
-"""
+"""Ceiling on the trend window."""
 
 _LIKE_ESCAPE: Final[str] = "\\"
-"""Escape character for ``LIKE`` patterns.
-
-Required because a plate search is a substring match: a user typing ``%``
-would otherwise inject a wildcard and match every row, and ``_`` would match
-any single character. Both are plausible things to type by accident.
-"""
+"""Escape character for ``LIKE`` patterns."""
 
 _PLATE_SEPARATORS: Final[tuple[str, ...]] = ("-", ".", " ")
-"""Characters stripped from both sides of a plate comparison.
-
-Vietnamese plates are written ``51F-12345``, ``51F.12345`` or ``51F 12345``
-depending on who is typing, and the stored value uses whichever form
-normalisation produced. Comparing separator-free forms means a user searching
-``51F12345`` finds ``51F-12345``, which is otherwise a "the search is broken"
-bug report.
-"""
+"""Characters stripped from both sides of a plate comparison."""
 
 HISTORY_SORT_COLUMNS: Final[dict[str, InstrumentedAttribute[Any]]] = {
     "detected_time": DetectionHistory.detected_time,
@@ -69,12 +52,7 @@ HISTORY_SORT_COLUMNS: Final[dict[str, InstrumentedAttribute[Any]]] = {
     "input_type": DetectionHistory.input_type,
     "id": DetectionHistory.id,
 }
-"""Sort keys the history endpoint accepts, mapped to columns.
-
-An allow-list rather than ``getattr``: the key arrives in a query string, and
-an arbitrary attribute name would either raise inside the query builder or
-resolve to a relationship and add an unintended join.
-"""
+"""Sort keys the history endpoint accepts, mapped to columns."""
 
 
 @dataclass(frozen=True, slots=True)

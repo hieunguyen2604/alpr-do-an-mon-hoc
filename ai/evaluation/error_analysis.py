@@ -43,12 +43,7 @@ ERROR_CLASSES: Final[tuple[str, ...]] = (
     "transposition",
     "mixed",
 )
-"""Every class :func:`classify_error` can return, in report order.
-
-Declared as a constant so that a class with zero occurrences still appears in
-the summary with a count of ``0``. A silently absent row reads as "not
-measured", which is a different statement from "never happened".
-"""
+"""Every class :func:`classify_error` can return, in report order."""
 
 _ANNOTATION_WIDTH: Final[int] = 480
 _ANNOTATION_BAR_HEIGHT: Final[int] = 68

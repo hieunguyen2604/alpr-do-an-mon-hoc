@@ -22,12 +22,10 @@ __all__ = [
 ]
 
 InputTypeLiteral = Literal["image", "video", "webcam"]
-"""Accepted input types. A ``Literal`` renders in Swagger as a dropdown of the
-valid values and is validated automatically, unlike a free-form string."""
+"""Accepted input types. A ``Literal`` renders in Swagger as a dropdown of the"""
 
 JobStatusLiteral = Literal["pending", "processing", "completed", "failed", "cancelled"]
-"""Job lifecycle states, as documented on
-:class:`~backend.models.detection.JobStatus`."""
+"""Job lifecycle states, as documented on"""
 
 Confidence = Annotated[float, Field(ge=0.0, le=1.0)]
 """A probability in ``[0.0, 1.0]``. Named so the bound is stated once."""
@@ -231,18 +229,7 @@ class DetectionHistoryResponse(BaseModel):
     """One stored detection record, as returned by the history endpoints."""
 
     model_config = ConfigDict(from_attributes=True, extra="forbid")
-    """``extra="forbid"`` is a guard, not a formality.
-
-    Pydantic's default is to *silently drop* a keyword it does not recognise. A
-    mapper that enumerates its fields -- as ``HistoryService._to_response`` does
-    -- therefore keeps working after someone adds a field to the schema and
-    passes it from the mapper before declaring it here: the value simply never
-    reaches the response, on this endpoint only, with nothing raised anywhere.
-    That is precisely how ``plate_display`` came back empty on the history
-    endpoint while working on the detection one. Forbidding extras turns that
-    class of drift into an error at the first request instead of a field the
-    interface quietly renders as a dash.
-    """
+    """``extra="forbid"`` is a guard, not a formality."""
 
     id: int = Field(..., description="Unique identifier of the detection record.")
     plate_number: str | None = Field(

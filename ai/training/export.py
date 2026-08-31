@@ -16,13 +16,7 @@ __all__ = ["SUPPORTED_FORMATS", "export_model", "verify_exported_model", "main"]
 LOGGER = logging.getLogger("ai.training.export")
 
 SUPPORTED_FORMATS: Final[tuple[str, ...]] = ("onnx", "openvino", "torchscript")
-"""Formats this script can produce.
-
-* ``onnx``        -- portable, runs under ONNX Runtime; the primary CPU target.
-* ``openvino``    -- Intel-optimised; usually the fastest option on this machine.
-* ``torchscript`` -- no extra runtime dependency; useful as a fallback and as a
-  control measurement in the benchmark.
-"""
+"""Formats this script can produce."""
 
 _RUNTIME_HINTS: Final[dict[str, str]] = {
     "onnx": "pip install onnx onnxruntime onnxslim",

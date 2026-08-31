@@ -40,21 +40,10 @@ VIETNAMESE_LABELS: Final[dict[PlateColor, str]] = {
 
 
 CENTRE_INSET: Final[float] = 0.18
-"""Fraction trimmed from each edge before sampling.
-
-A detector box includes surrounding bodywork often enough that the outer band is
-not reliably plate. Trimming 18% per side keeps roughly the middle two-thirds in
-each axis -- enough pixels for a stable histogram, tight enough that a coloured
-car body behind a white plate cannot dominate the vote.
-"""
+"""Fraction trimmed from each edge before sampling."""
 
 MIN_DOMINANT_FRACTION: Final[float] = 0.30
-"""Share of sampled pixels the winning band must reach to be named.
-
-Set from the failure direction that matters: naming a colour wrongly is worse
-than admitting ignorance, because a wrong colour asserts a vehicle class the
-system cannot back up.
-"""
+"""Share of sampled pixels the winning band must reach to be named."""
 
 # HSV bands in OpenCV's ranges: H 0-179, S 0-255, V 0-255.
 _YELLOW_HUE: Final[tuple[int, int]] = (15, 42)
@@ -63,12 +52,7 @@ _RED_HUE_LOW: Final[tuple[int, int]] = (0, 10)
 _RED_HUE_HIGH: Final[tuple[int, int]] = (165, 179)
 
 _CHROMATIC_MIN_SATURATION: Final[int] = 70
-"""Below this, a pixel is grey rather than coloured, whatever its hue says.
-
-Hue is meaningless at low saturation -- a near-grey pixel still reports some
-hue, and without this gate the noise in a white plate would be distributed
-across the coloured bands.
-"""
+"""Below this, a pixel is grey rather than coloured, whatever its hue says."""
 
 _CHROMATIC_MIN_VALUE: Final[int] = 45
 """Below this a pixel is shadow; its hue is unreliable and it is ignored."""

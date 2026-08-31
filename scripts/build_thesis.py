@@ -45,14 +45,7 @@ SECTION_SEPARATOR: str = (
 
 # Source outline and target for the slide deck.
 SLIDES_SOURCE_FILENAME: str = "10-slides.md"
-"""The deck that gets projected: 21 short slides, bullets only.
-
-Deliberately *not* ``10-slides-outline.md``. That file is the presentation
-plan -- speaker notes, per-slide timing budget, a table explaining how to read
-itself -- and exporting it produced a 51-slide deck in which the audience read
-prose off the wall instead of listening. The two files answer different
-questions and only one of them belongs on a projector.
-"""
+"""The deck that gets projected: 21 short slides, bullets only."""
 SLIDES_OUTPUT_FILENAME: str = "slides.pptx"
 SLIDES_TEMPLATE_FILENAME: str = "template-uit.pptx"
 
@@ -215,17 +208,7 @@ def read_section(path: Path) -> str:
 
 
 ORDER_FILENAME: str = "ORDER.txt"
-"""Per-directory override for :data:`CHAPTER_FILENAMES`.
-
-An edition with a different chapter set -- the course-project cut has five
-chapters where the thesis has six -- cannot reuse the tuple above, and naming
-its files to match anyway would leave a chapter called ``ch3-khao-sat-lua-chon``
-that contains system design. A directory may therefore declare its own binding
-order; one filename per line, ``#`` starts a comment.
-
-Still an explicit list, never a glob: the reason for listing files by hand (a
-stray Markdown file must never be swept into the book) applies to every edition.
-"""
+"""Per-directory override for :data:`CHAPTER_FILENAMES`."""
 
 
 def read_order(papers_dir: Path) -> tuple[str, ...]:
@@ -272,12 +255,7 @@ def find_pandoc() -> Path | None:
 
 
 PANDOC_VERSION = "3.10"
-"""Pinned so a rebuilt document is byte-comparable with an earlier one.
-
-Pandoc changes its DOCX styling between minor versions; letting the version
-float would make "the chapter text did not change but the .docx did" a routine
-and unexplainable event.
-"""
+"""Pinned so a rebuilt document is byte-comparable with an earlier one."""
 
 PANDOC_URL = (
     f"https://github.com/jgm/pandoc/releases/download/{PANDOC_VERSION}/"

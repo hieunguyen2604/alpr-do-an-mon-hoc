@@ -31,12 +31,7 @@ __all__ = [
 logger = get_logger(__name__)
 
 MAX_PAGE_SIZE: Final[int] = 100
-"""Largest page a client may request.
-
-An upper bound rather than a suggestion: without one, ``?page_size=100000``
-turns the paginated endpoint back into the unpaginated one this module exists
-to avoid.
-"""
+"""Largest page a client may request."""
 
 _EXPORT_BATCH_SIZE: Final[int] = 500
 """Rows fetched per round trip while streaming an export."""

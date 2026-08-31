@@ -36,147 +36,33 @@ __all__ = [
 _LOGGER = logging.getLogger(__name__)
 
 OCR_VERSION: Final[str] = "PP-OCRv5"
-"""PP-OCR generation this recogniser pins.
-
-Pinned rather than left to the library default so that a PaddleOCR upgrade
-cannot silently change the models behind a published benchmark number.
-
-.. warning::
-
-   ``lang="en"`` plus this version does **not** by itself yield an all-mobile
-   pipeline. Phase 7 measured the resulting engine loading
-   ``PP-OCRv5_server_det`` next to the mobile recogniser. The sub-models are
-   therefore named explicitly -- see :data:`TEXT_DETECTION_MODEL` and
-   :data:`RECOGNITION_MODEL_BY_LANG` -- which is what actually delivers the
-   small, CPU-friendly pair that decision AD-06 assumes.
-"""
+"""PP-OCR generation this recogniser pins."""
 
 TEXT_DETECTION_MODEL: Final[str] = "PP-OCRv5_mobile_det"
-"""Text-detection sub-model pinned for CPU inference.
-
-Naming it explicitly is a **performance fix, not a preference**. Passing only
-``lang``/``ocr_version`` to :class:`~paddleocr.PaddleOCR` produces a *mixed*
-pipeline: Phase 7 observed the engine loading ``PP-OCRv5_server_det`` next to
-the mobile recogniser. Measured on the project's i5-14600K, that mistake cost
-roughly **10x** on the OCR stage -- pipeline OCR median fell from **1.327,9 ms**
-to **133,4 ms** once both sub-models were pinned to mobile -- and it had gone
-unnoticed because the class still reported itself as "mobile".
-
-It is the single change that turned NFR-P1 from a 4,4x miss into a 4,4x pass;
-the detector backend, which the specification ranked as the first optimisation
-to try, was never the bottleneck.
-"""
+"""Text-detection sub-model pinned for CPU inference."""
 
 RECOGNITION_MODEL_BY_LANG: Final[dict[str, str]] = {
     "en": "en_PP-OCRv5_mobile_rec",
     "ch": "PP-OCRv5_mobile_rec",
 }
-"""Recognition sub-model per language code, all mobile variants.
-
-Vietnamese plates carry only Latin letters and digits, so ``en`` is both correct
-and faster than a multilingual model. A language absent from this table falls
-back to letting PaddleOCR resolve the pair from ``lang``/``ocr_version``, which
-keeps an unusual configuration working rather than failing outright.
-"""
+"""Recognition sub-model per language code, all mobile variants."""
 
 DEFAULT_ENABLE_MKLDNN: Final[bool] = False
-"""Whether the oneDNN (MKL-DNN) CPU acceleration path is enabled by default.
-
-Disabled, because it is **broken on this project's target platform**. With
-``paddlepaddle`` 3.3.1 on Windows/CPU, running the PP-OCRv5 detection model
-through oneDNN aborts with::
-
-    NotImplementedError: (Unimplemented) ConvertPirAttribute2RuntimeAttribute
-    not support [pir::ArrayAttribute<pir::DoubleAttribute>]
-
-The PIR executor cannot translate one of the model's attributes for the oneDNN
-kernel. Turning oneDNN off falls back to the plain CPU kernels, which run the
-same model correctly at a modest speed cost. Flip this per instance once the
-upstream bug is fixed, and re-measure -- it is a pure performance knob, not an
-accuracy one.
-"""
+"""Whether the oneDNN (MKL-DNN) CPU acceleration path is enabled by default."""
 
 _WARMUP_HEIGHT: Final[int] = 64
 _WARMUP_WIDTH: Final[int] = 224
 _MIN_OCR_HEIGHT: Final[int] = 64
-"""Crops shorter than this are enlarged before OCR.
-
-Plate crops coming out of the detector are often only 20-40 px tall. Enlarging
-before contrast enhancement gives CLAHE more pixels to work on, and keeps the
-engine from having to upscale an already degraded input itself.
-"""
+"""Crops shorter than this are enlarged before OCR."""
 
 _MAX_OCR_HEIGHT: Final[int] = 64
-"""Crops taller than this are shrunk before OCR.
-
-Equal to :data:`_MIN_OCR_HEIGHT` on purpose: together the two constants say
-"normalise the strip to 64 px, whichever side it comes from", which is the only
-statement about scale the OCR stage should be making.
-
-Adding the upper bound was a **bug fix**, not tuning. Without it the PP-OCR text
-detector receives glyphs hundreds of pixels tall on any close-up crop and
-detects nothing whatsoever -- 0 of 100 sampled crops of the Phase 2b label
-corpus produced a single character. With it, the same 100 crops read at 48/50
-(one-line) and 31/50 (two-line). See the warning on
-:func:`~ai.inference.two_line.preprocess_plate`'s ``downscale_to_height``
-argument for why the failure stayed hidden for so long.
-
-64 px was chosen from a sweep over 48, 64, 96, 128 and 192 on that corpus: 48
-and 64 tie, and accuracy on two-line plates falls away above 64 (23/50 at 96).
-It also leaves a modest margin over PP-OCR's own 48 px recognition input, so
-the engine never has to upscale.
-"""
+"""Crops taller than this are shrunk before OCR."""
 
 OCR_INPUT_HEIGHT: Final[int] = _MIN_OCR_HEIGHT
-"""Public alias for the height every crop is normalised to before OCR.
-
-Exported so that evaluation harnesses and tests can assert against the same
-number the recogniser uses, instead of re-declaring it and drifting.
-"""
+"""Public alias for the height every crop is normalised to before OCR."""
 
 MIN_FRAGMENT_HEIGHT_RATIO: Final[float] = 0.50
-"""Minimum height of a text fragment, relative to the tallest one, to be kept.
-
-Guards against a failure mode observed during Phase 4 bring-up: CLAHE
-necessarily amplifies whatever variation exists in a flat region, and where
-that region is near-uniform the amplified sensor noise can acquire enough
-texture for the text detector to fire on it. On a synthetic plate this produced
-a spurious 10 px-tall fragment reading ``"cYanmaGaYGntaYellowb"`` at 0.84
-confidence, alongside the two genuine rows at 125 px and 87 px.
-
-A plain confidence threshold does not separate those cases -- 0.84 is a
-perfectly ordinary score. Geometry does: after the split-and-merge transform
-every legitimate character row occupies, by construction, a large share of the
-strip's height, so a fragment far shorter than the tallest one is an artefact
-rather than a plate character. Measuring against the tallest *fragment* instead
-of the image height keeps the rule insensitive to how tightly the crop was
-framed.
-
-Why 0.50 and not the original 0.35
-----------------------------------
-The halves are cut to **overlap on purpose**, and on a tightly framed crop the
-band they share carries the feet of the upper row down into the lower half. The
-detector then finds that sliver as a text region of its own, next to the genuine
-row. On ``demo/images/nhieu-bien-3.png`` a motorcycle plate reading
-``59-F2 / 277.93`` produced::
-
-    '5952'    height=21    <- feet of the upper row, bled through the overlap
-    '277.93'  height=51    <- the genuine lower row
-
-21/51 = 0.41, which cleared the old 0.35 threshold. The two were concatenated
-into ``277.935952``, and the nine characters that came out of normalisation
-happened to match a legal motorcycle layout -- so the plate was reported as
-**valid** while being wrong, and the two-line rescue never fired, because the
-rescue only retries reads that failed validation. A confidently wrong answer is
-strictly worse than a refusal here.
-
-Raised to 0.50 on measurement, not on the strength of that one image: over 400
-two-line plates from the labelled corpus, 0.50 against 0.35 gained 10 plates and
-lost **none** (54.5% to 57.0%, +2.5 points), with 34 strings changing in total.
-See ``docs/reports/15-fragment-height-ab.json``. The gain is larger than the
-single-plate anecdote suggests because the bleed-through is a systematic
-consequence of the overlap, not an accident of one crop.
-"""
+"""Minimum height of a text fragment, relative to the tallest one, to be kept."""
 
 
 class PaddleOcrRecognizer(BaseRecognizer):

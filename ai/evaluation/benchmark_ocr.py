@@ -50,16 +50,7 @@ DEFAULT_OUTPUT_DIR: Final[Path] = PROJECT_ROOT / "docs" / "reports" / "04-ocr-be
 _REQUIRED_COLUMNS: Final[frozenset[str]] = frozenset({"image_path", "plate_text"})
 
 _CHARSET: Final[str] = OCR_TRAINING_CHARSET
-"""The 36 symbols of the confusion matrix: ``0``-``9`` then ``A``-``Z``.
-
-The matrix is built over the *training* charset rather than the 31-character
-safe charset on purpose. A recogniser trained on 36 symbols can emit ``I``,
-``J``, ``O``, ``Q`` and ``W``, which are illegal on a Vietnamese plate; those
-emissions are exactly the observable, repairable mistakes the split between
-:data:`~ai.inference.plate_rules.OCR_TRAINING_CHARSET` and
-:data:`~ai.inference.plate_rules.OCR_SAFE_CHARSET` was designed to expose. A
-31-symbol matrix would drop the most interesting column.
-"""
+"""The 36 symbols of the confusion matrix: ``0``-``9`` then ``A``-``Z``."""
 
 _CHAR_INDEX: Final[dict[str, int]] = {char: i for i, char in enumerate(_CHARSET)}
 

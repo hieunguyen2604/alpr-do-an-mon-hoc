@@ -288,14 +288,7 @@ _UPPER_LINE_ADJUSTABLE_KINDS: Final[frozenset[PlateKind]] = frozenset(
         PlateKind.BLUE_MOTORCYCLE,
     }
 )
-"""Families whose grouping is `serial-number` and therefore movable.
-
-Diplomatic and military plates are excluded on purpose: their layouts are not
-`serial` + `number` at all (``80-001-NG-01``, ``KV-6938``), so a character
-count taken from the upper line has nothing to move there. Restricting the
-adjustment to civil families keeps it from reformatting a layout it does not
-model.
-"""
+"""Families whose grouping is `serial-number` and therefore movable."""
 
 
 def _group_number(number: str) -> str:

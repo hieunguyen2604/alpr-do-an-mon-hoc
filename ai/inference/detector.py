@@ -25,21 +25,10 @@ LOGGER = logging.getLogger("ai.inference.detector")
 PLATE_CLASS_ALIASES: Final[frozenset[str]] = frozenset(
     {"license_plate", "licence_plate", "plate", "license-plate", "bien_so"}
 )
-"""Class names accepted as "this box is a license plate".
-
-The project's own dataset ships a single class, ``license_plate``. The aliases
-cover weights obtained from public datasets, which name the same concept
-differently. Matching is case-insensitive and treats ``-`` and spaces as ``_``
-(see :func:`_canonical_class_name`).
-"""
+"""Class names accepted as "this box is a license plate"."""
 
 SUPPORTED_WEIGHT_SUFFIXES: Final[tuple[str, ...]] = (".pt", ".onnx", ".torchscript")
-"""Weight file extensions this detector is known to handle.
-
-Ultralytics accepts more formats than these (OpenVINO directories, TensorRT
-engines...), so an unknown suffix produces a warning and an attempt, never a
-hard refusal.
-"""
+"""Weight file extensions this detector is known to handle."""
 
 _TRAINING_HINT: Final[str] = (
     "Train the detector first:\n"

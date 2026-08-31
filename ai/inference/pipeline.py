@@ -47,12 +47,7 @@ __all__ = [
 _LOGGER = logging.getLogger(__name__)
 
 STAGE_NAMES: Final[tuple[str, ...]] = ("detect", "crop", "ocr", "normalize", "total")
-"""Keys always present in :attr:`~ai.inference.types.PipelineResult.stage_times`.
-
-Fixed and exhaustive so that a benchmark can build a table without having to
-discover the keys at runtime, and so that a stage which never ran reports
-``0.0`` rather than being absent.
-"""
+"""Keys always present in :attr:`~ai.inference.types.PipelineResult.stage_times`."""
 
 
 class ALPRPipeline:
@@ -519,42 +514,17 @@ def rescue_two_line_upper(
 
 
 RETRY_STRETCH_MAX_RATIO: Final[float] = 4.2
-"""Widest crop the vertical-stretch retry still treats as a possible two-line.
-
-A genuine one-line plate is 4.727 wide (110x520 mm); a two-line plate leaning
-away from the camera lands between the two-line threshold and roughly this
-value (the measured 6.3.9 case sits at 3.48). Above the bound the crop is
-almost certainly a real one-line plate whose read failed for other reasons,
-and stretching it would only spend OCR calls on a hypothesis the geometry
-already rules out.
-"""
+"""Widest crop the vertical-stretch retry still treats as a possible two-line."""
 
 RETRY_STRETCH_FACTOR: Final[float] = 2.0
-"""Vertical multiplier for the foreshortening retry.
-
-Two is the neutral guess: it maps the ambiguous band ``[2.5, 4.2]`` onto
-``[1.25, 2.1]``, safely inside two-line territory, without assuming anything
-about the actual pitch angle. The stretch only routes the crop into the
-two-line path; precision beyond that buys nothing.
-"""
+"""Vertical multiplier for the foreshortening retry."""
 
 RETRY_SR_MAX_SIDE: Final[int] = 200
-"""Largest crop side, in pixels, still eligible for the super-resolution retry.
-
-Small crops fail for lack of detail, which SR can partially restore -- the
-measured recoveries were 32x23 px and 171x120 px. The large failing crops
-(600 px and up) fail for a *different* reason and SR would only spend time on
-them; both measured cases sit comfortably under this bound.
-"""
+"""Largest crop side, in pixels, still eligible for the super-resolution retry."""
 
 
 _UNCLASSIFIED_KINDS: Final[tuple[str, ...]] = ("", "unknown")
-"""Kind values that mean the classifier found nothing at all.
-
-Everything else -- including ``military`` -- is a *successful* read. The
-distinction is what keeps the retry ladder away from the project's worst
-failure class (see :func:`should_retry_skewed`).
-"""
+"""Kind values that mean the classifier found nothing at all."""
 
 
 def should_retry_skewed(recognition: PlateRecognition | None) -> bool:
@@ -759,12 +729,7 @@ _BLUE_EQUIVALENT: Final[dict[str, str]] = {
     "motorcycle_new": "blue_motorcycle",
     "motorcycle_old": "blue_motorcycle",
 }
-"""The State-agency counterpart of each civil family.
-
-Keyed on the family the *character string* established, because that is the only
-evidence for car-versus-motorcycle: the serial pattern differs (`65A` versus
-`65K1`) while the colour is identical either way.
-"""
+"""The State-agency counterpart of each civil family."""
 
 
 def refine_kind_with_color(outcome: object, color: str, line_count: int) -> str:

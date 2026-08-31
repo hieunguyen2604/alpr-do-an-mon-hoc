@@ -21,22 +21,10 @@ IdT = TypeVar("IdT")
 
 DEFAULT_PAGE_SIZE: Final[int] = 20
 MAX_PAGE_SIZE: Final[int] = 200
-"""Hard ceiling on ``page_size``.
-
-Without it, ``?page_size=1000000`` loads the entire history table into memory
-and serialises it, which is a denial of service that costs the caller one
-request to trigger. The ceiling is applied by clamping rather than by raising,
-so a client asking for too much gets the maximum instead of an error.
-"""
+"""Hard ceiling on ``page_size``."""
 
 _BULK_DELETE_CHUNK: Final[int] = 500
-"""Identifiers per ``DELETE ... WHERE id IN (...)`` statement.
-
-SQLite's compiled-statement limit (``SQLITE_MAX_VARIABLE_NUMBER``) is 999 on
-older builds. A user selecting every row on a large page and deleting them
-would exceed it and get an opaque "too many SQL variables" error, so the
-statement is split.
-"""
+"""Identifiers per ``DELETE ... WHERE id IN (...)`` statement."""
 
 
 class BaseRepository(Generic[ModelT, IdT]):

@@ -52,12 +52,7 @@ __all__ = [
 LOGGER = logging.getLogger("ai.evaluation.ocr_accuracy")
 
 CANONICAL_ASPECT_RATIO: Final[dict[int, float]] = {1: 4.727, 2: 1.357}
-"""Width/height a plate crop is reshaped to, per line count.
-
-Straight from QCVN 08:2024/BCA: the long car plate is 110 x 520 mm (4.727) and
-the motorcycle plate is 140 x 190 mm (1.357). Applied only because the label
-corpus was exported as squares; see the module docstring.
-"""
+"""Width/height a plate crop is reshaped to, per line count."""
 
 DEFAULT_LABELS_PATH: Final[Path] = PROJECT_ROOT / "datasets" / "annotations" / "plate_labels.csv"
 DEFAULT_OUTPUT_PATH: Final[Path] = PROJECT_ROOT / "docs" / "reports" / "04-ocr-accuracy.json"
@@ -70,8 +65,7 @@ TARGETS: Final[dict[str, tuple[float, float]]] = {
     "NFR-A6": (0.90, 0.85),
     "NFR-A7": (0.88, 0.82),
 }
-"""``(target, minimum)`` per requirement, copied from
-``docs/00-requirements/non-functional-requirements.md``."""
+"""``(target, minimum)`` per requirement, copied from"""
 
 ERROR_CLASSES: Final[tuple[str, ...]] = (
     "correct",

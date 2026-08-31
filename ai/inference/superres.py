@@ -18,12 +18,7 @@ __all__ = ["SR_SCALES", "superres_available", "superres_upscale"]
 _LOGGER = logging.getLogger(__name__)
 
 SR_SCALES: Final[tuple[int, ...]] = (3, 4)
-"""Upscale factors shipped with the project, tried in this order.
-
-Both earned their place by measurement, on different crop sizes: x3 fixed the
-32x23 px case, x4 the 171x120 px one. The corresponding graphs live in
-``models/sr/FSRCNN_x<scale>.pb``.
-"""
+"""Upscale factors shipped with the project, tried in this order."""
 
 _MODEL_DIR: Final = PROJECT_ROOT / "models" / "sr"
 

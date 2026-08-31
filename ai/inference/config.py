@@ -9,11 +9,7 @@ from pathlib import Path
 __all__ = ["PROJECT_ROOT", "DEFAULT_ENV_PREFIX", "InferenceConfig"]
 
 PROJECT_ROOT: Path = Path(__file__).resolve().parents[2]
-"""Repository root, resolved from this file (``<root>/ai/inference/config.py``).
-
-Deriving the root this way keeps the package relocatable: moving or renaming
-the checkout does not break anything, and no absolute path is hard-coded.
-"""
+"""Repository root, resolved from this file (``<root>/ai/inference/config.py``)."""
 
 DEFAULT_ENV_PREFIX: str = "ALPR_"
 """Prefix for all environment variables read by :meth:`InferenceConfig.from_env`."""

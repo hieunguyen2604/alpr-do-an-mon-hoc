@@ -21,11 +21,7 @@ __all__ = [
 LOGGER = logging.getLogger(__name__)
 
 PROJECT_ROOT: Final[Path] = Path(__file__).resolve().parents[2]
-"""Repository root, derived from ``<root>/ai/training/config.py``.
-
-Resolved from this file's own location so that the checkout can be moved,
-renamed, or cloned into ``/content`` on Colab without breaking any path.
-"""
+"""Repository root, derived from ``<root>/ai/training/config.py``."""
 
 CONFIGS_DIR: Final[Path] = Path(__file__).resolve().parent / "configs"
 """Directory holding the shipped YAML configurations."""
@@ -46,13 +42,7 @@ SUPPORTED_MODEL_VARIANTS: Final[tuple[str, ...]] = (
     "yolo11l",
     "yolo11x",
 )
-"""Model variants accepted by :class:`TrainingConfig`.
-
-Phase 1 selected **yolo11n** as the primary variant (CPU-friendly) and
-**yolo11s** as the escalation option if nano does not reach the mAP target.
-The larger variants are listed so that an experiment is not blocked by
-validation, but they are out of scope for the CPU deployment target.
-"""
+"""Model variants accepted by :class:`TrainingConfig`."""
 
 SUPPORTED_OPTIMIZERS: Final[tuple[str, ...]] = (
     "SGD",
