@@ -141,7 +141,11 @@ BUNDLE_FILES: tuple[tuple[str, str], ...] = (
 # ``raw_attribute`` is what lets :data:`SECTION_SEPARATOR` reach Word as a real
 # page break instead of being printed as XML. Harmless for the slide export,
 # which contains no raw blocks.
-PANDOC_FROM: str = "gfm+raw_attribute"
+# ``bracketed_spans`` cho phép `[]{#fig-4-1}` trở thành một bookmark Word. GFM
+# không có mở rộng này, nên trước đây các neo ấy bị nuốt im lặng và cột "Trang"
+# của Danh mục hình vẽ / Danh mục bảng biểu in ra rỗng — trường PAGEREF vẫn
+# sinh ra nhưng không có đích để trỏ tới. Xem gen_front_matter_lists._pageref.
+PANDOC_FROM: str = "gfm+raw_attribute+bracketed_spans"
 # Do sau muc luc khong con o day: truong TOC nam trong 01-front-matter.md
 # (muc E) va tu mang tham so `\o "1-2"`. Xem gen_front_matter_lists.py.
 

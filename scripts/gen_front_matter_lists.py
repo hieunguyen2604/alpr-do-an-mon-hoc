@@ -34,7 +34,7 @@ FRONT = PAPERS / "01-front-matter.md"
 
 CHUONG_H1 = re.compile(r"^#\s+(CHƯƠNG\s+\d+\..*)$")
 MUC_H2 = re.compile(r"^##\s+(\d+\.\d+)\.\s+(.*)$")
-CAP_HINH = re.compile(r"^\*+Hình (\d+\.\d+)\.\s*(.*?)\**$")
+CAP_HINH = re.compile(r"^\*+Hình (\d+\.\d+)\.\**\s*(.*?)\**$")
 CAP_BANG = re.compile(r"^\*\*Bảng (\d+\.\d+)\.?\*\*\s*(.*)$")
 FENCE = re.compile(r"^\s*(```|~~~)")
 
@@ -68,10 +68,13 @@ CHUONG = _doc_thu_tu()
 
 def don(s: str) -> str:
     """Bỏ đánh dấu Markdown khỏi tiêu đề để danh mục đọc được khi in."""
+    # Neo bookmark `[]{#fig-4-1}` mà neo_caption đặt vào chú thích phục vụ
+    # trường PAGEREF ở cột Trang; nó không được lọt vào TÊN hình/bảng.
+    s = re.sub(r"\[\]\{#[a-z0-9-]+\}\s*", "", s)
     s = re.sub(r"\*\*(.+?)\*\*", r"\1", s)
     s = re.sub(r"\*(.+?)\*", r"\1", s)
     s = re.sub(r"`(.+?)`", r"\1", s)
-    return s.rstrip(" .*")
+    return s.replace("*", "").strip(" .")
 
 
 def quet() -> tuple[list[str], list[tuple[str, str]], list[tuple[str, str]]]:
@@ -100,9 +103,34 @@ def quet() -> tuple[list[str], list[tuple[str, str]], list[tuple[str, str]]]:
     return muc_luc, hinh, bang
 
 
+def _pageref(neo: str) -> str:
+    """Truong PAGEREF cua Word, nhung trong raw OpenXML de pandoc chuyen thang.
+
+    Truoc day cot Trang la dau gach cung "—", nen Word khong co gi de dien va
+    danh muc hinh/bang in ra KHONG CO SO TRANG du tieu de cot hua co. Nay moi
+    dong tro toi mot bookmark dat ngay tai chu thich tuong ung (xem `neo_caption`),
+    va `export_thesis_pdf.ps1` goi Fields.Update() nen so trang tu dien.
+    """
+    return (
+        "`<w:r><w:fldChar w:fldCharType=\"begin\"/></w:r>"
+        "<w:r><w:instrText xml:space=\"preserve\"> PAGEREF " + neo + " \\h </w:instrText></w:r>"
+        "<w:r><w:fldChar w:fldCharType=\"separate\"/></w:r>"
+        "<w:r><w:t>0</w:t></w:r>"
+        "<w:r><w:fldChar w:fldCharType=\"end\"/></w:r>`{=openxml}"
+    )
+
+
+def neo_id(nhan: str, so: str) -> str:
+    """Ma bookmark cho mot hinh/bang — phai trung giua chu thich va danh muc."""
+    return ("fig" if nhan == "hình" else "tbl") + "-" + so.replace(".", "-")
+
+
 def bang_md(muc: list[tuple[str, str]], nhan: str) -> list[str]:
     ra = [f"| Ký hiệu | Tên {nhan} | Trang |", "|---|---|:---:|"]
-    ra += [f"| {nhan.capitalize()} {so} | {ten} | — |" for so, ten in muc]
+    ra += [
+        f"| {nhan.capitalize()} {so} | {ten} | {_pageref(neo_id(nhan, so))} |"
+        for so, ten in muc
+    ]
     return ra
 
 

@@ -38,7 +38,7 @@ Ràng buộc CPU loại họ **two-stage** (Faster R-CNN — sinh vùng đề xu
 
 ![](figures/fig-ch2-05.png)
 
-**Hình 2.1.** Kiến trúc tổng quát backbone – neck – head của YOLO11 *(theo [13], [9])*
+**Hình 2.1.**[]{#fig-2-1} Kiến trúc tổng quát backbone – neck – head của YOLO11 *(theo [13], [9])*
 
 Ba phần: **backbone** trích đặc trưng, **neck** hợp nhất đặc trưng nhiều tầng, **head** sinh dự đoán — từ YOLOv8 dùng **anchor-free split head** [13]<!-- jocher_2023_yolov8 -->. Anchor-free có ý nghĩa riêng với biển số: anchor-based hồi quy theo tập hộp mẫu thiết kế theo phân bố COCO, mà biển số nằm ngoài phân bố đó (một dòng ≈ 4,7:1, hai dòng ≈ 1,4:1); anchor-free hồi quy **trực tiếp khoảng cách tâm đến bốn cạnh**, xử lý cả hai chế độ tỷ lệ bằng một cơ chế [9]<!-- jocher_2024_yolo11 -->.
 
@@ -46,7 +46,7 @@ Ba phần: **backbone** trích đặc trưng, **neck** hợp nhất đặc trưn
 
 Đồ án **không cải tiến kiến trúc YOLO**, nên phần này chỉ nêu điều cần để đọc kết quả ở Chương 5. Khác biệt kiến trúc thực sự của YOLO11 so với YOLOv8 là khối attention **C2PSA** đặt ngay sau SPPF — thành phần YOLOv8 hoàn toàn không có; khối `C3k2` thì **kế thừa trực tiếp từ `C2f`** của YOLOv8 và trùng khớp với nó khi tắt cờ cấu hình [14]<!-- ultralytics_2026_blockpy -->. Ultralytics cho biết C2PSA cải thiện phát hiện **đối tượng nhỏ** và **che khuất phức tạp** [9]<!-- jocher_2024_yolo11 -->, nhưng đây là phát biểu **định tính**: hãng không công bố AP_small/AP_medium/AP_large theo chuẩn COCO cho từng biến thể, nên đồ án phải **tự đo trên dữ liệu của mình** (Chương 5) (Bảng 2.1).
 
-**Bảng 2.1.** So sánh khác biệt kiến trúc giữa các phiên bản YOLO gần đây
+**Bảng 2.1.**[]{#tbl-2-1} So sánh khác biệt kiến trúc giữa các phiên bản YOLO gần đây
 
 | Phiên bản | Khối backbone | Cơ chế attention | Đầu dự đoán | NMS | Điểm mới chính |
 |---|---|---|---|:--:|---|
@@ -83,7 +83,7 @@ $$\mathrm{AP} = \int_0^1 p(r)\, \mathrm{d}r, \qquad \mathrm{mAP} = \frac{1}{N}\s
 
 **OCR** (*Optical Character Recognition*) chuyển văn bản trong ảnh thành chuỗi, thường gồm **text detection** khoanh vùng rồi **text recognition** đọc từng vùng. Sai lầm phổ biến: lấy thẳng bảng xếp hạng OCR phổ thông làm căn cứ chọn bộ nhận dạng cho ALPR (Bảng 2.2).
 
-**Bảng 2.2.** So sánh OCR văn bản tài liệu và OCR biển số xe
+**Bảng 2.2.**[]{#tbl-2-2} So sánh OCR văn bản tài liệu và OCR biển số xe
 
 | Chiều so sánh | OCR văn bản tài liệu | OCR biển số xe |
 |---|---|---|
@@ -108,7 +108,7 @@ Tổng ở (2.3) tính bằng quy hoạch động tiến–lùi. Ưu điểm quy
 
 ![](figures/fig-ch2-crnn-ctc.png)
 
-**Hình 2.2.** Kiến trúc CRNN và cách CTC gộp chuỗi thô.
+**Hình 2.2.**[]{#fig-2-2} Kiến trúc CRNN và cách CTC gộp chuỗi thô.
 
 ### 2.4.3. Vì sao kiến trúc CTC gặp khó với văn bản nhiều dòng
 
@@ -116,7 +116,7 @@ Nền tảng lý thuyết cho rủi ro **R-04**: ở Việt Nam nơi xe máy áp
 
 ![](figures/fig-ch2-07.png)
 
-**Hình 2.3.** Cơ chế sụp đổ của CTC trên ảnh văn bản hai dòng
+**Hình 2.3.**[]{#fig-2-3} Cơ chế sụp đổ của CTC trên ảnh văn bản hai dòng
 
 Có nhiều cách phân biệt biển một dòng với hai dòng — lấy lớp từ chính bộ phát hiện, cắt đôi theo tỷ lệ hình học, chiếu ngang tìm điểm trũng, phân cụm hộp bao ký tự theo toạ độ dọc, hoặc kiểm tra tính thẳng hàng của ký tự. Phương án được chọn và lý do trình bày ở mục 4.6.4.
 
@@ -160,19 +160,19 @@ Khảo sát đối chiếu các bộ dữ liệu chuẩn của lĩnh vực theo 
 
 ### 2.5.4. Khoảng trống nghiên cứu và định vị đề tài
 
-Sáu khoảng trống rút ra từ khảo sát trên, cùng cách đồ án lấp từng khoảng, tổng hợp ở Bảng 2.3.
+Từ khảo sát trên, đồ án xác định sáu hướng đóng góp, mỗi hướng nhắm vào một khoảng trống cụ thể (Bảng 2.3).
 
-**Bảng 2.3.** Sáu khoảng trống nghiên cứu và cách nhóm thực hiện lấp
+**Bảng 2.3.**[]{#tbl-2-3} Sáu khoảng trống nghiên cứu và cách nhóm thực hiện lấp
 
-| # | Khoảng trống được xác định từ khảo sát | Cách nhóm thực hiện lấp |
-|:--:|---|---|
-| 1 | Nhóm **chưa tìm thấy công trình công khai nào của Việt Nam công bố bảng so sánh tách riêng độ chính xác biển một dòng và biển hai dòng trên cùng một hệ thống** (mục 2.5.2) | Nhóm thực hiện báo cáo tách bạch hai con số này |
-| 2 | Nhóm **chưa tìm thấy công trình công khai nào của Việt Nam mô tả có hệ thống bộ luật hậu xử lý ràng buộc theo VỊ TRÍ trong chuỗi** — các mô tả hiện có dừng ở danh sách phẳng, phần lớn dùng nhầm con số 20 chữ cái cho toàn chuỗi (mục 2.2.4) | Thiết kế hậu xử lý **theo từng vị trí**, **đo tách bạch trước và sau hậu xử lý**; hiệu số là đóng góp định lượng |
-| 3 | **Phần lớn công trình trong nước khảo sát được chỉ báo cáo mAP của bước phát hiện**, không báo cáo end-to-end mức chuỗi (mục 2.5.2) | Báo cáo cả hai, end-to-end là chỉ tiêu quan trọng nhất |
-| 4 | Nhóm **chưa tìm thấy benchmark công khai nào so sánh các bộ nhận dạng ký tự trên riêng ảnh biển số xe máy Việt Nam hai dòng** (mục 3.3) | ✅ **Đã lấp** — đo ba bộ nhận dạng trên 2.801 biển, cùng tầng bao quanh: PaddleOCR 68,87% · EasyOCR 14,28% · Tesseract 10,28% (mục 3.3.3) |
-| 5 | **Số liệu hiệu năng thường công bố không kèm phần cứng** (mục 2.5.1) | Mọi số liệu hiệu năng kèm: model CPU, số luồng, kích thước ảnh vào, nền tảng suy luận, cỡ mẫu đo |
-| 6 | **Phần lớn kho mã nguồn mở Việt Nam khảo sát được không công bố số liệu và không có kiến trúc phần mềm** (mục 2.5.2) | Công bố đầy đủ giao thức đo, tập kiểm thử, toàn bộ chỉ số; bàn giao hệ thống có API, giao diện, cơ sở dữ liệu, kiểm thử, đóng gói |
+| # | Đóng góp của đồ án | Khoảng trống mà nó lấp |
+|:--:| --- | --- |
+| 1 | **Báo cáo tách riêng độ chính xác cho biển một dòng và biển hai dòng** trên cùng một hệ thống, ở cả tầng phát hiện lẫn tầng nhận dạng, và biến việc này thành nghĩa vụ bắt buộc qua chỉ tiêu NFR-A8 | Trong tài liệu khảo sát được, các công trình Việt Nam thường chỉ công bố một con số độ chính xác chung (2.5.2) |
+| 2 | **Thiết kế bộ luật hậu xử lý ràng buộc theo VỊ TRÍ trong chuỗi**, và **đo tách bạch độ chính xác trước và sau bước đó** để hiệu số trở thành một đại lượng định lượng | Các mô tả khảo sát được dừng ở danh sách ký tự phẳng, phần lớn dùng nhầm con số 20 chữ cái cho toàn chuỗi (2.2.4) |
+| 3 | **Công bố chỉ số đầu cuối ở mức chuỗi** bên cạnh mAP của bước phát hiện, và nêu rõ chênh lệch giữa hai đại lượng | Phần lớn công trình trong nước khảo sát được chỉ báo cáo mAP của bước phát hiện (2.5.2) |
+| 4 | **Xây dựng benchmark ba bộ nhận dạng ký tự trên 2.801 biển số Việt Nam** trong cùng một tầng bao quanh: PaddleOCR 68,87% · EasyOCR 14,28% · Tesseract 10,28% (3.3.3) | Nhóm chưa tìm thấy benchmark công khai nào đo trên riêng ảnh biển số xe máy Việt Nam hai dòng (3.3) |
+| 5 | **Mọi số liệu hiệu năng công bố kèm cấu hình phần cứng**: model CPU, số luồng, kích thước ảnh vào, nền tảng suy luận, cỡ mẫu đo | Số liệu hiệu năng trong tài liệu thường công bố không kèm phần cứng nên không tái lập được (2.5.1) |
+| 6 | **Bàn giao hệ thống có kiến trúc phần mềm, kiểm thử và giao thức đo công khai** — mọi số liệu sinh lại được bằng một lệnh | Phần lớn kho mã nguồn mở Việt Nam khảo sát được không công bố số liệu và không có kiến trúc phần mềm (2.5.2) |
 
-Sáu khoảng trống đều thuộc loại **kỹ nghệ và báo cáo**, không phải thuật toán; tuyên bố đóng góp đầy đủ đặt ở mục 1.5.
+Sáu đóng góp đều thuộc loại **kỹ nghệ và báo cáo**, không phải thuật toán; tuyên bố đóng góp đầy đủ đặt ở mục 1.5.
 
 > Tuyên bố trung thực đầy đủ về mức đóng góp, cùng bốn điều đồ án **không** tuyên bố, đặt ở **mục 1.5.1 và 1.5.2** (Chương 1) — nơi chính danh để tuyên bố đóng góp.

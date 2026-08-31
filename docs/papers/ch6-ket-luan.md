@@ -4,7 +4,7 @@
 
 Nhóm thực hiện đã bàn giao một hệ thống nhận dạng biển số xe Việt Nam hoàn chỉnh, chạy đầu cuối trên máy **không có GPU**: bộ phát hiện tự huấn luyện, khối nhận dạng ký tự, bộ luật hậu xử lý theo quy chuẩn Việt Nam, REST API, giao diện web, cơ sở dữ liệu và đóng gói Docker. Trạng thái xác minh bằng HTTP thật — 10 thao tác trên 9 đường dẫn phản hồi đúng, **1.004/1.004** kiểm thử tự động đạt, bao phủ tầng nghiệp vụ 87,7% (Bảng 6.1).
 
-**Bảng 6.1.** Đối chiếu chỉ tiêu đặt ra ở giai đoạn phân tích yêu cầu với số đo trên `models/best.pt`
+**Bảng 6.1.**[]{#tbl-6-1} Đối chiếu chỉ tiêu đặt ra ở giai đoạn phân tích yêu cầu với số đo trên `models/best.pt`
 
 |      Mã       | Chỉ tiêu                                                      |            Mục tiêu |                  Đo được |       |
 | :-----------: | ------------------------------------------------------------- | ------------------: | -----------------------: | :---: |
@@ -22,15 +22,15 @@ Nhóm thực hiện đã bàn giao một hệ thống nhận dạng biển số 
 
 Các chỉ tiêu về phát hiện, thông lượng, độ tin cậy và chịu tải đều đạt; các chỉ tiêu về độ chính xác chuỗi chưa đạt ngưỡng. NFR-P1 vượt mục tiêu sau đợt tối ưu tầng chạy, dù bậc thử lại đã cộng thêm độ trễ đuôi để đổi lấy 34 biển đọc đúng.
 
-**Bốn đại lượng đo được mà khảo sát không tìm thấy tương đương trong tài liệu Việt Nam.** *(1)* **Đóng góp thuần của khối hậu xử lý theo vị trí: +13,28 điểm** — sửa đúng 372 biển, làm hỏng 0 trên 2.801 mẫu. *(2)* **Chênh lệch giữa hai bố cục biển: 23,07 điểm** ở khối nhận dạng so với 2,09 điểm ở khối phát hiện, nên rủi ro R-04 nằm trọn ở tầng đọc ký tự. *(3)* **Benchmark ba bộ nhận dạng trên 2.801 biển trong cùng một tầng bao quanh**: PaddleOCR 68,87% so với EasyOCR 14,28% và Tesseract 10,28%, kèm phát hiện rằng bước tách-ghép nâng PaddleOCR 34,92 điểm nhưng Tesseract chỉ 0,03 điểm — **điều kiện cần nhưng chưa đủ**. *(4)* **Bộ nhận màu nền đạt 97,89%** trên 1.565 ảnh có nhãn, cung cấp bằng chứng mà chuỗi ký tự không mang được.
+**Bốn kết quả định lượng mà khảo sát không tìm thấy tương đương trong tài liệu Việt Nam.** *(1)* Đóng góp thuần của khối hậu xử lý theo vị trí: **+13,28 điểm**, sửa đúng 372 biển và làm hỏng 0 trên 2.801 mẫu. *(2)* Chênh lệch giữa hai bố cục biển: **23,07 điểm** ở khối nhận dạng so với 2,09 điểm ở khối phát hiện, nên rủi ro R-04 nằm trọn ở tầng đọc ký tự. *(3)* Benchmark ba bộ nhận dạng trên 2.801 biển trong cùng một tầng bao quanh: **PaddleOCR 68,87%**, EasyOCR 14,28%, Tesseract 10,28%. *(4)* Bộ nhận màu nền đạt **97,89%** trên 1.565 ảnh có nhãn, cung cấp bằng chứng mà chuỗi ký tự không mang được.
 
-Hai kết quả kỹ thuật hệ thống đi kèm: **tối ưu tầng chạy đưa p95 từ 1.143,10 xuống 509,76 ms mà không đụng một trọng số nào và mọi chỉ số độ chính xác đứng yên** (4.6.8); và **khử trùng lặp mờ** gom 17 trên 44 cách đọc về đúng một bản ghi mỗi xe (4.7.2). Ngoài các con số, đồ án để lại một quy trình đánh giá có kiểm chứng: mọi số liệu sinh lại được bằng một lệnh, và các kết quả âm được ghi lại thay vì bỏ đi.
+Hai kết quả kỹ thuật hệ thống đi kèm: tối ưu tầng chạy đưa p95 từ 1.143,10 xuống **509,76 ms** mà không thay đổi trọng số và mọi chỉ số độ chính xác giữ nguyên (4.6.8); và khử trùng lặp mờ gom 17 trên 44 cách đọc về đúng một bản ghi mỗi xe (4.7.2). Ngoài các con số, đồ án để lại một quy trình đánh giá có kiểm chứng: mọi số liệu sinh lại được bằng một lệnh, và các kết quả âm được ghi lại thay vì bỏ đi.
 
 ## 6.2. Hạn chế
 
 Mười hạn chế của đồ án, xếp theo mức nghiêm trọng, liệt kê ở Bảng 6.2.
 
-**Bảng 6.2.** Mười hạn chế của đồ án
+**Bảng 6.2.**[]{#tbl-6-2} Mười hạn chế của đồ án
 
 |  #  | Hạn chế                                                             |    Mức     | Hệ quả cần lưu ý                                                                                       |
 | :-: | ------------------------------------------------------------------- | :--------: | ------------------------------------------------------------------------------------------------------ |
@@ -49,7 +49,7 @@ Mười hạn chế của đồ án, xếp theo mức nghiêm trọng, liệt k�
 
 Các hướng phát triển xếp theo mức tác động ở Bảng 6.3.
 
-**Bảng 6.3.** Mười một hướng phát triển, xếp theo mức tác động
+**Bảng 6.3.**[]{#tbl-6-3} Mười một hướng phát triển, xếp theo mức tác động
 
 |  #  | Hướng                                                          | Giải hạn chế | Ghi chú                                                                                            |
 | :-: | -------------------------------------------------------------- | :----------: | -------------------------------------------------------------------------------------------------- |

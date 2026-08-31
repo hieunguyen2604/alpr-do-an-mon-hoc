@@ -162,20 +162,20 @@ Nhóm cũng xin cảm ơn quý thầy cô Trường Đại học Công nghệ Th
 
 | Ký hiệu | Tên hình | Trang |
 |---|---|:---:|
-| Hình 1.1 | ** Ranh giới hệ thống — phần bên trong là hệ thống bàn giao, Colab/Kaggle nằm ngoài | — |
-| Hình 2.1 | * Kiến trúc tổng quát backbone – neck – head của YOLO11 (theo [13], [9]) | — |
-| Hình 2.2 | ** Kiến trúc CRNN và cách CTC gộp chuỗi thô | — |
-| Hình 2.3 | ** Cơ chế sụp đổ của CTC trên ảnh văn bản hai dòng | — |
-| Hình 4.1 | ** Sơ đồ use case — hai tác nhân và bốn use case | — |
-| Hình 4.2 | ** Kiến trúc phân tầng năm tầng và chiều phụ thuộc | — |
-| Hình 4.3 | ** Luồng xử lý của đường ống AI, các khối tô đỏ là nhánh biển hai dòng | — |
-| Hình 4.4 | ** Đường ống sáu bước xây dựng bộ dữ liệu | — |
-| Hình 4.5 | ** Đường cong huấn luyện theo epoch — ba hàm mất mát và bốn chỉ số trên tập kiểm định | — |
-| Hình 4.6 | ** Ba lớp trừu tượng và cài đặt tương ứng — bằng chứng cài đặt cho NFR-M5 | — |
-| Hình 4.7 | ** Thuật toán chuẩn hoá chuỗi biển số theo bộ luật ràng buộc vị trí | — |
-| Hình 5.1 | ** Giao thức đo và ràng buộc phụ thuộc giữa các bước đánh giá | — |
-| Hình 5.2 | ** Sáu lần đo NFR-P2 trong các điều kiện máy khác nhau | — |
-| Hình 5.3 | ** Một ca khử trùng lặp thật, cắt trực tiếp từ video demo | — |
+| Hình 1.1 | Ranh giới hệ thống — phần bên trong là hệ thống bàn giao, Colab/Kaggle nằm ngoài | `<w:r><w:fldChar w:fldCharType="begin"/></w:r><w:r><w:instrText xml:space="preserve"> PAGEREF fig-1-1 \h </w:instrText></w:r><w:r><w:fldChar w:fldCharType="separate"/></w:r><w:r><w:t>0</w:t></w:r><w:r><w:fldChar w:fldCharType="end"/></w:r>`{=openxml} |
+| Hình 2.1 | Kiến trúc tổng quát backbone – neck – head của YOLO11 (theo [13], [9]) | `<w:r><w:fldChar w:fldCharType="begin"/></w:r><w:r><w:instrText xml:space="preserve"> PAGEREF fig-2-1 \h </w:instrText></w:r><w:r><w:fldChar w:fldCharType="separate"/></w:r><w:r><w:t>0</w:t></w:r><w:r><w:fldChar w:fldCharType="end"/></w:r>`{=openxml} |
+| Hình 2.2 | Kiến trúc CRNN và cách CTC gộp chuỗi thô | `<w:r><w:fldChar w:fldCharType="begin"/></w:r><w:r><w:instrText xml:space="preserve"> PAGEREF fig-2-2 \h </w:instrText></w:r><w:r><w:fldChar w:fldCharType="separate"/></w:r><w:r><w:t>0</w:t></w:r><w:r><w:fldChar w:fldCharType="end"/></w:r>`{=openxml} |
+| Hình 2.3 | Cơ chế sụp đổ của CTC trên ảnh văn bản hai dòng | `<w:r><w:fldChar w:fldCharType="begin"/></w:r><w:r><w:instrText xml:space="preserve"> PAGEREF fig-2-3 \h </w:instrText></w:r><w:r><w:fldChar w:fldCharType="separate"/></w:r><w:r><w:t>0</w:t></w:r><w:r><w:fldChar w:fldCharType="end"/></w:r>`{=openxml} |
+| Hình 4.1 | Sơ đồ use case — hai tác nhân và bốn use case | `<w:r><w:fldChar w:fldCharType="begin"/></w:r><w:r><w:instrText xml:space="preserve"> PAGEREF fig-4-1 \h </w:instrText></w:r><w:r><w:fldChar w:fldCharType="separate"/></w:r><w:r><w:t>0</w:t></w:r><w:r><w:fldChar w:fldCharType="end"/></w:r>`{=openxml} |
+| Hình 4.2 | Kiến trúc phân tầng năm tầng và chiều phụ thuộc | `<w:r><w:fldChar w:fldCharType="begin"/></w:r><w:r><w:instrText xml:space="preserve"> PAGEREF fig-4-2 \h </w:instrText></w:r><w:r><w:fldChar w:fldCharType="separate"/></w:r><w:r><w:t>0</w:t></w:r><w:r><w:fldChar w:fldCharType="end"/></w:r>`{=openxml} |
+| Hình 4.3 | Luồng xử lý của đường ống AI, các khối tô đỏ là nhánh biển hai dòng | `<w:r><w:fldChar w:fldCharType="begin"/></w:r><w:r><w:instrText xml:space="preserve"> PAGEREF fig-4-3 \h </w:instrText></w:r><w:r><w:fldChar w:fldCharType="separate"/></w:r><w:r><w:t>0</w:t></w:r><w:r><w:fldChar w:fldCharType="end"/></w:r>`{=openxml} |
+| Hình 4.4 | Đường ống sáu bước xây dựng bộ dữ liệu | `<w:r><w:fldChar w:fldCharType="begin"/></w:r><w:r><w:instrText xml:space="preserve"> PAGEREF fig-4-4 \h </w:instrText></w:r><w:r><w:fldChar w:fldCharType="separate"/></w:r><w:r><w:t>0</w:t></w:r><w:r><w:fldChar w:fldCharType="end"/></w:r>`{=openxml} |
+| Hình 4.5 | Đường cong huấn luyện theo epoch — ba hàm mất mát và bốn chỉ số trên tập kiểm định | `<w:r><w:fldChar w:fldCharType="begin"/></w:r><w:r><w:instrText xml:space="preserve"> PAGEREF fig-4-5 \h </w:instrText></w:r><w:r><w:fldChar w:fldCharType="separate"/></w:r><w:r><w:t>0</w:t></w:r><w:r><w:fldChar w:fldCharType="end"/></w:r>`{=openxml} |
+| Hình 4.6 | Ba lớp trừu tượng và cài đặt tương ứng — bằng chứng cài đặt cho NFR-M5 | `<w:r><w:fldChar w:fldCharType="begin"/></w:r><w:r><w:instrText xml:space="preserve"> PAGEREF fig-4-6 \h </w:instrText></w:r><w:r><w:fldChar w:fldCharType="separate"/></w:r><w:r><w:t>0</w:t></w:r><w:r><w:fldChar w:fldCharType="end"/></w:r>`{=openxml} |
+| Hình 4.7 | Thuật toán chuẩn hoá chuỗi biển số theo bộ luật ràng buộc vị trí | `<w:r><w:fldChar w:fldCharType="begin"/></w:r><w:r><w:instrText xml:space="preserve"> PAGEREF fig-4-7 \h </w:instrText></w:r><w:r><w:fldChar w:fldCharType="separate"/></w:r><w:r><w:t>0</w:t></w:r><w:r><w:fldChar w:fldCharType="end"/></w:r>`{=openxml} |
+| Hình 5.1 | Giao thức đo và ràng buộc phụ thuộc giữa các bước đánh giá | `<w:r><w:fldChar w:fldCharType="begin"/></w:r><w:r><w:instrText xml:space="preserve"> PAGEREF fig-5-1 \h </w:instrText></w:r><w:r><w:fldChar w:fldCharType="separate"/></w:r><w:r><w:t>0</w:t></w:r><w:r><w:fldChar w:fldCharType="end"/></w:r>`{=openxml} |
+| Hình 5.2 | Sáu lần đo NFR-P2 trong các điều kiện máy khác nhau | `<w:r><w:fldChar w:fldCharType="begin"/></w:r><w:r><w:instrText xml:space="preserve"> PAGEREF fig-5-2 \h </w:instrText></w:r><w:r><w:fldChar w:fldCharType="separate"/></w:r><w:r><w:t>0</w:t></w:r><w:r><w:fldChar w:fldCharType="end"/></w:r>`{=openxml} |
+| Hình 5.3 | Một ca khử trùng lặp thật, cắt trực tiếp từ video demo | `<w:r><w:fldChar w:fldCharType="begin"/></w:r><w:r><w:instrText xml:space="preserve"> PAGEREF fig-5-3 \h </w:instrText></w:r><w:r><w:fldChar w:fldCharType="separate"/></w:r><w:r><w:t>0</w:t></w:r><w:r><w:fldChar w:fldCharType="end"/></w:r>`{=openxml} |
 
 ---
 
@@ -189,33 +189,33 @@ Nhóm cũng xin cảm ơn quý thầy cô Trường Đại học Công nghệ Th
 
 | Ký hiệu | Tên bảng | Trang |
 |---|---|:---:|
-| Bảng 1.1 | Nhóm chỉ tiêu độ chính xác | — |
-| Bảng 1.2 | Nhóm chỉ tiêu hiệu năng trên CPU | — |
-| Bảng 2.1 | So sánh khác biệt kiến trúc giữa các phiên bản YOLO gần đây | — |
-| Bảng 2.2 | So sánh OCR văn bản tài liệu và OCR biển số xe | — |
-| Bảng 2.3 | Sáu khoảng trống nghiên cứu và cách nhóm thực hiện lấp | — |
-| Bảng 3.1 | PP-OCRv6_medium_rec so với PP-OCRv5_mobile_rec, đo trên 200 vùng cắt biển số của đồ án | — |
-| Bảng 3.2 | So sánh ba bộ nhận dạng ký tự trên 2.801 biển số Việt Nam (567 một dòng, 2.234 hai dòng) | — |
-| Bảng 4.1 | Bốn ràng buộc kiến trúc và cách kiểm chứng từng ràng buộc | — |
-| Bảng 4.2 | Tám quyết định kiến trúc — mỗi dòng kèm đánh đổi phải chấp nhận | — |
-| Bảng 4.3 | Đóng góp của từng bộ dữ liệu trước và sau khử trùng lặp | — |
-| Bảng 4.4 | Tiến triển chỉ số trên tập validation theo mốc epoch | — |
-| Bảng 5.1 | Ba phiên bản bộ dữ liệu và số cặp ảnh gần trùng xuyên tập con theo ngưỡng Hamming | — |
-| Bảng 5.2 | Kết quả phát hiện tách theo biển một dòng và hai dòng (NFR-A8) | — |
-| Bảng 5.3 | Độ chính xác OCR trước và sau hậu xử lý, trên 2.801 biển có nhãn chuỗi | — |
-| Bảng 5.4 | Độ chính xác nhận dạng tách theo biển một dòng và hai dòng | — |
-| Bảng 5.5 | NFR-A7 ở mức ảnh toàn cảnh — ước lượng phân tầng trên 1.606 khung biển | — |
-| Bảng 5.6 | Chi phí và lợi ích của từng bậc trong thang thử lại | — |
-| Bảng 5.7 | Độ trễ đầu cuối một ảnh, đối chiếu NFR-P1 | — |
-| Bảng 5.8 | Phân rã ngân sách độ trễ theo từng bước | — |
-| Bảng 5.9 | Các chỉ tiêu hiệu năng ngoài đường xử lý ảnh | — |
-| Bảng 5.10 | Đối chiếu chỉ tiêu phi chức năng, gom theo nhóm | — |
-| Bảng 5.11 | Tần suất từng loại lỗi trên 2.801 biển có nhãn chuỗi, cấu hình giao hàng | — |
-| Bảng 5.12 | Đối chiếu kết quả của đồ án với các con số đã công bố | — |
-| Bảng 5.13 | Tám mối đe doạ đến tính hợp lệ của kết quả | — |
-| Bảng 6.1 | Đối chiếu chỉ tiêu đặt ra ở giai đoạn phân tích yêu cầu với số đo trên models/best.pt | — |
-| Bảng 6.2 | Mười hạn chế của đồ án | — |
-| Bảng 6.3 | Mười một hướng phát triển, xếp theo mức tác động | — |
+| Bảng 1.1 | Nhóm chỉ tiêu độ chính xác | `<w:r><w:fldChar w:fldCharType="begin"/></w:r><w:r><w:instrText xml:space="preserve"> PAGEREF tbl-1-1 \h </w:instrText></w:r><w:r><w:fldChar w:fldCharType="separate"/></w:r><w:r><w:t>0</w:t></w:r><w:r><w:fldChar w:fldCharType="end"/></w:r>`{=openxml} |
+| Bảng 1.2 | Nhóm chỉ tiêu hiệu năng trên CPU | `<w:r><w:fldChar w:fldCharType="begin"/></w:r><w:r><w:instrText xml:space="preserve"> PAGEREF tbl-1-2 \h </w:instrText></w:r><w:r><w:fldChar w:fldCharType="separate"/></w:r><w:r><w:t>0</w:t></w:r><w:r><w:fldChar w:fldCharType="end"/></w:r>`{=openxml} |
+| Bảng 2.1 | So sánh khác biệt kiến trúc giữa các phiên bản YOLO gần đây | `<w:r><w:fldChar w:fldCharType="begin"/></w:r><w:r><w:instrText xml:space="preserve"> PAGEREF tbl-2-1 \h </w:instrText></w:r><w:r><w:fldChar w:fldCharType="separate"/></w:r><w:r><w:t>0</w:t></w:r><w:r><w:fldChar w:fldCharType="end"/></w:r>`{=openxml} |
+| Bảng 2.2 | So sánh OCR văn bản tài liệu và OCR biển số xe | `<w:r><w:fldChar w:fldCharType="begin"/></w:r><w:r><w:instrText xml:space="preserve"> PAGEREF tbl-2-2 \h </w:instrText></w:r><w:r><w:fldChar w:fldCharType="separate"/></w:r><w:r><w:t>0</w:t></w:r><w:r><w:fldChar w:fldCharType="end"/></w:r>`{=openxml} |
+| Bảng 2.3 | Sáu khoảng trống nghiên cứu và cách nhóm thực hiện lấp | `<w:r><w:fldChar w:fldCharType="begin"/></w:r><w:r><w:instrText xml:space="preserve"> PAGEREF tbl-2-3 \h </w:instrText></w:r><w:r><w:fldChar w:fldCharType="separate"/></w:r><w:r><w:t>0</w:t></w:r><w:r><w:fldChar w:fldCharType="end"/></w:r>`{=openxml} |
+| Bảng 3.1 | PP-OCRv6_medium_rec so với PP-OCRv5_mobile_rec, đo trên 200 vùng cắt biển số của đồ án | `<w:r><w:fldChar w:fldCharType="begin"/></w:r><w:r><w:instrText xml:space="preserve"> PAGEREF tbl-3-1 \h </w:instrText></w:r><w:r><w:fldChar w:fldCharType="separate"/></w:r><w:r><w:t>0</w:t></w:r><w:r><w:fldChar w:fldCharType="end"/></w:r>`{=openxml} |
+| Bảng 3.2 | So sánh ba bộ nhận dạng ký tự trên 2.801 biển số Việt Nam (567 một dòng, 2.234 hai dòng) | `<w:r><w:fldChar w:fldCharType="begin"/></w:r><w:r><w:instrText xml:space="preserve"> PAGEREF tbl-3-2 \h </w:instrText></w:r><w:r><w:fldChar w:fldCharType="separate"/></w:r><w:r><w:t>0</w:t></w:r><w:r><w:fldChar w:fldCharType="end"/></w:r>`{=openxml} |
+| Bảng 4.1 | Bốn ràng buộc kiến trúc và cách kiểm chứng từng ràng buộc | `<w:r><w:fldChar w:fldCharType="begin"/></w:r><w:r><w:instrText xml:space="preserve"> PAGEREF tbl-4-1 \h </w:instrText></w:r><w:r><w:fldChar w:fldCharType="separate"/></w:r><w:r><w:t>0</w:t></w:r><w:r><w:fldChar w:fldCharType="end"/></w:r>`{=openxml} |
+| Bảng 4.2 | Tám quyết định kiến trúc — mỗi dòng kèm đánh đổi phải chấp nhận | `<w:r><w:fldChar w:fldCharType="begin"/></w:r><w:r><w:instrText xml:space="preserve"> PAGEREF tbl-4-2 \h </w:instrText></w:r><w:r><w:fldChar w:fldCharType="separate"/></w:r><w:r><w:t>0</w:t></w:r><w:r><w:fldChar w:fldCharType="end"/></w:r>`{=openxml} |
+| Bảng 4.3 | Đóng góp của từng bộ dữ liệu trước và sau khử trùng lặp | `<w:r><w:fldChar w:fldCharType="begin"/></w:r><w:r><w:instrText xml:space="preserve"> PAGEREF tbl-4-3 \h </w:instrText></w:r><w:r><w:fldChar w:fldCharType="separate"/></w:r><w:r><w:t>0</w:t></w:r><w:r><w:fldChar w:fldCharType="end"/></w:r>`{=openxml} |
+| Bảng 4.4 | Tiến triển chỉ số trên tập validation theo mốc epoch | `<w:r><w:fldChar w:fldCharType="begin"/></w:r><w:r><w:instrText xml:space="preserve"> PAGEREF tbl-4-4 \h </w:instrText></w:r><w:r><w:fldChar w:fldCharType="separate"/></w:r><w:r><w:t>0</w:t></w:r><w:r><w:fldChar w:fldCharType="end"/></w:r>`{=openxml} |
+| Bảng 5.1 | Ba phiên bản bộ dữ liệu và số cặp ảnh gần trùng xuyên tập con theo ngưỡng Hamming | `<w:r><w:fldChar w:fldCharType="begin"/></w:r><w:r><w:instrText xml:space="preserve"> PAGEREF tbl-5-1 \h </w:instrText></w:r><w:r><w:fldChar w:fldCharType="separate"/></w:r><w:r><w:t>0</w:t></w:r><w:r><w:fldChar w:fldCharType="end"/></w:r>`{=openxml} |
+| Bảng 5.2 | Kết quả phát hiện tách theo biển một dòng và hai dòng (NFR-A8) | `<w:r><w:fldChar w:fldCharType="begin"/></w:r><w:r><w:instrText xml:space="preserve"> PAGEREF tbl-5-2 \h </w:instrText></w:r><w:r><w:fldChar w:fldCharType="separate"/></w:r><w:r><w:t>0</w:t></w:r><w:r><w:fldChar w:fldCharType="end"/></w:r>`{=openxml} |
+| Bảng 5.3 | Độ chính xác OCR trước và sau hậu xử lý, trên 2.801 biển có nhãn chuỗi | `<w:r><w:fldChar w:fldCharType="begin"/></w:r><w:r><w:instrText xml:space="preserve"> PAGEREF tbl-5-3 \h </w:instrText></w:r><w:r><w:fldChar w:fldCharType="separate"/></w:r><w:r><w:t>0</w:t></w:r><w:r><w:fldChar w:fldCharType="end"/></w:r>`{=openxml} |
+| Bảng 5.4 | Độ chính xác nhận dạng tách theo biển một dòng và hai dòng | `<w:r><w:fldChar w:fldCharType="begin"/></w:r><w:r><w:instrText xml:space="preserve"> PAGEREF tbl-5-4 \h </w:instrText></w:r><w:r><w:fldChar w:fldCharType="separate"/></w:r><w:r><w:t>0</w:t></w:r><w:r><w:fldChar w:fldCharType="end"/></w:r>`{=openxml} |
+| Bảng 5.5 | NFR-A7 ở mức ảnh toàn cảnh — ước lượng phân tầng trên 1.606 khung biển | `<w:r><w:fldChar w:fldCharType="begin"/></w:r><w:r><w:instrText xml:space="preserve"> PAGEREF tbl-5-5 \h </w:instrText></w:r><w:r><w:fldChar w:fldCharType="separate"/></w:r><w:r><w:t>0</w:t></w:r><w:r><w:fldChar w:fldCharType="end"/></w:r>`{=openxml} |
+| Bảng 5.6 | Chi phí và lợi ích của từng bậc trong thang thử lại | `<w:r><w:fldChar w:fldCharType="begin"/></w:r><w:r><w:instrText xml:space="preserve"> PAGEREF tbl-5-6 \h </w:instrText></w:r><w:r><w:fldChar w:fldCharType="separate"/></w:r><w:r><w:t>0</w:t></w:r><w:r><w:fldChar w:fldCharType="end"/></w:r>`{=openxml} |
+| Bảng 5.7 | Độ trễ đầu cuối một ảnh, đối chiếu NFR-P1 | `<w:r><w:fldChar w:fldCharType="begin"/></w:r><w:r><w:instrText xml:space="preserve"> PAGEREF tbl-5-7 \h </w:instrText></w:r><w:r><w:fldChar w:fldCharType="separate"/></w:r><w:r><w:t>0</w:t></w:r><w:r><w:fldChar w:fldCharType="end"/></w:r>`{=openxml} |
+| Bảng 5.8 | Phân rã ngân sách độ trễ theo từng bước | `<w:r><w:fldChar w:fldCharType="begin"/></w:r><w:r><w:instrText xml:space="preserve"> PAGEREF tbl-5-8 \h </w:instrText></w:r><w:r><w:fldChar w:fldCharType="separate"/></w:r><w:r><w:t>0</w:t></w:r><w:r><w:fldChar w:fldCharType="end"/></w:r>`{=openxml} |
+| Bảng 5.9 | Các chỉ tiêu hiệu năng ngoài đường xử lý ảnh | `<w:r><w:fldChar w:fldCharType="begin"/></w:r><w:r><w:instrText xml:space="preserve"> PAGEREF tbl-5-9 \h </w:instrText></w:r><w:r><w:fldChar w:fldCharType="separate"/></w:r><w:r><w:t>0</w:t></w:r><w:r><w:fldChar w:fldCharType="end"/></w:r>`{=openxml} |
+| Bảng 5.10 | Đối chiếu chỉ tiêu phi chức năng, gom theo nhóm | `<w:r><w:fldChar w:fldCharType="begin"/></w:r><w:r><w:instrText xml:space="preserve"> PAGEREF tbl-5-10 \h </w:instrText></w:r><w:r><w:fldChar w:fldCharType="separate"/></w:r><w:r><w:t>0</w:t></w:r><w:r><w:fldChar w:fldCharType="end"/></w:r>`{=openxml} |
+| Bảng 5.11 | Tần suất từng loại lỗi trên 2.801 biển có nhãn chuỗi, cấu hình giao hàng | `<w:r><w:fldChar w:fldCharType="begin"/></w:r><w:r><w:instrText xml:space="preserve"> PAGEREF tbl-5-11 \h </w:instrText></w:r><w:r><w:fldChar w:fldCharType="separate"/></w:r><w:r><w:t>0</w:t></w:r><w:r><w:fldChar w:fldCharType="end"/></w:r>`{=openxml} |
+| Bảng 5.12 | Đối chiếu kết quả của đồ án với các con số đã công bố | `<w:r><w:fldChar w:fldCharType="begin"/></w:r><w:r><w:instrText xml:space="preserve"> PAGEREF tbl-5-12 \h </w:instrText></w:r><w:r><w:fldChar w:fldCharType="separate"/></w:r><w:r><w:t>0</w:t></w:r><w:r><w:fldChar w:fldCharType="end"/></w:r>`{=openxml} |
+| Bảng 5.13 | Tám mối đe doạ đến tính hợp lệ của kết quả | `<w:r><w:fldChar w:fldCharType="begin"/></w:r><w:r><w:instrText xml:space="preserve"> PAGEREF tbl-5-13 \h </w:instrText></w:r><w:r><w:fldChar w:fldCharType="separate"/></w:r><w:r><w:t>0</w:t></w:r><w:r><w:fldChar w:fldCharType="end"/></w:r>`{=openxml} |
+| Bảng 6.1 | Đối chiếu chỉ tiêu đặt ra ở giai đoạn phân tích yêu cầu với số đo trên models/best.pt | `<w:r><w:fldChar w:fldCharType="begin"/></w:r><w:r><w:instrText xml:space="preserve"> PAGEREF tbl-6-1 \h </w:instrText></w:r><w:r><w:fldChar w:fldCharType="separate"/></w:r><w:r><w:t>0</w:t></w:r><w:r><w:fldChar w:fldCharType="end"/></w:r>`{=openxml} |
+| Bảng 6.2 | Mười hạn chế của đồ án | `<w:r><w:fldChar w:fldCharType="begin"/></w:r><w:r><w:instrText xml:space="preserve"> PAGEREF tbl-6-2 \h </w:instrText></w:r><w:r><w:fldChar w:fldCharType="separate"/></w:r><w:r><w:t>0</w:t></w:r><w:r><w:fldChar w:fldCharType="end"/></w:r>`{=openxml} |
+| Bảng 6.3 | Mười một hướng phát triển, xếp theo mức tác động | `<w:r><w:fldChar w:fldCharType="begin"/></w:r><w:r><w:instrText xml:space="preserve"> PAGEREF tbl-6-3 \h </w:instrText></w:r><w:r><w:fldChar w:fldCharType="separate"/></w:r><w:r><w:t>0</w:t></w:r><w:r><w:fldChar w:fldCharType="end"/></w:r>`{=openxml} |
 
 ---
 
@@ -274,7 +274,7 @@ Xây dựng hệ thống nhận dạng biển số xe Việt Nam gồm mô hình
 
 Mỗi chỉ tiêu có **mục tiêu** và **ngưỡng tối thiểu** (bắt buộc đạt). Về chức năng và chất lượng phần mềm: **34 yêu cầu chức năng** (22 *Must*, 5 *Should*, 3 *Could*, 4 *Won't*) trong **sáu nhóm** (mục 4.1.3); **NFR-M1** mã đường ống AI **không import FastAPI**; **NFR-M5** thay được bộ OCR không sửa mã tầng API; **NFR-M2** độ bao phủ kiểm thử tầng nghiệp vụ **≥ 70%**; **khởi động một lệnh** `docker compose up`, demo **không cần Internet**. **NFR-A5 và NFR-A6 đo tách bạch có chủ đích** — hiệu số là **đóng góp định lượng của khối hậu xử lý** (mục 1.5); thêm **NFR-A8** (tách riêng biển một dòng / hai dòng) và **NFR-A9** (theo điều kiện ảnh, nếu có nhãn phù hợp) (Bảng 1.1).
 
-**Bảng 1.1.** Nhóm chỉ tiêu độ chính xác
+**Bảng 1.1.**[]{#tbl-1-1} Nhóm chỉ tiêu độ chính xác
 
 | Mã | Chỉ tiêu | Mục tiêu | Ngưỡng tối thiểu |
 |---|---|:--:|:--:|
@@ -288,7 +288,7 @@ Mỗi chỉ tiêu có **mục tiêu** và **ngưỡng tối thiểu** (bắt bu�
 
 Nhóm chỉ tiêu thứ hai đặt cho hiệu năng khi chạy trên CPU (Bảng 1.2).
 
-**Bảng 1.2.** Nhóm chỉ tiêu hiệu năng trên CPU
+**Bảng 1.2.**[]{#tbl-1-2} Nhóm chỉ tiêu hiệu năng trên CPU
 
 | Mã | Chỉ tiêu | Mục tiêu | Ngưỡng tối thiểu |
 |---|---|:--:|:--:|
@@ -328,7 +328,7 @@ Danh sách này nhằm xác định rõ giới hạn của đề tài; việc lo
 
 ![](figures/fig-ch1-01.png)
 
-**Hình 1.1.** Ranh giới hệ thống — phần bên trong là hệ thống bàn giao, Colab/Kaggle nằm ngoài
+**Hình 1.1.**[]{#fig-1-1} Ranh giới hệ thống — phần bên trong là hệ thống bàn giao, Colab/Kaggle nằm ngoài
 
 Colab/Kaggle nằm **ngoài** ranh giới khi vận hành — chỉ là công cụ ngoại tuyến sản xuất best.pt; hệ thống khi chạy **không phụ thuộc dịch vụ ngoài nào** (mục 1.2.3). Sau khi trang webcam bị gỡ, client gửi khung hình trực tiếp qua `POST /api/detect/frame`.
 
@@ -352,7 +352,7 @@ Bảng phân định chi tiết từng thành phần — nguồn gốc và phầ
 
 **(b) Đo được ĐỊNH LƯỢNG đóng góp của khối hậu xử lý** — phần lớn công trình mô tả bước này ở mức định tính, không trả lời được *nó đóng góp bao nhiêu*. Đồ án giải quyết ở tầng dữ liệu, **lưu song song chuỗi OCR thô và chuỗi đã sửa**, nên hiệu số NFR-A6 − NFR-A5 là một con số đo được: **+13,28 điểm, sửa đúng 372 biển, làm hỏng 0** trên 2.801 mẫu. Cùng nguyên tắc ấy áp cho **NFR-A8**, biến việc **báo cáo tách riêng biển một dòng và hai dòng** thành nghĩa vụ bắt buộc thay vì phân tích tuỳ chọn.
 
-**(c) Đo trên chính ảnh biển số Việt Nam.** Khảo sát không tìm thấy benchmark công khai nào so sánh các bộ nhận dạng ký tự trên riêng ảnh biển số xe máy Việt Nam hai dòng. Đồ án chạy ba phép so sánh trên cùng máy và cùng ngữ liệu — PP-OCRv5_mobile ↔ PP-OCRv6_medium (3.3.2), bộ nhận dạng gốc ↔ bản tinh chỉnh (5.5), và **PaddleOCR ↔ EasyOCR ↔ Tesseract trên toàn bộ 2.801 biển** (3.3.3): PaddleOCR **68,87%**, hơn EasyOCR 54,59 điểm và Tesseract 58,59 điểm. Một kết quả **khác dự đoán ban đầu**: bước tách rồi ghép ngang nâng PaddleOCR **34,92 điểm** nhưng chỉ nâng Tesseract **0,03 điểm**, nên nó **không** phải kỹ thuật độc lập bộ nhận dạng như giả định.
+**(c) Đo trên chính ảnh biển số Việt Nam.** Khảo sát không tìm thấy benchmark công khai nào so sánh các bộ nhận dạng ký tự trên riêng ảnh biển số xe máy Việt Nam hai dòng. Đồ án chạy ba phép so sánh trên cùng máy và cùng ngữ liệu — PP-OCRv5_mobile ↔ PP-OCRv6_medium (3.3.2), bộ nhận dạng gốc ↔ bản tinh chỉnh (5.5), và **PaddleOCR ↔ EasyOCR ↔ Tesseract trên toàn bộ 2.801 biển** (3.3.3): PaddleOCR **68,87%**, hơn EasyOCR 54,59 điểm và Tesseract 58,59 điểm. Kết quả thực nghiệm cho thấy một điểm khác với dự đoán ban đầu: bước tách rồi ghép ngang nâng PaddleOCR **34,92 điểm** nhưng chỉ nâng Tesseract **0,03 điểm**, nên nó **không** phải kỹ thuật độc lập bộ nhận dạng như giả định.
 
 Ngoài ba đóng góp trên, đồ án bàn giao một hệ thống có kiến trúc phần mềm đầy đủ — tầng AI tách hoàn toàn khỏi tầng API, REST API tự sinh tài liệu, giao diện web, cơ sở dữ liệu có migration, đóng gói Docker, **1.004 kiểm thử tự động đạt, bao phủ tầng nghiệp vụ 87,7%** — và mọi số liệu hiệu năng công bố kèm cấu hình phần cứng. Đây là phần **kỹ nghệ**, nêu ra để mô tả sản phẩm bàn giao chứ không tính là đóng góp khoa học.
 
@@ -405,7 +405,7 @@ Ràng buộc CPU loại họ **two-stage** (Faster R-CNN — sinh vùng đề xu
 
 ![](figures/fig-ch2-05.png)
 
-**Hình 2.1.** Kiến trúc tổng quát backbone – neck – head của YOLO11 *(theo [13], [9])*
+**Hình 2.1.**[]{#fig-2-1} Kiến trúc tổng quát backbone – neck – head của YOLO11 *(theo [13], [9])*
 
 Ba phần: **backbone** trích đặc trưng, **neck** hợp nhất đặc trưng nhiều tầng, **head** sinh dự đoán — từ YOLOv8 dùng **anchor-free split head** [13]<!-- jocher_2023_yolov8 -->. Anchor-free có ý nghĩa riêng với biển số: anchor-based hồi quy theo tập hộp mẫu thiết kế theo phân bố COCO, mà biển số nằm ngoài phân bố đó (một dòng ≈ 4,7:1, hai dòng ≈ 1,4:1); anchor-free hồi quy **trực tiếp khoảng cách tâm đến bốn cạnh**, xử lý cả hai chế độ tỷ lệ bằng một cơ chế [9]<!-- jocher_2024_yolo11 -->.
 
@@ -413,7 +413,7 @@ Ba phần: **backbone** trích đặc trưng, **neck** hợp nhất đặc trưn
 
 Đồ án **không cải tiến kiến trúc YOLO**, nên phần này chỉ nêu điều cần để đọc kết quả ở Chương 5. Khác biệt kiến trúc thực sự của YOLO11 so với YOLOv8 là khối attention **C2PSA** đặt ngay sau SPPF — thành phần YOLOv8 hoàn toàn không có; khối `C3k2` thì **kế thừa trực tiếp từ `C2f`** của YOLOv8 và trùng khớp với nó khi tắt cờ cấu hình [14]<!-- ultralytics_2026_blockpy -->. Ultralytics cho biết C2PSA cải thiện phát hiện **đối tượng nhỏ** và **che khuất phức tạp** [9]<!-- jocher_2024_yolo11 -->, nhưng đây là phát biểu **định tính**: hãng không công bố AP_small/AP_medium/AP_large theo chuẩn COCO cho từng biến thể, nên đồ án phải **tự đo trên dữ liệu của mình** (Chương 5) (Bảng 2.1).
 
-**Bảng 2.1.** So sánh khác biệt kiến trúc giữa các phiên bản YOLO gần đây
+**Bảng 2.1.**[]{#tbl-2-1} So sánh khác biệt kiến trúc giữa các phiên bản YOLO gần đây
 
 | Phiên bản | Khối backbone | Cơ chế attention | Đầu dự đoán | NMS | Điểm mới chính |
 |---|---|---|---|:--:|---|
@@ -450,7 +450,7 @@ $$\mathrm{AP} = \int_0^1 p(r)\, \mathrm{d}r, \qquad \mathrm{mAP} = \frac{1}{N}\s
 
 **OCR** (*Optical Character Recognition*) chuyển văn bản trong ảnh thành chuỗi, thường gồm **text detection** khoanh vùng rồi **text recognition** đọc từng vùng. Sai lầm phổ biến: lấy thẳng bảng xếp hạng OCR phổ thông làm căn cứ chọn bộ nhận dạng cho ALPR (Bảng 2.2).
 
-**Bảng 2.2.** So sánh OCR văn bản tài liệu và OCR biển số xe
+**Bảng 2.2.**[]{#tbl-2-2} So sánh OCR văn bản tài liệu và OCR biển số xe
 
 | Chiều so sánh | OCR văn bản tài liệu | OCR biển số xe |
 |---|---|---|
@@ -475,7 +475,7 @@ Tổng ở (2.3) tính bằng quy hoạch động tiến–lùi. Ưu điểm quy
 
 ![](figures/fig-ch2-crnn-ctc.png)
 
-**Hình 2.2.** Kiến trúc CRNN và cách CTC gộp chuỗi thô.
+**Hình 2.2.**[]{#fig-2-2} Kiến trúc CRNN và cách CTC gộp chuỗi thô.
 
 ### 2.4.3. Vì sao kiến trúc CTC gặp khó với văn bản nhiều dòng
 
@@ -483,7 +483,7 @@ Nền tảng lý thuyết cho rủi ro **R-04**: ở Việt Nam nơi xe máy áp
 
 ![](figures/fig-ch2-07.png)
 
-**Hình 2.3.** Cơ chế sụp đổ của CTC trên ảnh văn bản hai dòng
+**Hình 2.3.**[]{#fig-2-3} Cơ chế sụp đổ của CTC trên ảnh văn bản hai dòng
 
 Có nhiều cách phân biệt biển một dòng với hai dòng — lấy lớp từ chính bộ phát hiện, cắt đôi theo tỷ lệ hình học, chiếu ngang tìm điểm trũng, phân cụm hộp bao ký tự theo toạ độ dọc, hoặc kiểm tra tính thẳng hàng của ký tự. Phương án được chọn và lý do trình bày ở mục 4.6.4.
 
@@ -527,20 +527,20 @@ Khảo sát đối chiếu các bộ dữ liệu chuẩn của lĩnh vực theo 
 
 ### 2.5.4. Khoảng trống nghiên cứu và định vị đề tài
 
-Sáu khoảng trống rút ra từ khảo sát trên, cùng cách đồ án lấp từng khoảng, tổng hợp ở Bảng 2.3.
+Từ khảo sát trên, đồ án xác định sáu hướng đóng góp, mỗi hướng nhắm vào một khoảng trống cụ thể (Bảng 2.3).
 
-**Bảng 2.3.** Sáu khoảng trống nghiên cứu và cách nhóm thực hiện lấp
+**Bảng 2.3.**[]{#tbl-2-3} Sáu khoảng trống nghiên cứu và cách nhóm thực hiện lấp
 
-| # | Khoảng trống được xác định từ khảo sát | Cách nhóm thực hiện lấp |
-|:--:|---|---|
-| 1 | Nhóm **chưa tìm thấy công trình công khai nào của Việt Nam công bố bảng so sánh tách riêng độ chính xác biển một dòng và biển hai dòng trên cùng một hệ thống** (mục 2.5.2) | Nhóm thực hiện báo cáo tách bạch hai con số này |
-| 2 | Nhóm **chưa tìm thấy công trình công khai nào của Việt Nam mô tả có hệ thống bộ luật hậu xử lý ràng buộc theo VỊ TRÍ trong chuỗi** — các mô tả hiện có dừng ở danh sách phẳng, phần lớn dùng nhầm con số 20 chữ cái cho toàn chuỗi (mục 2.2.4) | Thiết kế hậu xử lý **theo từng vị trí**, **đo tách bạch trước và sau hậu xử lý**; hiệu số là đóng góp định lượng |
-| 3 | **Phần lớn công trình trong nước khảo sát được chỉ báo cáo mAP của bước phát hiện**, không báo cáo end-to-end mức chuỗi (mục 2.5.2) | Báo cáo cả hai, end-to-end là chỉ tiêu quan trọng nhất |
-| 4 | Nhóm **chưa tìm thấy benchmark công khai nào so sánh các bộ nhận dạng ký tự trên riêng ảnh biển số xe máy Việt Nam hai dòng** (mục 3.3) | ✅ **Đã lấp** — đo ba bộ nhận dạng trên 2.801 biển, cùng tầng bao quanh: PaddleOCR 68,87% · EasyOCR 14,28% · Tesseract 10,28% (mục 3.3.3) |
-| 5 | **Số liệu hiệu năng thường công bố không kèm phần cứng** (mục 2.5.1) | Mọi số liệu hiệu năng kèm: model CPU, số luồng, kích thước ảnh vào, nền tảng suy luận, cỡ mẫu đo |
-| 6 | **Phần lớn kho mã nguồn mở Việt Nam khảo sát được không công bố số liệu và không có kiến trúc phần mềm** (mục 2.5.2) | Công bố đầy đủ giao thức đo, tập kiểm thử, toàn bộ chỉ số; bàn giao hệ thống có API, giao diện, cơ sở dữ liệu, kiểm thử, đóng gói |
+| # | Đóng góp của đồ án | Khoảng trống mà nó lấp |
+|:--:| --- | --- |
+| 1 | **Báo cáo tách riêng độ chính xác cho biển một dòng và biển hai dòng** trên cùng một hệ thống, ở cả tầng phát hiện lẫn tầng nhận dạng, và biến việc này thành nghĩa vụ bắt buộc qua chỉ tiêu NFR-A8 | Trong tài liệu khảo sát được, các công trình Việt Nam thường chỉ công bố một con số độ chính xác chung (2.5.2) |
+| 2 | **Thiết kế bộ luật hậu xử lý ràng buộc theo VỊ TRÍ trong chuỗi**, và **đo tách bạch độ chính xác trước và sau bước đó** để hiệu số trở thành một đại lượng định lượng | Các mô tả khảo sát được dừng ở danh sách ký tự phẳng, phần lớn dùng nhầm con số 20 chữ cái cho toàn chuỗi (2.2.4) |
+| 3 | **Công bố chỉ số đầu cuối ở mức chuỗi** bên cạnh mAP của bước phát hiện, và nêu rõ chênh lệch giữa hai đại lượng | Phần lớn công trình trong nước khảo sát được chỉ báo cáo mAP của bước phát hiện (2.5.2) |
+| 4 | **Xây dựng benchmark ba bộ nhận dạng ký tự trên 2.801 biển số Việt Nam** trong cùng một tầng bao quanh: PaddleOCR 68,87% · EasyOCR 14,28% · Tesseract 10,28% (3.3.3) | Nhóm chưa tìm thấy benchmark công khai nào đo trên riêng ảnh biển số xe máy Việt Nam hai dòng (3.3) |
+| 5 | **Mọi số liệu hiệu năng công bố kèm cấu hình phần cứng**: model CPU, số luồng, kích thước ảnh vào, nền tảng suy luận, cỡ mẫu đo | Số liệu hiệu năng trong tài liệu thường công bố không kèm phần cứng nên không tái lập được (2.5.1) |
+| 6 | **Bàn giao hệ thống có kiến trúc phần mềm, kiểm thử và giao thức đo công khai** — mọi số liệu sinh lại được bằng một lệnh | Phần lớn kho mã nguồn mở Việt Nam khảo sát được không công bố số liệu và không có kiến trúc phần mềm (2.5.2) |
 
-Sáu khoảng trống đều thuộc loại **kỹ nghệ và báo cáo**, không phải thuật toán; tuyên bố đóng góp đầy đủ đặt ở mục 1.5.
+Sáu đóng góp đều thuộc loại **kỹ nghệ và báo cáo**, không phải thuật toán; tuyên bố đóng góp đầy đủ đặt ở mục 1.5.
 
 > Tuyên bố trung thực đầy đủ về mức đóng góp, cùng bốn điều đồ án **không** tuyên bố, đặt ở **mục 1.5.1 và 1.5.2** (Chương 1) — nơi chính danh để tuyên bố đóng góp.
 
@@ -577,7 +577,7 @@ Bốn ràng buộc thu hẹp không gian phương án **trước khi** so sánh.
 
 Mục này chọn **bậc mô hình** bên trong họ đã chọn, dựa trên số liệu **tự đo** (Bảng 3.1).
 
-**Bảng 3.1.** PP-OCRv6_medium_rec so với PP-OCRv5_mobile_rec, đo trên 200 vùng cắt biển số của đồ án
+**Bảng 3.1.**[]{#tbl-3-1} PP-OCRv6_medium_rec so với PP-OCRv5_mobile_rec, đo trên 200 vùng cắt biển số của đồ án
 
 | Mô hình                               |          Đúng chuỗi |    Trung vị |      p95 |
 | ------------------------------------- | ------------------: | ----------: | -------: |
@@ -592,7 +592,7 @@ Mục 3.3.1 kết thúc bằng một hạng mục chưa giải quyết: giữ Pa
 
 **a) Thiết kế phép đo.** Cả ba bộ nhận dạng chạy trong **đúng một tầng bao quanh** — sao đúng chuỗi bước của bản bàn giao — trên **cùng một mảng ảnh đã chuẩn bị xong**, nên khác biệt duy nhất còn lại là bộ nhận dạng; đây cũng là bằng chứng thực nghiệm cho NFR-M5. Một chỗ cố ý không cào bằng: Tesseract chạy kèm whitelist `A-Z0-9`, vì giới hạn tập ký tự là **năng lực gốc** của nó. Công cụ đo được kiểm chứng bằng cách đối chiếu nhánh có tách đôi của PaddleOCR — **63,73%**, khớp NFR-A5 = 0,6373 đã công bố (Bảng 3.2).
 
-**Bảng 3.2.** So sánh ba bộ nhận dạng ký tự trên 2.801 biển số Việt Nam (567 một dòng, 2.234 hai dòng)
+**Bảng 3.2.**[]{#tbl-3-2} So sánh ba bộ nhận dạng ký tự trên 2.801 biển số Việt Nam (567 một dòng, 2.234 hai dòng)
 
 | Bộ nhận dạng        | Nhánh       |    Toàn bộ |    1 dòng |    2 dòng |       CER | Rỗng |    p50 |
 | ------------- | ----------- | ---------: | --------: | --------: | --------: | ---: | -----: |
@@ -651,7 +651,7 @@ Ba use case chính — nhận dạng từ ảnh (UC-01), từ video (UC-02) và 
 
 ![](figures/fig-ch4-usecase.png)
 
-**Hình 4.1.** Sơ đồ use case — hai tác nhân và bốn use case.
+**Hình 4.1.**[]{#fig-4-1} Sơ đồ use case — hai tác nhân và bốn use case.
 
 ### 4.1.2. Yêu cầu chức năng
 
@@ -669,7 +669,7 @@ Các chỉ tiêu phi chức năng chia bảy nhóm — độ chính xác (NFR-A)
 
 <!-- {{T4.1a}} bon rang buoc kien truc va cach kiem chung -->
 
-**Bảng 4.1.** Bốn ràng buộc kiến trúc và cách kiểm chứng từng ràng buộc
+**Bảng 4.1.**[]{#tbl-4-1} Bốn ràng buộc kiến trúc và cách kiểm chứng từng ràng buộc
 
 | # | Ràng buộc | Mã chỉ tiêu | Cách hiện thực | Kiểm chứng bằng gì |
 |:--:|---|:--:|---|---|
@@ -686,7 +686,7 @@ phải nhánh ít ai đụng tới.
 
 ![](figures/fig-ch4-02.png)
 
-**Hình 4.2.** Kiến trúc phân tầng năm tầng và chiều phụ thuộc
+**Hình 4.2.**[]{#fig-4-2} Kiến trúc phân tầng năm tầng và chiều phụ thuộc
 
 Năm tầng: **1 — Trình bày** (giao diện, chỉ biết hợp đồng HTTP của tầng 2); **2 — API** (định tuyến, kiểm tra hợp lệ, ánh xạ ngoại lệ thành mã HTTP, sinh OpenAPI); **3 — Nghiệp vụ** (điều phối: tạo tác vụ, gọi đường ống, lưu tệp, ghi CSDL, gộp trùng, thống kê); **4 — AI** (phát hiện, nhận dạng, chuẩn hoá — **chỉ biết NumPy, OpenCV và thư viện học sâu**); **5 — Dữ liệu** (CSDL, kho tệp). **Điều quan trọng:** khối tầng AI **không có mũi tên nào đi lên**. Sau hai đợt thu gọn, tầng trình bày còn **ba trang** nhưng **tầng 2–5 không đổi một dòng**: `POST /detect/frame`, `GET /statistics`, `GET /health` vẫn phục vụ và vẫn có kiểm thử tích hợp — phép thử ngoài dự kiến cho nguyên tắc phụ thuộc một chiều.
 
@@ -698,7 +698,7 @@ Tầng AI là một gói Python độc lập, giao tiếp với tầng API **ch�
 
 ![](figures/fig-ch4-03.png)
 
-**Hình 4.3.** Luồng xử lý của đường ống AI, các khối tô đỏ là nhánh biển hai dòng
+**Hình 4.3.**[]{#fig-4-3} Luồng xử lý của đường ống AI, các khối tô đỏ là nhánh biển hai dòng
 
 **Nhánh biển hai dòng** là phần khó nhất của đồ án và là rủi ro đã xác định từ khâu lập kế hoạch (R-04). Bộ OCR dựng sẵn giả định văn bản một dòng ngang, nên với biển hai dòng chúng đọc theo thứ tự không xác định, ghép lẫn hoặc bỏ sót một dòng — cơ chế đứng sau chênh lệch 48,6 điểm phần trăm **đo trên bộ RodoSol-ALPR của Brazil** đã dẫn ở 4.1.1 [2]<!-- laroca_2022_crossdataset -->. Giải pháp: **tách vùng biển thành hai nửa, nhận dạng từng nửa, ghép theo thứ tự trên trước dưới sau** — mỗi nửa lúc này là một dòng ngang đúng giả định của bộ OCR (cài đặt ở 4.6.4).
 
@@ -708,7 +708,7 @@ Mỗi quyết định ghi kèm lý do và **đánh đổi phải chấp nhận**
 
 <!-- {{T4.2}} cac quyet dinh kien truc AD-01 den AD-08 -->
 
-**Bảng 4.2.** Tám quyết định kiến trúc — mỗi dòng kèm đánh đổi phải chấp nhận
+**Bảng 4.2.**[]{#tbl-4-2} Tám quyết định kiến trúc — mỗi dòng kèm đánh đổi phải chấp nhận
 
 | Mã | Quyết định | Lựa chọn | Đánh đổi phải chấp nhận |
 |:--:|---|---|---|
@@ -741,13 +741,13 @@ Ràng buộc CPU để lại dấu vết cụ thể: NFR-P1 phát biểu thẳng
 
 ![](figures/fig-ch5-01.png)
 
-**Hình 4.4.** Đường ống sáu bước xây dựng bộ dữ liệu
+**Hình 4.4.**[]{#fig-4-4} Đường ống sáu bước xây dựng bộ dữ liệu
 
 Mỗi bước là một kịch bản độc lập có giao diện dòng lệnh riêng và sinh báo cáo dạng dữ liệu có cấu trúc; một kịch bản điều phối chạy toàn chuỗi bằng một lệnh. **Kết quả:** **15.133 ảnh** hợp nhất từ **7 bộ công khai** (Roboflow, HuggingFace, Kaggle), còn **6 nguồn nguyên tố** sau khi loại **11.978 ảnh (44,2%)** bản sao từ **27.111 ảnh**; tổng 9 bộ tải về, 2 bộ nhãn mức ký tự tách riêng cho đánh giá OCR. Chia 70/20/10 thành **10.592 / 3.027 / 1.514 ảnh**. Bảng dưới **phải trích khi nói về dữ liệu của đồ án**; nguồn và giấy phép từng bộ ở **Phụ lục C.1** (Bảng 4.3).
 
 <!-- {{T4.4}} dong gop cua tung bo du lieu truoc va sau khu trung lap -->
 
-**Bảng 4.3.** Đóng góp của từng bộ dữ liệu trước và sau khử trùng lặp
+**Bảng 4.3.**[]{#tbl-4-3} Đóng góp của từng bộ dữ liệu trước và sau khử trùng lặp
 
 | #   | Bộ (slug)                   |    Vào gộp |        **Còn lại** |   Bị loại |
 | --- | --------------------------- | ---------: | -----------------: | --------: |
@@ -776,13 +776,13 @@ Giới hạn thời gian CPU chỉ cho phép **một lượt huấn luyện duy 
 
 ![](figures/fig-train-curves.png)
 
-**Hình 4.5.** Đường cong huấn luyện theo epoch — ba hàm mất mát và bốn chỉ số trên tập kiểm định
+**Hình 4.5.**[]{#fig-4-5} Đường cong huấn luyện theo epoch — ba hàm mất mát và bốn chỉ số trên tập kiểm định
 
 Ba hàm mất mát giảm đơn điệu và **không có dấu hiệu quá khớp**: mất mát hộp bao 1,252 → 0,809, mất mát phân lớp 0,833 → 0,313, mất mát phân phối 1,154 → 0,987; đường validation bám sát đường train suốt 20 epoch. Chỉ số trên tập validation đi lên rồi bão hoà sớm: mAP@0.5 đạt **0,9684 ngay ở epoch 1** và chỉ nhích lên **0,9830** ở epoch 20, trong khi mAP@0.5:0.95 — chỉ số nhạy với độ khít của hộp — tăng đáng kể hơn, **0,6526 → 0,7688** (Bảng 4.4).
 
 <!-- {{T4.5a}} tien trien chi so tren tap validation theo epoch -->
 
-**Bảng 4.4.** Tiến triển chỉ số trên tập validation theo mốc epoch
+**Bảng 4.4.**[]{#tbl-4-4} Tiến triển chỉ số trên tập validation theo mốc epoch
 
 | Epoch | Mất mát hộp bao | Mất mát phân lớp | mAP@0.5 | mAP@0.5:0.95 | Precision | Recall |
 | :---: | ---: | ---: | ---: | ---: | ---: | ---: |
@@ -799,7 +799,7 @@ Kiến trúc tầng AI dựa trên **ba lớp trừu tượng** có hợp đồn
 
 ![](figures/fig-ch4-interfaces.png)
 
-**Hình 4.6.** Ba lớp trừu tượng và cài đặt tương ứng — bằng chứng cài đặt cho NFR-M5.
+**Hình 4.6.**[]{#fig-4-6} Ba lớp trừu tượng và cài đặt tương ứng — bằng chứng cài đặt cho NFR-M5.
 
 ### 4.6.2. Bộ phát hiện
 
@@ -827,7 +827,7 @@ Một giới hạn kỹ thuật ngoài tầm kiểm soát của đồ án: trên
 
 Thiết kế cuối cùng vì vậy giữ nguyên chiến lược ghép và chỉ thêm một bước phục hồi có cổng chặt: **chỉ kích hoạt khi đồng thời** vùng biển được phân loại hai dòng, chuỗi sau chuẩn hoá không hợp lệ, và chuỗi thô khác rỗng. Khi đó hệ thống đọc thêm một lượt trên riêng nửa trên, ghép với chuỗi thô rồi chuẩn hoá lại; kết quả mới chỉ được nhận nếu vượt kiểm tra định dạng. **Tính không làm hỏng mang bản chất cấu trúc** — cổng chỉ mở khi kết quả đã không hợp lệ, nên tập bị can thiệp và tập đang đúng là hai tập rời nhau. Đo được **+1,86 và +0,50 điểm** trên hai mẫu độc lập, **0 trường hợp bị làm hỏng**, chi phí 15–21 ms mỗi biển hai dòng.
 
-**g) Một giới hạn về phương pháp đo.** Kịch bản sinh NFR-A4…A7 ban đầu gọi thẳng bộ nhận dạng thay vì đi qua tầng điều phối, nên logic đặt tại tầng ấy không được phản ánh trong số công bố. Khắc phục bằng cách tách bước phục hồi thành hàm cấp mô-đun để cả đường chạy sản phẩm lẫn công cụ đo cùng gọi một cài đặt. Bài học vượt ra ngoài phạm vi biển hai dòng: **một công cụ đo đi tắt qua tầng điều phối sẽ đo một hệ thống khác với hệ thống được bàn giao** (5.5.6).
+**g) Một giới hạn về phương pháp đo.** Kịch bản sinh NFR-A4…A7 ban đầu gọi thẳng bộ nhận dạng thay vì đi qua tầng điều phối, nên logic đặt tại tầng ấy không được phản ánh trong số công bố. Khắc phục bằng cách tách bước phục hồi thành hàm cấp mô-đun để cả đường chạy sản phẩm lẫn công cụ đo cùng gọi một cài đặt. Kết quả này cho thấy một yêu cầu chung với mọi phép đo: **một công cụ đo đi tắt qua tầng điều phối sẽ đo một hệ thống khác với hệ thống được bàn giao** (5.5.6).
 
 ### 4.6.5. Bộ luật hậu xử lý theo vị trí
 
@@ -859,7 +859,7 @@ Ký tự đại diện tại chỉ số 3 của chuỗi 9 ký tự quyết đị
 
 Trình tự các bước của thuật toán trình bày ở Hình 4.7.
 
-**Hình 4.7.** Thuật toán chuẩn hoá chuỗi biển số theo bộ luật ràng buộc vị trí
+**Hình 4.7.**[]{#fig-4-7} Thuật toán chuẩn hoá chuỗi biển số theo bộ luật ràng buộc vị trí
 
 Thuật toán tuân ba nguyên tắc. Biểu thức chính quy được thử trước khi thực hiện bất kỳ chỉnh sửa nào, bởi với chuỗi vốn đã hợp lệ thì mọi can thiệp chỉ có thể làm sai đi. Không chuỗi nào bị loại bỏ: chuỗi không sửa được vẫn trả về kèm cờ không hợp lệ và vẫn được lưu. Chuỗi thô được giữ song song với chuỗi đã sửa. Kết quả là một cấu trúc bất biến chứa chuỗi thô, chuỗi cuối, cờ hợp lệ, kết quả phân loại họ biển và danh sách vị trí ký tự đã chỉnh sửa — dấu vết kiểm toán mà chương đánh giá dựa vào để định lượng đóng góp của khối.
 
@@ -983,7 +983,7 @@ Chương này trả lời sáu câu hỏi từ đặc tả phi chức năng: **R
 
 ![](figures/fig-ch6-01.png)
 
-**Hình 5.1.** Giao thức đo và ràng buộc phụ thuộc giữa các bước đánh giá.
+**Hình 5.1.**[]{#fig-5-1} Giao thức đo và ràng buộc phụ thuộc giữa các bước đánh giá.
 
 **Không bước đo nào chạy trước khi trọng số được đóng băng**; **tập test không được chạm vào trong huấn luyện lẫn chọn epoch** — chọn epoch chỉ dựa vào validation. Ba quy ước: **kích thước lô = 1 khi đo độ trễ** (riêng mAP dùng lô lớn hơn vì không phụ thuộc kích thước lô); **bỏ 3 lượt khởi động nóng**; **báo cáo p50/p95/p99, không báo cáo trung bình**, vì trung bình che đuôi phân bố còn NFR-P1 phát biểu ở p95.
 
@@ -991,7 +991,7 @@ Chương này trả lời sáu câu hỏi từ đặc tả phi chức năng: **R
 
 Bảng đầy đủ năm lượt kèm chỉ số A4 và A6 của từng lượt đặt ở **Phụ lục IX**; cấu hình bản giao hàng là **lượt 5, A4 = 0,9483 và A6 = 0,7701**.
 
-Nguyên tắc rút ra và áp dụng từ đó: **một con số chỉ được đưa vào quyển khi công cụ đo đi qua đúng đường xử lý mà bản giao hàng đi**, và mọi tuỳ chọn cấu hình phải đọc từ cùng một nguồn với hệ thống đang chạy thật.
+Từ đó, đồ án áp dụng nguyên tắc: **một con số chỉ được đưa vào quyển khi công cụ đo đi qua đúng đường xử lý mà bản giao hàng đi**, và mọi tuỳ chọn cấu hình phải đọc từ cùng một nguồn với hệ thống đang chạy thật.
 
 ---
 
@@ -1019,7 +1019,7 @@ Lập luận đầy đủ ở **4.3.1**. NFR-P1 phát biểu _kèm_ ràng buộc
 
 Ba phiên bản bộ dữ liệu khác nhau ở quy mô và ở ngưỡng khử trùng lặp (Bảng 5.1).
 
-**Bảng 5.1.** Ba phiên bản bộ dữ liệu và số cặp ảnh gần trùng xuyên tập con theo ngưỡng Hamming
+**Bảng 5.1.**[]{#tbl-5-1} Ba phiên bản bộ dữ liệu và số cặp ảnh gần trùng xuyên tập con theo ngưỡng Hamming
 
 | Thuộc tính / ngưỡng                  |                   v1 |         v2 |                                                             **v3** |
 | ------------------------------------ | -------------------: | ---------: | -----------------------------------------------------------------: |
@@ -1063,7 +1063,7 @@ Bố cục xác định theo nhãn lớp khi bộ dữ liệu có khai báo, và
 
 <!-- {{T5.4b}} detection tach theo layout mot dong / hai dong (NFR-A8) -->
 
-**Bảng 5.2.** Kết quả phát hiện tách theo biển một dòng và hai dòng (NFR-A8)
+**Bảng 5.2.**[]{#tbl-5-2} Kết quả phát hiện tách theo biển một dòng và hai dòng (NFR-A8)
 
 | Chỉ số                                |        Biển **một dòng** |        Biển **hai dòng** |     Chênh (điểm %) |
 | ------------------------------------- | -----------------------: | -----------------------: | -----------------: |
@@ -1094,7 +1094,7 @@ Khối hậu xử lý theo luật — chuẩn hoá ký tự, áp mặt nạ vị
 
 <!-- {{T5.5b}} do chinh xac chuoi day du truoc va sau hau xu ly — DONG GOP DINH LUONG CUA KHOI HAU XU LY -->
 
-**Bảng 5.3.** Độ chính xác OCR trước và sau hậu xử lý, trên 2.801 biển có nhãn chuỗi
+**Bảng 5.3.**[]{#tbl-5-3} Độ chính xác OCR trước và sau hậu xử lý, trên 2.801 biển có nhãn chuỗi
 
 | Chỉ số                                                     |         Sàn |    Mục tiêu |        **Trước hậu xử lý** |         **Sau hậu xử lý** | Chênh (điểm %) |
 | ---------------------------------------------------------- | ----------: | ----------: | -------------------------: | ------------------------: | -------------: |
@@ -1108,7 +1108,7 @@ Khối hậu xử lý theo luật — chuẩn hoá ký tự, áp mặt nạ vị
 
 <!-- {{T5.5c}} OCR tach theo layout mot dong / hai dong -->
 
-**Bảng 5.4.** Độ chính xác nhận dạng tách theo biển một dòng và hai dòng
+**Bảng 5.4.**[]{#tbl-5-4} Độ chính xác nhận dạng tách theo biển một dòng và hai dòng
 
 | Chỉ số                              | Biển **một dòng** | Biển **hai dòng** | Chênh (điểm %) |
 | ----------------------------------- | ----------------: | ----------------: | -------------: |
@@ -1163,7 +1163,7 @@ NFR-A7 đo **ảnh đầu vào → phát hiện → cắt → OCR → hậu xử
 
 <!-- {{T5.5e2}} NFR-A7 uoc luong phan tang tren anh toan canh -->
 
-**Bảng 5.5.** NFR-A7 ở mức ảnh toàn cảnh — ước lượng phân tầng trên 1.606 khung biển
+**Bảng 5.5.**[]{#tbl-5-5} NFR-A7 ở mức ảnh toàn cảnh — ước lượng phân tầng trên 1.606 khung biển
 
 | Tầng | Kích thước | Đã gán nhãn | Độ chính xác |
 | --- | ---: | ---: | ---: |
@@ -1195,7 +1195,7 @@ Khi lần đọc đầu trả về chuỗi không hợp lệ, hệ thống thử
 
 <!-- {{T5.5i}} chi phi va loi ich cua tung bac trong thang thu lai -->
 
-**Bảng 5.6.** Chi phí và lợi ích của từng bậc trong thang thử lại
+**Bảng 5.6.**[]{#tbl-5-6} Chi phí và lợi ích của từng bậc trong thang thử lại
 
 | Bậc | Chi phí độ trễ | Lợi ích đo được | Trong bản giao hàng |
 | --- | ---: | ---: | :--: |
@@ -1214,7 +1214,7 @@ Khi lần đọc đầu trả về chuỗi không hợp lệ, hệ thống thử
 
 <!-- {{T5.6a}} do tre dau-cuoi mot anh, doi chieu NFR-P1 -->
 
-**Bảng 5.7.** Độ trễ đầu cuối một ảnh, đối chiếu NFR-P1
+**Bảng 5.7.**[]{#tbl-5-7} Độ trễ đầu cuối một ảnh, đối chiếu NFR-P1
 
 | Chỉ số                       |        Sàn |  Mục tiêu | Trước bậc thang | Sau bậc thang | **Cấu hình giao hàng** | Kết quả |
 | ---------------------------- | ---------: | --------: | --------------: | ------------: | ---------------------: | :-----: |
@@ -1240,7 +1240,7 @@ Ba can thiệp làm nên bước tiến đó đều nằm ở tầng chạy, kh�
 
 <!-- {{T5.6b}} phan ra ngan sach do tre theo tung buoc, doi chieu uoc luong ban dau -->
 
-**Bảng 5.8.** Phân rã ngân sách độ trễ theo từng bước
+**Bảng 5.8.**[]{#tbl-5-8} Phân rã ngân sách độ trễ theo từng bước
 
 | Bước xử lý                        | Ước lượng ban đầu (ms) | **Đo thật (ms)** | Chênh (lần) |    % tổng |
 | --------------------------------- | ---------------------: | ---------------: | ----------: | --------: |
@@ -1252,7 +1252,7 @@ Ba can thiệp làm nên bước tiến đó đều nằm ở tầng chạy, kh�
 | Ghi CSDL + lưu ảnh                |                     50 |                — |           — |         — |
 | **Tổng (một biển số)**            |                **405** |       **146,63** |        0,36 |  **100%** |
 
-Ba phát hiện. **Một, ước lượng ở giai đoạn phân tích yêu cầu khá sát ở tổng nhưng lệch ở phân bổ:** tổng suy luận thuần **146,63 ms/biển**, chỉ bằng 0,36 lần ước lượng ban đầu 405 ms. Sai lệch **không** tới một bậc độ lớn. **Hai, điểm nghẽn là PaddleOCR nhưng KHÔNG áp đảo như báo cáo cũ:** 60,8% so với 38,0% của bộ phát hiện, **thay thế** con số cũ "OCR 93,3% / detect 6,5%" vốn đo trên hệ thống đang có lỗi cắt ảnh (~1.322 ms/ảnh); nguyên nhân OCR đắt vẫn đúng — PaddleOCR là **đường ống nhiều giai đoạn** (phát hiện văn bản → phân loại hướng → nhận dạng) thiết kế cho ảnh tài liệu tổng quát, nên hệ thống trả chi phí cho năng lực mà vùng biển đã cắt không cần. **Ba, chiến lược tối ưu đổi hẳn:** theo định luật Amdahl, tăng tốc detector 2–3× có thể kéo E2E xuống quãng **15–23%**, khác hẳn kết luận cũ "chỉ giảm tối đa 6,7%". Dự đoán này **đã được kiểm chứng** bằng phép đo riêng: OpenVINO nhanh 1,57× ở tầng bộ phát hiện (5.6.3) và nâng thông lượng đầu cuối **+20,0%** — nằm trong khoảng dự đoán. Vì NFR-P1 mới đạt sàn, tối ưu hiệu năng vẫn nằm trên đường tới chỉ tiêu chứ không chỉ là _dư địa cải thiện thêm_.
+Kết quả phân rã cho thấy ba điểm. **Một, ước lượng ở giai đoạn phân tích yêu cầu khá sát ở tổng nhưng lệch ở phân bổ:** tổng suy luận thuần **146,63 ms/biển**, chỉ bằng 0,36 lần ước lượng ban đầu 405 ms. Sai lệch **không** tới một bậc độ lớn. **Hai, điểm nghẽn là PaddleOCR nhưng KHÔNG áp đảo như báo cáo cũ:** 60,8% so với 38,0% của bộ phát hiện, **thay thế** con số cũ "OCR 93,3% / detect 6,5%" vốn đo trên hệ thống đang có lỗi cắt ảnh (~1.322 ms/ảnh); nguyên nhân OCR đắt vẫn đúng — PaddleOCR là **đường ống nhiều giai đoạn** (phát hiện văn bản → phân loại hướng → nhận dạng) thiết kế cho ảnh tài liệu tổng quát, nên hệ thống trả chi phí cho năng lực mà vùng biển đã cắt không cần. **Ba, chiến lược tối ưu đổi hẳn:** theo định luật Amdahl, tăng tốc detector 2–3× có thể kéo E2E xuống quãng **15–23%**, khác hẳn kết luận cũ "chỉ giảm tối đa 6,7%". Dự đoán này **đã được kiểm chứng** bằng phép đo riêng: OpenVINO nhanh 1,57× ở tầng bộ phát hiện (5.6.3) và nâng thông lượng đầu cuối **+20,0%** — nằm trong khoảng dự đoán. Vì NFR-P1 mới đạt sàn, tối ưu hiệu năng vẫn nằm trên đường tới chỉ tiêu chứ không chỉ là _dư địa cải thiện thêm_.
 
 ### 5.6.3. Chế độ webcam (tầng API) và xử lý video (NFR-P2, NFR-P3)
 
@@ -1266,7 +1266,7 @@ Biên an toàn được kiểm chứng bằng cách ép tải tổng hợp: ở 
 
 ![](figures/fig-ch5-nfr-p2.png)
 
-**Hình 5.2.** Sáu lần đo NFR-P2 trong các điều kiện máy khác nhau.
+**Hình 5.2.**[]{#fig-5-2} Sáu lần đo NFR-P2 trong các điều kiện máy khác nhau.
 
 ### 5.6.4. Khử trùng lặp mờ cho chuỗi khung hình video
 
@@ -1287,7 +1287,7 @@ Riêng với khoảng cách bằng 2, chỉ điều kiện chuỗi là chưa đ�
 
 ![](figures/fig-ch5-dedup-51H14573.png)
 
-**Hình 5.3.** Một ca khử trùng lặp thật, cắt trực tiếp từ video demo.
+**Hình 5.3.**[]{#fig-5-3} Một ca khử trùng lặp thật, cắt trực tiếp từ video demo.
 
 **Phạm vi của kết quả này, nói cho đúng.** Đây là cải thiện ở **tầng trình bày kết quả video**, không phải ở độ chính xác nhận dạng: nó không sửa được một ký tự đọc sai, chỉ chọn ra cách đọc được nhiều khung ủng hộ nhất. Vì vậy **các chỉ số NFR-A4…A6 ở mục 5.5 không đổi** — chúng đo trên ngữ liệu ảnh cắt sẵn, mỗi biển một lần, nên bước hợp nhất này không tham gia. Rủi ro còn lại cũng phải nêu: rào ngữ nghĩa thu hẹp chứ **không loại trừ** khả năng gộp nhầm hai biển thật sự khác nhau khi chúng cùng tỉnh, cùng ba số cuối và cùng xuất hiện trong một cửa sổ 48 khung. Trên bộ demo chưa gặp ca nào như vậy, nhưng đó là **chưa quan sát thấy**, không phải **đã chứng minh không xảy ra**.
 
@@ -1299,7 +1299,7 @@ Riêng với khoảng cách bằng 2, chỉ điều kiện chuỗi là chưa đ�
 
 Các chỉ tiêu này tổng hợp ở Bảng 5.9.
 
-**Bảng 5.9.** Các chỉ tiêu hiệu năng ngoài đường xử lý ảnh
+**Bảng 5.9.**[]{#tbl-5-9} Các chỉ tiêu hiệu năng ngoài đường xử lý ảnh
 
 | Chỉ tiêu | Đo được | Ngưỡng | Biên |
 |---|---:|---:|---:|
@@ -1314,7 +1314,7 @@ Các chỉ tiêu này tổng hợp ở Bảng 5.9.
 
 Hai dòng cuối là bằng chứng **không rò rỉ bộ nhớ** và **không mất dữ liệu**; đối chiếu đầy đủ từng mã chỉ tiêu ở Bảng 5.10.
 
-**Trên chính đường xử lý ảnh, cả ba chỉ tiêu độ trễ nay đều đạt mục tiêu:** p95 một ảnh **509,76 ms** (mục tiêu 800), NFR-P2 **5,63 khung/giây** (mục tiêu 5) và NFR-P3 **0,8695×** thời gian thực (mục tiêu 0,3×). Bậc thang thử lại vẫn là một thoái lui có chủ ý đổi lấy 34 biển đọc thêm (5.5.7), nhưng đợt tối ưu tầng suy luận (4.4) đã bù lại và còn dư. **Kiến trúc phần mềm không còn là vấn đề** — tầng API, tầng dữ liệu, bộ nhớ, độ ổn định đều dư biên. Hai nhánh đi tiếp: nâng _độ chính xác_ OCR biển hai dòng (5.5), và cắt _đuôi độ trễ_ của chế độ ảnh tĩnh — đặt trần thời gian cho bậc thang, hoặc chuyển bộ phát hiện sang OpenVINO, hướng đã đo được **1,57×** ở mục 5.6.3.
+**Trên chính đường xử lý ảnh, cả ba chỉ tiêu độ trễ nay đều đạt mục tiêu:** p95 một ảnh **509,76 ms** (mục tiêu 800), NFR-P2 **5,63 khung/giây** (mục tiêu 5) và NFR-P3 **0,8695×** thời gian thực (mục tiêu 0,3×). Bậc thang thử lại vẫn làm tăng độ trễ đuôi để đổi lấy 34 biển đọc thêm (5.5.7), nhưng đợt tối ưu tầng suy luận (4.4) đã bù lại và còn dư. **Kiến trúc phần mềm không còn là vấn đề** — tầng API, tầng dữ liệu, bộ nhớ, độ ổn định đều dư biên. Hai nhánh đi tiếp: nâng _độ chính xác_ OCR biển hai dòng (5.5), và cắt _đuôi độ trễ_ của chế độ ảnh tĩnh — đặt trần thời gian cho bậc thang, hoặc chuyển bộ phát hiện sang OpenVINO, hướng đã đo được **1,57×** ở mục 5.6.3.
 
 ## 5.7. Đối chiếu toàn bộ chỉ tiêu phi chức năng
 
@@ -1324,7 +1324,7 @@ Bảng tổng hợp trình bày khi bảo vệ, liệt kê **đầy đủ mọi 
 
 <!-- {{T5.7}} doi chieu toan bo chi tieu NFR -->
 
-**Bảng 5.10.** Đối chiếu chỉ tiêu phi chức năng, gom theo nhóm
+**Bảng 5.10.**[]{#tbl-5-10} Đối chiếu chỉ tiêu phi chức năng, gom theo nhóm
 
 | Nhóm                                                   | Số chỉ tiêu | Kết quả                     | Con số quyết định                                                                                                                                          |
 | ------------------------------------------------------ | :---------: | --------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -1339,7 +1339,7 @@ Bảng tổng hợp trình bày khi bảo vệ, liệt kê **đầy đủ mọi 
 
 ## 5.8. Phân tích lỗi
 
-**Bảng 5.11.** Tần suất từng loại lỗi trên 2.801 biển có nhãn chuỗi, cấu hình giao hàng
+**Bảng 5.11.**[]{#tbl-5-11} Tần suất từng loại lỗi trên 2.801 biển có nhãn chuỗi, cấu hình giao hàng
 
 
 | Mã | Loại lỗi | Số ca | Tỉ lệ trong ca sai | Tỉ lệ toàn tập | Một dòng | Hai dòng |
@@ -1353,7 +1353,7 @@ Bảng tổng hợp trình bày khi bảo vệ, liệt kê **đầy đủ mọi 
 | | **Tổng ca sai** | **644** | **100%** | **22.99%** | **26** | **618** |
 | | **Tổng ca đánh giá** | **2.801** | n/a | **100%** | **567** | **2234** |
 
-Tổng **644** ca sai khớp đúng với Bảng 5.3: 2.801 × (1 − 0,7701). Ba quan sát. **Một, lỗi thay thế ký tự áp đảo** — 392 ca, 60.9% số ca sai, và đây chính là loại lỗi mà bảng ánh xạ nhầm lẫn ở mục 5.5.4 nhắm vào. **Hai, không một ca sai thứ tự nào** trên toàn tập: bước ghép ngang không đảo vị trí ký tự, đúng như thiết kế ở mục 4.6.4. **Ba, gánh nặng dồn lên biển hai dòng** — 618 trên 644 ca sai, trong khi biển hai dòng chỉ chiếm 79.8% ngữ liệu.
+Tổng **644** ca sai khớp đúng với Bảng 5.3: 2.801 × (1 − 0,7701). Phân bố lỗi cho thấy ba điểm. **Một, lỗi thay thế ký tự áp đảo** — 392 ca, 60.9% số ca sai, và đây chính là loại lỗi mà bảng ánh xạ nhầm lẫn ở mục 5.5.4 nhắm vào. **Hai, không một ca sai thứ tự nào** trên toàn tập: bước ghép ngang không đảo vị trí ký tự, đúng như thiết kế ở mục 4.6.4. **Ba, gánh nặng dồn lên biển hai dòng** — 618 trên 644 ca sai, trong khi biển hai dòng chỉ chiếm 79.8% ngữ liệu.
 
 > **Vì sao không có lớp *bỏ sót biển* và *phát hiện nhầm*.** Cả 2.801 mẫu là **vùng biển đã cắt sẵn**, nên bước phát hiện không chạy và hai loại lỗi ấy về nguyên tắc không thể xuất hiện ở đây; chúng được đo riêng ở tầng bộ phát hiện tại mục 5.4.
 
@@ -1361,7 +1361,7 @@ Tổng **644** ca sai khớp đúng với Bảng 5.3: 2.801 × (1 − 0,7701). B
 
 Việc so sánh trực tiếp giữa các hệ thống ALPR cần được diễn giải thận trọng, do khác biệt về bộ dữ liệu, định nghĩa chỉ số và điều kiện thực nghiệm. Bảng dưới chỉ nhằm **đặt kết quả của đồ án trong bối cảnh chung của lĩnh vực**, không phải một phép so sánh có kiểm soát (Bảng 5.12).
 
-**Bảng 5.12.** Đối chiếu kết quả của đồ án với các con số đã công bố
+**Bảng 5.12.**[]{#tbl-5-12} Đối chiếu kết quả của đồ án với các con số đã công bố
 
 | Hệ thống | Bộ dữ liệu · quốc gia | Chỉ số | Giá trị | Suy luận trên |
 | --- | --- | --- | ---: | --- |
@@ -1371,9 +1371,9 @@ Việc so sánh trực tiếp giữa các hệ thống ALPR cần được diễ
 | **Đồ án này** | tự hợp nhất · Việt Nam | Chuỗi đầy đủ sau hậu xử lý (A6) | **77,01%** | **CPU** |
 | **Đồ án này** | tự hợp nhất · Việt Nam | **Đầu cuối mức ảnh toàn cảnh (A7)** | **56,3%** | **CPU** |
 
-**Ba điều bảng này nói được, và một điều nó không nói được.** *(a)* Chỉ số đầu cuối của đồ án — **56,3%** — thấp hơn đáng kể mốc **82,13%** của đội vô địch ICPR 2026, nhưng hai con số đo trên hai bộ dữ liệu khác nhau và hai bài toán khác nhau, nên khoảng cách này **chỉ mang tính định vị**. *(b)* Con số của đồ án trên biển **hai dòng** (72,34%, mục 5.5.3) **cao hơn** mức 45,7% mà OpenALPR đạt trên biển hai dòng Brazil — nhưng đây cũng không phải bằng chứng về ưu thế, vì hai bộ dữ liệu khác nhau về cả bố cục biển lẫn điều kiện chụp. *(c)* Kết quả của đồ án đạt được với **suy luận hoàn toàn trên CPU**, và mọi số liệu hiệu năng đều công bố kèm cấu hình phần cứng (5.2) — điều kiện mà cột cuối của bảng không đối chiếu được vì nằm ngoài phạm vi khảo sát.
+**Bảng cho phép rút ra ba nhận xét, và có một kết luận nó không hỗ trợ.** *(a)* Chỉ số đầu cuối của đồ án — **56,3%** — thấp hơn đáng kể mốc **82,13%** của đội vô địch ICPR 2026, nhưng hai con số đo trên hai bộ dữ liệu khác nhau và hai bài toán khác nhau, nên khoảng cách này **chỉ mang tính định vị**. *(b)* Con số của đồ án trên biển **hai dòng** (72,34%, mục 5.5.3) **cao hơn** mức 45,7% mà OpenALPR đạt trên biển hai dòng Brazil — nhưng đây cũng không phải bằng chứng về ưu thế, vì hai bộ dữ liệu khác nhau về cả bố cục biển lẫn điều kiện chụp. *(c)* Kết quả của đồ án đạt được với **suy luận hoàn toàn trên CPU**, và mọi số liệu hiệu năng đều công bố kèm cấu hình phần cứng (5.2) — điều kiện mà cột cuối của bảng không đối chiếu được vì nằm ngoài phạm vi khảo sát.
 
-**Điều bảng này không nói được:** nó không cho phép kết luận hệ thống nào tốt hơn hệ thống nào. Phép so sánh hợp lệ duy nhất đòi hỏi chạy các hệ thống trên **cùng một tập kiểm tra**, và đồ án không thực hiện được vì các hệ thống trong bảng không công bố mã nguồn hoặc trọng số dùng được.
+**Kết luận mà bảng không hỗ trợ:** nó không cho phép kết luận hệ thống nào tốt hơn hệ thống nào. Phép so sánh hợp lệ duy nhất đòi hỏi chạy các hệ thống trên **cùng một tập kiểm tra**, và đồ án không thực hiện được vì các hệ thống trong bảng không công bố mã nguồn hoặc trọng số dùng được.
 
 Khoảng cách lớn nhất của hệ thống hiện tại nằm ở **nhận dạng biển hai dòng** — 72,34% so với 95,41% của biển một dòng, chênh 23,07 điểm phần trăm, trong khi biển hai dòng chiếm 79,8% ngữ liệu đánh giá. Đây cũng là hướng cải thiện quan trọng nhất được nêu ở mục 6.3.
 
@@ -1385,7 +1385,7 @@ Nguyên tắc: **nêu mối đe doạ, đánh giá mức nghiêm trọng, nói r
 
 Tám mối đe doạ được liệt kê kèm mức nghiêm trọng ở Bảng 5.13.
 
-**Bảng 5.13.** Tám mối đe doạ đến tính hợp lệ của kết quả
+**Bảng 5.13.**[]{#tbl-5-13} Tám mối đe doạ đến tính hợp lệ của kết quả
 
 |  #  | Mối đe doạ                                                               |    Mức     | Biện pháp giảm thiểu đã áp dụng                                                                                                                                                                                                                   |
 | :-: | ------------------------------------------------------------------------ | :--------: | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -1410,7 +1410,7 @@ Tám mối đe doạ được liệt kê kèm mức nghiêm trọng ở Bảng 5
 
 Nhóm thực hiện đã bàn giao một hệ thống nhận dạng biển số xe Việt Nam hoàn chỉnh, chạy đầu cuối trên máy **không có GPU**: bộ phát hiện tự huấn luyện, khối nhận dạng ký tự, bộ luật hậu xử lý theo quy chuẩn Việt Nam, REST API, giao diện web, cơ sở dữ liệu và đóng gói Docker. Trạng thái xác minh bằng HTTP thật — 10 thao tác trên 9 đường dẫn phản hồi đúng, **1.004/1.004** kiểm thử tự động đạt, bao phủ tầng nghiệp vụ 87,7% (Bảng 6.1).
 
-**Bảng 6.1.** Đối chiếu chỉ tiêu đặt ra ở giai đoạn phân tích yêu cầu với số đo trên `models/best.pt`
+**Bảng 6.1.**[]{#tbl-6-1} Đối chiếu chỉ tiêu đặt ra ở giai đoạn phân tích yêu cầu với số đo trên `models/best.pt`
 
 |      Mã       | Chỉ tiêu                                                      |            Mục tiêu |                  Đo được |       |
 | :-----------: | ------------------------------------------------------------- | ------------------: | -----------------------: | :---: |
@@ -1428,15 +1428,15 @@ Nhóm thực hiện đã bàn giao một hệ thống nhận dạng biển số 
 
 Các chỉ tiêu về phát hiện, thông lượng, độ tin cậy và chịu tải đều đạt; các chỉ tiêu về độ chính xác chuỗi chưa đạt ngưỡng. NFR-P1 vượt mục tiêu sau đợt tối ưu tầng chạy, dù bậc thử lại đã cộng thêm độ trễ đuôi để đổi lấy 34 biển đọc đúng.
 
-**Bốn đại lượng đo được mà khảo sát không tìm thấy tương đương trong tài liệu Việt Nam.** *(1)* **Đóng góp thuần của khối hậu xử lý theo vị trí: +13,28 điểm** — sửa đúng 372 biển, làm hỏng 0 trên 2.801 mẫu. *(2)* **Chênh lệch giữa hai bố cục biển: 23,07 điểm** ở khối nhận dạng so với 2,09 điểm ở khối phát hiện, nên rủi ro R-04 nằm trọn ở tầng đọc ký tự. *(3)* **Benchmark ba bộ nhận dạng trên 2.801 biển trong cùng một tầng bao quanh**: PaddleOCR 68,87% so với EasyOCR 14,28% và Tesseract 10,28%, kèm phát hiện rằng bước tách-ghép nâng PaddleOCR 34,92 điểm nhưng Tesseract chỉ 0,03 điểm — **điều kiện cần nhưng chưa đủ**. *(4)* **Bộ nhận màu nền đạt 97,89%** trên 1.565 ảnh có nhãn, cung cấp bằng chứng mà chuỗi ký tự không mang được.
+**Bốn kết quả định lượng mà khảo sát không tìm thấy tương đương trong tài liệu Việt Nam.** *(1)* Đóng góp thuần của khối hậu xử lý theo vị trí: **+13,28 điểm**, sửa đúng 372 biển và làm hỏng 0 trên 2.801 mẫu. *(2)* Chênh lệch giữa hai bố cục biển: **23,07 điểm** ở khối nhận dạng so với 2,09 điểm ở khối phát hiện, nên rủi ro R-04 nằm trọn ở tầng đọc ký tự. *(3)* Benchmark ba bộ nhận dạng trên 2.801 biển trong cùng một tầng bao quanh: **PaddleOCR 68,87%**, EasyOCR 14,28%, Tesseract 10,28%. *(4)* Bộ nhận màu nền đạt **97,89%** trên 1.565 ảnh có nhãn, cung cấp bằng chứng mà chuỗi ký tự không mang được.
 
-Hai kết quả kỹ thuật hệ thống đi kèm: **tối ưu tầng chạy đưa p95 từ 1.143,10 xuống 509,76 ms mà không đụng một trọng số nào và mọi chỉ số độ chính xác đứng yên** (4.6.8); và **khử trùng lặp mờ** gom 17 trên 44 cách đọc về đúng một bản ghi mỗi xe (4.7.2). Ngoài các con số, đồ án để lại một quy trình đánh giá có kiểm chứng: mọi số liệu sinh lại được bằng một lệnh, và các kết quả âm được ghi lại thay vì bỏ đi.
+Hai kết quả kỹ thuật hệ thống đi kèm: tối ưu tầng chạy đưa p95 từ 1.143,10 xuống **509,76 ms** mà không thay đổi trọng số và mọi chỉ số độ chính xác giữ nguyên (4.6.8); và khử trùng lặp mờ gom 17 trên 44 cách đọc về đúng một bản ghi mỗi xe (4.7.2). Ngoài các con số, đồ án để lại một quy trình đánh giá có kiểm chứng: mọi số liệu sinh lại được bằng một lệnh, và các kết quả âm được ghi lại thay vì bỏ đi.
 
 ## 6.2. Hạn chế
 
 Mười hạn chế của đồ án, xếp theo mức nghiêm trọng, liệt kê ở Bảng 6.2.
 
-**Bảng 6.2.** Mười hạn chế của đồ án
+**Bảng 6.2.**[]{#tbl-6-2} Mười hạn chế của đồ án
 
 |  #  | Hạn chế                                                             |    Mức     | Hệ quả cần lưu ý                                                                                       |
 | :-: | ------------------------------------------------------------------- | :--------: | ------------------------------------------------------------------------------------------------------ |
@@ -1455,7 +1455,7 @@ Mười hạn chế của đồ án, xếp theo mức nghiêm trọng, liệt k�
 
 Các hướng phát triển xếp theo mức tác động ở Bảng 6.3.
 
-**Bảng 6.3.** Mười một hướng phát triển, xếp theo mức tác động
+**Bảng 6.3.**[]{#tbl-6-3} Mười một hướng phát triển, xếp theo mức tác động
 
 |  #  | Hướng                                                          | Giải hạn chế | Ghi chú                                                                                            |
 | :-: | -------------------------------------------------------------- | :----------: | -------------------------------------------------------------------------------------------------- |

@@ -14,7 +14,7 @@ Ba use case chính — nhận dạng từ ảnh (UC-01), từ video (UC-02) và 
 
 ![](figures/fig-ch4-usecase.png)
 
-**Hình 4.1.** Sơ đồ use case — hai tác nhân và bốn use case.
+**Hình 4.1.**[]{#fig-4-1} Sơ đồ use case — hai tác nhân và bốn use case.
 
 ### 4.1.2. Yêu cầu chức năng
 
@@ -32,7 +32,7 @@ Các chỉ tiêu phi chức năng chia bảy nhóm — độ chính xác (NFR-A)
 
 <!-- {{T4.1a}} bon rang buoc kien truc va cach kiem chung -->
 
-**Bảng 4.1.** Bốn ràng buộc kiến trúc và cách kiểm chứng từng ràng buộc
+**Bảng 4.1.**[]{#tbl-4-1} Bốn ràng buộc kiến trúc và cách kiểm chứng từng ràng buộc
 
 | # | Ràng buộc | Mã chỉ tiêu | Cách hiện thực | Kiểm chứng bằng gì |
 |:--:|---|:--:|---|---|
@@ -49,7 +49,7 @@ phải nhánh ít ai đụng tới.
 
 ![](figures/fig-ch4-02.png)
 
-**Hình 4.2.** Kiến trúc phân tầng năm tầng và chiều phụ thuộc
+**Hình 4.2.**[]{#fig-4-2} Kiến trúc phân tầng năm tầng và chiều phụ thuộc
 
 Năm tầng: **1 — Trình bày** (giao diện, chỉ biết hợp đồng HTTP của tầng 2); **2 — API** (định tuyến, kiểm tra hợp lệ, ánh xạ ngoại lệ thành mã HTTP, sinh OpenAPI); **3 — Nghiệp vụ** (điều phối: tạo tác vụ, gọi đường ống, lưu tệp, ghi CSDL, gộp trùng, thống kê); **4 — AI** (phát hiện, nhận dạng, chuẩn hoá — **chỉ biết NumPy, OpenCV và thư viện học sâu**); **5 — Dữ liệu** (CSDL, kho tệp). **Điều quan trọng:** khối tầng AI **không có mũi tên nào đi lên**. Sau hai đợt thu gọn, tầng trình bày còn **ba trang** nhưng **tầng 2–5 không đổi một dòng**: `POST /detect/frame`, `GET /statistics`, `GET /health` vẫn phục vụ và vẫn có kiểm thử tích hợp — phép thử ngoài dự kiến cho nguyên tắc phụ thuộc một chiều.
 
@@ -61,7 +61,7 @@ Tầng AI là một gói Python độc lập, giao tiếp với tầng API **ch�
 
 ![](figures/fig-ch4-03.png)
 
-**Hình 4.3.** Luồng xử lý của đường ống AI, các khối tô đỏ là nhánh biển hai dòng
+**Hình 4.3.**[]{#fig-4-3} Luồng xử lý của đường ống AI, các khối tô đỏ là nhánh biển hai dòng
 
 **Nhánh biển hai dòng** là phần khó nhất của đồ án và là rủi ro đã xác định từ khâu lập kế hoạch (R-04). Bộ OCR dựng sẵn giả định văn bản một dòng ngang, nên với biển hai dòng chúng đọc theo thứ tự không xác định, ghép lẫn hoặc bỏ sót một dòng — cơ chế đứng sau chênh lệch 48,6 điểm phần trăm **đo trên bộ RodoSol-ALPR của Brazil** đã dẫn ở 4.1.1 [2]<!-- laroca_2022_crossdataset -->. Giải pháp: **tách vùng biển thành hai nửa, nhận dạng từng nửa, ghép theo thứ tự trên trước dưới sau** — mỗi nửa lúc này là một dòng ngang đúng giả định của bộ OCR (cài đặt ở 4.6.4).
 
@@ -71,7 +71,7 @@ Mỗi quyết định ghi kèm lý do và **đánh đổi phải chấp nhận**
 
 <!-- {{T4.2}} cac quyet dinh kien truc AD-01 den AD-08 -->
 
-**Bảng 4.2.** Tám quyết định kiến trúc — mỗi dòng kèm đánh đổi phải chấp nhận
+**Bảng 4.2.**[]{#tbl-4-2} Tám quyết định kiến trúc — mỗi dòng kèm đánh đổi phải chấp nhận
 
 | Mã | Quyết định | Lựa chọn | Đánh đổi phải chấp nhận |
 |:--:|---|---|---|
@@ -104,13 +104,13 @@ Ràng buộc CPU để lại dấu vết cụ thể: NFR-P1 phát biểu thẳng
 
 ![](figures/fig-ch5-01.png)
 
-**Hình 4.4.** Đường ống sáu bước xây dựng bộ dữ liệu
+**Hình 4.4.**[]{#fig-4-4} Đường ống sáu bước xây dựng bộ dữ liệu
 
 Mỗi bước là một kịch bản độc lập có giao diện dòng lệnh riêng và sinh báo cáo dạng dữ liệu có cấu trúc; một kịch bản điều phối chạy toàn chuỗi bằng một lệnh. **Kết quả:** **15.133 ảnh** hợp nhất từ **7 bộ công khai** (Roboflow, HuggingFace, Kaggle), còn **6 nguồn nguyên tố** sau khi loại **11.978 ảnh (44,2%)** bản sao từ **27.111 ảnh**; tổng 9 bộ tải về, 2 bộ nhãn mức ký tự tách riêng cho đánh giá OCR. Chia 70/20/10 thành **10.592 / 3.027 / 1.514 ảnh**. Bảng dưới **phải trích khi nói về dữ liệu của đồ án**; nguồn và giấy phép từng bộ ở **Phụ lục C.1** (Bảng 4.3).
 
 <!-- {{T4.4}} dong gop cua tung bo du lieu truoc va sau khu trung lap -->
 
-**Bảng 4.3.** Đóng góp của từng bộ dữ liệu trước và sau khử trùng lặp
+**Bảng 4.3.**[]{#tbl-4-3} Đóng góp của từng bộ dữ liệu trước và sau khử trùng lặp
 
 | #   | Bộ (slug)                   |    Vào gộp |        **Còn lại** |   Bị loại |
 | --- | --------------------------- | ---------: | -----------------: | --------: |
@@ -139,13 +139,13 @@ Giới hạn thời gian CPU chỉ cho phép **một lượt huấn luyện duy 
 
 ![](figures/fig-train-curves.png)
 
-**Hình 4.5.** Đường cong huấn luyện theo epoch — ba hàm mất mát và bốn chỉ số trên tập kiểm định
+**Hình 4.5.**[]{#fig-4-5} Đường cong huấn luyện theo epoch — ba hàm mất mát và bốn chỉ số trên tập kiểm định
 
 Ba hàm mất mát giảm đơn điệu và **không có dấu hiệu quá khớp**: mất mát hộp bao 1,252 → 0,809, mất mát phân lớp 0,833 → 0,313, mất mát phân phối 1,154 → 0,987; đường validation bám sát đường train suốt 20 epoch. Chỉ số trên tập validation đi lên rồi bão hoà sớm: mAP@0.5 đạt **0,9684 ngay ở epoch 1** và chỉ nhích lên **0,9830** ở epoch 20, trong khi mAP@0.5:0.95 — chỉ số nhạy với độ khít của hộp — tăng đáng kể hơn, **0,6526 → 0,7688** (Bảng 4.4).
 
 <!-- {{T4.5a}} tien trien chi so tren tap validation theo epoch -->
 
-**Bảng 4.4.** Tiến triển chỉ số trên tập validation theo mốc epoch
+**Bảng 4.4.**[]{#tbl-4-4} Tiến triển chỉ số trên tập validation theo mốc epoch
 
 | Epoch | Mất mát hộp bao | Mất mát phân lớp | mAP@0.5 | mAP@0.5:0.95 | Precision | Recall |
 | :---: | ---: | ---: | ---: | ---: | ---: | ---: |
@@ -162,7 +162,7 @@ Kiến trúc tầng AI dựa trên **ba lớp trừu tượng** có hợp đồn
 
 ![](figures/fig-ch4-interfaces.png)
 
-**Hình 4.6.** Ba lớp trừu tượng và cài đặt tương ứng — bằng chứng cài đặt cho NFR-M5.
+**Hình 4.6.**[]{#fig-4-6} Ba lớp trừu tượng và cài đặt tương ứng — bằng chứng cài đặt cho NFR-M5.
 
 ### 4.6.2. Bộ phát hiện
 
@@ -190,7 +190,7 @@ Một giới hạn kỹ thuật ngoài tầm kiểm soát của đồ án: trên
 
 Thiết kế cuối cùng vì vậy giữ nguyên chiến lược ghép và chỉ thêm một bước phục hồi có cổng chặt: **chỉ kích hoạt khi đồng thời** vùng biển được phân loại hai dòng, chuỗi sau chuẩn hoá không hợp lệ, và chuỗi thô khác rỗng. Khi đó hệ thống đọc thêm một lượt trên riêng nửa trên, ghép với chuỗi thô rồi chuẩn hoá lại; kết quả mới chỉ được nhận nếu vượt kiểm tra định dạng. **Tính không làm hỏng mang bản chất cấu trúc** — cổng chỉ mở khi kết quả đã không hợp lệ, nên tập bị can thiệp và tập đang đúng là hai tập rời nhau. Đo được **+1,86 và +0,50 điểm** trên hai mẫu độc lập, **0 trường hợp bị làm hỏng**, chi phí 15–21 ms mỗi biển hai dòng.
 
-**g) Một giới hạn về phương pháp đo.** Kịch bản sinh NFR-A4…A7 ban đầu gọi thẳng bộ nhận dạng thay vì đi qua tầng điều phối, nên logic đặt tại tầng ấy không được phản ánh trong số công bố. Khắc phục bằng cách tách bước phục hồi thành hàm cấp mô-đun để cả đường chạy sản phẩm lẫn công cụ đo cùng gọi một cài đặt. Bài học vượt ra ngoài phạm vi biển hai dòng: **một công cụ đo đi tắt qua tầng điều phối sẽ đo một hệ thống khác với hệ thống được bàn giao** (5.5.6).
+**g) Một giới hạn về phương pháp đo.** Kịch bản sinh NFR-A4…A7 ban đầu gọi thẳng bộ nhận dạng thay vì đi qua tầng điều phối, nên logic đặt tại tầng ấy không được phản ánh trong số công bố. Khắc phục bằng cách tách bước phục hồi thành hàm cấp mô-đun để cả đường chạy sản phẩm lẫn công cụ đo cùng gọi một cài đặt. Kết quả này cho thấy một yêu cầu chung với mọi phép đo: **một công cụ đo đi tắt qua tầng điều phối sẽ đo một hệ thống khác với hệ thống được bàn giao** (5.5.6).
 
 ### 4.6.5. Bộ luật hậu xử lý theo vị trí
 
@@ -222,7 +222,7 @@ Ký tự đại diện tại chỉ số 3 của chuỗi 9 ký tự quyết đị
 
 Trình tự các bước của thuật toán trình bày ở Hình 4.7.
 
-**Hình 4.7.** Thuật toán chuẩn hoá chuỗi biển số theo bộ luật ràng buộc vị trí
+**Hình 4.7.**[]{#fig-4-7} Thuật toán chuẩn hoá chuỗi biển số theo bộ luật ràng buộc vị trí
 
 Thuật toán tuân ba nguyên tắc. Biểu thức chính quy được thử trước khi thực hiện bất kỳ chỉnh sửa nào, bởi với chuỗi vốn đã hợp lệ thì mọi can thiệp chỉ có thể làm sai đi. Không chuỗi nào bị loại bỏ: chuỗi không sửa được vẫn trả về kèm cờ không hợp lệ và vẫn được lưu. Chuỗi thô được giữ song song với chuỗi đã sửa. Kết quả là một cấu trúc bất biến chứa chuỗi thô, chuỗi cuối, cờ hợp lệ, kết quả phân loại họ biển và danh sách vị trí ký tự đã chỉnh sửa — dấu vết kiểm toán mà chương đánh giá dựa vào để định lượng đóng góp của khối.
 
