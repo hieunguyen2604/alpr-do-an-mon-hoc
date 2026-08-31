@@ -48,27 +48,7 @@ __all__ = [
 
 
 class PlateKind(StrEnum):
-    """The plate families this module can recognise.
-
-    A kind is a *classification of the character string*, not a statement about
-    the vehicle: several kinds share the same string layout, which is exactly
-    why :class:`~ai.inference.normalizer.VietnamesePlateNormalizer` reports a
-    list of candidates instead of a single verdict when the string is
-    ambiguous (see sections 8.5 and 8.6 of the specification).
-
-    Members:
-        CAR: White or yellow plate, ``<province><letter><4-5 digits>``.
-        MOTORCYCLE_NEW: Two-letter serial, issued from 15/08/2023.
-        MOTORCYCLE_OLD: Letter + digit serial, still legally in circulation.
-        BLUE_CAR: State-agency plate, serial restricted to 11 letters.
-        BLUE_MOTORCYCLE: State-agency motorcycle, serial letter + digit 1-9.
-        SPECIAL: Two-character serial codes such as ``LD``, ``DA``, ``RM``.
-        DIPLOMATIC: Diplomatic/foreign plate carrying a 3-digit country code.
-        MILITARY: Army plate. Recognised **only so it can be excluded**: it is
-            outside the civil registration system and is never reported as a
-            valid civil format.
-        UNKNOWN: Nothing matched.
-    """
+    """The plate families this module can recognise."""
 
     CAR = "car"
     MOTORCYCLE_NEW = "motorcycle_new"
@@ -588,81 +568,17 @@ _D_STROKE_TRANSLATION: Final[dict[int, str]] = str.maketrans({"Đ": "D", "đ": "
 
 
 def clean_text(raw: str) -> str:
-    """Reduce a raw OCR string to canonical alphanumeric form.
-
-    Steps: fold ``Đ``/``đ`` to ``D``, upper-case, then delete every character
-    that is not ``0``-``9`` or ``A``-``Z``.
-
-    Separators are removed wholesale instead of being parsed, because their
-    position is genuinely inconsistent (section 7.5): a car plate prints
-    ``30A-123.45`` while a motorcycle prints ``29-AA`` on its upper line, and
-    the printing rules of QCVN 08:2024/BCA could not be read in full. Deleting
-    all separators turns that uncertainty into a safe decision rather than a
-    guess.
-
-    Args:
-        raw: The unmodified OCR output; may contain spaces, dots, hyphens,
-            line breaks, diacritics or noise characters.
-
-    Returns:
-        A string containing only digits and upper-case ASCII letters. Returns
-        an empty string when nothing survives cleaning.
-
-    Examples:
-        >>> clean_text("30A-123.45")
-        '30A12345'
-        >>> clean_text("29-mđ 002.33")
-        '29MD00233'
-    """
+    """Reduce a raw OCR string to canonical alphanumeric form."""
     return _SEPARATOR_RE.sub("", raw.translate(_D_STROKE_TRANSLATION).upper())
 
 
 def mask_for_length(length: int) -> str | None:
-    """Return the position mask that applies to a cleaned string of this length.
-
-    Args:
-        length: Number of characters in the cleaned string.
-
-    Returns:
-        The mask, or ``None`` when the length is outside the plausible 7-9
-        range -- in which case the string is too damaged for position-based
-        repair and must fail in a controlled way (section 9.5).
-    """
+    """Return the position mask that applies to a cleaned string of this length."""
     return MASK_BY_LENGTH.get(length)
 
 
 def apply_position_rules(text: str, mask: str) -> str:
-    """Repair OCR confusions using the per-position type constraints.
-
-    At a position the mask marks ``D``, any letter read is by definition an
-    error and is mapped through :data:`TO_DIGIT`. At a position marked ``L``,
-    any digit read is an error and is mapped through :data:`TO_LETTER`. At a
-    position marked ``?`` **nothing happens at all** -- neither table is
-    consulted (section 9.4).
-
-    A character with no entry in the applicable table is **kept as it is**; it
-    is never replaced by a placeholder. The string then simply fails the regex
-    check, which is the intended controlled failure: ``3OB12E45`` becomes
-    ``30B12E45``, not ``30B12?45``. The ``?`` symbol belongs to masks and never
-    appears in output.
-
-    Args:
-        text: A cleaned string (digits and upper-case letters only).
-        mask: A mask of the same length, built from ``D``, ``L`` and ``?``.
-
-    Returns:
-        The repaired string, or ``text`` unchanged if the lengths disagree --
-        applying a mismatched mask would corrupt every position after the
-        first discrepancy, so refusing is safer than realigning.
-
-    Examples:
-        >>> apply_position_rules("3OA12345", POSITION_MASKS["car_5"])
-        '30A12345'
-        >>> apply_position_rules("30012345", POSITION_MASKS["car_5"])
-        '30D12345'
-        >>> apply_position_rules("29AA12345", POSITION_MASKS["motorcycle_9"])
-        '29AA12345'
-    """
+    """Repair OCR confusions using the per-position type constraints."""
     if len(text) != len(mask):
         return text
 

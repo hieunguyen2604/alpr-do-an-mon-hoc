@@ -90,28 +90,12 @@ class ALPRPipeline:
     # Identity
     @property
     def name(self) -> str:
-        """Return a combined engine identifier, e.g. ``"yolo:best.pt+paddleocr-..."``.
-
-        Both halves are included because a benchmark number is only
-        reproducible if it names the detector *and* the recogniser that
-        produced it.
-        """
+        """Return a combined engine identifier, e.g. ``"yolo:best.pt+paddleocr-..."``."""
         return f"{self._safe_name(self._detector)}+{self._safe_name(self._recognizer)}"
 
     @property
     def is_ready(self) -> bool:
-        """Return whether this pipeline can produce genuine results.
-
-        Always ``True`` for this class: dependency injection means the detector
-        and the recogniser were constructed -- and their weights therefore
-        loaded or verified -- before the pipeline existed. A missing weights
-        file fails inside the detector's constructor, so an ``ALPRPipeline``
-        instance cannot exist in a not-ready state.
-
-        The property exists so that the real pipeline and the API layer's
-        placeholder are interchangeable, and so ``/health`` can distinguish
-        them.
-        """
+        """Return whether this pipeline can produce genuine results."""
         return True
 
     @property
@@ -136,14 +120,7 @@ class ALPRPipeline:
 
     # Lifecycle
     def warmup(self) -> None:
-        """Prime both models so the first real request is not the slow one.
-
-        Delegates to the detector's and the recogniser's own ``warmup``. A
-        failure in either is logged and swallowed: a warm-up is an
-        optimisation, and refusing to start the service because a synthetic
-        blank image produced no text would be the wrong trade-off. A genuine
-        model problem surfaces on the first real call, where it belongs.
-        """
+        """Prime both models so the first real request is not the slow one."""
         started = time.perf_counter()
         for label, component in (
             ("detector", self._detector),
@@ -224,24 +201,7 @@ class ALPRPipeline:
         *,
         read_text: bool = True,
     ) -> tuple[DetectionResult, dict[str, float]]:
-        """Crop, recognise and normalise a single detected plate.
-
-        Args:
-            image: The full source image.
-            detection: One box produced by the detector.
-            index: Position of this plate in the detector's output, used only
-                in log records so a failure can be tied to a specific box.
-            read_text: Whether to run OCR. When ``False`` the crop and its
-                colour are still produced -- both are nearly free and the
-                colour is what the overlay uses -- but the result carries no
-                characters, exactly as it would for a plate the engine could
-                not read.
-
-        Returns:
-            A ``(result, elapsed)`` pair. ``elapsed`` maps the ``crop``, ``ocr``
-            and ``normalize`` stage names to the seconds this plate spent in
-            each, for accumulation by :meth:`process`.
-        """
+        """Crop, recognise and normalise a single detected plate."""
         elapsed = {"crop": 0.0, "ocr": 0.0, "normalize": 0.0}
 
         crop_started = time.perf_counter()
@@ -614,13 +574,7 @@ def retry_skewed_variants(
     context: dict[str, object] | None = None,
     color: str = "",
 ) -> PlateRecognition:
-    """Re-read a failed crop through geometry-corrected variants.
-
-    Returns:
-        The first variant recognition that validates, or the unchanged
-        ``recognition`` when none does. Any failure inside a variant moves on
-        to the next: a retry must never cost more than it can win.
-    """
+    """Re-read a failed crop through geometry-corrected variants."""
     extra: dict[str, object] = dict(context or {})
 
     # Red background exists ONLY on army plates: no read off a red crop may be
@@ -768,23 +722,7 @@ def _format_for_display(
     kind: str = "",
     upper_char_count: int = 0,
 ) -> str:
-    """Render a plate string with the separators the physical plate carries.
-
-    Args:
-        normalizer: The injected normalizer. ``format_for_display`` is an
-            optional capability beyond :class:`BaseNormalizer`, so it is probed.
-        text: The bare normalised string, e.g. ``"29E01566"``.
-        line_count: Lines on the plate, forwarded to disambiguate layouts that
-            share a character pattern.
-        kind: The family already established for this plate, forwarded so the
-            digit grouping follows the SAME decision as the family badge (see
-            ``docs/reports/23-display-format-rules.md``). Empty when unknown.
-
-    Returns:
-        The formatted string, e.g. ``"29E-015.66"``. Falls back to ``text``
-        unchanged when the normalizer cannot format or raises -- a cosmetic
-        step must never cost a plate that was read correctly.
-    """
+    """Render a plate string with the separators the physical plate carries."""
     formatter = getattr(normalizer, "format_for_display", None)
     if not callable(formatter):
         return text
@@ -830,39 +768,7 @@ evidence for car-versus-motorcycle: the serial pattern differs (`65A` versus
 
 
 def refine_kind_with_color(outcome: object, color: str, line_count: int) -> str:
-    """Resolve a string-level plate-family ambiguity using the plate's colour.
-
-    The ambiguity being resolved
-    ----------------------------
-    Vietnamese plate layouts are not unique to a plate family. Asked to classify
-    ``80A12345``, the character rules return four candidates -- ``car``,
-    ``motorcycle_old``, ``blue_car``, ``blue_motorcycle`` -- and flag the result
-    ambiguous, because every one of them is a legal reading of that string. The
-    normalizer then has to pick one, and picks the commonest: ``car``.
-
-    That answer is right most of the time and silently wrong for every State
-    vehicle, whose plate carries the same characters on a **blue** field. No
-    amount of work on the regular expressions can fix it: the distinction is not
-    in the string. It is in the pixels, which this stage has.
-
-    So the colour is allowed to promote a candidate the string already
-    considered plausible -- and nothing more. It cannot invent a family the
-    character rules rejected, which keeps a misread colour from fabricating a
-    classification: the worst a wrong colour can do is choose the wrong member of
-    a set the string itself called equally likely.
-
-    Args:
-        outcome: The normalizer's detailed result, carrying ``decision.kind`` and
-            ``decision.candidates``.
-        color: Background colour from :func:`~ai.inference.plate_color.classify_plate_color`.
-        line_count: Lines on the plate, used to choose between the car and the
-            motorcycle member of a promoted pair.
-
-    Returns:
-        The refined plate-kind string, or the original verdict when the colour
-        offers no evidence -- unknown colour, a colour with no preferred family,
-        or a string the rules classified unambiguously.
-    """
+    """Resolve a string-level plate-family ambiguity using the plate's colour."""
     decision = getattr(outcome, "decision", None)
     original = getattr(getattr(decision, "kind", None), "value", "")
     if decision is None or not original:

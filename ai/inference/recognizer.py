@@ -180,26 +180,7 @@ consequence of the overlap, not an accident of one crop.
 
 
 class PaddleOcrRecognizer(BaseRecognizer):
-    """Read plate characters with PaddleOCR, handling one- and two-line plates.
-
-    The engine is expensive to construct -- it loads several models and
-    allocates its own inference session -- so it is built once, lazily, on the
-    first call and reused for every crop afterwards. Rebuilding it per image
-    would dominate the latency budget (NFR-P1).
-
-    Instances are **not** thread-safe: the underlying PaddleOCR pipeline keeps
-    mutable state between calls. Give each worker thread its own instance, or
-    serialise access.
-
-    Typical use::
-
-        recognizer = PaddleOcrRecognizer(InferenceConfig.from_env())
-        recognizer.warmup()
-        recognition = recognizer.recognize(plate_crop)
-
-    Attributes are configured through :class:`~ai.inference.config.InferenceConfig`;
-    the recogniser never reads the environment itself.
-    """
+    """Read plate characters with PaddleOCR, handling one- and two-line plates."""
 
     def __init__(
         self,
@@ -209,27 +190,7 @@ class PaddleOcrRecognizer(BaseRecognizer):
         enable_mkldnn: bool = DEFAULT_ENABLE_MKLDNN,
         engine: Any | None = None,
     ) -> None:
-        """Prepare the recogniser without loading any model yet.
-
-        Args:
-            config: Runtime settings. A default
-                :class:`~ai.inference.config.InferenceConfig` is built when
-                omitted. Only the OCR-related fields are used
-                (:attr:`~ai.inference.config.InferenceConfig.ocr_lang`,
-                :attr:`~ai.inference.config.InferenceConfig.ocr_use_gpu`,
-                :attr:`~ai.inference.config.InferenceConfig.two_line_aspect_ratio_threshold`).
-            preprocess: Whether to run
-                :func:`~ai.inference.two_line.preprocess_plate` on each crop.
-                Exposed so Phase 7 can measure what the pre-processing chain
-                contributes by turning it off.
-            enable_mkldnn: Whether to let PaddlePaddle use its oneDNN CPU
-                kernels. Defaults to ``False``; see
-                :data:`DEFAULT_ENABLE_MKLDNN` for why.
-            engine: An already-constructed OCR engine to use instead of
-                building one. Intended for tests and for benchmarking two
-                configurations without paying the load cost twice. Must expose
-                a ``predict(image)`` method compatible with PaddleOCR 3.x.
-        """
+        """Prepare the recogniser without loading any model yet."""
         self._config = config if config is not None else InferenceConfig()
         self._preprocess = preprocess
         self._enable_mkldnn = enable_mkldnn
@@ -237,15 +198,7 @@ class PaddleOcrRecognizer(BaseRecognizer):
 
     @property
     def name(self) -> str:
-        """Return the engine identifier used in logs and benchmark reports.
-
-        The identifier names the **detection** sub-model as well as the
-        generation, because those are separate choices: before Phase 7 this
-        property reported ``-mobile`` while the engine was in fact running a
-        server-sized detector, and every benchmark number published under that
-        name was mislabelled. Naming what is actually loaded is what stops that
-        from recurring.
-        """
+        """Return the engine identifier used in logs and benchmark reports."""
         recognition = RECOGNITION_MODEL_BY_LANG.get(self._config.ocr_lang)
         if recognition is None:
             return f"paddleocr-{OCR_VERSION}-auto({self._config.ocr_lang})"
@@ -257,50 +210,7 @@ class PaddleOcrRecognizer(BaseRecognizer):
         return self._config
 
     def recognize(self, plate_image: ImageArray) -> PlateRecognition:
-        """Read the plate text from a cropped plate image.
-
-        Pipeline applied to the crop:
-
-        1. Estimate the number of text lines from the aspect ratio.
-        2. If two, split into overlapping halves and re-stack them horizontally
-           into a single-line strip (see :mod:`ai.inference.two_line`).
-        3. Enhance contrast and denoise, unless disabled.
-        4. Run OCR and concatenate the recognised fragments left to right.
-
-        Deskewing is deliberately **not** part of this method. It was measured
-        as an always-on first step here and it *lost* ground: on the demo
-        video's detector-produced crops it converted two good reads into junk
-        for zero recoveries, because a mis-fitted rectangle on a small blurred
-        crop cuts characters away. Skew recovery therefore lives in the
-        pipeline's failure-retry ladder
-        (:func:`~ai.inference.pipeline.retry_skewed_variants`), where it runs
-        only on reads that have already failed and keeps its result only when
-        the re-read validates -- an attempt that can win but never lose.
-
-        The returned :attr:`~ai.inference.types.PlateRecognition.text` is
-        **not** normalised -- it is the raw engine output with whitespace
-        removed and letters upper-cased. Character correction, separator
-        stripping and format validation belong to the normalizer, which is why
-        :attr:`~ai.inference.types.PlateRecognition.is_valid_format` is always
-        ``False`` here: this stage has no authority to judge the format.
-
-        Args:
-            plate_image: The cropped plate as a BGR ``uint8`` array. This is
-                the region delimited by a detected bounding box, not the whole
-                scene.
-
-        Returns:
-            A :class:`~ai.inference.types.PlateRecognition`. When the engine
-            reads nothing -- a blurred, occluded or over-exposed crop -- the
-            result carries empty text and ``0.0`` confidence instead of an
-            exception. An unreadable plate is a normal outcome that must still
-            be recorded and counted.
-
-        Raises:
-            InvalidImageError: If the crop is empty or not a valid image.
-            ModelLoadError: If the OCR models cannot be loaded.
-            RecognitionError: If the engine itself fails during inference.
-        """
+        """Read the plate text from a cropped plate image."""
         self._validate_crop(plate_image)
 
         started = time.perf_counter()
@@ -362,17 +272,7 @@ class PaddleOcrRecognizer(BaseRecognizer):
         )
 
     def warmup(self) -> None:
-        """Load the models and run one throwaway pass to prime the engine.
-
-        The first inference in a process is several times slower than the rest
-        because weights are paged in and lazy kernels are compiled. Calling
-        this at start-up moves that cost off the first user request.
-
-        Failures are logged and swallowed rather than raised: a warm-up is an
-        optimisation, and refusing to start the service because a synthetic
-        blank image produced no text would be the wrong trade-off. A genuine
-        model-loading problem surfaces on the first real call.
-        """
+        """Load the models and run one throwaway pass to prime the engine."""
         try:
             blank = np.full((_WARMUP_HEIGHT, _WARMUP_WIDTH, 3), 255, dtype=np.uint8)
             started = time.perf_counter()
@@ -391,19 +291,7 @@ class PaddleOcrRecognizer(BaseRecognizer):
             )
 
     def _run_ocr(self, image: ImageArray) -> tuple[list[str], list[float]]:
-        """Run the engine and return the fragments in left-to-right order.
-
-        Args:
-            image: The prepared single-line strip.
-
-        Returns:
-            A ``(texts, scores)`` pair of equal length, ordered by horizontal
-            position. Both are empty when nothing was read.
-
-        Raises:
-            ModelLoadError: If the engine cannot be constructed.
-            RecognitionError: If inference fails.
-        """
+        """Run the engine and return the fragments in left-to-right order."""
         engine = self._ensure_engine()
         try:
             raw_results = engine.predict(image)
@@ -415,16 +303,7 @@ class PaddleOcrRecognizer(BaseRecognizer):
         return _parse_ocr_output(raw_results)
 
     def _ensure_engine(self) -> Any:
-        """Return the OCR engine, constructing it on first use.
-
-        Returns:
-            The PaddleOCR pipeline object.
-
-        Raises:
-            ModelLoadError: If PaddleOCR is not installed or its models cannot
-                be loaded -- typically a missing package, or no network access
-                on the first run when the weights still have to be downloaded.
-        """
+        """Return the OCR engine, constructing it on first use."""
         if self._engine is not None:
             return self._engine
 
@@ -506,28 +385,7 @@ class PaddleOcrRecognizer(BaseRecognizer):
         return self._engine
 
     def _build_recognition_only_engine(self, factory: Any, device: str) -> Any:
-        """Build a recognition-only engine that reads the whole crop at once.
-
-        The crop handed to this class has already been localised by the
-        detector, aspect-repaired, and -- when two-line -- split and re-stacked
-        into one horizontal strip. It is a single text line, so PaddleOCR's
-        text-detection stage has nothing left to find; all it does is cut the
-        strip into fragments that then have to be stitched back together.
-
-        See :attr:`~ai.inference.config.InferenceConfig.ocr_skip_detection` for
-        the measurement that put this on by default.
-
-        Args:
-            factory: The ``paddleocr.TextRecognition`` class.
-            device: ``"cpu"`` or ``"gpu"``.
-
-        Returns:
-            The recognition module, which exposes the same ``predict(image)``
-            call as the full pipeline.
-
-        Raises:
-            ModelLoadError: If the recognition model cannot be loaded.
-        """
+        """Build a recognition-only engine that reads the whole crop at once."""
         recognition_model = RECOGNITION_MODEL_BY_LANG.get(self._config.ocr_lang)
         kwargs: dict[str, Any] = {"device": device}
         if device == "cpu":
@@ -561,15 +419,7 @@ class PaddleOcrRecognizer(BaseRecognizer):
 
     @staticmethod
     def _validate_crop(plate_image: ImageArray) -> None:
-        """Reject crops that cannot be processed.
-
-        Args:
-            plate_image: Candidate crop.
-
-        Raises:
-            InvalidImageError: If the array is ``None``, not a NumPy array, has
-                the wrong rank, or has a zero-sized side.
-        """
+        """Reject crops that cannot be processed."""
         if plate_image is None or not isinstance(plate_image, np.ndarray):
             raise InvalidImageError(
                 "plate_image must be a NumPy array, got " f"{type(plate_image).__name__}"
@@ -586,20 +436,7 @@ class PaddleOcrRecognizer(BaseRecognizer):
 
 
 def _aggregate_confidence(texts: Sequence[str], scores: Sequence[float]) -> float:
-    """Combine per-fragment OCR scores into one confidence for the plate.
-
-    The mean is weighted by fragment length. A plain average would let a
-    one-character fragment recognised with 0.99 confidence mask a seven-
-    character fragment recognised with 0.40 -- and on a plate it is the long
-    fragment that carries the identity.
-
-    Args:
-        texts: Recognised fragments.
-        scores: Their confidences, aligned with ``texts``.
-
-    Returns:
-        A confidence in ``[0.0, 1.0]``, or ``0.0`` when nothing was read.
-    """
+    """Combine per-fragment OCR scores into one confidence for the plate."""
     weights = [len(text) for text in texts]
     total_weight = sum(weights)
     if total_weight == 0:
@@ -609,26 +446,7 @@ def _aggregate_confidence(texts: Sequence[str], scores: Sequence[float]) -> floa
 
 
 def _parse_ocr_output(raw_results: Any) -> tuple[list[str], list[float]]:
-    """Extract texts, scores and reading order from a PaddleOCR result.
-
-    Kept as a free function, and deliberately defensive, because the shape of
-    this payload changed between PaddleOCR 2.x and 3.x and may change again.
-    Isolating the parsing here means a future upgrade touches one function
-    instead of the recognition flow.
-
-    Fragments far shorter than the tallest one are dropped as detector
-    artefacts; see :data:`MIN_FRAGMENT_HEIGHT_RATIO`.
-
-    Args:
-        raw_results: Whatever ``PaddleOCR.predict`` returned. Expected to be an
-            iterable of mapping-like results carrying ``rec_texts``,
-            ``rec_scores`` and one of ``rec_polys``/``dt_polys``.
-
-    Returns:
-        A ``(texts, scores)`` pair of equal length, sorted by the left edge of
-        each fragment so that the plate reads left to right. Empty when the
-        payload carries no recognised text.
-    """
+    """Extract texts, scores and reading order from a PaddleOCR result."""
     if not raw_results:
         return [], []
 
@@ -668,16 +486,7 @@ def _parse_ocr_output(raw_results: Any) -> tuple[list[str], list[float]]:
 def _drop_short_fragments(
     fragments: list[tuple[float, float, str, float]],
 ) -> list[tuple[float, float, str, float]]:
-    """Discard fragments far shorter than the tallest one.
-
-    Args:
-        fragments: ``(left, height, text, score)`` tuples.
-
-    Returns:
-        The surviving fragments, in input order. Returned unchanged when no
-        fragment reported usable geometry, so the filter can never remove
-        everything on a payload it cannot measure.
-    """
+    """Discard fragments far shorter than the tallest one."""
     tallest = max((height for _, height, _, _ in fragments), default=0.0)
     if tallest <= 0.0:
         return fragments
@@ -699,15 +508,7 @@ def _drop_short_fragments(
 
 
 def _lookup(result: Any, key: str) -> Any:
-    """Read ``key`` from a mapping-like or attribute-like OCR result.
-
-    Args:
-        result: One entry of the engine's output.
-        key: Field name to read.
-
-    Returns:
-        The value, or ``None`` when the field is absent.
-    """
+    """Read ``key`` from a mapping-like or attribute-like OCR result."""
     try:
         return result[key]
     except (TypeError, KeyError, IndexError):
@@ -715,19 +516,7 @@ def _lookup(result: Any, key: str) -> Any:
 
 
 def _fragment_geometry(polys: Any, index: int) -> tuple[float, float]:
-    """Return the left edge and the height of one detected text polygon.
-
-    Args:
-        polys: Sequence of polygons aligned with the recognised fragments, or
-            ``None`` when the engine did not report any.
-        index: Position of the fragment.
-
-    Returns:
-        A ``(left, height)`` pair in pixels. When no geometry is available the
-        left edge falls back to ``index`` -- which preserves the engine's own
-        ordering -- and the height to ``0.0``, which disables the artefact
-        filter rather than letting it act on a guess.
-    """
+    """Return the left edge and the height of one detected text polygon."""
     if polys is None or index >= len(polys):
         return float(index), 0.0
     try:

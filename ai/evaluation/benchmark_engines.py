@@ -149,13 +149,7 @@ def _levenshtein(a: str, b: str) -> int:
 
 
 def chuan_bi(anh: np.ndarray, tach_hai_dong: bool) -> np.ndarray:
-    """Chuẩn bị ảnh y hệt bộ nhận dạng của hệ thống, trước khi engine nhìn thấy.
-
-    Args:
-        anh: Vùng biển đã cắt, BGR, đã khôi phục tỷ lệ khung hình.
-        tach_hai_dong: Có áp bước tách-rồi-ghép-ngang không. Tắt để đo bước này
-            đóng góp bao nhiêu cho *từng* engine.
-    """
+    """Chuẩn bị ảnh y hệt bộ nhận dạng của hệ thống, trước khi engine nhìn thấy."""
     vao = anh
     if tach_hai_dong and estimate_line_count(anh, NGUONG_HAI_DONG) == 2:
         tren, duoi = split_two_line(vao)

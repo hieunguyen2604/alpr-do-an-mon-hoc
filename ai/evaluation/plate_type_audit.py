@@ -30,16 +30,7 @@ EXPECTED_COLORS: tuple[str, ...] = ("white", "yellow", "blue", "red", "unknown")
 
 @dataclass(slots=True)
 class AuditRecord:
-    """One image's perceived type.
-
-    Attributes:
-        image_path: Where the image came from.
-        color: Background colour named by the classifier.
-        color_confidence: Fraction of sampled pixels behind that verdict.
-        kind: Plate family from the character string, or ``""`` when the audit
-            ran without labels.
-        plate_text: The labelled string, when one was available.
-    """
+    """One image's perceived type."""
 
     image_path: str
     color: str
@@ -50,17 +41,7 @@ class AuditRecord:
 
 @dataclass(slots=True)
 class AuditSummary:
-    """Aggregate counts across an audited set.
-
-    Attributes:
-        total: Images successfully read.
-        unreadable: Images that could not be decoded.
-        by_color: Count per background colour, including zeroes.
-        by_kind: Count per plate family, empty when the audit had no labels.
-        by_color_and_kind: Joint distribution, as ``"colour/kind"`` keys.
-        low_confidence: Images whose colour verdict fell below the classifier's
-            own dominance threshold -- the ones worth checking by eye.
-    """
+    """Aggregate counts across an audited set."""
 
     total: int = 0
     unreadable: int = 0
@@ -71,20 +52,7 @@ class AuditSummary:
 
 
 def read_image(path: str):
-    """Read an image, tolerating paths OpenCV cannot open directly.
-
-    ``cv2.imread`` returns ``None`` for any path containing a character outside
-    the C locale on Windows -- silently, with no exception. Reading the bytes in
-    Python and decoding them from memory sidesteps the locale entirely, which
-    matters here because plate images downloaded from Vietnamese sources
-    routinely carry diacritics in their filenames.
-
-    Args:
-        path: Filesystem path to an image.
-
-    Returns:
-        The decoded BGR array, or ``None`` when the file is genuinely unreadable.
-    """
+    """Read an image, tolerating paths OpenCV cannot open directly."""
     image = cv2.imread(path)
     if image is not None:
         return image
@@ -95,15 +63,7 @@ def read_image(path: str):
 
 
 def _iter_labelled(labels_path: Path) -> list[tuple[str, str, int]]:
-    """Read ``(image_path, plate_text, line_count)`` triples from a label CSV.
-
-    Args:
-        labels_path: CSV carrying at least ``image_path`` and ``plate_text``.
-
-    Returns:
-        One triple per row. The BOM-prefixed header variant is accepted because
-        the project's own label files are written with one.
-    """
+    """Read ``(image_path, plate_text, line_count)`` triples from a label CSV."""
     with labels_path.open(encoding="utf-8") as handle:
         rows = list(csv.DictReader(handle))
     if not rows:
@@ -113,16 +73,7 @@ def _iter_labelled(labels_path: Path) -> list[tuple[str, str, int]]:
 
 
 def _iter_directory(images_dir: Path) -> list[tuple[str, str, int]]:
-    """List images under a directory, with no label information.
-
-    Args:
-        images_dir: Directory searched recursively.
-
-    Returns:
-        Triples with empty text and a line count of ``1``, so the caller can
-        treat labelled and unlabelled input identically. The line count is unused
-        when there is no text to classify.
-    """
+    """List images under a directory, with no label information."""
     return [
         (str(path), "", 1)
         for path in sorted(images_dir.rglob("*"))
@@ -134,17 +85,7 @@ def audit_images(
     entries: list[tuple[str, str, int]],
     classify_kind: bool = True,
 ) -> tuple[list[AuditRecord], AuditSummary]:
-    """Classify every image and aggregate the distribution.
-
-    Args:
-        entries: ``(image_path, plate_text, line_count)`` triples.
-        classify_kind: Whether to also classify the plate family from the text.
-            Skipped for unlabelled directories, and skipped automatically when
-            the normalizer cannot be imported.
-
-    Returns:
-        The per-image records and the aggregate summary.
-    """
+    """Classify every image and aggregate the distribution."""
     normalizer = None
     if classify_kind:
         try:
@@ -220,14 +161,7 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def main(argv: list[str] | None = None) -> int:
-    """Run the audit.
-
-    Args:
-        argv: Command-line arguments; ``sys.argv[1:]`` when omitted.
-
-    Returns:
-        Process exit code: ``0`` on success, ``1`` when nothing could be read.
-    """
+    """Run the audit."""
     logging.basicConfig(level=logging.INFO, format="%(message)s")
     args = build_parser().parse_args(argv)
 

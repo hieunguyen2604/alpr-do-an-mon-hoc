@@ -1,9 +1,4 @@
-"""Add plate_kind, plate_color and plate_color_confidence to detection_history.
-
-Revision ID: 0002_plate_kind_and_color
-Revises: 0001_initial
-Create Date: 2026-07-20
-"""
+"""Add plate_kind, plate_color and plate_color_confidence to detection_history."""
 
 from __future__ import annotations
 

@@ -81,12 +81,7 @@ def discover_images(split_dir: Path) -> list[Path]:
 
 
 def hash_split(name: str, paths: Sequence[Path], hash_size: int = 8) -> SplitHashes:
-    """Compute phash for every image, returning an unpacked bit matrix.
-
-    Images that cannot be decoded are recorded in ``unreadable`` rather than
-    aborting the run -- a corrupt file is a dataset problem worth reporting, but
-    it should not prevent the leak question from being answered.
-    """
+    """Compute phash for every image, returning an unpacked bit matrix."""
     import imagehash
     from PIL import Image
 
@@ -118,12 +113,7 @@ def hash_split(name: str, paths: Sequence[Path], hash_size: int = 8) -> SplitHas
 
 
 def hamming_matrix(bits_a: np.ndarray, bits_b: np.ndarray) -> np.ndarray:
-    """Pairwise Hamming distances between two unpacked bit matrices.
-
-    For 0/1 matrices, the number of differing bits equals
-    ``a @ (1 - b).T + (1 - a) @ b.T`` -- two integer matrix products instead of
-    an n*m Python loop.
-    """
+    """Pairwise Hamming distances between two unpacked bit matrices."""
     if bits_a.size == 0 or bits_b.size == 0:
         return np.zeros((bits_a.shape[0], bits_b.shape[0]), dtype=np.int16)
 
@@ -141,13 +131,7 @@ def find_cross_split_duplicates(
     threshold: int,
     max_pairs_recorded: int,
 ) -> tuple[list[DuplicatePair], dict[str, int], int, int]:
-    """Compare two splits: close pairs, histogram, minimum distance, close count.
-
-    The histogram is returned alongside the pair list because "zero pairs at
-    distance <= 5" is much more convincing when accompanied by the shape of the
-    whole distribution: it shows the threshold was not simply missing a cluster
-    sitting just above the cut.
-    """
+    """Compare two splits: close pairs, histogram, minimum distance, close count."""
     distances = hamming_matrix(split_a.bits, split_b.bits)
 
     histogram: dict[str, int] = {}
@@ -181,12 +165,7 @@ def find_cross_split_duplicates(
 def find_within_split_duplicates(
     split: SplitHashes, threshold: int, max_pairs_recorded: int
 ) -> tuple[int, list[DuplicatePair]]:
-    """Count near-duplicate pairs *inside* one split (upper triangle only).
-
-    Within-split duplication does not invalidate a test score the way
-    cross-split leakage does, but it inflates the apparent size of the dataset
-    and is worth knowing about.
-    """
+    """Count near-duplicate pairs *inside* one split (upper triangle only)."""
     distances = hamming_matrix(split.bits, split.bits)
     if distances.size == 0:
         return 0, []

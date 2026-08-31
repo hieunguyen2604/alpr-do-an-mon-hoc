@@ -1,9 +1,4 @@
-"""Add video_time_seconds to detection_history.
-
-Revision ID: 0003_video_time_seconds
-Revises: 0002_plate_kind_and_color
-Create Date: 2026-07-20
-"""
+"""Add video_time_seconds to detection_history."""
 
 from __future__ import annotations
 

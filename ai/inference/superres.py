@@ -33,12 +33,7 @@ _unavailable_logged = False
 
 
 def _load_engine(scale: int) -> object | None:
-    """Build (or fetch the cached) FSRCNN engine for one scale.
-
-    Returns:
-        The engine, or ``None`` when the contrib module or the model file is
-        missing -- both are survivable configurations, not errors.
-    """
+    """Build (or fetch the cached) FSRCNN engine for one scale."""
     global _unavailable_logged
 
     with _lock:
@@ -81,16 +76,7 @@ def superres_available() -> bool:
 
 
 def superres_upscale(image: ImageArray, scale: int) -> ImageArray | None:
-    """Upscale a crop with the FSRCNN model for ``scale``.
-
-    Args:
-        image: The plate crop, BGR ``uint8``.
-        scale: One of :data:`SR_SCALES`.
-
-    Returns:
-        The upscaled image, or ``None`` when SR is unavailable or fails --
-        the caller simply skips the variant.
-    """
+    """Upscale a crop with the FSRCNN model for ``scale``."""
     engine = _load_engine(scale)
     if engine is None:
         return None

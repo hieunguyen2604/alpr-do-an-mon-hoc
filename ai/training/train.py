@@ -43,24 +43,7 @@ _CPU_WARNING_BANNER = (
 
 # --- Logging ---
 def configure_logging(log_dir: Path, run_name: str, verbose: bool = True) -> Path:
-    """Send log records to stdout and to a timestamped file.
-
-    A file handler is not a nicety here: Colab tears down the VM when a session
-    ends, and the browser scrollback is often the only other record of what
-    happened. Writing to disk (ideally a Drive-mounted directory) means the run
-    can still be diagnosed afterwards.
-
-    Args:
-        log_dir: Directory for the log file; created if missing.
-        run_name: Run name, used in the log filename.
-        verbose: Emit ``DEBUG`` records as well as ``INFO``.
-
-    Returns:
-        Path to the log file.
-
-    Raises:
-        ValueError: If the log directory cannot be created or written to.
-    """
+    """Send log records to stdout and to a timestamped file."""
     timestamp = datetime.now(timezone.utc).strftime("%Y%m%d-%H%M%S")
     log_file = log_dir / f"{run_name}_{timestamp}.log"
     try:
@@ -99,22 +82,7 @@ def configure_logging(log_dir: Path, run_name: str, verbose: bool = True) -> Pat
 
 # --- Device selection ---
 def resolve_device(requested: str) -> str:
-    """Turn a requested device string into a concrete Ultralytics device.
-
-    ``"auto"`` prefers CUDA, then Apple MPS, then CPU. Any other value is
-    honoured as-is, but a request for CUDA on a machine without it is downgraded
-    to CPU with a warning rather than left to fail deep inside the trainer.
-
-    Args:
-        requested: ``"auto"``, ``"cpu"``, ``"cuda"``, ``"0"``, ``"0,1"`` or
-            ``"mps"``.
-
-    Returns:
-        A device string that Ultralytics accepts.
-
-    Raises:
-        RuntimeError: If PyTorch is not installed.
-    """
+    """Turn a requested device string into a concrete Ultralytics device."""
     try:
         import torch
     except ImportError as error:  # pragma: no cover - environment problem
@@ -160,11 +128,7 @@ def resolve_device(requested: str) -> str:
 
 
 def log_environment() -> None:
-    """Log the versions and hardware that produced this run.
-
-    Recorded so that a number quoted in the thesis can be tied to a concrete
-    software/hardware combination.
-    """
+    """Log the versions and hardware that produced this run."""
     import platform
 
     LOGGER.info("Python      : %s", sys.version.split()[0])
@@ -188,20 +152,7 @@ def log_environment() -> None:
 
 # --- Checkpoints ---
 def find_resume_checkpoint(config: TrainingConfig, explicit: str | None) -> Path:
-    """Locate the checkpoint to resume training from.
-
-    Args:
-        config: Configuration whose :attr:`~TrainingConfig.run_dir` is searched
-            when no explicit path is given.
-        explicit: Optional user-supplied path to a ``.pt`` file.
-
-    Returns:
-        Absolute path to an existing checkpoint.
-
-    Raises:
-        FileNotFoundError: If the explicit path does not exist, or if no
-            ``last.pt`` can be found for the configured run.
-    """
+    """Locate the checkpoint to resume training from."""
     if explicit:
         candidate = Path(explicit).expanduser()
         if not candidate.is_absolute():
@@ -233,16 +184,7 @@ def find_resume_checkpoint(config: TrainingConfig, explicit: str | None) -> Path
 
 
 def inspect_checkpoint(checkpoint: Path) -> dict[str, Any]:
-    """Read the training state stored inside an Ultralytics checkpoint.
-
-    Args:
-        checkpoint: Path to a ``.pt`` file.
-
-    Returns:
-        Mapping with ``last_epoch`` (``-1`` once training has finished),
-        ``total_epochs``, ``data`` and ``readable``. Values are ``None`` when
-        the checkpoint could not be inspected.
-    """
+    """Read the training state stored inside an Ultralytics checkpoint."""
     report: dict[str, Any] = {
         "readable": False,
         "last_epoch": None,
@@ -267,21 +209,7 @@ def inspect_checkpoint(checkpoint: Path) -> dict[str, Any]:
 
 
 def assert_resumable(checkpoint: Path) -> None:
-    """Refuse to resume a checkpoint whose training has already completed.
-
-    This guard exists because of a genuinely dangerous Ultralytics behaviour:
-    calling ``train(resume=True)`` on a *finished* checkpoint does not raise --
-    it silently discards the resume request and starts a brand-new run with
-    **default** arguments, i.e. training on COCO. The run looks superficially
-    normal, finishes, and its worthless weights are then published over a good
-    ``best.pt``. Failing loudly here is the only safe behaviour.
-
-    Args:
-        checkpoint: Path to the ``last.pt`` being resumed.
-
-    Raises:
-        ValueError: If the checkpoint's training run already finished.
-    """
+    """Refuse to resume a checkpoint whose training has already completed."""
     state = inspect_checkpoint(checkpoint)
     if not state["readable"]:
         LOGGER.warning(
@@ -317,25 +245,7 @@ def publish_best_weights(
     models_dir: Path = DEFAULT_MODELS_DIR,
     filename: str = "best.pt",
 ) -> Path | None:
-    """Copy the run's best checkpoint into the project's model directory.
-
-    ``models/best.pt`` is the artefact the inference layer loads by default
-    (``ALPR_MODEL_PATH``), so promoting it is the final step of a training run.
-    An existing file is moved aside with a timestamp suffix rather than
-    overwritten -- losing a previously trained model to a worse run is an
-    expensive, silent mistake.
-
-    Args:
-        run_dir: Ultralytics run directory containing ``weights/best.pt``.
-        models_dir: Destination directory; created if missing.
-        filename: Destination file name.
-
-    Returns:
-        The published path, or ``None`` if the run produced no ``best.pt``.
-
-    Raises:
-        ValueError: If the file cannot be copied.
-    """
+    """Copy the run's best checkpoint into the project's model directory."""
     source = run_dir / "weights" / "best.pt"
     if not source.is_file():
         LOGGER.error(
@@ -364,15 +274,7 @@ def publish_best_weights(
 
 # --- Training ---
 def _validate_dataset(config: TrainingConfig) -> None:
-    """Check the dataset descriptor exists and looks usable.
-
-    Args:
-        config: Configuration to check.
-
-    Raises:
-        FileNotFoundError: If the ``data.yaml`` descriptor is missing.
-        ValueError: If it is not readable YAML or lacks the required keys.
-    """
+    """Check the dataset descriptor exists and looks usable."""
     import yaml
 
     if not config.data.is_file():
@@ -401,22 +303,7 @@ def run_training(
     resume_from: Path | None = None,
     models_dir: Path = DEFAULT_MODELS_DIR,
 ) -> dict[str, Any]:
-    """Execute one training run end to end.
-
-    Args:
-        config: Fully resolved hyper-parameters.
-        resume_from: Checkpoint to continue from, or ``None`` for a fresh run.
-        models_dir: Directory the winning ``best.pt`` is published into.
-
-    Returns:
-        A summary mapping with keys ``run_dir``, ``best_weights``,
-        ``published_weights``, ``elapsed_seconds`` and ``metrics``.
-
-    Raises:
-        RuntimeError: If Ultralytics is unavailable or training fails.
-        FileNotFoundError: If the dataset descriptor is missing.
-        ValueError: If the configuration or dataset is malformed.
-    """
+    """Execute one training run end to end."""
     try:
         from ultralytics import YOLO
     except ImportError as error:  # pragma: no cover - environment problem
@@ -536,11 +423,7 @@ def run_training(
 
 # --- CLI ---
 def build_parser() -> argparse.ArgumentParser:
-    """Construct the command-line parser.
-
-    Returns:
-        The configured :class:`argparse.ArgumentParser`.
-    """
+    """Construct the command-line parser."""
     parser = argparse.ArgumentParser(
         prog="python -m ai.training.train",
         description=(
@@ -654,21 +537,7 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def _apply_overrides(config: TrainingConfig, args: argparse.Namespace) -> TrainingConfig:
-    """Apply command-line overrides on top of a loaded configuration.
-
-    Rebuilding the dataclass (rather than mutating it) re-runs validation, so an
-    invalid override is rejected immediately.
-
-    Args:
-        config: Configuration loaded from YAML.
-        args: Parsed command-line arguments.
-
-    Returns:
-        A new, validated configuration.
-
-    Raises:
-        ValueError: If an override produces an invalid configuration.
-    """
+    """Apply command-line overrides on top of a loaded configuration."""
     values = config.to_dict()
     overrides = {
         "device": args.device,
@@ -702,15 +571,7 @@ def _apply_overrides(config: TrainingConfig, args: argparse.Namespace) -> Traini
 
 
 def main(argv: list[str] | None = None) -> int:
-    """Command-line entry point.
-
-    Args:
-        argv: Argument list; defaults to :data:`sys.argv`.
-
-    Returns:
-        Process exit code: ``0`` on success, ``1`` on a handled error, ``130``
-        if interrupted.
-    """
+    """Command-line entry point."""
     args = build_parser().parse_args(argv)
 
     logging.basicConfig(level=logging.INFO, format="%(levelname)s | %(message)s", stream=sys.stdout)

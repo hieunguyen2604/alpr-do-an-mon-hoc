@@ -57,24 +57,7 @@ _JOB_EXAMPLE: Final[dict[str, object]] = {
 
 
 def _read_upload(file: UploadFile, *, limit_bytes: int) -> bytes:
-    """Read an upload into memory, rejecting an oversized one early.
-
-    Starlette reports the size before the body is touched, so a file over the
-    ceiling is refused without being read at all. The service checks the real
-    length again afterwards -- the header is a hint from the client and this
-    one is only an optimisation, not the enforcement point (NFR-S3).
-
-    Args:
-        file: The multipart upload.
-        limit_bytes: Configured ceiling for this kind of upload.
-
-    Returns:
-        The complete file contents.
-
-    Raises:
-        ValidationError: If the request carried no file at all.
-        FileTooLargeError: If the declared size already exceeds the ceiling.
-    """
+    """Read an upload into memory, rejecting an oversized one early."""
     if file is None or not file.filename:
         raise ValidationError(
             "Request contained no file part",
@@ -129,23 +112,7 @@ def detect_image(
         File(description="Image file: JPEG, PNG, WebP or BMP."),
     ],
 ) -> DetectionResponse:
-    """Handle an image upload.
-
-    Args:
-        db: Session for this request.
-        detection: The detection service.
-        settings: Supplies the image size ceiling.
-        file: The uploaded image.
-
-    Returns:
-        The plates found, with the identifier of the job that groups them.
-
-    Raises:
-        ValidationError: If no file was sent or it cannot be decoded.
-        FileTooLargeError: If it exceeds the image ceiling.
-        UnsupportedMediaTypeError: If its true type is not an accepted image.
-        ProcessingError: If the pipeline or storage fails.
-    """
+    """Handle an image upload."""
     payload = _read_upload(file, limit_bytes=settings.max_image_size_bytes)
     return detection.detect_image(db, data=payload, original_filename=file.filename)
 
@@ -203,26 +170,7 @@ def detect_video(
         File(description="Video file: MP4, AVI, MOV or MKV."),
     ],
 ) -> DetectionJobResponse:
-    """Accept a video upload and queue it for processing.
-
-    Args:
-        db: Session for this request; the job is committed before returning so
-            a status poll arriving immediately can find it.
-        detection: The detection service.
-        storage: Used to build the job's response URLs.
-        settings: Supplies the video size ceiling.
-        background: FastAPI's background task queue.
-        file: The uploaded video.
-
-    Returns:
-        The queued job, in state ``pending``.
-
-    Raises:
-        ValidationError: If no file was sent.
-        FileTooLargeError: If it exceeds the video ceiling.
-        UnsupportedMediaTypeError: If its true type is not an accepted video.
-        ProcessingError: If the file could not be stored.
-    """
+    """Accept a video upload and queue it for processing."""
     payload = _read_upload(file, limit_bytes=settings.max_video_size_bytes)
     job = detection.create_video_job(db, data=payload, original_filename=file.filename)
 
@@ -306,26 +254,7 @@ def detect_frame(
         ),
     ] = True,
 ) -> DetectionResponse:
-    """Handle one webcam frame.
-
-    Args:
-        db: Session for this request.
-        detection: The detection service.
-        settings: Supplies the image size ceiling, which frames are held to.
-        file: The captured frame.
-        job_id: Identifier of the session this frame continues, if any.
-        read_text: Whether to run OCR. ``False`` returns boxes only and stores
-            nothing.
-
-    Returns:
-        The plates found in this frame, with the session's job identifier.
-
-    Raises:
-        ValidationError: If the frame is missing or cannot be decoded.
-        FileTooLargeError: If it exceeds the image ceiling.
-        UnsupportedMediaTypeError: If its true type is not an accepted image.
-        ProcessingError: If the pipeline fails.
-    """
+    """Handle one webcam frame."""
     payload = _read_upload(file, limit_bytes=settings.max_image_size_bytes)
     return detection.detect_frame(db, data=payload, job_id=job_id, read_text=read_text)
 
@@ -365,17 +294,5 @@ def get_job(
         ),
     ],
 ) -> DetectionJobResponse:
-    """Return one job's progress.
-
-    Args:
-        db: Session for this request.
-        detection: The detection service.
-        job_id: Identifier of the job to report on.
-
-    Returns:
-        The job's current state.
-
-    Raises:
-        NotFoundError: If no such job exists.
-    """
+    """Return one job's progress."""
     return detection.get_job(db, job_id)

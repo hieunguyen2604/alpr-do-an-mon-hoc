@@ -34,17 +34,7 @@ _BACKENDS: Final[dict[str, tuple[str, str]]] = {
 
 
 def collect_cpu_info() -> dict[str, Any]:
-    """Describe the CPU and thread configuration the benchmark ran on.
-
-    Uses :mod:`psutil` when available for core counts and frequency, falling
-    back to the standard library. On Windows, ``platform.processor()`` returns a
-    generic family string, so the registry-provided ``PROCESSOR_IDENTIFIER`` is
-    included as well.
-
-    Returns:
-        Mapping describing the machine; keys that could not be determined are
-        set to ``"unknown"``.
-    """
+    """Describe the CPU and thread configuration the benchmark ran on."""
     info: dict[str, Any] = {
         "system": f"{platform.system()} {platform.release()}",
         "machine": platform.machine(),
@@ -83,18 +73,7 @@ def collect_cpu_info() -> dict[str, Any]:
 
 
 def discover_images(source: Path, limit: int) -> list[Path]:
-    """Collect the images to benchmark on.
-
-    Args:
-        source: An image file, or a directory searched recursively.
-        limit: Maximum number of images to return; ``0`` means no limit.
-
-    Returns:
-        Sorted list of image paths.
-
-    Raises:
-        FileNotFoundError: If ``source`` does not exist or holds no images.
-    """
+    """Collect the images to benchmark on."""
     if not source.exists():
         raise FileNotFoundError(
             f"Benchmark image source not found: {source}\n"
@@ -111,15 +90,7 @@ def discover_images(source: Path, limit: int) -> list[Path]:
 
 
 def resolve_backend_path(weights: Path, backend: str) -> Path | None:
-    """Locate the exported artefact for a backend, next to the .pt checkpoint.
-
-    Args:
-        weights: Path to the base ``.pt`` checkpoint.
-        backend: Backend key from :data:`_BACKENDS`.
-
-    Returns:
-        The artefact path if it exists, otherwise ``None``.
-    """
+    """Locate the exported artefact for a backend, next to the .pt checkpoint."""
     suffix, _ = _BACKENDS[backend]
     if backend == "pytorch":
         return weights if weights.is_file() else None
@@ -137,19 +108,7 @@ def benchmark_backend(
     runs: int,
     warmup: int,
 ) -> dict[str, Any]:
-    """Time one backend over a fixed set of images.
-
-    Args:
-        model_path: Artefact to load (``.pt``, ``.onnx``, ``.torchscript`` or an
-            OpenVINO directory).
-        images: Images to run over, cycled if fewer than ``runs``.
-        imgsz: Inference input size.
-        runs: Number of timed inferences.
-        warmup: Number of discarded warm-up inferences.
-
-    Returns:
-        Mapping with ``ok``, timing statistics and, on failure, ``error``.
-    """
+    """Time one backend over a fixed set of images."""
     try:
         from ultralytics import YOLO
     except ImportError as error:  # pragma: no cover - environment problem
@@ -208,11 +167,7 @@ def benchmark_backend(
 
 
 def build_parser() -> argparse.ArgumentParser:
-    """Construct the command-line parser.
-
-    Returns:
-        The configured :class:`argparse.ArgumentParser`.
-    """
+    """Construct the command-line parser."""
     parser = argparse.ArgumentParser(
         prog="python -m ai.evaluation.benchmark_cpu",
         description=(
@@ -287,27 +242,13 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def _resolve(path: str | Path) -> Path:
-    """Resolve a path against the repository root when relative.
-
-    Args:
-        path: Absolute or relative path.
-
-    Returns:
-        An absolute path.
-    """
+    """Resolve a path against the repository root when relative."""
     candidate = Path(path).expanduser()
     return candidate if candidate.is_absolute() else PROJECT_ROOT / candidate
 
 
 def main(argv: list[str] | None = None) -> int:
-    """Command-line entry point.
-
-    Args:
-        argv: Argument list; defaults to :data:`sys.argv`.
-
-    Returns:
-        ``0`` if at least one backend was benchmarked, ``1`` otherwise.
-    """
+    """Command-line entry point."""
     args = build_parser().parse_args(argv)
     logging.basicConfig(
         level=logging.INFO,

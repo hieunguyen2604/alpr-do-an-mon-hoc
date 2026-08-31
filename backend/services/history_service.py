@@ -1,7 +1,4 @@
-"""Querying, exporting and deleting stored detection records.
-
-Provides pagination, filtering, full-text search, CSV export, and deletion (NFR-SC2).
-"""
+"""Querying, exporting and deleting stored detection records."""
 
 from __future__ import annotations
 
@@ -46,13 +43,7 @@ _EXPORT_BATCH_SIZE: Final[int] = 500
 
 
 class SortField(StrEnum):
-    """Columns the history list may be ordered by.
-
-    An enumeration rather than a free string, because the value ends up in an
-    ``ORDER BY`` clause. Accepting arbitrary text there is how a sort parameter
-    becomes an injection vector; with an enum, an unknown value is rejected by
-    validation before any query is built.
-    """
+    """Columns the history list may be ordered by."""
 
     DETECTED_TIME = "detected_time"
     CREATED_AT = "created_at"
@@ -72,27 +63,7 @@ class SortOrder(StrEnum):
 
 @dataclass(frozen=True, slots=True)
 class HistoryFilter:
-    """The set of conditions narrowing a history query.
-
-    Grouped into one object so that adding a filter changes one dataclass and
-    one ``_apply`` method rather than the signature of every method that
-    forwards it -- the list endpoint and the export endpoint must always agree
-    on what a filter means, or a user would export something different from what
-    they were looking at.
-
-    Attributes:
-        search: Free text matched against the corrected plate number and the
-            raw OCR string. Matching the raw string too is deliberate: a user
-            searching for what they saw on the vehicle should still find the
-            record when post-processing altered the text.
-        input_type: Restrict to one of ``image``/``video``/``webcam``.
-        is_valid_format: Restrict to records that did or did not match a
-            Vietnamese plate format.
-        date_from: Inclusive lower bound on ``detected_time``.
-        date_to: Inclusive upper bound on ``detected_time``.
-        min_confidence: Lower bound on the *detection* confidence.
-        job_id: Restrict to the plates found in one upload.
-    """
+    """The set of conditions narrowing a history query."""
 
     search: str | None = None
     input_type: str | None = None
@@ -103,15 +74,7 @@ class HistoryFilter:
     job_id: str | None = None
 
     def validate(self) -> None:
-        """Check the filter for self-contradictory values.
-
-        Raises:
-            ValidationError: If the date range ends before it starts, or if the
-                confidence bound is outside ``[0.0, 1.0]``. Caught here rather
-                than left to return zero rows, because an empty result looks
-                like "no data" and sends the user hunting for a problem that is
-                in their query.
-        """
+        """Check the filter for self-contradictory values."""
         if (
             self.date_from is not None
             and self.date_to is not None
@@ -150,31 +113,13 @@ class HistoryService:
     """Reads, exports and deletes stored detection records."""
 
     def __init__(self, storage: StorageService) -> None:
-        """Create the service.
-
-        Args:
-            storage: Used to turn stored paths into public URLs and to remove
-                the files behind a deleted record.
-        """
+        """Create the service."""
         self._storage = storage
 
     # -- Mapping ----------------------------------------------------------
 
     def _to_response(self, row: DetectionHistory) -> DetectionHistoryResponse:
-        """Map one ORM row to its API representation.
-
-        The path columns are replaced by URLs. That is not cosmetic: the stored
-        value is a filesystem path, and publishing it would tell a client where
-        the server keeps its files and invite requests for paths near it. The
-        URL points at the static handler, which is the only thing allowed to
-        resolve it (NFR-S2).
-
-        Args:
-            row: The stored detection.
-
-        Returns:
-            The response model for this record.
-        """
+        """Map one ORM row to its API representation."""
         return DetectionHistoryResponse(
             id=row.id,
             plate_number=row.plate_number,
@@ -210,20 +155,7 @@ class HistoryService:
     def _apply_filter(
         statement: Select[tuple[DetectionHistory]], criteria: HistoryFilter
     ) -> Select[tuple[DetectionHistory]]:
-        """Add every active condition of a filter to a query.
-
-        One method used by the list query, the count query and the export, so
-        that the three cannot disagree about what a filter selects. A separate
-        ``WHERE`` clause per call site is how a paginated list ends up reporting
-        a total that does not match its own contents.
-
-        Args:
-            statement: The query to narrow.
-            criteria: The conditions to apply. Unset fields add nothing.
-
-        Returns:
-            The narrowed query.
-        """
+        """Add every active condition of a filter to a query."""
         if criteria.search:
             # Escape LIKE wildcards to prevent unintended matches
             needle = criteria.search.strip().replace("\\", "\\\\")
@@ -257,23 +189,7 @@ class HistoryService:
         sort_by: SortField,
         order: SortOrder,
     ) -> Select[tuple[DetectionHistory]]:
-        """Add an ``ORDER BY`` clause, with a tiebreaker.
-
-        The secondary sort on ``id`` is what makes pagination correct rather
-        than merely usually correct. Ordering by ``detected_time`` alone leaves
-        rows sharing a timestamp -- every plate from one image does -- in an
-        order the database is free to change between two queries, so a row can
-        appear on both page 1 and page 2, or on neither. The unique tiebreaker
-        removes the ambiguity.
-
-        Args:
-            statement: The query to order.
-            sort_by: Which column to sort on.
-            order: Ascending or descending.
-
-        Returns:
-            The ordered query.
-        """
+        """Add an ``ORDER BY`` clause, with a tiebreaker."""
         column = getattr(DetectionHistory, sort_by.value)
         if order is SortOrder.DESC:
             return statement.order_by(column.desc(), DetectionHistory.id.desc())
@@ -291,24 +207,7 @@ class HistoryService:
         sort_by: SortField = SortField.DETECTED_TIME,
         order: SortOrder = SortOrder.DESC,
     ) -> HistoryListResponse:
-        """Return one page of detection records.
-
-        Args:
-            db: Session for this request.
-            page: 1-based page number.
-            page_size: Records per page, capped at :data:`MAX_PAGE_SIZE`.
-            criteria: Conditions narrowing the result. Defaults to no filtering.
-            sort_by: Column to order by.
-            order: Sort direction.
-
-        Returns:
-            The page, together with the total number of matching records across
-            all pages.
-
-        Raises:
-            ValidationError: If the paging parameters are out of range or the
-                filter is self-contradictory.
-        """
+        """Return one page of detection records."""
         if page < 1:
             raise ValidationError(
                 f"page must be >= 1, got {page}",
@@ -342,18 +241,7 @@ class HistoryService:
         )
 
     def get_by_id(self, db: Session, detection_id: int) -> DetectionHistoryResponse:
-        """Return one detection record.
-
-        Args:
-            db: Session for this request.
-            detection_id: Primary key of the record.
-
-        Returns:
-            The record's response model.
-
-        Raises:
-            NotFoundError: If no such record exists.
-        """
+        """Return one detection record."""
         row = db.get(DetectionHistory, detection_id)
         if row is None:
             raise NotFoundError.for_resource("detection", detection_id)
@@ -362,26 +250,7 @@ class HistoryService:
     # -- Deleting ---------------------------------------------------------
 
     def delete(self, db: Session, detection_id: int) -> None:
-        """Delete one detection record and the files that belong only to it.
-
-        The plate crop belongs to this record alone and is always removed. The
-        **source image does not**: every plate found in one upload shares it, so
-        deleting it with the first record would leave the siblings pointing at a
-        file that no longer exists. It is removed only once no other record
-        still references it.
-
-        Files are deleted after the row, not before. If the delete is rolled
-        back, an orphaned file wastes some disk; if it were the other way round,
-        a surviving row would point at nothing and the history screen would show
-        a broken image with no way to recover.
-
-        Args:
-            db: Session for this request; committed here.
-            detection_id: Primary key of the record to delete.
-
-        Raises:
-            NotFoundError: If no such record exists.
-        """
+        """Delete one detection record and the files that belong only to it."""
         row = db.get(DetectionHistory, detection_id)
         if row is None:
             raise NotFoundError.for_resource("detection", detection_id)
@@ -425,35 +294,7 @@ class HistoryService:
         sort_by: SortField = SortField.DETECTED_TIME,
         order: SortOrder = SortOrder.DESC,
     ) -> Iterator[str]:
-        """Stream the matching records as CSV text.
-
-        **The first thing yielded is a UTF-8 byte-order mark**, and it is not
-        decoration. Excel does not detect UTF-8 in a ``.csv`` file: without the
-        BOM it falls back to the system code page, and every Vietnamese
-        character in the headers turns into mojibake. Since the export exists so
-        the results can be opened in Excel, a file Excel renders wrongly is a
-        broken export, and one BOM is the entire fix.
-
-        The rows are yielded in batches instead of built into one string,
-        because the export deliberately has no page limit: at 100 000 rows
-        (NFR-SC2) the assembled document is tens of megabytes, and holding it in
-        memory to send it in one piece is how an export endpoint takes the
-        server down.
-
-        Args:
-            db: Session for this request.
-            criteria: Conditions narrowing the export. Must be the same filter
-                the user had applied to the list, or they receive something
-                other than what they were looking at.
-            sort_by: Column to order by.
-            order: Sort direction.
-
-        Yields:
-            Chunks of CSV text, starting with the BOM and the header row.
-
-        Raises:
-            ValidationError: If the filter is self-contradictory.
-        """
+        """Stream the matching records as CSV text."""
         criteria = criteria or HistoryFilter()
         criteria.validate()
 
@@ -465,11 +306,7 @@ class HistoryService:
         writer = csv.writer(buffer, lineterminator="\r\n")
 
         def flush() -> str:
-            """Return everything written so far and reset the buffer.
-
-            Returns:
-                The accumulated CSV text.
-            """
+            """Return everything written so far and reset the buffer."""
             chunk = buffer.getvalue()
             buffer.seek(0)
             buffer.truncate(0)
@@ -493,19 +330,7 @@ class HistoryService:
 
     @staticmethod
     def _csv_row(row: DetectionHistory) -> tuple[str, ...]:
-        """Render one record as CSV cells.
-
-        Every cell is a string, including the numbers. Left as floats they
-        would be written with the repr's full precision (``0.9400000000000001``)
-        and, worse, with a decimal point that a Vietnamese Excel locale reads as
-        a thousands separator -- turning a confidence of 0.94 into 94.
-
-        Args:
-            row: The record to render.
-
-        Returns:
-            The cells, in the order of :data:`_CSV_HEADERS`.
-        """
+        """Render one record as CSV cells."""
         return (
             str(row.id),
             row.plate_number or "",

@@ -1,19 +1,4 @@
-"""Kiểm tra mọi tham chiếu chéo trong luận văn có trỏ tới mục CÓ THẬT không.
-
-Vì sao cần
-----------
-Quyển đồ án có hơn 500 tham chiếu dạng *"mục 5.6.5"*, *"Chương 3"*, *"bảng
-T5.7b"*. Chúng là **văn bản thuần** — không có gì kiểm tra chúng, nên một lần
-đổi số mục là đủ để tạo ra hàng chục tham chiếu chết mà không ai biết cho tới
-lúc hội đồng lật tới trang đó.
-
-Script này biến chúng thành thứ kiểm được. Chạy TRƯỚC khi tái cấu trúc để biết
-hiện trạng, và chạy LẠI sau đó — số lỗi không được tăng.
-
-Chạy::
-
-    backend/.venv/Scripts/python scripts/check_thesis_refs.py
-"""
+"""Kiểm tra mọi tham chiếu chéo trong luận văn có trỏ tới mục CÓ THẬT không."""
 
 from __future__ import annotations
 

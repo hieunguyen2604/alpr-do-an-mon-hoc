@@ -1,7 +1,4 @@
-"""Post-processing: position-based repair and validation for Vietnamese plates (NFR-M1).
-
-Applies positional character repair according to national standards TT 79/2024 and QCVN 08:2024.
-"""
+"""Post-processing: position-based repair and validation for Vietnamese plates (NFR-M1)."""
 
 from __future__ import annotations
 
@@ -78,22 +75,7 @@ class VietnamesePlateNormalizer(BaseNormalizer):
     def normalize_detailed(
         self, raw_text: str, line_count: int | None = None
     ) -> NormalizationOutcome:
-        """Run the full normalisation and report everything that happened.
-
-        Args:
-            raw_text: The unmodified OCR output.
-            line_count: Number of text lines on the physical plate, ``1`` or
-                ``2``, when the caller knows it. The upper layer derives it
-                from the crop's aspect ratio. It is used solely to resolve the
-                8-character car / old-motorcycle ambiguity; see
-                :meth:`detect_plate_kind` for what it can and cannot settle.
-                ``None`` means "unknown", which is always safe.
-
-        Returns:
-            A :class:`NormalizationOutcome`. It is never ``None`` and never
-            raises for malformed input: an empty or nonsensical string simply
-            comes back with ``is_valid_format=False``.
-        """
+        """Run the full normalisation and report everything that happened."""
         cleaned = clean_text(raw_text)
 
         if not cleaned:
@@ -197,47 +179,7 @@ class VietnamesePlateNormalizer(BaseNormalizer):
         line_count: int | None = None,
         raw_text: str | None = None,
     ) -> KindDecision:
-        """Classify a cleaned plate string.
-
-        Patterns are tried in the priority order of
-        :data:`~ai.inference.plate_rules.PATTERNS_BY_KIND`, and *all* matches
-        are collected, because two ambiguities are documented and verified:
-
-        ================= ============= ==============================
-        Ambiguity         Example       Resolvable by
-        ================= ============= ==============================
-        car / old moto    ``29B11234``  line count / printed dot
-        special / new mot ``29LD12345`` not by line count
-        ================= ============= ==============================
-
-        **What ``line_count`` can settle.** Motorcycles are always two-line
-        plates, so ``line_count=1`` proves the string is a car plate and the
-        ambiguity disappears. ``line_count=2`` proves nothing on its own: a
-        short car plate is two-line too, so the pair stays ambiguous and the
-        flag remains set. Claiming otherwise would fabricate information the
-        input does not contain.
-
-        **What the raw string can settle.** The physical plate prints a
-        five-digit order number with a dot (``609.69``) and a four-digit one
-        without. When the RAW OCR string carries a ``DDD.DD`` group, the
-        number has five digits, so the serial has one letter -- a car -- and
-        the ambiguity is genuinely gone. This is the evidence that puts the
-        two-line car plates the prior used to mislabel (``51H-609.69`` on an
-        SUV tailgate, ``51C-920.87`` on a truck) into the right family
-        without costing the measured 450/452 motorcycle majority anything:
-        their four-digit numbers never print a dot.
-
-        Args:
-            text: A cleaned string (digits and upper-case letters only).
-            line_count: ``1`` or ``2`` when known, otherwise ``None``. Any
-                other value is ignored.
-            raw_text: The unmodified OCR output, separators included, when the
-                caller has it. Used solely for the printed-dot evidence.
-
-        Returns:
-            A :class:`KindDecision` carrying the best candidate, every
-            candidate, and whether the result is ambiguous.
-        """
+        """Classify a cleaned plate string."""
         candidates = tuple(
             kind for kind, pattern in PATTERNS_BY_KIND.items() if pattern.match(text)
         )
@@ -278,21 +220,7 @@ class VietnamesePlateNormalizer(BaseNormalizer):
         )
 
     def is_valid_format(self, text: str, line_count: int | None = None) -> bool:
-        """Return whether a cleaned string matches a known civil plate format.
-
-        Army plates are excluded on purpose: they match
-        :data:`~ai.inference.plate_rules.RE_MILITARY`, but that pattern exists
-        to *identify and exclude* them, not to bless them as valid civil
-        registrations.
-
-        Args:
-            text: A cleaned string. Raw strings should be passed through
-                :func:`~ai.inference.plate_rules.clean_text` first.
-            line_count: ``1`` or ``2`` when known.
-
-        Returns:
-            ``True`` if any civil pattern matches.
-        """
+        """Return whether a cleaned string matches a known civil plate format."""
         return self.detect_plate_kind(text, line_count=line_count).kind in CIVIL_KINDS
 
     def format_for_display(
@@ -302,61 +230,7 @@ class VietnamesePlateNormalizer(BaseNormalizer):
         kind: PlateKind | str | None = None,
         upper_char_count: int = 0,
     ) -> str:
-        """Re-insert separators so a plate reads naturally in the UI.
-
-        The canonical stored form is separator-free (section 7.5); separators
-        are a presentation concern and are added back only here. The full
-        grouping rule table, one row per plate family, is documented in
-        ``docs/reports/23-display-format-rules.md`` -- this method is its
-        implementation and must not drift from it.
-
-        Layout produced: serial group, ``-``, then the order number with a dot
-        before its last two digits when it has five::
-
-            30A12345  -> 30A-123.45
-            29A1234   -> 29A-1234
-            29AA12345 -> 29AA-123.45
-            80001NG01 -> 80-001-NG-01
-
-        A single-line rendering is used throughout for consistency; the source
-        document also shows a two-line layout for motorcycles (``29-AA`` above
-        ``123.45``), which is a rendering decision for the front end rather
-        than a property of the plate string.
-
-        Args:
-            text: A cleaned, normalised plate string.
-            line_count: ``1`` or ``2`` when known, forwarded to classification
-                when ``kind`` is not supplied.
-            kind: The family the caller has ALREADY established for this
-                string (a :class:`~ai.inference.plate_rules.PlateKind` or its
-                string value). When given and consistent with the string, the
-                grouping follows it instead of re-deriving -- this is what
-                keeps the family badge and the digit grouping telling the same
-                story: ``51H60969`` classified as a car by the printed-dot
-                evidence must render ``51H-609.69``, never ``51H6-0969``.
-            upper_char_count: For a two-line plate, how many characters the
-                engine read from the **upper** line (see
-                :attr:`~ai.inference.types.PlateRecognition.upper_char_count`).
-                ``0`` means unknown.
-
-                When it is known it **outranks** ``kind``, because it is direct
-                evidence from the image rather than an inference from the
-                string. An eight-character two-line plate is genuinely
-                ambiguous otherwise: ``67C10815`` groups as ``67C-108.15`` if
-                the upper line read ``67C`` and as ``67C1-0815`` if it read
-                ``67C1``, and both are legal. Measured on the demo set, the
-                family-derived grouping got five of seven such plates right and
-                two wrong; the upper line gets all seven right.
-
-                Ignored unless the implied split leaves a 4- or 5-digit number,
-                so a mis-read fragment length cannot produce a grouping the
-                plate rules do not allow.
-
-        Returns:
-            The formatted string, or ``text`` unchanged when it matches no
-            known pattern -- an unrecognised string is shown exactly as read,
-            never dressed up to look valid.
-        """
+        """Re-insert separators so a plate reads naturally in the UI."""
         resolved_kind: PlateKind | None = None
         if kind is not None:
             try:
@@ -425,15 +299,7 @@ model.
 
 
 def _group_number(number: str) -> str:
-    """Insert the thousands dot into a plate's order-number group.
-
-    Args:
-        number: The order number, 4 or 5 digits.
-
-    Returns:
-        ``"123.45"`` for five digits, ``"1234"`` unchanged for four. Four-digit
-        plates carry no dot on the physical plate (section 2.3).
-    """
+    """Insert the thousands dot into a plate's order-number group."""
     if len(number) == 5:
         return f"{number[:3]}.{number[3:]}"
     return number

@@ -50,19 +50,7 @@ def health(
     settings: SettingsDep,
     pipeline: PipelineDep,
 ) -> HealthResponse:
-    """Report the service's readiness.
-
-    Args:
-        request: Used to read the start time recorded by the lifespan handler.
-        db: Session used for a trivial round trip that proves the database is
-            reachable.
-        settings: Supplies the reported service name and version.
-        pipeline: The installed recognition pipeline, asked whether it is ready.
-
-    Returns:
-        The health response. Never raises: a health check that fails with a 500
-        tells a monitor that the check is broken, not that the service is.
-    """
+    """Report the service's readiness."""
     database_connected = _probe_database(db)
     model_loaded = _probe_pipeline(pipeline)
 
@@ -81,18 +69,7 @@ def health(
 
 
 def _probe_database(db: DbSession) -> bool:
-    """Check that the database answers a query.
-
-    ``SELECT 1`` rather than an inspection of the connection object: a pooled
-    connection can look alive while the file behind it has been removed or the
-    disk has gone read-only. Only a round trip proves anything.
-
-    Args:
-        db: The session to probe.
-
-    Returns:
-        ``True`` if the query succeeded.
-    """
+    """Check that the database answers a query."""
     try:
         db.execute(text("SELECT 1"))
     except Exception as error:  # noqa: BLE001 -- the health check reports, never raises
@@ -105,15 +82,7 @@ def _probe_database(db: DbSession) -> bool:
 
 
 def _probe_pipeline(pipeline: PipelineDep) -> bool:
-    """Check whether the recognition pipeline can produce genuine results.
-
-    Args:
-        pipeline: The installed pipeline.
-
-    Returns:
-        ``True`` when the pipeline reports itself ready. A pipeline that raises
-        while being asked is treated as not ready, which is the safe reading.
-    """
+    """Check whether the recognition pipeline can produce genuine results."""
     try:
         return bool(pipeline.is_ready)
     except Exception as error:  # noqa: BLE001

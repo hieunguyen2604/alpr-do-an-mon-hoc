@@ -86,42 +86,7 @@ ERROR_CLASSES: Final[tuple[str, ...]] = (
 
 @dataclass(slots=True)
 class Sample:
-    """One labelled crop, measured through both paths.
-
-    Attributes:
-        image_path: Absolute path to the crop.
-        truth: Cleaned ground-truth plate string.
-        line_count: ``1`` or ``2``, from the label -- never estimated, because
-            the corpus geometry makes estimation impossible.
-        source_dataset: Which Roboflow dataset the crop came from.
-        split: The Roboflow split recorded for the crop.
-        raw_ocr_text: Engine output after case folding and separator stripping.
-            This is the NFR-A5 string.
-        plate_number: Normalised output. This is the NFR-A6 string.
-        is_valid_format: Whether the normalised string matched a civil pattern.
-        confidence: Aggregated OCR confidence.
-        ocr_ms: Wall-clock recognition time for the crop path.
-        e2e_text: Normalised plate string produced by the full pipeline on the
-            aspect-repaired image, or ``""`` when the detector found nothing.
-        e2e_detected: Whether the detector produced at least one box.
-        e2e_ms: Wall-clock time for the end-to-end path.
-        e2e_raw_text: The same pipeline run on the **unrepaired** square image,
-            or ``None`` when that pass was not run.
-        e2e_raw_detected: Whether the detector fired on the unrepaired image.
-        no_repair_text: Normalised output when the aspect-ratio repair is
-            skipped -- the ablation of caveat 1.
-        rescued_upper_line: Whether the two-line upper-half rescue supplied the
-            final answer. Recorded per sample so the contribution of that step
-            can be reported separately instead of being folded silently into
-            NFR-A6.
-        retried_skewed: Whether the failure-retry ladder
-            (:func:`~ai.inference.pipeline.retry_skewed_variants`) supplied the
-            final answer. Recorded for the same reason as
-            :attr:`rescued_upper_line`, and because the ladder is the most
-            expensive rung in the chain -- its cost is only justifiable against
-            a measured contribution.
-        error: Message when a stage raised, else ``None``.
-    """
+    """One labelled crop, measured through both paths."""
 
     image_path: str
     truth: str
@@ -148,25 +113,7 @@ class Sample:
 
 
 def restore_aspect_ratio(image: np.ndarray, line_count: int) -> np.ndarray:
-    """Reshape a square-exported plate crop to a physically plausible ratio.
-
-    The Roboflow OCR exports stretch every crop onto a square canvas, which
-    destroys the aspect ratio the pipeline uses to tell a one-line plate from a
-    two-line one. Reshaping to the regulation ratio for the *labelled* line
-    count restores that signal.
-
-    Only the width is changed; the height, and therefore the vertical sampling
-    of the glyphs, is left alone.
-
-    Args:
-        image: The crop, BGR or grayscale.
-        line_count: ``1`` or ``2``. Anything else leaves the image untouched,
-            so an unexpected label degrades to a no-op rather than an
-            exception.
-
-    Returns:
-        The reshaped crop, or ``image`` itself when no ratio is known.
-    """
+    """Reshape a square-exported plate crop to a physically plausible ratio."""
     ratio = CANONICAL_ASPECT_RATIO.get(line_count)
     if ratio is None:
         return image
@@ -180,15 +127,7 @@ def restore_aspect_ratio(image: np.ndarray, line_count: int) -> np.ndarray:
 
 
 def corpus_cer(pairs: Sequence[tuple[str, str]]) -> float:
-    """Compute the corpus-level character error rate.
-
-    Args:
-        pairs: ``(truth, prediction)`` pairs.
-
-    Returns:
-        Total edit distance divided by total reference length. ``0.0`` when the
-        corpus is empty or carries no reference characters.
-    """
+    """Compute the corpus-level character error rate."""
     distance = 0
     length = 0
     for truth, prediction in pairs:
@@ -198,28 +137,7 @@ def corpus_cer(pairs: Sequence[tuple[str, str]]) -> float:
 
 
 def classify_error(truth: str, prediction: str) -> str:
-    """Place a misread into exactly one error class.
-
-    The classes map onto distinct root causes, which is what makes the taxonomy
-    actionable: a substitution is a glyph problem, a missing character is a
-    framing or split problem, and a transposition on a two-line plate is the
-    signature of the halves being merged in the wrong order (risk R-04).
-
-    Args:
-        truth: Ground-truth string.
-        prediction: Predicted string.
-
-    Returns:
-        One of :data:`ERROR_CLASSES`.
-
-    Examples:
-        >>> classify_error("30A1234", "30A1234")
-        'correct'
-        >>> classify_error("30A1234", "3OA1234")
-        'substitution'
-        >>> classify_error("30A1234", "")
-        'empty_read'
-    """
+    """Place a misread into exactly one error class."""
     if truth == prediction:
         return "correct"
     if not prediction:
@@ -241,17 +159,7 @@ def classify_error(truth: str, prediction: str) -> str:
 
 
 def accuracy_block(samples: Sequence[Sample]) -> dict[str, Any]:
-    """Aggregate every accuracy figure over one group of samples.
-
-    Args:
-        samples: The group. May be empty, in which case ``count`` is ``0`` and
-            every rate is ``None`` -- not ``0.0``, because "no data" and "zero
-            per cent" are different statements and the report must not blur
-            them.
-
-    Returns:
-        Mapping carrying the NFR-A4 to NFR-A7 figures for this group.
-    """
+    """Aggregate every accuracy figure over one group of samples."""
     count = len(samples)
     if count == 0:
         return {"count": 0}
@@ -331,15 +239,7 @@ def accuracy_block(samples: Sequence[Sample]) -> dict[str, Any]:
 
 
 def _percentile(values: Sequence[float], fraction: float) -> float:
-    """Nearest-rank percentile of an unsorted sequence.
-
-    Args:
-        values: The values. Must not be empty.
-        fraction: Percentile as a fraction in ``(0, 1]``.
-
-    Returns:
-        A value that was genuinely observed.
-    """
+    """Nearest-rank percentile of an unsorted sequence."""
     ordered = sorted(values)
     rank = max(1, min(len(ordered), int(round(fraction * len(ordered)))))
     return ordered[rank - 1]
@@ -349,20 +249,7 @@ def _percentile(values: Sequence[float], fraction: float) -> float:
 
 
 def _load_labels(path: Path, limit: int = 0) -> list[Sample]:
-    """Read the evaluation label file into unmeasured samples.
-
-    Args:
-        path: CSV produced by ``scripts/dataset/build_plate_labels.py``.
-        limit: Cap on the number of rows kept (``0`` = all). The cap is applied
-            after a deterministic shuffle so a smoke run is not biased towards
-            whichever dataset happens to sort first.
-
-    Returns:
-        Samples with only the label fields populated.
-
-    Raises:
-        FileNotFoundError: If the label file is missing.
-    """
+    """Read the evaluation label file into unmeasured samples."""
     if not path.is_file():
         raise FileNotFoundError(
             f"Label file not found: {path}\n"
@@ -402,20 +289,7 @@ def _load_labels(path: Path, limit: int = 0) -> list[Sample]:
 
 
 def _crop_color_name(crop: np.ndarray) -> str:
-    """Return the crop's background colour the way the pipeline sees it.
-
-    The retry ladder refuses to upgrade a read off a red crop, because red is
-    an army plate and no army plate may be turned into a valid civil string.
-    Measuring without that gate would credit the ladder with recoveries the
-    deployed system refuses to make.
-
-    Args:
-        crop: The plate image, BGR.
-
-    Returns:
-        The colour name, or ``""`` when classification fails -- a failure here
-        must not abort a measurement run.
-    """
+    """Return the crop's background colour the way the pipeline sees it."""
     try:
         color = classify_plate_color(crop)
     except ALPRError:
@@ -429,19 +303,7 @@ def measure_crops(
     normalizer: VietnamesePlateNormalizer,
     ablate_repair: bool = True,
 ) -> None:
-    """Run the crop path (NFR-A4 to NFR-A6) over every sample, in place.
-
-    A crop the engine cannot read is recorded with an empty string and counted
-    as a failure. Skipping it would make the accuracy figure describe only the
-    images that happened to work.
-
-    Args:
-        samples: Samples to fill in. Mutated.
-        recognizer: The OCR engine under test.
-        normalizer: The post-processing stage under test.
-        ablate_repair: Also run each crop without the aspect-ratio repair, to
-            quantify what the repair is worth. Roughly doubles the runtime.
-    """
+    """Run the crop path (NFR-A4 to NFR-A6) over every sample, in place."""
     total = len(samples)
     for index, sample in enumerate(samples, start=1):
         if index % 100 == 0 or index == total:
@@ -513,23 +375,7 @@ def _run_pipeline(
     recognizer: PaddleOcrRecognizer,
     normalizer: VietnamesePlateNormalizer,
 ) -> tuple[str, bool]:
-    """Run detect, crop, recognise and normalise over one image.
-
-    Everything after the input image is blind: the line count comes from the
-    detected box's own aspect ratio, exactly as in deployment. Nothing here
-    consults the label.
-
-    Args:
-        image: The image to process, BGR.
-        detector: A :class:`~ai.inference.detector.YoloPlateDetector`.
-        recognizer: The OCR engine.
-        normalizer: The post-processing stage.
-
-    Returns:
-        A ``(plate_string, detected)`` pair. The string is empty when the
-        detector found nothing or the crop could not be read -- both are
-        end-to-end failures and are counted as such.
-    """
+    """Run detect, crop, recognise and normalise over one image."""
     try:
         detections = detector.detect(image)
     except ALPRError as error:
@@ -593,34 +439,7 @@ def measure_end_to_end(
     normalizer: VietnamesePlateNormalizer,
     also_unrepaired: bool = True,
 ) -> None:
-    """Run the full detect-crop-recognise-normalise chain (NFR-A7), in place.
-
-    Two passes, because one number would be misleading either way:
-
-    ``e2e_text``
-        The pipeline over the **aspect-repaired** image. The repair is applied
-        to the *input photograph*, undoing the square export the label corpus
-        was published with; everything downstream -- localisation, cropping,
-        line-count estimation, recognition, normalisation -- then runs blind.
-        This is the figure NFR-A7 is judged on.
-
-    ``e2e_raw_text``
-        The pipeline over the image exactly as the dataset ships it. This
-        measures the square export, not the system, and is reported only so
-        that the size of the artefact is on the record rather than asserted.
-
-    A plate the detector misses is recorded with an empty string and
-    ``detected=False``. A miss is an end-to-end failure and must be counted as
-    one; excluding it would turn NFR-A7 into a second measurement of the OCR
-    stage.
-
-    Args:
-        samples: Samples to fill in. Mutated.
-        detector: A :class:`~ai.inference.detector.YoloPlateDetector`.
-        recognizer: The OCR engine.
-        normalizer: The post-processing stage.
-        also_unrepaired: Whether to run the second, unrepaired pass.
-    """
+    """Run the full detect-crop-recognise-normalise chain (NFR-A7), in place."""
     total = len(samples)
     for index, sample in enumerate(samples, start=1):
         if index % 100 == 0 or index == total:
@@ -647,25 +466,7 @@ def measure_end_to_end(
 
 
 def confusion_recommendations(confusion: dict[str, Any]) -> dict[str, Any]:
-    """Compare the measured confusions against the shape-based repair tables.
-
-    ``docs/reports/01-vn-plate-standards.md`` states that
-    :data:`~ai.inference.plate_rules.TO_DIGIT` and
-    :data:`~ai.inference.plate_rules.TO_LETTER` were derived from glyph-shape
-    reasoning, not from measurement. This function is the confrontation: which
-    entries the data supports, which it does not exercise, and which frequent
-    confusions the tables do not cover at all.
-
-    Args:
-        confusion: Payload from
-            :func:`~ai.evaluation.benchmark_ocr.build_confusion_matrix`.
-
-    Returns:
-        Mapping with ``confirmed``, ``unobserved`` and ``missing_from_tables``.
-        ``missing_from_tables`` lists only *directional* confusions -- true
-        character ``t`` read as ``p`` -- since that is the direction a repair
-        table has to invert.
-    """
+    """Compare the measured confusions against the shape-based repair tables."""
     observed: dict[tuple[str, str], int] = {
         (item["true"], item["predicted"]): item["count"] for item in confusion["top_confusions"]
     }
@@ -712,37 +513,7 @@ def confusion_recommendations(confusion: dict[str, Any]) -> dict[str, Any]:
 
 
 def propose_table_updates(confusion: dict[str, Any]) -> dict[str, Any]:
-    """Derive what each repair table *should* map, from the measured data.
-
-    :func:`confusion_recommendations` only says whether an existing rule was
-    ever exercised. This answers the sharper question the tables actually pose:
-    **given that the engine emitted character ``p`` at a position where ``p`` is
-    illegal, which legal character was most often the truth?** That is a
-    maximum-likelihood repair, and it is decidable straight from the matrix.
-
-    Candidate targets are constrained to what the position permits, which is
-    what makes the answer usable:
-
-    * at a ``D`` position the target must be a digit;
-    * at an ``L`` position it must be a letter that is legal in a serial --
-      ``I``, ``J``, ``O``, ``Q`` and ``W`` are excluded by the plate standard,
-      so proposing them would produce a string no pattern can match.
-
-    Args:
-        confusion: Payload from
-            :func:`~ai.evaluation.benchmark_ocr.build_confusion_matrix`.
-
-    Returns:
-        Mapping with one entry per table. Each entry lists, per emitted
-        character, the current rule, the best-supported target, the counts
-        behind both, and whether the data ``agrees``, asks to ``change`` the
-        rule, or proposes to ``add`` one that does not exist yet.
-
-        Nothing here is applied automatically. Changing a repair table changes
-        NFR-A6, so the proposal has to be adopted deliberately and the accuracy
-        re-measured afterwards -- otherwise the reported gain would describe
-        rules that were themselves fitted to the evaluation set.
-    """
+    """Derive what each repair table *should* map, from the measured data."""
     charset: str = confusion["charset"]
     matrix = confusion["matrix"]
     index = {char: i for i, char in enumerate(charset)}
@@ -751,15 +522,7 @@ def propose_table_updates(confusion: dict[str, Any]) -> dict[str, Any]:
     legal_letters = [c for c in charset if c.isalpha() and c not in "IJOQW"]
 
     def best_target(predicted: str, candidates: Sequence[str]) -> tuple[str | None, int]:
-        """Return the candidate most often mistaken for ``predicted``.
-
-        Args:
-            predicted: The character the engine emitted.
-            candidates: Legal true characters for the position.
-
-        Returns:
-            A ``(character, count)`` pair, or ``(None, 0)`` when never observed.
-        """
+        """Return the candidate most often mistaken for ``predicted``."""
         column = index[predicted]
         scored = [(candidate, matrix[index[candidate]][column]) for candidate in candidates]
         scored = [item for item in scored if item[1] > 0]
@@ -820,21 +583,7 @@ def propose_table_updates(confusion: dict[str, Any]) -> dict[str, Any]:
 def _export_errors(
     samples: Sequence[Sample], destination: Path, per_class: int = 8
 ) -> dict[str, int]:
-    """Copy a handful of failing crops per error class for visual review.
-
-    An aggregate figure says how often the system is wrong; only looking at the
-    images says why. Each exported file is annotated in its own name with the
-    truth and the prediction, so a directory listing is already a summary.
-
-    Args:
-        samples: All measured samples.
-        destination: Directory to write into; created, and cleared of previous
-            exports for the same classes.
-        per_class: How many crops to export per class.
-
-    Returns:
-        Number of files written per class.
-    """
+    """Copy a handful of failing crops per error class for visual review."""
     grouped: dict[str, list[Sample]] = defaultdict(list)
     for sample in samples:
         error_class = classify_error(sample.truth, sample.plate_number)
@@ -871,19 +620,7 @@ def _export_errors(
 def _write_charts(
     payload: dict[str, Any], samples: Sequence[Sample], figure_dir: Path
 ) -> list[str]:
-    """Render the report's PNG charts.
-
-    Charts are best-effort: a Matplotlib problem must not lose a measurement
-    whose numbers are already in the JSON.
-
-    Args:
-        payload: The finished JSON payload.
-        samples: All measured samples.
-        figure_dir: Destination directory.
-
-    Returns:
-        Names of the files actually written.
-    """
+    """Render the report's PNG charts."""
     try:
         import matplotlib
 
@@ -992,16 +729,7 @@ def _write_charts(
 
 
 def _verdict(requirement: str, value: float | None) -> dict[str, Any]:
-    """State pass, marginal or fail against the requirement thresholds.
-
-    Args:
-        requirement: Key into :data:`TARGETS`.
-        value: Measured value, or ``None`` when not measured.
-
-    Returns:
-        Mapping with the measured value, both thresholds and a verdict string.
-        ``"khong do duoc"`` when the value is missing -- never a silent pass.
-    """
+    """State pass, marginal or fail against the requirement thresholds."""
     target, minimum = TARGETS[requirement]
     if value is None:
         status = "khong do duoc"
@@ -1023,11 +751,7 @@ def _verdict(requirement: str, value: float | None) -> dict[str, Any]:
 
 
 def build_parser() -> argparse.ArgumentParser:
-    """Construct the command-line parser.
-
-    Returns:
-        The configured parser.
-    """
+    """Construct the command-line parser."""
     parser = argparse.ArgumentParser(
         prog="python -m ai.evaluation.ocr_accuracy",
         description=("Measure NFR-A4 to NFR-A8 on the reconstructed plate-string labels."),
@@ -1084,24 +808,7 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def _reanalyse(report_path: Path, figure_dir: Path) -> int:
-    """Recompute the derived sections of an existing report and rewrite it.
-
-    Everything downstream of the per-sample records -- the aggregates, the
-    confusion matrix, the repair-table review, the charts -- is a pure function
-    of ``samples``. When that analysis is extended, re-running it must not mean
-    re-running OCR: that would cost an hour and, worse, would publish a
-    *different* set of predictions from the ones already reported.
-
-    The measured fields are never touched.
-
-    Args:
-        report_path: An existing report written by :func:`main`.
-        figure_dir: Where the charts are rewritten.
-
-    Returns:
-        ``0`` on success, ``2`` when the report is missing or carries no
-        samples.
-    """
+    """Recompute the derived sections of an existing report and rewrite it."""
     if not report_path.is_file():
         LOGGER.error("No report to reanalyse at %s", report_path)
         return 2
@@ -1153,14 +860,7 @@ def _reanalyse(report_path: Path, figure_dir: Path) -> int:
 
 
 def main(argv: list[str] | None = None) -> int:
-    """Run every measurement and write the JSON report and the charts.
-
-    Args:
-        argv: Command-line arguments; ``sys.argv[1:]`` when omitted.
-
-    Returns:
-        ``0`` on success, ``2`` when the label file is missing.
-    """
+    """Run every measurement and write the JSON report and the charts."""
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
     logging.getLogger("ai.inference").setLevel(logging.ERROR)
     args = build_parser().parse_args(argv)

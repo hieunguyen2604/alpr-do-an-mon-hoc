@@ -1,9 +1,4 @@
-"""Initial schema: detection_job and detection_history.
-
-Revision ID: 0001_initial
-Revises:
-Create Date: 2026-07-19
-"""
+"""Initial schema: detection_job and detection_history."""
 
 from __future__ import annotations
 

@@ -20,19 +20,7 @@ __all__ = [
 
 
 class PlateColor(StrEnum):
-    """Background colours a Vietnamese plate can carry.
-
-    Members:
-        WHITE: Private vehicles, businesses and domestic organisations. Also the
-            background of diplomatic plates, whose red serial letters do not
-            cover enough area to change the dominant colour.
-        YELLOW: Commercial transport -- taxi, lorry, coach, ride-hailing.
-        BLUE: Party, State, political-social organisations, public service units.
-        RED: Army vehicles.
-        UNKNOWN: No band was dominant enough to name. A crop that is too dark,
-            too blown out or mostly not-a-plate lands here, and reporting that
-            honestly is more useful than defaulting to white.
-    """
+    """Background colours a Vietnamese plate can carry."""
 
     WHITE = "white"
     YELLOW = "yellow"
@@ -90,20 +78,7 @@ _WHITE_MIN_VALUE: Final[int] = 105
 
 
 class ColorEstimate:
-    """The classification of one crop, with the evidence behind it.
-
-    The per-band fractions are carried alongside the verdict on purpose: a
-    borderline call is far easier to review when the numbers that produced it
-    are visible, and the evaluation harness can report a distribution instead of
-    a bare label.
-
-    Attributes:
-        color: The winning colour, or :attr:`PlateColor.UNKNOWN`.
-        confidence: Fraction of sampled pixels in the winning band, ``0.0`` to
-            ``1.0``. Not a probability -- it is the margin the decision rests on.
-        fractions: Fraction of sampled pixels in each band, including the ones
-            that lost.
-    """
+    """The classification of one crop, with the evidence behind it."""
 
     __slots__ = ("color", "confidence", "fractions")
 
@@ -127,16 +102,7 @@ class ColorEstimate:
 
 
 def _centre_region(image: ImageArray) -> ImageArray:
-    """Trim :data:`CENTRE_INSET` from every edge.
-
-    Args:
-        image: The plate crop, BGR ``uint8``.
-
-    Returns:
-        The central region, or the original array when trimming would leave
-        fewer than two pixels on an axis -- a crop that small carries no usable
-        histogram either way, and returning an empty slice would raise.
-    """
+    """Trim :data:`CENTRE_INSET` from every edge."""
     height, width = image.shape[:2]
     inset_y = int(height * CENTRE_INSET)
     inset_x = int(width * CENTRE_INSET)
@@ -146,19 +112,7 @@ def _centre_region(image: ImageArray) -> ImageArray:
 
 
 def classify_plate_color(plate_image: ImageArray) -> ColorEstimate:
-    """Name the background colour of a cropped plate.
-
-    Args:
-        plate_image: The crop as a BGR ``uint8`` array, as produced by the
-            detector stage. Grayscale input is rejected rather than guessed at:
-            a colour verdict from an image with no colour would be fiction.
-
-    Returns:
-        A :class:`ColorEstimate`. An empty, single-channel or otherwise
-        unusable array yields :attr:`PlateColor.UNKNOWN` with zero confidence
-        instead of raising -- a plate whose colour cannot be read is a normal
-        outcome that must still be recorded, exactly as an unreadable plate is.
-    """
+    """Name the background colour of a cropped plate."""
     empty = dict.fromkeys(PlateColor, 0.0)
 
     if plate_image is None or plate_image.size == 0:

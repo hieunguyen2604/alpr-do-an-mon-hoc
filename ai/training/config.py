@@ -105,18 +105,7 @@ _NON_ULTRALYTICS_FIELDS: Final[frozenset[str]] = frozenset(
 
 
 def _resolve_under_root(value: str | Path) -> Path:
-    """Resolve a possibly relative path against the repository root.
-
-    Relative paths are interpreted relative to :data:`PROJECT_ROOT`, never to
-    the current working directory, so a config behaves identically no matter
-    where the process was launched from.
-
-    Args:
-        value: Absolute or relative path, as a string or :class:`~pathlib.Path`.
-
-    Returns:
-        An absolute path.
-    """
+    """Resolve a possibly relative path against the repository root."""
     candidate = Path(value).expanduser()
     if not candidate.is_absolute():
         candidate = PROJECT_ROOT / candidate
@@ -125,105 +114,7 @@ def _resolve_under_root(value: str | Path) -> Path:
 
 @dataclass(slots=True)
 class TrainingConfig:
-    """Complete hyper-parameter set for one YOLO11 detector training run.
-
-    Field groups, in the order they appear below: model selection, data, core
-    schedule, optimiser, loss weights, augmentation, runtime/bookkeeping.
-
-    Attributes:
-        model_variant: YOLO11 size to train, one of
-            :data:`SUPPORTED_MODEL_VARIANTS`. Phase 1 selected ``"yolo11n"``.
-        pretrained_weights: Checkpoint to initialise from. ``"yolo11n.pt"``
-            fine-tunes from the COCO-pretrained weights (downloaded on first
-            use); an empty string trains from a randomly initialised backbone.
-            Fine-tuning is strongly preferred on a ~37k-image dataset.
-        description: Free-text note describing the intent of this configuration.
-            Carried through YAML round-trips so a run's provenance survives.
-        data: Path to the Ultralytics dataset descriptor (``data.yaml``).
-            Relative values resolve against the repository root.
-        imgsz: Square training resolution in pixels; must be a positive multiple
-            of 32. 640 is the Phase 1 baseline: plates are small objects, so
-            reducing this hurts recall more than it saves time.
-        epochs: Maximum number of epochs.
-        batch: Images per batch. A negative value (``-1``) asks Ultralytics to
-            auto-size the batch to ~60% of available VRAM -- useful on Colab,
-            where the assigned GPU varies between sessions.
-        patience: Early-stopping patience in epochs with no fitness improvement.
-        optimizer: Optimiser name, one of :data:`SUPPORTED_OPTIMIZERS`.
-        lr0: Initial learning rate.
-        lrf: Final learning-rate factor; the schedule ends at ``lr0 * lrf``.
-        momentum: SGD momentum, or beta1 for the Adam family.
-        weight_decay: L2 regularisation coefficient.
-        warmup_epochs: Length of the linear learning-rate warm-up.
-        warmup_momentum: Momentum at the start of warm-up.
-        warmup_bias_lr: Bias-parameter learning rate during warm-up.
-        box: Weight of the bounding-box regression loss. Raised above the
-            Ultralytics default for this project: localisation quality directly
-            determines crop quality, and a sloppy crop breaks OCR.
-        cls: Weight of the classification loss. Kept low -- the detector has
-            very few classes, so classification is the easy part.
-        dfl: Weight of the distribution-focal loss.
-        hsv_h: Hue jitter fraction. Kept small: Vietnamese plate background
-            colour is semantically meaningful (white/yellow/blue/red encode the
-            vehicle category), so hue must not be scrambled.
-        hsv_s: Saturation jitter fraction.
-        hsv_v: Brightness jitter fraction. Generous, to cover night captures,
-            headlight glare and backlit plates.
-        degrees: Maximum rotation in degrees. Small on purpose: real plates are
-            near-horizontal, and large rotations teach the model poses that do
-            not occur.
-        translate: Maximum translation as a fraction of image size.
-        scale: Scale jitter gain.
-        shear: Maximum shear in degrees.
-        perspective: Perspective-warp gain; simulates off-axis camera angles,
-            which are extremely common in real gate/parking footage.
-        flipud: Vertical-flip probability. **Must be 0.0** -- an upside-down
-            plate is not a real-world input.
-        fliplr: Horizontal-flip probability. **Must be 0.0.** Mirroring the
-            image mirrors the glyphs; the detector would learn mirror-image
-            plates that never occur, and any downstream OCR training reusing
-            this augmentation policy would be actively harmed.
-        copy_paste: Copy-paste augmentation probability (segmentation-oriented;
-            0.0 for pure detection).
-        erasing: Random-erasing probability, for partially occluded plates.
-        mosaic: Mosaic augmentation probability. Very effective for small
-            objects such as plates.
-        close_mosaic: Number of final epochs with mosaic disabled, so the model
-            finishes on undistorted images.
-        mixup: MixUp probability. Left at 0.0: blending two plates produces
-            unreadable text and no useful detection signal.
-        device: ``"auto"`` (resolved at runtime by
-            :func:`ai.training.train.resolve_device`), ``"cpu"``, ``"0"``,
-            ``"0,1"``, or ``"mps"``.
-        workers: Dataloader worker processes. On Windows, keep this modest;
-            each worker re-imports the module.
-        project: Parent directory for run folders.
-        name: Run folder name inside :attr:`project`.
-        exist_ok: Allow reusing an existing run directory instead of creating
-            ``name2``, ``name3``, ...
-        seed: Random seed. 42 by default so results are reproducible.
-        deterministic: Force deterministic kernels. Slightly slower, but a
-            thesis number that cannot be reproduced is not worth much.
-        save_period: Save a numbered checkpoint every N epochs. **Positive by
-            default on purpose**: Colab disconnects mid-session regularly, and
-            a run with only ``last.pt`` can lose hours of GPU time.
-        val: Run validation each epoch.
-        plots: Emit training curves, PR curves and the confusion matrix.
-        cache: Image caching strategy: ``False``, ``"ram"`` or ``"disk"``.
-        amp: Automatic mixed precision. Ignored on CPU.
-        rect: Rectangular batching (disabled by default; incompatible with
-            shuffling benefits during training).
-        cos_lr: Use a cosine learning-rate schedule instead of linear.
-        single_cls: Treat every annotated object as one class. Useful when
-            merging datasets whose class taxonomies disagree.
-        fraction: Fraction of the training set to use. Lower it for a quick
-            smoke test without editing the dataset.
-        verbose: Verbose Ultralytics logging.
-
-    Raises:
-        ValueError: If any field is out of range or if ``fliplr``/``flipud`` is
-            non-zero.
-    """
+    """Complete hyper-parameter set for one YOLO11 detector training run."""
 
     # --- Model selection -----------------------------------------------------
     model_variant: str = "yolo11n"
@@ -293,16 +184,7 @@ class TrainingConfig:
     verbose: bool = True
 
     def __post_init__(self) -> None:
-        """Normalise paths and validate every field.
-
-        Called automatically by the dataclass machinery. Failing here -- before
-        a single image is loaded -- is far cheaper than discovering a bad
-        hyper-parameter three hours into a Colab run.
-
-        Raises:
-            ValueError: If any field is out of range, unknown, or violates a
-                domain rule (non-zero flip probability).
-        """
+        """Normalise paths and validate every field."""
         self.data = _resolve_under_root(self.data)
         self.project = _resolve_under_root(self.project)
 
@@ -383,55 +265,24 @@ class TrainingConfig:
 
     @property
     def run_dir(self) -> Path:
-        """Absolute directory Ultralytics will write this run into.
-
-        Returns:
-            ``<project>/<name>``. Note that with ``exist_ok=False`` Ultralytics
-            may append a numeric suffix, in which case the real directory is
-            reported by the trainer at runtime.
-        """
+        """Absolute directory Ultralytics will write this run into."""
         return self.project / self.name
 
     @property
     def initial_weights(self) -> str:
-        """Argument to pass to the ``YOLO(...)`` constructor.
-
-        Returns:
-            :attr:`pretrained_weights` when set (fine-tuning from an existing
-            checkpoint), otherwise ``"<model_variant>.yaml"``, which builds the
-            architecture from scratch with random initialisation.
-        """
+        """Argument to pass to the ``YOLO(...)`` constructor."""
         return self.pretrained_weights or f"{self.model_variant}.yaml"
 
     # --- Serialisation -------------------------------------------------------
 
     @classmethod
     def field_names(cls) -> tuple[str, ...]:
-        """List every configurable field name.
-
-        Returns:
-            Field names in declaration order.
-        """
+        """List every configurable field name."""
         return tuple(f.name for f in fields(cls))
 
     @classmethod
     def from_dict(cls, values: dict[str, Any]) -> TrainingConfig:
-        """Build a configuration from a plain mapping.
-
-        Unknown keys are rejected rather than ignored: a typo such as
-        ``epoch: 100`` would otherwise silently train for the default number of
-        epochs.
-
-        Args:
-            values: Mapping of field name to value.
-
-        Returns:
-            A validated configuration.
-
-        Raises:
-            TypeError: If ``values`` is not a mapping.
-            ValueError: If it contains unknown keys, or if validation fails.
-        """
+        """Build a configuration from a plain mapping."""
         if not isinstance(values, dict):
             raise TypeError(f"Expected a mapping of config values, got {type(values).__name__}")
         known = set(cls.field_names())
@@ -444,21 +295,7 @@ class TrainingConfig:
 
     @classmethod
     def from_yaml(cls, path: str | Path) -> TrainingConfig:
-        """Load a configuration from a YAML file.
-
-        Args:
-            path: Path to the YAML file. A bare name with no directory part is
-                also looked up inside :data:`CONFIGS_DIR`, so
-                ``--config yolo11n_baseline.yaml`` works from anywhere.
-
-        Returns:
-            A validated configuration.
-
-        Raises:
-            FileNotFoundError: If no such file exists.
-            ValueError: If the file is not valid YAML, does not contain a
-                mapping, contains unknown keys, or fails validation.
-        """
+        """Load a configuration from a YAML file."""
         candidate = Path(path).expanduser()
         if not candidate.exists() and candidate.parent == Path("."):
             candidate = CONFIGS_DIR / candidate.name
@@ -493,12 +330,7 @@ class TrainingConfig:
         return config
 
     def to_dict(self) -> dict[str, Any]:
-        """Convert to a plain, YAML-serialisable dictionary.
-
-        Returns:
-            Field name to value, with :class:`~pathlib.Path` values rendered as
-            POSIX-style strings so the file stays readable on every platform.
-        """
+        """Convert to a plain, YAML-serialisable dictionary."""
         payload = asdict(self)
         for key, value in payload.items():
             if isinstance(value, Path):
@@ -506,21 +338,7 @@ class TrainingConfig:
         return payload
 
     def to_yaml(self, path: str | Path) -> Path:
-        """Write this configuration to a YAML file.
-
-        Used by :mod:`ai.training.train` to snapshot the exact hyper-parameters
-        next to the run's artefacts, so a result can always be traced back to
-        the settings that produced it.
-
-        Args:
-            path: Destination file. Parent directories are created.
-
-        Returns:
-            The absolute path written.
-
-        Raises:
-            ValueError: If the file cannot be written.
-        """
+        """Write this configuration to a YAML file."""
         destination = Path(path).expanduser()
         if not destination.is_absolute():
             destination = PROJECT_ROOT / destination
@@ -536,20 +354,7 @@ class TrainingConfig:
         return destination
 
     def to_ultralytics_kwargs(self) -> dict[str, Any]:
-        """Render the keyword arguments for ``ultralytics.YOLO.train()``.
-
-        Project-specific bookkeeping fields (:attr:`model_variant`,
-        :attr:`pretrained_weights`, :attr:`description`) are stripped, because
-        Ultralytics rejects unknown keyword arguments.
-
-        Note that ``device`` is passed through verbatim: resolving ``"auto"``
-        into a concrete device is the caller's job (see
-        :func:`ai.training.train.resolve_device`), so that the choice can be
-        logged and warned about.
-
-        Returns:
-            Keyword arguments ready to splat into ``model.train(**kwargs)``.
-        """
+        """Render the keyword arguments for ``ultralytics.YOLO.train()``."""
         payload = asdict(self)
         for key in _NON_ULTRALYTICS_FIELDS:
             payload.pop(key, None)

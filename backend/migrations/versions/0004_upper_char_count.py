@@ -1,9 +1,4 @@
-"""Add upper_char_count to detection_history.
-
-Revision ID: 0004_upper_char_count
-Revises: 0003_video_time_seconds
-Create Date: 2026-08-02
-"""
+"""Add upper_char_count to detection_history."""
 
 from __future__ import annotations
 

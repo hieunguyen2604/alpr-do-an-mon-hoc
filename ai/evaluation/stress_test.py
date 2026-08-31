@@ -151,11 +151,7 @@ def build_pipeline(weights: Path, device: str) -> Any:
 
 
 def invoke_once(pipeline: Any, image: Any) -> RequestOutcome:
-    """Run one image through the pipeline, converting a failure into a datum.
-
-    Exceptions are captured rather than raised: a stress test whose purpose is
-    to measure an error rate cannot itself abort on the first error.
-    """
+    """Run one image through the pipeline, converting a failure into a datum."""
     started = time.perf_counter()
     try:
         result = pipeline.process(image)
@@ -201,11 +197,7 @@ def run_concurrency_level(
 def run_soak(
     pipeline: Any, images: Sequence[Any], duration_seconds: float, concurrency: int
 ) -> dict[str, Any]:
-    """Drive the pipeline continuously, reporting the success rate (NFR-R4).
-
-    Memory is sampled at start and end so that a leak shows up as a number
-    rather than as a vague suspicion.
-    """
+    """Drive the pipeline continuously, reporting the success rate (NFR-R4)."""
     import psutil
 
     process = psutil.Process(os.getpid())

@@ -39,62 +39,18 @@ _ENUM_LENGTH: Final[int] = 16
 
 
 def utcnow() -> dt.datetime:
-    """Return the current time as a timezone-aware UTC datetime.
-
-    Used as the Python-side default for every timestamp column instead of
-    SQLite's ``CURRENT_TIMESTAMP``. Two reasons: SQLite's version produces a
-    *naive* string with one-second resolution, which is too coarse to order
-    the detections coming out of a single video; and generating the value in
-    Python keeps the behaviour identical if the database is ever moved to
-    PostgreSQL.
-
-    Returns:
-        The current UTC time, with ``tzinfo`` set.
-    """
+    """Return the current time as a timezone-aware UTC datetime."""
     return dt.datetime.now(dt.timezone.utc)
 
 
 class UtcDateTime(TypeDecorator[dt.datetime]):
-    """A datetime column that is always timezone-aware UTC in Python.
-
-    Exists because of a silent data-fidelity bug in the obvious approach.
-    SQLite has no native datetime type: SQLAlchemy stores the value as a
-    formatted string, and that format **drops the UTC offset**. A value written
-    as ``2026-07-19 12:00:00+00:00`` therefore comes back as naive
-    ``2026-07-19 12:00:00`` -- no error, no warning, just a timestamp that has
-    quietly forgotten which timezone it is in. Two consequences follow, and
-    neither announces itself:
-
-    * ``utcnow() - row.created_at`` raises ``TypeError: can't subtract
-      offset-naive and offset-aware datetimes``, at whatever future point
-      someone computes a duration;
-    * serialised to JSON, a naive timestamp has no ``Z`` suffix, so the browser
-      reads it as **local** time. On a UTC+7 machine every timestamp in the
-      history table would display seven hours off -- plausible enough to go
-      unnoticed, wrong enough to invalidate any timing analysis.
-
-    This decorator closes the gap at the type level, so that no individual
-    model or query has to remember: values are normalised to UTC on the way in,
-    and UTC is re-attached on the way out. A naive value read from a row
-    written before this type existed is interpreted as UTC, which is what it
-    is -- :func:`utcnow` has always been the only writer.
-    """
+    """A datetime column that is always timezone-aware UTC in Python."""
 
     impl = DateTime(timezone=True)
     cache_ok = True
 
     def process_bind_param(self, value: dt.datetime | None, dialect: Dialect) -> dt.datetime | None:
-        """Normalise a datetime to UTC before it is written.
-
-        Args:
-            value: The value being stored, aware or naive.
-            dialect: The active SQLAlchemy dialect; unused.
-
-        Returns:
-            The equivalent instant expressed in UTC, or ``None``. A naive input
-            is assumed to already be UTC rather than rejected, so that a plain
-            ``datetime(2026, 1, 1)`` in a test fixture behaves predictably.
-        """
+        """Normalise a datetime to UTC before it is written."""
         if value is None:
             return None
         if value.tzinfo is None:
@@ -104,15 +60,7 @@ class UtcDateTime(TypeDecorator[dt.datetime]):
     def process_result_value(
         self, value: dt.datetime | None, dialect: Dialect
     ) -> dt.datetime | None:
-        """Re-attach UTC to a datetime loaded from the database.
-
-        Args:
-            value: The raw value from the driver, naive on SQLite.
-            dialect: The active SQLAlchemy dialect; unused.
-
-        Returns:
-            A timezone-aware UTC datetime, or ``None``.
-        """
+        """Re-attach UTC to a datetime loaded from the database."""
         if value is None:
             return None
         if value.tzinfo is None:
@@ -121,12 +69,7 @@ class UtcDateTime(TypeDecorator[dt.datetime]):
 
 
 class InputType(StrEnum):
-    """How a detection entered the system.
-
-    Stored as plain text rather than as a database enum: SQLite has no native
-    enum type, and a ``CHECK`` constraint over strings gives the same integrity
-    guarantee while keeping the column readable in any SQLite browser.
-    """
+    """How a detection entered the system."""
 
     IMAGE = "image"
     VIDEO = "video"
@@ -134,20 +77,7 @@ class InputType(StrEnum):
 
 
 class JobStatus(StrEnum):
-    """Lifecycle of a :class:`DetectionJob`.
-
-    Normal path::
-
-        pending ──> processing ──> completed
-                        │
-                        ├──> failed      (error_message is set)
-                        └──> cancelled   (user stopped it)
-
-    ``pending`` exists as a distinct state from ``processing`` because a video
-    upload returns ``202 Accepted`` immediately (decision AD-02) while the
-    background worker may not have picked the job up yet. Collapsing the two
-    would make a queued job indistinguishable from a stalled one.
-    """
+    """Lifecycle of a :class:`DetectionJob`."""
 
     PENDING = "pending"
     PROCESSING = "processing"
@@ -157,56 +87,16 @@ class JobStatus(StrEnum):
 
     @property
     def is_terminal(self) -> bool:
-        """Return ``True`` if no further transition is possible from this state.
-
-        The frontend polls a job's progress and uses this to decide when to
-        stop polling.
-        """
+        """Return ``True`` if no further transition is possible from this state."""
         return self in {JobStatus.COMPLETED, JobStatus.FAILED, JobStatus.CANCELLED}
 
 
 class Base(DeclarativeBase):
-    """Declarative base shared by every ORM model.
-
-    Alembic's autogenerate reads ``Base.metadata`` to diff the models against
-    the live database, so every model must inherit from this one class -- a
-    model on a second base would be invisible to migrations and its table would
-    simply never be created.
-    """
+    """Declarative base shared by every ORM model."""
 
 
 class DetectionJob(Base):
-    """One upload or capture session, and the state of processing it.
-
-    A job is created the moment a file is accepted and lives until processing
-    reaches a terminal state. Its purpose is twofold: it is the unit that
-    dashboard usage statistics count, and it is what the frontend polls for
-    progress while a video is being processed (FR-2.6).
-
-    A webcam session is one job, not one job per frame. Frames arriving during
-    the session raise :attr:`processed_frames` and attach their detections to
-    the same job, which keeps "one usage event" meaning the same thing across
-    all three input types.
-
-    Attributes:
-        id: UUID string primary key. A UUID rather than an auto-increment
-            integer because the identifier is handed to the client and used in
-            generated filenames, where a guessable sequential number would let
-            one user enumerate another's uploads.
-        input_type: Which of ``image``/``video``/``webcam`` produced this job.
-        status: Current lifecycle state; see :class:`JobStatus`.
-        progress: Completion fraction in ``[0.0, 1.0]``, for the progress bar.
-        source_path: Where the uploaded file was stored.
-        output_path: Where the annotated image or processed video was written.
-        error_message: Technical reason the job failed. Server-side only --
-            it is never returned to a user verbatim.
-        total_frames: Frame count for a video, or ``None`` when not applicable
-            or not yet known.
-        processed_frames: Frames processed so far.
-        created_at: When the job was accepted.
-        completed_at: When it reached a terminal state, or ``None``.
-        detections: Every plate found by this job.
-    """
+    """One upload or capture session, and the state of processing it."""
 
     __tablename__ = "detection_job"
 
@@ -275,63 +165,7 @@ class DetectionJob(Base):
 
 
 class DetectionHistory(Base):
-    """One license plate found in one job.
-
-    An image containing three plates produces three rows sharing a
-    :attr:`source_job_id`. This is the record the history table and the
-    accuracy reports are built from.
-
-    Nullability follows one rule: **a detection is worth keeping even when OCR
-    read nothing from it.** The detector's own output -- the box and its
-    confidence -- is always present, so those columns are non-nullable. Every
-    OCR-derived column is nullable, because a plate that was located but not
-    read is a real and reportable outcome. Discarding those rows would remove
-    precisely the failures the evaluation chapter needs to count, and would
-    make recognition accuracy look perfect by construction.
-
-    Attributes:
-        id: Auto-increment primary key.
-        plate_number: Normalised plate string after regex correction, e.g.
-            ``"51F-12345"``. ``None`` when OCR read nothing.
-        raw_ocr_text: The OCR engine's unmodified output. Kept so the effect of
-            post-processing can be measured against ``plate_number``.
-        confidence: **Detector** confidence in ``[0.0, 1.0]``. Always present.
-        ocr_confidence: **OCR** confidence in ``[0.0, 1.0]``, kept in its own
-            column so an uncertain reading is never mistaken for an uncertain
-            detection. ``None`` when OCR read nothing.
-        input_type: Which of ``image``/``video``/``webcam`` this came from.
-            Denormalised from the parent job so history filtering does not
-            require a join on every query.
-        image_path: Stored source image, or the extracted frame for a video.
-        plate_image_path: Stored crop of the plate itself.
-        bbox_x: Left edge of the plate box, in source-image pixels.
-        bbox_y: Top edge of the plate box.
-        bbox_w: Box width.
-        bbox_h: Box height.
-        is_valid_format: Whether :attr:`plate_number` matches a known
-            Vietnamese plate pattern. ``False`` flags the row rather than
-            rejecting it.
-        plate_line_count: ``1`` or ``2``. Lets accuracy be reported separately
-            for single-line and two-line plates, which behave very differently.
-        upper_char_count: For a two-line plate, how many characters were read
-            from the **upper** line; ``NULL`` when unknown or single-line.
-
-            Stored because it is *evidence*, not presentation. Separators are
-            still derived on read (see
-            :func:`~backend.services.detection_service.display_text`), but that
-            derivation cannot succeed without this: an eight-character two-line
-            string is genuinely ambiguous, and ``67C10815`` is ``67C-108.15``
-            when the upper line read ``67C`` and ``67C1-0815`` when it read
-            ``67C1``. Both are legal Vietnamese plates, so no rule over the
-            flat string can separate them -- only the image can, and this
-            column is where that observation survives.
-        processing_time: Seconds spent on this plate, detection plus OCR.
-        detected_time: When the plate was detected. For a video this is the
-            moment of processing, not a position within the video.
-        created_at: When the row was written.
-        source_job_id: The job this plate belongs to.
-        job: The parent job.
-    """
+    """One license plate found in one job."""
 
     __tablename__ = "detection_history"
 
@@ -430,13 +264,7 @@ class DetectionHistory(Base):
 
     @property
     def was_corrected(self) -> bool:
-        """Return ``True`` if post-processing changed the raw OCR string.
-
-        This is the per-row form of the measurement ``raw_ocr_text`` exists
-        for: aggregated over the test set it gives the share of readings the
-        correction step altered, which the evaluation report pairs with the
-        change in accuracy.
-        """
+        """Return ``True`` if post-processing changed the raw OCR string."""
         if self.plate_number is None or self.raw_ocr_text is None:
             return False
         return self.plate_number != self.raw_ocr_text

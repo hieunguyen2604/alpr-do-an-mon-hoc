@@ -1,25 +1,5 @@
 #!/usr/bin/env python3
-"""Sinh bốn hình cho bộ slide đồ án môn học, ĐỌC SỐ TỪ BÁO CÁO ĐO.
-
-Vì sao phải có script này
--------------------------
-``docs/slides/figures/fig-ch4-layout.png`` được vẽ tay ở một lượt đo cũ, rồi
-quyển đo lại mà hình thì không. Hình in ra **0,6996** và *"chênh 25,45 điểm"*
-trong khi quyển ghi **0,7234** và **23,07 điểm** — người nghe nhìn hình, người
-đọc nhìn quyển, hai bên thấy hai con số khác nhau.
-
-Mọi con số ở đây đọc từ :data:`NGUON`. Không hằng số nào gõ tay, nên hình không
-trôi khỏi số liệu được nữa. Chạy lại sau mỗi lần đo lại::
-
-    backend/.venv/Scripts/python.exe scripts/make_slide_figures.py
-
-Bốn hình
---------
-``fig-mon-hoc-funnel.png``   phễu bộ dữ liệu: 7 bộ → khử trùng lặp → chia tập
-``fig-mon-hoc-kpi.png``      bốn thẻ chỉ số chính, thay bảng bảy dòng
-``fig-ch4-layout.png``       cột so sánh biển một dòng ↔ hai dòng *(vẽ lại)*
-``fig-mon-hoc-donggop.png``  bốn thẻ đóng góp, thay bảng bóc tách
-"""
+"""Sinh bốn hình cho bộ slide đồ án môn học, ĐỌC SỐ TỪ BÁO CÁO ĐO."""
 
 from __future__ import annotations
 

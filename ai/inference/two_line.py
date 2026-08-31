@@ -93,16 +93,7 @@ _DENOISE_DEFAULT_SIGMA_SPACE: Final[float] = 50.0
 
 
 def _validate_image(image: ImageArray, argument_name: str) -> None:
-    """Reject arrays that cannot be treated as an image.
-
-    Args:
-        image: Candidate array.
-        argument_name: Name of the caller's parameter, used in the message.
-
-    Raises:
-        InvalidImageError: If the array is ``None``, not a NumPy array, has
-            fewer than two dimensions, or has a zero-sized side.
-    """
+    """Reject arrays that cannot be treated as an image."""
     if image is None or not isinstance(image, np.ndarray):
         raise InvalidImageError(
             f"{argument_name} must be a NumPy array, got {type(image).__name__}"
@@ -121,50 +112,7 @@ def estimate_line_count(
     source: ImageArray | BoundingBox,
     threshold: float = DEFAULT_TWO_LINE_AR_THRESHOLD,
 ) -> int:
-    """Guess whether a plate carries its characters on one line or two.
-
-    .. warning::
-       **This is a heuristic proposed by this project, not a legal rule.**
-       No Vietnamese regulation states how to classify a plate from its aspect
-       ratio. What the regulation does provide (QCVN 08:2024/BCA, in force from
-       2025-01-01) are the physical plate sizes, and those leave a wide empty
-       band:
-
-       =========================== ============= ============== =========
-       Plate type                  Size (mm)     Aspect ratio   Lines
-       =========================== ============= ============== =========
-       Car, long plate             110 x 520     4.727          1
-       Car, short plate            165 x 330     2.000          2
-       Motorcycle                  140 x 190     1.357          2
-       =========================== ============= ============== =========
-
-       No plate type falls between 2.000 and 4.727, so any cut-off inside that
-       2.727-wide gap separates the classes. This function defaults to 2.5,
-       biased towards the two-line side because the two-line path degrades
-       gracefully on a one-line input while the reverse does not.
-
-    .. note::
-       Ratios between roughly 2.5 and 3.0 are a genuine grey zone: a one-line
-       plate photographed at a sharp angle has a *bounding-box* ratio that
-       drops into it. Measuring on a rectified crop, or on the ratio of
-       ``cv2.minAreaRect``, is markedly more reliable than measuring on an
-       axis-aligned YOLO box. Phase 7 should quantify how often this matters.
-
-    Args:
-        source: Either a plate crop as a NumPy array -- the ratio is taken from
-            ``shape[1] / shape[0]`` -- or a
-            :class:`~ai.inference.types.BoundingBox`, whose
-            :attr:`~ai.inference.types.BoundingBox.aspect_ratio` is used.
-        threshold: Aspect ratio below which the plate is reported as two-line.
-            Must be positive.
-
-    Returns:
-        ``2`` when the plate is estimated to carry two lines, ``1`` otherwise.
-
-    Raises:
-        InvalidImageError: If ``source`` is an array that is not a usable image.
-        ValueError: If ``threshold`` is not positive.
-    """
+    """Guess whether a plate carries its characters on one line or two."""
     if threshold <= 0.0:
         raise ValueError(f"threshold must be positive, got {threshold}")
 
@@ -192,48 +140,7 @@ def rectify_plate(
     min_angle_degrees: float = MIN_RECTIFY_ANGLE_DEGREES,
     max_angle_degrees: float = MAX_RECTIFY_ANGLE_DEGREES,
 ) -> ImageArray:
-    """Deskew a plate crop by rotating its dominant blob level and re-cropping.
-
-    This is the *rectify* step that the two-line design always began with
-    (decision log: rectify -> classify -> split -> hstack) but that remained
-    unimplemented through Phase 4 -- YOLO's axis-aligned box crops a rectangle,
-    it does not straighten anything. The measured cost of the gap (thesis
-    section 6.3.9): a skewed two-line plate widens its own bounding box, the
-    aspect ratio jumps over the one-line/two-line threshold, the crop is never
-    split, and OCR returns an empty string -- while the very same plate reads
-    perfectly when photographed head-on.
-
-    Method, cheapest tier of section 6.4.9: binarise (Otsu, both polarities),
-    take the largest connected blob, fit ``cv2.minAreaRect``, rotate the crop
-    about the rectangle's centre so its long side lies horizontal, then cut the
-    now-level rectangle out with a small margin. Returning the *tight* cut
-    rather than the rotated canvas matters: the cut's aspect ratio is the
-    plate's true shape, which is exactly what :func:`estimate_line_count`
-    needs to classify reliably (its own documentation asked for this from
-    Phase 4).
-
-    Every unreliable estimate degrades to "return the crop unchanged": skew
-    below ``min_angle_degrees`` (nothing to fix -- keeps frontal crops
-    bit-identical), skew above ``max_angle_degrees`` (the estimate is almost
-    certainly wrong), or a dominant blob covering less than
-    :data:`MIN_RECTIFY_AREA_FRACTION` of the crop (thresholding fragmented the
-    plate). A rectify that can only help or do nothing is safe to leave
-    always-on.
-
-    Args:
-        image: The plate crop, grayscale or BGR. Not modified.
-        min_angle_degrees: Skew magnitude below which no correction is applied.
-        max_angle_degrees: Skew magnitude above which the estimate is rejected.
-
-    Returns:
-        The deskewed, tightly re-cropped plate as an array with the input's
-        channel layout -- or ``image`` itself when no trustworthy correction
-        was found.
-
-    Raises:
-        InvalidImageError: If ``image`` is not a usable image.
-        ValueError: If the angle bounds are not positive or are ordered wrong.
-    """
+    """Deskew a plate crop by rotating its dominant blob level and re-cropping."""
     _validate_image(image, "image")
     if min_angle_degrees <= 0.0 or max_angle_degrees <= 0.0:
         raise ValueError(
@@ -328,31 +235,7 @@ def rectify_plate(
 
 
 def stretch_vertical(image: ImageArray, factor: float = 2.0) -> ImageArray:
-    """Stretch a crop vertically, undoing pitch foreshortening.
-
-    A plate photographed from above or head-on-but-leaning (a parked
-    motorcycle's rear plate is the everyday case) is compressed **vertically**
-    by perspective while staying level: no in-plane rotation exists for
-    :func:`rectify_plate` to correct, yet the squeezed aspect ratio walks the
-    crop over the one-line threshold and the two-line split never runs.
-    Stretching the crop back down the aspect-ratio scale re-enters the
-    two-line path.
-
-    The interpolated rows add no real information -- the value of the stretch
-    is *routing* (which processing path the crop takes), not detail. That is
-    why this belongs in a failure-retry ladder and not in the main path.
-
-    Args:
-        image: The plate crop, grayscale or BGR. Not modified.
-        factor: Vertical multiplier. Must be greater than 1.
-
-    Returns:
-        The stretched crop.
-
-    Raises:
-        InvalidImageError: If ``image`` is not a usable image.
-        ValueError: If ``factor`` is not greater than 1.
-    """
+    """Stretch a crop vertically, undoing pitch foreshortening."""
     _validate_image(image, "image")
     if factor <= 1.0:
         raise ValueError(f"factor must be greater than 1, got {factor}")
@@ -368,38 +251,7 @@ def split_two_line(
     upper_end_ratio: float = UPPER_HALF_END_RATIO,
     lower_start_ratio: float = LOWER_HALF_START_RATIO,
 ) -> tuple[ImageArray, ImageArray]:
-    """Cut a two-line plate crop into an upper and a lower half, with overlap.
-
-    The two halves **overlap on purpose**. A naive cut at exactly half the
-    height slices through glyphs whenever the crop is not perfectly framed --
-    the plate border adds padding that is rarely symmetric, and a slight tilt
-    shifts the true separator by several pixels across the width. Amputating
-    the feet of the upper row or the caps of the lower row is far more damaging
-    to a recogniser than showing it a few stray pixels of the neighbouring row,
-    which it simply ignores as background.
-
-    With the default ratios the upper half spans ``[0, 5h/12)`` and the lower
-    half ``[h/3, h)``, so they share the band ``[h/3, 5h/12)`` -- one twelfth of
-    the plate height. These ratios are taken from published work on Vietnamese
-    two-line plates rather than tuned here, so that the baseline measurement in
-    Phase 4 starts from a known-good configuration.
-
-    Args:
-        image: The plate crop, grayscale or BGR. Not modified.
-        upper_end_ratio: Where the upper half ends, as a fraction of height.
-        lower_start_ratio: Where the lower half starts, as a fraction of
-            height. Must be smaller than ``upper_end_ratio`` for the halves to
-            overlap.
-
-    Returns:
-        An ``(upper, lower)`` pair of views cut from ``image``. Both are
-        guaranteed to have at least one row.
-
-    Raises:
-        InvalidImageError: If ``image`` is not a usable image.
-        ValueError: If the ratios are outside ``(0, 1)`` or would produce an
-            empty half.
-    """
+    """Cut a two-line plate crop into an upper and a lower half, with overlap."""
     _validate_image(image, "image")
 
     if not 0.0 < upper_end_ratio <= 1.0:
@@ -435,41 +287,7 @@ def merge_two_line(
     lower: ImageArray,
     target_height: int | None = None,
 ) -> ImageArray:
-    """Join the two halves of a plate side by side into one single-line strip.
-
-    This is the step that actually defuses risk R-04. A CRNN/CTC recogniser
-    assumes a monotonic left-to-right alignment between image columns and
-    emitted characters, and PP-OCR's recognition module resizes every input to
-    a **fixed height of 48 px**. Feed it a motorcycle plate (aspect ratio about
-    1.36) unchanged and each of the two text rows is compressed to roughly
-    24 px -- at that scale the strokes merge and the engine reads nothing
-    usable. Concatenating the halves horizontally instead gives a strip whose
-    aspect ratio is several times wider, so the single row of glyphs receives
-    the full 48 px height budget.
-
-    Reading order is preserved: the upper half is placed on the left, which is
-    exactly the order in which a Vietnamese two-line plate is read (province
-    code and series on top, running number below).
-
-    Args:
-        upper: Upper half of the plate, as returned by :func:`split_two_line`.
-        lower: Lower half of the plate.
-        target_height: Common height both halves are resized to, in pixels.
-            When ``None`` (the default) it is the larger of the two input
-            heights, floored at :data:`MIN_MERGE_HEIGHT` so the strip is never
-            shorter than the recogniser's own input height. Aspect ratio of
-            each half is preserved, so the halves keep their relative width.
-
-    Returns:
-        A single image of height ``target_height`` whose width is the sum of
-        the two resized half-widths. The channel layout matches the inputs;
-        if one input is grayscale and the other is BGR, both are promoted to
-        BGR so they can be stacked.
-
-    Raises:
-        InvalidImageError: If either half is not a usable image.
-        ValueError: If ``target_height`` is not positive.
-    """
+    """Join the two halves of a plate side by side into one single-line strip."""
     _validate_image(upper, "upper")
     _validate_image(lower, "lower")
 
@@ -504,72 +322,7 @@ def preprocess_plate(
     upscale_to_height: int | None = None,
     downscale_to_height: int | None = None,
 ) -> ImageArray:
-    """Clean up a plate crop before handing it to the OCR engine.
-
-    Three light-touch steps, each independently switchable so that Phase 7 can
-    ablate them and attribute the accuracy change to a specific one:
-
-    1. **Grayscale.** Vietnamese plate characters carry no colour information;
-       dropping the two chroma channels removes a nuisance variable introduced
-       by coloured street lighting.
-    2. **CLAHE.** Plates are retro-reflective metal with embossed characters
-       (1.7 mm relief per QCVN 08:2024/BCA), so a headlight or the sun produces
-       a bright patch over part of the plate while the rest stays dark. A
-       *global* histogram stretch cannot fix that; contrast-limited adaptive
-       equalisation works tile by tile and does. The clip limit keeps it from
-       amplifying sensor noise in the flat background areas.
-    3. **Denoise.** A bilateral filter -- edge-preserving on purpose, because a
-       Gaussian blur strong enough to remove sensor noise also rounds off the
-       stroke ends that distinguish ``8`` from ``B``.
-
-    The result is always a 3-channel BGR array even when ``to_grayscale`` is
-    enabled (the single channel is replicated), so that the output can be fed
-    to any engine without callers having to branch on channel count.
-
-    Args:
-        image: The plate crop, grayscale or BGR. Not modified.
-        to_grayscale: Whether to discard colour information.
-        apply_clahe: Whether to run contrast-limited adaptive histogram
-            equalisation. Requires a single-channel image, so it is skipped
-            with a warning when ``to_grayscale`` is disabled.
-        denoise: Whether to run the edge-preserving bilateral filter.
-        clahe_clip_limit: Contrast ceiling for CLAHE. Higher values give more
-            local contrast and more amplified noise.
-        clahe_tile_grid_size: CLAHE tile grid as ``(rows, columns)``.
-        upscale_to_height: When set, the crop is enlarged to this height
-            (aspect ratio preserved) before the other steps run. Small crops
-            benefit, since interpolating first gives CLAHE more pixels to work
-            with. Never downscales. ``None`` disables the step.
-        downscale_to_height: When set, a crop *taller* than this is shrunk to
-            it (aspect ratio preserved). ``None`` disables the step.
-
-            .. warning::
-               This is not a performance knob -- it is a **correctness fix**,
-               and leaving it unset costs everything. PP-OCR's text detector is
-               a DB segmentation network trained on document and scene text at
-               ordinary sizes; give it glyphs several hundred pixels tall and
-               its shrink map fires nowhere, so the pipeline returns *no text
-               at all*. Measured on the Phase 2b label corpus, whose crops are
-               exported at 640x640: with no cap, whole-plate accuracy is
-               **0 out of 100** sampled crops, one-line and two-line alike;
-               capping the strip at 64 px it is 48/50 and 31/50. The engine was
-               never the problem, the input scale was.
-
-               The failure is invisible in ordinary operation because a plate
-               cropped out of a 640-wide scene is only 20-40 px tall, well
-               under any cap. It appears the moment a user uploads a close-up
-               photograph -- exactly the input a web UI invites.
-
-    Returns:
-        The processed crop as a BGR ``uint8`` array.
-
-    Raises:
-        InvalidImageError: If ``image`` is not a usable image.
-        ValueError: If ``clahe_clip_limit`` is not positive, the tile grid is
-            not a pair of positive integers, either height bound is not
-            positive, or ``downscale_to_height`` is below
-            ``upscale_to_height`` (which would make the two steps fight).
-    """
+    """Clean up a plate crop before handing it to the OCR engine."""
     _validate_image(image, "image")
 
     if clahe_clip_limit <= 0.0:
@@ -632,17 +385,7 @@ def preprocess_plate(
 
 
 def _resize_to_height(image: ImageArray, height: int) -> ImageArray:
-    """Resize an image to a given height, preserving its aspect ratio.
-
-    Args:
-        image: Source image.
-        height: Target height in pixels. Must be positive.
-
-    Returns:
-        The resized image, at least one pixel wide. Enlarging uses cubic
-        interpolation (smoother strokes for the recogniser) and shrinking uses
-        area interpolation (no aliasing).
-    """
+    """Resize an image to a given height, preserving its aspect ratio."""
     source_height, source_width = image.shape[0], image.shape[1]
     if source_height == height:
         return image
@@ -652,18 +395,7 @@ def _resize_to_height(image: ImageArray, height: int) -> ImageArray:
 
 
 def _match_channels(first: ImageArray, second: ImageArray) -> tuple[ImageArray, ImageArray]:
-    """Promote both images to BGR when their channel counts differ.
-
-    ``np.hstack`` refuses arrays whose trailing dimensions disagree, so a
-    grayscale half cannot be stacked next to a colour one.
-
-    Args:
-        first: First image.
-        second: Second image.
-
-    Returns:
-        The two images with a matching number of channels.
-    """
+    """Promote both images to BGR when their channel counts differ."""
     if first.ndim == second.ndim:
         return first, second
     if first.ndim == 2:

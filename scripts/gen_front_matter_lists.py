@@ -1,19 +1,4 @@
-"""Sinh MỤC LỤC, DANH MỤC HÌNH VẼ và DANH MỤC BẢNG BIỂU từ chính nội dung chương.
-
-Vì sao phải sinh thay vì gõ
----------------------------
-Ba danh mục này ở đầu quyển đều mang nhãn *"placeholder — sinh tự động khi ghép
-quyển"*, nhưng thực tế **chưa có gì sinh chúng**. Hệ quả: chúng đã trôi rất xa
-khỏi nội dung thật — mục lục liệt kê những mục không tồn tại (*"2.10. Tóm tắt
-chương"*), danh mục hình bỏ trống nguyên Chương 4 và 5.
-
-Một mục lục sai còn tệ hơn không có mục lục, vì nó là thứ hội đồng đọc đầu tiên.
-
-Script này đọc trực tiếp các tệp chương và ghi đè ba mục ``E``, ``F``, ``G``
-trong ``01-front-matter.md``. Chạy lại sau mỗi lần đổi cấu trúc::
-
-    backend/.venv/Scripts/python scripts/gen_front_matter_lists.py --apply
-"""
+"""Sinh MỤC LỤC, DANH MỤC HÌNH VẼ và DANH MỤC BẢNG BIỂU từ chính nội dung chương."""
 
 from __future__ import annotations
 
@@ -102,13 +87,7 @@ def quet() -> tuple[list[str], list[tuple[str, str]], list[tuple[str, str]]]:
 
 
 def _pageref(neo: str) -> str:
-    """Truong PAGEREF cua Word, nhung trong raw OpenXML de pandoc chuyen thang.
-
-    Truoc day cot Trang la dau gach cung "—", nen Word khong co gi de dien va
-    danh muc hinh/bang in ra KHONG CO SO TRANG du tieu de cot hua co. Nay moi
-    dong tro toi mot bookmark dat ngay tai chu thich tuong ung (xem `neo_caption`),
-    va `export_thesis_pdf.ps1` goi Fields.Update() nen so trang tu dien.
-    """
+    """Truong PAGEREF cua Word, nhung trong raw OpenXML de pandoc chuyen thang."""
     return (
         "`<w:r><w:fldChar w:fldCharType=\"begin\"/></w:r>"
         "<w:r><w:instrText xml:space=\"preserve\"> PAGEREF " + neo + " \\h </w:instrText></w:r>"
@@ -133,12 +112,7 @@ def bang_md(muc: list[tuple[str, str]], nhan: str) -> list[str]:
 
 
 def thay_muc(goc: str, tieu_de: str, than: list[str]) -> str:
-    """Thay phần thân của một mục ``## X. TÊN`` bằng nội dung mới.
-
-    Mục không tồn tại thì **trả nguyên văn bản**, không tạo mới. Bản rút gọn đã
-    gỡ hẳn các mục E, F, G theo yêu cầu người thực hiện; nếu hàm này dựng lại
-    chúng thì mỗi lần chạy script lại làm sống lại phần vừa gỡ.
-    """
+    """Thay phần thân của một mục ``## X. TÊN`` bằng nội dung mới."""
     dong = goc.splitlines()
     dau = next((i for i, ln in enumerate(dong) if ln.startswith(tieu_de)), None)
     if dau is None:

@@ -46,55 +46,7 @@ _SQLITE_SCHEME: Final[str] = "sqlite:///"
 
 
 class Settings(BaseSettings):
-    """Runtime configuration for the backend, read from the environment.
-
-    Values are resolved in this order, first match winning:
-
-    1. an explicit keyword argument (used by tests),
-    2. an environment variable named ``ALPR_<FIELD>`` in upper case,
-    3. the same variable defined in a ``.env`` file,
-    4. the field default declared here.
-
-    Empty environment variables are treated as *unset* rather than as an empty
-    string, so a stray ``ALPR_DEVICE=`` in a shell profile cannot silently
-    blank out a setting.
-
-    An instance is built once per process by :func:`get_settings` and injected
-    wherever it is needed. Modules must not construct their own: two instances
-    could disagree, and configuration that disagrees with itself is worse than
-    configuration that is wrong.
-
-    Attributes:
-        app_name: Human-readable service name, shown in Swagger and ``/health``.
-        app_version: Version string reported by ``/health``.
-        debug: Enables verbose behaviour -- SQL echo and full tracebacks in the
-            log. Never enable in production: it does *not* change what the user
-            sees (errors stay opaque either way, NFR-S4), only how much detail
-            is written server-side.
-        api_prefix: Common prefix mounted in front of every router.
-        database_url: SQLAlchemy connection URL.
-        storage_root: Base directory for everything written to disk.
-        upload_dir: Original uploaded images and videos.
-        plate_dir: Cropped plate images.
-        output_dir: Rendered result images and processed videos.
-        max_image_size_mb: Upload ceiling for images, in megabytes.
-        max_video_size_mb: Upload ceiling for videos, in megabytes.
-        allowed_image_types: Accepted image MIME types, verified against the
-            file's magic bytes rather than its extension (NFR-S1).
-        allowed_video_types: Accepted video MIME types, verified the same way.
-        cors_origins: Browser origins allowed to call the API.
-        model_path: Detector weights. Shared with the ``ai`` package through
-            ``ALPR_MODEL_PATH``.
-        conf_threshold: Minimum detector confidence, in ``[0.0, 1.0]``.
-        iou_threshold: Non-maximum-suppression IoU threshold, in ``[0.0, 1.0]``.
-        imgsz: Square detector input size in pixels; a positive multiple of 32.
-        device: Torch device string. Defaults to ``"cpu"`` -- the target machine
-            has no CUDA GPU (decision AD-06).
-        frame_stride: Process every Nth video frame. Raising this speeds video
-            jobs up proportionally at the cost of possibly missing a plate that
-            is only briefly visible.
-        log_level: Root log level name, e.g. ``"INFO"``.
-    """
+    """Runtime configuration for the backend, read from the environment."""
 
     model_config = SettingsConfigDict(
         env_prefix="ALPR_",
@@ -240,21 +192,7 @@ class Settings(BaseSettings):
     @field_validator("cors_origins", "allowed_image_types", "allowed_video_types", mode="before")
     @classmethod
     def _split_list(cls, value: Any) -> Any:
-        """Accept a comma-separated string wherever a list is expected.
-
-        Pydantic-settings parses list-typed fields as JSON, which makes the
-        obvious ``.env`` line ``ALPR_CORS_ORIGINS=http://a,http://b`` a hard
-        error. Since ``.env`` files are hand-edited by people, the friendlier
-        form is supported too; JSON is still accepted so generated deployment
-        configuration keeps working.
-
-        Args:
-            value: Raw value straight from the environment or the field default.
-
-        Returns:
-            A list of strings when the input was a delimited string, otherwise
-            the value unchanged for Pydantic to handle.
-        """
+        """Accept a comma-separated string wherever a list is expected."""
         if not isinstance(value, str):
             return value
         text = value.strip()
@@ -270,21 +208,7 @@ class Settings(BaseSettings):
     @field_validator("cors_origins")
     @classmethod
     def _reject_wildcard_origin(cls, value: list[str]) -> list[str]:
-        """Refuse a wildcard CORS origin.
-
-        NFR-S4 requires an explicit origin allow-list. This is enforced at
-        start-up rather than reviewed by eye, because ``"*"`` is exactly the
-        value someone reaches for while debugging and then forgets to remove.
-
-        Args:
-            value: The configured origins.
-
-        Returns:
-            The origins unchanged when all of them are explicit.
-
-        Raises:
-            ValueError: If the list is empty or contains ``"*"``.
-        """
+        """Refuse a wildcard CORS origin."""
         if not value:
             raise ValueError(
                 "cors_origins must list at least one explicit origin; "
@@ -300,21 +224,7 @@ class Settings(BaseSettings):
     @field_validator("imgsz")
     @classmethod
     def _validate_imgsz(cls, value: int) -> int:
-        """Ensure the detector input size is a multiple of 32.
-
-        The YOLO backbone downsamples by 32, so any other value is silently
-        resized at inference time -- meaning the configured number would not be
-        the number actually used.
-
-        Args:
-            value: Configured input size in pixels.
-
-        Returns:
-            The value unchanged when valid.
-
-        Raises:
-            ValueError: If the value is not a multiple of 32.
-        """
+        """Ensure the detector input size is a multiple of 32."""
         if value % 32 != 0:
             raise ValueError(f"imgsz must be a multiple of 32, got {value}")
         return value
@@ -322,17 +232,7 @@ class Settings(BaseSettings):
     @field_validator("log_level")
     @classmethod
     def _normalize_log_level(cls, value: str) -> str:
-        """Upper-case and validate the log level name.
-
-        Args:
-            value: Configured level name, in any case.
-
-        Returns:
-            The canonical upper-case level name.
-
-        Raises:
-            ValueError: If the name is not a standard logging level.
-        """
+        """Upper-case and validate the log level name."""
         level = value.strip().upper()
         valid = {"CRITICAL", "ERROR", "WARNING", "INFO", "DEBUG", "NOTSET"}
         if level not in valid:
@@ -341,15 +241,7 @@ class Settings(BaseSettings):
 
     @model_validator(mode="after")
     def _resolve_paths(self) -> Settings:
-        """Anchor every relative path and the SQLite database file.
-
-        Runs after all fields are populated, which is what makes it possible to
-        resolve the storage sub-directories against ``storage_root`` -- a
-        field-level validator cannot see its siblings.
-
-        Returns:
-            The same instance, with all path fields absolute.
-        """
+        """Anchor every relative path and the SQLite database file."""
         self.storage_root = self._anchor(self.storage_root, PROJECT_ROOT)
         self.upload_dir = self._anchor(self.upload_dir, self.storage_root)
         self.plate_dir = self._anchor(self.plate_dir, self.storage_root)
@@ -360,15 +252,7 @@ class Settings(BaseSettings):
 
     @staticmethod
     def _anchor(path: Path, base: Path) -> Path:
-        """Make a path absolute by resolving it against a base directory.
-
-        Args:
-            path: Configured path, absolute or relative.
-            base: Directory a relative path is interpreted against.
-
-        Returns:
-            An absolute path with ``~`` expanded.
-        """
+        """Make a path absolute by resolving it against a base directory."""
         candidate = Path(path).expanduser()
         if not candidate.is_absolute():
             candidate = base / candidate
@@ -376,23 +260,7 @@ class Settings(BaseSettings):
 
     @staticmethod
     def _anchor_sqlite_url(url: str) -> str:
-        """Rewrite a relative SQLite URL into an absolute one.
-
-        ``sqlite:///./data/alpr.db`` is relative to the *working directory*,
-        so the server and Alembic would open two different database files when
-        launched from different folders -- a failure that looks like vanished
-        data rather than a configuration mistake. Anchoring the path to the
-        project root removes the possibility.
-
-        Non-SQLite URLs and URLs already carrying an absolute path are returned
-        untouched, as is the in-memory database used by tests.
-
-        Args:
-            url: The configured SQLAlchemy URL.
-
-        Returns:
-            The URL with any relative SQLite file path made absolute.
-        """
+        """Rewrite a relative SQLite URL into an absolute one."""
         if not url.startswith(_SQLITE_SCHEME):
             return url
         raw_path = url[len(_SQLITE_SCHEME) :]
@@ -422,25 +290,12 @@ class Settings(BaseSettings):
 
     @property
     def is_sqlite(self) -> bool:
-        """Return ``True`` when the configured database is SQLite.
-
-        Used by the engine factory, which must apply SQLite-specific
-        connection arguments and pragmas that other backends reject.
-        """
+        """Return ``True`` when the configured database is SQLite."""
         return self.database_url.startswith("sqlite")
 
     @property
     def sqlite_file(self) -> Path | None:
-        """Return the SQLite database file path, if there is one.
-
-        Returns:
-            The absolute path to the database file, or ``None`` when the
-            database is not a file-backed SQLite database (another engine, or
-            SQLite in memory). Callers use it to create the parent directory
-            before SQLAlchemy first connects -- SQLite will not create a
-            missing folder and fails with an opaque "unable to open database
-            file" instead.
-        """
+        """Return the SQLite database file path, if there is one."""
         if not self.database_url.startswith(_SQLITE_SCHEME):
             return None
         raw_path = self.database_url[len(_SQLITE_SCHEME) :]
@@ -451,15 +306,7 @@ class Settings(BaseSettings):
     # -- Side effects -----------------------------------------------------
 
     def ensure_directories(self) -> None:
-        """Create every directory the application writes to.
-
-        Called once during application start-up. Creating the folders up front
-        turns a missing directory into a start-up failure instead of a failure
-        halfway through a user's first upload, when a file has already been
-        partially consumed.
-
-        Idempotent: existing directories are left alone.
-        """
+        """Create every directory the application writes to."""
         for directory in (
             self.storage_root,
             self.upload_dir,
@@ -475,19 +322,5 @@ class Settings(BaseSettings):
 
 @lru_cache(maxsize=1)
 def get_settings() -> Settings:
-    """Return the process-wide settings instance.
-
-    Cached so that the environment and the ``.env`` file are read exactly once
-    and every caller observes the same object. This function is what the API
-    layer uses as a FastAPI dependency, which also makes it overridable in
-    tests via ``app.dependency_overrides``.
-
-    Returns:
-        The shared, fully validated settings instance.
-
-    Raises:
-        pydantic.ValidationError: If any environment value is missing, of the
-            wrong type, or out of range. Failing here means the process refuses
-            to start rather than misbehaving later under a bad configuration.
-    """
+    """Return the process-wide settings instance."""
     return Settings()

@@ -1,7 +1,4 @@
-"""FastAPI application factory: start-up, middleware, error handling, and routing.
-
-Configures logging, storage folders, database schema, and AI pipeline (NFR-S4).
-"""
+"""FastAPI application factory: start-up, middleware, error handling, and routing."""
 
 from __future__ import annotations
 

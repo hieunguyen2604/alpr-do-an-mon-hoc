@@ -32,33 +32,13 @@ _RUNTIME_HINTS: Final[dict[str, str]] = {
 
 
 def _resolve(path: str | Path) -> Path:
-    """Resolve a path against the repository root when it is relative.
-
-    Args:
-        path: Absolute or relative path.
-
-    Returns:
-        An absolute path.
-    """
+    """Resolve a path against the repository root when it is relative."""
     candidate = Path(path).expanduser()
     return candidate if candidate.is_absolute() else PROJECT_ROOT / candidate
 
 
 def verify_exported_model(exported: Path, imgsz: int) -> dict[str, Any]:
-    """Load an exported model back and run one forward pass on a dummy image.
-
-    Args:
-        exported: Path to the exported artefact (a file, or a directory in the
-            OpenVINO case).
-        imgsz: Input size the model was exported at.
-
-    Returns:
-        Mapping with ``path``, ``exists``, ``size_mb``, ``loaded``,
-        ``inference_ok``, ``latency_ms`` and ``error``.
-
-    Raises:
-        RuntimeError: If NumPy or Ultralytics is unavailable.
-    """
+    """Load an exported model back and run one forward pass on a dummy image."""
     try:
         import numpy as np
         from ultralytics import YOLO
@@ -110,31 +90,7 @@ def export_model(
     batch: int = 1,
     verify: bool = True,
 ) -> dict[str, Any]:
-    """Export one trained checkpoint to a single target format.
-
-    Args:
-        weights: Path to a ``.pt`` checkpoint.
-        export_format: One of :data:`SUPPORTED_FORMATS`.
-        imgsz: Square input size baked into the exported graph.
-        half: Export in FP16. **Ignored on CPU** by most runtimes and often
-            slower there than FP32; a warning is emitted when it is requested
-            for a CPU-oriented format.
-        dynamic: Allow a dynamic batch/spatial axis. Costs some speed; only
-            useful when the input size genuinely varies at runtime.
-        simplify: Run the ONNX graph simplifier (ONNX export only).
-        opset: ONNX opset version; ``None`` lets Ultralytics choose.
-        batch: Batch size baked into the graph.
-        verify: Load the result back and run a forward pass.
-
-    Returns:
-        Mapping with ``format``, ``output``, ``elapsed_seconds`` and, when
-        ``verify`` is set, ``verification``.
-
-    Raises:
-        FileNotFoundError: If the checkpoint does not exist.
-        ValueError: If ``export_format`` or ``imgsz`` is invalid.
-        RuntimeError: If Ultralytics is missing or the export itself fails.
-    """
+    """Export one trained checkpoint to a single target format."""
     if export_format not in SUPPORTED_FORMATS:
         raise ValueError(f"format must be one of {list(SUPPORTED_FORMATS)}, got {export_format!r}")
     if imgsz <= 0 or imgsz % 32 != 0:
@@ -229,11 +185,7 @@ def export_model(
 
 
 def build_parser() -> argparse.ArgumentParser:
-    """Construct the command-line parser.
-
-    Returns:
-        The configured :class:`argparse.ArgumentParser`.
-    """
+    """Construct the command-line parser."""
     parser = argparse.ArgumentParser(
         prog="python -m ai.training.export",
         description=(
@@ -305,14 +257,7 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def main(argv: list[str] | None = None) -> int:
-    """Command-line entry point.
-
-    Args:
-        argv: Argument list; defaults to :data:`sys.argv`.
-
-    Returns:
-        ``0`` if every requested export succeeded and verified, ``1`` otherwise.
-    """
+    """Command-line entry point."""
     args = build_parser().parse_args(argv)
     logging.basicConfig(
         level=logging.INFO,

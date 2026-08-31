@@ -71,18 +71,7 @@ _COCO_IOU_THRESHOLDS: Final[tuple[float, ...]] = tuple(round(0.5 + 0.05 * i, 2) 
 # --- Data containers ---
 @dataclass(slots=True)
 class GroundTruthBox:
-    """One annotated plate in one image.
-
-    Attributes:
-        image: Path of the image the box belongs to.
-        class_id: Class index from the label file.
-        xyxy: Absolute pixel coordinates ``(x1, y1, x2, y2)``.
-        group: :data:`SINGLE_LINE` or :data:`TWO_LINE`.
-        group_source: How :attr:`group` was decided -- ``"label"``, ``"class"``
-            or ``"aspect_ratio"``. Recorded so the report states how much of the
-            breakdown rests on a heuristic.
-        matched: Set during matching; ``True`` once a prediction has claimed it.
-    """
+    """One annotated plate in one image."""
 
     image: Path
     class_id: int
@@ -94,17 +83,7 @@ class GroundTruthBox:
 
 @dataclass(slots=True)
 class PredictionBox:
-    """One detection produced by the model.
-
-    Attributes:
-        image: Path of the image the detection came from.
-        class_id: Predicted class index.
-        confidence: Detector confidence in ``[0, 1]``.
-        xyxy: Absolute pixel coordinates ``(x1, y1, x2, y2)``.
-        group: Layout group inferred from the predicted box shape; overwritten
-            with the matched ground-truth group during matching, because the
-            ground-truth label is the more reliable assignment when available.
-    """
+    """One detection produced by the model."""
 
     image: Path
     class_id: int
@@ -115,22 +94,7 @@ class PredictionBox:
 
 @dataclass(slots=True)
 class GroupMetrics:
-    """Detection metrics for one population of plates.
-
-    Attributes:
-        group: Group name.
-        num_ground_truth: Number of annotated boxes in the group.
-        num_predictions: Number of detections assigned to the group.
-        true_positives: Detections matched to a ground-truth box at IoU >= 0.5.
-        false_positives: Detections with no ground-truth match.
-        false_negatives: Ground-truth boxes never detected.
-        precision: TP / (TP + FP) at the operating confidence threshold.
-        recall: TP / (TP + FN) at the operating confidence threshold.
-        f1: Harmonic mean of precision and recall.
-        ap50: Average precision at IoU 0.5.
-        ap50_95: Average precision averaged over IoU 0.50:0.05:0.95.
-        pr_curve: Sampled ``(recall, precision)`` points for plotting.
-    """
+    """Detection metrics for one population of plates."""
 
     group: str
     num_ground_truth: int = 0
@@ -146,11 +110,7 @@ class GroupMetrics:
     pr_curve: list[tuple[float, float]] = field(default_factory=list)
 
     def to_dict(self) -> dict[str, Any]:
-        """Render as a JSON-serialisable mapping.
-
-        Returns:
-            Metrics without the (large) PR curve samples.
-        """
+        """Render as a JSON-serialisable mapping."""
         return {
             "group": self.group,
             "num_ground_truth": self.num_ground_truth,
@@ -168,18 +128,7 @@ class GroupMetrics:
 
 # --- Dataset reading ---
 def load_dataset_descriptor(data_yaml: Path) -> dict[str, Any]:
-    """Read and sanity-check an Ultralytics ``data.yaml``.
-
-    Args:
-        data_yaml: Path to the descriptor.
-
-    Returns:
-        The parsed mapping.
-
-    Raises:
-        FileNotFoundError: If the file does not exist.
-        ValueError: If it is unreadable, not a mapping, or missing ``names``.
-    """
+    """Read and sanity-check an Ultralytics ``data.yaml``."""
     import yaml
 
     if not data_yaml.is_file():
@@ -199,23 +148,7 @@ def load_dataset_descriptor(data_yaml: Path) -> dict[str, Any]:
 
 
 def resolve_split_images(data_yaml: Path, descriptor: dict[str, Any], split: str) -> list[Path]:
-    """List the image files belonging to one dataset split.
-
-    Handles both Ultralytics conventions: a directory of images, or a text file
-    listing image paths one per line.
-
-    Args:
-        data_yaml: Path to the descriptor (used to resolve relative entries).
-        descriptor: Parsed descriptor mapping.
-        split: ``"train"``, ``"val"`` or ``"test"``.
-
-    Returns:
-        Sorted list of existing image paths.
-
-    Raises:
-        ValueError: If the split is absent from the descriptor, or resolves to
-            nothing usable.
-    """
+    """List the image files belonging to one dataset split."""
     if split not in descriptor:
         available = [k for k in ("train", "val", "test") if k in descriptor]
         raise ValueError(
@@ -265,18 +198,7 @@ def resolve_split_images(data_yaml: Path, descriptor: dict[str, Any], split: str
 
 
 def label_path_for(image: Path) -> Path:
-    """Map an image path to its YOLO label file.
-
-    Follows the Ultralytics convention of swapping the last ``/images/``
-    directory component for ``/labels/`` and the suffix for ``.txt``.
-
-    Args:
-        image: Path to an image file.
-
-    Returns:
-        Path to the corresponding ``.txt`` label file (which may not exist --
-        an empty/absent label file legitimately means "no objects").
-    """
+    """Map an image path to its YOLO label file."""
     parts = list(image.parts)
     for index in range(len(parts) - 1, -1, -1):
         if parts[index] == "images":
@@ -292,19 +214,7 @@ def classify_group(
     explicit_line_count: int | None,
     ar_threshold: float,
 ) -> tuple[str, str]:
-    """Decide whether a box is a single-line or a two-line plate.
-
-    Args:
-        width: Box width in pixels.
-        height: Box height in pixels.
-        class_name: Name of the box's class, lower-cased by the caller or not.
-        explicit_line_count: Line count read from the label file, if present.
-        ar_threshold: Width/height ratio below which a box is two-line.
-
-    Returns:
-        A ``(group, source)`` pair, where ``source`` is ``"label"``, ``"class"``
-        or ``"aspect_ratio"``.
-    """
+    """Decide whether a box is a single-line or a two-line plate."""
     if explicit_line_count is not None:
         return (SINGLE_LINE if explicit_line_count == 1 else TWO_LINE), "label"
 
@@ -324,24 +234,7 @@ def read_ground_truth(
     class_names: dict[int, str],
     ar_threshold: float,
 ) -> tuple[list[GroundTruthBox], dict[str, int]]:
-    """Load ground-truth boxes for a set of images and assign layout groups.
-
-    Malformed label lines are reported and skipped rather than aborting the
-    whole evaluation: on a merged multi-source dataset a handful of bad rows is
-    normal, and losing the entire report to one of them helps nobody.
-
-    Args:
-        images: Image paths to read labels for.
-        class_names: Mapping of class index to class name.
-        ar_threshold: Aspect-ratio threshold for the layout heuristic.
-
-    Returns:
-        A ``(boxes, stats)`` pair. ``stats`` counts ``images_without_labels``,
-        ``malformed_lines`` and how many boxes were grouped by each source.
-
-    Raises:
-        RuntimeError: If Pillow is unavailable (needed for image dimensions).
-    """
+    """Load ground-truth boxes for a set of images and assign layout groups."""
     try:
         from PIL import Image
     except ImportError as error:  # pragma: no cover - environment problem
@@ -419,15 +312,7 @@ def read_ground_truth(
 def iou(
     box_a: tuple[float, float, float, float], box_b: tuple[float, float, float, float]
 ) -> float:
-    """Intersection-over-union of two axis-aligned boxes.
-
-    Args:
-        box_a: ``(x1, y1, x2, y2)``.
-        box_b: ``(x1, y1, x2, y2)``.
-
-    Returns:
-        IoU in ``[0.0, 1.0]``; ``0.0`` when either box is degenerate.
-    """
+    """Intersection-over-union of two axis-aligned boxes."""
     ax1, ay1, ax2, ay2 = box_a
     bx1, by1, bx2, by2 = box_b
     inter_w = min(ax2, bx2) - max(ax1, bx1)
@@ -444,20 +329,7 @@ def iou(
 def compute_average_precision(
     matches: Sequence[tuple[float, bool]], num_ground_truth: int
 ) -> tuple[float, list[tuple[float, float]]]:
-    """Compute average precision from confidence-ranked match outcomes.
-
-    Uses all-point interpolation (the COCO/VOC-2010 convention): the precision
-    envelope is made monotonically decreasing before integration, so a single
-    noisy point cannot depress the score.
-
-    Args:
-        matches: ``(confidence, is_true_positive)`` for every prediction.
-        num_ground_truth: Total ground-truth boxes; the recall denominator.
-
-    Returns:
-        A ``(ap, pr_curve)`` pair. ``pr_curve`` holds ``(recall, precision)``
-        points in increasing-recall order, suitable for plotting.
-    """
+    """Compute average precision from confidence-ranked match outcomes."""
     if num_ground_truth == 0:
         return 0.0, []
     if not matches:
@@ -492,16 +364,7 @@ def _match_at_iou(
     predictions: Sequence[PredictionBox],
     iou_threshold: float,
 ) -> list[tuple[float, bool]]:
-    """Greedily match predictions to ground truth, highest confidence first.
-
-    Args:
-        ground_truth: Ground-truth boxes to match against.
-        predictions: Predictions to score.
-        iou_threshold: Minimum IoU for a match.
-
-    Returns:
-        ``(confidence, is_true_positive)`` per prediction, in confidence order.
-    """
+    """Greedily match predictions to ground truth, highest confidence first."""
     by_image: dict[Path, list[tuple[int, GroundTruthBox]]] = {}
     for index, box in enumerate(ground_truth):
         by_image.setdefault(box.image, []).append((index, box))
@@ -530,16 +393,7 @@ def evaluate_group(
     ground_truth: Sequence[GroundTruthBox],
     predictions: Sequence[PredictionBox],
 ) -> GroupMetrics:
-    """Compute detection metrics for one population of plates.
-
-    Args:
-        group: Group label, used only for reporting.
-        ground_truth: Ground-truth boxes in this group.
-        predictions: Predictions assigned to this group.
-
-    Returns:
-        Populated :class:`GroupMetrics`.
-    """
+    """Compute detection metrics for one population of plates."""
     metrics = GroupMetrics(
         group=group,
         num_ground_truth=len(ground_truth),
@@ -585,25 +439,7 @@ def run_predictions(
     device: str,
     ar_threshold: float,
 ) -> tuple[list[PredictionBox], list[float]]:
-    """Run the detector over every image, one at a time, recording latency.
-
-    Images are processed singly (batch size 1) on purpose: that is how the
-    deployed API serves an upload, so the per-image timings collected here are
-    the ones a user would actually experience.
-
-    Args:
-        model: Loaded Ultralytics model.
-        images: Images to run over.
-        imgsz: Inference input size.
-        conf: Confidence threshold.
-        iou_threshold: NMS IoU threshold.
-        device: Torch device string.
-        ar_threshold: Aspect-ratio threshold used to pre-assign a layout group
-            to each detection (refined later by ground-truth matching).
-
-    Returns:
-        A ``(predictions, latencies_ms)`` pair.
-    """
+    """Run the detector over every image, one at a time, recording latency."""
     predictions: list[PredictionBox] = []
     latencies: list[float] = []
     failures = 0
@@ -658,19 +494,7 @@ def run_predictions(
 def assign_predictions_to_groups(
     ground_truth: Sequence[GroundTruthBox], predictions: Sequence[PredictionBox]
 ) -> None:
-    """Re-assign each prediction to the group of the ground-truth box it hits.
-
-    A prediction carries no layout label of its own, so it is initially grouped
-    by its own aspect ratio. Where it overlaps an annotated plate, the
-    annotation is the better authority: a detection that is slightly too tall
-    should still be counted against the single-line population it was trying to
-    find. Predictions that match nothing keep their shape-based group, which is
-    the only information available for a false positive.
-
-    Args:
-        ground_truth: All ground-truth boxes.
-        predictions: Predictions to relabel, mutated in place.
-    """
+    """Re-assign each prediction to the group of the ground-truth box it hits."""
     by_image: dict[Path, list[GroundTruthBox]] = {}
     for box in ground_truth:
         by_image.setdefault(box.image, []).append(box)
@@ -687,19 +511,7 @@ def assign_predictions_to_groups(
 
 
 def summarise_latency(latencies: Sequence[float]) -> dict[str, float | int]:
-    """Summarise per-image latency measurements.
-
-    Percentiles are computed by nearest-rank on the sorted samples, which is
-    unambiguous and does not interpolate between measurements that were never
-    observed.
-
-    Args:
-        latencies: Per-image latencies in milliseconds.
-
-    Returns:
-        Mapping with ``samples``, ``mean_ms``, ``p50_ms``, ``p95_ms``,
-        ``p99_ms``, ``min_ms``, ``max_ms`` and ``fps_p50``.
-    """
+    """Summarise per-image latency measurements."""
     if not latencies:
         return {"samples": 0}
     ordered = sorted(latencies)
@@ -725,16 +537,7 @@ def summarise_latency(latencies: Sequence[float]) -> dict[str, float | int]:
 def plot_pr_curves(
     metrics_by_group: dict[str, GroupMetrics], destination: Path, title: str
 ) -> Path | None:
-    """Plot precision/recall curves, one line per plate layout.
-
-    Args:
-        metrics_by_group: Metrics keyed by group name.
-        destination: PNG file to write.
-        title: Plot title.
-
-    Returns:
-        The written path, or ``None`` if matplotlib is unavailable.
-    """
+    """Plot precision/recall curves, one line per plate layout."""
     try:
         import matplotlib
 
@@ -776,22 +579,7 @@ def plot_confusion_matrix(
     predictions: Sequence[PredictionBox],
     destination: Path,
 ) -> Path | None:
-    """Plot a layout-aware confusion matrix.
-
-    Rows are the ground-truth population (single-line, two-line, or
-    ``background`` for a false positive); columns are what the detector
-    produced. The ``background`` row/column is what makes the matrix useful for
-    detection: it separates "found the wrong kind of plate" from "hallucinated a
-    plate" and "missed a plate entirely".
-
-    Args:
-        ground_truth: All ground-truth boxes.
-        predictions: All predictions.
-        destination: PNG file to write.
-
-    Returns:
-        The written path, or ``None`` if matplotlib is unavailable.
-    """
+    """Plot a layout-aware confusion matrix."""
     try:
         import matplotlib
 
@@ -859,17 +647,7 @@ def plot_confusion_matrix(
 
 
 def plot_latency(latencies: Sequence[float], destination: Path, device: str) -> Path | None:
-    """Plot the distribution of per-image inference latency.
-
-    Args:
-        latencies: Per-image latencies in milliseconds.
-        destination: PNG file to write.
-        device: Device label for the title.
-
-    Returns:
-        The written path, or ``None`` if matplotlib is unavailable or there is
-        no data.
-    """
+    """Plot the distribution of per-image inference latency."""
     if not latencies:
         return None
     try:
@@ -915,25 +693,7 @@ def run_ultralytics_validation(
     device: str,
     figures_dir: Path,
 ) -> dict[str, Any]:
-    """Run the reference Ultralytics validator for the headline metrics.
-
-    The custom matcher in this module exists for the per-layout breakdown, which
-    Ultralytics cannot produce. The headline numbers, however, should come from
-    the reference implementation -- a thesis that quotes home-grown mAP invites
-    the obvious question at the defence.
-
-    Args:
-        model: Loaded Ultralytics model.
-        data_yaml: Dataset descriptor.
-        split: Split to validate on.
-        imgsz: Inference input size.
-        batch: Validation batch size.
-        device: Torch device string.
-        figures_dir: Directory to copy generated plots into.
-
-    Returns:
-        Mapping of metric name to value; empty if validation failed.
-    """
+    """Run the reference Ultralytics validator for the headline metrics."""
     try:
         results = model.val(
             data=str(data_yaml),
@@ -987,11 +747,7 @@ def run_ultralytics_validation(
 
 # --- CLI ---
 def build_parser() -> argparse.ArgumentParser:
-    """Construct the command-line parser.
-
-    Returns:
-        The configured :class:`argparse.ArgumentParser`.
-    """
+    """Construct the command-line parser."""
     parser = argparse.ArgumentParser(
         prog="python -m ai.evaluation.evaluate",
         description=(
@@ -1093,25 +849,13 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def _resolve(path: str | Path) -> Path:
-    """Resolve a path against the repository root when relative.
-
-    Args:
-        path: Absolute or relative path.
-
-    Returns:
-        An absolute path.
-    """
+    """Resolve a path against the repository root when relative."""
     candidate = Path(path).expanduser()
     return candidate if candidate.is_absolute() else PROJECT_ROOT / candidate
 
 
 def _log_table(metrics_by_group: dict[str, GroupMetrics], overall: GroupMetrics) -> None:
-    """Print the per-layout metrics table to the log.
-
-    Args:
-        metrics_by_group: Per-group metrics.
-        overall: Metrics over all plates.
-    """
+    """Print the per-layout metrics table to the log."""
     header = f"{'GROUP':<14}{'N_GT':>7}{'TP':>7}{'FP':>7}{'FN':>7}{'P':>9}{'R':>9}{'F1':>9}{'mAP50':>9}{'mAP50-95':>10}"
     LOGGER.info("=" * len(header))
     LOGGER.info(header)
@@ -1152,14 +896,7 @@ def _log_table(metrics_by_group: dict[str, GroupMetrics], overall: GroupMetrics)
 
 
 def main(argv: list[str] | None = None) -> int:
-    """Command-line entry point.
-
-    Args:
-        argv: Argument list; defaults to :data:`sys.argv`.
-
-    Returns:
-        ``0`` on success, ``1`` on a handled error.
-    """
+    """Command-line entry point."""
     args = build_parser().parse_args(argv)
     logging.basicConfig(
         level=logging.INFO,

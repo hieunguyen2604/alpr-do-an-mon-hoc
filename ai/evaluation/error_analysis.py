@@ -59,24 +59,7 @@ _FILENAME_SAFE: Final[frozenset[str]] = frozenset(
 
 @dataclass(frozen=True, slots=True)
 class ErrorCase:
-    """One misread crop, classified.
-
-    Attributes:
-        image_path: Absolute path to the crop.
-        ground_truth: The cleaned true plate string.
-        prediction: The predicted string being analysed.
-        error_class: One of :data:`ERROR_CLASSES`.
-        line_count: ``1`` or ``2``.
-        substitutions: ``(true_char, predicted_char)`` pairs from the alignment.
-        deleted: Characters present in the truth but absent from the prediction.
-        inserted: Characters the prediction added.
-        error_positions: Indices in the ground truth where a substitution or a
-            deletion occurred. Useful for spotting a systematically weak slot --
-            the last digit of a two-line plate, for instance.
-        confidence: The engine's own confidence, which is worth comparing
-            against correctness: a confidently wrong read is a worse failure
-            mode than an unconfident one.
-    """
+    """One misread crop, classified."""
 
     image_path: str
     ground_truth: str
@@ -96,22 +79,7 @@ class ErrorCase:
 
 
 def classify_error(ground_truth: str, prediction: str) -> tuple[str, dict[str, Any]]:
-    """Assign one error class to a prediction and describe the edit operations.
-
-    Classification order is deliberate. ``transposition`` is tested **before**
-    the edit operations are inspected, because a reordering shows up in an
-    alignment as a mixture of substitutions, insertions and deletions and would
-    otherwise be filed under ``mixed`` -- losing exactly the signal that makes
-    it worth having a class for.
-
-    Args:
-        ground_truth: The cleaned true plate string.
-        prediction: The predicted string.
-
-    Returns:
-        A ``(error_class, detail)`` pair. ``detail`` carries ``substitutions``,
-        ``deleted``, ``inserted`` and ``error_positions``.
-    """
+    """Assign one error class to a prediction and describe the edit operations."""
     operations = align(ground_truth, prediction)
     substitutions: list[tuple[str, str]] = []
     deleted: list[str] = []
@@ -158,20 +126,7 @@ def classify_error(ground_truth: str, prediction: str) -> tuple[str, dict[str, A
 
 
 def load_samples(report_path: Path) -> tuple[list[dict[str, Any]], dict[str, Any]]:
-    """Read the per-crop records out of a benchmark JSON report.
-
-    Args:
-        report_path: Path to ``ocr_benchmark.json``.
-
-    Returns:
-        A ``(samples, metadata)`` pair, where ``metadata`` holds the engine
-        name, the settings and the summary from the same run, so the analysis
-        can state which run it describes.
-
-    Raises:
-        FileNotFoundError: If the report does not exist.
-        ValueError: If the file is not valid JSON or carries no samples.
-    """
+    """Read the per-crop records out of a benchmark JSON report."""
     if not report_path.is_file():
         raise FileNotFoundError(
             f"Benchmark report not found: {report_path}\n"
@@ -199,24 +154,7 @@ def load_samples(report_path: Path) -> tuple[list[dict[str, Any]], dict[str, Any
 
 
 def analyse(samples: Sequence[dict[str, Any]], stage: str) -> list[ErrorCase]:
-    """Classify every sample of a benchmark run.
-
-    Args:
-        samples: The ``samples`` list from the benchmark JSON.
-        stage: Which prediction to analyse -- ``"normalized"`` for the string
-            the system actually reports, or ``"raw"`` for the engine output
-            before positional repair. Analysing ``"raw"`` shows what the
-            recogniser gets wrong; analysing ``"normalized"`` shows what the
-            rules failed to fix. Both are worth reporting, and they answer
-            different questions.
-
-    Returns:
-        One :class:`ErrorCase` per sample, correct reads included, so that
-        rates can be computed without consulting the benchmark again.
-
-    Raises:
-        ValueError: If ``stage`` is not a recognised value.
-    """
+    """Classify every sample of a benchmark run."""
     if stage not in ("normalized", "raw"):
         raise ValueError(f"stage must be 'normalized' or 'raw', got {stage!r}")
     key = "post_norm_text" if stage == "normalized" else "pre_norm_text"
@@ -244,31 +182,13 @@ def analyse(samples: Sequence[dict[str, Any]], stage: str) -> list[ErrorCase]:
 
 
 def _safe_stem(text: str, fallback: str = "empty") -> str:
-    """Reduce a plate string to characters that are safe in a filename.
-
-    Args:
-        text: The string to sanitise.
-        fallback: Returned when nothing survives.
-
-    Returns:
-        A filename-safe fragment.
-    """
+    """Reduce a plate string to characters that are safe in a filename."""
     cleaned = "".join(char if char in _FILENAME_SAFE else "-" for char in text)
     return cleaned[:24] or fallback
 
 
 def _annotate(image: Any, case: ErrorCase) -> Any:
-    """Draw the true and predicted strings underneath a crop.
-
-    Args:
-        image: The crop as a BGR array.
-        case: The case being exported.
-
-    Returns:
-        A new image with a caption bar appended below the crop. The crop itself
-        is never drawn over: covering part of the plate would defeat the point
-        of exporting it for visual review.
-    """
+    """Draw the true and predicted strings underneath a crop."""
     import cv2
     import numpy as np
 
@@ -311,21 +231,7 @@ def _annotate(image: Any, case: ErrorCase) -> Any:
 def export_cases(
     cases: Sequence[ErrorCase], output_dir: Path, annotate: bool, limit_per_class: int
 ) -> dict[str, int]:
-    """Copy the failing crops into one directory per error class.
-
-    Args:
-        cases: Every classified case; correct reads are ignored here.
-        output_dir: Root directory for the export. Existing per-class
-            directories are cleared first, so a re-run never mixes the
-            leftovers of a previous analysis with the current one.
-        annotate: Whether to append a caption bar carrying the true and
-            predicted strings. Requires OpenCV; falls back to a plain copy with
-            a warning when it is unavailable.
-        limit_per_class: Maximum crops exported per class; ``0`` means all.
-
-    Returns:
-        Number of files exported per class.
-    """
+    """Copy the failing crops into one directory per error class."""
     exported: Counter[str] = Counter()
     grouped: dict[str, list[ErrorCase]] = defaultdict(list)
     for case in cases:
@@ -377,14 +283,7 @@ def export_cases(
 
 
 def _class_counts(cases: Sequence[ErrorCase]) -> dict[str, int]:
-    """Count cases per error class, including the classes that never occurred.
-
-    Args:
-        cases: The classified cases.
-
-    Returns:
-        Mapping from every class in :data:`ERROR_CLASSES` to its count.
-    """
+    """Count cases per error class, including the classes that never occurred."""
     counter = Counter(case.error_class for case in cases)
     return {name: counter.get(name, 0) for name in ERROR_CLASSES}
 
@@ -392,16 +291,7 @@ def _class_counts(cases: Sequence[ErrorCase]) -> dict[str, int]:
 def _summary_payload(
     cases: Sequence[ErrorCase], metadata: dict[str, Any], stage: str
 ) -> dict[str, Any]:
-    """Assemble the analysis summary.
-
-    Args:
-        cases: The classified cases.
-        metadata: Run metadata from the benchmark report.
-        stage: Which prediction was analysed.
-
-    Returns:
-        The payload written to ``error_analysis.json``.
-    """
+    """Assemble the analysis summary."""
     errors = [case for case in cases if case.is_error]
     substitutions: Counter[tuple[str, str]] = Counter()
     positions: Counter[int] = Counter()
@@ -447,15 +337,7 @@ def _summary_payload(
 
 
 def _write_csv(cases: Sequence[ErrorCase], destination: Path) -> None:
-    """Write every failing case to a CSV for manual review in a spreadsheet.
-
-    Args:
-        cases: The classified cases; correct reads are omitted.
-        destination: File to write.
-
-    Raises:
-        OSError: If the file cannot be written.
-    """
+    """Write every failing case to a CSV for manual review in a spreadsheet."""
     with destination.open("w", encoding="utf-8", newline="") as handle:
         writer = csv.writer(handle)
         writer.writerow(
@@ -492,15 +374,7 @@ def _write_csv(cases: Sequence[ErrorCase], destination: Path) -> None:
 
 
 def _write_markdown(payload: dict[str, Any], destination: Path) -> None:
-    """Render the analysis as a Markdown summary.
-
-    Args:
-        payload: The analysis payload.
-        destination: File to write.
-
-    Raises:
-        OSError: If the file cannot be written.
-    """
+    """Render the analysis as a Markdown summary."""
     total = payload["total_cases"]
     lines: list[str] = [
         "# Phan tich loi OCR",
@@ -594,16 +468,7 @@ def _write_markdown(payload: dict[str, Any], destination: Path) -> None:
 
 
 def _write_chart(payload: dict[str, Any], destination: Path) -> bool:
-    """Render the error-class distribution as a bar chart.
-
-    Args:
-        payload: The analysis payload.
-        destination: PNG file to write.
-
-    Returns:
-        ``True`` if the chart was written. Charts are best-effort: a missing
-        Matplotlib must not lose an analysis whose numbers are already in JSON.
-    """
+    """Render the error-class distribution as a bar chart."""
     try:
         import matplotlib
 
@@ -639,11 +504,7 @@ def _write_chart(payload: dict[str, Any], destination: Path) -> bool:
 
 
 def build_parser() -> argparse.ArgumentParser:
-    """Construct the command-line parser.
-
-    Returns:
-        The configured :class:`argparse.ArgumentParser`.
-    """
+    """Construct the command-line parser."""
     parser = argparse.ArgumentParser(
         prog="python -m ai.evaluation.error_analysis",
         description=(
@@ -697,28 +558,13 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def _resolve(path: str | Path) -> Path:
-    """Resolve a path against the repository root when it is relative.
-
-    Args:
-        path: Absolute or relative path.
-
-    Returns:
-        An absolute path.
-    """
+    """Resolve a path against the repository root when it is relative."""
     candidate = Path(path).expanduser()
     return candidate if candidate.is_absolute() else PROJECT_ROOT / candidate
 
 
 def main(argv: list[str] | None = None) -> int:
-    """Command-line entry point.
-
-    Args:
-        argv: Argument list; defaults to :data:`sys.argv`.
-
-    Returns:
-        ``0`` on success, ``1`` on a write failure, ``2`` when the benchmark
-        report is missing or unusable.
-    """
+    """Command-line entry point."""
     args = build_parser().parse_args(argv)
     logging.basicConfig(
         level=logging.INFO,

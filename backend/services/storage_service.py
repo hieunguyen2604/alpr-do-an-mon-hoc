@@ -1,9 +1,4 @@
-"""Safe persistence of uploaded files and generated crops.
-
-- NFR-S2: Stored filenames are random UUIDs, discarding client-provided names.
-- NFR-S1: Media MIME types are verified directly from magic bytes.
-- NFR-M4: Storage directory paths are injected from configuration.
-"""
+"""Safe persistence of uploaded files and generated crops."""
 
 from __future__ import annotations
 

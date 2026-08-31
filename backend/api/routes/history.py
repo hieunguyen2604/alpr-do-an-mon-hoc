@@ -105,20 +105,7 @@ def _build_filter(
     min_confidence: float | None,
     job_id: str | None,
 ) -> HistoryFilter:
-    """Assemble the service-layer filter from query parameters.
-
-    Args:
-        search: Free-text needle, or ``None``.
-        input_type: Input type to keep, or ``None``.
-        is_valid_format: Format-validity restriction, or ``None``.
-        date_from: Inclusive lower time bound, or ``None``.
-        date_to: Inclusive upper time bound, or ``None``.
-        min_confidence: Lower bound on detection confidence, or ``None``.
-        job_id: Upload to restrict to, or ``None``.
-
-    Returns:
-        The filter object the service consumes.
-    """
+    """Assemble the service-layer filter from query parameters."""
     return HistoryFilter(
         search=search,
         input_type=input_type,
@@ -218,29 +205,7 @@ def list_history(
     sort_by: SortByQuery = SortField.DETECTED_TIME,
     order: OrderQuery = SortOrder.DESC,
 ) -> HistoryListResponse:
-    """Return one page of detection records.
-
-    Args:
-        db: Session for this request.
-        history: The history service.
-        page: 1-based page number.
-        page_size: Records per page.
-        search: Free-text needle matched against both plate strings.
-        input_type: Restrict to one input type.
-        is_valid_format: Restrict by format validity.
-        date_from: Inclusive lower bound on detection time.
-        date_to: Inclusive upper bound on detection time.
-        min_confidence: Lower bound on detection confidence.
-        job_id: Restrict to one upload.
-        sort_by: Column to order by.
-        order: Sort direction.
-
-    Returns:
-        The requested page and the total number of matching records.
-
-    Raises:
-        ValidationError: If the paging or filter parameters are inconsistent.
-    """
+    """Return one page of detection records."""
     criteria = _build_filter(
         search, input_type, is_valid_format, date_from, date_to, min_confidence, job_id
     )
@@ -302,35 +267,7 @@ def export_history(
     sort_by: SortByQuery = SortField.DETECTED_TIME,
     order: OrderQuery = SortOrder.DESC,
 ) -> StreamingResponse:
-    """Stream the matching records as a CSV download.
-
-    Note the absence of a ``db`` parameter, which is not an oversight. A
-    dependency-provided session is closed when the endpoint *returns*, and a
-    streaming response returns before its body has been produced -- the
-    generator would then run against a closed session and fail halfway through
-    the download. The stream therefore owns a session of its own and closes it
-    when the last chunk has been written.
-
-    Args:
-        history: The history service.
-        search: Free-text needle matched against both plate strings.
-        input_type: Restrict to one input type.
-        is_valid_format: Restrict by format validity.
-        date_from: Inclusive lower bound on detection time.
-        date_to: Inclusive upper bound on detection time.
-        min_confidence: Lower bound on detection confidence.
-        job_id: Restrict to one upload.
-        sort_by: Column to order by.
-        order: Sort direction.
-
-    Returns:
-        A streaming CSV response with a download filename.
-
-    Raises:
-        ValidationError: If the filter parameters are inconsistent. Raised
-            before streaming starts, so the client still receives a clean 400
-            rather than a truncated file.
-    """
+    """Stream the matching records as a CSV download."""
     criteria = _build_filter(
         search, input_type, is_valid_format, date_from, date_to, min_confidence, job_id
     )
@@ -357,17 +294,7 @@ def _stream_csv(
     sort_by: SortField,
     order: SortOrder,
 ) -> Iterator[str]:
-    """Produce the export's chunks against a session of the stream's own.
-
-    Args:
-        history: The history service.
-        criteria: Conditions narrowing the export.
-        sort_by: Column to order by.
-        order: Sort direction.
-
-    Yields:
-        Chunks of CSV text.
-    """
+    """Produce the export's chunks against a session of the stream's own."""
     from backend.models.database import SessionLocal  # local: keeps the import cycle open
 
     session = SessionLocal()
@@ -403,19 +330,7 @@ def get_detection(
         Path(ge=1, description="Identifier of the detection record.", examples=[1247]),
     ],
 ) -> DetectionHistoryResponse:
-    """Return one detection record.
-
-    Args:
-        db: Session for this request.
-        history: The history service.
-        detection_id: Primary key of the record.
-
-    Returns:
-        The record.
-
-    Raises:
-        NotFoundError: If no such record exists.
-    """
+    """Return one detection record."""
     return history.get_by_id(db, detection_id)
 
 
@@ -447,18 +362,6 @@ def delete_detection(
         Path(ge=1, description="Identifier of the detection record.", examples=[1247]),
     ],
 ) -> Response:
-    """Delete one detection record.
-
-    Args:
-        db: Session for this request.
-        history: The history service.
-        detection_id: Primary key of the record to delete.
-
-    Returns:
-        An empty 204 response.
-
-    Raises:
-        NotFoundError: If no such record exists.
-    """
+    """Delete one detection record."""
     history.delete(db, detection_id)
     return Response(status_code=status.HTTP_204_NO_CONTENT)

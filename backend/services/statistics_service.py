@@ -1,7 +1,4 @@
-"""Aggregate figures and metrics for dashboard statistics.
-
-Distinguishes upload job counts from plate detection counts, and partitions format statuses.
-"""
+"""Aggregate figures and metrics for dashboard statistics."""
 
 from __future__ import annotations
 
@@ -44,18 +41,7 @@ class StatisticsService:
         *,
         days: int = DEFAULT_TREND_DAYS,
     ) -> StatisticsResponse:
-        """Compute every dashboard figure in one pass.
-
-        Args:
-            db: Session for this request.
-            days: Length of the daily trend window, ending today (UTC).
-
-        Returns:
-            The fully populated statistics response.
-
-        Raises:
-            ValidationError: If ``days`` is outside ``[1, MAX_TREND_DAYS]``.
-        """
+        """Compute every dashboard figure in one pass."""
         if not 1 <= days <= MAX_TREND_DAYS:
             raise ValidationError(
                 f"days must be within [1, {MAX_TREND_DAYS}], got {days}",
@@ -156,21 +142,7 @@ class StatisticsService:
     # -- Breakdowns -------------------------------------------------------
 
     def _by_input_type(self, db: Session) -> list[InputTypeCountSchema]:
-        """Count uploads and plates for each input type.
-
-        Both counts are produced in one grouped query per table rather than one
-        query per type, so the breakdown costs two round trips regardless of how
-        many input types exist.
-
-        Args:
-            db: Session for this request.
-
-        Returns:
-            One entry per input type, in the declaration order of
-            :class:`~backend.models.detection.InputType`. Types with no activity
-            are included with zeros: a bar chart missing its "webcam" bar looks
-            like a rendering fault, not like an absence of data.
-        """
+        """Count uploads and plates for each input type."""
         job_counts = dict(
             db.execute(
                 select(DetectionJob.input_type, func.count()).group_by(DetectionJob.input_type)
@@ -194,21 +166,7 @@ class StatisticsService:
         ]
 
     def _daily_counts(self, db: Session, *, days: int, today: dt.date) -> list[DailyCountSchema]:
-        """Build the per-day activity series for the trend chart.
-
-        Days with no activity are emitted as zeros rather than omitted. A chart
-        drawn from a sparse series silently compresses the gaps, so a quiet
-        weekend renders as a continuous line and the shape of the trend is
-        wrong.
-
-        Args:
-            db: Session for this request.
-            days: Window length, ending today inclusive.
-            today: Today's date in UTC.
-
-        Returns:
-            One entry per day in the window, oldest first.
-        """
+        """Build the per-day activity series for the trend chart."""
         window_start = self._start_of_day(today - dt.timedelta(days=days - 1))
 
         job_rows = db.execute(
@@ -241,35 +199,12 @@ class StatisticsService:
 
     @staticmethod
     def _start_of_day(day: dt.date) -> dt.datetime:
-        """Return midnight UTC at the start of a date.
-
-        Args:
-            day: The calendar date.
-
-        Returns:
-            A timezone-aware UTC datetime at 00:00 on that date. Aware on
-            purpose: the columns are ``UtcDateTime``, and comparing them against
-            a naive value would compare two different clocks.
-        """
+        """Return midnight UTC at the start of a date."""
         return dt.datetime.combine(day, dt.time.min, tzinfo=dt.timezone.utc)
 
     @staticmethod
     def _as_date(value: object) -> dt.date:
-        """Coerce a grouped ``DATE()`` result into a :class:`datetime.date`.
-
-        SQLite returns the group key as a ``"YYYY-MM-DD"`` string while other
-        backends return a real date object. Normalising here keeps the caller
-        free of the difference.
-
-        Args:
-            value: The group key as returned by the driver.
-
-        Returns:
-            The corresponding date.
-
-        Raises:
-            ValueError: If the value is neither a date nor a parsable string.
-        """
+        """Coerce a grouped ``DATE()`` result into a :class:`datetime.date`."""
         if isinstance(value, dt.datetime):
             return value.date()
         if isinstance(value, dt.date):
@@ -278,30 +213,10 @@ class StatisticsService:
 
     @staticmethod
     def _as_optional_float(value: object) -> float | None:
-        """Convert an aggregate result to a float, preserving ``NULL``.
-
-        ``AVG`` over an empty table returns ``NULL``, and that must stay
-        ``None`` rather than becoming ``0.0``: an average confidence of zero
-        reads as "the model is completely unsure", while the truth is "there is
-        nothing to average yet".
-
-        Args:
-            value: The aggregate value from the driver.
-
-        Returns:
-            The value as a float, or ``None`` when the aggregate was ``NULL``.
-        """
+        """Convert an aggregate result to a float, preserving ``NULL``."""
         return None if value is None else float(value)
 
     @staticmethod
     def _scalar_count(db: Session, statement: Select[tuple[int]]) -> int:
-        """Execute a counting query and return the result as an ``int``.
-
-        Args:
-            db: Session for this request.
-            statement: A query selecting exactly one scalar.
-
-        Returns:
-            The count.
-        """
+        """Execute a counting query and return the result as an ``int``."""
         return int(db.execute(statement).scalar_one())

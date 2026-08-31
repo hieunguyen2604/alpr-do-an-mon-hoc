@@ -1,38 +1,4 @@
-"""Measure the runtime NFRs that require a live server (P2, P3, R4, R5).
-
-Four quantities that cannot be measured in-process
---------------------------------------------------
-=========== ============================================================ =============
-Requirement Quantity                                                     Target
-=========== ============================================================ =============
-NFR-P2      Effective webcam frame rate over 60 s                        >= 5 FPS
-NFR-P3      Video processing speed relative to real time                 >= 0.3x
-NFR-R4      Success rate under continuous load                           >= 99%
-NFR-R5      Database contents survive a restart                          100%
-=========== ============================================================ =============
-
-Why a real uvicorn subprocess
------------------------------
-``TestClient`` calls the ASGI app in-process. That removes the socket, the HTTP
-parser and the event loop -- and for NFR-R5 it removes the very thing under
-test, since an in-process client shares the interpreter whose death is the
-event we want to survive. Every phase here therefore talks to a real server
-over real HTTP on the loopback interface.
-
-What the webcam number does and does not include
-------------------------------------------------
-There is no camera in this environment, so NFR-P2 is measured by replaying
-stored test images through ``POST /api/detect/frame`` under the *same*
-single-slot queue discipline the frontend uses: at most one request is in
-flight, and a frame produced by the camera while a request is outstanding is
-dropped rather than queued. The reported figure is therefore the frame rate the
-*server* can sustain over localhost HTTP. It excludes camera capture, JPEG
-encoding in the browser and canvas draw time, all of which a real deployment
-would additionally pay. Treat it as an upper bound.
-
-Example:
-    python scripts/benchmark_runtime_nfr.py --soak-minutes 15
-"""
+"""Measure the runtime NFRs that require a live server (P2, P3, R4, R5)."""
 
 from __future__ import annotations
 
@@ -68,22 +34,7 @@ IMAGE_SUFFIXES: Final[frozenset[str]] = frozenset({".jpg", ".jpeg", ".png", ".bm
 def start_server(
     port: int, log_path: Path, model_path: str | None = None
 ) -> subprocess.Popen[bytes]:
-    """Launch uvicorn in a subprocess.
-
-    With no ``model_path`` the server resolves its own weights from the ``.env``
-    files, which is what a real deployment does and therefore what should be
-    measured by default. Passing one sets ``ALPR_MODEL_PATH`` in the child's
-    environment; a real environment variable outranks both ``.env`` files in
-    pydantic-settings, so this reliably wins.
-
-    Args:
-        port: Loopback port to bind.
-        log_path: File the server's stdout and stderr are appended to.
-        model_path: Detector weights to force, or None to use the configuration.
-
-    Returns:
-        The running process handle.
-    """
+    """Launch uvicorn in a subprocess."""
     environment = dict(os.environ)
     environment["PYTHONPATH"] = str(_PROJECT_ROOT)
     if model_path:
@@ -111,14 +62,7 @@ def start_server(
 
 
 def stop_server(server: subprocess.Popen[bytes], timeout_s: float = 30.0) -> None:
-    """Terminate the server and wait for the process to actually be gone.
-
-    On Windows ``terminate()`` is ``TerminateProcess``, which gives the server
-    no chance to run shutdown handlers or close its database connections. For
-    NFR-R5 that is a feature rather than a limitation: the restart it tests is
-    an abrupt one, closer to a crash or a pulled plug than to a polite stop, so
-    surviving it is the stronger claim.
-    """
+    """Terminate the server and wait for the process to actually be gone."""
     server.terminate()
     try:
         server.wait(timeout=timeout_s)
@@ -167,28 +111,7 @@ def measure_webcam_fps(
     duration_s: float,
     capture_fps: float,
 ) -> dict[str, Any]:
-    """Replay frames under the frontend's single-slot queue discipline.
-
-    A virtual camera produces a frame every ``1 / capture_fps`` seconds. If a
-    request is still in flight when a frame arrives, that frame is *dropped* --
-    it is never queued. This is what the frontend does, and it is why the
-    effective frame rate is bounded by the server's per-frame latency rather
-    than by the capture rate.
-
-    Because only one request is ever outstanding, the loop can be written
-    synchronously: send, wait, then discard whatever the virtual camera
-    produced meanwhile.
-
-    Args:
-        base_url: Server root, e.g. ``http://127.0.0.1:8931``.
-        api_prefix: Router prefix, normally ``/api``.
-        images: Frames to cycle through, standing in for camera output.
-        duration_s: Length of the measurement window.
-        capture_fps: Rate at which the virtual camera produces frames.
-
-    Returns:
-        Frame counts, latency percentiles and the effective frame rate.
-    """
+    """Replay frames under the frontend's single-slot queue discipline."""
     import httpx
 
     endpoint = f"{base_url}{api_prefix}/detect/frame"
@@ -324,24 +247,7 @@ def measure_video_throughput(
     poll_interval_s: float,
     timeout_s: float,
 ) -> dict[str, Any]:
-    """Upload a video, poll its job to completion and time the whole thing.
-
-    The stopwatch starts before the upload and stops when the job first reports
-    a terminal status. That includes the upload, the queueing delay and the
-    polling granularity -- all of which a user waits through, so none of them
-    is subtracted.
-
-    Args:
-        base_url: Server root.
-        api_prefix: Router prefix.
-        video: File to upload.
-        frame_stride: The server's configured stride, recorded for the report.
-        poll_interval_s: Gap between status polls.
-        timeout_s: Give up after this long.
-
-    Returns:
-        Timings, the ratio against real time and the verdict.
-    """
+    """Upload a video, poll its job to completion and time the whole thing."""
     import httpx
 
     info = probe_video(video)
@@ -426,18 +332,7 @@ def run_soak(
     minutes: float,
     server_pid: int,
 ) -> dict[str, Any]:
-    """Drive the image endpoint continuously and record the success rate.
-
-    Args:
-        base_url: Server root.
-        api_prefix: Router prefix.
-        images: Cycled as request bodies.
-        minutes: Length of the run.
-        server_pid: Sampled for resident memory, to catch a leak.
-
-    Returns:
-        Counts, latency percentiles, an RSS trace and the verdict.
-    """
+    """Drive the image endpoint continuously and record the success rate."""
     import httpx
 
     endpoint = f"{base_url}{api_prefix}/detect/image"
@@ -535,20 +430,7 @@ def server_rss_gb(pid: int) -> float | None:
 
 # --- NFR-R5 -- durability across a restart ---
 def snapshot_database(base_url: str, api_prefix: str, sample_size: int) -> dict[str, Any]:
-    """Read a fingerprint of the stored data through the public API.
-
-    Reading through the API rather than the file keeps the check honest: it
-    proves the data is still *reachable by the application*, not merely that
-    bytes remain on disk.
-
-    Args:
-        base_url: Server root.
-        api_prefix: Router prefix.
-        sample_size: How many newest records to fingerprint individually.
-
-    Returns:
-        Total record count, statistics body and the sampled records.
-    """
+    """Read a fingerprint of the stored data through the public API."""
     import httpx
 
     with httpx.Client(timeout=60.0) as client:
@@ -584,15 +466,7 @@ def snapshot_database(base_url: str, api_prefix: str, sample_size: int) -> dict[
 
 
 def compare_snapshots(before: dict[str, Any], after: dict[str, Any]) -> dict[str, Any]:
-    """Decide whether a restart lost anything.
-
-    Args:
-        before: Snapshot taken while the first server was alive.
-        after: Snapshot taken from the freshly started server.
-
-    Returns:
-        The comparison and the verdict.
-    """
+    """Decide whether a restart lost anything."""
     total_before = before.get("total_records")
     total_after = after.get("total_records")
     sample_identical = before.get("sample") == after.get("sample")

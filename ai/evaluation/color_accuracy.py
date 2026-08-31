@@ -41,16 +41,7 @@ EXCLUDED_CLASSES: dict[str, str] = {
 
 @dataclass(slots=True)
 class ColorSample:
-    """One evaluated crop.
-
-    Attributes:
-        image_path: Where the crop came from.
-        truth: Human-assigned colour class from the dataset.
-        predicted: Colour this project's classifier named.
-        confidence: Fraction of sampled pixels behind the prediction.
-        correct: Whether the two agree.
-        excluded: Whether this sample sits outside the headline figure.
-    """
+    """One evaluated crop."""
 
     image_path: str
     truth: str
@@ -61,14 +52,7 @@ class ColorSample:
 
 
 def _read_image(path: Path) -> np.ndarray | None:
-    """Read an image, tolerating paths OpenCV cannot open directly.
-
-    Args:
-        path: Filesystem path to an image.
-
-    Returns:
-        The decoded BGR array, or ``None`` when the file cannot be read.
-    """
+    """Read an image, tolerating paths OpenCV cannot open directly."""
     image = cv2.imread(str(path))
     if image is not None:
         return image
@@ -79,18 +63,7 @@ def _read_image(path: Path) -> np.ndarray | None:
 
 
 def _load_class_names(dataset: Path) -> list[str]:
-    """Read the class-index-to-name list from the dataset descriptor.
-
-    Args:
-        dataset: Root of the exported dataset, containing ``data.yaml``.
-
-    Returns:
-        Class names in index order.
-
-    Raises:
-        ValueError: If the descriptor carries no ``names`` list. Guessing the
-            order would silently mislabel every sample.
-    """
+    """Read the class-index-to-name list from the dataset descriptor."""
     text = (dataset / "data.yaml").read_text(encoding="utf-8")
     for line in text.splitlines():
         if not line.startswith("names:"):
@@ -101,16 +74,7 @@ def _load_class_names(dataset: Path) -> list[str]:
 
 
 def evaluate_dataset(dataset: Path, limit: int = 0) -> tuple[list[ColorSample], dict]:
-    """Classify every crop and compare against the dataset's labels.
-
-    Args:
-        dataset: Root of the exported YOLO dataset.
-        limit: Stop after this many images; ``0`` evaluates all of them.
-
-    Returns:
-        A ``(samples, summary)`` pair. The summary carries the headline accuracy
-        over the scored classes, a per-class breakdown, and the confusion matrix.
-    """
+    """Classify every crop and compare against the dataset's labels."""
     names = _load_class_names(dataset)
     LOGGER.info("classes: %s", ", ".join(names))
 
@@ -196,14 +160,7 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def main(argv: list[str] | None = None) -> int:
-    """Run the evaluation and write the report.
-
-    Args:
-        argv: Command-line arguments; ``sys.argv[1:]`` when omitted.
-
-    Returns:
-        ``0`` on success, ``1`` when no sample could be evaluated.
-    """
+    """Run the evaluation and write the report."""
     logging.basicConfig(level=logging.INFO, format="%(message)s")
     args = build_parser().parse_args(argv)
 

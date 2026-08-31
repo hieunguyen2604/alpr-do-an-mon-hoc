@@ -1,39 +1,5 @@
 #!/usr/bin/env python3
-"""Build the full thesis document from its per-chapter Markdown sources.
-
-This script turns the previously-manual "concatenate the chapters" step into a
-reproducible build. It joins the front matter and the six chapters — in a fixed,
-explicit order — into ``docs/papers/thesis-full.md``. When a Pandoc binary is
-available it additionally exports:
-
-* ``docs/papers/thesis-full.docx`` (from the merged Markdown), and
-* ``docs/slides/slides.pptx`` (from the slide outline).
-
-Design goals
-------------
-* **Byte-identical rebuild.** Running this script must reproduce the committed
-  ``thesis-full.md`` exactly (see :data:`SECTION_SEPARATOR` for the one subtle
-  historical detail). This lets the merged file be regenerated at any time and
-  verified with a plain ``diff``.
-* **No hard-coded absolute paths.** All paths derive from the repository root,
-  which is located relative to this file, so the script runs from anywhere.
-* **Explicit file list, never a glob.** Globbing risks silently swallowing a
-  stray Markdown file; the chapter order is data the reader can audit here.
-
-Usage
------
-Concatenate only (default output path)::
-
-    python scripts/build_thesis.py --no-docx
-
-Concatenate and, if Pandoc is present, export DOCX + PPTX::
-
-    python scripts/build_thesis.py
-
-Write the merged Markdown somewhere else::
-
-    python scripts/build_thesis.py --out build/thesis-full.md --no-docx
-"""
+"""Build the full thesis document from its per-chapter Markdown sources."""
 
 from __future__ import annotations
 
@@ -194,20 +160,7 @@ STYLE_PATCHES: tuple[tuple[str, str], ...] = (
 
 
 def patch_styles(styles_xml: str) -> str:
-    """Apply :data:`STYLE_PATCHES` to the reference document's ``styles.xml``.
-
-    Args:
-        styles_xml: Contents of ``word/styles.xml`` from Pandoc's default
-            reference document.
-
-    Returns:
-        The patched XML.
-
-    Raises:
-        ValueError: If any anchor is absent or appears more than once, which
-            means Pandoc's default styles moved and the patch is no longer
-            describing what it thinks it is.
-    """
+    """Apply :data:`STYLE_PATCHES` to the reference document's ``styles.xml``."""
     # Pandoc 3.10 xuat phan nay voi CRLF; do thuc te roi dich thay vi ghi cung.
     eol = "\r\n" if "\r\n" in styles_xml else "\n"
 
@@ -226,21 +179,7 @@ def patch_styles(styles_xml: str) -> str:
 
 
 def build_reference_docx(pandoc: Path, dest: Path) -> Path | None:
-    """Write a reference document whose ``Table`` style draws full borders.
-
-    Regenerated on every build rather than committed, so it can never drift
-    away from the pinned Pandoc version it is derived from. It is a build
-    artefact in the same sense ``thesis-full.docx`` is.
-
-    Args:
-        pandoc: Path to the Pandoc executable.
-        dest: Destination ``.docx`` path.
-
-    Returns:
-        ``dest`` on success, or ``None`` if the reference document could not be
-        produced -- in which case the caller falls back to Pandoc's defaults
-        and gets the old borderless tables rather than a failed build.
-    """
+    """Write a reference document whose ``Table`` style draws full borders."""
     import io
     import zipfile
 
@@ -269,20 +208,7 @@ def build_reference_docx(pandoc: Path, dest: Path) -> Path | None:
 
 
 def read_section(path: Path) -> str:
-    """Read one Markdown source file, preserving its bytes exactly.
-
-    The file is decoded as UTF-8 with newline translation disabled so that the
-    original (LF) line endings survive untouched on any platform.
-
-    Args:
-        path: Absolute path to the Markdown source file.
-
-    Returns:
-        The file's textual content, unchanged.
-
-    Raises:
-        FileNotFoundError: If ``path`` does not exist.
-    """
+    """Read one Markdown source file, preserving its bytes exactly."""
     if not path.is_file():
         raise FileNotFoundError(f"Missing thesis source file: {path}")
     return path.read_text(encoding="utf-8")
@@ -303,19 +229,7 @@ stray Markdown file must never be swept into the book) applies to every edition.
 
 
 def read_order(papers_dir: Path) -> tuple[str, ...]:
-    """Return the binding order for ``papers_dir``.
-
-    Args:
-        papers_dir: Directory holding the section Markdown files.
-
-    Returns:
-        Filenames from that directory's ``ORDER.txt`` when present, otherwise
-        :data:`CHAPTER_FILENAMES`.
-
-    Raises:
-        ValueError: If an ``ORDER.txt`` exists but lists nothing, which would
-            otherwise produce an empty book without complaint.
-    """
+    """Return the binding order for ``papers_dir``."""
     manifest = papers_dir / ORDER_FILENAME
     if not manifest.is_file():
         return CHAPTER_FILENAMES
@@ -331,18 +245,7 @@ def read_order(papers_dir: Path) -> tuple[str, ...]:
 
 
 def merge_sections(papers_dir: Path, filenames: tuple[str, ...]) -> str:
-    """Concatenate the ordered section files with the page-break separator.
-
-    Every section (including the final one) is followed by
-    :data:`SECTION_SEPARATOR`, reproducing the original manual concatenation.
-
-    Args:
-        papers_dir: Directory containing the section Markdown files.
-        filenames: Section file names, already in binding order.
-
-    Returns:
-        The merged Markdown document as a single string.
-    """
+    """Concatenate the ordered section files with the page-break separator."""
     parts: list[str] = []
     for name in filenames:
         parts.append(read_section(papers_dir / name))
@@ -351,12 +254,7 @@ def merge_sections(papers_dir: Path, filenames: tuple[str, ...]) -> str:
 
 
 def write_text_exact(path: Path, text: str) -> None:
-    """Write ``text`` to ``path`` as UTF-8 without newline translation or BOM.
-
-    Args:
-        path: Destination file path (parent directories are created).
-        text: Content to write verbatim.
-    """
+    """Write ``text`` to ``path`` as UTF-8 without newline translation or BOM."""
     path.parent.mkdir(parents=True, exist_ok=True)
     # newline="" disables translation so embedded "\n" stay as LF bytes.
     with path.open("w", encoding="utf-8", newline="") as handle:
@@ -364,15 +262,7 @@ def write_text_exact(path: Path, text: str) -> None:
 
 
 def find_pandoc() -> Path | None:
-    """Locate a Pandoc executable.
-
-    Prefers the vendored copy under ``tools/pandoc-3.10`` so the build is
-    reproducible without a system install, then falls back to ``pandoc`` on the
-    PATH.
-
-    Returns:
-        The path to a Pandoc executable, or ``None`` if none is found.
-    """
+    """Locate a Pandoc executable."""
     exe_name = "pandoc.exe" if os.name == "nt" else "pandoc"
     vendored = REPO_ROOT / "tools" / "pandoc-3.10" / exe_name
     if vendored.is_file():
@@ -396,19 +286,7 @@ PANDOC_URL = (
 
 
 def fetch_pandoc() -> Path | None:
-    """Download the pinned Pandoc build into ``tools/`` and return its path.
-
-    Exists so that ``tools/pandoc-3.10`` -- 221 MB of vendored binary, and by far
-    the largest thing in the working tree -- can be deleted without stranding the
-    document build. Before this, removing it left no record anywhere of which
-    version had been used or where it came from, which turns a disk-space clean-up
-    into an unbounded archaeology task months later.
-
-    Returns:
-        Path to ``pandoc.exe``, or ``None`` when the download or extraction
-        failed. Failure is reported and returned rather than raised: the caller
-        already knows how to build the Markdown without Pandoc.
-    """
+    """Download the pinned Pandoc build into ``tools/`` and return its path."""
     import urllib.request
     import zipfile
 
@@ -434,26 +312,12 @@ def fetch_pandoc() -> Path | None:
 
 
 def run_pandoc(pandoc: Path, args: list[str]) -> None:
-    """Invoke Pandoc with the given arguments, surfacing failures loudly.
-
-    Args:
-        pandoc: Path to the Pandoc executable.
-        args: Arguments to pass after the executable.
-
-    Raises:
-        subprocess.CalledProcessError: If Pandoc exits non-zero.
-    """
+    """Invoke Pandoc with the given arguments, surfacing failures loudly."""
     subprocess.run([str(pandoc), *args], check=True)
 
 
 def export_docx(pandoc: Path, markdown_path: Path, docx_path: Path) -> None:
-    """Export the merged thesis Markdown to a DOCX file.
-
-    Args:
-        pandoc: Path to the Pandoc executable.
-        markdown_path: The merged ``thesis-full.md`` to convert.
-        docx_path: Destination ``.docx`` path.
-    """
+    """Export the merged thesis Markdown to a DOCX file."""
     docx_path.parent.mkdir(parents=True, exist_ok=True)
     reference = build_reference_docx(
         pandoc, docx_path.parent / REFERENCE_DOCX_FILENAME
@@ -483,24 +347,7 @@ def export_docx(pandoc: Path, markdown_path: Path, docx_path: Path) -> None:
 
 
 def export_pptx(pandoc: Path, outline_path: Path, pptx_path: Path) -> None:
-    """Export the slide outline to a PPTX deck.
-
-    The deck's appearance comes entirely from ``template-uit.pptx``: Pandoc
-    contributes the text and takes theme, fonts, background art and the UIT
-    crest from the reference doc's master and layouts. See
-    :mod:`scripts.make_slide_template` for how that file is derived, and why
-    its layouts have to carry English names.
-
-    The reference doc is optional on purpose. A missing template produces a
-    plain-looking but complete deck rather than a failed build, which matters
-    because the slides are a deliverable in their own right -- losing the
-    styling is an inconvenience, losing the deck is not.
-
-    Args:
-        pandoc: Path to the Pandoc executable.
-        outline_path: The slide outline Markdown source.
-        pptx_path: Destination ``.pptx`` path.
-    """
+    """Export the slide outline to a PPTX deck."""
     if not outline_path.is_file():
         print(f"[skip] slide outline not found: {outline_path}", file=sys.stderr)
         return
@@ -533,14 +380,7 @@ def export_pptx(pandoc: Path, outline_path: Path, pptx_path: Path) -> None:
 
 
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
-    """Parse command-line arguments.
-
-    Args:
-        argv: Optional explicit argument list (defaults to ``sys.argv``).
-
-    Returns:
-        The parsed arguments namespace.
-    """
+    """Parse command-line arguments."""
     parser = argparse.ArgumentParser(
         description=(
             "Merge the thesis chapters into a single Markdown file and, when "
@@ -597,17 +437,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
 
 
 def copy_bundle(bundle_dir: Path = BUNDLE_DIR) -> tuple[int, list[str]]:
-    """Refresh the submission folder from whatever build outputs exist.
-
-    Args:
-        bundle_dir: Destination directory, created if absent.
-
-    Returns:
-        ``(number copied, names of sources that were missing)``. A missing
-        source is normal -- the PDF only exists after
-        ``scripts/export_thesis_pdf.ps1`` has run, and the technical-report deck
-        only after ``--slides`` was passed -- so it is reported, not raised.
-    """
+    """Refresh the submission folder from whatever build outputs exist."""
     bundle_dir.mkdir(parents=True, exist_ok=True)
     copied = 0
     missing: list[str] = []
@@ -623,18 +453,7 @@ def copy_bundle(bundle_dir: Path = BUNDLE_DIR) -> tuple[int, list[str]]:
 
 
 def _canh_bao_truong_chua_dien(bundle_dir: Path) -> None:
-    """Bao khi ban .docx trong nop/ con giu gia tri cache cua truong Word.
-
-    Muc luc va hai danh muc hinh/bang dung truong TOC va PAGEREF; Pandoc chi
-    ghi cong thuc truong kem mot gia tri cache la ``0``. Chinh Word dien so
-    trang, va viec do xay ra o ``scripts/export_thesis_pdf.ps1``.
-
-    Nghia la thu tu chay CO Y NGHIA: chay rieng script nay sau khi da xuat PDF
-    se sinh lai .docx tu markdown va **ghi de ban da dien so trang** trong
-    ``nop/`` bang mot ban co cot Trang toan so 0. Loi da xay ra that. Ham nay
-    khong sua duoc dieu do -- chi Word moi dien duoc truong -- nhung no khong
-    de nguoi chay ra ve ma tuong ban nop da xong.
-    """
+    """Bao khi ban .docx trong nop/ con giu gia tri cache cua truong Word."""
     for ten in ("01-do-an-tot-nghiep.docx", "04-do-an-mon-hoc.docx"):
         tep = bundle_dir / ten
         if not tep.is_file():
@@ -657,14 +476,7 @@ def _canh_bao_truong_chua_dien(bundle_dir: Path) -> None:
 
 
 def main(argv: list[str] | None = None) -> int:
-    """Build the thesis document(s).
-
-    Args:
-        argv: Optional explicit argument list (defaults to ``sys.argv``).
-
-    Returns:
-        Process exit code (0 on success).
-    """
+    """Build the thesis document(s)."""
     args = parse_args(argv)
     out_path = args.out or args.src / "thesis-full.md"
 

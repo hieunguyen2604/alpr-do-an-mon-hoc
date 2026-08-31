@@ -34,14 +34,7 @@ Confidence = Annotated[float, Field(ge=0.0, le=1.0)]
 
 
 class BoundingBoxSchema(BaseModel):
-    """Location of a detected plate within its source image.
-
-    Uses the ``x, y, width, height`` form with the origin at the top-left
-    corner -- the same convention as OpenCV, as the database columns, and as
-    the HTML canvas the frontend draws on. Keeping one convention end to end
-    removes the coordinate conversion that would otherwise sit at each
-    boundary, and with it the chance of getting one of them wrong.
-    """
+    """Location of a detected plate within its source image."""
 
     model_config = ConfigDict(from_attributes=True)
 
@@ -62,15 +55,7 @@ class BoundingBoxSchema(BaseModel):
 
 
 class DetectionResultSchema(BaseModel):
-    """A single plate found during one detection run.
-
-    Returned inside the response to an image, frame or video request. The two
-    confidence values are separate fields on purpose: a low
-    ``detection_confidence`` means the model was unsure it was looking at a
-    plate at all, while a low ``ocr_confidence`` means it was sure of the plate
-    but unsure of the characters. Merging them into one number would make those
-    two very different failures indistinguishable in the results.
-    """
+    """A single plate found during one detection run."""
 
     model_config = ConfigDict(from_attributes=True)
 
@@ -195,20 +180,7 @@ class DetectionResultSchema(BaseModel):
 
 
 class DetectionResponse(BaseModel):
-    """The outcome of one synchronous detection: an image upload or a frame.
-
-    Wraps the per-plate results rather than returning a bare list, for two
-    reasons that only show up later. ``job_id`` is what groups these plates as
-    one upload -- without it the client cannot ask about them again, and a
-    webcam client cannot tell the server that its next frame belongs to the
-    same session. And a JSON *object* can gain a field in a later version,
-    whereas a top-level array cannot without breaking every consumer.
-
-    An image containing no plate is a **successful** response with an empty
-    ``results`` list and HTTP 200, never a 4xx: treating "found nothing" as an
-    error would erase every negative case from the statistics and leave the
-    reported accuracy measuring only the images that happened to work.
-    """
+    """The outcome of one synchronous detection: an image upload or a frame."""
 
     model_config = ConfigDict(from_attributes=True)
 
@@ -256,15 +228,7 @@ class DetectionResponse(BaseModel):
 
 
 class DetectionHistoryResponse(BaseModel):
-    """One stored detection record, as returned by the history endpoints.
-
-    Maps directly from
-    :class:`~backend.models.detection.DetectionHistory`. Every field of the
-    approved schema is exposed except the raw filesystem paths: those are
-    replaced by URLs, so that the server's directory layout is not published to
-    the client and files can only be reached through the endpoint that checks
-    the request first (NFR-S2).
-    """
+    """One stored detection record, as returned by the history endpoints."""
 
     model_config = ConfigDict(from_attributes=True, extra="forbid")
     """``extra="forbid"`` is a guard, not a formality.
@@ -378,30 +342,14 @@ class DetectionHistoryResponse(BaseModel):
     @computed_field  # type: ignore[prop-decorator]
     @property
     def bbox(self) -> BoundingBoxSchema:
-        """Return the four bbox columns as a single nested object.
-
-        The columns are flat in the database because that is how the approved
-        schema stores them, but a client drawing an overlay wants one object.
-        Deriving it here means the response carries both shapes without the
-        database having to.
-        """
+        """Return the four bbox columns as a single nested object."""
         return BoundingBoxSchema(
             x=self.bbox_x, y=self.bbox_y, width=self.bbox_w, height=self.bbox_h
         )
 
 
 class DetectionJobResponse(BaseModel):
-    """State of one upload or capture session.
-
-    Returned by the video upload endpoint alongside ``202 Accepted``, and by
-    the job status endpoint that the frontend polls while processing runs
-    (decision AD-02).
-
-    ``error_message`` from the ORM model is intentionally absent: it holds the
-    technical failure description, which belongs in the log. A failed job is
-    reported to the user through ``status`` plus the generic Vietnamese message
-    in :class:`ErrorResponse`.
-    """
+    """State of one upload or capture session."""
 
     model_config = ConfigDict(from_attributes=True)
 
@@ -450,13 +398,7 @@ class DetectionJobResponse(BaseModel):
 
 
 class HistoryListResponse(BaseModel):
-    """A page of detection records.
-
-    The history table can hold 100 000 rows (NFR-SC2), so results are always
-    paginated -- there is no unpaginated variant to reach for by accident.
-    ``total`` counts the rows matching the current filters, not the rows in
-    this page.
-    """
+    """A page of detection records."""
 
     model_config = ConfigDict(from_attributes=True)
 
@@ -499,21 +441,7 @@ class HistoryListResponse(BaseModel):
         page: int,
         page_size: int,
     ) -> HistoryListResponse:
-        """Assemble a page, computing ``total_pages`` from the inputs.
-
-        Keeps the ceiling division in one place. Done at each call site it
-        would eventually be written as ``total // page_size`` somewhere and
-        drop the final partial page.
-
-        Args:
-            items: The ORM rows or dictionaries for this page.
-            total: Count of records matching the query, across all pages.
-            page: Current page number, 1-based.
-            page_size: Maximum records per page.
-
-        Returns:
-            A fully populated response.
-        """
+        """Assemble a page, computing ``total_pages`` from the inputs."""
         total_pages = (total + page_size - 1) // page_size if page_size else 0
         return cls(
             items=[DetectionHistoryResponse.model_validate(item) for item in items],
@@ -549,21 +477,7 @@ class DailyCountSchema(BaseModel):
 
 
 class StatisticsResponse(BaseModel):
-    """Aggregate figures for the dashboard.
-
-    Two families of counter, kept apart by name because conflating them is the
-    single easiest way to publish a wrong number:
-
-    * ``*_jobs`` counts **uploads and sessions** -- how much the system was
-      used. One image is one job however many plates it contains.
-    * ``*_detections`` counts **license plates** -- how much was recognized.
-      One image containing three plates contributes three.
-
-    A dashboard tile labelled "images processed" must read ``total_jobs``. Using
-    ``total_detections`` there would inflate the figure by the average number of
-    plates per image, and the error would look plausible enough to survive
-    review.
-    """
+    """Aggregate figures for the dashboard."""
 
     model_config = ConfigDict(from_attributes=True)
 
@@ -635,13 +549,7 @@ class StatisticsResponse(BaseModel):
 
 
 class HealthResponse(BaseModel):
-    """Service readiness, as reported by the health endpoint.
-
-    Reports readiness rather than mere liveness: a process that is running but
-    whose detector weights failed to load cannot serve a single detection
-    request, and answering "ok" in that state would make the endpoint useless
-    for the start-up measurement NFR-P4 defines.
-    """
+    """Service readiness, as reported by the health endpoint."""
 
     # ``model_loaded`` collides with Pydantic's reserved ``model_`` prefix. The
     # name is the clearest one available and the guard is disabled rather than
@@ -672,21 +580,7 @@ class HealthResponse(BaseModel):
 
 
 class ErrorResponse(BaseModel):
-    """The body returned for every failed request.
-
-    Deliberately minimal. It carries no stack trace, no exception class name,
-    no filesystem path and no SQL -- that material is written to the log
-    instead, keyed by the same ``request_id`` that appears here (NFR-S4).
-
-    ``request_id`` is what connects the two halves: a user quoting the
-    identifier from an error screen lets a developer retrieve the exact
-    traceback behind it, without the traceback ever having been sent to the
-    user.
-
-    ``message`` is Vietnamese, because it is displayed verbatim in the
-    interface. Clients should branch on ``error``, which is stable, rather than
-    on the message text, which may be reworded.
-    """
+    """The body returned for every failed request."""
 
     model_config = ConfigDict(
         json_schema_extra={

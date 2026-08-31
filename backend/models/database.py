@@ -28,25 +28,11 @@ _SQLITE_BUSY_TIMEOUT_MS: Final[int] = 5_000
 
 
 def _register_sqlite_pragmas(target: Engine) -> None:
-    """Apply the required pragmas to every new SQLite connection.
-
-    Registered as a ``connect`` listener because SQLite scopes these settings
-    to a connection: running them once at start-up would configure a single
-    pooled connection and leave the rest of the pool with foreign keys silently
-    switched off.
-
-    Args:
-        target: The engine whose connections should be configured.
-    """
+    """Apply the required pragmas to every new SQLite connection."""
 
     @event.listens_for(target, "connect")
     def _set_pragmas(dbapi_connection: Any, connection_record: Any) -> None:
-        """Configure one freshly opened SQLite connection.
-
-        Args:
-            dbapi_connection: The raw DB-API connection just established.
-            connection_record: SQLAlchemy's pool bookkeeping entry; unused.
-        """
+        """Configure one freshly opened SQLite connection."""
         cursor = dbapi_connection.cursor()
         try:
             # Without this, every ForeignKey and ON DELETE CASCADE is decorative.
@@ -62,19 +48,7 @@ def _register_sqlite_pragmas(target: Engine) -> None:
 
 
 def create_database_engine(settings: Settings | None = None) -> Engine:
-    """Build a configured SQLAlchemy engine.
-
-    Exposed as a function, rather than only as the module-level
-    :data:`engine`, so tests can point a second engine at a throwaway database
-    without touching global state.
-
-    Args:
-        settings: Configuration to use. Defaults to the process-wide settings.
-
-    Returns:
-        An engine ready for use. For SQLite it carries the pragma listener and
-        the connection arguments a threaded server needs.
-    """
+    """Build a configured SQLAlchemy engine."""
     config = settings or get_settings()
     connect_args: dict[str, Any] = {}
 
@@ -115,25 +89,7 @@ SessionLocal: sessionmaker[Session] = sessionmaker(
 
 
 def get_db() -> Iterator[Session]:
-    """Yield a database session for the lifetime of one request.
-
-    Written for use as a FastAPI dependency::
-
-        @router.get("/history")
-        def list_history(db: Session = Depends(get_db)) -> HistoryListResponse:
-            ...
-
-    The session is always closed, including when the endpoint raises, because
-    the ``finally`` clause runs when FastAPI closes the generator. Note what
-    this function does *not* do: it never commits. Committing here would make
-    every request that raised halfway through persist its partial writes, since
-    the exception arrives after the endpoint has already made some of them.
-    The service layer commits explicitly, at the point where it knows the unit
-    of work is complete.
-
-    Yields:
-        A session bound to the process-wide engine.
-    """
+    """Yield a database session for the lifetime of one request."""
     session = SessionLocal()
     try:
         yield session
@@ -143,26 +99,7 @@ def get_db() -> Iterator[Session]:
 
 @contextmanager
 def session_scope() -> Iterator[Session]:
-    """Provide a transactional session for work outside a request.
-
-    Background video jobs and start-up tasks have no FastAPI dependency
-    injection to lean on, but still need a session with correct commit and
-    rollback behaviour. This context manager commits on success and rolls back
-    on any exception::
-
-        with session_scope() as db:
-            db.add(job)
-
-    A background task must not reuse the request's session: the request that
-    started it returns ``202 Accepted`` immediately and closes its session,
-    while the job keeps running for minutes afterwards.
-
-    Yields:
-        A session that is committed on clean exit and rolled back on error.
-
-    Raises:
-        Exception: Re-raises whatever the caller raised, after rolling back.
-    """
+    """Provide a transactional session for work outside a request."""
     session = SessionLocal()
     try:
         yield session
@@ -175,17 +112,7 @@ def session_scope() -> Iterator[Session]:
 
 
 def init_database(target: Engine | None = None) -> None:
-    """Create any missing tables.
-
-    Intended for development and for the test suite. In deployment, schema
-    changes go through Alembic: ``create_all`` only ever *adds* missing tables,
-    so it silently does nothing when a table exists but its columns have
-    changed -- which is the situation a migration exists to handle.
-
-    Args:
-        target: Engine to create the tables on. Defaults to the process-wide
-            engine.
-    """
+    """Create any missing tables."""
     Base.metadata.create_all(bind=target or engine)
     logger.info(
         "database schema ensured",

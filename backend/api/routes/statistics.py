@@ -93,17 +93,5 @@ def get_statistics(
         ),
     ] = DEFAULT_TREND_DAYS,
 ) -> StatisticsResponse:
-    """Return the dashboard's aggregate figures.
-
-    Args:
-        db: Session for this request.
-        statistics: The statistics service.
-        days: Length of the daily trend window.
-
-    Returns:
-        Every figure the dashboard needs.
-
-    Raises:
-        ValidationError: If ``days`` is out of range.
-    """
+    """Return the dashboard's aggregate figures."""
     return statistics.get_statistics(db, days=days)

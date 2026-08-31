@@ -1,21 +1,4 @@
-"""Dung lai mot ca khu trung lap mo THAT tu video demo, kem anh cat doi chung.
-
-Vi sao can script nay: muc 5.4 se trinh bay buoc khu trung lap mo bang mot ca
-cu the. Ca do phai LAY TU DU LIEU THAT chu khong duoc dung minh hoa — neu khong
-thi hinh trong quyen la mot thu khong ai tai lap duoc.
-
-Cach lam:
-  1. Doc video demo, lay mau khung hinh theo buoc `--step`.
-  2. Chay dung duong ong bo giao hang tren tung khung.
-  3. Gom cac lan doc theo chuoi, ghi lai khung dau/cuoi va do tin cay cao nhat.
-  4. Goi CHINH `DetectionService._collapse_variants` — khong chep lai logic —
-     de xem cap nao bi gop.
-  5. Xuat anh cat cua tung bien the vao mot hinh doi chung.
-
-Buoc 4 la diem mau chot: neu chep lai logic gop vao day thi hinh minh hoa se mo
-ta mot thuat toan KHAC voi thuat toan dang chay. Do dung la lop loi ma do an da
-tra gia bon lan.
-"""
+"""Dung lai mot ca khu trung lap mo THAT tu video demo, kem anh cat doi chung."""
 
 from __future__ import annotations
 

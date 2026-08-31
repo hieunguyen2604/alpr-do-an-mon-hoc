@@ -21,26 +21,7 @@ _HTTP_INTERNAL_SERVER_ERROR: Final[int] = 500
 
 
 class APIError(Exception):
-    """Base class for every error the API deliberately returns to a client.
-
-    Subclasses fix :attr:`status_code`, :attr:`error_code` and a default
-    :attr:`user_message`; a call site normally supplies only
-    ``internal_detail``, because the technical cause is the part that varies
-    while the message shown to the user should stay consistent.
-
-    Attributes:
-        status_code: HTTP status for the response.
-        error_code: Stable machine-readable identifier, e.g. ``"FILE_TOO_LARGE"``.
-            The frontend switches on this rather than on the message text, so
-            wording can be improved without breaking client behaviour.
-        user_message: Vietnamese text shown to the end user. Must never name a
-            filesystem path, an exception class or a library.
-        internal_detail: English technical description, for the log only.
-            Never serialised into a response.
-        context: Extra structured fields merged into the log record, for
-            example ``{"job_id": ..., "size_bytes": ...}``. Never serialised
-            into a response either.
-    """
+    """Base class for every error the API deliberately returns to a client."""
 
     status_code: int = _HTTP_INTERNAL_SERVER_ERROR
     error_code: str = "INTERNAL_ERROR"
@@ -53,17 +34,7 @@ class APIError(Exception):
         user_message: str | None = None,
         context: dict[str, Any] | None = None,
     ) -> None:
-        """Create an API error.
-
-        Args:
-            internal_detail: English technical description of what failed --
-                the message a developer needs. Written to the log, never to the
-                response.
-            user_message: Overrides the class default when a specific situation
-                deserves more precise Vietnamese wording. Leave unset to use
-                the class default, which is the usual case.
-            context: Structured fields to attach to the log record.
-        """
+        """Create an API error."""
         self.internal_detail = internal_detail or self.__class__.__name__
         self.user_message = user_message or self.default_user_message
         self.context: dict[str, Any] = context or {}
@@ -72,22 +43,7 @@ class APIError(Exception):
         super().__init__(self.internal_detail)
 
     def to_response_dict(self, request_id: str | None = None) -> dict[str, Any]:
-        """Build the response body for this error.
-
-        This method is the single place where an error becomes bytes on the
-        wire, and it is written so that adding a field to the class cannot
-        accidentally expose it: the dictionary is constructed from an explicit
-        list of safe keys rather than from ``self.__dict__``. Neither
-        :attr:`internal_detail` nor :attr:`context` can appear here.
-
-        Args:
-            request_id: Correlation identifier for the current request, echoed
-                back so a user reporting a problem can quote it and a developer
-                can find the matching log line.
-
-        Returns:
-            A JSON-serialisable body carrying only user-safe values.
-        """
+        """Build the response body for this error."""
         body: dict[str, Any] = {
             "error": self.error_code,
             "message": self.user_message,
@@ -97,16 +53,7 @@ class APIError(Exception):
         return body
 
     def log_fields(self) -> dict[str, Any]:
-        """Return the structured fields to attach to the log record.
-
-        Args:
-            None.
-
-        Returns:
-            A mapping suitable for ``logger.error(..., extra=...)``, combining
-            the error code, the HTTP status, the technical detail and any
-            caller-supplied context.
-        """
+        """Return the structured fields to attach to the log record."""
         return {
             "error_code": self.error_code,
             "status_code": self.status_code,
@@ -124,16 +71,7 @@ class APIError(Exception):
 
 
 class ValidationError(APIError):
-    """Raised when the request itself is malformed or self-contradictory.
-
-    Covers things the caller can fix by sending a different request: a missing
-    upload field, a page number below one, a date range that ends before it
-    starts, an ``input_type`` outside the accepted set.
-
-    Not to be used for a file that is merely too large or of the wrong type --
-    those have dedicated status codes (413 and 415) that clients can act on
-    without parsing a message.
-    """
+    """Raised when the request itself is malformed or self-contradictory."""
 
     status_code = _HTTP_BAD_REQUEST
     error_code = "VALIDATION_ERROR"
@@ -143,16 +81,7 @@ class ValidationError(APIError):
 
 
 class NotFoundError(APIError):
-    """Raised when a requested record does not exist.
-
-    Used for an unknown detection identifier, an unknown ``job_id``, or a
-    stored file whose row still exists but whose bytes have gone missing from
-    disk.
-
-    The user-facing message deliberately does not distinguish "never existed"
-    from "was deleted": the distinction is of no use to the user and telling
-    the two apart lets an outsider probe which identifiers are real.
-    """
+    """Raised when a requested record does not exist."""
 
     status_code = _HTTP_NOT_FOUND
     error_code = "NOT_FOUND"
@@ -160,20 +89,7 @@ class NotFoundError(APIError):
 
     @classmethod
     def for_resource(cls, resource: str, identifier: object) -> NotFoundError:
-        """Build a not-found error naming the resource in the internal detail.
-
-        A convenience for the repository layer, where the same three lines
-        would otherwise be repeated for every lookup. The identifier goes into
-        the log; the user still sees the generic message.
-
-        Args:
-            resource: Name of the resource type, e.g. ``"detection"`` or
-                ``"job"``.
-            identifier: The primary key that was looked up.
-
-        Returns:
-            A configured :class:`NotFoundError`.
-        """
+        """Build a not-found error naming the resource in the internal detail."""
         return cls(
             f"{resource} with id={identifier!r} was not found",
             context={"resource": resource, "resource_id": str(identifier)},
@@ -181,16 +97,7 @@ class NotFoundError(APIError):
 
 
 class FileTooLargeError(APIError):
-    """Raised when an upload exceeds the configured size ceiling (NFR-S3).
-
-    The limit is enforced server-side even though the frontend also checks it:
-    the frontend check is a convenience, and anything reaching the API over
-    HTTP may not have gone through it at all.
-
-    Unlike most errors here, the user message is worth specialising per case --
-    a user told only "file too large" cannot tell whether they are over by a
-    kilobyte or by a factor of ten. Use :meth:`with_limit`.
-    """
+    """Raised when an upload exceeds the configured size ceiling (NFR-S3)."""
 
     status_code = _HTTP_PAYLOAD_TOO_LARGE
     error_code = "FILE_TOO_LARGE"
@@ -206,22 +113,7 @@ class FileTooLargeError(APIError):
         limit_bytes: int,
         filename: str | None = None,
     ) -> FileTooLargeError:
-        """Build the error with both sizes stated in the Vietnamese message.
-
-        Sizes are the one technical detail that is genuinely useful to a user:
-        knowing the ceiling is 10 MB and the file is 24 MB tells them exactly
-        what to do next. The filename stays out of the message -- it is the
-        user's own string echoed back, and echoing user input into a rendered
-        message is a habit worth not forming.
-
-        Args:
-            actual_bytes: Size of the rejected upload.
-            limit_bytes: Configured ceiling that was exceeded.
-            filename: Original filename, recorded in the log only.
-
-        Returns:
-            A configured :class:`FileTooLargeError`.
-        """
+        """Build the error with both sizes stated in the Vietnamese message."""
         actual_mb = actual_bytes / (1024 * 1024)
         limit_mb = limit_bytes / (1024 * 1024)
         return cls(
@@ -243,12 +135,7 @@ class FileTooLargeError(APIError):
 
 
 class UnsupportedMediaTypeError(APIError):
-    """Raised when an upload's media type is not accepted (NFR-S1).
-
-    The type is determined from the file's **magic bytes**, never from its
-    extension: an extension is chosen by whoever uploads the file and proves
-    nothing. A ``.jpg`` that is really a ZIP archive is rejected here.
-    """
+    """Raised when an upload's media type is not accepted (NFR-S1)."""
 
     status_code = _HTTP_UNSUPPORTED_MEDIA_TYPE
     error_code = "UNSUPPORTED_MEDIA_TYPE"
@@ -264,16 +151,7 @@ class UnsupportedMediaTypeError(APIError):
         allowed_types: list[str],
         filename: str | None = None,
     ) -> UnsupportedMediaTypeError:
-        """Build the error recording what was detected and what was allowed.
-
-        Args:
-            detected_type: MIME type read from the file's magic bytes.
-            allowed_types: MIME types configured as acceptable.
-            filename: Original filename, recorded in the log only.
-
-        Returns:
-            A configured :class:`UnsupportedMediaTypeError`.
-        """
+        """Build the error recording what was detected and what was allowed."""
         return cls(
             f"Rejected media type {detected_type!r}; allowed: {allowed_types}",
             context={
@@ -285,21 +163,7 @@ class UnsupportedMediaTypeError(APIError):
 
 
 class ProcessingError(APIError):
-    """Raised when the request was valid but the server failed to complete it.
-
-    Two distinct causes end up here, and both are genuinely the server's fault
-    rather than the caller's:
-
-    * the recognition pipeline failed -- an ``ALPRError`` from the ``ai``
-      package, translated at the service boundary;
-    * a storage operation failed -- the disk is full, a path is not writable,
-      a video could not be encoded.
-
-    Finding no plate in an image is **not** this error. An image with no plate
-    is a successful request with an empty result list, and must be reported as
-    ``200`` with zero detections -- otherwise the statistics lose every
-    negative case and the accuracy figures become meaningless.
-    """
+    """Raised when the request was valid but the server failed to complete it."""
 
     status_code = _HTTP_INTERNAL_SERVER_ERROR
     error_code = "PROCESSING_ERROR"
@@ -315,23 +179,7 @@ class ProcessingError(APIError):
         stage: str,
         context: dict[str, Any] | None = None,
     ) -> ProcessingError:
-        """Wrap an ``ai`` package exception as an API-level processing error.
-
-        The translation point required by NFR-M1: ``ALPRError`` knows nothing
-        about HTTP, and the API layer must not let its English developer text
-        reach a user. The original message is preserved in
-        :attr:`~APIError.internal_detail` so nothing is lost from the log.
-
-        Args:
-            error: The original exception raised by the pipeline.
-            stage: Which stage failed, e.g. ``"detection"``, ``"recognition"``
-                or ``"storage"``. Recorded to make failure patterns visible in
-                aggregate.
-            context: Additional structured fields for the log record.
-
-        Returns:
-            A configured :class:`ProcessingError`.
-        """
+        """Wrap an ``ai`` package exception as an API-level processing error."""
         return cls(
             f"{stage} stage failed: {type(error).__name__}: {error}",
             context={"stage": stage, "error_type": type(error).__name__, **(context or {})},

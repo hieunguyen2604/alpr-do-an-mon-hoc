@@ -63,12 +63,7 @@ class HardwareInfo:
 
 
 def describe_hardware(sample_seconds: float = 3.0) -> HardwareInfo:
-    """Collect the hardware header, including any competing CPU load.
-
-    The competing-process scan matters: this project's benchmark may well be run
-    while a training job is still going, and a latency measured against a
-    saturated CPU has to be labelled as such rather than published bare.
-    """
+    """Collect the hardware header, including any competing CPU load."""
     import psutil
 
     cpu_name = platform.processor() or "unknown"
@@ -173,12 +168,7 @@ def discover_images(root: Path, limit: int) -> list[Path]:
 
 
 def measure_model_load(model_path: Path, device: str) -> tuple[Any, float]:
-    """Build the pipeline, timing construction end to end (NFR-P4).
-
-    Returns the pipeline and the elapsed seconds. Warmup is timed separately by
-    the caller, because "load" and "first inference" are different costs and
-    conflating them would misattribute several hundred milliseconds.
-    """
+    """Build the pipeline, timing construction end to end (NFR-P4)."""
     from ai.inference.config import InferenceConfig
     from ai.inference.pipeline import build_default_pipeline
 
@@ -197,15 +187,7 @@ def measure_model_load(model_path: Path, device: str) -> tuple[Any, float]:
 
 
 def measure_stages(pipeline: Any, image_path: Path) -> StageTimings:
-    """Time one image stage by stage, driving the components directly.
-
-    The pipeline's own ``process`` returns a single total, which cannot answer
-    "where does the time go". Calling detector / recogniser / normalizer in turn
-    reproduces the same sequence while letting each boundary be timed. The
-    resulting ``total_ms`` is therefore the sum of measured stages and will
-    differ slightly from ``ALPRPipeline.process`` overhead, which is measured
-    separately by :func:`measure_end_to_end`.
-    """
+    """Time one image stage by stage, driving the components directly."""
     import cv2
 
     timings = StageTimings()
@@ -283,12 +265,7 @@ def measure_end_to_end(pipeline: Any, images: Sequence[Path]) -> tuple[list[floa
 def measure_detector_backend(
     weights: Path, images: Sequence[Path], device: str, imgsz: int
 ) -> dict[str, Any]:
-    """Time the detector alone for one weights file (``.pt`` or ``.onnx``).
-
-    Isolating the detector is what makes the PyTorch/ONNX comparison meaningful:
-    OCR dominates the end-to-end budget, so a large relative speedup in the
-    detector would be almost invisible if measured through the full pipeline.
-    """
+    """Time the detector alone for one weights file (``.pt`` or ``.onnx``)."""
     import cv2
     from ultralytics import YOLO
 
@@ -338,11 +315,7 @@ def process_rss_gb() -> float:
 
 
 def summarise_stage_budget(stage_rows: Sequence[StageTimings]) -> dict[str, Any]:
-    """Aggregate per-stage timings into medians and percentage shares.
-
-    Medians rather than means: one pathological image with a dozen plates would
-    drag a mean and misrepresent the typical request the budget describes.
-    """
+    """Aggregate per-stage timings into medians and percentage shares."""
     if not stage_rows:
         return {}
 

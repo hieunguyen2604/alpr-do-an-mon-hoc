@@ -69,17 +69,7 @@ _CHAR_INDEX: Final[dict[str, int]] = {char: i for i, char in enumerate(_CHARSET)
 
 @dataclass(frozen=True, slots=True)
 class LabelRecord:
-    """One hand-transcribed plate crop.
-
-    Attributes:
-        image_path: Resolved absolute path to the crop.
-        plate_text: The label exactly as written in the CSV.
-        cleaned_text: :func:`~ai.inference.plate_rules.clean_text` applied to
-            :attr:`plate_text` -- the canonical form every comparison uses.
-        line_count: ``1`` or ``2`` when the CSV stated it, otherwise ``None``.
-        split: Dataset split name, or ``None``.
-        row_number: 1-based line number in the CSV, for error messages.
-    """
+    """One hand-transcribed plate crop."""
 
     image_path: Path
     plate_text: str
@@ -91,34 +81,7 @@ class LabelRecord:
 
 @dataclass(slots=True)
 class SampleResult:
-    """Everything measured for a single crop.
-
-    Serialised into the JSON report as-is, because
-    :mod:`ai.evaluation.error_analysis` consumes these records rather than
-    re-running the OCR engine -- OCR is by far the expensive half of the work
-    and running it twice for one analysis would be wasteful.
-
-    Attributes:
-        image_path: Absolute path to the crop, as a string.
-        ground_truth: Cleaned label.
-        raw_text: Untouched engine output.
-        pre_norm_text: Cleaned engine output, before positional repair.
-        post_norm_text: Output of the normalizer.
-        is_valid_format: Whether the normalised string matched a civil pattern.
-        corrections: ``(index, before, after)`` triples the repair applied.
-        line_count: Line count used for the breakdown.
-        line_count_source: ``"label"`` or ``"aspect_ratio"``.
-        aspect_ratio: Width divided by height of the crop.
-        confidence: Aggregated OCR confidence.
-        elapsed_ms: Wall-clock recognition time for this crop.
-        exact_verbatim: Engine output equals the label, character for character.
-        exact_pre_norm: Cleaned engine output equals the cleaned label.
-        exact_post_norm: Normalised output equals the cleaned label.
-        cer_pre_norm: Character error rate before repair.
-        cer_post_norm: Character error rate after repair.
-        error: Message when recognition failed for this crop, else ``None``.
-            A failed crop is recorded and counted, never silently skipped.
-    """
+    """Everything measured for a single crop."""
 
     image_path: str
     ground_truth: str
@@ -142,15 +105,7 @@ class SampleResult:
 
 @dataclass(slots=True)
 class BenchmarkOutcome:
-    """The complete result of one benchmark run.
-
-    Attributes:
-        samples: One :class:`SampleResult` per crop, in input order.
-        skipped: ``(row_number, reason)`` for every CSV row that could not be
-            used, so that the report accounts for the full label file.
-        engine_name: Identifier reported by the recogniser.
-        settings: The run's parameters, echoed into the report.
-    """
+    """The complete result of one benchmark run."""
 
     samples: list[SampleResult] = field(default_factory=list)
     skipped: list[tuple[int, str]] = field(default_factory=list)
@@ -162,31 +117,7 @@ class BenchmarkOutcome:
 
 
 def align(reference: str, hypothesis: str) -> list[tuple[str, str, str]]:
-    """Align two strings with Levenshtein edit operations.
-
-    A plain edit *distance* is enough to compute a character error rate, but not
-    enough to build a confusion matrix: that needs to know **which** character
-    was mistaken for which. This returns the operation trace instead of the
-    scalar, so both fall out of one pass.
-
-    Substitution, insertion and deletion all cost 1; ties are resolved in the
-    order substitute, delete, insert, which keeps the trace deterministic.
-
-    Args:
-        reference: The ground-truth string.
-        hypothesis: The predicted string.
-
-    Returns:
-        Operations in reading order, each a ``(op, ref_char, hyp_char)`` triple
-        where ``op`` is one of ``"equal"``, ``"substitute"``, ``"delete"``
-        (present in the reference, missing from the hypothesis) or ``"insert"``
-        (absent from the reference, added by the hypothesis). The unused
-        character of an insert/delete is the empty string.
-
-    Examples:
-        >>> align("30A", "3OA")
-        [('equal', '3', '3'), ('substitute', '0', 'O'), ('equal', 'A', 'A')]
-    """
+    """Align two strings with Levenshtein edit operations."""
     rows, columns = len(reference), len(hypothesis)
     # cost[i][j] = edit distance between reference[:i] and hypothesis[:j].
     cost: list[list[int]] = [[0] * (columns + 1) for _ in range(rows + 1)]
@@ -226,19 +157,7 @@ def align(reference: str, hypothesis: str) -> list[tuple[str, str, str]]:
 
 
 def character_error_rate(reference: str, hypothesis: str) -> float:
-    """Compute the character error rate between a label and a prediction.
-
-    Args:
-        reference: The ground-truth string.
-        hypothesis: The predicted string.
-
-    Returns:
-        ``edit_distance / len(reference)``, **not** capped at 1.0. A prediction
-        far longer than the label genuinely has a rate above 1, and clipping it
-        would hide a runaway recogniser behind a tidy-looking number. When the
-        reference is empty the rate is ``0.0`` for an empty hypothesis and
-        ``1.0`` otherwise.
-    """
+    """Compute the character error rate between a label and a prediction."""
     if not reference:
         return 0.0 if not hypothesis else 1.0
     distance = sum(1 for operation, _, _ in align(reference, hypothesis) if operation != "equal")
@@ -249,18 +168,7 @@ def character_error_rate(reference: str, hypothesis: str) -> float:
 
 
 def _resolve_image_path(raw: str, csv_directory: Path) -> Path | None:
-    """Resolve an image path from the CSV against the three plausible bases.
-
-    Args:
-        raw: The path as written in the CSV.
-        csv_directory: Directory holding the CSV file.
-
-    Returns:
-        The first candidate that exists, or ``None`` when none does. Absolute
-        paths are tried first, then paths relative to the project root, then
-        paths relative to the CSV -- the last is what a label file written by
-        an annotation tool usually contains.
-    """
+    """Resolve an image path from the CSV against the three plausible bases."""
     candidate = Path(raw.strip()).expanduser()
     if candidate.is_absolute():
         return candidate if candidate.is_file() else None
@@ -274,24 +182,7 @@ def _resolve_image_path(raw: str, csv_directory: Path) -> Path | None:
 def load_labels(
     labels_path: Path, split: str | None = None
 ) -> tuple[list[LabelRecord], list[tuple[int, str]]]:
-    """Read and validate the hand-made plate transcriptions.
-
-    Rows are validated rather than trusted: a missing image or an empty label
-    silently dropped would make every accuracy figure computed afterwards
-    unverifiable.
-
-    Args:
-        labels_path: Path to the CSV file.
-        split: When given, keep only rows whose ``split`` column matches.
-
-    Returns:
-        A ``(records, skipped)`` pair, where ``skipped`` holds
-        ``(row_number, reason)`` for every unusable row.
-
-    Raises:
-        FileNotFoundError: If the CSV does not exist.
-        ValueError: If the CSV is empty or lacks a required column.
-    """
+    """Read and validate the hand-made plate transcriptions."""
     if not labels_path.is_file():
         raise FileNotFoundError(
             f"Plate label file not found: {labels_path}\n"
@@ -365,14 +256,7 @@ def load_labels(
 
 
 def _parse_line_count(value: str | None) -> int | None:
-    """Parse the optional ``line_count`` column.
-
-    Args:
-        value: Raw cell content, possibly empty or ``None``.
-
-    Returns:
-        ``1`` or ``2``, or ``None`` when the cell is empty or unparsable.
-    """
+    """Parse the optional ``line_count`` column."""
     if not value:
         return None
     try:
@@ -386,27 +270,7 @@ def _parse_line_count(value: str | None) -> int | None:
 
 
 def build_recognizer(engine: str, config: InferenceConfig, preprocess: bool) -> BaseRecognizer:
-    """Construct the recogniser named on the command line.
-
-    This indirection is the point of :class:`~ai.inference.interfaces.BaseRecognizer`
-    made concrete. Phase 1 found **no** public evidence that PaddleOCR beats
-    EasyOCR on plate imagery, and the single reproducible comparison that was
-    located favoured EasyOCR; the engine choice is therefore an open question
-    that this benchmark exists to settle on this project's own data. Adding a
-    competitor means writing one subclass and one entry here.
-
-    Args:
-        engine: Engine key. Currently only ``"paddleocr"`` is implemented.
-        config: Runtime settings handed to the engine.
-        preprocess: Whether the engine may run its pre-processing chain. Set to
-            ``False`` to measure what that chain contributes.
-
-    Returns:
-        A ready-to-use recogniser. Models are loaded lazily on the first call.
-
-    Raises:
-        ValueError: If ``engine`` names an implementation that does not exist.
-    """
+    """Construct the recogniser named on the command line."""
     if engine == "paddleocr":
         from ai.inference.recognizer import PaddleOcrRecognizer
 
@@ -427,32 +291,7 @@ def run_benchmark(
     aspect_ratio_threshold: float,
     warmup: int = 3,
 ) -> BenchmarkOutcome:
-    """Run the recogniser over every labelled crop and measure the outcome.
-
-    Warm-up passes are run first and discarded: the first inference of a process
-    pays one-off model loading and lazy kernel compilation, and letting that
-    land in the p99 would make the latency figure describe start-up rather than
-    steady state.
-
-    A crop that fails to decode, or on which the engine raises, is recorded with
-    an ``error`` and empty predictions. It still counts against accuracy -- an
-    unreadable plate is a failure of the system, and excluding it would flatter
-    the result.
-
-    Args:
-        records: The labelled crops.
-        recognizer: The engine under test.
-        normalizer: The post-processing stage under test.
-        aspect_ratio_threshold: Width/height cut-off below which a crop with no
-            labelled line count is treated as two-line.
-        warmup: Number of discarded warm-up recognitions.
-
-    Returns:
-        A :class:`BenchmarkOutcome`.
-
-    Raises:
-        ImportError: If OpenCV is unavailable, which makes the run impossible.
-    """
+    """Run the recogniser over every labelled crop and measure the outcome."""
     import cv2
 
     outcome = BenchmarkOutcome(engine_name=recognizer.name)
@@ -534,33 +373,13 @@ def run_benchmark(
 
 
 def _percentile(ordered: Sequence[float], fraction: float) -> float:
-    """Return a nearest-rank percentile of an already sorted sequence.
-
-    The nearest-rank definition is used rather than an interpolating one so
-    that every reported percentile is a latency that was genuinely observed.
-
-    Args:
-        ordered: Values sorted ascending. Must not be empty.
-        fraction: Percentile as a fraction in ``(0, 1]``.
-
-    Returns:
-        The value at that rank.
-    """
+    """Return a nearest-rank percentile of an already sorted sequence."""
     rank = max(1, min(len(ordered), int(round(fraction * len(ordered)))))
     return ordered[rank - 1]
 
 
 def _accuracy_block(samples: Sequence[SampleResult]) -> dict[str, Any]:
-    """Aggregate the accuracy figures over a group of samples.
-
-    Args:
-        samples: The samples in the group. May be empty.
-
-    Returns:
-        Mapping with the counts, the three exact-match accuracies, the mean
-        character accuracies and the post-processing contribution. Every value
-        is ``0.0`` for an empty group, and ``count`` says so.
-    """
+    """Aggregate the accuracy figures over a group of samples."""
     count = len(samples)
     if count == 0:
         return {
@@ -600,15 +419,7 @@ def _accuracy_block(samples: Sequence[SampleResult]) -> dict[str, Any]:
 
 
 def _latency_block(samples: Sequence[SampleResult]) -> dict[str, Any]:
-    """Aggregate the per-crop latency figures.
-
-    Args:
-        samples: The samples to time over. May be empty.
-
-    Returns:
-        Mapping with mean, p50, p95, p99, min and max in milliseconds, plus the
-        implied single-threaded throughput.
-    """
+    """Aggregate the per-crop latency figures."""
     if not samples:
         return {"count": 0}
     ordered = sorted(sample.elapsed_ms for sample in samples)
@@ -627,16 +438,7 @@ def _latency_block(samples: Sequence[SampleResult]) -> dict[str, Any]:
 
 
 def summarize(outcome: BenchmarkOutcome) -> dict[str, Any]:
-    """Turn the raw per-crop results into the report's summary section.
-
-    Args:
-        outcome: The benchmark result.
-
-    Returns:
-        Mapping with an ``overall`` block, a ``by_line_count`` block holding a
-        separate entry for one-line and two-line plates (NFR-A8), the latency
-        block and the label-quality counters.
-    """
+    """Turn the raw per-crop results into the report's summary section."""
     samples = outcome.samples
     one_line = [s for s in samples if s.line_count == 1]
     two_line = [s for s in samples if s.line_count == 2]
@@ -663,32 +465,7 @@ def summarize(outcome: BenchmarkOutcome) -> dict[str, Any]:
 def build_confusion_matrix(
     samples: Sequence[SampleResult], use_post_norm: bool = False
 ) -> dict[str, Any]:
-    """Build the 36x36 character confusion matrix from the aligned strings.
-
-    The matrix is the empirical replacement for the shape-based reasoning
-    currently encoded in :data:`~ai.inference.plate_rules.TO_DIGIT` and
-    :data:`~ai.inference.plate_rules.TO_LETTER`. Phase 1 flagged those tables as
-    hypotheses; this is the measurement that either confirms them or replaces
-    them.
-
-    Insertions and deletions are counted **separately** rather than folded into
-    the grid. A deletion is not a confusion between two characters -- there is
-    no second character -- and giving it a cell would corrupt exactly the
-    statistic the correction tables are meant to be derived from.
-
-    Args:
-        samples: The samples to aggregate over.
-        use_post_norm: Build the matrix from the normalised strings instead of
-            the raw ones. The raw matrix is the one that describes the *engine*;
-            the post-norm matrix shows which confusions the rules failed to fix.
-
-    Returns:
-        Mapping with ``charset``, ``matrix`` (a 36x36 list of rows indexed
-        ``[true][predicted]``), ``top_confusions`` (the most frequent off-
-        diagonal pairs), ``insertions``/``deletions`` per character and
-        ``out_of_charset`` for symbols the engine emitted that are not in the
-        36-symbol alphabet.
-    """
+    """Build the 36x36 character confusion matrix from the aligned strings."""
     size = len(_CHARSET)
     matrix = [[0] * size for _ in range(size)]
     insertions: Counter[str] = Counter()
@@ -740,11 +517,7 @@ def build_confusion_matrix(
 
 
 def _environment_info() -> dict[str, Any]:
-    """Describe the machine, so the numbers stay interpretable later.
-
-    Returns:
-        Mapping with the OS, the CPU identifier and the Python version.
-    """
+    """Describe the machine, so the numbers stay interpretable later."""
     return {
         "system": f"{platform.system()} {platform.release()}",
         "machine": platform.machine(),
@@ -754,26 +527,12 @@ def _environment_info() -> dict[str, Any]:
 
 
 def _format_percent(value: float) -> str:
-    """Format a fraction as a percentage string with one decimal.
-
-    Args:
-        value: A fraction, typically in ``[0, 1]``.
-
-    Returns:
-        For example ``"94.3%"``.
-    """
+    """Format a fraction as a percentage string with one decimal."""
     return f"{value * 100:.1f}%"
 
 
 def _markdown_report(payload: dict[str, Any]) -> str:
-    """Render the summary as a Markdown document.
-
-    Args:
-        payload: The full JSON payload.
-
-    Returns:
-        The Markdown source, ready to be pasted into the Phase 4 report.
-    """
+    """Render the summary as a Markdown document."""
     summary = payload["summary"]
     overall = summary["overall"]
     one_line = summary["by_line_count"]["one_line"]
@@ -876,18 +635,7 @@ def _markdown_report(payload: dict[str, Any]) -> str:
 
 
 def _write_charts(payload: dict[str, Any], output_dir: Path) -> list[Path]:
-    """Render the PNG charts that accompany the report.
-
-    Charts are best-effort: a missing or misbehaving Matplotlib must not lose a
-    benchmark run whose numbers are already in the JSON payload.
-
-    Args:
-        payload: The full JSON payload.
-        output_dir: Directory to write the PNGs into.
-
-    Returns:
-        Paths actually written, possibly empty.
-    """
+    """Render the PNG charts that accompany the report."""
     try:
         import matplotlib
 
@@ -991,19 +739,7 @@ def _write_charts(payload: dict[str, Any], output_dir: Path) -> list[Path]:
 
 
 def write_reports(payload: dict[str, Any], output_dir: Path) -> dict[str, Path]:
-    """Write the JSON payload, the Markdown table and the charts.
-
-    Args:
-        payload: The full result payload.
-        output_dir: Destination directory, created when missing.
-
-    Returns:
-        Mapping from artefact kind to the path written.
-
-    Raises:
-        OSError: If the directory or the JSON file cannot be written. The JSON
-            is the primary artefact -- losing it silently would waste the run.
-    """
+    """Write the JSON payload, the Markdown table and the charts."""
     output_dir.mkdir(parents=True, exist_ok=True)
 
     json_path = output_dir / "ocr_benchmark.json"
@@ -1030,11 +766,7 @@ def write_reports(payload: dict[str, Any], output_dir: Path) -> dict[str, Path]:
 
 
 def build_parser() -> argparse.ArgumentParser:
-    """Construct the command-line parser.
-
-    Returns:
-        The configured :class:`argparse.ArgumentParser`.
-    """
+    """Construct the command-line parser."""
     parser = argparse.ArgumentParser(
         prog="python -m ai.evaluation.benchmark_ocr",
         description=(
@@ -1102,29 +834,13 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def _resolve(path: str | Path) -> Path:
-    """Resolve a path against the repository root when it is relative.
-
-    Args:
-        path: Absolute or relative path.
-
-    Returns:
-        An absolute path.
-    """
+    """Resolve a path against the repository root when it is relative."""
     candidate = Path(path).expanduser()
     return candidate if candidate.is_absolute() else PROJECT_ROOT / candidate
 
 
 def main(argv: list[str] | None = None) -> int:
-    """Command-line entry point.
-
-    Args:
-        argv: Argument list; defaults to :data:`sys.argv`.
-
-    Returns:
-        ``0`` on success, ``1`` on a runtime failure, ``2`` when the label file
-        is missing or unusable -- a distinct code, because "the labels do not
-        exist yet" is an expected state of the project, not a crash.
-    """
+    """Command-line entry point."""
     args = build_parser().parse_args(argv)
     logging.basicConfig(
         level=logging.INFO,
