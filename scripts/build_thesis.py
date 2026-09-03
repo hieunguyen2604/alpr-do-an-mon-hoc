@@ -102,9 +102,14 @@ TABLE_BORDERS_XML: str = (
 STYLE_PATCHES: tuple[tuple[str, str], ...] = (
     # 0b. Chu trong o bang 12->10 pt (chuan van ban hoc thuat; than bai van 12).
     #     Pandoc gan kieu Compact cho moi doan trong o bang nen sua mot cho la du.
+    #     Anchor phai chep tu `pandoc --print-default-data-file reference.docx`
+    #     (thu tu thuoc tinh: type, customStyle, styleId / before, after) — ban
+    #     dau chep tu styles.xml cua mot DOCX DA XUAT, noi writer sap xep thuoc
+    #     tinh theo abc, nen anchor khop 0 lan va keo ca 6 patch chet chung
+    #     tu 30/08 den 03/09.
     (
-        '<w:style w:customStyle="1" w:styleId="Compact" w:type="paragraph">\n    <w:name w:val="Compact" />\n    <w:basedOn w:val="BodyText" />\n    <w:qFormat />\n    <w:pPr>\n      <w:spacing w:after="36" w:before="36" />\n    </w:pPr>',  # noqa: E501 — chuoi khop nguyen van, khong duoc tach
-        '<w:style w:customStyle="1" w:styleId="Compact" w:type="paragraph">\n    <w:name w:val="Compact" />\n    <w:basedOn w:val="BodyText" />\n    <w:qFormat />\n    <w:pPr>\n      <w:spacing w:after="20" w:before="20" />\n    </w:pPr>\n    <w:rPr>\n      <w:sz w:val="20" />\n      <w:szCs w:val="20" />\n    </w:rPr>',  # noqa: E501 — chuoi khop nguyen van, khong duoc tach
+        '<w:style w:type="paragraph" w:customStyle="1" w:styleId="Compact">\n    <w:name w:val="Compact" />\n    <w:basedOn w:val="BodyText" />\n    <w:qFormat />\n    <w:pPr>\n      <w:spacing w:before="36" w:after="36" />\n    </w:pPr>',  # noqa: E501 — chuoi khop nguyen van, khong duoc tach
+        '<w:style w:type="paragraph" w:customStyle="1" w:styleId="Compact">\n    <w:name w:val="Compact" />\n    <w:basedOn w:val="BodyText" />\n    <w:qFormat />\n    <w:pPr>\n      <w:spacing w:before="20" w:after="20" />\n    </w:pPr>\n    <w:rPr>\n      <w:sz w:val="20" />\n      <w:szCs w:val="20" />\n    </w:rPr>',  # noqa: E501 — chuoi khop nguyen van, khong duoc tach
     ),
     # 0. Khoang cach sau doan 200->120 dxa: ~655 doan van, rieng khoang trong da
     #    ~11,5 trang in. Co chu va gian dong KHONG doi.
