@@ -168,3 +168,14 @@ reference-thesis.docx
 # Giu tep tren may de dung lai, nhung khong dua vao ban nop.
 .sentrux/
 /do-an-mon-hoc_*.zip
+
+# --- San pham dung: da co ban giao hang trong nop/, khong theo doi ban thu hai ---
+# build_thesis.py + export_thesis_pdf.ps1 sinh lai duoc toan bo; giu ca hai ban
+# lam goi nop phinh them 11 MB va tao rui ro hai ban lech nhau.
+docs/papers/mon-hoc/thesis-full.md
+docs/papers/mon-hoc/thesis-full.docx
+docs/papers/mon-hoc/thesis-full.pdf
+docs/slides/12-slides-mon-hoc.pptx
+
+# Cau hinh cong cu phat trien, khong thuoc bai nop.
+.claude/
