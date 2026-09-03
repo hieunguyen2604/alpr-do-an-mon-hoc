@@ -1096,8 +1096,3 @@ powershell -File scripts/export_thesis_pdf.ps1 -Nguon docs/papers/mon-hoc/thesis
 
 Lệnh đầu ghép năm chương thành một tệp Markdown rồi kết xuất `.docx`; thứ tự ghép khai báo ở `ORDER.txt` trong chính thư mục đó. Lệnh hai dùng Word để kết xuất PDF và điền số trang cho mục lục.
 
-
-```{=openxml}
-<w:p><w:r><w:br w:type="page"/></w:r></w:p>
-```
-

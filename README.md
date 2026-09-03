@@ -11,7 +11,7 @@
 >
 > | | Trên nhánh này | Trên `main` |
 > |---|---|---|
-> | Quyển | `docs/papers/mon-hoc/` — 5 chương, 44 trang | thêm quyển ĐATN 6 chương, 79 trang |
+> | Quyển | `docs/papers/mon-hoc/` — 5 chương, 43 trang | thêm quyển ĐATN 6 chương, 79 trang |
 > | Slide | `12-slides-mon-hoc.md` — 16 slide | thêm deck bảo vệ 28 slide (24 chính + 4 backup) |
 > | Bảo vệ | — | kịch bản nói 885 s, bộ Hỏi–Đáp, kịch bản demo, poster |
 > | Mã nguồn · dữ liệu · báo cáo đo | **giữ nguyên** | giữ nguyên |

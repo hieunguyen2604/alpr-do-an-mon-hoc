@@ -235,11 +235,11 @@ def read_order(papers_dir: Path) -> tuple[str, ...]:
 
 def merge_sections(papers_dir: Path, filenames: tuple[str, ...]) -> str:
     """Concatenate the ordered section files with the page-break separator."""
-    parts: list[str] = []
-    for name in filenames:
-        parts.append(read_section(papers_dir / name))
-        parts.append(SECTION_SEPARATOR)
-    return "".join(parts)
+    # join, khong append: dat separator SAU ca phan cuoi tao mot ngat trang
+    # thua o cuoi quyen — ca hai ban tung in ra mot to trang cuoi vi the.
+    return SECTION_SEPARATOR.join(
+        read_section(papers_dir / name) for name in filenames
+    ) + "\n"
 
 
 def write_text_exact(path: Path, text: str) -> None:
