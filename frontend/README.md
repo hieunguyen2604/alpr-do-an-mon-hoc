@@ -384,7 +384,7 @@ nhiều khả năng tệp đã bị mở bằng công cụ khác rồi lưu đè
   không sẵn sàng. Trạng thái `model_loaded` vẫn đọc được qua `GET /health`; từ 2026-07-20
   **không còn màn hình nào hiển thị nó** (thẻ cảnh báo cũ nằm ở trang Tổng quan đã gỡ).
 * Nút **Huỷ tác vụ** ở trang video đang **bị vô hiệu hoá** vì API chưa có endpoint huỷ
-  (xem mục Hạn chế trong `docs/reports/06-ui-documentation.md`).
+  (xem mục Hạn chế trong `docs/reports/06-ui-documentation.md`, nhánh `main`).
 
 Tài liệu giao diện đầy đủ — sơ đồ điều hướng, mô tả từng màn hình, bảng đối chiếu yêu cầu
-chức năng — nằm ở [`docs/reports/06-ui-documentation.md`](../docs/reports/06-ui-documentation.md).
+chức năng — nằm ở `docs/reports/06-ui-documentation.md` *(nhánh `main`)*.

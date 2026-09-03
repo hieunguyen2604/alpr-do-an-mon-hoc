@@ -32,7 +32,7 @@ Các mô-đun triển khai thực tế (`detector.py`, `recognizer.py`, `normali
 
 Đây là **ràng buộc kiến trúc, không phải nguyện vọng**. Cách kiểm tra bằng lệnh
 `grep` được ghi trong
-[docs/architecture/system-architecture.md](../../docs/architecture/system-architecture.md)
+`docs/architecture/system-architecture.md` *(nhánh `main`)*
 — lệnh đó phải **không trả về kết quả nào**.
 
 ### Vì sao phải nghiêm ngặt như vậy?

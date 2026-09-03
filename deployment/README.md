@@ -47,7 +47,7 @@ không phát sinh vấn đề CORS trong trường hợp sử dụng thông thư
 > Mục này trước đây ghi rằng `docker compose build` sẽ thất bại vì thiếu tệp
 > của Phase 5/6. **Điều đó không còn đúng.** Ngày 19/07/2026 cả hai image đã
 > được build thật và cả stack đã chạy, được kiểm thử bằng HTTP thật từ ngoài
-> container. Chi tiết số đo: `docs/reports/08-deployment-guide.md`.
+> container. Chi tiết số đo: `docs/reports/08-deployment-guide.md` *(nhánh `main`)*.
 
 | Hạng mục | Trạng thái |
 |---|---|
@@ -636,7 +636,7 @@ docker compose up -d
 
 ## 11. Tài liệu liên quan
 
-* [`docs/architecture/system-architecture.md`](../docs/architecture/system-architecture.md) — kiến trúc hệ thống và các quyết định AD-01…AD-08
-* [`docs/00-requirements/non-functional-requirements.md`](../docs/00-requirements/non-functional-requirements.md) — các chỉ tiêu NFR được nhắc tới ở trên
-* [`docs/00-requirements/environment.md`](../docs/00-requirements/environment.md) — môi trường phát triển và lý do chạy CPU
+* `docs/architecture/system-architecture.md` *(nhánh `main`)* — kiến trúc hệ thống và các quyết định AD-01…AD-08
+* `docs/00-requirements/non-functional-requirements.md` *(nhánh `main`)* — các chỉ tiêu NFR được nhắc tới ở trên
+* `docs/00-requirements/environment.md` *(nhánh `main`)* — môi trường phát triển và lý do chạy CPU
 * [`ai/inference/README.md`](../ai/inference/README.md) — hợp đồng của tầng suy luận và bảng biến môi trường `ALPR_*`

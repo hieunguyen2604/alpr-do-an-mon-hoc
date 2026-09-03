@@ -1,6 +1,0 @@
-﻿threshold,status,total_cross_split_pairs,min_distance,train-val,train-test,val-test
-5,guaranteed-by-construction,0,,0,0,0
-10,guaranteed-by-construction,0,,0,0,0
-12,independent,2462,12,1454,791,217
-15,independent,10798,12,6391,3529,878
-20,independent,429548,12,256557,137506,35485

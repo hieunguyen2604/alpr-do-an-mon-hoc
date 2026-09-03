@@ -264,7 +264,7 @@ python -m ai.evaluation.benchmark_cpu --weights models/best.pt \
     --images datasets/processed/test/images
 ```
 
-`evaluate.py` ghi báo cáo JSON vào `docs/reports/` và biểu đồ PNG vào `docs/reports/figures/`.
+`evaluate.py` ghi báo cáo JSON vào `docs/reports/` và biểu đồ PNG vào `docs/reports/figures/` — thư mục này chỉ còn trên nhánh `main`, chạy ở đây thì truyền `--output` khác.
 
 **Con số cần nhìn trước tiên** không phải mAP tổng, mà là bảng tách theo số dòng:
 
@@ -345,8 +345,8 @@ Intel Core i5-14600K — 14 nhân vật lý / 20 luồng):
 
 ## 11. Tài liệu liên quan
 
-* [`docs/reports/01-yolo-comparison.md`](../../docs/reports/01-yolo-comparison.md) — căn cứ chọn YOLO11n
-* [`docs/reports/01-dataset-survey.md`](../../docs/reports/01-dataset-survey.md) — khảo sát dataset
-* [`docs/reports/01-vn-plate-standards.md`](../../docs/reports/01-vn-plate-standards.md) — QCVN 08:2024/BCA
-* [`docs/00-requirements/environment.md`](../../docs/00-requirements/environment.md) — môi trường và quyết định AD-06
+* `docs/reports/01-yolo-comparison.md` *(nhánh `main`)* — căn cứ chọn YOLO11n
+* `docs/reports/01-dataset-survey.md` *(nhánh `main`)* — khảo sát dataset
+* `docs/reports/01-vn-plate-standards.md` *(nhánh `main`)* — QCVN 08:2024/BCA
+* `docs/00-requirements/environment.md` *(nhánh `main`)* — môi trường và quyết định AD-06
 * [`ai/inference/README.md`](../inference/README.md) — tầng suy luận tiêu thụ `models/best.pt`

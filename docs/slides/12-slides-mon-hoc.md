@@ -39,7 +39,7 @@ BỐN QUY ƯỚC BẮT BUỘC — vi phạm là vỡ layout, `check_slides.ps1` 
 3. **Câu dẫn trên bảng/hình: MỘT câu, tối đa ~100 ký tự.** Dài hơn thì
    PowerPoint không cắt chữ — nó cho tràn ra và **vẽ đè lên bảng bên dưới**,
    lỗi không phát hiện được bằng phép đo chiều cao.
-4. Mọi con số phải truy được về `docs/papers/mon-hoc/` hoặc `docs/reports/`.
+4. Mọi con số phải truy được về `docs/papers/mon-hoc/` hoặc `docs/reports/` (nhánh `main`).
 
 Kiểm tra sau mỗi lần sửa:
 

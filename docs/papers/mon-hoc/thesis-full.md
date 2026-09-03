@@ -945,8 +945,8 @@ Xét từ góc độ môn học, kết quả đáng chú ý nhất không phải
 
 <!-- Danh muc rieng cua ban do an mon hoc — 17 muc, chi gom nhung tai lieu
      THAT SU duoc trich trong 5 chuong. Quyen do an tot nghiep co danh muc
-     rieng 123 muc, sinh tu docs/references.bib; hai danh muc danh so DOC LAP
-     voi nhau nen KHONG duoc doi chieu so [n] giua hai ban. -->
+     rieng, sinh tu docs/references.bib (nhanh main); hai danh muc danh so
+     DOC LAP voi nhau nen KHONG duoc doi chieu so [n] giua hai ban. -->
 
 [1] Báo Dân trí, "Việt Nam có 77 triệu xe máy, cứ 1.000 dân có 770 người sở hữu xe máy," Báo Dân trí, 2024. [Trực tuyến]. Địa chỉ: <https://dantri.com.vn/thoi-su/viet-nam-co-77-trieu-xe-may-cu-1000-dan-co-770-nguoi-so-huu-xe-may-20241104141910472.htm> (truy cập ngày 2026-07-19).
 

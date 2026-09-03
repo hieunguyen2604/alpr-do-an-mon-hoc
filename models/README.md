@@ -6,7 +6,7 @@
 >
 > `StubPipeline` **đã bị đưa ra khỏi đường chạy chính**. Phương án lùi khi thiếu trọng số hiện là `UnavailablePipeline` — nó **ném lỗi** thay vì bịa ra biển số. Stub chỉ chạy khi đặt tường minh `ALPR_USE_STUB=true`.
 >
-> Kết quả detection thật của `best.pt` trên tập test v3 (1.514 ảnh): **mAP@0.5 = 0,9829 · mAP@0.5:0.95 = 0,7834 · Precision = 0,9837 · Recall = 0,9714** — đều đạt chỉ tiêu. Nguồn: [05-tables.md §T5.5a](../docs/reports/05-tables.md).
+> Kết quả detection thật của `best.pt` trên tập test v3 (1.514 ảnh): **mAP@0.5 = 0,9829 · mAP@0.5:0.95 = 0,7834 · Precision = 0,9837 · Recall = 0,9714** — đều đạt chỉ tiêu. Nguồn: 05-tables.md §T5.5a *(nhánh `main`)*.
 >
 > ⚠️ **`baseline-416-v1.pt` giờ là mô hình ĐỐI CHỨNG**, không phải mô hình đưa vào quyển đồ án — nó có hai khiếm khuyết đã biết, đọc mục ngay dưới.
 
@@ -42,11 +42,11 @@ Kết quả huấn luyện (epoch tốt nhất = 38 / 40, tổng 156 phút trên
 
 Nhìn qua thì vượt xa chỉ tiêu NFR-A1 (≥ 0,90) và NFR-A2 (≥ 0,65). **Nhưng không được báo cáo là "đạt"**, vì hai lý do độc lập nhau:
 
-**1. `imgsz` = 416, trong khi chỉ tiêu đặt ở 640.** Không so sánh trực tiếp được. Chi tiết: [03-training-setup.md §9.1](../docs/reports/03-training-setup.md).
+**1. `imgsz` = 416, trong khi chỉ tiêu đặt ở 640.** Không so sánh trực tiếp được. Chi tiết: 03-training-setup.md §9.1 *(nhánh `main`)*.
 
 **2. Tập test có rò rỉ thật.** Đo ở ngưỡng phash 10 — dải mà bộ chia tách *không* bảo vệ — tìm thấy **619 cặp ảnh gần trùng giữa train và test** trên bộ v1. Kiểm tra bằng mắt: cùng một chiếc xe, cùng chuỗi biển số, xuất hiện ở cả hai split. Nghĩa là mAP 0,9933 **lạc quan hơn hiệu năng thật**.
 
-> Kết quả 0 cặp ở ngưỡng 5 mà bản trước từng dùng làm bằng chứng là **lập luận vòng tròn**: pipeline gom nhóm ở ngưỡng 5 rồi đo lại cũng ở ngưỡng 5. Chi tiết phân tích: [07-testing-report.md §6](../docs/reports/07-testing-report.md).
+> Kết quả 0 cặp ở ngưỡng 5 mà bản trước từng dùng làm bằng chứng là **lập luận vòng tròn**: pipeline gom nhóm ở ngưỡng 5 rồi đo lại cũng ở ngưỡng 5. Chi tiết phân tích: 07-testing-report.md §6 *(nhánh `main`)*.
 
 **Vì vậy `baseline-416-v1.pt` chỉ dùng để hệ thống chạy được và để đối chứng.** Nó **không phải** mô hình đưa vào quyển đồ án.
 
@@ -91,9 +91,9 @@ baseline **đã bị xoá** — mọi số đo trên chúng đã bị bác bỏ.
 Đo ngày 13/08/2026 trên 50 ảnh thật: PyTorch **33,09 ms** · ONNX Runtime **24,48 ms**
 (1,35×) · OpenVINO **21,12 ms** (1,57×), và mAP **không suy giảm** sau khi xuất.
 Bản giao hàng **vẫn giữ `best.pt`** vì NFR-P1 và NFR-P2 đều đạt mà không cần đổi;
-muốn bật thì đổi `ALPR_MODEL_PATH`. Chi tiết: [báo cáo 38](../docs/reports/38-runtime-backend-and-nfr-p2.md).
+muốn bật thì đổi `ALPR_MODEL_PATH`. Chi tiết: báo cáo 38 *(nhánh `main`)*.
 
-Đo lại phân rã độ trễ trên `best.pt` (nguồn: [05-tables.md §T5.7b](../docs/reports/05-tables.md)): **PaddleOCR chiếm ~64,3% tổng độ trễ (~112,55 ms/biển)**, detector YOLO11n chiếm **~34,2% (~59,83 ms)**. Độ trễ E2E p95 đo được là **780,36 ms in-process** và **731,15 ms client-side qua HTTP** ([07-benchmark-p1-resolved.json](../docs/reports/07-benchmark-p1-resolved.json)) — **đạt mục tiêu NFR-P1 (≤ 800 ms)** và thoả cả ngưỡng tối thiểu 1.500 ms.
+Đo lại phân rã độ trễ trên `best.pt` (nguồn: 05-tables.md §T5.7b *(nhánh `main`)*): **PaddleOCR chiếm ~64,3% tổng độ trễ (~112,55 ms/biển)**, detector YOLO11n chiếm **~34,2% (~59,83 ms)**. Độ trễ E2E p95 đo được là **780,36 ms in-process** và **731,15 ms client-side qua HTTP** (07-benchmark-p1-resolved.json *(nhánh `main`)*) — **đạt mục tiêu NFR-P1 (≤ 800 ms)** và thoả cả ngưỡng tối thiểu 1.500 ms.
 
 > Con số cũ "PaddleOCR chiếm 93,3%, p95 = 5.857,19 ms" **đã bị bác bỏ**: nó đo trên checkpoint `best-cpu-epoch7.pt` (không phải `best.pt`) trong khi một tiến trình huấn luyện chiếm ~793% CPU song song, cộng thêm lỗi crop khiến OCR đọc trên ảnh crop quá lớn (~1322 ms/ảnh). Đo lại trên `best.pt` với máy rảnh: p95 chỉ còn ~731–780 ms. Vì OCR (64,3%) không còn áp đảo tuyệt đối, tối ưu detector (34,2%) giờ mới có ý nghĩa thực sự.
 
@@ -104,8 +104,8 @@ muốn bật thì đổi `ALPR_MODEL_PATH`. Chi tiết: [báo cáo 38](../docs/r
 1. ✅ `best.pt` đã nằm ở `models/best.pt`
 2. ✅ Cấu hình mặc định `ALPR_MODEL_PATH=models/best.pt`
 3. ✅ `GET /health` báo `model_loaded: true`, `engine` chứa `yolo:best.pt`
-4. ✅ Đã chạy `ai/evaluation/evaluate.py`, số liệu detection nằm ở [05-tables.md §T5.5a](../docs/reports/05-tables.md)
-5. ✅ Số liệu hiệu năng (P1, breakdown) đã đo lại trên `best.pt` — xem [05-tables.md §T5.7](../docs/reports/05-tables.md) và [07-benchmark-p1-resolved.json](../docs/reports/07-benchmark-p1-resolved.json). Các NFR hiệu năng khác (P4–P7, R4, SC1) vẫn ghi số đo trên baseline và được đánh dấu rõ *(baseline)* trong bảng.
+4. ✅ Đã chạy `ai/evaluation/evaluate.py`, số liệu detection nằm ở 05-tables.md §T5.5a *(nhánh `main`)*
+5. ✅ Số liệu hiệu năng (P1, breakdown) đã đo lại trên `best.pt` — xem 05-tables.md §T5.7 *(nhánh `main`)* và 07-benchmark-p1-resolved.json *(nhánh `main`)*. Các NFR hiệu năng khác (P4–P7, R4, SC1) vẫn ghi số đo trên baseline và được đánh dấu rõ *(baseline)* trong bảng.
 
 ---
 
