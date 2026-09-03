@@ -104,7 +104,8 @@ function drawBox(
   context.strokeStyle = BOX_COLOR;
   context.strokeRect(x, y, width, height);
 
-  const label = `${index + 1}. ${result.plate_number ?? UNREADABLE_LABEL}`;
+  const plate = result.plate_display ?? result.plate_number;
+  const label = `${index + 1}. ${plate ?? UNREADABLE_LABEL}`;
   context.font = `600 ${fontSize}px "Segoe UI", Roboto, Arial, sans-serif`;
   context.textBaseline = 'top';
 

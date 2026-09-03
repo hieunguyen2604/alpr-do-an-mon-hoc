@@ -187,7 +187,7 @@ Bậc thang nắn hình và giãn dọc ở mục 3.4.6 cải thiện thêm **34
 | p95 | 866,3 ms | 1.143,10 ms | +276,80 |
 | p99 | — | 1.420,07 ms | — |
 
-Điểm đáng chú ý: **trung vị thậm chí giảm nhẹ.** Vì bậc thang chỉ chạy **sau khi lần đọc đầu thất bại**, nó không chạm vào trường hợp thường; toàn bộ chi phí dồn vào **đuôi phân bố**. Với một hệ thống mà 95% ảnh xong dưới 1,15 giây và một nửa xong dưới 0,41 giây, p50 mô tả trải nghiệm điển hình còn p95 mô tả trường hợp xấu.
+Điểm đáng chú ý: **trung vị thậm chí giảm nhẹ.** Vì bậc thang chỉ chạy **sau khi lần đọc đầu thất bại**, nó không chạm vào trường hợp thường; toàn bộ chi phí dồn vào **đuôi phân bố**. Ở cấu hình đo của thí nghiệm này — **trước** đợt tối ưu tầng suy luận ở mục 4.5.2 — 95% ảnh xong dưới 1,15 giây và một nửa xong dưới 0,41 giây; p50 mô tả trải nghiệm điển hình còn p95 mô tả trường hợp xấu.
 
 Đây là một **thoái lui có chủ ý và đã định lượng**: đổi 277 ms ở p95 lấy 34 biển đọc thêm.
 
@@ -229,7 +229,7 @@ Ba nhận xét. **Một, điểm nghẽn là khối nhận dạng ký tự** (60
 
 ### 4.5.2. Độ trễ đầu cuối và các chỉ tiêu tài nguyên
 
-Độ trễ một ảnh ở cấu hình giao hàng: **p50 = 150,07 ms · p95 = 509,76 ms · p99 = 1.124,13 ms** — đo sau đợt tối ưu tầng suy luận (bật `torch.inference_mode()`, ghim số luồng cho torch và OpenCV, truyền `cpu_threads` xuống bộ nhận dạng). Bảng 4.9 ở trên đo **trước** đợt ấy, nên hai bộ số không được ghép chung: bảng ấy trả lời riêng câu hỏi bậc thang thử lại đắt bao nhiêu. Chỉ tiêu p95 phát biểu ở mức ≤ 1.500 ms (tối thiểu) và ≤ 800 ms (mục tiêu), nên kết luận chính thức là **đạt ngưỡng tối thiểu, không đạt mục tiêu** — với nguyên nhân đã định lượng ở mục 4.4.2.
+Độ trễ một ảnh ở cấu hình giao hàng: **p50 = 150,07 ms · p95 = 509,76 ms · p99 = 1.124,13 ms** — đo sau đợt tối ưu tầng suy luận (bật `torch.inference_mode()`, ghim số luồng cho torch và OpenCV, truyền `cpu_threads` xuống bộ nhận dạng). Bảng 4.9 ở trên đo **trước** đợt ấy, nên hai bộ số không được ghép chung: bảng ấy trả lời riêng câu hỏi bậc thang thử lại đắt bao nhiêu. Chỉ tiêu p95 phát biểu ở mức ≤ 1.500 ms (tối thiểu) và ≤ 800 ms (mục tiêu), nên kết luận chính thức là **đạt cả mục tiêu**, với biên 290 ms. Con số này thay cho lượt đo trước tối ưu ở Bảng 4.9 (p95 = 1.143,10 ms), khi chỉ tiêu mới chỉ đạt ngưỡng tối thiểu.
 
 Mọi chỉ tiêu **ngoài đường xử lý ảnh** đều đạt với biên rộng: nạp mô hình 6,41 s (ngưỡng 30 s); bộ nhớ thường trú 0,806 GB (ngưỡng 4 GB); truy vấn 10.000 bản ghi lịch sử 18,71 ms; chạy liên tục 15 phút với **100% thành công trên 5.337 yêu cầu**, **0 lỗi** — **không rò rỉ** (Bảng 4.11).
 
@@ -244,7 +244,7 @@ Mọi chỉ tiêu **ngoài đường xử lý ảnh** đều đạt với biên 
 | Biển xanh | 63 | 61 | **96,83%** |
 | **Tổng** | **1.565** | **1.532** | **97,89%** |
 
-Ba giới hạn phải nêu kèm. **Một,** 542 ảnh đã bị loại khỏi phép đo — toàn bộ lớp không xác định, cùng các ảnh chụp ban đêm hoặc hồng ngoại mà chính người gán nhãn cũng không xác định được màu. **Hai,** dạng lỗi chủ đạo là **biển trắng bị phân loại thành biển xanh** — 21 trong 33 ca sai — do một số điểm ảnh ám lạnh vượt ngưỡng bão hoà. **Ba,** bộ dữ liệu không chứa biển đỏ và biển ngoại giao nên hai nhánh này chưa có số liệu — ghi thành **hạn chế số 6** ở mục 5.2.
+Ba giới hạn phải nêu kèm. **Một,** 542 ảnh đã bị loại khỏi phép đo — toàn bộ lớp không xác định, cùng các ảnh chụp ban đêm hoặc hồng ngoại mà chính người gán nhãn cũng không xác định được màu. **Hai,** dạng lỗi chủ đạo là **biển trắng bị phân loại thành biển xanh** — 21 trong 33 ca sai — do một số điểm ảnh ám lạnh vượt ngưỡng bão hoà. **Ba,** bộ dữ liệu không chứa biển đỏ và biển ngoại giao nên hai nhánh này chưa có số liệu — ghi thành **hạn chế số 5** ở mục 5.2.
 
 ## 4.6. Phân tích lỗi
 

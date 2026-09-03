@@ -116,7 +116,7 @@ export default function Layout(): JSX.Element {
             <p className="truncate text-sm font-bold tracking-tight">
               ALPR VIỆT NAM
             </p>
-            <p className="truncate text-[11px] text-content-muted">ĐATN · YOLO11 + PaddleOCR</p>
+            <p className="truncate text-[11px] text-content-muted">ĐAMH · YOLO11 + PaddleOCR</p>
           </div>
           <button
             type="button"

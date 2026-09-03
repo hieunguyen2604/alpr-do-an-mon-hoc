@@ -51,7 +51,8 @@ export function BoundingBoxOverlay({
 
         {results.map((result, index) => {
           const isActive = activeIndex === index;
-          const label = result.plate_number ?? 'Không đọc được';
+          const label =
+            result.plate_display ?? result.plate_number ?? 'Không đọc được';
 
           return (
             <div
