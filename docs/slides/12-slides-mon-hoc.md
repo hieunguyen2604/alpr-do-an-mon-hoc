@@ -139,7 +139,7 @@ Mọi bước bật tắt độc lập, nên đóng góp của từng bước **
 ## Ba kết quả khác với dự đoán ban đầu
 
 - **Tách-ghép không độc lập bộ nhận dạng** — 34,92 điểm cho PaddleOCR, **0,03** cho Tesseract ⇒ điều kiện cần, không đủ
-- **Bảng ánh xạ suy từ hình dạng chỉ phủ 2/10 cặp**, và mục `L → 1` ở vị trí chữ số đoán **sai đích** — đo được `L` thật ra là `4` (53 lần). Bảng trích từ ma trận đo được: phủ **4/10**, thêm **53 biển đúng, 0 hỏng**
+- **Bảng luật suy từ hình dạng chỉ phủ 2/10 cặp nhầm phổ biến nhất**; bảng trích từ ma trận đo được phủ **4/10** và thêm **53 biển đúng**
 - **Siêu phân giải cải thiện 0 biển, nhưng 0/120 mẫu lọt cổng** ⇒ *chi phí đã đo, lợi ích chưa ai đo được*
 
 ## Demo: hệ thống chạy thật
@@ -162,6 +162,6 @@ Khởi động bằng một lệnh `docker compose up`; giao diện hiện **c�
 - Chạy đầu cuối trên CPU: phát hiện **mAP@0.5 = 0,9829**
 - Biển hai dòng giải bằng **phép biến đổi ảnh**, không bằng mô hình nặng hơn — **34,92 điểm**
 - Hậu xử lý theo vị trí **+13,28 điểm**, **0 ca làm hỏng** / 2.801 biển
-- Chưa đạt: đọc đúng cả chuỗi **0,7701** so với ngưỡng 0,85
+- Điểm nghẽn còn lại: **biển hai dòng** (S₁ = 0,7234)
 
 **Nhóm thực hiện xin trân trọng cảm ơn Quý Thầy/Cô và các bạn đã lắng nghe.**
