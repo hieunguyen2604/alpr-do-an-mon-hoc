@@ -101,8 +101,19 @@ Ba công cụ này đọc cấu hình từ biến môi trường thay vì tự d
 ### B.4. Dựng lại quyển báo cáo
 
 ```
-backend/.venv/Scripts/python scripts/build_thesis.py --src docs/papers/mon-hoc
-powershell -File scripts/export_thesis_pdf.ps1 -Nguon docs/papers/mon-hoc/thesis-full.docx -Dich docs/papers/mon-hoc/thesis-full.pdf
+backend/.venv/Scripts/python scripts/build_thesis.py
+powershell -File scripts/export_thesis_pdf.ps1
 ```
 
-Lệnh đầu ghép năm chương thành một tệp Markdown rồi kết xuất `.docx`; thứ tự ghép khai báo ở `ORDER.txt` trong chính thư mục đó. Lệnh hai dùng Word để kết xuất PDF và điền số trang cho mục lục.
+Lệnh đầu ghép năm chương thành một tệp Markdown rồi kết xuất `.docx`; thứ tự ghép khai báo ở `ORDER.txt` trong chính thư mục đó. Lệnh hai dùng Word để kết xuất PDF và điền số trang cho mục lục. Cả hai đã đặt sẵn bản đồ án môn học làm mặc định nên không cần tham số; muốn dựng bản khác thì truyền `--src` cho lệnh đầu và `-Nguon` cho lệnh hai.
+
+## Phụ lục C. Phân công công việc
+
+| Thành viên | MSSV | Công việc chính |
+|---|:--:|---|
+| Phạm Nguyễn Thế Châu | 25410004 | Thu thập dữ liệu, huấn luyện YOLO11n, đánh giá bộ phát hiện |
+| Nguyễn Công Hậu | 25410006 | Xây dựng giao diện React, FastAPI, Docker, kiểm thử tích hợp |
+| Nguyễn Minh Hiếu | 25410007 | Thiết kế đường ống xử lý ảnh, hậu xử lý biển số, thực nghiệm OCR, viết báo cáo |
+| Phạm Công Thành | 25410013 | Xây dựng bộ dữ liệu, khử trùng lặp, đánh giá và phân tích kết quả |
+
+Các hạng mục trên là **phần việc chính** của từng thành viên, không phải ranh giới tuyệt đối: những quyết định ảnh hưởng tới số liệu công bố — chọn ngưỡng phân loại bố cục (mục 3.4.3), dừng lượt tinh chỉnh bộ nhận dạng, chốt cấu hình bàn giao — đều do cả nhóm thống nhất.
