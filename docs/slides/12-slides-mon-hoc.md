@@ -2,7 +2,8 @@
 title: "Xây dựng hệ thống nhận diện biển số xe bằng Trí tuệ nhân tạo"
 subtitle: "Đồ án môn học · Xử lý ảnh và ứng dụng"
 author:
-  - "Phạm Công Thành — 25410013 · Nguyễn Minh Hiếu — 25410007"
+  - "Phạm Nguyễn Thế Châu — 25410004 · Nguyễn Công Hậu — 25410006"
+  - "Nguyễn Minh Hiếu — 25410007 · Phạm Công Thành — 25410013"
 date: "Tháng 9 năm 2026"
 ---
 

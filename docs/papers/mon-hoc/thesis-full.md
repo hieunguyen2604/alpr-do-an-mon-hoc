@@ -31,10 +31,12 @@
 
 | | |
 |---:|:---|
-| **Sinh viên thực hiện:** | **Phạm Công Thành** — MSSV **25410013** |
+| **Sinh viên thực hiện:** | **Phạm Nguyễn Thế Châu** — MSSV **25410004** |
+| | **Nguyễn Công Hậu** — MSSV **25410006** |
 | | **Nguyễn Minh Hiếu** — MSSV **25410007** |
+| | **Phạm Công Thành** — MSSV **25410013** |
 | **Lớp:** | AI503.F3.LT.TTNT |
-| **Giảng viên hướng dẫn:** | «điền tên giảng viên phụ trách môn» |
+| **Giảng viên hướng dẫn:** | ThS. Cáp Phạm Đình Thăng |
 
 <br/><br/>
 

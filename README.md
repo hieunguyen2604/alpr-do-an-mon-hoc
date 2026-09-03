@@ -3,7 +3,8 @@
 > Nhận dạng biển số xe Việt Nam: khảo sát đóng góp của **từng bước xử lý ảnh**
 > trong một hệ thống ALPR chạy đầu cuối trên CPU.
 >
-> **Sinh viên thực hiện:** Phạm Công Thành — 25410013 · Nguyễn Minh Hiếu — 25410007
+> **Sinh viên thực hiện:** Phạm Nguyễn Thế Châu — 25410004 · Nguyễn Công Hậu — 25410006
+> · Nguyễn Minh Hiếu — 25410007 · Phạm Công Thành — 25410013
 > **Giảng viên hướng dẫn:** ThS. Cáp Phạm Đình Thăng · UIT — ĐHQG TP.HCM
 
 > ### ⚠ Đây là nhánh `do-an-mon-hoc`
