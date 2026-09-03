@@ -30,18 +30,11 @@ Skill này cung cấp các nguyên tắc vàng, cấu trúc chuẩn, quy tắc k
 
 ## 2. Cấu Trúc Các Bộ Slide Có Sẵn
 
-### A. Slide Đồ Án Tốt Nghiệp (15–20 phút)
-- **Tệp nguồn:** `docs/slides/10-slides.md` (**37 slide** `##`, gồm cả khối backup; `check_slides.ps1` báo 38 vì tính thêm trang tiêu đề)
-- **Kịch bản:** `docs/slides/10-kich-ban-noi.md`
-- **Phân bổ thời gian (900s):**
-  - Khối 1: Tổng quan & Đặc thù biển số VN (S1–S8 · 240s)
-  - Khối 2: Kiến trúc 5 tầng & Pipeline AI (S9–S13 · 210s)
-  - Khối 3: Dữ liệu & Hệ thống Backend/Frontend (S14–S17 · 150s)
-  - Khối 4: Kết quả thực nghiệm & Đo đạc CPU/NFR (S18–S26 · 210s)
-  - Khối 5: Kịch bản Demo & Kết luận (S27–S31 · 90s)
-  - Khối Backup: 7 slide trả lời phản biện (S32–S38)
+### A. Slide Đồ Án Tốt Nghiệp (15–20 phút) — *trên nhánh `main`, không có ở nhánh này*
+- **Tệp nguồn:** `docs/slides/10-slides.md` (28 slide: 24 chính + 4 backup)
+- **Kịch bản:** `docs/slides/10-kich-ban-noi.md` (ngân sách 885 s ≈ 14:45)
 
-### B. Slide Đồ Án Môn Học (7–10 phút)
+### B. Slide Đồ Án Môn Học (7–10 phút) — *bộ duy nhất trên nhánh này*
 - **Tệp nguồn:** `docs/slides/12-slides-mon-hoc.md` (**15 slide** `##`)
 - **Trọng tâm:** Pipeline thị giác máy tính (YOLO11n + PP-OCRv5), thử nghiệm độ trễ CPU và demo sản phẩm.
 
@@ -70,6 +63,9 @@ powershell -File scripts/check_slides.ps1
 
 ## 4. Danh Mục Tài Liệu Bổ Trợ
 
-- **Kịch bản Q&A phản biện (40+ câu):** [`docs/slides/10-defense-qa.md`](docs/slides/10-defense-qa.md)
-- **Kịch bản Demo trực tiếp:** [`docs/slides/10-demo-script.md`](docs/slides/10-demo-script.md)
-- **Hướng dẫn dựng slide & poster:** [`docs/slides/README.md`](docs/slides/README.md)
+> **Trên nhánh `do-an-mon-hoc`:** các tài liệu bảo vệ dưới đây **không có ở nhánh này**
+> — chúng nằm trên `main`. Deck duy nhất còn ở đây là `docs/slides/12-slides-mon-hoc.md`.
+>
+> - Kịch bản Q&A phản biện: `docs/slides/10-defense-qa.md` *(trên `main`)*
+> - Kịch bản demo trực tiếp: `docs/slides/10-demo-script.md` *(trên `main`)*
+> - Kịch bản nói 24 slide: `docs/slides/10-kich-ban-noi.md` *(trên `main`)*

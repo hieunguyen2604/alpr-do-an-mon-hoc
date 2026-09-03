@@ -44,8 +44,9 @@ def quet(files: list[Path]) -> tuple[set[str], set[str], set[str]]:
 
 def main() -> None:
     # Tham so tuy chon: thu muc con chua cac tep chuong, tinh tu docs/papers/.
-    # Mac dinh la chinh docs/papers/.
-    thu_muc = PAPERS / sys.argv[1] if len(sys.argv) > 1 else PAPERS
+    # Nhanh do-an-mon-hoc: ban mon hoc la ban duy nhat nen lam mac dinh — de
+    # docs/papers/ thi khong con tep chuong nao va lenh khong tham so luon do.
+    thu_muc = PAPERS / (sys.argv[1] if len(sys.argv) > 1 else "mon-hoc")
     files = sorted(thu_muc.glob("ch*.md"))
     if not files:
         raise SystemExit(f"Khong tim thay tep chuong nao trong {thu_muc}")

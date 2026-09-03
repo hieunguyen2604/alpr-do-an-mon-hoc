@@ -214,7 +214,7 @@ d:/DATN/
 ├── data/                        # Lưu trữ lúc chạy: alpr.db, uploads/, plates/, outputs/
 ├── deployment/docker/           # Dockerfile.backend, Dockerfile.frontend, nginx.conf
 ├── docker-compose.yml
-├── docs/                        # Toàn bộ tài liệu — xem docs/papers/THESIS-README.md
+├── docs/                        # Toàn bộ tài liệu — quyển môn học ở docs/papers/mon-hoc/
 ├── .coveragerc · pytest.ini · conftest.py
 ├── .env / .env.example          # .env CHỨA KHOÁ THẬT, đã nằm trong .gitignore
 └── CLAUDE.md · README.md

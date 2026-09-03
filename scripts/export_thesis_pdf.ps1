@@ -21,7 +21,7 @@
 #            ghi de len docs/papers/thesis-full.pdf 86 trang cua ban tot nghiep.
 # Bay gio ca hai deu suy tu $Nguon, va chi bi ghi de khi nguoi dung tu truyen.
 param(
-  [string]$Nguon = "D:\DATN\docs\papers\thesis-full.docx",
+  [string]$Nguon = "D:\DATN\docs\papers\mon-hoc\thesis-full.docx",
   [string]$Dich  = "",
   [string]$TenBanNop = ""
 )
@@ -74,7 +74,8 @@ try {
   # nay va mot ten cung se lam ban nay de len ban kia.
   $ten = $TenBanNop
   if (-not $ten) {
-    if ($Nguon -match 'mon-hoc') { $ten = "04-do-an-mon-hoc.pdf" }
+    # Nhanh do-an-mon-hoc: goi nop chi con ban mon hoc, danh so tu 01.
+    if ($Nguon -match 'mon-hoc') { $ten = "01-do-an-mon-hoc.pdf" }
     else                         { $ten = "01-do-an-tot-nghiep.pdf" }
   }
   $nop = Join-Path (Split-Path -Parent (Split-Path -Parent $PSCommandPath)) "nop"

@@ -124,8 +124,10 @@ thật trong dự án — đọc ví dụ để hiểu vì sao rule tồn tại.
    *(Sự cố: banner của `07-testing-report.md` ghi ô "hiện tại" = P2 ❌ 2,379 FPS —
    chính là con số đã bị bác bỏ trong báo cáo [38].)*
 4. **Bộ slide là một đơn vị commit:**
-   `10-slides.md` + `10-slides-outline.md` + `10-defense-qa.md` + `SLIDE_PLAN.md`
-   phải thay đổi **cùng một commit**; CI quét cả bốn. Sửa deck mà bỏ kịch bản nói
+   deck và kịch bản/hình đi kèm phải thay đổi **cùng một commit**. Trên nhánh
+   `do-an-mon-hoc` chỉ còn `12-slides-mon-hoc.md` (+ hình từ
+   `make_slide_figures.py`); bộ ĐATN (`10-slides.md` + `10-kich-ban-noi.md` +
+   `10-defense-qa.md`) nằm trên `main`. Sửa deck mà bỏ kịch bản nói
    là để lại mâu thuẫn ngay trên sân bảo vệ.
    *(Sự cố: outline ghi siêu tham số "SGD, batch 16, lr0 0,01" trong khi Backup 5
    của chính deck đó ghi "AdamW, batch 8, lr0 0,001" — bản ghi đã thực thi.)*

@@ -12,8 +12,9 @@ for _l in (sys.stdout, sys.stderr):
 
 ROOT = Path(__file__).resolve().parents[1]
 # Tham so tuy chon: thu muc con chua cac tep chuong, tinh tu docs/papers/.
-# Mac dinh la chinh docs/papers/.
-_BAN = next((a for a in sys.argv[1:] if not a.startswith("-")), "")
+# Nhanh do-an-mon-hoc: ban mon hoc la ban duy nhat nen lam mac dinh — de ""
+# thi script tro vao docs/papers/, noi khong con tep chuong nao tren nhanh nay.
+_BAN = next((a for a in sys.argv[1:] if not a.startswith("-")), "mon-hoc")
 PAPERS = ROOT / "docs" / "papers" / _BAN if _BAN else ROOT / "docs" / "papers"
 FRONT = PAPERS / "01-front-matter.md"
 

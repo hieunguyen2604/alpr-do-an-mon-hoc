@@ -1,7 +1,30 @@
-# Hệ thống nhận dạng biển số xe Việt Nam ứng dụng AI
+# Đồ án môn học — Xử lý ảnh và ứng dụng
 
-> **Developing an AI-based Vietnamese License Plate Recognition System**
-> Đồ án tốt nghiệp — hệ thống ALPR hoàn chỉnh từ mô hình AI đến giao diện người dùng và triển khai.
+> Nhận dạng biển số xe Việt Nam: khảo sát đóng góp của **từng bước xử lý ảnh**
+> trong một hệ thống ALPR chạy đầu cuối trên CPU.
+
+> ### ⚠ Đây là nhánh `do-an-mon-hoc`
+>
+> Nhánh này **chỉ giữ phần đồ án môn học**. Quyển đồ án tốt nghiệp, bộ slide bảo
+> vệ, kịch bản nói, bộ Hỏi–Đáp, kịch bản demo và poster **đã được tách ra** và
+> nằm nguyên trên nhánh `main` — không có gì bị mất, chuyển nhánh là thấy lại đầy đủ.
+>
+> | | Trên nhánh này | Trên `main` |
+> |---|---|---|
+> | Quyển | `docs/papers/mon-hoc/` — 5 chương, 44 trang | thêm quyển ĐATN 6 chương, 79 trang |
+> | Slide | `12-slides-mon-hoc.md` — 16 slide | thêm deck bảo vệ 28 slide (24 chính + 4 backup) |
+> | Bảo vệ | — | kịch bản nói 885 s, bộ Hỏi–Đáp, kịch bản demo, poster |
+> | Mã nguồn · dữ liệu · báo cáo đo | **giữ nguyên** | giữ nguyên |
+>
+> **Không merge nhánh này về `main`** — merge sẽ xoá luôn quyển tốt nghiệp.
+> Muốn đưa thay đổi ngược về thì cherry-pick từng commit.
+>
+> Dựng lại toàn bộ: `python scripts/build_thesis.py` rồi
+> `powershell -File scripts/export_thesis_pdf.ps1` *(mặc định trên nhánh này đã
+> trỏ vào bản môn học)*. Gói nộp ra `nop/` gồm 3 tệp (PDF + DOCX + PPTX).
+>
+> Lưu ý: `nop/` bị `.gitignore` nên **dùng chung giữa các nhánh** — sau khi dựng
+> ở đây nó có thể còn lẫn tệp của bản tốt nghiệp dựng từ `main`.
 
 <p>
 <img alt="Phase" src="https://img.shields.io/badge/Phase-11-Done-brightgreen">
@@ -229,7 +252,7 @@ DATN/
 ├── demo/               # Tài nguyên demo
 └── docs/               # Toàn bộ tài liệu
     ├── 00-requirements/    architecture/
-    ├── papers/  reports/  slides/  poster/
+    ├── papers/  reports/  slides/
 ```
 
 ---

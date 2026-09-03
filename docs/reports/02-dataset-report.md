@@ -1336,7 +1336,7 @@ Cụ thể v2 mở khoá được những gì:
 1. **NFR-A4 (CER).** 2.801 chuỗi hợp lệ là **ground truth mức ký tự**. Cắt ảnh theo hộp ký tự đã có
    sẵn trong nhãn nguồn, so chuỗi dự đoán với chuỗi tham chiếu → tính được CER trực tiếp.
 2. **NFR-A5 so với NFR-A6 — đóng góp định lượng của khối hậu xử lý.** Đây là chỉ số mà
-   [00-thesis-outline.md](../papers/00-thesis-outline.md) gọi là *"đóng góp học thuật định lượng"*
+   `00-thesis-outline.md` *(đã xoá, tra qua git history nhánh `main`)* gọi là *"đóng góp học thuật định lượng"*
    của đồ án. Dữ liệu v2 cho phép đo hiệu số này **ngay lập tức**, và thậm chí đã có sẵn một ước
    lượng cận dưới: `failure_reasons` ghi **595 chuỗi "chỉ hợp lệ sau khi normalizer sửa"** — tức là
    595 / 4.019 = **14,8 điểm phần trăm** là mức đóng góp mà riêng khối chuẩn hoá ký tự đem lại trên

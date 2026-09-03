@@ -9,7 +9,7 @@ date: "Tháng 9 năm 2026"
 <!--
 BỘ SLIDE ĐỒ ÁN MÔN HỌC — 16 slide (1 bìa + 15 nội dung), khoảng 15 phút.
 
-Khác gì bộ kia:
+Khác gì bộ kia (nằm trên nhánh `main`, không có ở nhánh này):
   `10-slides.md`         28 slide (24 chính + 4 backup), bám mạch quyển tốt
                          nghiệp, dùng cho buổi bảo vệ.
   `12-slides-mon-hoc.md`  bộ này — bám quyển `docs/papers/mon-hoc/`, trọng tâm

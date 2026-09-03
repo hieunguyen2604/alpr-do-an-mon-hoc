@@ -100,7 +100,7 @@ Xoá 15 tệp `.gitkeep` ở các thư mục nay đã có nội dung thật (`ai
 
 Cập nhật NFR-M6 ở ba nơi cho nhất quán với số đo thật:
 [`07-testing-report.md`](07-testing-report.md) §7.4 và §7.6 (bảng NFR + bảng hạn
-chế mục 9), [`ch5-thuc-nghiem.md`](../papers/ch5-thuc-nghiem.md) §5.9.2 (và bản
+chế mục 9), `ch5-thuc-nghiem.md` *(nhánh `main`)* §5.9.2 (và bản
 gộp `thesis-full.md`), [`timeline.md`](../00-requirements/timeline.md) mốc M7.
 
 NFR-M6 chuyển từ ⬜ *chưa đo* sang ⚠️ *đo được, đạt một phần* — **không** đánh dấu

@@ -44,9 +44,9 @@ SECTION_SEPARATOR: str = (
 )
 
 # Source outline and target for the slide deck.
-SLIDES_SOURCE_FILENAME: str = "10-slides.md"
-"""The deck that gets projected: 21 short slides, bullets only."""
-SLIDES_OUTPUT_FILENAME: str = "slides.pptx"
+SLIDES_SOURCE_FILENAME: str = "12-slides-mon-hoc.md"
+"""The deck that gets projected: 16 short slides, bullets only."""
+SLIDES_OUTPUT_FILENAME: str = "12-slides-mon-hoc.pptx"
 SLIDES_TEMPLATE_FILENAME: str = "template-uit.pptx"
 
 # --- Bundle nop: ban sao (khong move) duoi ten nguoi doc hieu duoc, lam
@@ -61,12 +61,10 @@ BUNDLE_FILES: tuple[tuple[str, str], ...] = (
     # Save) lam duoc dieu do — script ay tu chep .docx sang nop/. De o day thi
     # moi lan build se de mot ban cot-Trang-toan-so-0 len ban tot; loi nay da
     # xay ra BA lan vi canh bao bi >/dev/null nuot.
-    ("docs/papers/thesis-full.pdf", "01-do-an-tot-nghiep.pdf"),
-    ("docs/slides/slides.pptx", "02-slide-bao-ve.pptx"),
-    # Ban rut gon cho do an mon hoc — quyen rieng, dung nguon rieng, khong
-    # phai mot phien ban khac cua quyen tot nghiep.
-    ("docs/papers/mon-hoc/thesis-full.pdf", "04-do-an-mon-hoc.pdf"),
-    ("docs/slides/12-slides-mon-hoc.pptx", "05-slide-mon-hoc.pptx"),
+    # Nhanh `do-an-mon-hoc`: quyen tot nghiep va tai lieu bao ve nam tren
+    # nhanh main, goi nop o day chi con hai muc cua do an mon hoc.
+    ("docs/papers/mon-hoc/thesis-full.pdf", "01-do-an-mon-hoc.pdf"),
+    ("docs/slides/12-slides-mon-hoc.pptx", "02-slide-mon-hoc.pptx"),
 )
 
 # raw_attribute: SECTION_SEPARATOR toi Word nhu ngat trang that. bracketed_spans:
@@ -381,18 +379,18 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         type=Path,
         default=None,
         help=(
-            "Slide outline to export (default: docs/slides/10-slides.md). The "
+            "Slide outline to export (default: docs/slides/12-slides-mon-hoc.md). The "
             "PPTX is written next to it, named after the source file."
         ),
     )
     parser.add_argument(
         "--src",
         type=Path,
-        default=PAPERS_DIR,
+        default=PAPERS_DIR / "mon-hoc",
         help=(
             "Directory holding the per-chapter Markdown files (default: "
-            "docs/papers). Point it at docs/papers/compact to build the "
-            "shortened edition from the same chapter list."
+            "docs/papers/mon-hoc, the course-project edition -- the only "
+            "one kept on this branch)."
         ),
     )
     parser.add_argument(

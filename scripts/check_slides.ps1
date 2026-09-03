@@ -10,7 +10,8 @@
 #
 # Chay:  powershell -File scripts/check_slides.ps1
 
-param([string]$DeckPath = "D:\DATN\docs\slides\slides.pptx")
+# Nhanh do-an-mon-hoc: deck duy nhat con lai la ban mon hoc.
+param([string]$DeckPath = "D:\DATN\docs\slides\12-slides-mon-hoc.pptx")
 
 $ppt = New-Object -ComObject PowerPoint.Application
 $pres = $ppt.Presentations.Open($DeckPath, $true, $false, $false)
