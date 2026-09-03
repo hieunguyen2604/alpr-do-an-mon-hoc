@@ -9,7 +9,7 @@
 > như bản ghi lịch sử của lần đề xuất 02/08/2026.
 
 **Ngày lập:** 2026-08-02 · **Trạng thái:** ✅ **ĐÃ ÁP DỤNG 02/08/2026**
-**Thay cho:** [00-thesis-outline.md](00-thesis-outline.md) (cấu trúc 6 chương, nay đã lỗi thời)
+**Thay cho:** đề cương 6 chương cũ (đã xoá 03/09/2026, tra lại qua git history)
 
 > **Đã thực hiện bằng công cụ, không sửa tay.** Việc tái cấu trúc do
 > `scripts/restructure_thesis.py` thực hiện, kèm hai lớp kiểm chứng chạy trước

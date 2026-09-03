@@ -19,7 +19,6 @@ Tài liệu này trả lời bốn câu hỏi: **quyển đồ án nằm ở đ�
 docs/papers/
 ├── THESIS-README.md            ← tài liệu này — quy ước biên soạn
 ├── 00-thesis-outline-v2.md     ← đề cương 7 chương (02/08/2026) — bản thực thi cuối đã gộp về 6 chương, xem banner đầu file
-├── 00-thesis-outline.md        ← đề cương cũ (6 chương) — giữ để tra lịch sử, KHÔNG dùng
 ├── 01-front-matter.md          ← bìa, cam đoan, cảm ơn, mục lục, danh mục, abstract
 ├── ch1-gioi-thieu.md           ← ✅ Chương 1
 ├── ch2-co-so-ly-thuyet.md      ← ✅ Chương 2
