@@ -139,7 +139,7 @@ Mọi bước bật tắt độc lập, nên đóng góp của từng bước **
 ## Ba kết quả khác với dự đoán ban đầu
 
 - **Tách-ghép không độc lập bộ nhận dạng** — 34,92 điểm cho PaddleOCR, **0,03** cho Tesseract ⇒ điều kiện cần, không đủ
-- **Bảng ánh xạ suy từ hình dạng chỉ phủ 2/10 cặp** — và một trong hai suy **sai chiều**. Thay bằng bảng trích từ ma trận đo được: phủ **4/10**, thêm **53 biển đúng, 0 hỏng**
+- **Bảng ánh xạ suy từ hình dạng chỉ phủ 2/10 cặp**, và mục `L → 1` ở vị trí chữ số đoán **sai đích** — đo được `L` thật ra là `4` (53 lần). Bảng trích từ ma trận đo được: phủ **4/10**, thêm **53 biển đúng, 0 hỏng**
 - **Siêu phân giải cải thiện 0 biển, nhưng 0/120 mẫu lọt cổng** ⇒ *chi phí đã đo, lợi ích chưa ai đo được*
 
 ## Demo: hệ thống chạy thật
@@ -153,7 +153,7 @@ Khởi động bằng một lệnh `docker compose up`; giao diện hiện **c�
 | # | Hướng phát triển | Giải hạn chế nào |
 |:--:|---|---|
 | 1 | **Huấn luyện lại bộ nhận dạng ký tự cho biển số Việt Nam** | Điểm nghẽn lớn nhất — biển hai dòng |
-| 2 | **Thay bảng ánh xạ bằng bảng trích từ ma trận đo được** | Tối ưu hóa: dữ liệu đã có sẵn |
+| 2 | **Mở rộng bảng ánh xạ từ ma trận nhầm lẫn khi có thêm dữ liệu** | Vòng đầu đã +53 biển; 5 cặp còn lại chưa đủ bằng chứng |
 | 3 | Khử rò rỉ theo **chuỗi biển số** thay vì theo băm tri giác | Băm tri giác tóm tắt khung ảnh, không tóm tắt chiếc xe |
 | 4 | Thu thập dữ liệu biển vàng, xanh, đỏ | 97,68% mẫu là biển trắng |
 
