@@ -210,7 +210,7 @@ Phần này không phải trọng tâm của môn học nên chỉ nêu những 
 
 **Hình 3.5.**[]{#fig-3-5} Kiến trúc phân tầng và chiều phụ thuộc
 
-Hệ thống gồm **máy chủ FastAPI** phục vụ mười thao tác HTTP trên chín đường dẫn, **cơ sở dữ liệu SQLite** lưu lịch sử nhận dạng, **giao diện web React** ba trang (nhận dạng ảnh, nhận dạng video, tra cứu lịch sử), và **đóng gói Docker Compose** khởi động toàn bộ bằng một lệnh.
+Hệ thống gồm **máy chủ FastAPI** phục vụ mười thao tác HTTP trên chín đường dẫn, **cơ sở dữ liệu SQLite** lưu lịch sử nhận dạng, **giao diện web React** bốn trang (nhận dạng ảnh, nhận dạng video, quét webcam trực tiếp, tra cứu lịch sử), và **đóng gói Docker Compose** khởi động toàn bộ bằng một lệnh.
 
 Ba chi tiết đáng ghi nhận:
 

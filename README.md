@@ -42,7 +42,7 @@ Kết quả chính (đo trên Intel i5-14600K, chỉ CPU): phát hiện **mAP@0.
 
 - `ai/` — pipeline suy luận + huấn luyện (Python thuần, không import web)
 - `backend/` — FastAPI + SQLAlchemy + SQLite, REST API, Swagger
-- `frontend/` — React + Vite + TypeScript: Nhận dạng ảnh · Video · Lịch sử
+- `frontend/` — React + Vite + TypeScript: Nhận dạng ảnh · Video · Webcam · Lịch sử
 - `tests/` — 1.004 test tự động
 - `demo/` — ảnh mẫu 1 dòng / 2 dòng / nhiều biển + video, dùng khi trình bày
 - `docs/papers/mon-hoc/` — nguồn Markdown của quyển; `docs/slides/` — nguồn deck
