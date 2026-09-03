@@ -99,17 +99,11 @@ Phân rã lỗi ký tự cho một manh mối quan trọng: **số ký tự bị
 
 **Hình 4.1.**[]{#fig-4-1} Đối chiếu biển một dòng và hai dòng trên ba chỉ số
 
-Chênh lệch mà tầng phát hiện gần như che khuất (2,09 điểm ở Bảng 4.2) **lộ ra ở tầng nhận dạng với biên độ khác hẳn cấp**: 5,45 điểm ở mức ký tự, **23,07 điểm** ở S₁, **38,18 điểm** ở S₀.
+Hình 4.1 cho thấy quan hệ phi tuyến ở mục 2.4.3 bằng số thật: cột đo mức ký tự gần như không phân biệt hai bố cục (0,9925 so với 0,9380), nhưng sai một ký tự trong tám là hỏng cả chuỗi, nên chênh lệch 5,45 điểm ở mức ký tự **khuếch đại thành 23,07 điểm** ở mức chuỗi. Ba kết luận rút ra:
 
-Hình 4.1 còn cho thấy một điều mà bảng số không nói ngay: **cột đo mức ký tự gần như không phân biệt được hai bố cục** (0,9925 so với 0,9380), trong khi cột đo cả chuỗi thì cách nhau một trời một vực. Đây chính là quan hệ phi tuyến ở mục 2.4.3: sai một ký tự trong tám là hỏng cả chuỗi, nên một chênh lệch 5,45 điểm ở mức ký tự **khuếch đại thành 23,07 điểm** ở mức chuỗi. Chọn chỉ số nào để báo cáo vì vậy quyết định kết luận trông ra sao — và mức chuỗi mới là mức phản ánh giá trị sử dụng.
-
-Ba kết luận rút ra:
-
-**Biển một dòng về cơ bản đã giải xong** — S₁ = 0,9541, vượt cả mục tiêu 0,90. Toàn bộ việc "nhận dạng không đạt chỉ tiêu" là do **biển hai dòng kéo xuống**, và vì biển hai dòng chiếm **2.234 / 2.801 = 79,8%** tập đánh giá (phản ánh đúng tỉ lệ xe máy rất cao ở Việt Nam), con số tổng bị quần thể khó này chi phối.
-
-**Khối hậu xử lý có ích gấp mười một lần trên biển hai dòng** (+16,34 so với +1,23 điểm). Điều này hợp lý: biển một dòng vốn đã đọc gần đúng nên còn rất ít chỗ để sửa.
-
-**Khoảng cách 23,07 điểm là con số *sau* khi đã áp toàn bộ chuỗi biện pháp xử lý ảnh** ở mục 3.4. Ở lượt đo trước khi có bậc thang thử lại và bước phục hồi dòng trên, S₁ của biển hai dòng là 0,5810 và khoảng cách là **36,79 điểm** — chuỗi biện pháp đã thu hẹp **13,72 điểm**, một dịch chuyển thật nhưng vẫn để lại gần một phần tư khoảng cách. Phần còn lại nằm ở **năng lực nhận dạng của mô hình ký tự**, không ở khâu cắt hay ghép, vì hai khâu đó đã được đo tách bạch ở mục 4.4.
+1. **Điểm nghẽn nằm ở biển hai dòng.** Biển một dòng đạt S₁ = 0,9541, vượt cả mục tiêu 0,90; biển hai dòng chiếm 79,8% tập đánh giá nên kéo con số tổng xuống.
+2. **Hậu xử lý hiệu quả hơn hẳn trên biển hai dòng** — +16,34 so với +1,23 điểm; biển một dòng vốn đã đọc gần đúng nên còn ít chỗ để sửa.
+3. **Tách-ghép đã thu hẹp đáng kể khoảng cách nhưng chưa xoá được** — từ 36,79 xuống 23,07 điểm; phần còn lại nằm ở năng lực mô hình ký tự, vì khâu cắt-ghép đã được đo tách bạch ở mục 4.4.
 
 ### 4.3.3. Ma trận nhầm lẫn ký tự và mức chính xác của bảng luật
 
@@ -138,7 +132,7 @@ Hướng cải thiện rõ ràng: **thay bảng suy đoán bằng bảng trích 
 
 Câu hỏi: chọn PaddleOCR có đúng không, khi một số tài liệu công khai lại nghiêng về EasyOCR?
 
-**Thiết kế thí nghiệm.** Cả ba bộ nhận dạng chạy trong **đúng một tầng bao quanh** — sao đúng chuỗi bước xử lý ảnh của bản bàn giao — trên **cùng một mảng ảnh đã chuẩn bị xong**; khác biệt duy nhất còn lại là bộ nhận dạng. Điều này quan trọng, vì bốn lượt chạy đầu đều cho số vô nghĩa và mỗi lượt hỏng lộ ra một điều kiện bắt buộc. Bài học chung: **phần lớn năng lực đọc biển số không nằm trong bộ nhận dạng mà ở tầng xử lý ảnh bao quanh nó** — so sánh ba bộ nhận dạng với ba tầng bao quanh khác nhau là đo tầng bao quanh chứ không đo bộ nhận dạng (Bảng 4.7).
+**Thiết kế thí nghiệm.** Cả ba bộ nhận dạng chạy trong **đúng một tầng bao quanh** — sao đúng chuỗi bước xử lý ảnh của bản bàn giao — trên **cùng một mảng ảnh đã chuẩn bị xong**; khác biệt duy nhất còn lại là bộ nhận dạng. So sánh ba bộ nhận dạng với ba tầng bao quanh khác nhau là đo tầng bao quanh chứ không đo bộ nhận dạng (Bảng 4.7).
 
 **Bảng 4.7.**[]{#tbl-4-7} So sánh ba bộ nhận dạng trên 2.801 biển số Việt Nam
 
@@ -179,11 +173,7 @@ Thí nghiệm A/B trên **200 biển hai dòng** với hạt giống ngẫu nhi�
 | **A — ghép ngang rồi đọc một lần** *(đang dùng)* | **129/200 = 64,50%** | 2 | 340,11 ms |
 | B — đọc riêng từng nửa rồi nối chuỗi | **7/200 = 3,50%** | 9 | 391,35 ms |
 
-**B kém A 61,00 điểm phần trăm và còn tốn thêm 51,24 ms.** Trong 200 ca, **122 ca A thắng B và 0 ca B thắng A** — giả thuyết "đọc riêng từng dòng thì chính xác hơn" bị **bác bỏ dứt khoát**.
-
-Nguyên nhân đọc được ngay trong dữ liệu, và nó chính là hệ quả của vùng chồng lấn ở mục 3.4.4: khi hai nửa được đọc riêng, dải chồng lấn bị nhận dạng **hai lần** và ký tự bị nhân đôi — `84G122593` đọc ra thành `84-G124E009.01225.93`. Trên dải liền mạch đã ghép, vùng lặp nằm **giữa** hai cụm ký tự và bị bộ phát hiện văn bản loại bỏ như mảnh nhiễu.
-
-Đây là một **kết quả âm có giá trị**: nó chứng minh lựa chọn kiến trúc ở mục 3.4.5 không tuỳ tiện, và nó cho thấy vùng chồng lấn — vốn thiết kế chỉ để tránh cắt cụt ký tự — còn có một tác dụng thứ hai mà thiết kế ban đầu không lường trước.
+**B kém A 61,00 điểm phần trăm và còn tốn thêm 51,24 ms**; trong 200 ca, 122 ca A thắng B và **0 ca B thắng A**. Kết quả bác bỏ dứt khoát giả thuyết "đọc riêng từng dòng thì chính xác hơn" và cho thấy chiến lược ghép ngang là **cần thiết** đối với biển hai dòng — cơ chế gây lỗi của phương án B đã phân tích ở mục 3.4.7.
 
 ### 4.4.2. Bậc thang thử lại: cái giá của 34 biển đọc thêm
 
@@ -283,9 +273,7 @@ Bảng này khép lại mạch lập luận của chương. **Nhầm ký tự ch
 
 **Hình 4.2.**[]{#fig-4-2} Sáu vùng biển thật: ba ca khối hậu xử lý sửa được, ba ca vẫn sai
 
-Hình 4.2 cho thấy các con số ở Bảng 4.12 **trông như thế nào trên ảnh thật**. Hàng trên minh hoạ đúng ba cơ chế mà mục 3.6 mô tả: `2947872 → 29A7872` là mặt nạ vị trí ép chữ số thành chữ cái ở vị trí seri; `52126661 → 52L26661` là cùng cơ chế với cặp `1 / L`; còn `5203 → 78N25203` là bước phục hồi dòng trên ở mục 3.4.7 — chuỗi thô mất trọn dòng trên và được đọc lại riêng nửa trên.
-
-Hàng dưới cho thấy phần còn lại khó ở đâu. Cả ba đều là biển hai dòng, và cả ba đều **hỏng ở dòng trên**: `30A → 37L`, `31F` mất hẳn, `52Z → 52T`. Dòng dưới toàn chữ số nên bộ luật vị trí kiểm được; dòng trên trộn chữ và số ở đúng vị trí mà mặt nạ cho phép cả hai, nên hậu xử lý **không có ràng buộc nào để bám vào**. Đây là lý do hướng phát triển số 1 ở mục 5.3 nhắm vào bộ nhận dạng chứ không nhắm vào bộ luật.
+Hàng trên là ba cơ chế sửa của mục 3.6 trên ảnh thật: mặt nạ vị trí (`2947872 → 29A7872`, `52126661 → 52L26661`) và bước phục hồi dòng trên (`5203 → 78N25203`). Hàng dưới là ba ca vẫn sai — cả ba đều là biển hai dòng và đều **hỏng ở dòng trên** (`30A → 37L`, `31F` mất hẳn, `52Z → 52T`): dòng trên trộn chữ và số ở đúng vị trí mà mặt nạ cho phép cả hai, nên hậu xử lý không có ràng buộc nào để bám vào. Đây là lý do hướng phát triển số 1 ở mục 5.3 nhắm vào bộ nhận dạng chứ không nhắm vào bộ luật.
 
 Cần lưu ý về ảnh: ngữ liệu nhãn xuất mọi vùng cắt về khung vuông 640 × 640, **phá tỉ lệ khung hình gốc**. Hình trên đã khôi phục tỉ lệ bằng đúng hàm mà công cụ đo dùng trước khi chạy nhận dạng. Bước khôi phục này không phải chi tiết trình bày: bỏ nó đi thì S₁ rơi từ 0,7701 xuống **0,4988**, vì mọi vùng cắt vuông đều bị phân loại thành hai dòng.
 

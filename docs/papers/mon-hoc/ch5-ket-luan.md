@@ -14,17 +14,7 @@ Nhóm thực hiện đã xây dựng một hệ thống nhận dạng biển s�
 | **S₀ → S₁** — đúng cả chuỗi | 0,80 → 0,85 | 0,85 → 0,90 | **0,6373 → 0,7701** | ❌ |
 | Độ trễ một ảnh, p95, trên CPU | ≤ 1.500 ms | ≤ 800 ms | **509,76 ms** | ✅ |
 
-**Vạch ngăn giữa "đạt" và "không đạt" trùng khít vạch ngăn giữa hai tầng:** mọi chỉ tiêu của bộ phát hiện đều đạt với biên rộng, còn chỉ tiêu độ chính xác chuỗi đầy đủ thì không. Và phần thiếu hụt đó **nằm gần như trọn ở biển hai dòng** — biển một dòng đạt S₁ = 0,9541, vượt cả mục tiêu.
-
-Ba đại lượng đo được đáng ghi nhận, đều liên quan trực tiếp tới nội dung môn học:
-
-**Một — đóng góp thuần của khối hậu xử lý: +13,28 điểm**, sửa đúng 372 biển và làm hỏng 0 biển trên 2.801 mẫu, với chi phí tính toán 0,03 ms mỗi biển. Con số này chỉ đo được nhờ một quyết định thiết kế dữ liệu từ đầu: **lưu song song chuỗi thô và chuỗi đã chuẩn hoá**.
-
-**Hai — bước tách rồi ghép ngang đóng góp 34,92 điểm cho PaddleOCR nhưng chỉ 0,03 điểm cho Tesseract.** Đây là kết quả khác với dự đoán ban đầu và làm **yếu đi** khẳng định ban đầu: phép biến đổi ảnh này là **điều kiện cần, không đủ**. Nó biến bài toán đa dòng thành bài toán một dòng, nhưng bộ nhận dạng vẫn phải đủ mạnh để tận dụng.
-
-**Ba — trực giác hình dạng ký tự ghép đúng cặp nhưng sai chiều.** Bảng ánh xạ ban đầu suy từ hình dạng chỉ phủ 2 trên 10 cặp nhầm phổ biến nhất, và cặp `L` thì suy **ngược**: khi một vị trí bắt buộc là số mà bộ nhận dạng đọc ra `L`, sự thật là `4` **53 lần** và là `1` **đúng một lần**. Thay hai mục bằng bảng trích từ ma trận nhầm lẫn đo được — chỉ những cặp vượt ngưỡng thống kê — mua thêm **53 biển đọc đúng và làm hỏng 0 biển**, toàn bộ nằm ở biển hai dòng.
-
-Ngoài các con số, nhóm thực hiện để lại **một quy trình đánh giá có kiểm chứng**: mọi bước xử lý ảnh bật tắt được độc lập nên đóng góp của từng bước đo được riêng, và các kết quả âm — phương án đọc riêng từng nửa thua 61 điểm, bậc siêu phân giải không cải thiện được biển nào — được ghi lại thay vì bỏ đi (Bảng 5.2).
+Hệ thống đạt toàn bộ chỉ tiêu ở tầng phát hiện với biên rộng nhưng chưa đạt chỉ tiêu nhận dạng chuỗi, và phần thiếu hụt **nằm gần như trọn ở biển hai dòng** — biển một dòng đạt S₁ = 0,9541, vượt cả mục tiêu. Các bước xử lý ảnh và hậu xử lý vẫn mang lại cải thiện đáng kể với chi phí tính toán thấp: khối hậu xử lý **+13,28 điểm** (372 biển sửa đúng, 0 biển hỏng, 0,03 ms mỗi biển), bước tách-ghép **+34,92 điểm** cho PaddleOCR — điều kiện cần nhưng không đủ, vì chỉ được +0,03 điểm trên Tesseract (mục 4.3.4). Mọi bước bật tắt được độc lập nên đóng góp của từng bước đo được riêng, và các kết quả âm được ghi lại thay vì bỏ đi.
 
 ## 5.2. Hạn chế
 

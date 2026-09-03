@@ -14,7 +14,7 @@ nào bị đổi đường dẫn.
 
 | Tệp | Sinh từ | Nội dung |
 |---|---|---|
-| `01-do-an-mon-hoc.pdf` | `docs/papers/mon-hoc/thesis-full.pdf` | Quyển đồ án môn học **Xử lý ảnh và ứng dụng**, **43 trang** |
+| `01-do-an-mon-hoc.pdf` | `docs/papers/mon-hoc/thesis-full.pdf` | Quyển đồ án môn học **Xử lý ảnh và ứng dụng**, **40 trang** |
 | `01-do-an-mon-hoc.docx` | `docs/papers/mon-hoc/thesis-full.docx` | Cùng nội dung, bản Word để hội đồng ghi chú |
 | `02-slide-mon-hoc.pptx` | `docs/slides/12-slides-mon-hoc.pptx` | Slide báo cáo môn học, **16 slide** (Chuẩn 7–10 phút) |
 

@@ -408,27 +408,17 @@ Việc **tắt phép lật ngang** là quyết định xử lý ảnh đáng ch�
 
 ### 3.4.1. Chuỗi bước và nguyên tắc bật tắt độc lập
 
-Mọi bước trong mục này đều **bật tắt được độc lập** qua biến cấu hình. Đây không phải tiện ích lập trình mà là điều kiện để chương 4 **bóc tách đóng góp của từng bước**: không có công tắc thì không đo được bước nào cải thiện được gì.
-
-Thứ tự trên **đường chạy chính**:
+Mọi bước trong mục này đều **bật tắt được độc lập** qua biến cấu hình — điều kiện để chương 4 **bóc tách đóng góp của từng bước**. Thứ tự trên **đường chạy chính**:
 
 > cắt vùng → ước lượng số dòng → *(nếu hai dòng)* tách hai nửa → ghép ngang → phóng đại → thang xám → CLAHE → lọc song phương → nhận dạng
 
-Hai chi tiết về thứ tự này đáng nêu, vì đảo lại sẽ ra một hệ thống khác.
-
-**Ước lượng số dòng chạy trên vùng cắt thô, trước mọi phép tăng cường.** Điều này an toàn vì các bước tăng cường không đổi tỉ lệ khung hình — phóng đại giữ nguyên tỉ lệ, còn thang xám, CLAHE và lọc song phương chỉ đổi giá trị điểm ảnh. Đại lượng mà bước phân loại dựa vào vì vậy không bị bước nào phía sau làm nhiễu.
-
-**Tiền xử lý chạy sau khi ghép, không phải trước khi tách.** CLAHE vì vậy làm việc trên **dải ảnh đã ghép**, tức trên một hàng ký tự duy nhất, chứ không phải trên từng nửa riêng. Đây là lựa chọn có chủ đích: chạy CLAHE riêng cho từng nửa sẽ cân bằng tương phản của hai nửa **độc lập với nhau**, và nếu một nửa bị chói còn nửa kia không, hai nửa sau khi ghép sẽ có độ sáng lệch nhau ngay giữa dải — đúng chỗ bộ phát hiện văn bản dễ hiểu nhầm là ranh giới giữa hai vùng chữ.
-
-**Bước nắn hình không nằm trên đường chạy chính.** Nó thuộc bậc thang thử lại ở mục 3.4.6, chỉ chạy sau khi lần đọc đầu tiên đã thất bại.
+Ước lượng số dòng chạy trên vùng cắt thô (các bước tăng cường phía sau không làm đổi tỉ lệ khung hình); tiền xử lý chạy trên dải ảnh **đã ghép** để CLAHE cân bằng tương phản trên một hàng ký tự liền mạch; còn bước nắn hình không nằm trên đường chạy chính — nó thuộc bậc thang thử lại ở mục 3.4.6.
 
 ![](figures/fig-pipeline-strip.png)
 
 **Hình 3.3.**[]{#fig-3-3} Toàn bộ chuỗi xử lý trên một biển thật, ảnh chụp sau từng bước
 
-Hình 3.3 là kết quả chạy **chính các hàm của bản bàn giao**, không phải hình vẽ minh hoạ: mỗi khung là mảng ảnh thật ở đầu ra của bước tương ứng, và chuỗi kết thúc bằng chuỗi ký tự mà hệ thống thực sự đọc được. Hai khung đáng nhìn kỹ là khung 3 và khung 4 — chúng cho thấy trực tiếp thứ mà cả mục này mô tả bằng chữ: **tỉ lệ khung hình nhảy từ 1,12 lên 4,42**, và hai hàng ký tự cao 30 px trở thành một hàng duy nhất nhận trọn 50 px.
-
-Khung 3 cũng cho thấy một chi tiết dễ bị hiểu nhầm: nửa dưới **có chứa phần chân của hàng ký tự trên**. Đó không phải lỗi cắt mà chính là vùng chồng lấn ở mục 3.4.4, và mục 3.4.7 cho thấy nó còn giải quyết thêm một vấn đề nữa.
+Hình 3.3 là kết quả chạy **chính các hàm của bản bàn giao**: mỗi khung là mảng ảnh thật ở đầu ra của bước tương ứng. Khung 3 và khung 4 cho thấy trực tiếp điều cả mục này mô tả bằng chữ — **tỉ lệ khung hình nhảy từ 1,12 lên 4,42**, hai hàng ký tự cao 30 px thành một hàng duy nhất nhận trọn 50 px. Phần chân hàng trên lọt vào nửa dưới ở khung 3 không phải lỗi cắt mà là vùng chồng lấn của mục 3.4.4.
 
 ### 3.4.2. Tiền xử lý
 
@@ -468,30 +458,20 @@ Chi tiết cuối cùng là điểm mấu chốt của toàn bộ thiết kế. 
 
 ### 3.4.6. Nắn hình và bậc thang thử lại
 
-Biển chụp nghiêng gây hai vấn đề cùng lúc, và vấn đề thứ nhất nguy hiểm hơn vấn đề thứ hai.
+Biển chụp nghiêng vừa làm ký tự biến dạng phối cảnh, vừa làm **hộp bao nở rộng theo chiều ngang** khiến tỉ lệ khung hình đo được vượt ngưỡng 2,5 của mục 3.4.3: biển hai dòng bị phân loại nhầm thành một dòng, không được tách và trả về chuỗi rỗng — lỗi **đi nhầm nhánh xử lý**, không phải "đọc kém đi". Hai phép hiệu chỉnh được cài để kéo vùng biển về đúng nhánh:
 
-**Vấn đề hiển nhiên** là ký tự bị biến dạng phối cảnh. **Vấn đề thật sự** là biển nghiêng làm **hộp bao nở rộng ra theo chiều ngang**, nên tỉ lệ khung hình đo được **vượt qua ngưỡng 2,5** của mục 3.4.3: vùng biển hai dòng bị phân loại nhầm thành một dòng, **không bao giờ được tách**, và bộ nhận dạng trả về chuỗi rỗng — trong khi đúng biển đó chụp chính diện thì đọc hoàn hảo. Sai sót ở đây không phải "đọc kém đi" mà là **đi nhầm nhánh xử lý**.
+- **Nắn hình** — nhị phân hoá bằng Otsu ở cả hai cực, lấy vùng liên thông lớn nhất, khớp một hình chữ nhật xoay, xoay cho cạnh dài nằm ngang rồi **cắt lại sát**; tỉ lệ của phần cắt sát mới là hình dạng thật của biển — đúng đại lượng mà bước phân loại cần.
+- **Giãn theo chiều dọc** — cho biển bị nén do chụp chếch từ trên xuống, khi không có góc xoay nào để nắn; giá trị nằm ở việc **định tuyến lại**, không ở chi tiết ảnh nội suy thêm.
 
-Hai phép hiệu chỉnh được cài để kéo vùng biển về đúng nhánh:
-
-- **Nắn hình** — nhị phân hoá bằng Otsu ở cả hai cực, lấy vùng liên thông lớn nhất, khớp một hình chữ nhật xoay, rồi xoay ảnh cho cạnh dài nằm ngang và cắt lại sát. Trả về **phần cắt sát** chứ không phải khung đã xoay, vì tỉ lệ của phần cắt sát mới là hình dạng thật của biển — đúng đại lượng mà bước phân loại cần.
-- **Giãn theo chiều dọc** — cho biển bị nén do chụp chếch từ trên xuống. Trường hợp này **không có góc xoay nào để nắn**: biển vẫn nằm ngang, chỉ bị ép dẹt. Các hàng điểm ảnh nội suy thêm **không mang thông tin mới**; giá trị của phép giãn nằm ở chỗ **định tuyến**, không ở chi tiết ảnh.
-
-Hai phép này **không nằm trên đường chạy chính**. Chúng được tổ chức thành một **bậc thang thử lại**, chỉ kích hoạt **sau khi lần đọc đầu tiên đã thất bại** — tức khi chuỗi trả về không qua được kiểm tra định dạng. Cấu trúc này có một tính chất quan trọng: vì cổng chỉ mở khi kết quả đã không hợp lệ, **tập bị can thiệp và tập đang đúng là hai tập rời nhau**, nên bậc thang **không thể làm hỏng một biển vốn đã đọc đúng**. Chính tính chất đó cho phép để nó bật mặc định mà không cần lo thoái lui về độ chính xác.
-
-Bản thân bước nắn hình cũng có ba cổng an toàn, mỗi cổng đều lùi về "trả nguyên vùng cắt": góc nghiêng dưới 1,5° (không có gì để sửa, giữ nguyên đường chạy chính diện không đổi một bit), góc trên 35° (ước lượng gần như chắc chắn sai), hoặc vùng liên thông lớn nhất chiếm dưới 25% diện tích vùng cắt (nhị phân hoá đã làm hỏng biển thay vì cô lập nó).
+Hai phép này tổ chức thành một **bậc thang thử lại**, chỉ kích hoạt sau khi lượt đọc đầu tiên trượt kiểm tra định dạng. Vì cổng chỉ mở khi kết quả đã không hợp lệ, tập bị can thiệp và tập đang đúng là **hai tập rời nhau** — bậc thang không thể làm hỏng một biển vốn đã đọc đúng, nên bật mặc định được. Bước nắn hình còn ba cổng an toàn tự lùi về "trả nguyên vùng cắt": góc nghiêng dưới 1,5°, góc trên 35°, hoặc vùng liên thông lớn nhất dưới 25% diện tích vùng cắt.
 
 Chi phí và lợi ích đo được trình bày ở mục 4.4.2, kèm một quyết định **tắt** một bậc trong đó.
 
 ### 3.4.7. Bước phục hồi dòng trên
 
-Chế độ hỏng quan sát được: chuỗi `29E-015.66` chỉ đọc ra `015.66` — sau khi ghép, bộ phát hiện văn bản của PaddleOCR chỉ khoanh được một vùng chữ và bỏ qua cụm mã tỉnh cùng ký tự seri ở nửa bên trái.
+Chế độ hỏng quan sát được: chuỗi `29E-015.66` chỉ đọc ra `015.66` — sau khi ghép, bộ phát hiện văn bản của PaddleOCR chỉ khoanh được một vùng chữ và bỏ qua nửa bên trái. Giả thuyết tự nhiên — **bỏ hẳn phép ghép, đọc riêng từng nửa rồi nối chuỗi** — được kiểm bằng thí nghiệm A/B trên 200 biển hai dòng và **bị bác bỏ dứt khoát** (mục 4.4.1): khi đọc riêng, dải chồng lấn của mục 3.4.4 bị nhận dạng **hai lần** và sinh ký tự thừa (`84G122593` → `84-G124E009.01225.93`), trong khi trên dải đã ghép nó nằm giữa hai cụm ký tự và bị loại như một mảnh nhiễu.
 
-Giả thuyết tự nhiên là **bỏ hẳn phép ghép, đọc riêng từng nửa rồi nối chuỗi**. Giả thuyết này được kiểm chứng bằng thí nghiệm A/B trên 200 biển hai dòng chứ không bị loại bằng lập luận, và kết quả ở mục 4.4.1 **bác bỏ nó dứt khoát**. Nguyên nhân nằm ở chính vùng chồng lấn của mục 3.4.4: khi hai nửa được đọc **riêng**, dải chồng lấn bị nhận dạng **hai lần** và sinh ký tự thừa — `84G122593` đọc thành `84-G124E009.01225.93`.
-
-Kết quả này đảo ngược cách hiểu ban đầu về vùng chồng lấn. Trên dải liền mạch đã ghép, vùng lặp nằm **giữa** hai cụm ký tự và bị bộ phát hiện văn bản loại bỏ như một mảnh nhiễu; điều đó không xảy ra khi hai ảnh được xử lý tách biệt.
-
-Thiết kế cuối cùng vì vậy **giữ nguyên chiến lược ghép** và chỉ bổ sung một bước phục hồi có điều kiện chặt: chỉ kích hoạt khi đồng thời (a) vùng biển được phân loại hai dòng, (b) chuỗi sau chuẩn hoá không hợp lệ, và (c) chuỗi thô khác rỗng. Khi đó hệ thống nhận dạng thêm một lượt trên **riêng nửa trên**, ghép với chuỗi thô rồi chuẩn hoá lại; kết quả mới chỉ được chấp nhận nếu vượt kiểm tra định dạng.
+Thiết kế cuối cùng vì vậy **giữ nguyên chiến lược ghép** và chỉ bổ sung một bước phục hồi có điều kiện chặt: kích hoạt khi đồng thời (a) vùng biển phân loại hai dòng, (b) chuỗi sau chuẩn hoá không hợp lệ, (c) chuỗi thô khác rỗng — hệ thống đọc thêm một lượt trên **riêng nửa trên**, ghép với chuỗi thô rồi chuẩn hoá lại, và chỉ nhận kết quả vượt kiểm tra định dạng.
 
 ## 3.5. Phân loại màu nền trong không gian HSV
 
@@ -662,17 +642,11 @@ Phân rã lỗi ký tự cho một manh mối quan trọng: **số ký tự bị
 
 **Hình 4.1.**[]{#fig-4-1} Đối chiếu biển một dòng và hai dòng trên ba chỉ số
 
-Chênh lệch mà tầng phát hiện gần như che khuất (2,09 điểm ở Bảng 4.2) **lộ ra ở tầng nhận dạng với biên độ khác hẳn cấp**: 5,45 điểm ở mức ký tự, **23,07 điểm** ở S₁, **38,18 điểm** ở S₀.
+Hình 4.1 cho thấy quan hệ phi tuyến ở mục 2.4.3 bằng số thật: cột đo mức ký tự gần như không phân biệt hai bố cục (0,9925 so với 0,9380), nhưng sai một ký tự trong tám là hỏng cả chuỗi, nên chênh lệch 5,45 điểm ở mức ký tự **khuếch đại thành 23,07 điểm** ở mức chuỗi. Ba kết luận rút ra:
 
-Hình 4.1 còn cho thấy một điều mà bảng số không nói ngay: **cột đo mức ký tự gần như không phân biệt được hai bố cục** (0,9925 so với 0,9380), trong khi cột đo cả chuỗi thì cách nhau một trời một vực. Đây chính là quan hệ phi tuyến ở mục 2.4.3: sai một ký tự trong tám là hỏng cả chuỗi, nên một chênh lệch 5,45 điểm ở mức ký tự **khuếch đại thành 23,07 điểm** ở mức chuỗi. Chọn chỉ số nào để báo cáo vì vậy quyết định kết luận trông ra sao — và mức chuỗi mới là mức phản ánh giá trị sử dụng.
-
-Ba kết luận rút ra:
-
-**Biển một dòng về cơ bản đã giải xong** — S₁ = 0,9541, vượt cả mục tiêu 0,90. Toàn bộ việc "nhận dạng không đạt chỉ tiêu" là do **biển hai dòng kéo xuống**, và vì biển hai dòng chiếm **2.234 / 2.801 = 79,8%** tập đánh giá (phản ánh đúng tỉ lệ xe máy rất cao ở Việt Nam), con số tổng bị quần thể khó này chi phối.
-
-**Khối hậu xử lý có ích gấp mười một lần trên biển hai dòng** (+16,34 so với +1,23 điểm). Điều này hợp lý: biển một dòng vốn đã đọc gần đúng nên còn rất ít chỗ để sửa.
-
-**Khoảng cách 23,07 điểm là con số *sau* khi đã áp toàn bộ chuỗi biện pháp xử lý ảnh** ở mục 3.4. Ở lượt đo trước khi có bậc thang thử lại và bước phục hồi dòng trên, S₁ của biển hai dòng là 0,5810 và khoảng cách là **36,79 điểm** — chuỗi biện pháp đã thu hẹp **13,72 điểm**, một dịch chuyển thật nhưng vẫn để lại gần một phần tư khoảng cách. Phần còn lại nằm ở **năng lực nhận dạng của mô hình ký tự**, không ở khâu cắt hay ghép, vì hai khâu đó đã được đo tách bạch ở mục 4.4.
+1. **Điểm nghẽn nằm ở biển hai dòng.** Biển một dòng đạt S₁ = 0,9541, vượt cả mục tiêu 0,90; biển hai dòng chiếm 79,8% tập đánh giá nên kéo con số tổng xuống.
+2. **Hậu xử lý hiệu quả hơn hẳn trên biển hai dòng** — +16,34 so với +1,23 điểm; biển một dòng vốn đã đọc gần đúng nên còn ít chỗ để sửa.
+3. **Tách-ghép đã thu hẹp đáng kể khoảng cách nhưng chưa xoá được** — từ 36,79 xuống 23,07 điểm; phần còn lại nằm ở năng lực mô hình ký tự, vì khâu cắt-ghép đã được đo tách bạch ở mục 4.4.
 
 ### 4.3.3. Ma trận nhầm lẫn ký tự và mức chính xác của bảng luật
 
@@ -701,7 +675,7 @@ Hướng cải thiện rõ ràng: **thay bảng suy đoán bằng bảng trích 
 
 Câu hỏi: chọn PaddleOCR có đúng không, khi một số tài liệu công khai lại nghiêng về EasyOCR?
 
-**Thiết kế thí nghiệm.** Cả ba bộ nhận dạng chạy trong **đúng một tầng bao quanh** — sao đúng chuỗi bước xử lý ảnh của bản bàn giao — trên **cùng một mảng ảnh đã chuẩn bị xong**; khác biệt duy nhất còn lại là bộ nhận dạng. Điều này quan trọng, vì bốn lượt chạy đầu đều cho số vô nghĩa và mỗi lượt hỏng lộ ra một điều kiện bắt buộc. Bài học chung: **phần lớn năng lực đọc biển số không nằm trong bộ nhận dạng mà ở tầng xử lý ảnh bao quanh nó** — so sánh ba bộ nhận dạng với ba tầng bao quanh khác nhau là đo tầng bao quanh chứ không đo bộ nhận dạng (Bảng 4.7).
+**Thiết kế thí nghiệm.** Cả ba bộ nhận dạng chạy trong **đúng một tầng bao quanh** — sao đúng chuỗi bước xử lý ảnh của bản bàn giao — trên **cùng một mảng ảnh đã chuẩn bị xong**; khác biệt duy nhất còn lại là bộ nhận dạng. So sánh ba bộ nhận dạng với ba tầng bao quanh khác nhau là đo tầng bao quanh chứ không đo bộ nhận dạng (Bảng 4.7).
 
 **Bảng 4.7.**[]{#tbl-4-7} So sánh ba bộ nhận dạng trên 2.801 biển số Việt Nam
 
@@ -742,11 +716,7 @@ Thí nghiệm A/B trên **200 biển hai dòng** với hạt giống ngẫu nhi�
 | **A — ghép ngang rồi đọc một lần** *(đang dùng)* | **129/200 = 64,50%** | 2 | 340,11 ms |
 | B — đọc riêng từng nửa rồi nối chuỗi | **7/200 = 3,50%** | 9 | 391,35 ms |
 
-**B kém A 61,00 điểm phần trăm và còn tốn thêm 51,24 ms.** Trong 200 ca, **122 ca A thắng B và 0 ca B thắng A** — giả thuyết "đọc riêng từng dòng thì chính xác hơn" bị **bác bỏ dứt khoát**.
-
-Nguyên nhân đọc được ngay trong dữ liệu, và nó chính là hệ quả của vùng chồng lấn ở mục 3.4.4: khi hai nửa được đọc riêng, dải chồng lấn bị nhận dạng **hai lần** và ký tự bị nhân đôi — `84G122593` đọc ra thành `84-G124E009.01225.93`. Trên dải liền mạch đã ghép, vùng lặp nằm **giữa** hai cụm ký tự và bị bộ phát hiện văn bản loại bỏ như mảnh nhiễu.
-
-Đây là một **kết quả âm có giá trị**: nó chứng minh lựa chọn kiến trúc ở mục 3.4.5 không tuỳ tiện, và nó cho thấy vùng chồng lấn — vốn thiết kế chỉ để tránh cắt cụt ký tự — còn có một tác dụng thứ hai mà thiết kế ban đầu không lường trước.
+**B kém A 61,00 điểm phần trăm và còn tốn thêm 51,24 ms**; trong 200 ca, 122 ca A thắng B và **0 ca B thắng A**. Kết quả bác bỏ dứt khoát giả thuyết "đọc riêng từng dòng thì chính xác hơn" và cho thấy chiến lược ghép ngang là **cần thiết** đối với biển hai dòng — cơ chế gây lỗi của phương án B đã phân tích ở mục 3.4.7.
 
 ### 4.4.2. Bậc thang thử lại: cái giá của 34 biển đọc thêm
 
@@ -846,9 +816,7 @@ Bảng này khép lại mạch lập luận của chương. **Nhầm ký tự ch
 
 **Hình 4.2.**[]{#fig-4-2} Sáu vùng biển thật: ba ca khối hậu xử lý sửa được, ba ca vẫn sai
 
-Hình 4.2 cho thấy các con số ở Bảng 4.12 **trông như thế nào trên ảnh thật**. Hàng trên minh hoạ đúng ba cơ chế mà mục 3.6 mô tả: `2947872 → 29A7872` là mặt nạ vị trí ép chữ số thành chữ cái ở vị trí seri; `52126661 → 52L26661` là cùng cơ chế với cặp `1 / L`; còn `5203 → 78N25203` là bước phục hồi dòng trên ở mục 3.4.7 — chuỗi thô mất trọn dòng trên và được đọc lại riêng nửa trên.
-
-Hàng dưới cho thấy phần còn lại khó ở đâu. Cả ba đều là biển hai dòng, và cả ba đều **hỏng ở dòng trên**: `30A → 37L`, `31F` mất hẳn, `52Z → 52T`. Dòng dưới toàn chữ số nên bộ luật vị trí kiểm được; dòng trên trộn chữ và số ở đúng vị trí mà mặt nạ cho phép cả hai, nên hậu xử lý **không có ràng buộc nào để bám vào**. Đây là lý do hướng phát triển số 1 ở mục 5.3 nhắm vào bộ nhận dạng chứ không nhắm vào bộ luật.
+Hàng trên là ba cơ chế sửa của mục 3.6 trên ảnh thật: mặt nạ vị trí (`2947872 → 29A7872`, `52126661 → 52L26661`) và bước phục hồi dòng trên (`5203 → 78N25203`). Hàng dưới là ba ca vẫn sai — cả ba đều là biển hai dòng và đều **hỏng ở dòng trên** (`30A → 37L`, `31F` mất hẳn, `52Z → 52T`): dòng trên trộn chữ và số ở đúng vị trí mà mặt nạ cho phép cả hai, nên hậu xử lý không có ràng buộc nào để bám vào. Đây là lý do hướng phát triển số 1 ở mục 5.3 nhắm vào bộ nhận dạng chứ không nhắm vào bộ luật.
 
 Cần lưu ý về ảnh: ngữ liệu nhãn xuất mọi vùng cắt về khung vuông 640 × 640, **phá tỉ lệ khung hình gốc**. Hình trên đã khôi phục tỉ lệ bằng đúng hàm mà công cụ đo dùng trước khi chạy nhận dạng. Bước khôi phục này không phải chi tiết trình bày: bỏ nó đi thì S₁ rơi từ 0,7701 xuống **0,4988**, vì mọi vùng cắt vuông đều bị phân loại thành hai dòng.
 
@@ -888,17 +856,7 @@ Nhóm thực hiện đã xây dựng một hệ thống nhận dạng biển s�
 | **S₀ → S₁** — đúng cả chuỗi | 0,80 → 0,85 | 0,85 → 0,90 | **0,6373 → 0,7701** | ❌ |
 | Độ trễ một ảnh, p95, trên CPU | ≤ 1.500 ms | ≤ 800 ms | **509,76 ms** | ✅ |
 
-**Vạch ngăn giữa "đạt" và "không đạt" trùng khít vạch ngăn giữa hai tầng:** mọi chỉ tiêu của bộ phát hiện đều đạt với biên rộng, còn chỉ tiêu độ chính xác chuỗi đầy đủ thì không. Và phần thiếu hụt đó **nằm gần như trọn ở biển hai dòng** — biển một dòng đạt S₁ = 0,9541, vượt cả mục tiêu.
-
-Ba đại lượng đo được đáng ghi nhận, đều liên quan trực tiếp tới nội dung môn học:
-
-**Một — đóng góp thuần của khối hậu xử lý: +13,28 điểm**, sửa đúng 372 biển và làm hỏng 0 biển trên 2.801 mẫu, với chi phí tính toán 0,03 ms mỗi biển. Con số này chỉ đo được nhờ một quyết định thiết kế dữ liệu từ đầu: **lưu song song chuỗi thô và chuỗi đã chuẩn hoá**.
-
-**Hai — bước tách rồi ghép ngang đóng góp 34,92 điểm cho PaddleOCR nhưng chỉ 0,03 điểm cho Tesseract.** Đây là kết quả khác với dự đoán ban đầu và làm **yếu đi** khẳng định ban đầu: phép biến đổi ảnh này là **điều kiện cần, không đủ**. Nó biến bài toán đa dòng thành bài toán một dòng, nhưng bộ nhận dạng vẫn phải đủ mạnh để tận dụng.
-
-**Ba — trực giác hình dạng ký tự ghép đúng cặp nhưng sai chiều.** Bảng ánh xạ ban đầu suy từ hình dạng chỉ phủ 2 trên 10 cặp nhầm phổ biến nhất, và cặp `L` thì suy **ngược**: khi một vị trí bắt buộc là số mà bộ nhận dạng đọc ra `L`, sự thật là `4` **53 lần** và là `1` **đúng một lần**. Thay hai mục bằng bảng trích từ ma trận nhầm lẫn đo được — chỉ những cặp vượt ngưỡng thống kê — mua thêm **53 biển đọc đúng và làm hỏng 0 biển**, toàn bộ nằm ở biển hai dòng.
-
-Ngoài các con số, nhóm thực hiện để lại **một quy trình đánh giá có kiểm chứng**: mọi bước xử lý ảnh bật tắt được độc lập nên đóng góp của từng bước đo được riêng, và các kết quả âm — phương án đọc riêng từng nửa thua 61 điểm, bậc siêu phân giải không cải thiện được biển nào — được ghi lại thay vì bỏ đi (Bảng 5.2).
+Hệ thống đạt toàn bộ chỉ tiêu ở tầng phát hiện với biên rộng nhưng chưa đạt chỉ tiêu nhận dạng chuỗi, và phần thiếu hụt **nằm gần như trọn ở biển hai dòng** — biển một dòng đạt S₁ = 0,9541, vượt cả mục tiêu. Các bước xử lý ảnh và hậu xử lý vẫn mang lại cải thiện đáng kể với chi phí tính toán thấp: khối hậu xử lý **+13,28 điểm** (372 biển sửa đúng, 0 biển hỏng, 0,03 ms mỗi biển), bước tách-ghép **+34,92 điểm** cho PaddleOCR — điều kiện cần nhưng không đủ, vì chỉ được +0,03 điểm trên Tesseract (mục 4.3.4). Mọi bước bật tắt được độc lập nên đóng góp của từng bước đo được riêng, và các kết quả âm được ghi lại thay vì bỏ đi.
 
 ## 5.2. Hạn chế
 

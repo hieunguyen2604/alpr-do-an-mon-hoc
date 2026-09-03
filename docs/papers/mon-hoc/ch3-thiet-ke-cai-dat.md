@@ -92,27 +92,17 @@ Việc **tắt phép lật ngang** là quyết định xử lý ảnh đáng ch�
 
 ### 3.4.1. Chuỗi bước và nguyên tắc bật tắt độc lập
 
-Mọi bước trong mục này đều **bật tắt được độc lập** qua biến cấu hình. Đây không phải tiện ích lập trình mà là điều kiện để chương 4 **bóc tách đóng góp của từng bước**: không có công tắc thì không đo được bước nào cải thiện được gì.
-
-Thứ tự trên **đường chạy chính**:
+Mọi bước trong mục này đều **bật tắt được độc lập** qua biến cấu hình — điều kiện để chương 4 **bóc tách đóng góp của từng bước**. Thứ tự trên **đường chạy chính**:
 
 > cắt vùng → ước lượng số dòng → *(nếu hai dòng)* tách hai nửa → ghép ngang → phóng đại → thang xám → CLAHE → lọc song phương → nhận dạng
 
-Hai chi tiết về thứ tự này đáng nêu, vì đảo lại sẽ ra một hệ thống khác.
-
-**Ước lượng số dòng chạy trên vùng cắt thô, trước mọi phép tăng cường.** Điều này an toàn vì các bước tăng cường không đổi tỉ lệ khung hình — phóng đại giữ nguyên tỉ lệ, còn thang xám, CLAHE và lọc song phương chỉ đổi giá trị điểm ảnh. Đại lượng mà bước phân loại dựa vào vì vậy không bị bước nào phía sau làm nhiễu.
-
-**Tiền xử lý chạy sau khi ghép, không phải trước khi tách.** CLAHE vì vậy làm việc trên **dải ảnh đã ghép**, tức trên một hàng ký tự duy nhất, chứ không phải trên từng nửa riêng. Đây là lựa chọn có chủ đích: chạy CLAHE riêng cho từng nửa sẽ cân bằng tương phản của hai nửa **độc lập với nhau**, và nếu một nửa bị chói còn nửa kia không, hai nửa sau khi ghép sẽ có độ sáng lệch nhau ngay giữa dải — đúng chỗ bộ phát hiện văn bản dễ hiểu nhầm là ranh giới giữa hai vùng chữ.
-
-**Bước nắn hình không nằm trên đường chạy chính.** Nó thuộc bậc thang thử lại ở mục 3.4.6, chỉ chạy sau khi lần đọc đầu tiên đã thất bại.
+Ước lượng số dòng chạy trên vùng cắt thô (các bước tăng cường phía sau không làm đổi tỉ lệ khung hình); tiền xử lý chạy trên dải ảnh **đã ghép** để CLAHE cân bằng tương phản trên một hàng ký tự liền mạch; còn bước nắn hình không nằm trên đường chạy chính — nó thuộc bậc thang thử lại ở mục 3.4.6.
 
 ![](figures/fig-pipeline-strip.png)
 
 **Hình 3.3.**[]{#fig-3-3} Toàn bộ chuỗi xử lý trên một biển thật, ảnh chụp sau từng bước
 
-Hình 3.3 là kết quả chạy **chính các hàm của bản bàn giao**, không phải hình vẽ minh hoạ: mỗi khung là mảng ảnh thật ở đầu ra của bước tương ứng, và chuỗi kết thúc bằng chuỗi ký tự mà hệ thống thực sự đọc được. Hai khung đáng nhìn kỹ là khung 3 và khung 4 — chúng cho thấy trực tiếp thứ mà cả mục này mô tả bằng chữ: **tỉ lệ khung hình nhảy từ 1,12 lên 4,42**, và hai hàng ký tự cao 30 px trở thành một hàng duy nhất nhận trọn 50 px.
-
-Khung 3 cũng cho thấy một chi tiết dễ bị hiểu nhầm: nửa dưới **có chứa phần chân của hàng ký tự trên**. Đó không phải lỗi cắt mà chính là vùng chồng lấn ở mục 3.4.4, và mục 3.4.7 cho thấy nó còn giải quyết thêm một vấn đề nữa.
+Hình 3.3 là kết quả chạy **chính các hàm của bản bàn giao**: mỗi khung là mảng ảnh thật ở đầu ra của bước tương ứng. Khung 3 và khung 4 cho thấy trực tiếp điều cả mục này mô tả bằng chữ — **tỉ lệ khung hình nhảy từ 1,12 lên 4,42**, hai hàng ký tự cao 30 px thành một hàng duy nhất nhận trọn 50 px. Phần chân hàng trên lọt vào nửa dưới ở khung 3 không phải lỗi cắt mà là vùng chồng lấn của mục 3.4.4.
 
 ### 3.4.2. Tiền xử lý
 
@@ -152,30 +142,20 @@ Chi tiết cuối cùng là điểm mấu chốt của toàn bộ thiết kế. 
 
 ### 3.4.6. Nắn hình và bậc thang thử lại
 
-Biển chụp nghiêng gây hai vấn đề cùng lúc, và vấn đề thứ nhất nguy hiểm hơn vấn đề thứ hai.
+Biển chụp nghiêng vừa làm ký tự biến dạng phối cảnh, vừa làm **hộp bao nở rộng theo chiều ngang** khiến tỉ lệ khung hình đo được vượt ngưỡng 2,5 của mục 3.4.3: biển hai dòng bị phân loại nhầm thành một dòng, không được tách và trả về chuỗi rỗng — lỗi **đi nhầm nhánh xử lý**, không phải "đọc kém đi". Hai phép hiệu chỉnh được cài để kéo vùng biển về đúng nhánh:
 
-**Vấn đề hiển nhiên** là ký tự bị biến dạng phối cảnh. **Vấn đề thật sự** là biển nghiêng làm **hộp bao nở rộng ra theo chiều ngang**, nên tỉ lệ khung hình đo được **vượt qua ngưỡng 2,5** của mục 3.4.3: vùng biển hai dòng bị phân loại nhầm thành một dòng, **không bao giờ được tách**, và bộ nhận dạng trả về chuỗi rỗng — trong khi đúng biển đó chụp chính diện thì đọc hoàn hảo. Sai sót ở đây không phải "đọc kém đi" mà là **đi nhầm nhánh xử lý**.
+- **Nắn hình** — nhị phân hoá bằng Otsu ở cả hai cực, lấy vùng liên thông lớn nhất, khớp một hình chữ nhật xoay, xoay cho cạnh dài nằm ngang rồi **cắt lại sát**; tỉ lệ của phần cắt sát mới là hình dạng thật của biển — đúng đại lượng mà bước phân loại cần.
+- **Giãn theo chiều dọc** — cho biển bị nén do chụp chếch từ trên xuống, khi không có góc xoay nào để nắn; giá trị nằm ở việc **định tuyến lại**, không ở chi tiết ảnh nội suy thêm.
 
-Hai phép hiệu chỉnh được cài để kéo vùng biển về đúng nhánh:
-
-- **Nắn hình** — nhị phân hoá bằng Otsu ở cả hai cực, lấy vùng liên thông lớn nhất, khớp một hình chữ nhật xoay, rồi xoay ảnh cho cạnh dài nằm ngang và cắt lại sát. Trả về **phần cắt sát** chứ không phải khung đã xoay, vì tỉ lệ của phần cắt sát mới là hình dạng thật của biển — đúng đại lượng mà bước phân loại cần.
-- **Giãn theo chiều dọc** — cho biển bị nén do chụp chếch từ trên xuống. Trường hợp này **không có góc xoay nào để nắn**: biển vẫn nằm ngang, chỉ bị ép dẹt. Các hàng điểm ảnh nội suy thêm **không mang thông tin mới**; giá trị của phép giãn nằm ở chỗ **định tuyến**, không ở chi tiết ảnh.
-
-Hai phép này **không nằm trên đường chạy chính**. Chúng được tổ chức thành một **bậc thang thử lại**, chỉ kích hoạt **sau khi lần đọc đầu tiên đã thất bại** — tức khi chuỗi trả về không qua được kiểm tra định dạng. Cấu trúc này có một tính chất quan trọng: vì cổng chỉ mở khi kết quả đã không hợp lệ, **tập bị can thiệp và tập đang đúng là hai tập rời nhau**, nên bậc thang **không thể làm hỏng một biển vốn đã đọc đúng**. Chính tính chất đó cho phép để nó bật mặc định mà không cần lo thoái lui về độ chính xác.
-
-Bản thân bước nắn hình cũng có ba cổng an toàn, mỗi cổng đều lùi về "trả nguyên vùng cắt": góc nghiêng dưới 1,5° (không có gì để sửa, giữ nguyên đường chạy chính diện không đổi một bit), góc trên 35° (ước lượng gần như chắc chắn sai), hoặc vùng liên thông lớn nhất chiếm dưới 25% diện tích vùng cắt (nhị phân hoá đã làm hỏng biển thay vì cô lập nó).
+Hai phép này tổ chức thành một **bậc thang thử lại**, chỉ kích hoạt sau khi lượt đọc đầu tiên trượt kiểm tra định dạng. Vì cổng chỉ mở khi kết quả đã không hợp lệ, tập bị can thiệp và tập đang đúng là **hai tập rời nhau** — bậc thang không thể làm hỏng một biển vốn đã đọc đúng, nên bật mặc định được. Bước nắn hình còn ba cổng an toàn tự lùi về "trả nguyên vùng cắt": góc nghiêng dưới 1,5°, góc trên 35°, hoặc vùng liên thông lớn nhất dưới 25% diện tích vùng cắt.
 
 Chi phí và lợi ích đo được trình bày ở mục 4.4.2, kèm một quyết định **tắt** một bậc trong đó.
 
 ### 3.4.7. Bước phục hồi dòng trên
 
-Chế độ hỏng quan sát được: chuỗi `29E-015.66` chỉ đọc ra `015.66` — sau khi ghép, bộ phát hiện văn bản của PaddleOCR chỉ khoanh được một vùng chữ và bỏ qua cụm mã tỉnh cùng ký tự seri ở nửa bên trái.
+Chế độ hỏng quan sát được: chuỗi `29E-015.66` chỉ đọc ra `015.66` — sau khi ghép, bộ phát hiện văn bản của PaddleOCR chỉ khoanh được một vùng chữ và bỏ qua nửa bên trái. Giả thuyết tự nhiên — **bỏ hẳn phép ghép, đọc riêng từng nửa rồi nối chuỗi** — được kiểm bằng thí nghiệm A/B trên 200 biển hai dòng và **bị bác bỏ dứt khoát** (mục 4.4.1): khi đọc riêng, dải chồng lấn của mục 3.4.4 bị nhận dạng **hai lần** và sinh ký tự thừa (`84G122593` → `84-G124E009.01225.93`), trong khi trên dải đã ghép nó nằm giữa hai cụm ký tự và bị loại như một mảnh nhiễu.
 
-Giả thuyết tự nhiên là **bỏ hẳn phép ghép, đọc riêng từng nửa rồi nối chuỗi**. Giả thuyết này được kiểm chứng bằng thí nghiệm A/B trên 200 biển hai dòng chứ không bị loại bằng lập luận, và kết quả ở mục 4.4.1 **bác bỏ nó dứt khoát**. Nguyên nhân nằm ở chính vùng chồng lấn của mục 3.4.4: khi hai nửa được đọc **riêng**, dải chồng lấn bị nhận dạng **hai lần** và sinh ký tự thừa — `84G122593` đọc thành `84-G124E009.01225.93`.
-
-Kết quả này đảo ngược cách hiểu ban đầu về vùng chồng lấn. Trên dải liền mạch đã ghép, vùng lặp nằm **giữa** hai cụm ký tự và bị bộ phát hiện văn bản loại bỏ như một mảnh nhiễu; điều đó không xảy ra khi hai ảnh được xử lý tách biệt.
-
-Thiết kế cuối cùng vì vậy **giữ nguyên chiến lược ghép** và chỉ bổ sung một bước phục hồi có điều kiện chặt: chỉ kích hoạt khi đồng thời (a) vùng biển được phân loại hai dòng, (b) chuỗi sau chuẩn hoá không hợp lệ, và (c) chuỗi thô khác rỗng. Khi đó hệ thống nhận dạng thêm một lượt trên **riêng nửa trên**, ghép với chuỗi thô rồi chuẩn hoá lại; kết quả mới chỉ được chấp nhận nếu vượt kiểm tra định dạng.
+Thiết kế cuối cùng vì vậy **giữ nguyên chiến lược ghép** và chỉ bổ sung một bước phục hồi có điều kiện chặt: kích hoạt khi đồng thời (a) vùng biển phân loại hai dòng, (b) chuỗi sau chuẩn hoá không hợp lệ, (c) chuỗi thô khác rỗng — hệ thống đọc thêm một lượt trên **riêng nửa trên**, ghép với chuỗi thô rồi chuẩn hoá lại, và chỉ nhận kết quả vượt kiểm tra định dạng.
 
 ## 3.5. Phân loại màu nền trong không gian HSV
 

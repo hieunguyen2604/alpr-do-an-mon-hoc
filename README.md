@@ -22,7 +22,7 @@
 
 | Tệp trong `nop/` | Nội dung |
 |---|---|
-| `01-do-an-mon-hoc.pdf` | Quyển đồ án, **43 trang** (bản Word cùng tên để ghi chú) |
+| `01-do-an-mon-hoc.pdf` | Quyển đồ án, **40 trang** (bản Word cùng tên để ghi chú) |
 | `02-slide-mon-hoc.pptx` | Slide báo cáo, **16 slide**, chuẩn 7–10 phút |
 
 Kết quả chính (đo trên Intel i5-14600K, chỉ CPU): phát hiện **mAP@0.5 = 0,9829**
