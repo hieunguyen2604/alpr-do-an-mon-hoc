@@ -671,13 +671,13 @@ Mục 3.6c đã nêu một giới hạn: bảng ánh xạ nhầm lẫn ban đầ
 
 Kết quả này là một **phát hiện âm có giá trị**: bảng luật suy từ hình dạng chỉ phủ **2 trong 10** cặp nhầm phổ biến nhất, tuy cả hai đều đúng chiều. Bảy cặp không được phủ — `E → F`, `4 → L`, `U → 1`, `Z → 7` — đều là những cặp mà trực giác hình dạng không gợi ra, nhưng thực tế lại rất phổ biến trên ảnh phân giải thấp.
 
-Hướng cải thiện rõ ràng: **thay bảng suy đoán bằng bảng trích trực tiếp từ ma trận nhầm lẫn đo được**. Đây là ví dụ điển hình cho việc đo đạc thay thế trực giác.
+Phép thay thế **đã được thực hiện ngay trong vòng này** cho những cặp đủ bằng chứng thống kê: hai mục vượt ngưỡng được thay bằng ánh xạ trích trực tiếp từ ma trận đo được, mua thêm **53 biển đọc đúng và 0 biển hỏng** — đây chính là cấu hình bàn giao sinh ra S₁ = 0,7701. Năm cặp còn lại thắng dưới 10 lần nên **chưa đủ cơ sở để bật mặc định**; chúng chờ ngữ liệu lớn hơn ở hướng phát triển số 2 (mục 5.3). Đây là ví dụ điển hình cho việc đo đạc thay thế trực giác.
 
 ### 4.3.4. So sánh ba bộ nhận dạng nhận dạng trên cùng một tầng bao quanh
 
 Câu hỏi: chọn PaddleOCR có đúng không, khi một số tài liệu công khai lại nghiêng về EasyOCR?
 
-**Thiết kế thí nghiệm.** Cả ba bộ nhận dạng chạy trong **đúng một tầng bao quanh** — sao đúng chuỗi bước xử lý ảnh của bản bàn giao — trên **cùng một mảng ảnh đã chuẩn bị xong**; khác biệt duy nhất còn lại là bộ nhận dạng. So sánh ba bộ nhận dạng với ba tầng bao quanh khác nhau là đo tầng bao quanh chứ không đo bộ nhận dạng (Bảng 4.7).
+**Thiết kế thí nghiệm.** Cả ba bộ nhận dạng chạy trong **đúng một tầng bao quanh** — sao đúng chuỗi bước xử lý ảnh của bản bàn giao — trên **cùng một mảng 2.801 vùng biển đã chuẩn bị xong**; khác biệt duy nhất còn lại là bộ nhận dạng. So sánh ba bộ nhận dạng với ba tầng bao quanh khác nhau là đo tầng bao quanh chứ không đo bộ nhận dạng (Bảng 4.7).
 
 **Bảng 4.7.**[]{#tbl-4-7} So sánh ba bộ nhận dạng trên 2.801 biển số Việt Nam
 
