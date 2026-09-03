@@ -65,6 +65,13 @@ Hoặc bằng Docker:
 docker compose up
 ```
 
+**Chạy thử nhanh không cần mở giao diện** — 39 ảnh demo qua đúng đường ống bàn giao,
+đối chiếu với bản ghi kết quả trong `demo/expected.json`:
+
+```bash
+backend/.venv/Scripts/python scripts/demo_test.py
+```
+
 ## 4. Dựng lại quyển và slide
 
 ```bash

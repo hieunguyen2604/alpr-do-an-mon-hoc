@@ -10,7 +10,7 @@ demo/
 ├── 2-line/          # 16 ảnh biển số 2 dòng (xe máy, ô tô vuông, biển quân sự, ngoại giao)
 ├── multi-plate/     # 9 ảnh bối cảnh nhiều xe / không có biển số
 ├── videos/          # 3 video giao thông thực tế
-└── expected.json    # Nhãn Ground Truth xác thực do người gán
+└── expected.json    # Bản ghi kết quả hệ thống trên 39 ảnh (mốc đối chiếu)
 ```
 
 ---
@@ -46,13 +46,28 @@ Gồm các tình huống biển 2 dòng xe máy, ô tô biển vuông, biển đ
 
 ## 4. `demo/videos/` — Video kiểm thử (3 tệp)
 - `demo-video.mp4` (1.5 MB): Video mẫu tiêu chuẩn.
-- `demo-video-cac-loai-bien.mp4` (9.7 MB): Video chứa đa dạng các loại biển số.
-- `demo-video-giao-thong.mp4` (9.2 MB): Video bối cảnh đường phố lưu lượng cao.
+- `demo-video-cac-loai-bien.mp4` (3.2 MB): Video chứa đa dạng các loại biển số.
+- `demo-video-giao-thong.mp4` (3.0 MB): Video bối cảnh đường phố lưu lượng cao.
 
 ---
 
 ## 5. Chạy kiểm thử tự động
-Để chạy toàn bộ ảnh và video qua ALPR API:
+
+Chạy 39 ảnh qua **đúng đường ống của bản giao hàng** rồi đối chiếu với `expected.json`:
+
 ```bash
-python scripts/test_demo_all.py
+backend/.venv/Scripts/python scripts/demo_test.py
+```
+
+Không cần chạy máy chủ — script tự nạp mô hình (mất khoảng 5 giây) rồi chạy
+khoảng 470 ms mỗi ảnh. Nó in số ảnh khớp theo từng nhóm và **chỉ rõ trường nào
+lệch** ở những ảnh không khớp.
+
+`expected.json` là **bản ghi đầu ra của hệ thống**, không phải nhãn do người gán:
+nó chứa cả mảnh rác mà bộ phát hiện bắt nhầm (`'MI'`, `'HN'`) và các ô trống ở
+biển không đọc được. Vì vậy "khớp" ở đây nghĩa là *hệ thống vẫn hành xử như lúc
+ghi nhận*, không phải *đọc đúng biển*. Muốn ghi lại mốc theo lượt chạy hiện tại:
+
+```bash
+backend/.venv/Scripts/python scripts/demo_test.py --ghi-lai
 ```
