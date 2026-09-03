@@ -193,7 +193,7 @@ Bậc thang nắn hình và giãn dọc ở mục 3.4.6 cải thiện thêm **34
 
 ### 4.4.3. Siêu phân giải: một số 0 và cách đọc nó cho đúng
 
-Bậc thứ ba của thang thử lại là **siêu phân giải** bằng mạng FSRCNN [16], dành cho vùng biển quá nhỏ. Kết quả đo:
+Bậc thứ ba của thang thử lại là **siêu phân giải** bằng mạng FSRCNN [15], dành cho vùng biển quá nhỏ. Kết quả đo:
 
 | | Chi phí | Lợi ích |
 |---|---:|---:|

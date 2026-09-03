@@ -8,7 +8,7 @@ Chương này chỉ trình bày phần lý thuyết **ràng buộc trực tiếp
 
 Biển số ô tô trong nước gồm **8 ký tự**, ba thành phần: **mã địa phương** 2 chữ số, **seri** 1 chữ cái, **số thứ tự** 5 chữ số — ví dụ `30A-123.45` [3]. Trên đường vẫn còn biển 4 chữ số kiểu cũ (`29A-1234`) và xe đã đăng ký không bắt buộc đổi biển, nên biểu thức chính quy phải chấp nhận nhóm thứ tự **4 hoặc 5 chữ số**. Biển xe mô tô có **9 ký tự**, seri hai ký tự.
 
-**Mã địa phương hữu hạn và có lỗ hổng.** Dải 11–99 có 89 giá trị, nhưng chỉ **81 mã đang được sử dụng**; tám mã **13, 42, 44, 45, 46, 87, 91, 96** không được gán [7]. Kiểm tra mã tỉnh vì vậy biến lỗi đọc ở hai vị trí đầu từ **sai âm thầm** thành **sai phát hiện được**: đọc ra `46A-123.45` thì biết ngay mã 46 không tồn tại.
+**Mã địa phương hữu hạn và có lỗ hổng.** Dải 11–99 có 89 giá trị, nhưng chỉ **81 mã đang được sử dụng**; tám mã **13, 42, 44, 45, 46, 87, 91, 96** không được gán [4]. Kiểm tra mã tỉnh vì vậy biến lỗi đọc ở hai vị trí đầu từ **sai âm thầm** thành **sai phát hiện được**: đọc ra `46A-123.45` thì biết ngay mã 46 không tồn tại.
 
 **Tập ký tự seri phụ thuộc vị trí.** Đây là chi tiết dễ trình bày sai nhất. Biển trắng và vàng dùng seri thuộc tập **20 chữ cái** [6]; đối chiếu 26 chữ Latin thì vắng `I J O Q R W`. Nhưng suy diễn *"26 − 20 = 6 chữ bị loại trừ"* là **sai**: danh sách 20 chữ chỉ áp dụng cho **chữ cái thứ nhất**; ở **vị trí thứ hai** của seri xe máy là một tập khác — **có `R`, không có `G`**. Hợp hai vị trí, tập chữ không bao giờ xuất hiện trên biển Việt Nam chỉ gồm **5 chữ: `I`, `J`, `O`, `Q`, `W`** (Bảng 2.1).
 
@@ -72,9 +72,9 @@ Bề mặt biển số Việt Nam **phản quang theo tiêu chuẩn**, nên dư�
 
 **Cân bằng lược đồ xám thích nghi (AHE)** chia ảnh thành các ô nhỏ và cân bằng riêng từng ô, nên vùng chói và vùng tối được xử lý bằng hai hàm biến đổi khác nhau. Nhược điểm của nó là **khuếch đại nhiễu** ở những ô gần đồng nhất: khi lược đồ tập trung vào vài mức xám, hàm phân phối tích luỹ dựng đứng và một chênh lệch một mức xám bị kéo giãn thành chênh lệch lớn.
 
-**CLAHE** [11] khắc phục bằng cách **cắt ngọn lược đồ** tại một hệ số giới hạn rồi **phân phối lại** phần bị cắt đều cho mọi mức xám, trước khi tính hàm phân phối tích luỹ. Việc cắt ngọn đặt trần cho độ dốc của hàm biến đổi, tức đặt trần cho mức khuếch đại nhiễu.
+**CLAHE** [10] khắc phục bằng cách **cắt ngọn lược đồ** tại một hệ số giới hạn rồi **phân phối lại** phần bị cắt đều cho mọi mức xám, trước khi tính hàm phân phối tích luỹ. Việc cắt ngọn đặt trần cho độ dốc của hàm biến đổi, tức đặt trần cho mức khuếch đại nhiễu.
 
-Đồ án dùng hệ số giới hạn **2,0** trên lưới ô **8 × 8**. Kỹ thuật này đã được ghi nhận hiệu quả trong chính bài toán ALPR [10].
+Đồ án dùng hệ số giới hạn **2,0** trên lưới ô **8 × 8**. Kỹ thuật này đã được ghi nhận hiệu quả trong chính bài toán ALPR [9].
 
 ### 2.2.3. Lọc song phương thay cho làm mờ Gauss
 
@@ -86,7 +86,7 @@ $$G(x, y) = \frac{1}{2\pi\sigma^{2}} \exp\!\left(-\frac{x^{2} + y^{2}}{2\sigma^{
 
 lấy trung bình có trọng số theo **khoảng cách không gian**, nên nó không phân biệt được điểm ảnh nhiễu với điểm ảnh nằm trên một biên thật — kết quả là biên bị làm mờ cùng với nhiễu.
 
-**Lọc song phương** [12] nhân thêm một nhân trọng số theo **chênh lệch cường độ**:
+**Lọc song phương** [11] nhân thêm một nhân trọng số theo **chênh lệch cường độ**:
 
 $$I'(\mathbf{p}) = \frac{1}{W_{\mathbf{p}}} \sum_{\mathbf{q} \in S} G_{\sigma_{s}}\!\left(\lVert \mathbf{p} - \mathbf{q} \rVert\right) \, G_{\sigma_{r}}\!\left(\lvert I(\mathbf{p}) - I(\mathbf{q}) \rvert\right) I(\mathbf{q})$$
 
@@ -114,7 +114,7 @@ Bộ dữ liệu của đồ án hợp nhất từ nhiều nguồn công khai, m
 
 So khớp theo mã băm mật mã (MD5, SHA) không dùng được, vì chỉ cần nén lại ảnh ở chất lượng khác là mã băm đổi hoàn toàn. Cần một hàm băm mà **ảnh giống nhau về mặt thị giác cho mã băm gần nhau**.
 
-**Băm tri giác dựa trên biến đổi cosine rời rạc (pHash)** [15] hoạt động theo bốn bước: đưa ảnh về thang xám và kích thước 32 × 32; áp biến đổi cosine rời rạc hai chiều; **giữ lại khối 8 × 8 ở góc trên trái**, tức các hệ số **tần số thấp** mô tả cấu trúc tổng thể và loại bỏ chi tiết tần số cao; so từng hệ số với trung vị của khối để sinh **64 bit**. Khoảng cách giữa hai ảnh là **khoảng cách Hamming** giữa hai mã băm.
+**Băm tri giác dựa trên biến đổi cosine rời rạc (pHash)** [14] hoạt động theo bốn bước: đưa ảnh về thang xám và kích thước 32 × 32; áp biến đổi cosine rời rạc hai chiều; **giữ lại khối 8 × 8 ở góc trên trái**, tức các hệ số **tần số thấp** mô tả cấu trúc tổng thể và loại bỏ chi tiết tần số cao; so từng hệ số với trung vị của khối để sinh **64 bit**. Khoảng cách giữa hai ảnh là **khoảng cách Hamming** giữa hai mã băm.
 
 Việc giữ lại tần số thấp chính là điều khiến pHash bền vững trước nén, đổi kích thước và thay đổi độ sáng nhẹ — và cũng chính là **giới hạn của nó**, phân tích ở mục 3.2.3.
 
@@ -126,9 +126,9 @@ Họ hai giai đoạn (Faster R-CNN) sinh vùng đề xuất rồi phân loại 
 
 ![](figures/fig-ch2-05.png)
 
-**Hình 2.1.**[]{#fig-2-1} Kiến trúc tổng quát backbone – neck – head của YOLO11 *(theo [8])*
+**Hình 2.1.**[]{#fig-2-1} Kiến trúc tổng quát backbone – neck – head của YOLO11 *(theo [7])*
 
-Từ YOLOv8, họ YOLO chuyển sang **đầu dự đoán anchor-free**, và điều này có ý nghĩa riêng với bài toán biển số. Cách tiếp cận anchor-based hồi quy theo một tập hộp mẫu được thiết kế theo phân bố của bộ dữ liệu COCO; biển số **nằm ngoài phân bố đó** — một dòng khoảng 4,7:1, hai dòng khoảng 1,4:1, hai chế độ tỉ lệ cách xa nhau. Anchor-free hồi quy **trực tiếp khoảng cách từ tâm tới bốn cạnh**, nên xử lý được cả hai chế độ bằng một cơ chế duy nhất [8].
+Từ YOLOv8, họ YOLO chuyển sang **đầu dự đoán anchor-free**, và điều này có ý nghĩa riêng với bài toán biển số. Cách tiếp cận anchor-based hồi quy theo một tập hộp mẫu được thiết kế theo phân bố của bộ dữ liệu COCO; biển số **nằm ngoài phân bố đó** — một dòng khoảng 4,7:1, hai dòng khoảng 1,4:1, hai chế độ tỉ lệ cách xa nhau. Anchor-free hồi quy **trực tiếp khoảng cách từ tâm tới bốn cạnh**, nên xử lý được cả hai chế độ bằng một cơ chế duy nhất [7].
 
 ### 2.3.2. Chỉ số đánh giá
 
@@ -148,9 +148,9 @@ Khoảng cách giữa hai chỉ số này với biển số thường rất lớ
 
 ### 2.4.1. Kiến trúc CRNN và hàm mất mát CTC
 
-**CRNN** [14] gồm ba tầng: tầng tích chập trích đặc trưng và — điểm mấu chốt — **hạ chiều cao bản đồ đặc trưng về 1**, biến ảnh thành một **chuỗi vector theo chiều rộng**; tầng hồi quy mô hình hoá ngữ cảnh; tầng phiên mã giải chuỗi đó thành văn bản.
+**CRNN** [13] gồm ba tầng: tầng tích chập trích đặc trưng và — điểm mấu chốt — **hạ chiều cao bản đồ đặc trưng về 1**, biến ảnh thành một **chuỗi vector theo chiều rộng**; tầng hồi quy mô hình hoá ngữ cảnh; tầng phiên mã giải chuỗi đó thành văn bản.
 
-**Hàm mất mát CTC** [13] giải bài toán: biết chuỗi nhãn đúng nhưng **không biết mỗi ký tự nằm ở cột đặc trưng nào**. CTC thêm ký hiệu trống $\varepsilon$, định nghĩa ánh xạ $\mathcal{B}$ gộp ký tự lặp rồi xoá $\varepsilon$ — ví dụ $\mathcal{B}(\texttt{3}\varepsilon\texttt{00}\varepsilon\texttt{A}) = \texttt{30A}$ — và tính xác suất chuỗi nhãn $\mathbf{l}$ bằng tổng xác suất **mọi** đường đi thô ánh xạ về nó:
+**Hàm mất mát CTC** [12] giải bài toán: biết chuỗi nhãn đúng nhưng **không biết mỗi ký tự nằm ở cột đặc trưng nào**. CTC thêm ký hiệu trống $\varepsilon$, định nghĩa ánh xạ $\mathcal{B}$ gộp ký tự lặp rồi xoá $\varepsilon$ — ví dụ $\mathcal{B}(\texttt{3}\varepsilon\texttt{00}\varepsilon\texttt{A}) = \texttt{30A}$ — và tính xác suất chuỗi nhãn $\mathbf{l}$ bằng tổng xác suất **mọi** đường đi thô ánh xạ về nó:
 
 $$p(\mathbf{l} \mid \mathbf{x}) = \sum_{\boldsymbol{\pi} \in \mathcal{B}^{-1}(\mathbf{l})} \prod_{t=1}^{T} y^{t}_{\pi_{t}}$$
 

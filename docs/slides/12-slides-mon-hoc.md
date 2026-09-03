@@ -114,7 +114,7 @@ Ba ràng buộc đặc thù biển số Việt Nam, khai thác **theo từng v�
 
 ## Kết quả đo được
 
-Phát hiện **đạt cả bốn chỉ tiêu**; phần thiếu nằm trọn ở **biển hai dòng** — riêng biển một dòng đạt 0,9541
+Phát hiện **đạt cả bốn chỉ tiêu**; phần thiếu nằm trọn ở **biển hai dòng** — riêng một dòng đạt 0,9541 sau hậu xử lý
 
 ![](figures/fig-mon-hoc-kpi.png)
 

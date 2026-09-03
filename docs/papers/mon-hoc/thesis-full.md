@@ -108,9 +108,9 @@ Mỗi lựa chọn dưới đây bị chi phối bởi cùng bốn ràng buộc:
 
 | Hạng mục | Chọn | Phương án đã xét | Lý do chính | Đánh đổi |
 |---|---|---|---|---|
-| Thư viện xử lý ảnh | **OpenCV** [17] | scikit-image, Pillow | Đủ cả CLAHE, lọc song phương, biến đổi phối cảnh, HSV trong một thư viện; ràng buộc thời gian thực | API kiểu C cũ, dễ nhầm thứ tự kênh BGR/RGB |
-| Bộ phát hiện | **YOLO11n** [8] | Faster R-CNN, SSD, YOLOv8 | Họ một giai đoạn, **anchor-free** — hồi quy trực tiếp khoảng cách tâm tới bốn cạnh nên xử lý được cả tỉ lệ 4,7:1 lẫn 1,4:1 bằng một cơ chế; biến thể `n` chỉ 2,59 triệu tham số | Họ hai giai đoạn chính xác hơn nhưng không hợp ràng buộc CPU |
-| Nhận dạng ký tự | **PaddleOCR PP-OCRv5 mobile** [9] | EasyOCR, Tesseract | Cao hơn hẳn hai bộ nhận dạng kia trên chính ảnh biển số Việt Nam, trong cấu hình đánh giá của đồ án (mục 4.3.4) | Là đường ống nhiều giai đoạn thiết kế cho ảnh tài liệu, nên trả chi phí cho năng lực mà vùng biển đã cắt không cần |
+| Thư viện xử lý ảnh | **OpenCV** [16] | scikit-image, Pillow | Đủ cả CLAHE, lọc song phương, biến đổi phối cảnh, HSV trong một thư viện; ràng buộc thời gian thực | API kiểu C cũ, dễ nhầm thứ tự kênh BGR/RGB |
+| Bộ phát hiện | **YOLO11n** [7] | Faster R-CNN, SSD, YOLOv8 | Họ một giai đoạn, **anchor-free** — hồi quy trực tiếp khoảng cách tâm tới bốn cạnh nên xử lý được cả tỉ lệ 4,7:1 lẫn 1,4:1 bằng một cơ chế; biến thể `n` chỉ 2,59 triệu tham số | Họ hai giai đoạn chính xác hơn nhưng không hợp ràng buộc CPU |
+| Nhận dạng ký tự | **PaddleOCR PP-OCRv5 mobile** [8] | EasyOCR, Tesseract | Cao hơn hẳn hai bộ nhận dạng kia trên chính ảnh biển số Việt Nam, trong cấu hình đánh giá của đồ án (mục 4.3.4) | Là đường ống nhiều giai đoạn thiết kế cho ảnh tài liệu, nên trả chi phí cho năng lực mà vùng biển đã cắt không cần |
 | Hậu xử lý | **Bộ luật tự thiết kế** | Mô hình ngôn ngữ, từ điển | Biển số không có từ vựng để dựa vào; ràng buộc cú pháp lại rất chặt và kiểm được bằng biểu thức chính quy | Phải cập nhật khi văn bản pháp quy thay đổi |
 | Ứng dụng trình diễn | **FastAPI + React + Docker** | Notebook, ứng dụng desktop | Yêu cầu chạy được bằng một lệnh trên máy sạch | Không phải trọng tâm của môn học |
 
@@ -131,7 +131,7 @@ Chương này chỉ trình bày phần lý thuyết **ràng buộc trực tiếp
 
 Biển số ô tô trong nước gồm **8 ký tự**, ba thành phần: **mã địa phương** 2 chữ số, **seri** 1 chữ cái, **số thứ tự** 5 chữ số — ví dụ `30A-123.45` [3]. Trên đường vẫn còn biển 4 chữ số kiểu cũ (`29A-1234`) và xe đã đăng ký không bắt buộc đổi biển, nên biểu thức chính quy phải chấp nhận nhóm thứ tự **4 hoặc 5 chữ số**. Biển xe mô tô có **9 ký tự**, seri hai ký tự.
 
-**Mã địa phương hữu hạn và có lỗ hổng.** Dải 11–99 có 89 giá trị, nhưng chỉ **81 mã đang được sử dụng**; tám mã **13, 42, 44, 45, 46, 87, 91, 96** không được gán [7]. Kiểm tra mã tỉnh vì vậy biến lỗi đọc ở hai vị trí đầu từ **sai âm thầm** thành **sai phát hiện được**: đọc ra `46A-123.45` thì biết ngay mã 46 không tồn tại.
+**Mã địa phương hữu hạn và có lỗ hổng.** Dải 11–99 có 89 giá trị, nhưng chỉ **81 mã đang được sử dụng**; tám mã **13, 42, 44, 45, 46, 87, 91, 96** không được gán [4]. Kiểm tra mã tỉnh vì vậy biến lỗi đọc ở hai vị trí đầu từ **sai âm thầm** thành **sai phát hiện được**: đọc ra `46A-123.45` thì biết ngay mã 46 không tồn tại.
 
 **Tập ký tự seri phụ thuộc vị trí.** Đây là chi tiết dễ trình bày sai nhất. Biển trắng và vàng dùng seri thuộc tập **20 chữ cái** [6]; đối chiếu 26 chữ Latin thì vắng `I J O Q R W`. Nhưng suy diễn *"26 − 20 = 6 chữ bị loại trừ"* là **sai**: danh sách 20 chữ chỉ áp dụng cho **chữ cái thứ nhất**; ở **vị trí thứ hai** của seri xe máy là một tập khác — **có `R`, không có `G`**. Hợp hai vị trí, tập chữ không bao giờ xuất hiện trên biển Việt Nam chỉ gồm **5 chữ: `I`, `J`, `O`, `Q`, `W`** (Bảng 2.1).
 
@@ -195,9 +195,9 @@ Bề mặt biển số Việt Nam **phản quang theo tiêu chuẩn**, nên dư�
 
 **Cân bằng lược đồ xám thích nghi (AHE)** chia ảnh thành các ô nhỏ và cân bằng riêng từng ô, nên vùng chói và vùng tối được xử lý bằng hai hàm biến đổi khác nhau. Nhược điểm của nó là **khuếch đại nhiễu** ở những ô gần đồng nhất: khi lược đồ tập trung vào vài mức xám, hàm phân phối tích luỹ dựng đứng và một chênh lệch một mức xám bị kéo giãn thành chênh lệch lớn.
 
-**CLAHE** [11] khắc phục bằng cách **cắt ngọn lược đồ** tại một hệ số giới hạn rồi **phân phối lại** phần bị cắt đều cho mọi mức xám, trước khi tính hàm phân phối tích luỹ. Việc cắt ngọn đặt trần cho độ dốc của hàm biến đổi, tức đặt trần cho mức khuếch đại nhiễu.
+**CLAHE** [10] khắc phục bằng cách **cắt ngọn lược đồ** tại một hệ số giới hạn rồi **phân phối lại** phần bị cắt đều cho mọi mức xám, trước khi tính hàm phân phối tích luỹ. Việc cắt ngọn đặt trần cho độ dốc của hàm biến đổi, tức đặt trần cho mức khuếch đại nhiễu.
 
-Đồ án dùng hệ số giới hạn **2,0** trên lưới ô **8 × 8**. Kỹ thuật này đã được ghi nhận hiệu quả trong chính bài toán ALPR [10].
+Đồ án dùng hệ số giới hạn **2,0** trên lưới ô **8 × 8**. Kỹ thuật này đã được ghi nhận hiệu quả trong chính bài toán ALPR [9].
 
 ### 2.2.3. Lọc song phương thay cho làm mờ Gauss
 
@@ -209,7 +209,7 @@ $$G(x, y) = \frac{1}{2\pi\sigma^{2}} \exp\!\left(-\frac{x^{2} + y^{2}}{2\sigma^{
 
 lấy trung bình có trọng số theo **khoảng cách không gian**, nên nó không phân biệt được điểm ảnh nhiễu với điểm ảnh nằm trên một biên thật — kết quả là biên bị làm mờ cùng với nhiễu.
 
-**Lọc song phương** [12] nhân thêm một nhân trọng số theo **chênh lệch cường độ**:
+**Lọc song phương** [11] nhân thêm một nhân trọng số theo **chênh lệch cường độ**:
 
 $$I'(\mathbf{p}) = \frac{1}{W_{\mathbf{p}}} \sum_{\mathbf{q} \in S} G_{\sigma_{s}}\!\left(\lVert \mathbf{p} - \mathbf{q} \rVert\right) \, G_{\sigma_{r}}\!\left(\lvert I(\mathbf{p}) - I(\mathbf{q}) \rvert\right) I(\mathbf{q})$$
 
@@ -237,7 +237,7 @@ Bộ dữ liệu của đồ án hợp nhất từ nhiều nguồn công khai, m
 
 So khớp theo mã băm mật mã (MD5, SHA) không dùng được, vì chỉ cần nén lại ảnh ở chất lượng khác là mã băm đổi hoàn toàn. Cần một hàm băm mà **ảnh giống nhau về mặt thị giác cho mã băm gần nhau**.
 
-**Băm tri giác dựa trên biến đổi cosine rời rạc (pHash)** [15] hoạt động theo bốn bước: đưa ảnh về thang xám và kích thước 32 × 32; áp biến đổi cosine rời rạc hai chiều; **giữ lại khối 8 × 8 ở góc trên trái**, tức các hệ số **tần số thấp** mô tả cấu trúc tổng thể và loại bỏ chi tiết tần số cao; so từng hệ số với trung vị của khối để sinh **64 bit**. Khoảng cách giữa hai ảnh là **khoảng cách Hamming** giữa hai mã băm.
+**Băm tri giác dựa trên biến đổi cosine rời rạc (pHash)** [14] hoạt động theo bốn bước: đưa ảnh về thang xám và kích thước 32 × 32; áp biến đổi cosine rời rạc hai chiều; **giữ lại khối 8 × 8 ở góc trên trái**, tức các hệ số **tần số thấp** mô tả cấu trúc tổng thể và loại bỏ chi tiết tần số cao; so từng hệ số với trung vị của khối để sinh **64 bit**. Khoảng cách giữa hai ảnh là **khoảng cách Hamming** giữa hai mã băm.
 
 Việc giữ lại tần số thấp chính là điều khiến pHash bền vững trước nén, đổi kích thước và thay đổi độ sáng nhẹ — và cũng chính là **giới hạn của nó**, phân tích ở mục 3.2.3.
 
@@ -249,9 +249,9 @@ Họ hai giai đoạn (Faster R-CNN) sinh vùng đề xuất rồi phân loại 
 
 ![](figures/fig-ch2-05.png)
 
-**Hình 2.1.**[]{#fig-2-1} Kiến trúc tổng quát backbone – neck – head của YOLO11 *(theo [8])*
+**Hình 2.1.**[]{#fig-2-1} Kiến trúc tổng quát backbone – neck – head của YOLO11 *(theo [7])*
 
-Từ YOLOv8, họ YOLO chuyển sang **đầu dự đoán anchor-free**, và điều này có ý nghĩa riêng với bài toán biển số. Cách tiếp cận anchor-based hồi quy theo một tập hộp mẫu được thiết kế theo phân bố của bộ dữ liệu COCO; biển số **nằm ngoài phân bố đó** — một dòng khoảng 4,7:1, hai dòng khoảng 1,4:1, hai chế độ tỉ lệ cách xa nhau. Anchor-free hồi quy **trực tiếp khoảng cách từ tâm tới bốn cạnh**, nên xử lý được cả hai chế độ bằng một cơ chế duy nhất [8].
+Từ YOLOv8, họ YOLO chuyển sang **đầu dự đoán anchor-free**, và điều này có ý nghĩa riêng với bài toán biển số. Cách tiếp cận anchor-based hồi quy theo một tập hộp mẫu được thiết kế theo phân bố của bộ dữ liệu COCO; biển số **nằm ngoài phân bố đó** — một dòng khoảng 4,7:1, hai dòng khoảng 1,4:1, hai chế độ tỉ lệ cách xa nhau. Anchor-free hồi quy **trực tiếp khoảng cách từ tâm tới bốn cạnh**, nên xử lý được cả hai chế độ bằng một cơ chế duy nhất [7].
 
 ### 2.3.2. Chỉ số đánh giá
 
@@ -271,9 +271,9 @@ Khoảng cách giữa hai chỉ số này với biển số thường rất lớ
 
 ### 2.4.1. Kiến trúc CRNN và hàm mất mát CTC
 
-**CRNN** [14] gồm ba tầng: tầng tích chập trích đặc trưng và — điểm mấu chốt — **hạ chiều cao bản đồ đặc trưng về 1**, biến ảnh thành một **chuỗi vector theo chiều rộng**; tầng hồi quy mô hình hoá ngữ cảnh; tầng phiên mã giải chuỗi đó thành văn bản.
+**CRNN** [13] gồm ba tầng: tầng tích chập trích đặc trưng và — điểm mấu chốt — **hạ chiều cao bản đồ đặc trưng về 1**, biến ảnh thành một **chuỗi vector theo chiều rộng**; tầng hồi quy mô hình hoá ngữ cảnh; tầng phiên mã giải chuỗi đó thành văn bản.
 
-**Hàm mất mát CTC** [13] giải bài toán: biết chuỗi nhãn đúng nhưng **không biết mỗi ký tự nằm ở cột đặc trưng nào**. CTC thêm ký hiệu trống $\varepsilon$, định nghĩa ánh xạ $\mathcal{B}$ gộp ký tự lặp rồi xoá $\varepsilon$ — ví dụ $\mathcal{B}(\texttt{3}\varepsilon\texttt{00}\varepsilon\texttt{A}) = \texttt{30A}$ — và tính xác suất chuỗi nhãn $\mathbf{l}$ bằng tổng xác suất **mọi** đường đi thô ánh xạ về nó:
+**Hàm mất mát CTC** [12] giải bài toán: biết chuỗi nhãn đúng nhưng **không biết mỗi ký tự nằm ở cột đặc trưng nào**. CTC thêm ký hiệu trống $\varepsilon$, định nghĩa ánh xạ $\mathcal{B}$ gộp ký tự lặp rồi xoá $\varepsilon$ — ví dụ $\mathcal{B}(\texttt{3}\varepsilon\texttt{00}\varepsilon\texttt{A}) = \texttt{30A}$ — và tính xác suất chuỗi nhãn $\mathbf{l}$ bằng tổng xác suất **mọi** đường đi thô ánh xạ về nó:
 
 $$p(\mathbf{l} \mid \mathbf{x}) = \sum_{\boldsymbol{\pi} \in \mathcal{B}^{-1}(\mathbf{l})} \prod_{t=1}^{T} y^{t}_{\pi_{t}}$$
 
@@ -738,7 +738,7 @@ Bậc thang nắn hình và giãn dọc ở mục 3.4.6 cải thiện thêm **34
 
 ### 4.4.3. Siêu phân giải: một số 0 và cách đọc nó cho đúng
 
-Bậc thứ ba của thang thử lại là **siêu phân giải** bằng mạng FSRCNN [16], dành cho vùng biển quá nhỏ. Kết quả đo:
+Bậc thứ ba của thang thử lại là **siêu phân giải** bằng mạng FSRCNN [15], dành cho vùng biển quá nhỏ. Kết quả đo:
 
 | | Chi phí | Lợi ích |
 |---|---:|---:|
@@ -902,7 +902,7 @@ Xét từ góc độ môn học, kết quả đáng chú ý nhất không phải
 
 # TÀI LIỆU THAM KHẢO
 
-<!-- Danh muc rieng cua ban do an mon hoc — 17 muc, chi gom nhung tai lieu
+<!-- Danh muc rieng cua ban do an mon hoc — 16 muc, chi gom nhung tai lieu
      THAT SU duoc trich trong 5 chuong. Quyen do an tot nghiep co danh muc
      rieng, sinh tu docs/references.bib (nhanh main); hai danh muc danh so
      DOC LAP voi nhau nen KHONG duoc doi chieu so [n] giua hai ban. -->
@@ -913,33 +913,31 @@ Xét từ góc độ môn học, kết quả đáng chú ý nhất không phải
 
 [3] Bộ Công an, "Thông tư số 79/2024/TT-BCA quy định về cấp, thu hồi chứng nhận đăng ký xe, biển số xe cơ giới, xe máy chuyên dùng," 2024. [Trực tuyến]. Địa chỉ: <https://chinhphu.vn/?pageid=27160&docid=211945&classid=1&orggroupid=4> (truy cập ngày 2026-07-19).
 
-[4] Bộ Công an, "Thông tư số 51/2025/TT-BCA sửa đổi, bổ sung một số điều của Thông tư số 79/2024/TT-BCA đã được sửa đổi tại Thông tư số 13/2025/TT-BCA," 2025. [Trực tuyến]. Địa chỉ: <https://congbao.chinhphu.vn/van-ban/thong-tu-so-51-2025-tt-bca-45356.htm> (truy cập ngày 2026-07-19).
+[4] Bộ Công an, "Thông tư số 51/2025/TT-BCA sửa đổi, bổ sung một số điều của Thông tư số 79/2024/TT-BCA quy định về cấp, thu hồi chứng nhận đăng ký xe, biển số xe cơ giới, xe máy chuyên dùng," ban hành 30/06/2025, hiệu lực 01/07/2025, Công báo số 887+888 ngày 15/07/2025. [Trực tuyến]. Địa chỉ: <https://congbao.chinhphu.vn/van-ban/thong-tu-so-51-2025-tt-bca-45356/57302.htm> (truy cập ngày 2026-09-03).
 
 [5] Bộ Công an, "Quy chuẩn kỹ thuật quốc gia về biển số xe QCVN 08:2024/BCA," 2024. [Trực tuyến]. Địa chỉ: <https://mps.gov.vn/chinh-sach-phap-luat/bai-viet/quy-chuan-ky-thuat-quoc-gia-ve-bien-so-xe-d1-t1592> (truy cập ngày 2026-07-19).
 
 [6] Bộ Công an, "Nhận diện màu sắc, seri, ký hiệu biển số xe của cơ quan, tổ chức, cá nhân từ 01/01/2025," Cổng Thông tin điện tử Bộ Công an, 2024. [Trực tuyến]. Địa chỉ: <https://bocongan.gov.vn/chinh-sach-phap-luat/bai-viet/nhan-dien-mau-sac-seri-ky-hieu-bien-so-xe-cua-co-quan-to-chuc-ca-nhan-tu-01012025-d1-t1617> (truy cập ngày 2026-07-19).
 
-[7] Thư viện Nhà đất, "Chính thức ký hiệu biển số xe 34 tỉnh thành sau sáp nhập theo Thông tư 51/2025/TT-BCA," Thư viện Nhà đất, 2025. [Trực tuyến]. Địa chỉ: <https://thuviennhadat.vn/phap-luat/chinh-thuc-ky-hieu-bien-so-xe-34-tinh-thanh-sau-sap-nhap-theo-thong-tu-51-2025-tt-bca-690227.html> (truy cập ngày 2026-07-19).
+[7] G. Jocher, J. Qiu, "Ultralytics YOLO11," Ultralytics, 2024. [Trực tuyến]. Địa chỉ: <https://docs.ultralytics.com/models/yolo11/> (truy cập ngày 2026-07-19).
 
-[8] G. Jocher, J. Qiu, "Ultralytics YOLO11," Ultralytics, 2024. [Trực tuyến]. Địa chỉ: <https://docs.ultralytics.com/models/yolo11/> (truy cập ngày 2026-07-19).
+[8] C. Cui, "PP-OCRv5: A Specialized 5M-Parameter Model Rivaling Billion-Parameter Vision-Language Models on OCR Tasks," *arXiv:2603.24373*, 2026. [Trực tuyến]. Địa chỉ: <https://arxiv.org/html/2603.24373v1> (truy cập ngày 2026-07-19).
 
-[9] C. Cui, "PP-OCRv5: A Specialized 5M-Parameter Model Rivaling Billion-Parameter Vision-Language Models on OCR Tasks," *arXiv:2603.24373*, 2026. [Trực tuyến]. Địa chỉ: <https://arxiv.org/html/2603.24373v1> (truy cập ngày 2026-07-19).
+[9] Sutikno, A. Sugiharto, R. Kusumaningrum, "Enhanced Automatic License Plate Detection and Recognition using CLAHE and YOLOv11," 2025.
 
-[10] Sutikno, A. Sugiharto, R. Kusumaningrum, "Enhanced Automatic License Plate Detection and Recognition using CLAHE and YOLOv11," 2025.
+[10] K. Zuiderveld, "Contrast Limited Adaptive Histogram Equalization," trong *Graphics Gems IV*, P. S. Heckbert, biên tập. San Diego: Academic Press, 1994, tr. 474–485.
 
-[11] K. Zuiderveld, "Contrast Limited Adaptive Histogram Equalization," trong *Graphics Gems IV*, P. S. Heckbert, biên tập. San Diego: Academic Press, 1994, tr. 474–485.
+[11] C. Tomasi, R. Manduchi, "Bilateral Filtering for Gray and Color Images," trong *Proceedings of the Sixth International Conference on Computer Vision (ICCV)*, 1998, tr. 839–846. doi: 10.1109/ICCV.1998.710815.
 
-[12] C. Tomasi, R. Manduchi, "Bilateral Filtering for Gray and Color Images," trong *Proceedings of the Sixth International Conference on Computer Vision (ICCV)*, 1998, tr. 839–846. doi: 10.1109/ICCV.1998.710815.
+[12] A. Graves, S. Fernández, F. Gomez, J. Schmidhuber, "Connectionist Temporal Classification: Labelling Unsegmented Sequence Data with Recurrent Neural Networks," trong *Proceedings of the 23rd International Conference on Machine Learning (ICML)*, 2006, tr. 369–376. doi: 10.1145/1143844.1143891.
 
-[13] A. Graves, S. Fernández, F. Gomez, J. Schmidhuber, "Connectionist Temporal Classification: Labelling Unsegmented Sequence Data with Recurrent Neural Networks," trong *Proceedings of the 23rd International Conference on Machine Learning (ICML)*, 2006, tr. 369–376. doi: 10.1145/1143844.1143891.
+[13] B. Shi, X. Bai, C. Yao, "An End-to-End Trainable Neural Network for Image-Based Sequence Recognition and Its Application to Scene Text Recognition," *IEEE Transactions on Pattern Analysis and Machine Intelligence*, q. 39, s. 11, tr. 2298–2304, 2017. doi: 10.1109/TPAMI.2016.2646371.
 
-[14] B. Shi, X. Bai, C. Yao, "An End-to-End Trainable Neural Network for Image-Based Sequence Recognition and Its Application to Scene Text Recognition," *IEEE Transactions on Pattern Analysis and Machine Intelligence*, q. 39, s. 11, tr. 2298–2304, 2017. doi: 10.1109/TPAMI.2016.2646371.
+[14] C. Zauner, "Implementation and Benchmarking of Perceptual Image Hash Functions," Luận văn thạc sĩ, Upper Austria University of Applied Sciences, Hagenberg, 2010.
 
-[15] C. Zauner, "Implementation and Benchmarking of Perceptual Image Hash Functions," Luận văn thạc sĩ, Upper Austria University of Applied Sciences, Hagenberg, 2010.
+[15] C. Dong, C. C. Loy, X. Tang, "Accelerating the Super-Resolution Convolutional Neural Network," trong *European Conference on Computer Vision (ECCV)*, 2016, tr. 391–407. doi: 10.1007/978-3-319-46475-6_25.
 
-[16] C. Dong, C. C. Loy, X. Tang, "Accelerating the Super-Resolution Convolutional Neural Network," trong *European Conference on Computer Vision (ECCV)*, 2016, tr. 391–407. doi: 10.1007/978-3-319-46475-6_25.
-
-[17] G. Bradski, "The OpenCV Library," *Dr. Dobb's Journal of Software Tools*, 2000.
+[16] G. Bradski, "The OpenCV Library," *Dr. Dobb's Journal of Software Tools*, 2000.
 
 
 ```{=openxml}
