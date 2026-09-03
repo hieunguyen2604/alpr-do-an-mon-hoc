@@ -8,12 +8,14 @@ Quyển đồ án tốt nghiệp ở `docs/papers/` **không bị thay đổi** 
 
 ## Khác gì quyển tốt nghiệp
 
+Số của cột *Tốt nghiệp* đọc từ nhánh `main` (quyển đó không có ở nhánh này).
+
 | | Tốt nghiệp | Môn học |
 |---|---:|---:|
 | Số chương | 6 | **5** |
-| Số trang | 93 | **44** |
-| Tài liệu tham khảo | 123 mục | **17 mục** |
-| Phụ lục | 8 mục | **2 mục** |
+| Số trang | 72 | **40** |
+| Tài liệu tham khảo | 29 mục | **16 mục** |
+| Phụ lục | 9 mục | **3 mục** |
 
 **Trọng tâm dời chỗ.** Quyển tốt nghiệp phải bảo vệ một *đóng góp* trước hội
 đồng — vì sao chọn công nghệ này chứ không phải công nghệ kia, kết quả đứng ở
@@ -38,7 +40,7 @@ diễn giải lại hay bỏ đi để bản rút gọn trông đẹp hơn.
 ## Dựng lại
 
 ```bash
-backend/.venv/Scripts/python.exe scripts/build_thesis.py --src docs/papers/mon-hoc
+backend/.venv/Scripts/python.exe scripts/build_thesis.py
 ```
 
 Thứ tự ghép khai báo ở `ORDER.txt` trong chính thư mục này, không dùng
@@ -47,15 +49,16 @@ Thứ tự ghép khai báo ở `ORDER.txt` trong chính thư mục này, không 
 Kết xuất PDF (Word điền số trang cho mục lục):
 
 ```bash
-powershell -File scripts/export_thesis_pdf.ps1 -Nguon docs/papers/mon-hoc/thesis-full.docx -Dich docs/papers/mon-hoc/thesis-full.pdf
+powershell -File scripts/export_thesis_pdf.ps1
 ```
 
-Cả hai lệnh tự chép bản thành phẩm sang `nop/` dưới tên `04-do-an-mon-hoc.*`.
+Trên nhánh `do-an-mon-hoc`, cả hai lệnh đã đặt bản môn học làm mặc định nên không
+cần tham số; chúng tự chép bản thành phẩm sang `nop/` dưới tên `01-do-an-mon-hoc.*`.
 
 ## Kiểm tra sau mỗi lần sửa
 
 ```bash
-backend/.venv/Scripts/python.exe scripts/check_thesis_refs.py mon-hoc
+backend/.venv/Scripts/python.exe scripts/check_thesis_refs.py
 ```
 
 Cần lưu ý giới hạn của công cụ này: nó chỉ bắt tham chiếu trỏ tới mục **không
