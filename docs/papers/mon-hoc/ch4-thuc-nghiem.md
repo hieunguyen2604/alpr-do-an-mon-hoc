@@ -45,7 +45,7 @@ Ba lưu ý khi đọc bảng này. **Một,** bài toán chỉ có **một lớp
 | mAP@0,5:0,95 | 0,7526 | 0,7649 | −1,23 |
 | Recall | 0,9895 | 0,9691 | 2,04 |
 
-Chênh lệch giữa hai bố cục ở tầng phát hiện chỉ **2,09 điểm** — nhỏ. Con số này đáng nhớ, vì mục 4.3.2 sẽ cho thấy cùng phép tách đó ở tầng nhận dạng cho **23,07 điểm**. Kết luận: **bài toán biển hai dòng không nằm ở khâu phát hiện.**
+Bảng 4.2 cho thấy chênh lệch giữa hai bố cục ở tầng phát hiện chỉ **2,09 điểm** — nhỏ. Con số này đáng nhớ, vì mục 4.3.2 sẽ cho thấy cùng phép tách đó ở tầng nhận dạng cho **23,07 điểm**. Kết luận: **bài toán biển hai dòng không nằm ở khâu phát hiện.**
 
 ### 4.2.3. Tách theo kích thước đối tượng
 
@@ -263,7 +263,7 @@ Bảng 4.11 đo trên 1.565 ảnh ngoài dữ liệu hiệu chỉnh. Ba giới h
 
 > Không có lớp *bỏ sót biển* hay *phát hiện nhầm* vì cả 2.801 mẫu là **vùng biển đã cắt sẵn**, nên bước phát hiện không chạy; hai loại lỗi ấy được đo riêng ở tầng bộ phát hiện.
 
-Bảng này khép lại mạch lập luận của chương. **Nhầm ký tự chiếm gần hai phần ba số ca sai, và 375 trên 392 ca thuộc biển hai dòng** — cùng một kết luận đã rút ra ở mục 4.3.2, nay xác nhận từ một góc đo khác.
+Bảng 4.12 khép lại mạch lập luận của chương. **Nhầm ký tự chiếm gần hai phần ba số ca sai, và 375 trên 392 ca thuộc biển hai dòng** — cùng một kết luận đã rút ra ở mục 4.3.2, nay xác nhận từ một góc đo khác.
 
 **Sai thứ tự bằng 0** là bằng chứng trực tiếp cho thấy thiết kế ghép ngang ở mục 3.4.5 hoạt động đúng: nếu phép ghép đặt nhầm thứ tự hai nửa, hoặc nếu CTC vẫn đọc lộn xộn giữa hai dòng, loại lỗi này phải xuất hiện. Nó không xuất hiện một lần nào.
 
@@ -273,7 +273,7 @@ Bảng này khép lại mạch lập luận của chương. **Nhầm ký tự ch
 
 **Hình 4.2.**[]{#fig-4-2} Sáu vùng biển thật: ba ca khối hậu xử lý sửa được, ba ca vẫn sai
 
-Hàng trên là hai cơ chế sửa trên ảnh thật: mặt nạ vị trí của mục 3.6b (`2947872 → 29A7872`, `52126661 → 52L26661`) và bước phục hồi dòng trên của mục 3.4.7 (`5203 → 78N25203`). Hàng dưới là ba ca vẫn sai — cả ba đều là biển hai dòng và đều **hỏng ở dòng trên** (`30A → 37L`, `31F` mất hẳn, `52Z → 52T`): dòng trên trộn chữ và số ở đúng vị trí mà mặt nạ cho phép cả hai, nên hậu xử lý không có ràng buộc nào để bám vào. Đây là lý do hướng phát triển số 1 ở mục 5.3 nhắm vào bộ nhận dạng chứ không nhắm vào bộ luật.
+Hình 4.2 đặt các con số của Bảng 4.12 lên ảnh thật. Hàng trên là hai cơ chế sửa: mặt nạ vị trí của mục 3.6b (`2947872 → 29A7872`, `52126661 → 52L26661`) và bước phục hồi dòng trên của mục 3.4.7 (`5203 → 78N25203`). Hàng dưới là ba ca vẫn sai — cả ba đều là biển hai dòng và đều **hỏng ở dòng trên** (`30A → 37L`, `31F` mất hẳn, `52Z → 52T`): dòng trên trộn chữ và số ở đúng vị trí mà mặt nạ cho phép cả hai, nên hậu xử lý không có ràng buộc nào để bám vào. Đây là lý do hướng phát triển số 1 ở mục 5.3 nhắm vào bộ nhận dạng chứ không nhắm vào bộ luật.
 
 Cần lưu ý về ảnh: ngữ liệu nhãn xuất mọi vùng cắt về khung vuông 640 × 640, **phá tỉ lệ khung hình gốc**. Hình trên đã khôi phục tỉ lệ bằng đúng hàm mà công cụ đo dùng trước khi chạy nhận dạng. Bước khôi phục này không phải chi tiết trình bày: bỏ nó đi thì S₁ rơi từ 0,7701 xuống **0,4988**, vì mọi vùng cắt vuông đều bị phân loại thành hai dòng.
 

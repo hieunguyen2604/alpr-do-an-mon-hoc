@@ -18,6 +18,8 @@ Hệ thống đạt toàn bộ chỉ tiêu ở tầng phát hiện với biên r
 
 ## 5.2. Hạn chế
 
+Bảng 5.2 tổng hợp năm hạn chế, xếp theo mức nghiêm trọng.
+
 **Bảng 5.2.**[]{#tbl-5-2} Năm hạn chế của đồ án
 
 | # | Hạn chế | Mức | Hệ quả |

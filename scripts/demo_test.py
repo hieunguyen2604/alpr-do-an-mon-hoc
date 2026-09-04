@@ -34,12 +34,9 @@ TRUONG = ("plate", "display", "kind", "color", "valid", "lines")
 
 
 def chuan(muc: list[dict[str, object]] | None) -> list[tuple[object, ...]]:
-    """Rút mỗi biển về sáu trường đo được, quy chuỗi rỗng về None.
-
-    Bản ghi có thêm trường ``note`` do người soạn viết tay và dùng ``null`` ở
-    chỗ hệ thống trả chuỗi rỗng; so nguyên khối sẽ báo lệch ở những chỗ hai bên
-    thực ra khớp nhau.
-    """
+    """Rút mỗi biển về sáu trường đo được, quy chuỗi rỗng về None."""
+    # Ban ghi co them truong `note` viet tay va dung null o cho he thong tra
+    # chuoi rong; so nguyen khoi se bao lech o cho hai ben thuc ra khop nhau.
     return [
         tuple(None if (v := p.get(k)) == "" else v for k in TRUONG)
         for p in (muc or [])
@@ -57,19 +54,17 @@ def doc_anh() -> dict[str, Path]:
 
 
 def do_mot_bien(ket_qua, chuan_hoa: VietnamesePlateNormalizer) -> dict[str, object]:
-    """Rút một biển thành đúng sáu trường mà bản giao hàng trả cho người dùng.
-
-    Chuỗi hiển thị phải dựng bằng ``format_for_display`` kèm ``upper_char_count``
-    y như ``backend.services.detection_service.display_text`` làm — đọc thẳng
-    trường ``display_text`` của tầng AI sẽ ra chuỗi khác ở biển hai dòng, tức là
-    đo một hệ thống không phải hệ thống được giao.
-    """
+    """Rút một biển thành đúng sáu trường mà bản giao hàng trả cho người dùng."""
+    # Chuoi hien thi phai dung format_for_display kem upper_char_count y nhu
+    # detection_service.display_text — doc thang display_text cua tang AI se ra
+    # chuoi khac o bien hai dong, tuc do mot he thong khong phai he thong duoc giao.
     nhan = ket_qua.recognition
     if nhan is None:
         return dict.fromkeys(TRUONG) | {"color": ket_qua.plate_color or None}
 
     # Chuoi rong van la mot ket qua: bien duoc phat hien, chi khong doc duoc chu.
     # Bon truong con lai VAN co gia tri va bo giao dien van hien chung.
+
     # Chi 3 hoac 4 moi duoc dung: cot CSDL rang buoc CHECK IN (3,4) va
     # detection_service loai moi gia tri khac truoc khi luu, nen chuoi hien thi
     # cua ban giao hang khong bao gio thay gia tri ngoai mien do.
