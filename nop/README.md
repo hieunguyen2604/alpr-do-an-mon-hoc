@@ -14,9 +14,10 @@ nào bị đổi đường dẫn.
 
 | Tệp | Sinh từ | Nội dung |
 |---|---|---|
-| `01-do-an-mon-hoc.pdf` | `docs/papers/mon-hoc/thesis-full.pdf` | Quyển đồ án môn học **Xử lý ảnh và ứng dụng**, **42 trang** |
+| `01-do-an-mon-hoc.pdf` | `docs/papers/mon-hoc/thesis-full.pdf` | Quyển đồ án môn học **Xử lý ảnh và ứng dụng**, **44 trang** |
 | `01-do-an-mon-hoc.docx` | `docs/papers/mon-hoc/thesis-full.docx` | Cùng nội dung, bản Word để hội đồng ghi chú |
-| `02-slide-mon-hoc.pptx` | `docs/slides/12-slides-mon-hoc.pptx` | Slide báo cáo môn học, **16 slide** (Chuẩn 7–10 phút) |
+| `02-slide-mon-hoc.pptx` | `docs/slides/12-slides-mon-hoc.pptx` | Slide báo cáo môn học, **23 slide** (Chuẩn 10–15 phút) |
+| `02-slide-mon-hoc.pdf` | `docs/slides/12-slides-mon-hoc.pptx` | Bản PDF slide trình chiếu, **23 trang** |
 
 Quyển này là **quyển riêng**, không phải bản rút gọn của quyển tốt nghiệp:
 khác bố cục, khác cao độ trình bày, khác danh mục tài liệu tham khảo.

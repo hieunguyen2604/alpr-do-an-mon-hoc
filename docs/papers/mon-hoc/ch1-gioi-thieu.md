@@ -22,7 +22,7 @@ Xây dựng một hệ thống nhận dạng biển số xe Việt Nam chạy đ
 
 **Bảng 1.1.**[]{#tbl-1-1} Chỉ tiêu đặt ra, mỗi chỉ tiêu có ngưỡng tối thiểu và mục tiêu
 
-| Đo cái gì | Ngưỡng tối thiểu | Mục tiêu |
+| Chỉ tiêu đánh giá | Ngưỡng tối thiểu | Mục tiêu |
 |---|:--:|:--:|
 | mAP@0,5 của bộ phát hiện biển số | 0,85 | 0,90 |
 | mAP@0,5:0,95 của bộ phát hiện | 0,55 | 0,65 |
@@ -39,11 +39,11 @@ Ngưỡng độ trễ rộng hơn các bài báo ALPR vì máy thực hiện **k
 
 **Trong phạm vi:** thu thập và làm sạch bộ dữ liệu ảnh; khử trùng lặp bằng băm tri giác; huấn luyện bộ phát hiện; toàn bộ khối xử lý ảnh vùng biển; bộ luật hậu xử lý chuỗi theo quy chuẩn Việt Nam; phân loại màu nền; đánh giá đầy đủ kèm phân tích lỗi; một ứng dụng web tối thiểu để trình diễn.
 
-**Ngoài phạm vi:** xác thực và phân quyền (hệ thống chạy nội bộ); bám vết đối tượng qua khung hình; ước lượng tốc độ và phát hiện vi phạm; biển số nước ngoài; huấn luyện lại bộ nhận dạng ký tự — bản giao hàng dùng nguyên mô hình tiền huấn luyện; một lượt tinh chỉnh đã thử và bị loại vì kém hơn bản gốc ở cấu hình vận hành; suy luận trên GPU.
+**Ngoài phạm vi:** xác thực và phân quyền (hệ thống chạy nội bộ); bám vết đối tượng qua khung hình; ước lượng tốc độ và phát hiện vi phạm; biển số nước ngoài; huấn luyện lại bộ nhận dạng ký tự — cấu hình triển khai dùng nguyên mô hình tiền huấn luyện; một lượt tinh chỉnh đã thử và bị loại vì kém hơn bản gốc ở cấu hình vận hành; suy luận trên GPU.
 
 ## 1.3. Lựa chọn công nghệ
 
-Mỗi lựa chọn dưới đây bị chi phối bởi cùng bốn ràng buộc: **không có GPU**, **phải xử lý được biển hai dòng**, **phải đóng gói bàn giao được**, và **ngân sách thời gian máy hữu hạn** (Bảng 1.2).
+Mỗi lựa chọn dưới đây bị chi phối bởi cùng bốn ràng buộc: **không có GPU**, **phải xử lý được biển hai dòng**, **phải đóng gói hoàn chỉnh có thể triển khai**, và **ngân sách thời gian máy hữu hạn** (Bảng 1.2).
 
 **Bảng 1.2.**[]{#tbl-1-2} Các quyết định công nghệ và lý do
 

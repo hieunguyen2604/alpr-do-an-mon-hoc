@@ -6,13 +6,13 @@ Nhóm thực hiện đã xây dựng một hệ thống nhận dạng biển s�
 
 **Bảng 5.1.**[]{#tbl-5-1} Đối chiếu chỉ tiêu đặt ra với kết quả đo được
 
-| Đo cái gì | Ngưỡng tối thiểu | Mục tiêu | Đo được | |
+| Chỉ tiêu đánh giá | Ngưỡng tối thiểu | Mục tiêu | Đo được | |
 |---|:--:|:--:|---:|:--:|
-| mAP@0,5 · mAP@0,5:0,95 của bộ phát hiện | 0,85 · 0,55 | 0,90 · 0,65 | **0,9829 · 0,7834** | ✅ |
-| Precision · Recall | 0,88 · 0,85 | 0,92 · 0,90 | **0,9837 · 0,9714** | ✅ |
-| **C** — đúng mức ký tự | 0,92 | 0,95 | **0,9483** | 🟡 |
-| **S₀ → S₁** — đúng cả chuỗi | 0,80 → 0,85 | 0,85 → 0,90 | **0,6373 → 0,7701** | ❌ |
-| Độ trễ một ảnh, p95, trên CPU | ≤ 1.500 ms | ≤ 800 ms | **509,76 ms** | ✅ |
+| mAP@0,5 · mAP@0,5:0,95 của bộ phát hiện | 0,85 · 0,55 | 0,90 · 0,65 | **0,9829 · 0,7834** | **Đạt** |
+| Precision · Recall | 0,88 · 0,85 | 0,92 · 0,90 | **0,9837 · 0,9714** | **Đạt** |
+| **C** — đúng mức ký tự | 0,92 | 0,95 | **0,9483** | **Cận ngưỡng** |
+| **S₀ → S₁** — đúng cả chuỗi | 0,80 → 0,85 | 0,85 → 0,90 | **0,6373 → 0,7701** | **Chưa đạt** |
+| Độ trễ một ảnh, p95, trên CPU | ≤ 1.500 ms | ≤ 800 ms | **509,76 ms** | **Đạt** |
 
 Hệ thống đạt toàn bộ chỉ tiêu ở tầng phát hiện với biên rộng nhưng chưa đạt chỉ tiêu nhận dạng chuỗi, và phần thiếu hụt **nằm gần như trọn ở biển hai dòng** — biển một dòng đạt S₁ = 0,9541, vượt cả mục tiêu. Các bước xử lý ảnh và hậu xử lý vẫn mang lại cải thiện đáng kể với chi phí tính toán thấp: khối hậu xử lý **+13,28 điểm** (372 biển sửa đúng, 0 biển hỏng, 0,03 ms mỗi biển), bước tách-ghép **+34,92 điểm** cho PaddleOCR — điều kiện cần nhưng không đủ, vì chỉ được +0,03 điểm trên Tesseract (mục 4.3.4). Mọi bước bật tắt được độc lập nên đóng góp của từng bước đo được riêng, và các kết quả âm được ghi lại thay vì bỏ đi.
 
@@ -39,7 +39,7 @@ Sáu hướng phát triển, xếp theo mức tác động, tổng hợp ở B�
 | # | Hướng | Giải hạn chế | Ghi chú |
 |:--:|---|:--:|---|
 | 1 | **Huấn luyện lại bộ nhận dạng ký tự riêng cho biển số Việt Nam** | 1 | Hướng quan trọng nhất. Phân tích ở mục 4.3.2 đã định vị điểm nghẽn nằm ở năng lực mô hình ký tự, không ở khâu xử lý ảnh |
-| 2 | **Mở rộng bảng ánh xạ nhầm lẫn khi ngữ liệu lớn hơn** | 1 | Vòng đầu **đã làm** và mua được 53 biển, nâng độ phủ lên 4/10; sáu cặp còn lại (mục 4.3.3) nằm ngoài cơ chế mặt nạ vị trí hoặc xung đột với cặp phổ biến hơn — cần cơ chế sửa theo ngữ cảnh và ngữ liệu lớn hơn |
+| 2 | **Mở rộng bảng ánh xạ nhầm lẫn khi ngữ liệu lớn hơn** | 1 | Vòng đầu đã thực nghiệm và nhận dạng chính xác thêm 53 biển, nâng độ phủ lên 4/10; sáu cặp còn lại (mục 4.3.3) nằm ngoài cơ chế mặt nạ vị trí hoặc xung đột với cặp phổ biến hơn — cần cơ chế sửa theo ngữ cảnh và ngữ liệu lớn hơn |
 | 3 | Thu thập dữ liệu biển vàng, xanh, đỏ và ngoại giao | 2, 5 | Điều kiện để mở rộng kết luận ra ngoài biển trắng, và để hai nhánh biển đỏ · ngoại giao có số liệu đánh giá |
 | 4 | **Khử rò rỉ theo chuỗi biển số thay vì theo băm tri giác** | 3, 4 | Gom nhóm theo chuỗi ký tự thay vì theo tương đồng ảnh; giải đúng loại rò rỉ mà pHash không thấy |
 | 5 | Đo lại bậc siêu phân giải trên ngữ liệu có biển thật sự nhỏ | — | Mục 4.4.3: số 0 hiện tại do **thiếu điều kiện quan sát**, không phải do đã quan sát thấy vô dụng |

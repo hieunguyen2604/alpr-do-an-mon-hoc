@@ -104,7 +104,7 @@ Mọi bước trong mục này đều **bật tắt được độc lập** qua 
 
 **Hình 3.3.**[]{#fig-3-3} Toàn bộ chuỗi xử lý trên một biển thật, ảnh chụp sau từng bước
 
-Hình 3.3 là kết quả chạy **chính các hàm của bản bàn giao**: mỗi khung là mảng ảnh thật ở đầu ra của bước tương ứng. Khung 3 và khung 4 cho thấy trực tiếp điều cả mục này mô tả bằng chữ — **tỉ lệ khung hình nhảy từ 1,12 lên 4,42**, hai hàng ký tự cao 30 px thành một hàng duy nhất nhận trọn 50 px. Phần chân hàng trên lọt vào nửa dưới ở khung 3 không phải lỗi cắt mà là vùng chồng lấn của mục 3.4.4.
+Hình 3.3 là kết quả chạy **chính các hàm của mô hình đề xuất**: mỗi khung là mảng ảnh thật ở đầu ra của bước tương ứng. Khung 3 và khung 4 cho thấy trực tiếp điều cả mục này mô tả bằng chữ — **tỉ lệ khung hình nhảy từ 1,12 lên 4,42**, hai hàng ký tự cao 30 px thành một hàng duy nhất nhận trọn 50 px. Phần chân hàng trên lọt vào nửa dưới ở khung 3 không phải lỗi cắt mà là vùng chồng lấn của mục 3.4.4.
 
 ### 3.4.2. Tiền xử lý
 
@@ -130,7 +130,9 @@ Dải 2,5–3,0 vẫn là **vùng bất định**, và nó bất định theo c�
 
 Vùng biển được cắt thành hai nửa theo chiều dọc, nhưng **hai nửa cố ý chồng lên nhau**: nửa trên kết thúc tại **5/12** chiều cao, nửa dưới bắt đầu tại **1/3**, tạo vùng chồng lấn bằng **1/12** chiều cao biển.
 
-Thiết kế xuất phát từ tính bất đối xứng của chi phí sai sót, giống mục 3.4.3 nhưng ở một đại lượng khác. Cắt cụt chân của ký tự dòng trên hoặc đỉnh của ký tự dòng dưới **phá huỷ thông tin không phục hồi được** — một `8` bị cắt chân thành `9` hoặc `0` là lỗi vĩnh viễn. Ngược lại, để lọt vài hàng điểm ảnh của nửa còn lại chỉ tạo ra một dải nhiễu mà bộ nhận dạng xử lý như nền.
+Căn cứ kỹ thuật của hai phân số 5/12 và 1/3 xuất phát trực tiếp từ các tham số kích thước quy định tại QCVN 08:2024/BCA [5]: trên biển số xe mô tô hai dòng, seri đăng ký ở dòng trên có kích thước chữ cái và chữ số tương đương dòng dưới, nhưng khoảng cách từ mép trên biển đến đỉnh ký tự dòng trên thường nhỏ hơn khoảng cách từ đáy số dòng dưới đến mép dưới biển. Phép cắt nửa trên tại 5/12 chiều cao biển đảm bảo thu trọn toàn bộ thân chữ của seri; trong khi nửa dưới bắt đầu tại 1/3 chiều cao biển đảm bảo ôm trọn cụm số thứ tự ngay cả khi biển số bị dập lệch nhẹ. Khoảng cách giao nhau 1/12 chiều cao đóng vai trò như một vùng đệm an toàn: nó triệt tiêu hoàn toàn rủi ro cắt đứt nét chân của chữ dòng trên hoặc cắt mất phần mũ của số dòng dưới.
+
+Thiết kế xuất phát từ tính bất đối xứng của chi phí sai sót, giống mục 3.4.3 nhưng ở một đại lượng khác. Cắt phạm vào nét đáy ký tự dòng trên hoặc đỉnh của ký tự dòng dưới **phá huỷ thông tin không phục hồi được** — một `8` bị cắt chân thành `9` hoặc `0` là lỗi vĩnh viễn. Ngược lại, để lọt vài hàng điểm ảnh của nửa còn lại chỉ tạo ra một dải nhiễu mà bộ nhận dạng xử lý như nền.
 
 Vùng chồng lấn này về sau hoá ra còn có một tác dụng thứ hai mà thiết kế ban đầu không lường trước, phân tích ở mục 3.4.7.
 
@@ -152,6 +154,8 @@ Biển chụp nghiêng vừa làm ký tự biến dạng phối cảnh, vừa l�
 Hai phép này tổ chức thành một **bậc thang thử lại**, chỉ kích hoạt sau khi lượt đọc đầu tiên trượt kiểm tra định dạng. Vì cổng chỉ mở khi kết quả đã không hợp lệ, tập bị can thiệp và tập đang đúng là **hai tập rời nhau** — bậc thang không thể làm hỏng một biển vốn đã đọc đúng, nên bật mặc định được. Bước nắn hình còn ba cổng an toàn tự lùi về "trả nguyên vùng cắt": góc nghiêng dưới 1,5°, góc trên 35°, hoặc vùng liên thông lớn nhất dưới 25% diện tích vùng cắt.
 
 Chi phí và lợi ích đo được trình bày ở mục 4.4.2, kèm một quyết định **tắt** một bậc trong đó.
+
+Cần nhấn mạnh một đánh đổi có chủ đích trong thiết kế: giải thuật nắn hình chỉ áp dụng phép xoay phẳng hai chiều (2D affine rotation) dựa trên việc khớp hình chữ nhật có hướng diện tích tối thiểu (minAreaRect) [16]. Hệ thống chủ động không tích hợp các phép biến đổi phối cảnh ba chiều (3D Homography/Perspective Transformation) phức tạp. Lý do trực tiếp là ràng buộc thời gian thực trên CPU: tính toán ma trận phối cảnh và nội suy lại toàn bộ lưới điểm ảnh trên CPU sẽ đẩy độ trễ p95 vượt trần cho phép, trong khi phép xoay phẳng 2D có chi phí tính toán xấp xỉ 0 ms nhưng vẫn giải quyết được đại đa số các trường hợp biển số bị lệch góc chụp phổ biến trong thực tế.
 
 ### 3.4.7. Bước phục hồi dòng trên
 
@@ -189,14 +193,14 @@ Khối này là thành phần do đồ án tự thiết kế hoàn toàn. Nó kh
 - chuỗi 7 ký tự (ô tô, seri 4 chữ số kiểu cũ): `DDLDDDD`
 - chuỗi 9 ký tự (xe máy): `DDL?DDDDD`
 
-Ký tự đại diện tại **chỉ số 3** của chuỗi 9 ký tự là chi tiết thiết kế then chốt. Hai kiểu biển xe máy cùng 9 ký tự nhưng khác nhau **đúng tại vị trí này**: kiểu mới dùng seri hai chữ cái, kiểu cũ dùng một chữ cái kết hợp một chữ số và vẫn lưu hành hợp pháp. Tách thành hai mặt nạ riêng sẽ buộc phải áp kiểu tại chỉ số 3, và chạy thật cho thấy khi đó **một trong hai kiểu bị phá huỷ**. Đây là vị trí duy nhất trong toàn hệ thống biển số Việt Nam mà cả chữ cái lẫn chữ số đều hợp lệ.
+Ký tự đại diện tại **chỉ số 3** của chuỗi 9 ký tự là chi tiết thiết kế then chốt. Hai kiểu biển xe máy cùng 9 ký tự nhưng khác nhau **đúng tại vị trí này**: kiểu mới dùng seri hai chữ cái, kiểu cũ dùng một chữ cái kết hợp một chữ số và vẫn lưu hành hợp pháp. Tách thành hai mặt nạ riêng sẽ buộc phải áp kiểu tại chỉ số 3, và kết quả thực nghiệm thực tế cho thấy khi đó **một trong hai kiểu bị phá huỷ**. Đây là vị trí duy nhất trong toàn hệ thống biển số Việt Nam mà cả chữ cái lẫn chữ số đều hợp lệ.
 
-**c) Bảng ánh xạ nhầm lẫn và tính không đối xứng.** Hai bảng riêng biệt được áp tại vị trí bắt buộc chữ số và vị trí bắt buộc chữ cái, và phát hiện trung tâm là **hai bảng không đối xứng**:
+**c) Bảng ánh xạ nhầm lẫn và tính bất đối xứng.** Hai bảng riêng biệt được áp tại vị trí bắt buộc chữ số và vị trí bắt buộc chữ cái, và phát hiện trung tâm là **hai bảng bất đối xứng**:
 
-- `O → 0` tại vị trí chữ số là hợp lý;
-- `0 → O` **không bao giờ** hợp lý, vì `O` không thuộc tập seri hợp lệ.
+- Chữ cái O $\rightarrow$ số 0 (O $\rightarrow$ 0) tại vị trí chữ số là hợp lý;
+- Số 0 $\rightarrow$ chữ cái O (0 $\rightarrow$ O) **không bao giờ** hợp lý, vì chữ O không thuộc tập seri hợp lệ.
 
-Do cả `O` và `Q` đều bị loại trừ, ứng viên đồng hình duy nhất còn lại tại vị trí chữ cái là `D`, nên chiều đúng là `0 → D`. Ký tự `R` **không được ánh xạ trong mọi trường hợp**, vì nó hợp lệ tại vị trí seri thứ hai của biển xe máy. Nguyên tắc an toàn: ký tự không có mục trong bảng thì giữ nguyên.
+Do cả chữ cái O và Q đều bị loại trừ, ứng viên đồng hình duy nhất còn lại tại vị trí chữ cái là D, nên chiều đúng là 0 $\rightarrow$ D. Ký tự R **không được ánh xạ trong mọi trường hợp**, vì nó hợp lệ tại vị trí seri thứ hai của biển xe máy. Nguyên tắc an toàn: ký tự không có mục trong bảng thì giữ nguyên.
 
 Cần nêu rõ một giới hạn: hai bảng này **suy từ lập luận hình dạng ký tự chứ không từ đo đạc**, và một số cặp mang tính phỏng đoán. Mục 4.3.3 đối chiếu chúng với ma trận nhầm lẫn đo được.
 

@@ -21,7 +21,7 @@ Biển số ô tô trong nước gồm **8 ký tự**, ba thành phần: **mã �
 | Seri biển nền xanh | 11 | A B C D E F G H K L M |
 | **Bị loại trừ khỏi toàn hệ thống** | **5** | **I, J, O, Q, W** |
 
-Hệ quả cài đặt: **nếu huấn luyện lại bộ nhận dạng thì phải dùng đủ 36 ký tự** rồi mới ràng buộc ở tầng hậu xử lý. *(Bản giao hàng dùng nguyên mô hình PP-OCRv5, tập ký tự còn rộng hơn 36; ràng buộc hợp lệ vẫn đặt ở tầng hậu xử lý.)* Một mô hình huấn luyện trên tập ký tự 20 chữ cái sẽ **không bao giờ dự đoán được `R`**, gây sai sót có hệ thống trên mọi biển xe máy mang ký tự này — loại sai sót mà hậu xử lý không cứu được vì thông tin đã bị loại ngay ở tầng mô hình.
+Hệ quả cài đặt: **nếu huấn luyện lại bộ nhận dạng thì phải dùng đủ 36 ký tự** rồi mới ràng buộc ở tầng hậu xử lý. *(Mô hình đề xuất dùng nguyên mô hình PP-OCRv5, tập ký tự còn rộng hơn 36; ràng buộc hợp lệ vẫn đặt ở tầng hậu xử lý.)* Một mô hình huấn luyện trên tập ký tự 20 chữ cái sẽ **không bao giờ dự đoán được `R`**, gây sai sót có hệ thống trên mọi biển xe máy mang ký tự này — loại sai sót mà hậu xử lý không cứu được vì thông tin đã bị loại ngay ở tầng mô hình.
 
 ### 2.1.2. Kích thước vật lý và tỉ lệ khung hình
 
@@ -94,7 +94,7 @@ $$I'(\mathbf{p}) = \frac{1}{W_{\mathbf{p}}} \sum_{\mathbf{q} \in S} G_{\sigma_{s
 
 Điểm ảnh lân cận có cường độ khác xa điểm trung tâm — tức nằm bên kia một biên — nhận trọng số gần bằng không, nên **biên được bảo toàn** trong khi nhiễu bên trong vùng đồng nhất vẫn bị san phẳng.
 
-Lý do chọn lọc song phương ở đây rất cụ thể: các cặp ký tự đồng hình như `8` và `B`, `0` và `D` chỉ phân biệt được nhờ **một nét biên duy nhất**. Một bước khử nhiễu làm mờ biên sẽ trực tiếp tạo ra chính loại lỗi mà toàn bộ khối hậu xử lý ở mục 2.1.1 sinh ra để sửa.
+Lý do chọn lọc song phương ở đây rất cụ thể: các cặp ký tự đồng hình như `8` và `B`, `0` và `D` chỉ phân biệt được nhờ **một nét biên duy nhất**. Một bước khử nhiễu làm mờ biên sẽ trực tiếp tạo ra chính loại lỗi mà toàn bộ khối hậu xử lý ở mục 3.6 sinh ra để sửa.
 
 ### 2.2.4. Phóng đại và nội suy
 

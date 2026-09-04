@@ -14,7 +14,7 @@ Chỉ cần khi muốn tái lập **số đo hiệu năng**; số đo độ chí
 | Python | 3.13.12 |
 | Thư viện chính | `ultralytics` 8.4.101 · `torch` 2.13.0+cpu · `paddleocr` 3.7.0 · `paddlepaddle` 3.3.1 · `opencv-python` 4.10.0.84 · `numpy` 2.4.5 |
 
-Phiên bản thư viện trích từ **môi trường đang chạy tại thời điểm đo**, không lấy từ tệp khai báo phụ thuộc — tệp khai báo ghi *ràng buộc phiên bản*, không ghi *phiên bản đã cài*. Riêng phiên bản OpenCV đáng ghi vì quy ước góc của `minAreaRect` từng đổi giữa các phiên bản lớn, và bước nắn hình ở mục 3.4.6 phải xử lý riêng chuyện đó.
+Phiên bản thư viện trích từ **môi trường đang chạy tại thời điểm đo**, không lấy từ tệp khai báo phụ thuộc — tệp khai báo ghi *ràng buộc phiên bản*, không ghi *phiên bản đã cài*. Riêng phiên bản OpenCV đáng ghi vì quy ước góc của `minAreaRect` từng đổi giữa các phiên bản lớn, và bước nắn hình ở mục 3.4.6 phải xử lý riêng trường hợp ngoại lệ này.
 
 ### A.2. Siêu tham số huấn luyện bộ phát hiện
 
@@ -71,7 +71,7 @@ Trọng số mô hình **không nằm trong ảnh Docker** mà được gắn t�
 
 ### B.2. Chạy trực tiếp trên máy, không dùng Docker
 
-Cần Python 3.13 và Node.js 18 trở lên. Đồ án dùng **một môi trường ảo duy nhất**; bản đầu từng tách làm ba vì: bộ phụ thuộc của thư viện nhận dạng ký tự hạ cấp NumPy và thay thư viện thị giác máy tính bằng một biến thể lùi một phiên bản lớn so với nhánh huấn luyện. Cài chung thì mỗi lần cài lại một nhánh sẽ âm thầm đổi phiên bản nhánh kia — lỗi không làm sập chương trình mà làm **kết quả đo không tái lập được**.
+Cần Python 3.13 và Node.js 18 trở lên. Đồ án dùng **một môi trường ảo duy nhất**. Bản đầu từng tách làm ba, vì bộ phụ thuộc của thư viện nhận dạng ký tự hạ cấp NumPy và thay thư viện thị giác máy tính bằng một biến thể lùi một phiên bản lớn so với nhánh huấn luyện. Cài chung thì mỗi lần cài lại một nhánh sẽ âm thầm đổi phiên bản nhánh kia — lỗi không làm sập chương trình mà làm **kết quả đo không tái lập được**.
 
 ```
 python -m venv backend/.venv
@@ -96,7 +96,7 @@ backend/.venv/Scripts/python ai/evaluation/benchmark_system.py
 backend/.venv/Scripts/python ai/evaluation/benchmark_engines.py
 ```
 
-Ba công cụ này đọc cấu hình từ biến môi trường thay vì tự dựng cấu hình riêng, nên các công tắc bật tắt từng bước xử lý ảnh ở mục 3.4.1 có hiệu lực với chúng. Đây là điều kiện để **bóc tách đóng góp của từng bước** ở mục 4.4; một công cụ đo tự dựng cấu hình riêng sẽ đo một hệ thống khác với hệ thống được bàn giao.
+Ba công cụ này đọc cấu hình từ biến môi trường thay vì tự dựng cấu hình riêng, nên các công tắc bật tắt từng bước xử lý ảnh ở mục 3.4.1 có hiệu lực với chúng. Đây là điều kiện để **bóc tách đóng góp của từng bước** ở mục 4.4; một công cụ đo tự dựng cấu hình riêng sẽ đo một hệ thống khác với hệ thống được triển khai.
 
 ### B.4. Dựng lại quyển báo cáo
 
@@ -116,4 +116,4 @@ Lệnh đầu ghép năm chương thành một tệp Markdown rồi kết xuất
 | Nguyễn Minh Hiếu | 25410007 | Thiết kế đường ống xử lý ảnh, hậu xử lý biển số, thực nghiệm OCR, viết báo cáo |
 | Phạm Công Thành | 25410013 | Xây dựng bộ dữ liệu, khử trùng lặp, đánh giá và phân tích kết quả |
 
-Các hạng mục trên là **phần việc chính** của từng thành viên, không phải ranh giới tuyệt đối: những quyết định ảnh hưởng tới số liệu công bố — chọn ngưỡng phân loại bố cục (mục 3.4.3), dừng lượt tinh chỉnh bộ nhận dạng, chốt cấu hình bàn giao — đều do cả nhóm thống nhất.
+Các hạng mục trên là **phần việc chính** của từng thành viên, không phải ranh giới tuyệt đối: những quyết định ảnh hưởng tới số liệu công bố — chọn ngưỡng phân loại bố cục (mục 3.4.3), dừng lượt tinh chỉnh bộ nhận dạng, chốt cấu hình triển khai — đều do cả nhóm thống nhất.

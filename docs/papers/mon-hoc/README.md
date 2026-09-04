@@ -13,7 +13,7 @@ Số của cột *Tốt nghiệp* đọc từ nhánh `main` (quyển đó không
 | | Tốt nghiệp | Môn học |
 |---|---:|---:|
 | Số chương | 6 | **5** |
-| Số trang | 72 | **42** |
+| Số trang | 72 | **44** |
 | Tài liệu tham khảo | 29 mục | **16 mục** |
 | Phụ lục | 9 mục | **3 mục** |
 

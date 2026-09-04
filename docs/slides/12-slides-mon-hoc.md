@@ -2,13 +2,16 @@
 title: "Xây dựng hệ thống nhận diện biển số xe bằng Trí tuệ nhân tạo"
 subtitle: "Đồ án môn học · Xử lý ảnh và ứng dụng"
 author:
-  - "Phạm Nguyễn Thế Châu — 25410004 · Nguyễn Công Hậu — 25410006"
-  - "Nguyễn Minh Hiếu — 25410007 · Phạm Công Thành — 25410013"
+  - "Giảng viên hướng dẫn: ThS. Cáp Phạm Đình Thăng"
+  - "Phạm Nguyễn Thế Châu — 25410004"
+  - "Nguyễn Công Hậu — 25410006"
+  - "Nguyễn Minh Hiếu — 25410007"
+  - "Phạm Công Thành — 25410013"
 date: "Tháng 9 năm 2026"
 ---
 
 <!--
-BỘ SLIDE ĐỒ ÁN MÔN HỌC — 16 slide (1 bìa + 15 nội dung), khoảng 15 phút.
+BỘ SLIDE ĐỒ ÁN MÔN HỌC — 22 slide (1 bìa + 21 nội dung), khoảng 15 phút.
 
 Khác gì bộ kia (nằm trên nhánh `main`, không có ở nhánh này):
   `10-slides.md`         28 slide (24 chính + 4 backup), bám mạch quyển tốt
@@ -50,6 +53,13 @@ powershell -File scripts/check_slides.ps1 -DeckPath docs/slides/12-slides-mon-ho
 ```
 -->
 
+## Nội dung trình bày
+
+1. Bài toán và mục tiêu
+2. Phương pháp đề xuất
+3. Kết quả thực nghiệm
+4. Kết luận và hướng phát triển
+
 ## Đặt vấn đề
 
 - **77 triệu xe máy**, chiếm 85–90% lưu lượng ⇒ ở Việt Nam **biển hai dòng là đa số**, không phải ngoại lệ
@@ -61,13 +71,27 @@ powershell -File scripts/check_slides.ps1 -DeckPath docs/slides/12-slides-mon-ho
 
 Hệ thống chạy đầu cuối, **suy luận hoàn toàn trên CPU**, hỗ trợ cả biển một dòng và hai dòng.
 
-| Đo cái gì | Sàn | Mục tiêu |
+| Chỉ tiêu | Ngưỡng tối thiểu | Mục tiêu |
 |---|---:|---:|
 | mAP@0,5 của bộ phát hiện | 0,85 | **0,90** |
+| mAP@0,5:0,95 của bộ phát hiện | 0,55 | 0,65 |
 | Đúng mức ký tự (1 − CER) | 0,92 | 0,95 |
 | Đúng cả chuỗi, **trước** hậu xử lý | 0,80 | 0,85 |
 | Đúng cả chuỗi, **sau** hậu xử lý | 0,85 | 0,90 |
 | Độ trễ một ảnh, p95, **trên CPU** | ≤ 1.500 ms | ≤ 800 ms |
+
+## Pipeline xử lý tổng thể
+
+Đóng góp chính nằm ở **khối xử lý ảnh** và **hậu xử lý** — cầu nối giữa hai mô hình học sâu.
+
+| Luồng | Khối chức năng | Nội dung kỹ thuật trong pipeline |
+|:---:|---|---|
+| **1** | **Ảnh đầu vào** | Khung hình camera / ảnh phương tiện thực tế (1 hoặc 2 dòng) |
+| ↓ | **YOLO11n** | Phát hiện vùng biển số và trích xuất bounding box |
+| ↓ | **Khối xử lý ảnh** *(cốt lõi)* | Phân loại số dòng (AR = 2,50) · Tách–ghép ngang · CLAHE · Lọc song phương |
+| ↓ | **PaddleOCR** | Nhận dạng ký tự quang học trên ảnh một dòng đã chuẩn hóa |
+| ↓ | **Khối hậu xử lý** *(cốt lõi)* | Kiểm tra mã tỉnh (81/89) · Mặt nạ vị trí · Ánh xạ nhầm lẫn bất đối xứng |
+| **6** | **Kết quả đầu ra** | Chuỗi ký tự biển số chuẩn hóa + Loại phương tiện / màu biển |
 
 ## Bộ dữ liệu: khử trùng lặp bằng băm tri giác
 
@@ -77,14 +101,13 @@ Các bộ công khai fork lẫn nhau, nên **44,2% ảnh là bản trùng** — 
 
 ## Vì sao biển hai dòng làm OCR đọc sai
 
-- **CRNN hạ chiều cao bản đồ đặc trưng về 1** — đó chính là chỗ giả định "một dòng" nằm
-- Ảnh hai dòng: ký tự hai hàng **bị chiếu chồng lên nhau** vào cùng một cột đặc trưng
-- Mô-đun nhận dạng chuẩn hoá mọi ảnh về **48 px**, nên mỗi hàng chỉ còn khoảng **24 px**
-- Hệ quả: đọc lộn thứ tự, ghép lẫn hai dòng, hoặc **mất hẳn một dòng**
+Bản đồ đặc trưng bị nén H → 1 khiến ký tự hai dòng rơi chung cột đặc trưng và xung đột CTC.
 
-## Hướng giải: sửa ảnh, không đổi mô hình
+![](figures/fig-slide-crnn-collapse.png)
 
-Nếu vấn đề là *ảnh có hai dòng*, thì biến nó thành **ảnh một dòng** trước khi đưa vào mô hình.
+## Hướng tiếp cận: Biến đổi hình học ảnh thay cho mô hình phức tạp
+
+Tái cấu trúc hình học của ảnh để tương thích hoàn toàn với giả định của mô hình CRNN/CTC sẵn có.
 
 | Phép xử lý ảnh | Dùng để làm gì | Thay cho phương án hiển nhiên |
 |---|---|---|
@@ -95,11 +118,17 @@ Nếu vấn đề là *ảnh có hai dòng*, thì biến nó thành **ảnh mộ
 | **Băm tri giác (DCT)** | Khử ảnh trùng giữa các bộ dữ liệu | Băm mật mã MD5/SHA |
 | **Không gian màu HSV** | Nhận màu nền bền với ánh sáng | Phân ngưỡng trên RGB |
 
-## Chuỗi xử lý trên một biển thật
+## Minh họa pipeline trên một biển thật
 
-Mỗi khung là ảnh thật ở đầu ra một bước, dựng từ **chính mã bàn giao**.
+Mỗi khung là ảnh thật ở đầu ra một bước, dựng từ **mô hình đề xuất**.
 
 ![](figures/fig-pipeline-strip-ngang.png)
+
+## Cắt cố định 5/12 & 1/3 thay vì Chiếu ngang
+
+Ốc vít ở tim biển tạo đỉnh xám giả làm gãy phép chiếu ngang; cắt cố định O(1) bảo vệ nét chữ.
+
+![](figures/fig-slide-split-vs-projection.png)
 
 ## Bộ luật hậu xử lý ràng buộc theo vị trí
 
@@ -110,7 +139,19 @@ Ba ràng buộc đặc thù biển số Việt Nam, khai thác **theo từng v�
 | Mã tỉnh | **81/89** giá trị được dùng | `\d{2}` cho qua 8 chuỗi không tồn tại |
 | Tập seri | Vị trí 1 **có G không R**; vị trí 2 của xe máy **có R không G** | Danh sách phẳng sai hệ thống trên mọi biển xe máy có `R` |
 | Mặt nạ vị trí | `DDLDDDDD` · `DDLDDDD` · `DDL?DDDDD` | Chỉ số 3 là vị trí **duy nhất** cả chữ lẫn số đều hợp lệ |
-| Ánh xạ nhầm lẫn | `O → 0` hợp lý, `0 → O` **không bao giờ** — chiều đúng là `0 → D` | Bảng đối xứng sẽ tạo ra ký tự bất hợp lệ |
+| Ánh xạ nhầm lẫn | O → 0 hợp lý, 0 → O **không bao giờ** — chiều đúng là 0 → D | Bảng đối xứng sẽ tạo ra ký tự bất hợp lệ |
+
+## Phân loại màu nền trong không gian màu HSV
+
+Tách biệt sắc độ H khỏi độ sáng V giúp nhận diện bền vững; độ chính xác tổng thể đạt 97,89%.
+
+![](figures/fig-slide-hsv-eval.png)
+
+## Xử lý biển nghiêng: Nắn 2D & Thử lại
+
+Nắn phẳng bằng minAreaRect cứu thêm 34 biển số, chi phí dồn vào đuôi p95 mà không ảnh hưởng p50.
+
+![](figures/fig-slide-deskew-ladder.png)
 
 ## Kết quả đo được
 
@@ -120,7 +161,7 @@ Phát hiện **đạt cả bốn chỉ tiêu**; phần thiếu nằm trọn ở 
 
 ## Khoảng cách nằm ở đâu
 
-Đo mức ký tự thì hai bố cục gần bằng nhau; đo cả chuỗi thì cách một trời một vực.
+Đo mức ký tự thì hai bố cục gần bằng nhau; đo cả chuỗi thì phân hóa rõ rệt.
 
 ![](figures/fig-ch4-layout.png)
 
@@ -135,6 +176,12 @@ Ba ca được chuẩn hóa đúng nhờ hậu xử lý, ba ca vẫn sai — **c
 Mọi bước bật tắt độc lập, nên đóng góp của từng bước **đo được riêng** — kể cả khi bằng 0. *(Đối chứng: tách-ghép trên Tesseract chỉ +0,03 điểm)*
 
 ![](figures/fig-mon-hoc-donggop.png)
+
+## Phân rã ngân sách độ trễ & Định luật Amdahl
+
+PaddleOCR chiếm 60,8% độ trễ là điểm nghẽn chính; xử lý ảnh mang lại đột phá với chi phí ~0 ms.
+
+![](figures/fig-slide-latency-amdahl.png)
 
 ## Ba kết quả khác với dự đoán ban đầu
 
@@ -151,17 +198,28 @@ Khởi động bằng một lệnh `docker compose up`; giao diện hiện **c�
 ## Hướng phát triển
 
 | # | Hướng phát triển | Giải hạn chế nào |
-|:--:|---|---|
-| 1 | **Huấn luyện lại bộ nhận dạng ký tự cho biển số Việt Nam** | Điểm nghẽn lớn nhất — biển hai dòng |
-| 2 | **Mở rộng bảng ánh xạ từ ma trận nhầm lẫn khi có thêm dữ liệu** | Vòng đầu đã +53 biển, phủ 4/10; 6 cặp còn lại nằm ngoài cơ chế mặt nạ vị trí |
-| 3 | Khử rò rỉ theo **chuỗi biển số** thay vì theo băm tri giác | Băm tri giác tóm tắt khung ảnh, không tóm tắt chiếc xe |
-| 4 | Thu thập dữ liệu biển vàng, xanh, đỏ | 97,68% mẫu là biển trắng |
+|:--:|---|:--:|
+| 1 | **Huấn luyện lại bộ nhận dạng ký tự cho biển số Việt Nam** | 1 |
+| 2 | **Mở rộng bảng ánh xạ từ ma trận nhầm lẫn khi có thêm dữ liệu** | 1 |
+| 3 | Khử rò rỉ theo **chuỗi biển số** thay vì theo băm tri giác | 3, 4 |
+| 4 | Thu thập dữ liệu biển vàng, xanh, đỏ | 2, 5 |
+| 5 | Đo lại bậc siêu phân giải FSRCNN trên ngữ liệu có biển siêu nhỏ | — |
+| 6 | Tăng tốc khối nhận dạng: lượng tử hóa, xuất OpenVINO hoặc ONNX | — |
 
-## Cảm ơn
+## Kết luận chung
 
 - Chạy đầu cuối trên CPU: phát hiện **mAP@0,5 = 0,9829**
-- Biển hai dòng giải bằng **phép biến đổi ảnh**, không bằng mô hình nặng hơn — **34,92 điểm**
+- Đột phá trên biển hai dòng nhờ biến đổi ảnh (thay vì đổi mô hình): tăng **+34,92 điểm**
 - Hậu xử lý theo vị trí **+13,28 điểm**, **0 ca làm hỏng** / 2.801 biển
 - Điểm nghẽn còn lại: **biển hai dòng** (S₁ = 0,7234)
 
-**Nhóm thực hiện xin trân trọng cảm ơn Quý Thầy/Cô và các bạn đã lắng nghe.**
+## Cảm ơn & Hỏi đáp (Q&A)
+
+**Đề tài: Xây dựng hệ thống nhận diện biển số xe bằng Trí tuệ nhân tạo**
+
+- **Giảng viên hướng dẫn:** ThS. Cáp Phạm Đình Thăng
+- **Sinh viên thực hiện:** Phạm Nguyễn Thế Châu | Nguyễn Công Hậu | Nguyễn Minh Hiếu | Phạm Công Thành
+
+**Xin trân trọng cảm ơn Quý Thầy/Cô và các bạn!**
+
+**Phiên trao đổi & Hỏi đáp (Q&A)**

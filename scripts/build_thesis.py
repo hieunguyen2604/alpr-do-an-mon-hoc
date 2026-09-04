@@ -65,6 +65,7 @@ BUNDLE_FILES: tuple[tuple[str, str], ...] = (
     # nhanh main, goi nop o day chi con hai muc cua do an mon hoc.
     ("docs/papers/mon-hoc/thesis-full.pdf", "01-do-an-mon-hoc.pdf"),
     ("docs/slides/12-slides-mon-hoc.pptx", "02-slide-mon-hoc.pptx"),
+    ("docs/slides/12-slides-mon-hoc.pdf", "02-slide-mon-hoc.pdf"),
 )
 
 # raw_attribute: SECTION_SEPARATOR toi Word nhu ngat trang that. bracketed_spans:
@@ -361,6 +362,18 @@ def export_pptx(pandoc: Path, outline_path: Path, pptx_path: Path) -> None:
         )
 
     run_pandoc(pandoc, arguments)
+    patch_script = REPO_ROOT / "scripts" / "patch_pptx_slides.ps1"
+    if patch_script.is_file():
+        try:
+            powershell_cmd = REPO_ROOT / "powershell.cmd"
+            cmd = (
+                [str(powershell_cmd), "-ExecutionPolicy", "Bypass", "-File", str(patch_script), "-DeckPath", str(pptx_path)]
+                if powershell_cmd.is_file()
+                else ["powershell", "-ExecutionPolicy", "Bypass", "-File", str(patch_script), "-DeckPath", str(pptx_path)]
+            )
+            subprocess.run(cmd, check=False)
+        except Exception as e:
+            print(f"[warn] patch_pptx_slides: {e}", file=sys.stderr)
 
 
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
