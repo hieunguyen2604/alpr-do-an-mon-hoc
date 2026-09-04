@@ -370,15 +370,11 @@ $damhDir = "D:\baocao_damh"
 if (Test-Path $nopDir) {
     Copy-Item -Path $fullPath -Destination (Join-Path $nopDir "02-slide-mon-hoc.pptx") -Force
     Copy-Item -Path $pdfPath -Destination (Join-Path $nopDir "02-slide-mon-hoc.pdf") -Force
-    Copy-Item -Path $fullPath -Destination (Join-Path $nopDir "02-slide-mon-hoc_FINAL.pptx") -Force
-    Copy-Item -Path $pdfPath -Destination (Join-Path $nopDir "02-slide-mon-hoc_FINAL.pdf") -Force
 }
 
 if (Test-Path $damhDir) {
     Copy-Item -Path $fullPath -Destination (Join-Path $damhDir "02-slide-mon-hoc.pptx") -Force
     Copy-Item -Path $pdfPath -Destination (Join-Path $damhDir "02-slide-mon-hoc.pdf") -Force
-    Copy-Item -Path $fullPath -Destination (Join-Path $damhDir "02-slide-mon-hoc_FINAL.pptx") -Force
-    Copy-Item -Path $pdfPath -Destination (Join-Path $damhDir "02-slide-mon-hoc_FINAL.pdf") -Force
 }
 
 Write-Output "Successfully patched Slide 8 title, literal hyphen bullets on S3/S19/S22, Slide 11 O vs 0, Slide 21 table, S9/S11/S17 bottom images, Slide 22, and Slide 23."

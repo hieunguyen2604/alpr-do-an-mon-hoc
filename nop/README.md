@@ -18,8 +18,6 @@ nào bị đổi đường dẫn.
 | `01-do-an-mon-hoc.docx` | `docs/papers/mon-hoc/thesis-full.docx` | Cùng nội dung, bản Word để hội đồng ghi chú |
 | `02-slide-mon-hoc.pptx` | `docs/slides/12-slides-mon-hoc.pptx` | Slide báo cáo môn học, **23 slide** (Chuẩn 10–15 phút) |
 | `02-slide-mon-hoc.pdf` | `docs/slides/12-slides-mon-hoc.pptx` | Bản PDF slide trình chiếu, **23 trang** |
-| `02-slide-mon-hoc_FINAL.pptx` | `docs/slides/12-slides-mon-hoc.pptx` | Bản PowerPoint hoàn thiện chốt nộp (**23 slide**) |
-| `02-slide-mon-hoc_FINAL.pdf` | `docs/slides/12-slides-mon-hoc.pptx` | Bản PDF slide hoàn thiện chốt nộp (**23 trang**) |
 
 Quyển này là **quyển riêng**, không phải bản rút gọn của quyển tốt nghiệp:
 khác bố cục, khác cao độ trình bày, khác danh mục tài liệu tham khảo.
