@@ -8,15 +8,10 @@ from PIL import Image
 plt.rcParams['font.sans-serif'] = ['Segoe UI', 'Arial', 'DejaVu Sans']
 plt.rcParams['font.family'] = 'sans-serif'
 
-out_dir = r"D:\DATN\docs\slides\figures"
+out_dir = os.path.join(os.path.dirname(__file__), "..", "docs", "slides", "figures")
 os.makedirs(out_dir, exist_ok=True)
 
-# First clean plate_pure.png to have zero residual text at the bottom:
-orig_plate = Image.open(r"C:\Users\hieun\.gemini\antigravity-ide\brain\6c61013c-949a-4f48-8b30-5257d6b389c2\scratch\crop_frame1.png")
-# Pure plate box in crop_frame1: x in [12, 375], y in [35, 345] (height = 310)
-plate_clean = orig_plate.crop((12, 35, 375, 345))
-plate_clean_path = r"C:\Users\hieun\.gemini\antigravity-ide\brain\6c61013c-949a-4f48-8b30-5257d6b389c2\scratch\plate_clean.png"
-plate_clean.save(plate_clean_path)
+plate_clean_path = os.path.join(out_dir, "plate_clean.png")
 
 # ==============================================================================
 # 1. SLIDE 7: fig-slide-crnn-collapse.png
@@ -165,8 +160,8 @@ def gen_fig2():
 
     ax.text(3.85, 6.1, "RỦI RO CỦA PHÉP CHIẾU NGANG (PROJECTION)", fontsize=13, fontweight='bold',
             color='#be123c', ha='center', va='center', zorder=4)
-    ax.text(3.85, 5.7, "Bu-lông ở tim biển tạo đỉnh xám giả nối liền hai dòng, làm triệt tiêu điểm cắt rỗng",
-            fontsize=10, color='#9f1239', ha='center', va='center', style='italic', zorder=4)
+    ax.text(3.85, 5.7, "Mộc Công an dập nổi và ốc vít gắn biển tạo đỉnh xám giả nối liền hai dòng, làm triệt tiêu điểm cắt rỗng",
+            fontsize=9.5, color='#9f1239', ha='center', va='center', style='italic', zorder=4)
 
     # Real plate with central bolt
     img_plate = Image.open(plate_clean_path)
@@ -175,7 +170,7 @@ def gen_fig2():
     # Highlight bolt in plate center
     bolt_circle = patches.Circle((2.0, 4.35), 0.18, edgecolor='#ef4444', facecolor='none', linewidth=2.5, linestyle='--', zorder=5)
     ax.add_patch(bolt_circle)
-    ax.text(2.0, 2.55, "Biển xe máy có bu-lông ở tim\n(Vùng nối liền 2 dòng)", fontsize=9, ha='center', va='top', color='#334155', fontweight='bold', zorder=4)
+    ax.text(2.0, 2.55, "Biển xe máy có mộc dập nổi / ốc vít ở tim biển\n(Vùng nối liền 2 dòng)", fontsize=8.5, ha='center', va='top', color='#334155', fontweight='bold', zorder=4)
 
     # Plot Projection Profile
     ax_prof = patches.Rectangle((3.6, 2.7), 3.3, 2.4, facecolor='#ffffff', edgecolor='#cbd5e1', linewidth=1.5, zorder=2)
@@ -193,16 +188,16 @@ def gen_fig2():
     ax.text(6.8, 4.5, "← Dòng 1 (59-K1)", fontsize=8.5, color='#1e293b', va='center', zorder=5)
     ax.text(6.8, 3.4, "← Dòng 2 (201.73)", fontsize=8.5, color='#1e293b', va='center', zorder=5)
     
-    ax.annotate("ĐỈNH GIẢ TẠI ỐC VÍT\n(Không có khoảng trắng)", xy=(3.8 + 1.4*0.9, 3.95), xytext=(4.2, 4.0),
+    ax.annotate("ĐỈNH GIẢ TẠI ỐC VÍT / MỘC DẬP\n(Không có khoảng trắng)", xy=(3.8 + 1.4*0.9, 3.95), xytext=(4.3, 4.0),
                 arrowprops=dict(arrowstyle="->", color='#dc2626', lw=1.5),
-                fontsize=8, fontweight='bold', color='#dc2626', zorder=6)
+                fontsize=7.5, fontweight='bold', color='#dc2626', zorder=6)
 
     # Callout text below
     callout1 = patches.FancyBboxPatch((0.8, 0.75), 6.1, 1.4, boxstyle="round,pad=0.1,rounding_size=0.15",
                                      facecolor='#ffffff', edgecolor='#fda4af', linewidth=1.5, zorder=2)
     ax.add_patch(callout1)
     ax.text(3.85, 1.45, "HẠN CHẾ CỐ HỮU CỦA CHIẾU NGANG:", fontsize=10, fontweight='bold', color='#be123c', ha='center', zorder=4)
-    ax.text(3.85, 1.05, "• Ốc vít bắt ở tâm biển tạo cầu nối xám liên tục giữa 2 dòng ký tự\n• Biển cong vênh, bám bùn hoặc bóng đổ làm mất hoàn toàn thung lũng phân cách\n• Đòi hỏi quét ngưỡng động phức tạp, dễ cắt phạm nét chữ hoặc vỡ đường ống",
+    ax.text(3.85, 1.05, "• Ốc vít / mộc Công an ở tâm biển tạo cầu nối xám liên tục giữa 2 dòng ký tự\n• Biển cong vênh, bám bùn hoặc bóng đổ làm mất hoàn toàn thung lũng phân cách\n• Đòi hỏi quét ngưỡng động phức tạp, dễ cắt phạm nét chữ hoặc vỡ đường ống",
             fontsize=8.5, color='#4c0519', ha='center', va='center', zorder=4)
 
     # RIGHT PANEL: Cắt cố định 5/12 & 1/3

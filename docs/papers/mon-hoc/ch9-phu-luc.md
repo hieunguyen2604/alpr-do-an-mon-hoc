@@ -97,16 +97,6 @@ backend/.venv/Scripts/python ai/evaluation/benchmark_engines.py
 ```
 
 Ba công cụ này đọc cấu hình từ biến môi trường thay vì tự dựng cấu hình riêng, nên các công tắc bật tắt từng bước xử lý ảnh ở mục 3.4.1 có hiệu lực với chúng. Đây là điều kiện để **bóc tách đóng góp của từng bước** ở mục 4.4; một công cụ đo tự dựng cấu hình riêng sẽ đo một hệ thống khác với hệ thống được triển khai.
-
-### B.4. Dựng lại quyển báo cáo
-
-```
-backend/.venv/Scripts/python scripts/build_thesis.py
-powershell -File scripts/export_thesis_pdf.ps1
-```
-
-Lệnh đầu ghép năm chương thành một tệp Markdown rồi kết xuất `.docx`; thứ tự ghép khai báo ở `ORDER.txt` trong chính thư mục đó. Lệnh hai dùng Word để kết xuất PDF và điền số trang cho mục lục. Cả hai đã đặt sẵn bản đồ án môn học làm mặc định nên không cần tham số; muốn dựng bản khác thì truyền `--src` cho lệnh đầu và `-Nguon` cho lệnh hai.
-
 ## Phụ lục C. Phân công công việc
 
 | Thành viên | MSSV | Công việc chính |

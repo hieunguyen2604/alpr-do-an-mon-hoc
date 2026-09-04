@@ -60,6 +60,11 @@ class TestEstimateLineCount:
         assert estimate_line_count(_image(100, 250), threshold=2.5) == 1
         assert estimate_line_count(_image(100, 249), threshold=2.5) == 2
 
+    def test_ambiguous_ratios_stay_two_line_for_stability(self) -> None:
+        """Near the decision line, a conservative 2-line guess avoids OCR flip-flops."""
+        assert estimate_line_count(_image(100, 255), threshold=2.5) == 2
+        assert estimate_line_count(_image(100, 275), threshold=2.5) == 1
+
     def test_custom_threshold_shifts_the_decision(self) -> None:
         """The cut-off is a parameter, not a hard-coded constant."""
         square_ish = _image(100, 300)

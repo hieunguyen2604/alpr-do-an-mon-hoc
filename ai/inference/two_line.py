@@ -32,6 +32,9 @@ _LOGGER = logging.getLogger(__name__)
 DEFAULT_TWO_LINE_AR_THRESHOLD: Final[float] = 2.5
 """Aspect-ratio cut-off below which a crop is treated as a two-line plate."""
 
+LINE_COUNT_STABILITY_MARGIN: Final[float] = 0.15
+"""A narrow uncertainty band near the threshold keeps ambiguous short plates stable."""
+
 UPPER_HALF_END_RATIO: Final[float] = 5.0 / 12.0
 """Fraction of the crop height at which the upper half stops (0.4167)."""
 
@@ -88,7 +91,16 @@ def estimate_line_count(
         height, width = source.shape[0], source.shape[1]
         aspect_ratio = width / height
 
-    line_count = 2 if aspect_ratio < threshold else 1
+    if aspect_ratio < threshold:
+        line_count = 2
+    elif threshold < aspect_ratio <= threshold + LINE_COUNT_STABILITY_MARGIN:
+        # Keep slightly-over-threshold short plates in the safer two-line branch.
+        # This avoids jitter around the decision boundary without changing the exact
+        # threshold behaviour at aspect_ratio == threshold.
+        line_count = 2
+    else:
+        line_count = 1
+
     _LOGGER.debug(
         "Estimated plate line count",
         extra={
