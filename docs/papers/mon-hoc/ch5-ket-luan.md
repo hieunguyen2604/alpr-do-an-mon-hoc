@@ -37,11 +37,11 @@ Sáu hướng phát triển, xếp theo mức tác động, tổng hợp ở B�
 | # | Hướng | Giải hạn chế | Ghi chú |
 |:--:|---|:--:|---|
 | 1 | **Huấn luyện lại bộ nhận dạng ký tự riêng cho biển số Việt Nam** | 1 | Hướng quan trọng nhất. Phân tích ở mục 4.3.2 đã định vị điểm nghẽn nằm ở năng lực mô hình ký tự, không ở khâu xử lý ảnh |
-| 2 | **Mở rộng bảng ánh xạ nhầm lẫn khi ngữ liệu lớn hơn** | 1 | Vòng đầu **đã làm** và mua được 53 biển; năm mục còn lại chưa đủ bằng chứng (thắng dưới 10 lần) nên vẫn giữ phỏng đoán theo hình dạng — ngữ liệu lớn hơn sẽ quyết được |
+| 2 | **Mở rộng bảng ánh xạ nhầm lẫn khi ngữ liệu lớn hơn** | 1 | Vòng đầu **đã làm** và mua được 53 biển, nâng độ phủ lên 4/10; sáu cặp còn lại (mục 4.3.3) nằm ngoài cơ chế mặt nạ vị trí hoặc xung đột với cặp phổ biến hơn — cần cơ chế sửa theo ngữ cảnh và ngữ liệu lớn hơn |
 | 3 | Thu thập dữ liệu biển vàng, xanh, đỏ và ngoại giao | 2, 5 | Điều kiện để mở rộng kết luận ra ngoài biển trắng, và để hai nhánh biển đỏ · ngoại giao có số liệu đánh giá |
 | 4 | **Khử rò rỉ theo chuỗi biển số thay vì theo băm tri giác** | 3, 4 | Gom nhóm theo chuỗi ký tự thay vì theo tương đồng ảnh; giải đúng loại rò rỉ mà pHash không thấy |
 | 5 | Đo lại bậc siêu phân giải trên ngữ liệu có biển thật sự nhỏ | — | Mục 4.4.3: số 0 hiện tại do **thiếu điều kiện quan sát**, không phải do đã quan sát thấy vô dụng |
-| 6 | Tăng tốc khối nhận dạng: lượng tử hoá, đóng gói ONNX hoặc OpenVINO | — | Khối nhận dạng chiếm 60,8% ngân sách độ trễ (Bảng 4.10). Riêng bộ phát hiện đã đo: OpenVINO nhanh **1,57×** mà không giảm mAP |
+| 6 | Tăng tốc khối nhận dạng: lượng tử hoá, đóng gói ONNX hoặc OpenVINO | — | Khối nhận dạng chiếm 60,8% ngân sách độ trễ (Bảng 4.10); bộ phát hiện xuất được sang ONNX/OpenVINO nhưng chưa đo trong khuôn khổ đồ án này |
 
 ## 5.4. Kết luận chung
 

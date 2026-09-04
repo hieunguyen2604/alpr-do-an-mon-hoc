@@ -23,10 +23,10 @@
 
 | Tệp trong `nop/` | Nội dung |
 |---|---|
-| `01-do-an-mon-hoc.pdf` | Quyển đồ án, **40 trang** (bản Word cùng tên để ghi chú) |
+| `01-do-an-mon-hoc.pdf` | Quyển đồ án, **42 trang** (bản Word cùng tên để ghi chú) |
 | `02-slide-mon-hoc.pptx` | Slide báo cáo, **16 slide**, chuẩn 7–10 phút |
 
-Kết quả chính (đo trên Intel i5-14600K, chỉ CPU): phát hiện **mAP@0.5 = 0,9829**
+Kết quả chính (đo trên Intel i5-14600K, chỉ CPU): phát hiện **mAP@0,5 = 0,9829**
 (YOLO11n tự huấn luyện, `models/best.pt`); đọc đúng cả chuỗi sau hậu xử lý
 **77,01%** trên 2.801 biển có nhãn (khối hậu xử lý đóng góp **+13,28 điểm** —
 372 biển sửa đúng, 0 biển hỏng); độ trễ p95 một ảnh **≈ 510 ms**.

@@ -1,13 +1,9 @@
 <!-- PHAN DAU QUYEN — ban do an mon hoc. Khoi nay la ghi chu bien soan, khong in ra.
 
-     Ban rut gon cua do an tot nghiep, dinh huong lai theo mon "Xu ly anh va
-     ung dung": cac phep xu ly anh dua len tuyen dau, YOLO va OCR trinh bay
-     nhu cong cu ap dung, tang web gop con mot muc.
-
-     Moi cho dat trong dau «...» la cho trong phai dien thong tin that.
+     Tieu de bia dat bang raw OpenXML voi style Title / Subtitle cua pandoc, KHONG
+     dung heading Markdown: truong TOC \o "1-2" gom moi Heading 1-2, nen bia viet
+     bang # se tu chui vao muc luc (loi da xay ra). Sau bia la mot ngat trang.
 -->
-
-<div align="center">
 
 **ĐẠI HỌC QUỐC GIA TP. HỒ CHÍ MINH**
 
@@ -17,15 +13,12 @@
 
 <br/><br/>
 
-# ĐỒ ÁN MÔN HỌC
-
-### Môn: Xử lý ảnh và ứng dụng
-
-<br/>
-
-### Đề tài:
-
-# XÂY DỰNG HỆ THỐNG NHẬN DIỆN BIỂN SỐ XE BẰNG TRÍ TUỆ NHÂN TẠO
+```{=openxml}
+<w:p><w:pPr><w:pStyle w:val="Title"/></w:pPr><w:r><w:t>ĐỒ ÁN MÔN HỌC</w:t></w:r></w:p>
+<w:p><w:pPr><w:pStyle w:val="Subtitle"/></w:pPr><w:r><w:t>Môn: Xử lý ảnh và ứng dụng</w:t></w:r></w:p>
+<w:p><w:pPr><w:pStyle w:val="Subtitle"/></w:pPr><w:r><w:t>Đề tài:</w:t></w:r></w:p>
+<w:p><w:pPr><w:pStyle w:val="Title"/></w:pPr><w:r><w:t>XÂY DỰNG HỆ THỐNG NHẬN DIỆN BIỂN SỐ XE BẰNG TRÍ TUỆ NHÂN TẠO</w:t></w:r></w:p>
+```
 
 <br/><br/>
 
@@ -42,12 +35,8 @@
 
 **TP. Hồ Chí Minh, tháng 9 năm 2026**
 
-</div>
-
----
-
-## MỤC LỤC
-
 ```{=openxml}
-<w:p><w:r><w:fldChar w:fldCharType="begin" w:dirty="true"/></w:r><w:r><w:instrText xml:space="preserve"> TOC \o "1-2" \h \z \u </w:instrText></w:r><w:r><w:fldChar w:fldCharType="separate"/></w:r><w:r><w:t>Mở tệp trong Word rồi bấm Ctrl+A, F9 để cập nhật mục lục.</w:t></w:r><w:r><w:fldChar w:fldCharType="end"/></w:r></w:p>
+<w:p><w:r><w:br w:type="page"/></w:r></w:p>
+<w:p><w:pPr><w:pStyle w:val="TOCHeading"/></w:pPr><w:r><w:t>MỤC LỤC</w:t></w:r></w:p>
+<w:p><w:r><w:fldChar w:fldCharType="begin" w:dirty="true"/></w:r><w:r><w:instrText xml:space="preserve"> TOC \o "1-2" \h \z \u </w:instrText></w:r><w:r><w:fldChar w:fldCharType="separate"/></w:r><w:r><w:t>Mục lục</w:t></w:r><w:r><w:fldChar w:fldCharType="end"/></w:r></w:p>
 ```

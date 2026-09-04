@@ -19,7 +19,7 @@ Khối 2 và khối 4 là phần do đồ án tự thiết kế; khối 1 và kh
 
 Toàn bộ đường ống được đóng gói thành một **gói Python độc lập không phụ thuộc tầng web**. Ràng buộc này không phải hình thức: nó cho phép cùng một mã chạy được trong sổ tay thử nghiệm, trong kịch bản đo đạc và trong dịch vụ đang vận hành. Bài học ngược lại đã xảy ra trong quá trình thực hiện đồ án: một kịch bản đo **chép lại** các bước của đường ống thay vì **gọi** nó, nên mỗi bước mới thêm vào đường ống đều rơi ra ngoài phép đo, và số liệu công bố mô tả một hệ thống ngắn hơn hệ thống thực tế.
 
-Ba lớp trừu tượng có hợp đồng thống nhất: lớp phát hiện trả danh sách vùng biển đã lọc ngưỡng và khử chồng lấn, **danh sách rỗng là kết quả hợp lệ chứ không phải lỗi**; lớp nhận dạng trả chuỗi thô kèm độ tin cậy, **không** tự sửa lỗi ký tự; lớp chuẩn hoá trả về cả chuỗi không hợp lệ kèm cờ đánh dấu. Chính việc lớp nhận dạng không được phép tự sửa lỗi là điều kiện để **đo tách bạch** đóng góp của khối hậu xử lý ở mục 4.3.2 (Hình 3.2).
+Ba lớp trừu tượng có hợp đồng thống nhất: lớp phát hiện trả danh sách vùng biển đã lọc ngưỡng và khử chồng lấn, **danh sách rỗng là kết quả hợp lệ chứ không phải lỗi**; lớp nhận dạng trả chuỗi thô kèm độ tin cậy, **không** tự sửa lỗi ký tự; lớp chuẩn hoá trả về cả chuỗi không hợp lệ kèm cờ đánh dấu. Chính việc lớp nhận dạng không được phép tự sửa lỗi là điều kiện để **đo tách bạch** đóng góp của khối hậu xử lý ở mục 4.3.2.
 
 ## 3.2. Xây dựng bộ dữ liệu
 
@@ -29,7 +29,7 @@ Ba lớp trừu tượng có hợp đồng thống nhất: lớp phát hiện tr
 
 **Hình 3.2.**[]{#fig-3-2} Đường ống sáu bước xây dựng bộ dữ liệu
 
-Mỗi bước là một kịch bản độc lập sinh báo cáo dạng dữ liệu có cấu trúc; một kịch bản điều phối chạy toàn chuỗi bằng một lệnh. Kết quả: **15.133 ảnh** hợp nhất từ **7 bộ công khai**, sau khi loại **11.978 ảnh trùng lặp (44,2%)** từ **27.111 ảnh** ban đầu. Chia theo tỉ lệ 70/20/10 thành **10.592 / 3.027 / 1.514 ảnh** (Bảng 3.1).
+Hình 3.2 tóm tắt sáu bước; mỗi bước là một kịch bản độc lập sinh báo cáo dạng dữ liệu có cấu trúc; một kịch bản điều phối chạy toàn chuỗi bằng một lệnh. Kết quả: **15.133 ảnh** hợp nhất từ **7 bộ công khai**, sau khi loại **11.978 ảnh trùng lặp (44,2%)** từ **27.111 ảnh** ban đầu. Chia theo tỉ lệ 70/20/10 thành **10.592 / 3.027 / 1.514 ảnh** (Bảng 3.1).
 
 **Bảng 3.1.**[]{#tbl-3-1} Đóng góp của từng bộ dữ liệu trước và sau khử trùng lặp
 
@@ -42,7 +42,9 @@ Mỗi bước là một kịch bản độc lập sinh báo cáo dạng dữ li�
 | 5 | roboflow_demo_tracking | 236 | **235** | 0,4% |
 | 6 | roboflow_cuong_ta | 8.254 | **140** | **98,3%** |
 | 7 | roboflow_tran_ngoc_xuan_tin | 1.005 | **0** | **100%** |
-| | **Tổng** | **27.111** | **15.133** | **44,2%** |
+| | **Tổng** † | **27.111** | **15.133** | **44,2%** |
+
+† Cột *Vào hợp nhất* cộng lại được 27.113; bước hợp nhất gạt hai ảnh nằm trong danh sách loại trừ ra trước khi ghi (`skipped_excluded = 2` trong báo cáo hợp nhất), nên tổng thực ghi là 27.111.
 
 ### 3.2.2. Khử trùng lặp chéo bộ
 
@@ -218,4 +220,4 @@ Ba chi tiết đáng ghi nhận:
 
 **Giao diện hiển thị đồng thời chuỗi thô và chuỗi đã chuẩn hoá khi hai chuỗi khác nhau.** Điều này biến một cột dữ liệu phục vụ nghiên cứu thành **bằng chứng quan sát được ngay trong lúc trình diễn**: người xem thấy trực tiếp khối hậu xử lý vừa sửa gì.
 
-**Yêu cầu xử lý video trả mã *đã tiếp nhận* thay vì mã thành công**, vì một video 60 giây cần khoảng 200 giây xử lý trên CPU và không client nào chờ được.
+**Yêu cầu xử lý video trả mã *đã tiếp nhận* thay vì mã thành công**, vì một video 60 giây, với bước lấy mẫu 5 khung hình, cần khoảng một đến ba phút xử lý trên CPU tuỳ độ trễ từng khung, và không client nào chờ được.

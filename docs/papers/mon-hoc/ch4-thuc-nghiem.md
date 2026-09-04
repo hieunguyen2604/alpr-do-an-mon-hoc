@@ -49,7 +49,7 @@ Chênh lệch giữa hai bố cục ở tầng phát hiện chỉ **2,09 điểm
 
 ### 4.2.3. Tách theo kích thước đối tượng
 
-Mục này tồn tại vì bộ dữ liệu có **10,91% số hộp bao chiếm dưới 0,5% diện tích ảnh** — vượt ngưỡng chất lượng 10% mà đồ án tự đặt. Đối tượng nhỏ là chế độ thất bại đã ghi nhận rộng rãi của bộ phát hiện một giai đoạn, nên một con số mAP tổng sẽ **giấu chế độ thất bại đó sau giá trị trung bình** (Bảng 4.3).
+Mục này tồn tại vì toàn bộ bộ dữ liệu có **10,91% số hộp bao chiếm dưới 0,5% diện tích ảnh** — vượt ngưỡng chất lượng 10% mà đồ án tự đặt; riêng trên tập kiểm thử tỉ lệ này là 16,3% (262/1.611). Đối tượng nhỏ là chế độ thất bại đã ghi nhận rộng rãi của bộ phát hiện một giai đoạn, nên một con số mAP tổng sẽ **giấu chế độ thất bại đó sau giá trị trung bình** (Bảng 4.3).
 
 **Bảng 4.3.**[]{#tbl-4-3} Kết quả phát hiện tách theo dải kích thước hộp bao
 
@@ -63,7 +63,7 @@ Mục này tồn tại vì bộ dữ liệu có **10,91% số hộp bao chiếm 
 
 † Dòng này chỉ có 28 đối tượng, dưới ngưỡng 30 nên không có ý nghĩa thống kê và không được dùng để so sánh.
 
-Điểm yếu duy nhất của bộ phát hiện lộ ra ở đây: dải **rất nhỏ** rớt xuống mAP@0,5 = 0,8553 và mAP@0,5:0,95 = 0,5249, tức **hộp bao vừa dễ bỏ sót vừa kém khít**. Với biển số, hộp kém khít kéo theo hậu quả dây chuyền: vùng cắt lệch làm tỉ lệ khung hình đo sai, khiến bước ước lượng số dòng ở mục 3.4.3 phân loại nhầm (Bảng 4.4).
+Điểm yếu duy nhất của bộ phát hiện lộ ra ở đây: dải **rất nhỏ** rớt xuống mAP@0,5 = 0,8553 và mAP@0,5:0,95 = 0,5249, tức **hộp bao vừa dễ bỏ sót vừa kém khít**. Với biển số, hộp kém khít kéo theo hậu quả dây chuyền: vùng cắt lệch làm tỉ lệ khung hình đo sai, khiến bước ước lượng số dòng ở mục 3.4.3 phân loại nhầm.
 
 ## 4.3. Kết quả nhận dạng ký tự
 
@@ -73,13 +73,13 @@ Mục này tồn tại vì bộ dữ liệu có **10,91% số hộp bao chiếm 
 
 | Chỉ số | Ngưỡng tối thiểu | Mục tiêu | **Trước** | **Sau** | Chênh |
 |---|:--:|:--:|---:|---:|---:|
-| **C** — đúng mức ký tự | 0,92 | 0,95 | 0,9061 | **0,9483** 🟡 | +3,93 |
-| CER | ≤ 0,08 | ≤ 0,05 | 0,0939 | 0,0546 | — |
+| **C** — đúng mức ký tự | 0,92 | 0,95 | 0,9061 | **0,9483** 🟡 | +4,22 |
+| CER | ≤ 0,08 | ≤ 0,05 | 0,0939 | 0,0517 | — |
 | **S₀ → S₁** — đúng cả chuỗi | 0,80 → 0,85 | 0,85 → 0,90 | **0,6373** ❌ | **0,7701** ❌ | **+13,28** |
 | Số biển **sửa đúng** / **bị làm hỏng** | — | — | — | **372** / **0** | — |
 | Phân rã lỗi ký tự $S$ / $D$ / $I$ trên $N$ = 23.855 | — | — | 862 / 1.272 / 107 | — | — |
 
-**Khối hậu xử lý đóng góp +13,28 điểm, sửa đúng 372 biển và không làm hỏng biển nào.** Con số "0 biển bị làm hỏng" không phải may mắn mà là hệ quả của nguyên tắc thiết kế ở mục 3.6d: biểu thức chính quy được thử **trước** khi sửa bất cứ thứ gì, nên chuỗi vốn đã hợp lệ không bao giờ bị can thiệp.
+**Khối hậu xử lý đóng góp +13,28 điểm, sửa đúng 372 biển và không làm hỏng biển nào** (Bảng 4.4). Con số "0 biển bị làm hỏng" không phải may mắn mà là hệ quả của nguyên tắc thiết kế ở mục 3.6d: biểu thức chính quy được thử **trước** khi sửa bất cứ thứ gì, nên chuỗi vốn đã hợp lệ không bao giờ bị can thiệp.
 
 Phân rã lỗi ký tự cho một manh mối quan trọng: **số ký tự bị xoá ($D$ = 1.272) lớn hơn số bị thay thế ($S$ = 862)**. Hồ sơ lỗi thiên về *xoá* có cách giải thích tự nhiên là **mất hẳn một dòng** — đúng cơ chế đã dự đoán ở mục 2.4.2 (Bảng 4.5).
 
@@ -90,7 +90,7 @@ Phân rã lỗi ký tự cho một manh mối quan trọng: **số ký tự bị
 | Chỉ số | Biển **một dòng** | Biển **hai dòng** | Chênh (điểm %) |
 |---|---:|---:|---:|
 | Số mẫu *(tổng 2.801)* | **567** | **2.234** | — |
-| **C** — đúng mức ký tự | 0,9925 | 0,9380 | 5,81 |
+| **C** — đúng mức ký tự | 0,9925 | 0,9380 | 5,45 |
 | **S₀** — đúng cả chuỗi, trước hậu xử lý | 0,9418 | 0,5600 | **38,18** |
 | **S₁** — đúng cả chuỗi, sau hậu xử lý | **0,9541** | **0,7234** | **23,07** |
 | Cải thiện nhờ hậu xử lý | +1,23 | **+16,34** | — |
@@ -124,31 +124,31 @@ Mục 3.6c đã nêu một giới hạn: bảng ánh xạ nhầm lẫn ban đầ
 | 9 | B → R | 20 | 2,32% | không |
 | 10 | 9 → 0 | 19 | 2,20% | không |
 
-Kết quả này là một **phát hiện âm có giá trị**: bảng luật suy từ hình dạng chỉ phủ **2 trong 10** cặp nhầm phổ biến nhất, tuy cả hai đều đúng chiều. Bảy cặp không được phủ — `E → F`, `4 → L`, `U → 1`, `Z → 7` — đều là những cặp mà trực giác hình dạng không gợi ra, nhưng thực tế lại rất phổ biến trên ảnh phân giải thấp.
+Kết quả này là một **phát hiện âm có giá trị**: bảng luật suy từ hình dạng chỉ phủ **2 trong 10** cặp nhầm phổ biến nhất, tuy cả hai đều đúng chiều. Tám cặp không được phủ, trong đó bốn cặp `E → F`, `4 → L`, `U → 1`, `Z → 7` là những cặp mà trực giác hình dạng không gợi ra, nhưng thực tế lại rất phổ biến trên ảnh phân giải thấp.
 
-Phép thay thế **đã được thực hiện ngay trong vòng này** cho những cặp đủ bằng chứng thống kê: hai mục vượt ngưỡng được thay bằng ánh xạ trích trực tiếp từ ma trận đo được, mua thêm **53 biển đọc đúng và 0 biển hỏng** — đây chính là cấu hình bàn giao sinh ra S₁ = 0,7701. Năm cặp còn lại thắng dưới 10 lần nên **chưa đủ cơ sở để bật mặc định**; chúng chờ ngữ liệu lớn hơn ở hướng phát triển số 2 (mục 5.3). Đây là ví dụ điển hình cho việc đo đạc thay thế trực giác.
+Phép thay thế **đã được thực hiện ngay trong vòng này** cho hai cặp có đủ bằng chứng: mục `L → 1` tại vị trí chữ số đổi thành `L → 4` (hạng 3, 53 lần) và mục cho `7` tại vị trí chữ cái đổi thành `7 → Z` (hạng 6, 32 lần), mua thêm **53 biển đọc đúng và 0 biển hỏng** — đây chính là cấu hình bàn giao sinh ra S₁ = 0,7701, và bảng bàn giao phủ **4 trong 10** cặp. Sáu cặp còn lại không sửa được bằng cơ chế này: năm cặp cùng kiểu (`E → F`, `X → Y`, `B → R`, `2 → 7`, `9 → 0`) không bao giờ kích hoạt mặt nạ vị trí vì ký tự đọc ra vẫn đúng kiểu; cặp `U → 1` xung đột với `L → 1` phổ biến hơn (90 so với 38 lần) nên giữ chiều thắng. Xử lý chúng cần một cơ chế khác và ngữ liệu lớn hơn (hướng phát triển số 2, mục 5.3). Đây là ví dụ điển hình cho việc đo đạc thay thế trực giác.
 
-### 4.3.4. So sánh ba bộ nhận dạng nhận dạng trên cùng một tầng bao quanh
+### 4.3.4. So sánh ba bộ nhận dạng trên cùng một tầng bao quanh
 
 Câu hỏi: chọn PaddleOCR có đúng không, khi một số tài liệu công khai lại nghiêng về EasyOCR?
 
-**Thiết kế thí nghiệm.** Cả ba bộ nhận dạng chạy trong **đúng một tầng bao quanh** — sao đúng chuỗi bước xử lý ảnh của bản bàn giao — trên **cùng một mảng 2.801 vùng biển đã chuẩn bị xong**; khác biệt duy nhất còn lại là bộ nhận dạng. So sánh ba bộ nhận dạng với ba tầng bao quanh khác nhau là đo tầng bao quanh chứ không đo bộ nhận dạng (Bảng 4.7).
+**Thiết kế thí nghiệm.** Cả ba bộ nhận dạng chạy trong **đúng một tầng bao quanh** — toàn bộ chuỗi bước xử lý ảnh bọc quanh bộ nhận dạng, sao đúng bản bàn giao — trên **cùng một mảng 2.801 vùng biển đã chuẩn bị xong**; khác biệt duy nhất còn lại là bộ nhận dạng. So sánh ba bộ nhận dạng với ba tầng bao quanh khác nhau là đo tầng bao quanh chứ không đo bộ nhận dạng (Bảng 4.7).
 
 **Bảng 4.7.**[]{#tbl-4-7} So sánh ba bộ nhận dạng trên 2.801 biển số Việt Nam
 
-| bộ nhận dạng | Tắt bước tách-ghép | Có tách-ghép | + hậu xử lý | Riêng biển 2 dòng |
+| Bộ nhận dạng | Tắt bước tách-ghép | Có tách-ghép | + hậu xử lý | Riêng biển 2 dòng |
 |---|---:|---:|---:|---:|
 | **PaddleOCR** | 28,81% | **63,73%** | **68,87%** | **62,3%** |
 | EasyOCR | 6,53% | 10,35% | 14,28% | 10,7% |
 | Tesseract | 9,57% | 9,60% | 10,28% | **0,1%** |
 
-**PaddleOCR cao hơn hẳn trong phép đo này** — 68,87%, hơn EasyOCR 54,59 điểm và hơn Tesseract 58,59 điểm; khoảng cách quá lớn để quy cho nhiễu, nhưng kết luận chỉ áp cho cấu hình đánh giá ở mục b.
+**PaddleOCR cao hơn hẳn trong phép đo này** — 68,87%, hơn EasyOCR 54,59 điểm và hơn Tesseract 58,59 điểm; khoảng cách quá lớn để quy cho nhiễu, nhưng kết luận chỉ áp cho cấu hình đánh giá nêu ở đoạn *Thiết kế thí nghiệm* trên.
 
 **Tesseract không đọc được biển hai dòng**: **0,1% trên 2.234 mẫu**, kể cả sau khi đã ghép thành một dòng, trong khi đọc được 50,4% biển một dòng. Đã kiểm bằng mắt để loại khả năng lỗi công cụ — nó **có** đọc ra chữ nhưng luôn kèm ký tự rác, và 700/2.801 lần trả chuỗi rỗng.
 
-**kết quả ngoài dự đoán nhất — bước tách-ghép KHÔNG độc lập bộ nhận dạng:**
+**Kết quả ngoài dự đoán nhất — bước tách-ghép KHÔNG độc lập bộ nhận dạng:**
 
-| bộ nhận dạng | Mức tăng nhờ tách-ghép |
+| Bộ nhận dạng | Mức tăng nhờ tách-ghép |
 |---|---:|
 | PaddleOCR | **+34,92 điểm** |
 | EasyOCR | +3,82 điểm |
@@ -193,18 +193,18 @@ Bậc thang nắn hình và giãn dọc ở mục 3.4.6 cải thiện thêm **34
 
 ### 4.4.3. Siêu phân giải: một số 0 và cách đọc nó cho đúng
 
-Bậc thứ ba của thang thử lại là **siêu phân giải** bằng mạng FSRCNN [15], dành cho vùng biển quá nhỏ. Kết quả đo:
+Bậc thứ ba của thang thử lại là **siêu phân giải** bằng mạng FSRCNN [15], dành cho vùng biển quá nhỏ. Kết quả đo ở **lượt bóc tách sớm** — một lượt đo riêng, trước lượt đo ở Bảng 4.9 và trên nền máy khác, nên số tuyệt đối không cộng trừ chéo được với Bảng 4.9:
 
-| | Chi phí | Lợi ích |
+| | Chi phí (lượt bóc tách sớm) | Lợi ích |
 |---|---:|---:|
 | Nắn hình + giãn dọc | +244 ms p95 | **+34 biển** |
 | **Siêu phân giải** | **+319 ms p95, +1.381 ms p99** | **0 biển** |
 
-Một mình bậc siêu phân giải đẩy p95 lên **1.514,26 ms**, tức **vượt cả ngưỡng tối thiểu 1.500 ms**. Nó đã bị **tắt mặc định**, đưa p95 về 1.143,10 ms.
+Ở lượt đó, bật cả ba bậc đẩy p95 lên **1.514,26 ms**, tức **vượt cả ngưỡng tối thiểu 1.500 ms**; bậc siêu phân giải vì vậy bị **tắt mặc định** và không có mặt trong cấu hình bàn giao — Bảng 4.9 và mục 4.5.2 đều đo cấu hình đã tắt bậc này. Chi phí của nắn hình + giãn dọc đo lại ở lượt Bảng 4.9 là +276,80 ms; hai lượt cho cùng kết luận.
 
 **Nhưng số 0 đó phải đọc cho đúng, và đây là điểm phương pháp luận đáng nêu.** Cổng vào bậc siêu phân giải chỉ mở cho vùng cắt **nhỏ hơn 200 điểm ảnh**, và trong ngữ liệu đo **0 trên 120 mẫu lọt qua cổng đó**. Nói cách khác, quyết định tắt dựa trên **"chi phí đã đo, lợi ích chưa ai đo được"** — không phải trên "đã đo và thấy vô dụng". Mã và công tắc vì vậy được **giữ nguyên**, để đo lại khi có ngữ liệu chứa biển thật sự nhỏ.
 
-Phân biệt này quan trọng: một số 0 do *thiếu điều kiện quan sát* khác hẳn một số 0 do *đã quan sát và thấy bằng không* (Bảng 4.10).
+Phân biệt này quan trọng: một số 0 do *thiếu điều kiện quan sát* khác hẳn một số 0 do *đã quan sát và thấy bằng không*.
 
 ## 4.5. Hiệu năng
 
@@ -221,7 +221,7 @@ Phân biệt này quan trọng: một số 0 do *thiếu điều kiện quan sá
 | Hậu xử lý và kiểm tra hợp lệ | 0,03 | 0,0% |
 | **Tổng suy luận thuần** | **146,63** | **100%** |
 
-Ba nhận xét. **Một, điểm nghẽn là khối nhận dạng ký tự** (60,8%) chứ không phải bộ phát hiện (38,0%). Nguyên nhân: PaddleOCR là một **đường ống nhiều giai đoạn** — phát hiện văn bản, phân loại hướng, rồi mới nhận dạng — thiết kế cho ảnh tài liệu tổng quát, nên hệ thống trả chi phí cho những năng lực mà một vùng biển đã cắt sẵn không cần.
+Ba nhận xét từ Bảng 4.10. **Một, điểm nghẽn là khối nhận dạng ký tự** (60,8%) chứ không phải bộ phát hiện (38,0%). Nguyên nhân: PaddleOCR là một **đường ống nhiều giai đoạn** — phát hiện văn bản, phân loại hướng, rồi mới nhận dạng — thiết kế cho ảnh tài liệu tổng quát, nên hệ thống trả chi phí cho những năng lực mà một vùng biển đã cắt sẵn không cần.
 
 **Hai, toàn bộ khối xử lý ảnh của đồ án gần như miễn phí**: bước cắt và tiền xử lý vùng biển đo được xấp xỉ 0 ms, hậu xử lý 0,03 ms. Đóng góp +13,28 điểm ở mục 4.3.1 vì vậy đến với chi phí tính toán không đáng kể — một tỉ lệ lợi ích trên chi phí rất hiếm.
 
@@ -231,7 +231,7 @@ Ba nhận xét. **Một, điểm nghẽn là khối nhận dạng ký tự** (60
 
 Độ trễ một ảnh ở cấu hình giao hàng: **p50 = 150,07 ms · p95 = 509,76 ms · p99 = 1.124,13 ms** — đo sau đợt tối ưu tầng suy luận (bật `torch.inference_mode()`, ghim số luồng cho torch và OpenCV, truyền `cpu_threads` xuống bộ nhận dạng). Bảng 4.9 ở trên đo **trước** đợt ấy, nên hai bộ số không được ghép chung: bảng ấy trả lời riêng câu hỏi bậc thang thử lại đắt bao nhiêu. Chỉ tiêu p95 phát biểu ở mức ≤ 1.500 ms (tối thiểu) và ≤ 800 ms (mục tiêu), nên kết luận chính thức là **đạt cả mục tiêu**, với biên 290 ms. Con số này thay cho lượt đo trước tối ưu ở Bảng 4.9 (p95 = 1.143,10 ms), khi chỉ tiêu mới chỉ đạt ngưỡng tối thiểu.
 
-Mọi chỉ tiêu **ngoài đường xử lý ảnh** đều đạt với biên rộng: nạp mô hình 6,41 s (ngưỡng 30 s); bộ nhớ thường trú 0,806 GB (ngưỡng 4 GB); truy vấn 10.000 bản ghi lịch sử 18,71 ms; chạy liên tục 15 phút với **100% thành công trên 5.337 yêu cầu**, **0 lỗi** — **không rò rỉ** (Bảng 4.11).
+Mọi chỉ tiêu **ngoài đường xử lý ảnh** đều đạt với biên rộng: nạp mô hình 6,41 s (ngưỡng 30 s); bộ nhớ thường trú 0,806 GB (ngưỡng 4 GB); truy vấn 10.000 bản ghi lịch sử 18,71 ms; chạy liên tục 15 phút với **100% thành công trên 5.337 yêu cầu**, **0 lỗi** — **không rò rỉ**.
 
 ### 4.5.3. Độ chính xác bộ phân loại màu nền
 
@@ -244,7 +244,7 @@ Mọi chỉ tiêu **ngoài đường xử lý ảnh** đều đạt với biên 
 | Biển xanh | 63 | 61 | **96,83%** |
 | **Tổng** | **1.565** | **1.532** | **97,89%** |
 
-Ba giới hạn phải nêu kèm. **Một,** 542 ảnh đã bị loại khỏi phép đo — toàn bộ lớp không xác định, cùng các ảnh chụp ban đêm hoặc hồng ngoại mà chính người gán nhãn cũng không xác định được màu. **Hai,** dạng lỗi chủ đạo là **biển trắng bị phân loại thành biển xanh** — 21 trong 33 ca sai — do một số điểm ảnh ám lạnh vượt ngưỡng bão hoà. **Ba,** bộ dữ liệu không chứa biển đỏ và biển ngoại giao nên hai nhánh này chưa có số liệu — ghi thành **hạn chế số 5** ở mục 5.2.
+Bảng 4.11 đo trên 1.565 ảnh ngoài dữ liệu hiệu chỉnh. Ba giới hạn phải nêu kèm. **Một,** 542 ảnh đã bị loại khỏi phép đo — toàn bộ lớp không xác định, cùng các ảnh chụp ban đêm hoặc hồng ngoại mà chính người gán nhãn cũng không xác định được màu. **Hai,** dạng lỗi chủ đạo là **biển trắng bị phân loại thành biển xanh** — 21 trong 33 ca sai — do một số điểm ảnh ám lạnh vượt ngưỡng bão hoà. **Ba,** bộ dữ liệu không chứa biển đỏ và biển ngoại giao nên hai nhánh này chưa có số liệu — ghi thành **hạn chế số 5** ở mục 5.2.
 
 ## 4.6. Phân tích lỗi
 
@@ -263,17 +263,17 @@ Ba giới hạn phải nêu kèm. **Một,** 542 ảnh đã bị loại khỏi p
 
 > Không có lớp *bỏ sót biển* hay *phát hiện nhầm* vì cả 2.801 mẫu là **vùng biển đã cắt sẵn**, nên bước phát hiện không chạy; hai loại lỗi ấy được đo riêng ở tầng bộ phát hiện.
 
-Bảng này khép lại mạch lập luận của chương. **Nhầm ký tự chiếm gần hai phần ba số ca sai, và 428 trên 445 ca thuộc biển hai dòng** — cùng một kết luận đã rút ra ở mục 4.3.2, nay xác nhận từ một góc đo khác.
+Bảng này khép lại mạch lập luận của chương. **Nhầm ký tự chiếm gần hai phần ba số ca sai, và 375 trên 392 ca thuộc biển hai dòng** — cùng một kết luận đã rút ra ở mục 4.3.2, nay xác nhận từ một góc đo khác.
 
 **Sai thứ tự bằng 0** là bằng chứng trực tiếp cho thấy thiết kế ghép ngang ở mục 3.4.5 hoạt động đúng: nếu phép ghép đặt nhầm thứ tự hai nửa, hoặc nếu CTC vẫn đọc lộn xộn giữa hai dòng, loại lỗi này phải xuất hiện. Nó không xuất hiện một lần nào.
 
-**Thiếu ký tự tập trung tuyệt đối ở biển hai dòng** (73/73), khớp với hồ sơ lỗi thiên về xoá ở mục 4.3.1 và với chế độ hỏng "mất hẳn dòng trên" mà mục 3.4.7 xử lý.
+**Thiếu ký tự tập trung tuyệt đối ở biển hai dòng** (76/76), khớp với hồ sơ lỗi thiên về xoá ở mục 4.3.1 và với chế độ hỏng "mất hẳn dòng trên" mà mục 3.4.7 xử lý.
 
 ![](figures/fig-ch4-loi.png)
 
 **Hình 4.2.**[]{#fig-4-2} Sáu vùng biển thật: ba ca khối hậu xử lý sửa được, ba ca vẫn sai
 
-Hàng trên là ba cơ chế sửa của mục 3.6 trên ảnh thật: mặt nạ vị trí (`2947872 → 29A7872`, `52126661 → 52L26661`) và bước phục hồi dòng trên (`5203 → 78N25203`). Hàng dưới là ba ca vẫn sai — cả ba đều là biển hai dòng và đều **hỏng ở dòng trên** (`30A → 37L`, `31F` mất hẳn, `52Z → 52T`): dòng trên trộn chữ và số ở đúng vị trí mà mặt nạ cho phép cả hai, nên hậu xử lý không có ràng buộc nào để bám vào. Đây là lý do hướng phát triển số 1 ở mục 5.3 nhắm vào bộ nhận dạng chứ không nhắm vào bộ luật.
+Hàng trên là hai cơ chế sửa trên ảnh thật: mặt nạ vị trí của mục 3.6b (`2947872 → 29A7872`, `52126661 → 52L26661`) và bước phục hồi dòng trên của mục 3.4.7 (`5203 → 78N25203`). Hàng dưới là ba ca vẫn sai — cả ba đều là biển hai dòng và đều **hỏng ở dòng trên** (`30A → 37L`, `31F` mất hẳn, `52Z → 52T`): dòng trên trộn chữ và số ở đúng vị trí mà mặt nạ cho phép cả hai, nên hậu xử lý không có ràng buộc nào để bám vào. Đây là lý do hướng phát triển số 1 ở mục 5.3 nhắm vào bộ nhận dạng chứ không nhắm vào bộ luật.
 
 Cần lưu ý về ảnh: ngữ liệu nhãn xuất mọi vùng cắt về khung vuông 640 × 640, **phá tỉ lệ khung hình gốc**. Hình trên đã khôi phục tỉ lệ bằng đúng hàm mà công cụ đo dùng trước khi chạy nhận dạng. Bước khôi phục này không phải chi tiết trình bày: bỏ nó đi thì S₁ rơi từ 0,7701 xuống **0,4988**, vì mọi vùng cắt vuông đều bị phân loại thành hai dòng.
 

@@ -63,7 +63,7 @@ Hệ thống chạy đầu cuối, **suy luận hoàn toàn trên CPU**, hỗ tr
 
 | Đo cái gì | Sàn | Mục tiêu |
 |---|---:|---:|
-| mAP@0.5 của bộ phát hiện | 0,85 | **0,90** |
+| mAP@0,5 của bộ phát hiện | 0,85 | **0,90** |
 | Đúng mức ký tự (1 − CER) | 0,92 | 0,95 |
 | Đúng cả chuỗi, **trước** hậu xử lý | 0,80 | 0,85 |
 | Đúng cả chuỗi, **sau** hậu xử lý | 0,85 | 0,90 |
@@ -153,13 +153,13 @@ Khởi động bằng một lệnh `docker compose up`; giao diện hiện **c�
 | # | Hướng phát triển | Giải hạn chế nào |
 |:--:|---|---|
 | 1 | **Huấn luyện lại bộ nhận dạng ký tự cho biển số Việt Nam** | Điểm nghẽn lớn nhất — biển hai dòng |
-| 2 | **Mở rộng bảng ánh xạ từ ma trận nhầm lẫn khi có thêm dữ liệu** | Vòng đầu đã +53 biển; 5 cặp còn lại chưa đủ bằng chứng |
+| 2 | **Mở rộng bảng ánh xạ từ ma trận nhầm lẫn khi có thêm dữ liệu** | Vòng đầu đã +53 biển, phủ 4/10; 6 cặp còn lại nằm ngoài cơ chế mặt nạ vị trí |
 | 3 | Khử rò rỉ theo **chuỗi biển số** thay vì theo băm tri giác | Băm tri giác tóm tắt khung ảnh, không tóm tắt chiếc xe |
 | 4 | Thu thập dữ liệu biển vàng, xanh, đỏ | 97,68% mẫu là biển trắng |
 
 ## Cảm ơn
 
-- Chạy đầu cuối trên CPU: phát hiện **mAP@0.5 = 0,9829**
+- Chạy đầu cuối trên CPU: phát hiện **mAP@0,5 = 0,9829**
 - Biển hai dòng giải bằng **phép biến đổi ảnh**, không bằng mô hình nặng hơn — **34,92 điểm**
 - Hậu xử lý theo vị trí **+13,28 điểm**, **0 ca làm hỏng** / 2.801 biển
 - Điểm nghẽn còn lại: **biển hai dòng** (S₁ = 0,7234)

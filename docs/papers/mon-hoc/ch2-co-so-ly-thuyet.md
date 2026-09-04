@@ -21,7 +21,7 @@ Biển số ô tô trong nước gồm **8 ký tự**, ba thành phần: **mã �
 | Seri biển nền xanh | 11 | A B C D E F G H K L M |
 | **Bị loại trừ khỏi toàn hệ thống** | **5** | **I, J, O, Q, W** |
 
-Hệ quả cài đặt: **nếu huấn luyện lại bộ nhận dạng thì phải dùng đủ 36 ký tự** rồi mới ràng buộc ở tầng hậu xử lý. *(Bản giao hàng dùng model gốc PP-OCRv5, charset còn rộng hơn 36; ràng buộc hợp lệ vẫn đặt ở tầng hậu xử lý.)* Một mô hình huấn luyện trên charset 20 chữ cái sẽ **không bao giờ dự đoán được `R`**, gây sai sót có hệ thống trên mọi biển xe máy mang ký tự này — loại sai sót mà hậu xử lý không cứu được vì thông tin đã bị loại ngay ở tầng mô hình.
+Hệ quả cài đặt: **nếu huấn luyện lại bộ nhận dạng thì phải dùng đủ 36 ký tự** rồi mới ràng buộc ở tầng hậu xử lý. *(Bản giao hàng dùng nguyên mô hình PP-OCRv5, tập ký tự còn rộng hơn 36; ràng buộc hợp lệ vẫn đặt ở tầng hậu xử lý.)* Một mô hình huấn luyện trên tập ký tự 20 chữ cái sẽ **không bao giờ dự đoán được `R`**, gây sai sót có hệ thống trên mọi biển xe máy mang ký tự này — loại sai sót mà hậu xử lý không cứu được vì thông tin đã bị loại ngay ở tầng mô hình.
 
 ### 2.1.2. Kích thước vật lý và tỉ lệ khung hình
 
@@ -160,9 +160,7 @@ $$p(\mathbf{l} \mid \mathbf{x}) = \sum_{\boldsymbol{\pi} \in \mathcal{B}^{-1}(\m
 
 ![](figures/fig-ch2-crnn-ctc.png)
 
-**Hình 2.2.**[]{#fig-2-2} Kiến trúc CRNN và cách CTC gộp chuỗi thô. Điểm mấu chốt nằm ở
-tầng tích chập: nó hạ **chiều cao về 1**, biến bản đồ đặc trưng hai chiều thành
-một chuỗi vector — nhờ đó bài toán đọc ảnh trở thành bài toán đọc chuỗi (Hình 2.3).
+**Hình 2.2.**[]{#fig-2-2} Kiến trúc CRNN và cách CTC gộp chuỗi thô
 
 ### 2.4.2. Vì sao CTC gãy trên biển hai dòng
 
@@ -170,7 +168,7 @@ một chuỗi vector — nhờ đó bài toán đọc ảnh trở thành bài to
 
 **Hình 2.3.**[]{#fig-2-3} Cơ chế sụp đổ của CTC trên ảnh văn bản hai dòng
 
-Phép hạ chiều cao về 1 ở mục 2.4.1 **giả định toàn bộ văn bản nằm trên một dòng ngang**. Với ảnh hai dòng, mọi ký tự của dòng trên và dòng dưới bị **chiếu chồng lên nhau** vào cùng một cột đặc trưng, và giả định căn chỉnh đơn điệu giữa cột ảnh và chuỗi ký tự — nền tảng của CTC — không còn đúng. Hệ quả quan sát được là mô hình đọc theo thứ tự không xác định, ghép lẫn hai dòng, hoặc bỏ sót hẳn một dòng.
+Phép hạ chiều cao về 1 ở mục 2.4.1 **giả định toàn bộ văn bản nằm trên một dòng ngang** (Hình 2.3). Với ảnh hai dòng, mọi ký tự của dòng trên và dòng dưới bị **chiếu chồng lên nhau** vào cùng một cột đặc trưng, và giả định căn chỉnh đơn điệu giữa cột ảnh và chuỗi ký tự — nền tảng của CTC — không còn đúng. Hệ quả quan sát được là mô hình đọc theo thứ tự không xác định, ghép lẫn hai dòng, hoặc bỏ sót hẳn một dòng.
 
 Vấn đề còn bị khuếch đại bởi một ràng buộc kích thước. Mô-đun nhận dạng chuẩn hoá mọi ảnh về chiều cao **48 điểm ảnh**. Biển xe mô tô có tỉ lệ khung hình khoảng 1,36, nên sau chuẩn hoá **mỗi hàng ký tự chỉ còn khoảng 24 điểm ảnh** — thấp hơn ngưỡng mà nét chữ còn tách rời được.
 

@@ -2,11 +2,11 @@
 
 ## 1.1. Đặt vấn đề
 
-Tính đến tháng 9/2024, Việt Nam có khoảng **77 triệu xe máy đã đăng ký**, chiếm **85–90% lưu lượng phương tiện trên đường** [1]. Con số này là một ràng buộc kỹ thuật trực tiếp chứ không phải bối cảnh xã hội: mọi xe mô tô đều mang **biển hai dòng gần vuông**, nên ở Việt Nam biển hai dòng là dạng phổ biến chứ không phải ngoại lệ. Biển xe mô tô chỉ 140 × 190 mm, nên đây đồng thời là bài toán phát hiện **đối tượng nhỏ**.
+Tính đến tháng 9/2024, Việt Nam có khoảng **77 triệu xe máy đã đăng ký**, chiếm **85–90% lưu lượng phương tiện trên đường** [1]. Con số này là một ràng buộc kỹ thuật trực tiếp chứ không phải bối cảnh xã hội: mọi xe mô tô đều mang **biển hai dòng gần vuông**, nên ở Việt Nam biển hai dòng là dạng phổ biến chứ không phải ngoại lệ. Biển xe mô tô chỉ 190 × 140 mm, nên đây đồng thời là bài toán phát hiện **đối tượng nhỏ**.
 
 Nhận dạng biển số xe tự động (ALPR) là lõi của bãi đỗ xe thông minh, thu phí không dừng, kiểm soát ra vào và giám sát giao thông. Cả bốn ứng dụng đều đo cùng một đại lượng: **tỉ lệ đọc đúng toàn bộ chuỗi biển số**, chứ không phải tỉ lệ đọc đúng từng ký tự — đọc đúng 9 trên 10 ký tự vẫn là đọc sai biển.
 
-**Không thể dùng trực tiếp giải pháp nước ngoài**, vì hai lý do đo được và một lý do pháp lý.
+**Không thể dùng trực tiếp giải pháp nước ngoài**, vì ba lý do: một đo được, một pháp lý, một thuộc điều kiện thu nhận ảnh.
 
 **Thứ nhất, biển hai dòng là điểm suy giảm đã đo được.** Trên tập kiểm thử cân bằng của bộ **RodoSol-ALPR (Brazil)** — 4.000 ảnh ô tô biển một dòng, 4.000 ảnh xe máy biển hai dòng — hệ thống thương mại OpenALPR nhận đúng **94,3% biển một dòng nhưng chỉ 45,7% biển hai dòng**, chênh **48,6 điểm phần trăm**, không biến số nào khác thay đổi ngoài bố cục biển [2]. Cặp số này đo trên **dữ liệu Brazil, không phải dữ liệu Việt Nam**; đồ án dẫn nó như một dẫn chứng định lượng về độ khó của biển hai dòng tại một quốc gia cũng có tỉ lệ xe máy cao, không phải như mốc chuẩn.
 
@@ -39,7 +39,7 @@ Ngưỡng độ trễ rộng hơn các bài báo ALPR vì máy thực hiện **k
 
 **Trong phạm vi:** thu thập và làm sạch bộ dữ liệu ảnh; khử trùng lặp bằng băm tri giác; huấn luyện bộ phát hiện; toàn bộ khối xử lý ảnh vùng biển; bộ luật hậu xử lý chuỗi theo quy chuẩn Việt Nam; phân loại màu nền; đánh giá đầy đủ kèm phân tích lỗi; một ứng dụng web tối thiểu để trình diễn.
 
-**Ngoài phạm vi:** xác thực và phân quyền (hệ thống chạy nội bộ); bám vết đối tượng qua khung hình; ước lượng tốc độ và phát hiện vi phạm; biển số nước ngoài; huấn luyện bộ nhận dạng ký tự từ đầu — đồ án dùng mô hình tiền huấn luyện và chỉ tinh chỉnh; suy luận trên GPU.
+**Ngoài phạm vi:** xác thực và phân quyền (hệ thống chạy nội bộ); bám vết đối tượng qua khung hình; ước lượng tốc độ và phát hiện vi phạm; biển số nước ngoài; huấn luyện lại bộ nhận dạng ký tự — bản giao hàng dùng nguyên mô hình tiền huấn luyện; một lượt tinh chỉnh đã thử và bị loại vì kém hơn bản gốc ở cấu hình vận hành; suy luận trên GPU.
 
 ## 1.3. Lựa chọn công nghệ
 
