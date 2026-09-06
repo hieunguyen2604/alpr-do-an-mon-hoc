@@ -93,7 +93,7 @@ npm run build       # chạy tsc --noEmit rồi build vào dist/
 npm run preview     # xem thử bản build tại http://localhost:4173
 ```
 
-`npm run build` **kiểm tra kiểu trước khi build**. Một lỗi TypeScript sẽ làm hỏng lệnh build,
+`npm run build` **kiểm tra kiểu trước khi build**. Một lỗi TypeScript sẽ khiến lệnh build thất bại,
 không lọt ra trình duyệt.
 
 Kết quả build nằm trong `dist/` — chỉ gồm tệp tĩnh (HTML, JS, CSS), có thể phục vụ bằng

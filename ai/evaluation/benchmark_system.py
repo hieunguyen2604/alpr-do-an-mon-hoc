@@ -413,7 +413,7 @@ def build_parser() -> argparse.ArgumentParser:
         prog="python -m ai.evaluation.benchmark_system",
         description="Measure end-to-end system performance against the NFR-P targets.",
     )
-    # Mac dinh PHAI la mo hinh ban giao hang — tro nham checkpoint la moi so do
+    # Mac dinh PHAI la mo hinh phien ban ban giao — tro nham checkpoint la moi so do
     # mo ta mot he thong khong ai giao, va khong co canh bao nao.
     parser.add_argument("--weights", default="models/best.pt")
     parser.add_argument("--images", default="datasets/processed/yolo/images/test")

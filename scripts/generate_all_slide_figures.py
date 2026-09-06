@@ -293,7 +293,7 @@ def gen_fig3():
                                  facecolor='#ffffff', edgecolor='#e2e8f0', linewidth=1.5, zorder=2)
     ax1.add_patch(card)
     ax1.text(5.0, 3.0, "BA KỸ THUẬT XỬ LÝ ẢNH MÀU CỐT LÕI:", fontsize=10, fontweight='bold', color='#1e293b', ha='center', zorder=3)
-    ax1.text(5.0, 1.8, "1. Tách biệt H và V: Nhận diện màu chuẩn xác dưới nắng gắt hoặc bóng râm\n2. Vùng đệm thu biên 18%: Cắt bỏ rìa viền nhằm triệt tiêu màu sơn vỏ xe\n3. Ngưỡng tin cậy 30%: Dải màu chiếm đa số từ 30% trở lên mới phân loại, tránh đoán mò",
+    ax1.text(5.0, 1.8, "1. Tách biệt H và V: Nhận diện màu chuẩn xác dưới nắng gắt hoặc bóng râm\n2. Vùng đệm thu biên 18%: Cắt bỏ rìa viền nhằm triệt tiêu màu sơn vỏ xe\n3. Ngưỡng tin cậy 30%: Dải màu chiếm đa số từ 30% trở lên mới phân loại, tránh gán nhãn thiếu căn cứ",
              fontsize=8.5, color='#334155', ha='center', va='center', zorder=3)
 
     # RIGHT PANEL: Biểu đồ cột đánh giá độc lập

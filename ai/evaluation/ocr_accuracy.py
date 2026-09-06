@@ -323,7 +323,7 @@ def measure_crops(
         sample.is_valid_format = outcome.is_valid_format
 
         # Cung ham rescue ma pipeline goi: do thieu no la cong bo so cho mot duong
-        # chay ngan hon ban giao hang (~2 diem tren bien hai dong).
+        # chay ngan hon phien ban ban giao (~2 diem tren bien hai dong).
         candidate = PlateRecognition(
             text=outcome.text,
             raw_text=sample.raw_ocr_text,
@@ -342,7 +342,7 @@ def measure_crops(
                 sample.rescued_upper_line = True
                 candidate = rescued
 
-        # Bac thang thu lai, dung vi tri va dieu kien nhu ALPRPipeline._process_one
+        # Co che thu lai da tang, dung vi tri va dieu kien nhu ALPRPipeline._process_one
         # — thieu no thi A4/A5/A6 mo ta mot pipeline ngan hon hai bac.
         if recognizer.config.rectify_enabled and should_retry_skewed(candidate):
             retried = retry_skewed_variants(
@@ -760,7 +760,7 @@ def build_parser() -> argparse.ArgumentParser:
         default="runs/cpu-finetune-416/weights/best.pt",
         help="Detector weights for the NFR-A7 pass. Empty string skips E2E.",
     )
-    # Mac dinh doc tu cau hinh ban giao hang, cam gan cung: do 416 khi best.pt
+    # Mac dinh doc tu cau hinh phien ban ban giao, cam gan cung: do 416 khi best.pt
     # huan luyen o 640 lam ty le phat hien tut 0,8804 -> 0,6109.
     parser.add_argument(
         "--detector-imgsz", type=int, default=InferenceConfig.from_env().imgsz

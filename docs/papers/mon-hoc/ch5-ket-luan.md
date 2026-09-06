@@ -14,7 +14,7 @@ Nhóm thực hiện đã xây dựng một hệ thống nhận dạng biển s�
 | **S₀ → S₁** — đúng cả chuỗi | 0,80 → 0,85 | 0,85 → 0,90 | **0,6373 → 0,7701** | **Chưa đạt** |
 | Độ trễ một ảnh, p95, trên CPU | ≤ 1.500 ms | ≤ 800 ms | **509,76 ms** | **Đạt** |
 
-Hệ thống đạt toàn bộ chỉ tiêu ở tầng phát hiện với biên rộng nhưng chưa đạt chỉ tiêu nhận dạng chuỗi, và phần thiếu hụt **nằm gần như trọn ở biển hai dòng** — biển một dòng đạt S₁ = 0,9541, vượt cả mục tiêu. Các bước xử lý ảnh và hậu xử lý vẫn mang lại cải thiện đáng kể với chi phí tính toán thấp: khối hậu xử lý **+13,28 điểm** (372 biển sửa đúng, 0 biển hỏng, 0,03 ms mỗi biển), bước tách-ghép **+34,92 điểm** cho PaddleOCR — điều kiện cần nhưng không đủ, vì chỉ được +0,03 điểm trên Tesseract (mục 4.3.4). Mọi bước bật tắt được độc lập nên đóng góp của từng bước đo được riêng, và các kết quả âm được ghi lại thay vì bỏ đi.
+Hệ thống đạt toàn bộ chỉ tiêu ở tầng phát hiện với biên rộng nhưng chưa đạt chỉ tiêu nhận dạng chuỗi, và phần thiếu hụt **nằm gần như trọn ở biển hai dòng** — biển một dòng đạt S₁ = 0,9541, vượt cả mục tiêu. Các bước xử lý ảnh và hậu xử lý vẫn mang lại cải thiện đáng kể với chi phí tính toán thấp: khối hậu xử lý **+13,28 điểm** (372 biển sửa đúng, 0 biển bị sai lệch, 0,03 ms mỗi biển), bước tách-ghép **+34,92 điểm** cho PaddleOCR — điều kiện cần nhưng không đủ, vì chỉ được +0,03 điểm trên Tesseract (mục 4.3.4). Mọi bước bật tắt được độc lập nên đóng góp của từng bước đo được riêng, và các kết quả âm được ghi lại thay vì bỏ đi.
 
 ## 5.2. Hạn chế
 

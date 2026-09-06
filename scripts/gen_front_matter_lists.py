@@ -25,7 +25,7 @@ CAP_BANG = re.compile(r"^\*\*Bảng (\d+\.\d+)\.?\*\*\s*(.*)$")
 FENCE = re.compile(r"^\s*(```|~~~)")
 
 # Uu tien ORDER.txt cua chinh thu muc (co che read_order cua build_thesis);
-# hardcode danh sach tung lam script hong ngay khi doi ban 5 chuong.
+# gan cung danh sach tung lam script hong ngay khi doi ban 5 chuong.
 def _doc_thu_tu() -> list[str]:
     """Doc ORDER.txt cua thu muc; neu khong co thi dung danh sach mac dinh."""
     manifest = PAPERS / "ORDER.txt"
@@ -170,7 +170,7 @@ def main() -> None:
     print(f"Mục lục : {sum(1 for ln in muc_luc if ln.strip())} dòng")
     print(f"Hình    : {len(hinh)}")
     print(f"Bảng    : {len(bang)}")
-    # Dai chuong suy tu chinh CHUONG, khong hardcode "123456": ban mon hoc chi
+    # Dai chuong suy tu chinh CHUONG, khong gan cung "123456": ban mon hoc chi
     # co 5 chuong nen dai cung se bao thieu "ch6" moi lan chay.
     so_chuong = [m.group(1) for m in (re.match(r"ch(\d+)", x) for x in CHUONG) if m]
     thieu = [f"ch{c}" for c in so_chuong

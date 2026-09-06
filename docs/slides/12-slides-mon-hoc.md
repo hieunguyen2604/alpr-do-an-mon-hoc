@@ -167,7 +167,7 @@ Phát hiện **đạt cả bốn chỉ tiêu**; phần thiếu nằm trọn ở 
 
 ## Lỗi trông như thế nào
 
-Ba ca được chuẩn hóa đúng nhờ hậu xử lý, ba ca vẫn sai — **cả ba ca sai đều hỏng ở dòng trên**.
+Ba ca được chuẩn hóa đúng nhờ hậu xử lý, ba ca vẫn sai — **cả ba ca sai đều gặp lỗi ở dòng trên**.
 
 ![](figures/fig-ch4-loi.png)
 

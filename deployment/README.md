@@ -150,7 +150,7 @@ rồi build lại.
 > ```
 >
 > Nếu bạn tự đặt `user:` trong compose hoặc `--user` trên dòng lệnh, entrypoint
-> nhận ra mình không phải root và chạy thẳng lệnh, không đụng vào quyền — người
+> nhận diện tiến trình không thuộc quyền root và chạy thẳng lệnh, không đụng vào quyền — người
 > vận hành giữ toàn quyền quyết định.
 
 ---
@@ -497,7 +497,7 @@ loại trừ**. Riêng `backend/.venv` nặng 2,0 GB và chứa wheel **Windows*
 Sau khi sửa: context còn **633 kB**, image còn **4,12 GB**.
 
 **Bài học.** Mẫu trong `.dockerignore` không tự đệ quy. Luôn kiểm tra bằng dòng
-`transferring context` chứ đừng tin là mình đã loại trừ đúng.
+`transferring context` thay vì phỏng đoán các tệp đã được loại trừ.
 
 ### 🔴 ĐÃ GẶP — Ảnh tải lên không xuất hiện trong `./storage` trên máy chủ
 

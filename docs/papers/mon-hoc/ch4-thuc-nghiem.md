@@ -79,7 +79,7 @@ Mục này tồn tại vì toàn bộ bộ dữ liệu có **10,91% số hộp b
 | Số biển **sửa đúng** / **bị làm sai lệch** | — | — | — | **372** / **0** | — |
 | Phân rã lỗi ký tự $S$ / $D$ / $I$ trên $N$ = 23.855 | — | — | 862 / 1.272 / 107 | — | — |
 
-**Khối hậu xử lý đóng góp +13,28 điểm, sửa đúng 372 biển và không làm sai lệch biển nào** (Bảng 4.4). Con số "0 biển bị làm sai lệch" không phải may mắn mà là hệ quả của nguyên tắc thiết kế ở mục 3.6d: biểu thức chính quy được thử **trước** khi sửa bất cứ thứ gì, nên chuỗi vốn đã hợp lệ không bao giờ bị can thiệp.
+**Khối hậu xử lý đóng góp +13,28 điểm, sửa đúng 372 biển và không làm sai lệch biển nào** (Bảng 4.4). Con số "0 biển bị làm sai lệch" không phải ngẫu nhiên mà là hệ quả tất yếu từ nguyên tắc thiết kế ở mục 3.6d: biểu thức chính quy được thử **trước** khi sửa bất cứ thứ gì, nên chuỗi vốn đã hợp lệ không bao giờ bị can thiệp.
 
 Phân rã lỗi ký tự cho một manh mối quan trọng: **số ký tự bị xoá ($D$ = 1.272) lớn hơn số bị thay thế ($S$ = 862)**. Hồ sơ lỗi thiên về *xoá* có cách giải thích tự nhiên là **mất hẳn một dòng** — đúng cơ chế đã dự đoán ở mục 2.4.2 (Bảng 4.5).
 
@@ -99,7 +99,7 @@ Phân rã lỗi ký tự cho một manh mối quan trọng: **số ký tự bị
 
 **Hình 4.1.**[]{#fig-4-1} Đối chiếu biển một dòng và hai dòng trên ba chỉ số
 
-Hình 4.1 cho thấy quan hệ phi tuyến ở mục 2.4.3 bằng số thật: cột đo mức ký tự gần như không phân biệt hai bố cục (0,9925 so với 0,9380), nhưng sai một ký tự trong tám là hỏng cả chuỗi, nên chênh lệch 5,45 điểm ở mức ký tự **khuếch đại thành 23,07 điểm** ở mức chuỗi. Ba kết luận rút ra:
+Hình 4.1 cho thấy quan hệ phi tuyến ở mục 2.4.3 bằng số thật: cột đo mức ký tự gần như không phân biệt hai bố cục (0,9925 so với 0,9380), nhưng chỉ cần sai một ký tự trong tám là chuỗi mất tính chính xác toàn thể, nên chênh lệch 5,45 điểm ở mức ký tự **khuếch đại thành 23,07 điểm** ở mức chuỗi. Ba kết luận rút ra:
 
 1. **Điểm nghẽn nằm ở biển hai dòng.** Biển một dòng đạt S₁ = 0,9541, vượt cả mục tiêu 0,90; biển hai dòng chiếm 79,8% tập đánh giá nên kéo con số tổng xuống.
 2. **Hậu xử lý hiệu quả hơn hẳn trên biển hai dòng** — +16,34 so với +1,23 điểm; biển một dòng vốn đã đọc gần đúng nên còn ít chỗ để sửa.
@@ -126,7 +126,7 @@ Mục 3.6c đã nêu một giới hạn: bảng ánh xạ nhầm lẫn ban đầ
 
 Kết quả này là một **phát hiện âm có giá trị**: bảng luật suy từ hình dạng chỉ phủ **2 trong 10** cặp nhầm phổ biến nhất, tuy cả hai đều đúng chiều. Tám cặp không được phủ, trong đó bốn cặp `E → F`, `4 → L`, `U → 1`, `Z → 7` là những cặp mà trực giác hình dạng không gợi ra, nhưng thực tế lại rất phổ biến trên ảnh phân giải thấp.
 
-Phép thay thế **đã được thực hiện ngay trong vòng này** cho hai cặp có đủ bằng chứng: mục `L → 1` tại vị trí chữ số đổi thành `L → 4` (hạng 3, 53 lần) và mục cho `7` tại vị trí chữ cái đổi thành `7 → Z` (hạng 6, 32 lần), nhận dạng chính xác thêm **53 biển đọc đúng và 0 biển hỏng** — đây chính là cấu hình triển khai sinh ra S₁ = 0,7701, và bảng ánh xạ phủ **4 trong 10** cặp. Sáu cặp còn lại không sửa được bằng cơ chế này: năm cặp cùng kiểu (`E → F`, `X → Y`, `B → R`, `2 → 7`, `9 → 0`) không bao giờ kích hoạt mặt nạ vị trí vì ký tự đọc ra vẫn đúng kiểu; cặp `U → 1` xung đột với `L → 1` phổ biến hơn (90 so với 38 lần) nên giữ chiều thắng. Xử lý chúng cần một cơ chế khác và ngữ liệu lớn hơn (hướng phát triển số 2, mục 5.3). Đây là ví dụ điển hình cho việc đo đạc thay thế trực giác.
+Phép thay thế **đã được thực hiện ngay trong vòng này** cho hai cặp có đủ bằng chứng: mục `L → 1` tại vị trí chữ số đổi thành `L → 4` (hạng 3, 53 lần) và mục cho `7` tại vị trí chữ cái đổi thành `7 → Z` (hạng 6, 32 lần), nhận dạng chính xác thêm **53 biển đọc đúng và 0 biển bị sai lệch** — đây chính là cấu hình triển khai sinh ra S₁ = 0,7701, và bảng ánh xạ phủ **4 trong 10** cặp. Sáu cặp còn lại không sửa được bằng cơ chế này: năm cặp cùng kiểu (`E → F`, `X → Y`, `B → R`, `2 → 7`, `9 → 0`) không bao giờ kích hoạt mặt nạ vị trí vì ký tự đọc ra vẫn đúng kiểu; cặp `U → 1` xung đột với `L → 1` phổ biến hơn (90 so với 38 lần) nên giữ chiều thắng. Xử lý chúng cần một cơ chế khác và ngữ liệu lớn hơn (hướng phát triển số 2, mục 5.3). Đây là ví dụ điển hình cho việc đo đạc thay thế trực giác.
 
 Hiện tượng chữ số 4 bị nhận diện thành chữ cái L chiếm tần suất cao (53 ca, đứng hạng 3 trong tổng số lỗi thay thế, Bảng 4.6) là một phát hiện thị giác đặc thù của bài toán ALPR trên ảnh độ phân giải thấp. Theo chuẩn font chữ dập nổi của biển số Việt Nam, nét gạch ngang của số 4 có độ dày nhỏ hơn nét sổ dọc. Dưới điều kiện chụp xa, bám bụi hoặc bị ánh sáng tán xạ làm giảm tương phản cục bộ, nét gạch ngang này dễ bị mờ nhòe hoặc đứt đoạn sau bước nhị phân hóa nội bộ của OCR. Khi đó, cấu trúc còn lại chỉ gồm một nét sổ đứng và một đoạn chân ngang bên phải, khiến mô hình trích xuất đặc trưng hiểu nhầm thành chữ L viết hoa.
 
@@ -269,13 +269,13 @@ Bảng 4.12 khép lại mạch lập luận của chương. **Nhầm ký tự ch
 
 **Sai thứ tự bằng 0** là bằng chứng trực tiếp cho thấy thiết kế ghép ngang ở mục 3.4.5 hoạt động đúng: nếu phép ghép đặt nhầm thứ tự hai nửa, hoặc nếu CTC vẫn đọc lộn xộn giữa hai dòng, loại lỗi này phải xuất hiện. Nó không xuất hiện một lần nào.
 
-**Thiếu ký tự tập trung tuyệt đối ở biển hai dòng** (76/76), khớp với hồ sơ lỗi thiên về xoá ở mục 4.3.1 và với chế độ hỏng "mất hẳn dòng trên" mà mục 3.4.7 xử lý.
+**Thiếu ký tự tập trung tuyệt đối ở biển hai dòng** (76/76), khớp với hồ sơ lỗi thiên về xoá ở mục 4.3.1 và với dạng lỗi đặc thù "mất hẳn dòng trên" mà mục 3.4.7 xử lý.
 
 ![](figures/fig-ch4-loi.png)
 
 **Hình 4.2.**[]{#fig-4-2} Sáu vùng biển thật: ba ca khối hậu xử lý sửa được, ba ca vẫn sai
 
-Hình 4.2 đặt các con số của Bảng 4.12 lên ảnh thật. Hàng trên là hai cơ chế sửa: mặt nạ vị trí của mục 3.6b (`2947872 → 29A7872`, `52126661 → 52L26661`) và bước phục hồi dòng trên của mục 3.4.7 (`5203 → 78N25203`). Hàng dưới là ba ca vẫn sai — cả ba đều là biển hai dòng và đều **hỏng ở dòng trên** (`30A → 37L`, `31F` mất hẳn, `52Z → 52T`): dòng trên trộn chữ và số ở đúng vị trí mà mặt nạ cho phép cả hai, nên hậu xử lý không có ràng buộc nào để bám vào. Đây là lý do hướng phát triển số 1 ở mục 5.3 nhắm vào bộ nhận dạng chứ không nhắm vào bộ luật.
+Hình 4.2 đặt các con số của Bảng 4.12 lên ảnh thật. Hàng trên là hai cơ chế sửa: mặt nạ vị trí của mục 3.6b (`2947872 → 29A7872`, `52126661 → 52L26661`) và bước phục hồi dòng trên của mục 3.4.7 (`5203 → 78N25203`). Hàng dưới là ba ca vẫn sai — cả ba đều là biển hai dòng và đều **gặp lỗi ở dòng trên** (`30A → 37L`, `31F` mất hẳn, `52Z → 52T`): dòng trên trộn chữ và số ở đúng vị trí mà mặt nạ cho phép cả hai, nên hậu xử lý không có ràng buộc nào để bám vào. Đây là lý do hướng phát triển số 1 ở mục 5.3 nhắm vào bộ nhận dạng chứ không nhắm vào bộ luật.
 
 Cần lưu ý về ảnh: ngữ liệu nhãn xuất mọi vùng cắt về khung vuông 640 × 640, **phá tỉ lệ khung hình gốc**. Hình trên đã khôi phục tỉ lệ bằng đúng hàm mà công cụ đo dùng trước khi chạy nhận dạng. Bước khôi phục này không phải chi tiết trình bày: bỏ nó đi thì S₁ rơi từ 0,7701 xuống **0,4988**, vì mọi vùng cắt vuông đều bị phân loại thành hai dòng.
 

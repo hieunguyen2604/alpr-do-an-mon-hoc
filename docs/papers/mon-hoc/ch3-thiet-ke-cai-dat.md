@@ -120,11 +120,11 @@ Vùng biển được **phóng đại về 64 điểm ảnh** chiều cao trư�
 
 Số dòng suy từ tỉ lệ chiều rộng trên chiều cao của vùng biển, **ngưỡng phân loại 2,5**: tỉ lệ nhỏ hơn ngưỡng được xếp vào nhóm hai dòng.
 
-Ngưỡng này là **đề xuất của đồ án, không phải quy định pháp lý**. Quy chuẩn chỉ cung cấp ba tỉ lệ vật lý 4,727 · 2,000 · 1,357 (mục 2.1.2), để lại khoảng trống rộng giữa 2,000 và 4,727. Giá trị 2,5 được đặt **lệch hẳn về phía nhóm hai dòng** thay vì đặt ở giữa khoảng trống, và lý do là **tính bất đối xứng của chi phí sai sót**: đường xử lý hai dòng **suy giảm êm** khi gặp đầu vào một dòng — nó chỉ tách một ảnh vốn đã một dòng thành hai nửa rồi ghép lại, kết quả gần như không đổi — trong khi chiều ngược lại thì không, một biển hai dòng đi thẳng vào bộ nhận dạng sẽ hỏng theo cơ chế ở mục 2.4.2.
+Ngưỡng này là **đề xuất của đồ án, không phải quy định pháp lý**. Quy chuẩn chỉ cung cấp ba tỉ lệ vật lý 4,727 · 2,000 · 1,357 (mục 2.1.2), để lại khoảng trống rộng giữa 2,000 và 4,727. Giá trị 2,5 được đặt **lệch hẳn về phía nhóm hai dòng** thay vì đặt ở giữa khoảng trống, và lý do là **tính bất đối xứng của chi phí sai sót**: đường xử lý hai dòng **suy giảm êm** khi gặp đầu vào một dòng — nó chỉ tách một ảnh vốn đã một dòng thành hai nửa rồi ghép lại, kết quả gần như không đổi — trong khi chiều ngược lại thì không, một biển hai dòng đi thẳng vào bộ nhận dạng sẽ phát sinh lỗi nghiêm trọng theo cơ chế ở mục 2.4.2.
 
 Dải 2,5–3,0 vẫn là **vùng bất định**, và nó bất định theo cả hai chiều: một biển một dòng chụp nghiêng lớn có thể cho tỉ lệ rơi xuống khoảng này, còn một biển hai dòng nghiêng thì có tỉ lệ **vọt lên trên** ngưỡng và đi nhầm sang nhánh một dòng.
 
-Luồng xử lý chính **không có cách nào tự phát hiện** mình vừa phân loại nhầm — nó chỉ đo một con số và so với một ngưỡng. Đây chính là lý do cơ chế thử lại đa tầng ở mục 3.4.6 tồn tại: nó không sửa ngưỡng mà **dùng kết quả đọc sai lệch làm tín hiệu** để hiệu chỉnh góc nghiêng rồi phân loại lại.
+Luồng xử lý chính **không thể tự phát hiện** trường hợp phân loại nhầm bố cục — nó chỉ đo một con số và so với một ngưỡng. Đây chính là lý do cơ chế thử lại đa tầng ở mục 3.4.6 tồn tại: nó không sửa ngưỡng mà **dùng kết quả đọc sai lệch làm tín hiệu** để hiệu chỉnh góc nghiêng rồi phân loại lại.
 
 ### 3.4.4. Tách hai nửa có chồng lấn
 
@@ -159,7 +159,7 @@ Cần nhấn mạnh một đánh đổi có chủ đích trong thiết kế: gi�
 
 ### 3.4.7. Bước phục hồi dòng trên
 
-Chế độ hỏng quan sát được: chuỗi `29E-015.66` chỉ đọc ra `015.66` — sau khi ghép, bộ phát hiện văn bản của PaddleOCR chỉ khoanh được một vùng chữ và bỏ qua nửa bên trái. Giả thuyết tự nhiên — **bỏ hẳn phép ghép, đọc riêng từng nửa rồi nối chuỗi** — được kiểm bằng thí nghiệm A/B trên 200 biển hai dòng và **bị bác bỏ dứt khoát** (mục 4.4.1): khi đọc riêng, dải chồng lấn của mục 3.4.4 bị nhận dạng **hai lần** và sinh ký tự thừa (`84G122593` → `84-G124E009.01225.93`), trong khi trên dải đã ghép nó nằm giữa hai cụm ký tự và bị loại như một mảnh nhiễu.
+Dạng lỗi quan sát được (Failure Mode): chuỗi `29E-015.66` chỉ đọc ra `015.66` — sau khi ghép, bộ phát hiện văn bản của PaddleOCR chỉ khoanh được một vùng chữ và bỏ qua nửa bên trái. Giả thuyết tự nhiên — **bỏ hẳn phép ghép, đọc riêng từng nửa rồi nối chuỗi** — được kiểm bằng thí nghiệm A/B trên 200 biển hai dòng và **bị bác bỏ dứt khoát** (mục 4.4.1): khi đọc riêng, dải chồng lấn của mục 3.4.4 bị nhận dạng **hai lần** và sinh ký tự thừa (`84G122593` → `84-G124E009.01225.93`), trong khi trên dải đã ghép nó nằm giữa hai cụm ký tự và bị loại như một mảnh nhiễu.
 
 Thiết kế cuối cùng vì vậy **giữ nguyên chiến lược ghép** và chỉ bổ sung một bước phục hồi có điều kiện chặt: kích hoạt khi đồng thời (a) vùng biển phân loại hai dòng, (b) chuỗi sau chuẩn hoá không hợp lệ, (c) chuỗi thô khác rỗng — hệ thống đọc thêm một lượt trên **riêng nửa trên**, ghép với chuỗi thô rồi chuẩn hoá lại, và chỉ nhận kết quả vượt kiểm tra định dạng.
 

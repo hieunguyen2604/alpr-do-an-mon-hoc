@@ -78,7 +78,7 @@ def do_mot_bien(ket_qua, chuan_hoa: VietnamesePlateNormalizer) -> dict[str, obje
                 kind=nhan.kind or None,
                 upper_char_count=tren,
             )
-        except Exception:  # noqa: BLE001 — trình bày hỏng không được làm hỏng phép đo
+        except Exception:  # noqa: BLE001 — lỗi định dạng không được ảnh hưởng đến kết quả đo
             hien = nhan.text
     return {
         "plate": nhan.text or None,
