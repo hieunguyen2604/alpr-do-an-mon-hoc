@@ -182,7 +182,7 @@ def patch_deck(pptx_path):
                 items22 = [
                     [("Chạy đầu cuối trên CPU: phát hiện ", False), ("mAP@0,5 = 0,9829", True)],
                     [("Đột phá trên biển hai dòng nhờ biến đổi ảnh (thay vì đổi mô hình): tăng ", False), ("+34,92 điểm", True)],
-                    [("Hậu xử lý theo vị trí ", False), ("+13,28 điểm", True), (", ", False), ("0 ca làm hỏng", True), (" / 2.801 biển", False)],
+                    [("Hậu xử lý theo vị trí ", False), ("+13,28 điểm", True), (", ", False), ("0 ca làm sai lệch", True), (" / 2.801 biển", False)],
                     [("Điểm nghẽn còn lại: ", False), ("biển hai dòng", True), (" (S₁ = 0,7234)", False)]
                 ]
                 

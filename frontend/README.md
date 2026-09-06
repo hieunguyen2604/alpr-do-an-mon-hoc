@@ -281,7 +281,7 @@ Lợi ích của cách này:
 1. **Không cần CORS** trong môi trường phát triển.
 2. Bản build production đặt sau reverse proxy vẫn dùng **đúng các tiền tố đó**,
    nên mã nguồn không phải phân biệt dev/prod.
-3. Không có hostname nào bị hard-code — triển khai là việc **cấu hình**, không phải build lại.
+3. Không có hostname nào bị gán cứng — triển khai là việc **cấu hình**, không phải build lại.
 
 ### Đổi cổng backend
 

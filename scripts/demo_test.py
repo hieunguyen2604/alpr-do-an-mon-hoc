@@ -54,7 +54,7 @@ def doc_anh() -> dict[str, Path]:
 
 
 def do_mot_bien(ket_qua, chuan_hoa: VietnamesePlateNormalizer) -> dict[str, object]:
-    """Rút một biển thành đúng sáu trường mà bản giao hàng trả cho người dùng."""
+    """Rút một biển thành đúng sáu trường mà phiên bản bàn giao trả cho người dùng."""
     # Chuoi hien thi phai dung format_for_display kem upper_char_count y nhu
     # detection_service.display_text — doc thang display_text cua tang AI se ra
     # chuoi khac o bien hai dong, tuc do mot he thong khong phai he thong duoc giao.
@@ -67,7 +67,7 @@ def do_mot_bien(ket_qua, chuan_hoa: VietnamesePlateNormalizer) -> dict[str, obje
 
     # Chi 3 hoac 4 moi duoc dung: cot CSDL rang buoc CHECK IN (3,4) va
     # detection_service loai moi gia tri khac truoc khi luu, nen chuoi hien thi
-    # cua ban giao hang khong bao gio thay gia tri ngoai mien do.
+    # cua phien ban ban giao khong bao gio thay gia tri ngoai mien do.
     tren = nhan.upper_char_count if nhan.upper_char_count in (3, 4) else 0
     hien = None
     if nhan.text:

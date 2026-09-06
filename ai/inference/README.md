@@ -185,7 +185,7 @@ không tính được.
 
 ---
 
-## 5. Cấu hình — không hard-code đường dẫn (NFR-M4)
+## 5. Cấu hình — không gán cứng đường dẫn (NFR-M4)
 
 `PROJECT_ROOT` được suy ra từ chính vị trí của tệp `config.py`
 (`<gốc>/ai/inference/config.py` → lùi 2 cấp), **không** viết cứng chuỗi

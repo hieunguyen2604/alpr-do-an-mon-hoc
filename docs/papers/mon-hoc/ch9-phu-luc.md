@@ -14,7 +14,7 @@ Chỉ cần khi muốn tái lập **số đo hiệu năng**; số đo độ chí
 | Python | 3.13.12 |
 | Thư viện chính | `ultralytics` 8.4.101 · `torch` 2.13.0+cpu · `paddleocr` 3.7.0 · `paddlepaddle` 3.3.1 · `opencv-python` 4.10.0.84 · `numpy` 2.4.5 |
 
-Phiên bản thư viện trích từ **môi trường đang chạy tại thời điểm đo**, không lấy từ tệp khai báo phụ thuộc — tệp khai báo ghi *ràng buộc phiên bản*, không ghi *phiên bản đã cài*. Riêng phiên bản OpenCV đáng ghi vì quy ước góc của `minAreaRect` từng đổi giữa các phiên bản lớn, và bước nắn hình ở mục 3.4.6 phải xử lý riêng trường hợp ngoại lệ này.
+Phiên bản thư viện trích từ **môi trường đang chạy tại thời điểm đo**, không lấy từ tệp khai báo phụ thuộc — tệp khai báo ghi *ràng buộc phiên bản*, không ghi *phiên bản đã cài*. Riêng phiên bản OpenCV đáng ghi vì quy ước góc của `minAreaRect` từng đổi giữa các phiên bản lớn, và bước hiệu chỉnh góc nghiêng ở mục 3.4.6 phải xử lý riêng trường hợp ngoại lệ này.
 
 ### A.2. Siêu tham số huấn luyện bộ phát hiện
 

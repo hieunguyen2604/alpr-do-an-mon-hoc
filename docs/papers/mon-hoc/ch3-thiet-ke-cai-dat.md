@@ -94,11 +94,11 @@ Việc **tắt phép lật ngang** là quyết định xử lý ảnh đáng ch�
 
 ### 3.4.1. Chuỗi bước và nguyên tắc bật tắt độc lập
 
-Mọi bước trong mục này đều **bật tắt được độc lập** qua biến cấu hình — điều kiện để chương 4 **bóc tách đóng góp của từng bước**. Thứ tự trên **đường chạy chính**:
+Mọi bước trong mục này đều **bật tắt được độc lập** qua biến cấu hình — điều kiện để chương 4 **bóc tách đóng góp của từng bước**. Thứ tự trên **luồng xử lý chính**:
 
 > cắt vùng → ước lượng số dòng → *(nếu hai dòng)* tách hai nửa → ghép ngang → phóng đại → thang xám → CLAHE → lọc song phương → nhận dạng
 
-Ước lượng số dòng chạy trên vùng cắt thô (các bước tăng cường phía sau không làm đổi tỉ lệ khung hình); tiền xử lý chạy trên dải ảnh **đã ghép** để CLAHE cân bằng tương phản trên một hàng ký tự liền mạch; còn bước nắn hình không nằm trên đường chạy chính — nó thuộc bậc thang thử lại ở mục 3.4.6.
+Ước lượng số dòng chạy trên vùng cắt thô (các bước tăng cường phía sau không làm đổi tỉ lệ khung hình); tiền xử lý chạy trên dải ảnh **đã ghép** để CLAHE cân bằng tương phản trên một hàng ký tự liền mạch; còn bước hiệu chỉnh góc nghiêng (Deskew) không nằm trên luồng xử lý chính — nó thuộc cơ chế thử lại đa tầng ở mục 3.4.6.
 
 ![](figures/fig-pipeline-strip.png)
 
@@ -124,7 +124,7 @@ Ngưỡng này là **đề xuất của đồ án, không phải quy định ph�
 
 Dải 2,5–3,0 vẫn là **vùng bất định**, và nó bất định theo cả hai chiều: một biển một dòng chụp nghiêng lớn có thể cho tỉ lệ rơi xuống khoảng này, còn một biển hai dòng nghiêng thì có tỉ lệ **vọt lên trên** ngưỡng và đi nhầm sang nhánh một dòng.
 
-Đường chạy chính **không có cách nào tự phát hiện** mình vừa phân loại nhầm — nó chỉ đo một con số và so với một ngưỡng. Đây chính là lý do bậc thang thử lại ở mục 3.4.6 tồn tại: nó không sửa ngưỡng mà **dùng kết quả đọc hỏng làm tín hiệu** để nắn hình rồi phân loại lại.
+Luồng xử lý chính **không có cách nào tự phát hiện** mình vừa phân loại nhầm — nó chỉ đo một con số và so với một ngưỡng. Đây chính là lý do cơ chế thử lại đa tầng ở mục 3.4.6 tồn tại: nó không sửa ngưỡng mà **dùng kết quả đọc sai lệch làm tín hiệu** để hiệu chỉnh góc nghiêng rồi phân loại lại.
 
 ### 3.4.4. Tách hai nửa có chồng lấn
 
@@ -144,18 +144,18 @@ Chi tiết cuối cùng là điểm mấu chốt của toàn bộ thiết kế. 
 
 Đây là một minh hoạ trực tiếp cho luận điểm của môn học: bài toán không được giải bằng cách thay mô hình mạnh hơn, mà bằng cách **biến đổi ảnh đầu vào cho khớp giả định của mô hình sẵn có**.
 
-### 3.4.6. Nắn hình và bậc thang thử lại
+### 3.4.6. Hiệu chỉnh góc nghiêng và cơ chế thử lại đa tầng
 
 Biển chụp nghiêng vừa làm ký tự biến dạng phối cảnh, vừa làm **hộp bao nở rộng theo chiều ngang** khiến tỉ lệ khung hình đo được vượt ngưỡng 2,5 của mục 3.4.3: biển hai dòng bị phân loại nhầm thành một dòng, không được tách và trả về chuỗi rỗng — lỗi **đi nhầm nhánh xử lý**, không phải "đọc kém đi". Hai phép hiệu chỉnh được cài để kéo vùng biển về đúng nhánh:
 
-- **Nắn hình** — nhị phân hoá bằng Otsu ở cả hai cực, lấy vùng liên thông lớn nhất, khớp một hình chữ nhật xoay, xoay cho cạnh dài nằm ngang rồi **cắt lại sát**; tỉ lệ của phần cắt sát mới là hình dạng thật của biển — đúng đại lượng mà bước phân loại cần.
+- **Hiệu chỉnh góc nghiêng (Deskew)** — nhị phân hoá bằng Otsu ở cả hai cực, lấy vùng liên thông lớn nhất, khớp một hình chữ nhật xoay, xoay cho cạnh dài nằm ngang rồi **cắt lại sát**; tỉ lệ của phần cắt sát mới là hình dạng thật của biển — đúng đại lượng mà bước phân loại cần.
 - **Giãn theo chiều dọc** — cho biển bị nén do chụp chếch từ trên xuống, khi không có góc xoay nào để nắn; giá trị nằm ở việc **định tuyến lại**, không ở chi tiết ảnh nội suy thêm.
 
-Hai phép này tổ chức thành một **bậc thang thử lại**, chỉ kích hoạt sau khi lượt đọc đầu tiên trượt kiểm tra định dạng. Vì cổng chỉ mở khi kết quả đã không hợp lệ, tập bị can thiệp và tập đang đúng là **hai tập rời nhau** — bậc thang không thể làm hỏng một biển vốn đã đọc đúng, nên bật mặc định được. Bước nắn hình còn ba cổng an toàn tự lùi về "trả nguyên vùng cắt": góc nghiêng dưới 1,5°, góc trên 35°, hoặc vùng liên thông lớn nhất dưới 25% diện tích vùng cắt.
+Hai phép này tổ chức thành một **cơ chế thử lại đa tầng (Fallback Ladder)**, chỉ kích hoạt sau khi lượt đọc đầu tiên trượt kiểm tra định dạng. Vì cổng chỉ mở khi kết quả đã không hợp lệ, tập bị can thiệp và tập đang đúng là **hai tập rời nhau** — cơ chế thử lại không thể làm sai lệch một biển vốn đã đọc đúng, nên bật mặc định được. Bước hiệu chỉnh góc nghiêng còn ba cổng an toàn tự lùi về "trả nguyên vùng cắt": góc nghiêng dưới 1,5°, góc trên 35°, hoặc vùng liên thông lớn nhất dưới 25% diện tích vùng cắt.
 
 Chi phí và lợi ích đo được trình bày ở mục 4.4.2, kèm một quyết định **tắt** một bậc trong đó.
 
-Cần nhấn mạnh một đánh đổi có chủ đích trong thiết kế: giải thuật nắn hình chỉ áp dụng phép xoay phẳng hai chiều (2D affine rotation) dựa trên việc khớp hình chữ nhật có hướng diện tích tối thiểu (minAreaRect) [16]. Hệ thống chủ động không tích hợp các phép biến đổi phối cảnh ba chiều (3D Homography/Perspective Transformation) phức tạp. Lý do trực tiếp là ràng buộc thời gian thực trên CPU: tính toán ma trận phối cảnh và nội suy lại toàn bộ lưới điểm ảnh trên CPU sẽ đẩy độ trễ p95 vượt trần cho phép, trong khi phép xoay phẳng 2D có chi phí tính toán xấp xỉ 0 ms nhưng vẫn giải quyết được đại đa số các trường hợp biển số bị lệch góc chụp phổ biến trong thực tế.
+Cần nhấn mạnh một đánh đổi có chủ đích trong thiết kế: giải thuật hiệu chỉnh góc nghiêng chỉ áp dụng phép xoay phẳng hai chiều (2D affine rotation) dựa trên việc khớp hình chữ nhật có hướng diện tích tối thiểu (minAreaRect) [16]. Hệ thống chủ động không tích hợp các phép biến đổi phối cảnh ba chiều (3D Homography/Perspective Transformation) phức tạp. Lý do trực tiếp là ràng buộc thời gian thực trên CPU: tính toán ma trận phối cảnh và nội suy lại toàn bộ lưới điểm ảnh trên CPU sẽ đẩy độ trễ p95 vượt trần cho phép, trong khi phép xoay phẳng 2D có chi phí tính toán xấp xỉ 0 ms nhưng vẫn giải quyết được đại đa số các trường hợp biển số bị lệch góc chụp phổ biến trong thực tế.
 
 ### 3.4.7. Bước phục hồi dòng trên
 

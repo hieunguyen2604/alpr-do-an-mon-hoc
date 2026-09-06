@@ -18,7 +18,7 @@ Nhận dạng biển số xe tự động (ALPR) là lõi của bãi đỗ xe th
 
 ### 1.2.1. Mục tiêu
 
-Xây dựng một hệ thống nhận dạng biển số xe Việt Nam chạy được đầu cuối, **suy luận hoàn toàn trên CPU**, hỗ trợ cả biển một dòng và biển hai dòng. Trọng tâm của đồ án môn học đặt ở **khối xử lý ảnh** nằm giữa bộ phát hiện và bộ nhận dạng ký tự: chuẩn hoá, tăng cường tương phản, khử nhiễu bảo toàn biên, nắn hình, phân loại bố cục theo hình học, tách và ghép ảnh, phân tích màu trong không gian HSV (Bảng 1.1).
+Xây dựng một hệ thống nhận dạng biển số xe Việt Nam chạy được đầu cuối, **suy luận hoàn toàn trên CPU**, hỗ trợ cả biển một dòng và biển hai dòng. Trọng tâm của đồ án môn học đặt ở **khối xử lý ảnh** nằm giữa bộ phát hiện và bộ nhận dạng ký tự: chuẩn hoá, tăng cường tương phản, khử nhiễu bảo toàn biên, hiệu chỉnh góc nghiêng (Deskew), phân loại bố cục theo hình học, tách và ghép ảnh, phân tích màu trong không gian HSV (Bảng 1.1).
 
 **Bảng 1.1.**[]{#tbl-1-1} Chỉ tiêu đặt ra, mỗi chỉ tiêu có ngưỡng tối thiểu và mục tiêu
 

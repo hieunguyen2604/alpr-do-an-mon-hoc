@@ -210,7 +210,7 @@ Khởi động bằng một lệnh `docker compose up`; giao diện hiện **c�
 
 - Chạy đầu cuối trên CPU: phát hiện **mAP@0,5 = 0,9829**
 - Đột phá trên biển hai dòng nhờ biến đổi ảnh (thay vì đổi mô hình): tăng **+34,92 điểm**
-- Hậu xử lý theo vị trí **+13,28 điểm**, **0 ca làm hỏng** / 2.801 biển
+- Hậu xử lý theo vị trí **+13,28 điểm**, **0 ca làm sai lệch** / 2.801 biển
 - Điểm nghẽn còn lại: **biển hai dòng** (S₁ = 0,7234)
 
 ## Cảm ơn & Hỏi đáp (Q&A)

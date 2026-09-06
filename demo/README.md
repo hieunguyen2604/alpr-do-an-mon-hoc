@@ -53,7 +53,7 @@ Gồm các tình huống biển 2 dòng xe máy, ô tô biển vuông, biển đ
 
 ## 5. Chạy kiểm thử tự động
 
-Chạy 39 ảnh qua **đúng đường ống của bản giao hàng** rồi đối chiếu với `expected.json`:
+Chạy 39 ảnh qua **đúng đường ống của phiên bản bàn giao** rồi đối chiếu với `expected.json`:
 
 ```bash
 backend/.venv/Scripts/python scripts/demo_test.py

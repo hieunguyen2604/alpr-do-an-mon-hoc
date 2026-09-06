@@ -29,21 +29,21 @@
 Kết quả chính (đo trên Intel i5-14600K, chỉ CPU): phát hiện **mAP@0,5 = 0,9829**
 (YOLO11n tự huấn luyện, `models/best.pt`); đọc đúng cả chuỗi sau hậu xử lý
 **77,01%** trên 2.801 biển có nhãn (khối hậu xử lý đóng góp **+13,28 điểm** —
-372 biển sửa đúng, 0 biển hỏng); độ trễ p95 một ảnh **≈ 510 ms**.
+372 biển sửa đúng, 0 biển làm sai lệch); độ trễ p95 một ảnh **≈ 510 ms**.
 
 ---
 
 ## 2. Hệ thống
 
 ```
-Ảnh → YOLO11n phát hiện biển → cắt + nắn hình → tách 2 dòng, ghép ngang
+Ảnh → YOLO11n phát hiện biển → cắt + hiệu chỉnh góc nghiêng → tách 2 dòng, ghép ngang
     → PaddleOCR PP-OCRv5 mobile → hậu xử lý theo luật biển số VN → kết quả
 ```
 
 - `ai/` — pipeline suy luận + huấn luyện (Python thuần, không import web)
 - `backend/` — FastAPI + SQLAlchemy + SQLite, REST API, Swagger
 - `frontend/` — React + Vite + TypeScript: Nhận dạng ảnh · Video · Webcam · Lịch sử
-- `tests/` — 1.004 test tự động
+- `tests/` — Bộ kiểm thử tự động toàn diện
 - `demo/` — ảnh mẫu 1 dòng / 2 dòng / nhiều biển + video, dùng khi trình bày
 - `docs/papers/mon-hoc/` — nguồn Markdown của quyển; `docs/slides/` — nguồn deck
 
@@ -87,7 +87,7 @@ kiểm slide sau khi dựng: `powershell -File scripts/check_slides.ps1`.
 ## 5. Quy ước
 
 - Tài liệu học thuật tiếng Việt; mã nguồn, chú thích và Swagger tiếng Anh.
-- Mã AI không import FastAPI; không hard-code đường dẫn.
+- Mã AI không import FastAPI; không gán cứng đường dẫn.
 - Mọi con số trong quyển/slide truy được về phép đo thật
   (hồ sơ đo đầy đủ: `docs/reports/` trên nhánh `main`).
 

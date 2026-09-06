@@ -4,7 +4,7 @@
 
 > ✅ **MÔ HÌNH CHÍNH THỨC `best.pt` ĐÃ CÓ VÀ ĐANG CHẠY.** `best.pt` (YOLO11n, 2.590.035 tham số, `imgsz=640`, split v3, 20 epoch) đã huấn luyện xong và là mô hình hệ thống đang nạp. `GET /health` trả về **`model_loaded: true`**, trường `engine` là `yolo:best.pt+paddleocr-PP-OCRv5-mobile`.
 >
-> `StubPipeline` **đã bị đưa ra khỏi đường chạy chính**. Phương án lùi khi thiếu trọng số hiện là `UnavailablePipeline` — nó **ném lỗi** thay vì bịa ra biển số. Stub chỉ chạy khi đặt tường minh `ALPR_USE_STUB=true`.
+> `StubPipeline` **đã bị đưa ra khỏi luồng xử lý chính**. Phương án lùi khi thiếu trọng số hiện là `UnavailablePipeline` — nó **báo lỗi hệ thống** thay vì sinh kết quả giả lập. Stub chỉ chạy khi đặt tường minh `ALPR_USE_STUB=true`.
 >
 > Kết quả detection thật của `best.pt` trên tập test v3 (1.514 ảnh): **mAP@0.5 = 0,9829 · mAP@0.5:0.95 = 0,7834 · Precision = 0,9837 · Recall = 0,9714** — đều đạt chỉ tiêu. Nguồn: 05-tables.md §T5.5a *(nhánh `main`)*.
 >
@@ -78,7 +78,7 @@ Kế hoạch ban đầu có cân nhắc việc tải một mô hình phát hiệ
 1. **Rủi ro bảo mật.** Tệp `.pt` của PyTorch là **pickle**. Nạp một file `.pt` tải từ kho bất kỳ trên Internet đồng nghĩa với **thực thi mã tuỳ ý** trên máy — không phải chỉ đọc dữ liệu.
 2. **Ràng buộc học thuật.** Mọi số liệu công bố phải đo trên mô hình do đồ án tự huấn luyện (xem mục cuối trang này).
 
-**Quyết định đã chọn và đã thực hiện: tự huấn luyện.** `baseline-416-v1.pt` là kết quả của lượt huấn luyện đầu tiên trên bộ dữ liệu của đồ án; `best.pt` là lượt chính thức (đã hoàn tất, đang chạy). Không có trọng số bên thứ ba nào nằm trên đường chạy chính ngoài `pretrained/yolo11n-coco.pt` — và file đó chỉ dùng làm điểm khởi tạo transfer learning, không tự phát hiện được biển số.
+**Quyết định đã chọn và đã thực hiện: tự huấn luyện.** `baseline-416-v1.pt` là kết quả của lượt huấn luyện đầu tiên trên bộ dữ liệu của đồ án; `best.pt` là lượt chính thức (đã hoàn tất, đang chạy). Không có trọng số bên thứ ba nào nằm trên luồng xử lý chính ngoài `pretrained/yolo11n-coco.pt` — và file đó chỉ dùng làm điểm khởi tạo transfer learning, không tự phát hiện được biển số.
 
 ---
 
@@ -90,7 +90,7 @@ baseline **đã bị xoá** — mọi số đo trên chúng đã bị bác bỏ.
 
 Đo ngày 13/08/2026 trên 50 ảnh thật: PyTorch **33,09 ms** · ONNX Runtime **24,48 ms**
 (1,35×) · OpenVINO **21,12 ms** (1,57×), và mAP **không suy giảm** sau khi xuất.
-Bản giao hàng **vẫn giữ `best.pt`** vì NFR-P1 và NFR-P2 đều đạt mà không cần đổi;
+Phiên bản bàn giao **vẫn giữ `best.pt`** vì NFR-P1 và NFR-P2 đều đạt mà không cần đổi;
 muốn bật thì đổi `ALPR_MODEL_PATH`. Chi tiết: báo cáo 38 *(nhánh `main`)*.
 
 Đo lại phân rã độ trễ trên `best.pt` (nguồn: 05-tables.md §T5.7b *(nhánh `main`)*): **PaddleOCR chiếm ~64,3% tổng độ trễ (~112,55 ms/biển)**, detector YOLO11n chiếm **~34,2% (~59,83 ms)**. Độ trễ E2E p95 đo được là **780,36 ms in-process** và **731,15 ms client-side qua HTTP** (07-benchmark-p1-resolved.json *(nhánh `main`)*) — **đạt mục tiêu NFR-P1 (≤ 800 ms)** và thoả cả ngưỡng tối thiểu 1.500 ms.

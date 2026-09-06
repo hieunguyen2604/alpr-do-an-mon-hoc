@@ -107,8 +107,8 @@ docker exec alpr-backend sh -c 'echo $ALPR_MODEL_PATH'
 ```
 
 Nếu tệp không tồn tại, dịch vụ **vẫn khởi động** nhưng `/health` báo
-`model_loaded: false` và mọi yêu cầu nhận dạng đều lỗi sạch — nó **không** bịa
-ra kết quả giả. Đó là chủ ý (`UnavailablePipeline` trong `backend/main.py`).
+`model_loaded: false` và mọi yêu cầu nhận dạng đều lỗi sạch — nó **không** tự ý sinh
+kết quả giả lập. Đó là chủ ý (`UnavailablePipeline` trong `backend/main.py`).
 
 **Vì sao phải `mkdir -p storage` thủ công?** `./storage` được gắn theo kiểu
 bind mount. Nếu thư mục chưa tồn tại, Docker sẽ tự tạo nó **với quyền sở hữu
@@ -389,7 +389,7 @@ Backend image cần **cả** `backend/` lẫn `ai/`. Quan trọng hơn,
 `ai/inference/config.py` suy ra `PROJECT_ROOT` bằng cách lùi hai cấp từ chính
 vị trí của nó. Đặt gói tại `/app/ai/inference/` khiến `/app` được nhận diện là
 gốc dự án, nhờ đó `models/best.pt` và các đường dẫn khác phân giải đúng mà
-**không cần hard-code** đường dẫn nào (NFR-M4).
+**không cần gán cứng** đường dẫn nào (NFR-M4).
 
 Frontend image cũng dùng context là thư mục gốc, vì nó cần chép
 `deployment/docker/nginx.conf` — mà `COPY` thì không thể lấy tệp nằm ngoài

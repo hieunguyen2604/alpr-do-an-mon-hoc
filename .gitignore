@@ -58,7 +58,9 @@ datasets/processed/**
 # Checkpoint trung gian bị loại, nhưng best.pt thì GIỮ LẠI (sản phẩm bàn giao)
 models/**/*.pt
 !models/best.pt
-!models/*.onnx
+models/**/*.onnx
+models/best_openvino_model/
+models/rec_finetuned/
 runs/
 wandb/
 
@@ -75,12 +77,17 @@ ehthumbs.db
 Desktop.ini
 .DS_Store
 
-# ---------- IDE ----------
+# ---------- IDE & Trợ lý AI ----------
 .vscode/*
 !.vscode/settings.json
 !.vscode/extensions.json
 .idea/
 *.swp
+.agents/
+.claude/
+.github/agents/
+AGENTS.md
+CLAUDE.md
 
 # ---------- Tài liệu tạm ----------
 docs/**/*.aux

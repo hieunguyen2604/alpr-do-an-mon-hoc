@@ -1,4 +1,4 @@
-# Model super-resolution cho bậc thang thử-lại OCR
+# Mô hình Super-Resolution cho cơ chế thử lại đa tầng trong OCR
 
 | Tệp | Kiến trúc | Hệ số | Nguồn | Giấy phép |
 |---|---|---|---|---|

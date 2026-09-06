@@ -351,7 +351,7 @@ def gen_fig4():
                                      facecolor='#f8fafc', edgecolor='#cbd5e1', linewidth=1.8, zorder=1)
     ax.add_patch(rect_top)
 
-    ax.text(7.5, 6.0, "QUY TRÌNH NẮN HÌNH PHẲNG 2D (AFFINE TRANSFORM)", fontsize=13, fontweight='bold', color='#1e293b', ha='center', zorder=3)
+    ax.text(7.5, 6.0, "QUY TRÌNH HIỆU CHỈNH GÓC NGHIÊNG 2D (AFFINE DESKEW)", fontsize=13, fontweight='bold', color='#1e293b', ha='center', zorder=3)
     ax.text(7.5, 5.65, "Kéo tỉ lệ khung hình về đúng hình học chuẩn để đi vào nhánh tách-ghép biển hai dòng", fontsize=10, color='#475569', ha='center', style='italic', zorder=3)
 
     img_cv = cv2.imread(plate_clean_path)
@@ -400,8 +400,8 @@ def gen_fig4():
 
     ax.text(7.5, 2.0, "ĐÁNH ĐỔI KỸ THUẬT ĐÃ LƯỢNG HÓA TỪ THỰC NGHIỆM (BẢNG 4.9)", fontsize=11, fontweight='bold', color='#047857', ha='center', zorder=3)
     
-    col1_text = "• Cứu thêm +34 biển số đọc đúng hoàn toàn (đóng góp vào mức tăng toàn hệ thống)\n• Cơ chế Fallback Ladder: Chỉ mở cổng khi lần đọc 1 trượt regex -> Tuyệt đối không can thiệp biển vốn đã đúng"
-    col2_text = "• Ba cổng an toàn: Bỏ qua nắn hình nếu góc dưới 1,5°, trên 35°, hoặc diện tích liên thông dưới 25% bbox\n• Chi phí tính toán: Trung vị p50 giữ nguyên 405 ms (+0 ms); chi phí dồn trọn vào đuôi phân bố p95 (+276,8 ms)"
+    col1_text = "• Cứu thêm +34 biển số đọc đúng hoàn toàn (đóng góp vào mức tăng toàn hệ thống)\n• Cơ chế thử lại đa tầng (Fallback Ladder): Chỉ mở cổng khi lần đọc 1 trượt regex -> Tuyệt đối không can thiệp biển vốn đã đúng"
+    col2_text = "• Ba cổng an toàn: Bỏ qua hiệu chỉnh nếu góc dưới 1,5°, trên 35°, hoặc diện tích liên thông dưới 25% bbox\n• Chi phí tính toán: Trung vị p50 giữ nguyên 405 ms (+0 ms); chi phí dồn trọn vào đuôi phân bố p95 (+276,8 ms)"
 
     ax.text(1.0, 1.4, col1_text, fontsize=9, color='#064e3b', va='top', zorder=4)
     ax.text(8.0, 1.4, col2_text, fontsize=9, color='#064e3b', va='top', zorder=4)

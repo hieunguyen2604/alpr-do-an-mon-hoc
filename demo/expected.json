@@ -168,7 +168,7 @@
       "color": "white",
       "valid": true,
       "lines": 2,
-      "note": "Biển in '59-X1 / 394.58'. Từ 21/07 (sàn tin cậy rescue + bậc thang thử-lại) hệ thống đọc ĐÚNG 59X1-394.58."
+      "note": "Biển in '59-X1 / 394.58'. Từ 21/07 (sàn tin cậy rescue + cơ chế thử lại đa tầng) hệ thống đọc ĐÚNG 59X1-394.58."
     },
     {
       "plate": "76B141873",
@@ -186,7 +186,7 @@
       "color": "white",
       "valid": true,
       "lines": 1,
-      "note": "Biển trước ô tô Hyundai đỏ '51K-141.16', crop chỉ 25×16 px. Hệ thống đọc thẳng ra BA-104 — được gắn cờ quân đội/không hợp lệ trên UI (trung thực), không bịa thành biển dân sự."
+      "note": "Biển trước ô tô Hyundai đỏ '51K-141.16', crop chỉ 25×16 px. Hệ thống đọc thẳng ra BA-104 — được gắn cờ quân đội/không hợp lệ trên UI (trung thực), không tự ý chuyển thành biển dân sự."
     }
   ],
   "nhieu-bien-3.png": [
