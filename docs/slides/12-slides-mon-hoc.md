@@ -11,207 +11,167 @@ date: "Tháng 9 năm 2026"
 ---
 
 <!--
-BỘ SLIDE ĐỒ ÁN MÔN HỌC — 22 slide (1 bìa + 21 nội dung), khoảng 15 phút.
+BỘ SLIDE ĐỒ ÁN MÔN HỌC — bám sát rubric thuyết trình của giảng viên.
 
-Khác gì bộ kia (nằm trên nhánh `main`, không có ở nhánh này):
-  `10-slides.md`         28 slide (24 chính + 4 backup), bám mạch quyển tốt
-                         nghiệp, dùng cho buổi bảo vệ.
-  `12-slides-mon-hoc.md`  bộ này — bám quyển `docs/papers/mon-hoc/`, trọng tâm
-                          dời hẳn sang CÁC PHÉP XỬ LÝ ẢNH. YOLO và PaddleOCR
-                          xuất hiện như công cụ áp dụng, không như đóng góp.
+Cấu trúc theo rubric:
+  1. Bài toán (I/O công thức toán → Ý nghĩa + Thách thức → Khảo sát phương pháp)
+  2. Phương pháp đề xuất (Overview framework → Chi tiết)
+  3. Thực nghiệm (Dataset → Metric → Kết quả → Ví dụ → Ablation)
+  4. Kết luận & Hướng phát triển
 
-Ba khác biệt nội dung so với bộ 11 slide:
-  1. BỎ cặp số 94,3% / 45,7% của RodoSol-ALPR. Đối chiếu với công trình đã công
-     bố là việc của luận văn tốt nghiệp, không phải của đồ án môn học.
-  2. BỎ khung "đóng góp kỹ thuật". Đồ án môn học không tuyên bố đóng góp; nó
-     trình bày cách giải.
-  3. THÊM slide bóc tách đóng góp đo được của từng bước xử lý ảnh, và slide
-     hình chuỗi xử lý dựng từ chính mã bàn giao.
-
-Bốn slide thêm ở lượt sau (12 -> 16), đều lấp chỗ trống có thật:
-  - Bộ dữ liệu và khử trùng lặp: băm tri giác DCT là nội dung môn học mà
-    bản 12 slide chỉ nhắc trong một dòng bảng.
-  - Hình 4.1 và Hình 4.2 của quyển: con số quan trọng nhất và các ca lỗi
-    thật, trước đó chỉ nằm trong bảng.
-  - Tách Demo ra khỏi Hướng phát triển để có chỗ cho ảnh chụp giao diện.
-
-BỐN QUY ƯỚC BẮT BUỘC — vi phạm là vỡ layout, `check_slides.ps1` sẽ báo:
-
-1. **Chỉ dùng `##`.** Mỗi `##` là một slide; cấp này ghim bằng `--slide-level=2`.
-2. **Bảng hoặc hình phải là khối CUỐI CÙNG của slide, và chỉ được có MỘT.**
-   Pandoc cắt sang slide mới ở mọi thứ đứng sau bảng/hình.
-3. **Câu dẫn trên bảng/hình: MỘT câu, tối đa ~100 ký tự.** Dài hơn thì
-   PowerPoint không cắt chữ — nó cho tràn ra và **vẽ đè lên bảng bên dưới**,
-   lỗi không phát hiện được bằng phép đo chiều cao.
-4. Mọi con số phải truy được về `docs/papers/mon-hoc/` hoặc `docs/reports/` (nhánh `main`).
+BỐN QUY ƯỚC BẮT BUỘC — vi phạm là vỡ layout:
+1. Chỉ dùng `##`. Mỗi `##` là một slide.
+2. Bảng hoặc hình phải là khối CUỐI CÙNG của slide, chỉ được MỘT.
+3. Câu dẫn trên bảng/hình: tối đa ~100 ký tự.
+4. Mọi con số phải truy được về `docs/reports/` hoặc `docs/papers/mon-hoc/`.
 
 Kiểm tra sau mỗi lần sửa:
-
-```
-python scripts/build_thesis.py --slides docs/slides/12-slides-mon-hoc.md
-powershell -File scripts/check_slides.ps1 -DeckPath docs/slides/12-slides-mon-hoc.pptx
-```
+  python scripts/build_thesis.py --slides docs/slides/12-slides-mon-hoc.md
+  powershell -File scripts/check_slides.ps1 -DeckPath docs/slides/12-slides-mon-hoc.pptx
 -->
 
 ## Nội dung trình bày
 
-1. Bài toán và mục tiêu
+1. Bài toán
 2. Phương pháp đề xuất
-3. Kết quả thực nghiệm
+3. Thực nghiệm
 4. Kết luận và hướng phát triển
 
-## Đặt vấn đề
+## Định nghĩa bài toán
 
-- **77 triệu xe máy**, chiếm 85–90% lưu lượng ⇒ ở Việt Nam **biển hai dòng là đa số**, không phải ngoại lệ
-- Biển xe mô tô chỉ **190 × 140 mm**, tỉ lệ khung hình **1,357** — vừa là đối tượng nhỏ, vừa là bố cục hai dòng
-- Mọi bộ nhận dạng ký tự dựng sẵn đều **giả định văn bản nằm trên một dòng ngang** — giả định đó **sai** với đa số biển số Việt Nam
-- Ảnh thực tế còn thêm: bề mặt phản quang gây **chói cục bộ**, biển bám bụi, cong vênh, chụp nghiêng, ngược sáng
+Với ảnh phương tiện $I \in \mathbb{R}^{H \times W \times 3}$, hệ thống học hàm:
 
-## Mục tiêu và chỉ tiêu
+$$f_{\theta}(I) = (b,\; y,\; c)$$
 
-Hệ thống chạy đầu cuối, **suy luận hoàn toàn trên CPU**, hỗ trợ cả biển một dòng và hai dòng.
+- $b$: hộp bao biển số
+- $y \in \Sigma^n$: chuỗi 7–9 ký tự
+- $c$: nhãn màu nền biển
+- Ràng buộc vận hành: p95 ≤ **1,5 giây**
 
-| Chỉ tiêu | Ngưỡng tối thiểu | Mục tiêu |
-|---|---:|---:|
-| mAP@0,5 của bộ phát hiện | 0,85 | **0,90** |
-| mAP@0,5:0,95 của bộ phát hiện | 0,55 | 0,65 |
-| Đúng mức ký tự (1 − CER) | 0,92 | 0,95 |
-| Đúng cả chuỗi, **trước** hậu xử lý | 0,80 | 0,85 |
-| Đúng cả chuỗi, **sau** hậu xử lý | 0,85 | 0,90 |
-| Độ trễ một ảnh, p95, **trên CPU** | ≤ 1.500 ms | ≤ 800 ms |
+## Phạm vi đề tài
 
-## Pipeline xử lý tổng thể
+| Trong phạm vi | Ngoài phạm vi |
+|---|---|
+| Phát hiện biển số trên ảnh | Theo dõi phương tiện qua nhiều khung hình |
+| Nhận dạng biển một dòng và hai dòng | Điều khiển barie hoặc thiết bị ngoại vi |
+| Chuẩn hóa chuỗi và nhận dạng màu nền | Kiến trúc microservices hoặc multi-GPU |
+| Tối ưu suy luận trên máy tính phổ thông | Nhận dạng khuôn mặt và danh tính chủ xe |
 
-Đóng góp chính nằm ở **khối xử lý ảnh** và **hậu xử lý** — cầu nối giữa hai mô hình học sâu.
+## Ý nghĩa thực tiễn
 
-| Luồng | Khối chức năng | Nội dung kỹ thuật trong pipeline |
-|:---:|---|---|
-| **1** | **Ảnh đầu vào** | Khung hình camera / ảnh phương tiện thực tế (1 hoặc 2 dòng) |
-| ↓ | **YOLO11n** | Phát hiện vùng biển số và trích xuất bounding box |
-| ↓ | **Khối xử lý ảnh** *(cốt lõi)* | Phân loại số dòng (AR = 2,50) · Tách–ghép ngang · CLAHE · Lọc song phương |
-| ↓ | **PaddleOCR** | Nhận dạng ký tự quang học trên ảnh một dòng đã chuẩn hóa |
-| ↓ | **Khối hậu xử lý** *(cốt lõi)* | Kiểm tra mã tỉnh (81/89) · Mặt nạ vị trí · Ánh xạ nhầm lẫn bất đối xứng |
-| **6** | **Kết quả đầu ra** | Chuỗi ký tự biển số chuẩn hóa + Loại phương tiện / màu biển |
+- Tự động hóa khâu nhập biển số từ camera hoặc ảnh tĩnh
+- Làm lõi nhận dạng cho bãi đỗ xe, thu phí và kiểm soát ra vào
+- Có thể triển khai trên máy tính phổ thông
+- Đánh giá bằng **đúng cả chuỗi**, sát với yêu cầu vận hành thực tế
 
-## Bộ dữ liệu: khử trùng lặp bằng băm tri giác
+## Thách thức của bài toán
 
-Các bộ công khai fork lẫn nhau, nên **44,2% ảnh là bản trùng** — không khử thì đang đo trí nhớ
+- **77 triệu xe máy** khiến biển hai dòng là trường hợp phổ biến
+- CRNN/CTC chuẩn hóa ảnh thành một chuỗi ngang, khó bảo toàn bố cục hai dòng
+- Biển xe máy **190 × 140 mm** là đối tượng nhỏ trong khung hình
+- Chói phản quang, bụi bẩn, nhòe và góc nghiêng làm mất nét ký tự
 
-![](figures/fig-mon-hoc-funnel.png)
+## Các hướng tiếp cận hiện có
 
-## Vì sao biển hai dòng làm OCR đọc sai
+Đề tài chọn hướng 4 vì không cần huấn luyện lại OCR và phù hợp khi triển khai.
 
-Bản đồ đặc trưng bị nén H → 1 khiến ký tự hai dòng rơi chung cột đặc trưng và xung đột CTC.
-
-![](figures/fig-slide-crnn-collapse.png)
-
-## Hướng tiếp cận: Biến đổi hình học ảnh thay cho mô hình phức tạp
-
-Tái cấu trúc hình học của ảnh để tương thích hoàn toàn với giả định của mô hình CRNN/CTC sẵn có.
-
-| Phép xử lý ảnh | Dùng để làm gì | Thay cho phương án hiển nhiên |
+| Hướng tiếp cận | Nhận dạng | Hạn chế với biển VN |
 |---|---|---|
-| **Ngưỡng tỉ lệ khung hình 2,50** | Phân loại một dòng / hai dòng — quy chuẩn cho 4,727 · 2,000 · 1,357 nên có khoảng trống rộng **2,727** để đặt ngưỡng | Huấn luyện thêm một bộ phân loại |
-| **Tách hai nửa + ghép ngang** | Biến ảnh hai dòng thành một dòng | Đổi sang mô hình đọc đa dòng |
-| **CLAHE** | Xử lý mảng chói cục bộ | Cân bằng lược đồ xám **toàn cục** |
-| **Lọc song phương** | Khử nhiễu mà **giữ biên** | Làm mờ Gauss |
-| **Băm tri giác (DCT)** | Khử ảnh trùng giữa các bộ dữ liệu | Băm mật mã MD5/SHA |
-| **Không gian màu HSV** | Nhận màu nền bền với ánh sáng | Phân ngưỡng trên RGB |
+| Truyền thống: morphology + SVM | SVM/CNN ký tự | Nhạy với góc nghiêng và nhiễu |
+| YOLO + OCR dựng sẵn | EasyOCR/Tesseract | Suy giảm mạnh trên biển hai dòng |
+| End-to-end | LPRNet/CRNN | Cần dữ liệu Việt Nam để huấn luyện lại |
+| **Phương pháp của đề tài** | **YOLO11n + PP-OCRv5** | Thêm biến đổi ảnh, phù hợp máy tính phổ thông |
 
-## Minh họa pipeline trên một biển thật
+## Pipeline đề xuất
 
-Mỗi khung là ảnh thật ở đầu ra một bước, dựng từ **mô hình đề xuất**.
+Đóng góp cốt lõi nằm ở **khối xử lý ảnh** giữa hai mô hình học sâu.
 
 ![](figures/fig-pipeline-strip-ngang.png)
 
-## Cắt cố định 5/12 & 1/3 thay vì Chiếu ngang
+## Tại sao OCR đọc sai biển hai dòng?
 
-Ốc vít ở tim biển tạo đỉnh xám giả làm gãy phép chiếu ngang; cắt cố định O(1) bảo vệ nét chữ.
+Feature map nén H → 1 khiến ký tự hai hàng chồng cột — CTC xung đột và đọc sai.
 
-![](figures/fig-slide-split-vs-projection.png)
+![](figures/fig-slide-crnn-collapse.png)
 
-## Bộ luật hậu xử lý ràng buộc theo vị trí
+## Khối xử lý ảnh
 
-Ba ràng buộc đặc thù biển số Việt Nam, khai thác **theo từng vị trí trong chuỗi**.
+Tái cấu trúc hình học ảnh để khớp với giả định đầu vào của CRNN/CTC sẵn có.
 
-| Ràng buộc | Nội dung | Vì sao không dùng luật phẳng |
+| Phép xử lý | Mục đích | Thay cho |
 |---|---|---|
-| Mã tỉnh | **81/89** giá trị được dùng | `\d{2}` cho qua 8 chuỗi không tồn tại |
-| Tập seri | Vị trí 1 **có G không R**; vị trí 2 của xe máy **có R không G** | Danh sách phẳng sai hệ thống trên mọi biển xe máy có `R` |
-| Mặt nạ vị trí | `DDLDDDDD` · `DDLDDDD` · `DDL?DDDDD` | Chỉ số 3 là vị trí **duy nhất** cả chữ lẫn số đều hợp lệ |
-| Ánh xạ nhầm lẫn | O → 0 hợp lý, 0 → O **không bao giờ** — chiều đúng là 0 → D | Bảng đối xứng sẽ tạo ra ký tự bất hợp lệ |
+| **Ngưỡng tỉ lệ AR = 2,50** | Phân loại 1 dòng / 2 dòng | Huấn luyện bộ phân loại |
+| **Tách & ghép ngang** | Biến 2 dòng thành 1 dòng | Mô hình đọc đa dòng |
+| **CLAHE** | Xử lý chói cục bộ | Cân bằng histogram toàn cục |
+| **Lọc song phương** | Khử nhiễu giữ biên | Làm mờ Gauss |
+| **Nắn phẳng (Deskew)** | Hiệu chỉnh biển nghiêng | Homography 3D (quá chậm) |
 
-## Phân loại màu nền trong không gian màu HSV
+## Bộ luật hậu xử lý theo vị trí
 
-Tách biệt sắc độ H khỏi độ sáng V giúp nhận diện bền vững; độ chính xác tổng thể đạt 97,89%.
+Khai thác đặc trưng cấu trúc biển số Việt Nam để sửa lỗi OCR theo từng vị trí ký tự.
 
-![](figures/fig-slide-hsv-eval.png)
+| Ràng buộc | Nội dung |
+|---|---|
+| Mã tỉnh | 81/89 giá trị hợp lệ |
+| Mặt nạ vị trí | DDLDDDDD · DDL?DDDDD |
+| Ánh xạ nhầm lẫn | O→0 hợp lý; 0→O không bao giờ |
 
-## Xử lý biển nghiêng: Nắn 2D & Thử lại
+## Bộ dữ liệu
 
-Nắn phẳng bằng minAreaRect cứu thêm 34 biển số, chi phí dồn vào đuôi p95 mà không ảnh hưởng p50.
+7 bộ công khai, 27.111 ảnh → khử 44,2% trùng lặp → **15.133 ảnh**, chia 70 / 20 / 10.
 
-![](figures/fig-slide-deskew-ladder.png)
+![](figures/fig-mon-hoc-funnel.png)
 
-## Kết quả đo được
+## Phương pháp đánh giá
 
-Phát hiện **đạt cả bốn chỉ tiêu**; phần thiếu nằm trọn ở **biển hai dòng** — riêng một dòng đạt 0,9541 sau hậu xử lý
+- **mAP@0,5:** dự đoán đúng khi IoU ≥ 0,5
+- **Precision, Recall:** mức báo nhầm và bỏ sót của bộ phát hiện
+- **S₀, S₁:** đúng cả chuỗi trước và sau hậu xử lý
+- **CER:** tỉ lệ ký tự sai
+- **p50, p95, p99:** phân vị độ trễ đầu cuối
+
+## Kết quả
+
+Bộ phát hiện đạt cả 4 chỉ tiêu; phần thiếu tập trung hoàn toàn ở biển hai dòng.
 
 ![](figures/fig-mon-hoc-kpi.png)
 
-## Khoảng cách nằm ở đâu
+## Ví dụ: ca đúng và ca sai
 
-Đo mức ký tự thì hai bố cục gần bằng nhau; đo cả chuỗi thì phân hóa rõ rệt.
-
-![](figures/fig-ch4-layout.png)
-
-## Lỗi trông như thế nào
-
-Ba ca được chuẩn hóa đúng nhờ hậu xử lý, ba ca vẫn sai — **cả ba ca sai đều gặp lỗi ở dòng trên**.
+Ba ca được hậu xử lý cứu; ba ca vẫn sai — **lỗi đều ở dòng trên của biển hai dòng**.
 
 ![](figures/fig-ch4-loi.png)
 
-## Bóc tách đóng góp của từng bước
+## Đóng góp của từng bước (Ablation)
 
-Mọi bước bật tắt độc lập, nên đóng góp của từng bước **đo được riêng** — kể cả khi bằng 0. *(Đối chứng: tách-ghép trên Tesseract chỉ +0,03 điểm)*
+Chi phí của tách–ghép chưa được tách thành một phép đo độc lập.
 
-![](figures/fig-mon-hoc-donggop.png)
-
-## Phân rã ngân sách độ trễ & Định luật Amdahl
-
-PaddleOCR chiếm 60,8% độ trễ là điểm nghẽn chính; xử lý ảnh mang lại đột phá với chi phí ~0 ms.
-
-![](figures/fig-slide-latency-amdahl.png)
-
-## Ba kết quả khác với dự đoán ban đầu
-
-- **Tách-ghép không độc lập bộ nhận dạng** — 34,92 điểm cho PaddleOCR, **0,03** cho Tesseract ⇒ điều kiện cần, không đủ
-- **Bảng luật suy từ hình dạng chỉ phủ 2/10 cặp nhầm phổ biến nhất**; bảng trích từ ma trận đo được phủ **4/10** và thêm **53 biển đúng**
-- **Siêu phân giải cải thiện 0 biển, nhưng 0/120 mẫu lọt cổng** ⇒ *chi phí đã đo, lợi ích chưa ai đo được*
+| Can thiệp | Mức cải thiện (+Δ metric) | Chi phí tính toán (+ms trễ) |
+|---|---:|---:|
+| Tách–ghép ngang + PP-OCRv5 | **+34,92 điểm S₀** | Chưa đo tách riêng |
+| Hậu xử lý theo vị trí | **+13,28 điểm S₁** | **+0,03 ms** |
+| Thử lại có nắn phẳng | **+34 biển đúng** | **+276,80 ms p95** |
 
 ## Demo: hệ thống chạy thật
 
-Khởi động bằng một lệnh `docker compose up`; giao diện hiện **cả chuỗi thô lẫn chuỗi đã sửa**.
+Khởi động bằng một lệnh docker compose up; giao diện hiển thị chuỗi thô và chuỗi đã chuẩn hóa.
 
 ![](figures/fig-demo-ui.png)
 
-## Hướng phát triển
+## Kết luận
 
-| # | Hướng phát triển | Giải hạn chế nào |
-|:--:|---|:--:|
-| 1 | **Huấn luyện lại bộ nhận dạng ký tự cho biển số Việt Nam** | 1 |
-| 2 | **Mở rộng bảng ánh xạ từ ma trận nhầm lẫn khi có thêm dữ liệu** | 1 |
-| 3 | Khử rò rỉ theo **chuỗi biển số** thay vì theo băm tri giác | 3, 4 |
-| 4 | Thu thập dữ liệu biển vàng, xanh, đỏ | 2, 5 |
-| 5 | Đo lại bậc siêu phân giải FSRCNN trên ngữ liệu có biển siêu nhỏ | — |
-| 6 | Tăng tốc khối nhận dạng: lượng tử hóa, xuất OpenVINO hoặc ONNX | — |
+- Phát hiện mAP@0,5 = **0,9829** · Biển một dòng S₁ = **0,9541**
+- Biến đổi hình học biển hai dòng: **+34,92 điểm** · Hậu xử lý: **+13,28 điểm**, 0 ca sai lệch
+- Độ trễ đầu cuối đạt p95 = **509,76 ms**
+- Điểm nghẽn còn lại là biển hai dòng, S₁ = **0,7234**
 
-## Kết luận chung
+## Hạn chế và hướng phát triển
 
-- Chạy đầu cuối trên CPU: phát hiện **mAP@0,5 = 0,9829**
-- Đột phá trên biển hai dòng nhờ biến đổi ảnh (thay vì đổi mô hình): tăng **+34,92 điểm**
-- Hậu xử lý theo vị trí **+13,28 điểm**, **0 ca làm sai lệch** / 2.801 biển
-- Điểm nghẽn còn lại: **biển hai dòng** (S₁ = 0,7234)
+| Hạn chế đã đo | Hướng phát triển |
+|---|---|
+| Biển hai dòng S₁ = **0,7234** | Huấn luyện recognizer chuyên biệt cho biển Việt Nam |
+| Bảng nhầm lẫn còn hạn chế | Mở rộng từ ma trận nhầm lẫn trên dữ liệu mới |
+| Tập test chưa xuyên nguồn dữ liệu | Bổ sung phép đánh giá chéo theo nguồn |
 
 ## Cảm ơn & Hỏi đáp (Q&A)
 
