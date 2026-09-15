@@ -213,17 +213,24 @@ if (9 -le $pres.Slides.Count) {
     }
 }
 
-# Slide 11: Has a table, MUST NOT have ANY picture shape.
+# Legacy slide 11 cleanup: run only when the target is still a table slide.
+# The 19-slide rubric deck now uses slide 11 for the dataset funnel image.
 if (11 -le $pres.Slides.Count) {
     $s11 = $pres.Slides.Item(11)
-    for ($i = $s11.Shapes.Count; $i -ge 1; $i--) {
-        $sh = $s11.Shapes.Item($i)
-        $isPageNum = ($sh.Width -lt 50 -and $sh.Height -lt 50 -and $sh.Left -lt 50)
-        if (-not $isPageNum) {
-            if ($sh.Type -eq 13 -or $sh.Name -like "*Picture*") {
-                $sh.Delete()
-            } elseif ($sh.Top -gt 460 -and -not $sh.HasTable) {
-                $sh.Delete()
+    $hasTable = $false
+    foreach ($candidate in $s11.Shapes) {
+        if ($candidate.HasTable -eq -1) { $hasTable = $true; break }
+    }
+    if ($hasTable) {
+        for ($i = $s11.Shapes.Count; $i -ge 1; $i--) {
+            $sh = $s11.Shapes.Item($i)
+            $isPageNum = ($sh.Width -lt 50 -and $sh.Height -lt 50 -and $sh.Left -lt 50)
+            if (-not $isPageNum) {
+                if ($sh.Type -eq 13 -or $sh.Name -like "*Picture*") {
+                    $sh.Delete()
+                } elseif ($sh.Top -gt 460 -and -not $sh.HasTable) {
+                    $sh.Delete()
+                }
             }
         }
     }
